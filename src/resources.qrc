@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/logo.svg</file>
+        <file>../doc_template/template.doc</file>
+    </qresource>
+</RCC>
