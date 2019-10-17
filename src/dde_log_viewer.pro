@@ -7,7 +7,7 @@ TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 PKGCONFIG += dtkwidget
 
-TRANSLATIONS += translations/dde_monitor.ts
+TRANSLATIONS += translations/dde_log_viewer.ts
 LIBS += -L /usr/lib
 
 include(../thirdlib/QtXlsxWriter/src/xlsx/qtxlsx.pri)
@@ -48,11 +48,11 @@ HEADERS += \
     loglistview.h
 
 
-translations.path = /usr/share/dde_monitor/translations
+translations.path = /usr/share/dde_log_viewer/translations
 translations.files = $$PWD/translations/*.qm
 
 INSTALLS += translations
 
 DISTFILES += \
-    translations/dde_monitor_zh_CN.qm \
-    translations/dde_monitor.ts
+    translations/dde_log_viewer_zh_CN.qm \
+    translations/dde_log_viewer.ts
