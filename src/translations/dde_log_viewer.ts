@@ -232,49 +232,49 @@
         <translation type="unfinished">调试</translation>
     </message>
     <message>
-        <location filename="../journalwork.cpp" line="134"/>
+        <location filename="../journalwork.cpp" line="93"/>
         <source>Emer</source>
         <translatorcomment>紧急</translatorcomment>
         <translation type="unfinished">紧急</translation>
     </message>
     <message>
-        <location filename="../journalwork.cpp" line="135"/>
+        <location filename="../journalwork.cpp" line="94"/>
         <source>Alert</source>
         <translatorcomment>严重警告</translatorcomment>
         <translation type="unfinished">严重警告</translation>
     </message>
     <message>
-        <location filename="../journalwork.cpp" line="136"/>
+        <location filename="../journalwork.cpp" line="95"/>
         <source>Critical</source>
         <translatorcomment>严重</translatorcomment>
         <translation type="unfinished">严重</translation>
     </message>
     <message>
-        <location filename="../journalwork.cpp" line="137"/>
+        <location filename="../journalwork.cpp" line="96"/>
         <source>Error</source>
         <translatorcomment>错误</translatorcomment>
         <translation type="unfinished">错误</translation>
     </message>
     <message>
-        <location filename="../journalwork.cpp" line="138"/>
+        <location filename="../journalwork.cpp" line="97"/>
         <source>Warning</source>
         <translatorcomment>警告</translatorcomment>
         <translation type="unfinished">警告</translation>
     </message>
     <message>
-        <location filename="../journalwork.cpp" line="139"/>
+        <location filename="../journalwork.cpp" line="98"/>
         <source>Notice</source>
         <translatorcomment>注意</translatorcomment>
         <translation type="unfinished">注意</translation>
     </message>
     <message>
-        <location filename="../journalwork.cpp" line="140"/>
+        <location filename="../journalwork.cpp" line="99"/>
         <source>Info</source>
         <translatorcomment>信息</translatorcomment>
         <translation type="unfinished">信息</translation>
     </message>
     <message>
-        <location filename="../journalwork.cpp" line="141"/>
+        <location filename="../journalwork.cpp" line="100"/>
         <source>Debug</source>
         <translatorcomment>调试</translatorcomment>
         <translation type="unfinished">调试</translation>
@@ -475,6 +475,7 @@
         <translation type="obsolete">系统日志</translation>
     </message>
     <message>
+        <location filename="../loglistview.cpp" line="21"/>
         <location filename="../logtreeview.cpp" line="29"/>
         <source>System Log</source>
         <translation type="unfinished">系统日志</translation>
@@ -504,26 +505,31 @@
         <translation type="unfinished">Xorg日志</translation>
     </message>
     <message>
+        <location filename="../loglistview.cpp" line="26"/>
         <location filename="../logtreeview.cpp" line="52"/>
         <source>Kernel Log</source>
         <translation type="unfinished">内核日志</translation>
     </message>
     <message>
+        <location filename="../loglistview.cpp" line="31"/>
         <location filename="../logtreeview.cpp" line="57"/>
         <source>Boot Log</source>
         <translation type="unfinished">启动日志</translation>
     </message>
     <message>
+        <location filename="../loglistview.cpp" line="36"/>
         <location filename="../logtreeview.cpp" line="62"/>
         <source>dpkg Log</source>
         <translation type="unfinished">dpkg日志</translation>
     </message>
     <message>
+        <location filename="../loglistview.cpp" line="41"/>
         <location filename="../logtreeview.cpp" line="67"/>
         <source>Xorg Log</source>
         <translation type="unfinished">Xorg日志</translation>
     </message>
     <message>
+        <location filename="../loglistview.cpp" line="46"/>
         <location filename="../logtreeview.cpp" line="72"/>
         <source>Application log</source>
         <translatorcomment>应用日志</translatorcomment>
