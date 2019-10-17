@@ -1,0 +1,22 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraies
+*.so
+*.dylib
+
+# Compiled static libraies
+*.lai
+*.la
+*.a
+
+build*/
+*.pro.user*
+
+# misc
+.vscode/
+
+# log
+*.log
