@@ -23,7 +23,8 @@ SOURCES += \
     logpasswordauth.cpp \
     logexportwidget.cpp \
     utils.cpp \
-    loglistview.cpp
+    loglistview.cpp \
+    logsearchnoresultwidget.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -38,7 +39,8 @@ HEADERS += \
     logpasswordauth.h \
     logexportwidget.h \
     utils.h \
-    loglistview.h
+    loglistview.h \
+    logsearchnoresultwidget.h
 
 
 TRANSLATIONS += translations/dde-log-viewer.ts
@@ -54,7 +56,11 @@ desktop.files = $$PWD/dde-log-viewer.desktop
 translations.path = /usr/share/dde-log-viewer/translations
 translations.files = $$PWD/translations/*.qm
 
+icon_files.path = /usr/share/icons/hicolor/scalable/apps
+icon_files.files = $$PWD/images/logo.svg
+
+
 DISTFILES += \
     translations/dde-log-viewer.ts
 
-INSTALLS += target desktop translations
+INSTALLS += target desktop translations icon_files
