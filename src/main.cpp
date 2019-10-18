@@ -17,7 +17,8 @@ int main(int argc, char *argv[])
     a.setOrganizationName("deepin");
     a.setApplicationName("Deepin Log Viewer");
     a.setApplicationVersion(DApplication::buildVersion("20191016"));
-    a.setProductIcon(QIcon(":/images/logo.svg"));
+    a.setProductIcon(QIcon("://images/logo.svg"));
+    a.setWindowIcon(QIcon("://images/logo.svg"));
     a.setProductName(DApplication::translate("Main", "Deepin Log Viewer"));
     a.setApplicationDescription(DApplication::translate(
         "Main", "Deepin Log Viewer is a small tool for viewing system logs."));
@@ -25,7 +26,7 @@ int main(int argc, char *argv[])
     //    a.setTheme("dark");
 
     LogCollectorMain w;
-    w.setMinimumSize(900, 500);
+    w.setMinimumSize(1000, 800);
     w.show();
 
     Dtk::Widget::moveToCenter(&w);

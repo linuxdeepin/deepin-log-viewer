@@ -1,7 +1,7 @@
 [Desktop Entry]
 Categories=Utility
 Exec=dde-log-viewer %f
-#Icon=dde-log-viewer
+#Icon=logo
 MimeType=font/collection;font/ttf;font/otf;application/x-font-otf;application/x-font-ttf;application/x-font-type1;
 Name=Log Viewer
 StartupNotify=true

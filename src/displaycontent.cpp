@@ -2,6 +2,7 @@
 
 #include <DApplication>
 #include <DFileDialog>
+#include <DHorizontalLine>
 #include <DScrollBar>
 #include <DStandardItem>
 #include <QAbstractItemView>
@@ -42,13 +43,11 @@ DisplayContent::~DisplayContent()
 void DisplayContent::initUI()
 {
     // init pointer
-    m_LTime = new DLabel("--", this);
-    m_LSrc = new DLabel("--", this);
-    m_LType = new DLabel("--", this);
-    m_LStatus = new DLabel("--", this);
-    m_LAccount = new DLabel("--", this);
-    m_LKeyword = new DLabel("--", this);
-    m_LLevel = new DLabel("--", this);
+    m_dateTime = new DLabel(this);
+    m_userName = new DLabel(this);
+    m_pid = new DLabel(this);
+    m_status = new DLabel(this);
+    m_level = new DLabel(this);
     m_textBrowser = new DTextBrowser(this);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
@@ -59,48 +58,36 @@ void DisplayContent::initUI()
     // display single table row's detail info
     QVBoxLayout *vLy = new QVBoxLayout;
     QHBoxLayout *hLy1 = new QHBoxLayout;
-    DLabel *nameL = new DLabel("UserAccount", this);
+    m_daemonName = new DLabel(this);
     QFont font;
     font.setBold(true);
-    nameL->setFont(font);
-    hLy1->addWidget(nameL);
+    m_daemonName->setFont(font);
+    hLy1->addWidget(m_daemonName);
     hLy1->addStretch(1);
-    hLy1->addWidget(m_LTime);
+    hLy1->addWidget(m_dateTime);
 
     QHBoxLayout *hLy2 = new QHBoxLayout;
 
     QHBoxLayout *hLy21 = new QHBoxLayout;
-    DLabel *l1 = new DLabel(DApplication::translate("Label", "Source:"), this);
-    hLy21->addWidget(l1);
-    hLy21->addWidget(m_LSrc, 1);
+    m_userLabel = new DLabel(DApplication::translate("Label", "User:"), this);
+    hLy21->addWidget(m_userLabel);
+    hLy21->addWidget(m_userName, 1);
 
     QHBoxLayout *hLy22 = new QHBoxLayout;
-    DLabel *l2 = new DLabel(DApplication::translate("Label", "Type:"), this);
-    hLy22->addWidget(l2);
-    hLy22->addWidget(m_LType, 1);
+    m_pidLabel = new DLabel(DApplication::translate("Label", "PID:"), this);
+    hLy22->addWidget(m_pidLabel);
+    hLy22->addWidget(m_pid, 1);
 
     QHBoxLayout *hLy23 = new QHBoxLayout;
-    DLabel *l3 = new DLabel(DApplication::translate("Label", "Status:"), this);
-    hLy23->addWidget(l3);
-    hLy23->addWidget(m_LStatus, 1);
-
-    QHBoxLayout *hLy24 = new QHBoxLayout;
-    DLabel *l4 = new DLabel(DApplication::translate("Label", "Account:"), this);
-    hLy24->addWidget(l4);
-    hLy24->addWidget(m_LAccount, 1);
-
-    QHBoxLayout *hLy25 = new QHBoxLayout;
-    DLabel *l5 = new DLabel(DApplication::translate("Label", "Keyword:"), this);
-    hLy25->addWidget(l5);
-    hLy25->addWidget(m_LKeyword, 1);
+    m_statusLabel = new DLabel(DApplication::translate("Label", "Status:"), this);
+    hLy23->addWidget(m_statusLabel);
+    hLy23->addWidget(m_status, 1);
 
     hLy2->addLayout(hLy21, 1);
     hLy2->addLayout(hLy22, 1);
     hLy2->addLayout(hLy23, 1);
-    hLy2->addLayout(hLy24, 1);
-    hLy2->addLayout(hLy25, 1);
     hLy2->addStretch(1);
-    hLy2->addWidget(m_LLevel);
+    hLy2->addWidget(m_level);
 
     vLy->addLayout(hLy1);
     vLy->addLayout(hLy2);
@@ -111,19 +98,17 @@ void DisplayContent::initUI()
     // layout for widgets
     vLayout->addWidget(m_tableView, 10);
 
-    noResultLabel = new DLabel;
-    noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
-    QFont labelFont;
-    labelFont.setPixelSize(20);
-    noResultLabel->setFont(labelFont);
-    noResultLabel->setAlignment(Qt::AlignCenter);
-    vLayout->addWidget(noResultLabel, 10);
-    noResultLabel->hide();
+    m_noResultWdg = new LogSearchNoResultWidget(this);
+    m_noResultWdg->setContent("");
+    vLayout->addWidget(m_noResultWdg, 10);
+    m_noResultWdg->hide();
 
     vLayout->addLayout(vLy, 2);
     vLayout->setContentsMargins(0, 0, 0, 0);
 
     this->setLayout(vLayout);
+
+    cleanText();
 }
 
 void DisplayContent::initMap()
@@ -132,15 +117,23 @@ void DisplayContent::initMap()
     m_transDict.insert("Debug", DApplication::translate("Level", "debug"));
 }
 
-void DisplayContent::clearText()
+void DisplayContent::cleanText()
 {
-    m_LTime->setText("--");
-    m_LSrc->setText("--");
-    m_LType->setText("--");
-    m_LStatus->setText("--");
-    m_LAccount->setText("--");
-    m_LKeyword->setText("--");
-    m_LLevel->setText("--");
+    m_dateTime->hide();
+
+    m_userName->hide();
+    m_userLabel->hide();
+
+    m_pid->hide();
+    m_pidLabel->hide();
+
+    m_status->hide();
+    m_statusLabel->hide();
+
+    m_level->hide();
+
+    m_daemonName->hide();
+
     m_textBrowser->clear();
 }
 
@@ -477,35 +470,77 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
     m_tableView->setModel(m_pModel);
 }
 
+void DisplayContent::fillDetailInfo(QString deamonName, QString usrName, QString pid,
+                                    QString dateTime, QString level, QString msg, QString status)
+{
+    m_dateTime->show();
+    m_daemonName->show();
+    m_level->show();
+    m_userName->show();
+    m_userLabel->show();
+    m_pid->show();
+    m_pidLabel->show();
+    m_status->show();
+    m_statusLabel->show();
+
+    deamonName.isEmpty() ? m_daemonName->hide() : m_daemonName->setText(deamonName);
+    level.isEmpty() ? m_level->hide() : m_level->setText(level);
+    dateTime.isEmpty() ? m_dateTime->hide() : m_dateTime->setText(dateTime);
+
+    if (usrName.isEmpty()) {
+        m_userName->hide();
+        m_userLabel->hide();
+    } else {
+        m_userName->setText(usrName);
+    }
+
+    if (pid.isEmpty()) {
+        m_pid->hide();
+        m_pidLabel->hide();
+    } else {
+        m_pid->setText(pid);
+    }
+
+    if (status.isEmpty()) {
+        m_status->hide();
+        m_statusLabel->hide();
+    } else {
+        m_status->setText(status);
+    }
+    m_textBrowser->setText(msg);
+}
+
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
     if (!index.isValid())
         return;
 
-    clearText();
+    cleanText();
 
     QString dataStr = index.data(Qt::UserRole + 1).toString();
 
     if (dataStr.contains(DPKG_TABLE_DATA)) {
-        m_LTime->setText(m_pModel->item(index.row(), 0)->text());
-        m_textBrowser->setText(m_pModel->item(index.row(), 1)->text());
-        m_LStatus->setText(m_pModel->item(index.row(), 2)->text());
+        fillDetailInfo("Dpkg", "", "", m_pModel->item(index.row(), 0)->text(), "",
+                       m_pModel->item(index.row(), 1)->text(),
+                       m_pModel->item(index.row(), 2)->text());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {
-        m_textBrowser->setText(m_pModel->item(index.row(), 0)->text());
+        fillDetailInfo("Xorg", "", "", "", "", m_pModel->item(index.row(), 0)->text());
     } else if (dataStr.contains(BOOT_TABLE_DATA)) {
-        m_textBrowser->setText(m_pModel->item(index.row(), 1)->text());
-        m_LStatus->setText(m_pModel->item(index.row(), 0)->text());
+        fillDetailInfo("Boot", "", "", "", "", m_pModel->item(index.row(), 1)->text(),
+                       m_pModel->item(index.row(), 0)->text());
     } else if (dataStr.contains(KERN_TABLE_DATA)) {
-        m_LTime->setText(m_pModel->item(index.row(), 0)->text());
-        m_textBrowser->setText(m_pModel->item(index.row(), 3)->text());
+        fillDetailInfo(
+            m_pModel->item(index.row(), 2)->text(), m_pModel->item(index.row(), 1)->text(), "",
+            m_pModel->item(index.row(), 0)->text(), "", m_pModel->item(index.row(), 3)->text());
     } else if (dataStr.contains(JOUR_TABLE_DATA)) {
-        m_LTime->setText(m_pModel->item(index.row(), 2)->text());
-        m_LLevel->setText(m_pModel->item(index.row(), 0)->text());
-        m_textBrowser->setText(m_pModel->item(index.row(), 3)->text());
+        fillDetailInfo(
+            m_pModel->item(index.row(), 1)->text(), m_pModel->item(index.row(), 4)->text(),
+            m_pModel->item(index.row(), 5)->text(), m_pModel->item(index.row(), 2)->text(),
+            m_pModel->item(index.row(), 0)->text(), m_pModel->item(index.row(), 3)->text());
     } else if (dataStr.contains(APP_TABLE_DATA)) {
-        m_LLevel->setText(m_pModel->item(index.row(), 0)->text());
-        m_LTime->setText(m_pModel->item(index.row(), 1)->text());
-        m_textBrowser->setText(m_pModel->item(index.row(), 3)->text());
+        fillDetailInfo("", "", "", m_pModel->item(index.row(), 1)->text(),
+                       m_pModel->item(index.row(), 0)->text(),
+                       m_pModel->item(index.row(), 3)->text());
     }
 }
 
@@ -561,7 +596,7 @@ void DisplayContent::slot_treeClicked(const QModelIndex &index)
     }
     curIdx = index;
 
-    clearText();
+    cleanText();
     m_pModel->clear();
 
     QString itemData = index.data(Qt::UserRole + 1).toString();
@@ -814,10 +849,12 @@ void DisplayContent::slot_searchResult(QString str)
     }
     if (0 == m_pModel->rowCount()) {
         m_tableView->hide();
-        noResultLabel->show();
-        clearText();
+        m_noResultWdg->setContent(str);
+        m_noResultWdg->show();
+        cleanText();
     } else {
         m_tableView->show();
-        noResultLabel->hide();
+        m_noResultWdg->setContent(str);
+        m_noResultWdg->hide();
     }
 }

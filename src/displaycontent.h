@@ -7,6 +7,7 @@
 #include <QStandardItemModel>
 #include <QWidget>
 #include "logfileparser.h"
+#include "logsearchnoresultwidget.h"
 #include "structdef.h"
 
 class DisplayContent : public Dtk::Widget::DWidget
@@ -19,7 +20,7 @@ public:
 private:
     void initUI();
     void initMap();
-    void clearText();
+    void cleanText();
     void initTableView();
     void setTableViewData();
     void initConnections();
@@ -41,6 +42,8 @@ private:
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
 
+    void fillDetailInfo(QString deamonName, QString usrName, QString pid, QString dateTime,
+                        QString level, QString msg, QString status = "");
 signals:
     void loadMoreInfo();
 
@@ -66,13 +69,15 @@ public slots:
 private:
     Dtk::Widget::DTableView *m_tableView;
     QStandardItemModel *m_pModel;
-    Dtk::Widget::DLabel *m_LTime, *m_LSrc, *m_LType, *m_LStatus, *m_LAccount, *m_LKeyword,
-        *m_LLevel;
+    Dtk::Widget::DLabel *m_daemonName, *m_dateTime, *m_userName, *m_pid, *m_level, *m_status;
+    Dtk::Widget::DLabel *m_userLabel, *m_pidLabel, *m_statusLabel;
     Dtk::Widget::DTextBrowser *m_textBrowser;
     Dtk::Widget::DLabel *noResultLabel {nullptr};
     QModelIndex curIdx;
     QMap<QString, QString> m_transDict;
     int m_limitTag {0};
+
+    LogSearchNoResultWidget *m_noResultWdg;
 
     QString m_curAppLog;
 
