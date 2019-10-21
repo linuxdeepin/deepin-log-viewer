@@ -25,7 +25,7 @@ private:
     Dtk::Widget::DSearchEdit *m_searchEdt;
     FilterContent *m_topRightWgt;
     //    LogTreeView *m_treeView;
-    LogListView *m_treeView;
+    LogListView *m_logCatelogue;
     DisplayContent *m_midRightWgt;
     QHBoxLayout *m_hLayout;
     QVBoxLayout *m_vLayout;

@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     //    a.setTheme("dark");
 
     LogCollectorMain w;
-    w.setMinimumSize(1000, 800);
+    w.setMinimumSize(1000, 600);
     w.show();
 
     Dtk::Widget::moveToCenter(&w);

@@ -49,8 +49,8 @@ void LogCollectorMain::initUI()
 
     /** left frame */
     //    m_treeView = new LogTreeView(m_hSplitter);
-    m_treeView = new LogListView(m_hSplitter);
-    m_hSplitter->addWidget(m_treeView);
+    m_logCatelogue = new LogListView(m_hSplitter);
+    m_hSplitter->addWidget(m_logCatelogue);
 
     QWidget *layoutWidget = new QWidget(m_hSplitter);
 
@@ -67,6 +67,7 @@ void LogCollectorMain::initUI()
     m_hSplitter->addWidget(layoutWidget);
 
     m_hLayout->addWidget(m_hSplitter);
+    m_hLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
 
     m_hSplitter->setStretchFactor(0, 5);
     m_hSplitter->setStretchFactor(1, 15);
@@ -104,9 +105,9 @@ void LogCollectorMain::initConnection()
             &DisplayContent::slot_exportClicked);
 
     //! treeView widget
-    connect(m_treeView, SIGNAL(clicked(const QModelIndex &)), m_midRightWgt,
+    connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_midRightWgt,
             SLOT(slot_treeClicked(const QModelIndex &)));
     //! set tree <==> combobox visible
-    connect(m_treeView, SIGNAL(clicked(const QModelIndex &)), m_topRightWgt,
+    connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_topRightWgt,
             SLOT(slot_treeClicked(const QModelIndex &)));
 }

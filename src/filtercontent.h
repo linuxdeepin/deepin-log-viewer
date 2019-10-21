@@ -2,12 +2,13 @@
 #define FILTERCONTENT_H
 
 #include <DComboBox>
+#include <DFrame>
 #include <DSuggestButton>
 #include <DWidget>
 #include <QButtonGroup>
 #include <QWidget>
 
-class FilterContent : public Dtk::Widget::DWidget
+class FilterContent : public Dtk::Widget::DFrame
 {
     Q_OBJECT
 public:
@@ -20,6 +21,7 @@ public:
 private:
     void setAppComboBoxItem();
     void setComboBoxVisible(bool first, bool second);
+    void paintEvent(QPaintEvent *event);
 
 signals:
     void sigButtonClicked(int tId, int lId, QModelIndex idx);
