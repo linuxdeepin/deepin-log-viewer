@@ -57,7 +57,7 @@ translations.path = /usr/share/dde-log-viewer/translations
 translations.files = $$PWD/translations/*.qm
 
 icon_files.path = /usr/share/icons/hicolor/scalable/apps
-icon_files.files = $$PWD/images/logo.svg
+icon_files.files = $$PWD/images/log.svg
 
 
 DISTFILES += \
