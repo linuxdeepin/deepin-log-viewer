@@ -27,7 +27,7 @@ void LogSearchNoResultWidget::setContent(QString word)
 
     QString str1 = DApplication::translate("NoSearch", "Don't find");
     result = str1 + "“" + word + "”";
-    QString str2 = DApplication::translate("NoSearch", ", please retry another keyword");
+    QString str2 = DApplication::translate("NoSearch", ", please retry another keyword.");
     result += str2;
 
     QFont labelFont;
