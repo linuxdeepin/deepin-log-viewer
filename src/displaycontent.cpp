@@ -281,6 +281,10 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
     m_tableView->hideColumn(2);
 
     m_tableView->setModel(m_pModel);
+
+    // default first row select
+    m_tableView->selectRow(0);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::generateKernFile(int id)
@@ -338,6 +342,10 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
     }
 
     m_tableView->setModel(m_pModel);
+
+    // default first row select
+    m_tableView->selectRow(0);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::generateAppFile(QString path, int id, int lId)
@@ -398,6 +406,10 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
     }
 
     m_tableView->setModel(m_pModel);
+
+    // default first row select
+    m_tableView->selectRow(0);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
@@ -417,6 +429,10 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
     }
 
     m_tableView->setModel(m_pModel);
+
+    // default first row select
+    m_tableView->selectRow(0);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::createXorgTable(QStringList &list)
@@ -432,6 +448,10 @@ void DisplayContent::createXorgTable(QStringList &list)
     }
 
     m_tableView->setModel(m_pModel);
+
+    // default first row select
+    m_tableView->selectRow(0);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end)
@@ -468,6 +488,10 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
     m_tableView->hideColumn(5);
 
     m_tableView->setModel(m_pModel);
+
+    // default first row select
+    m_tableView->selectRow(0);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::fillDetailInfo(QString deamonName, QString usrName, QString pid,
@@ -538,7 +562,7 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
             m_pModel->item(index.row(), 5)->text(), m_pModel->item(index.row(), 2)->text(),
             m_pModel->item(index.row(), 0)->text(), m_pModel->item(index.row(), 3)->text());
     } else if (dataStr.contains(APP_TABLE_DATA)) {
-        fillDetailInfo("", "", "", m_pModel->item(index.row(), 1)->text(),
+        fillDetailInfo(m_curAppLog.section("/", -1), "", "", m_pModel->item(index.row(), 1)->text(),
                        m_pModel->item(index.row(), 0)->text(),
                        m_pModel->item(index.row(), 3)->text());
     }
