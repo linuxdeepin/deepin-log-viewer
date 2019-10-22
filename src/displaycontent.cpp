@@ -97,11 +97,19 @@ void DisplayContent::initUI()
 
     // layout for widgets
     vLayout->addWidget(m_tableView, 10);
+    noResultLabel = new DLabel;
+    noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
+    QFont labelFont;
+    labelFont.setPixelSize(20);
+    noResultLabel->setFont(labelFont);
+    noResultLabel->setAlignment(Qt::AlignCenter);
+    vLayout->addWidget(noResultLabel, 10);
+    noResultLabel->hide();
 
-    m_noResultWdg = new LogSearchNoResultWidget(this);
-    m_noResultWdg->setContent("");
-    vLayout->addWidget(m_noResultWdg, 10);
-    m_noResultWdg->hide();
+    //    m_noResultWdg = new LogSearchNoResultWidget(this);
+    //    m_noResultWdg->setContent("");
+    //    vLayout->addWidget(m_noResultWdg, 10);
+    //    m_noResultWdg->hide();
 
     vLayout->addLayout(vLy, 2);
     vLayout->setContentsMargins(0, 0, 0, 0);
@@ -629,13 +637,15 @@ void DisplayContent::slot_treeClicked(const QModelIndex &index)
 
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         // default level is info so PRIORITY=6
-        jList.clear();
+        //        jList.clear();
+        //        m_logFileParse.parseByJournal(QStringList() << "PRIORITY=6");
         m_flag = JOURNAL;
-        m_logFileParse.parseByJournal(QStringList() << "PRIORITY=6");
+        generateJournalFile(m_curBtnId, m_curLvId);
     } else if (itemData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
-        dList.clear();
+        //        dList.clear();
+        //        m_logFileParse.parseByDpkg(dList);
         m_flag = DPKG;
-        m_logFileParse.parseByDpkg(dList);
+        generateDpkgFile(m_curBtnId);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
         xList.clear();
         m_flag = XORG;
@@ -645,9 +655,10 @@ void DisplayContent::slot_treeClicked(const QModelIndex &index)
         m_flag = BOOT;
         m_logFileParse.parseByBoot(bList);
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
-        kList.clear();
+        //        kList.clear();
+        //        m_logFileParse.parseByKern(kList);
         m_flag = KERN;
-        m_logFileParse.parseByKern(kList);
+        generateKernFile(m_curBtnId);
     } else if (itemData.contains(".cache")) {
         //        appList.clear();
         //        m_logFileParse.parseByApp(itemData, appList);
@@ -873,12 +884,14 @@ void DisplayContent::slot_searchResult(QString str)
     }
     if (0 == m_pModel->rowCount()) {
         m_tableView->hide();
-        m_noResultWdg->setContent(str);
-        m_noResultWdg->show();
+        noResultLabel->show();
+        //        m_noResultWdg->setContent(str);
+        //        m_noResultWdg->show();
         cleanText();
     } else {
         m_tableView->show();
-        m_noResultWdg->setContent(str);
-        m_noResultWdg->hide();
+        noResultLabel->hide();
+        //        m_noResultWdg->setContent(str);
+        //        m_noResultWdg->hide();
     }
 }

@@ -43,7 +43,7 @@ HEADERS += \
     logsearchnoresultwidget.h
 
 
-TRANSLATIONS += translations/dde-log-viewer.ts
+TRANSLATIONS += translations/dde-log-viewer_zh_CN.ts
 
 isEmpty(BINDIR):BINDIR=/usr/bin
 isEmpty(APPDIR):APPDIR=/usr/share/applications
@@ -61,6 +61,6 @@ icon_files.files = $$PWD/images/log.svg
 
 
 DISTFILES += \
-    translations/dde-log-viewer.ts
+    translations/dde-log-viewer_zh_CN.ts
 
 INSTALLS += target desktop translations icon_files

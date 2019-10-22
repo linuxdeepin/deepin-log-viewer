@@ -244,8 +244,13 @@ void FilterContent::slot_treeClicked(const QModelIndex &index)
 
 void FilterContent::slot_buttonClicked(int idx)
 {
-    if (!m_curTreeIndex.isValid())
-        return;
+    /** note: In order to adapt to the new scene, select time-period first,
+     *        then select any log item, should display current log info.
+     *        so comment this judge.
+     */
+    //    if (!m_curTreeIndex.isValid())
+    //        return;
+
     QString itemData = m_curTreeIndex.data(Qt::UserRole + 1).toString();
 
     switch (idx) {
@@ -270,7 +275,8 @@ void FilterContent::slot_buttonClicked(int idx)
             }
         } break;
         case EXPORT:
-            emit sigExportInfo();
+            if (!itemData.isEmpty())
+                emit sigExportInfo();
             break;
         default:
             break;
