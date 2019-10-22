@@ -1,5 +1,6 @@
 #include "logfileparser.h"
 
+#include <DMessageBox>
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
@@ -10,6 +11,8 @@
 #include <QMessageBox>
 #include <QProcess>
 #include "journalwork.h"
+
+DWIDGET_USE_NAMESPACE
 
 LogFileParser::LogFileParser(QWidget *parent)
     : QObject(parent)
@@ -293,12 +296,12 @@ void LogFileParser::createFile(QString output, int count)
 bool LogFileParser::isErroCommand(QString str)
 {
     if (str.contains("权限") || str.contains("permission", Qt::CaseInsensitive)) {
-        QMessageBox::information(nullptr, tr("infomation"),
+        DMessageBox::information(nullptr, tr("infomation"),
                                  str + "\n" + tr("Please use 'sudo' run this application"));
         return true;
     }
     if (str.contains("请重试") || str.contains("retry", Qt::CaseInsensitive)) {
-        QMessageBox::information(nullptr, tr("infomation"),
+        DMessageBox::information(nullptr, tr("infomation"),
                                  tr("The password is incorrect,please try again"));
         m_rootPasswd = "";
         return true;

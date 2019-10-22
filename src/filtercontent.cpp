@@ -32,8 +32,8 @@ void FilterContent::initUI()
 {
     QVBoxLayout *vLayout = new QVBoxLayout;
     // set period info
-    QHBoxLayout *hLayout_period = new QHBoxLayout;
-    QLabel *txtLabel = new QLabel(DApplication::translate("Label", "Period:"), this);
+    hLayout_period = new QHBoxLayout;
+    periodLabel = new DLabel(DApplication::translate("Label", "Period:"), this);
     m_btnGroup = new QButtonGroup;
     DPushButton *m_allBtn = new DPushButton(DApplication::translate("Button", "All"), this);
     m_allBtn->setObjectName("allBtn");
@@ -53,7 +53,7 @@ void FilterContent::initUI()
 
     setUeButtonSytle();
 
-    hLayout_period->addWidget(txtLabel);
+    hLayout_period->addWidget(periodLabel);
     hLayout_period->addWidget(m_allBtn);
     hLayout_period->addWidget(m_todayBtn);
     hLayout_period->addWidget(m_threeDayBtn);
@@ -70,7 +70,7 @@ void FilterContent::initUI()
     hLayout_period->addWidget(cmdLinkBtn);
 
     // set level info
-    QHBoxLayout *hLayout_all = new QHBoxLayout;
+    hLayout_all = new QHBoxLayout;
 
     QHBoxLayout *hLayout_lv = new QHBoxLayout;
     lvTxt = new DLabel(DApplication::translate("Label", "Level:"), this);
@@ -110,7 +110,7 @@ void FilterContent::initUI()
     this->setLayout(vLayout);
 
     // default application list is invisible
-    setComboBoxVisible(true, false);
+    setSelectorVisible(true, false, true, false);
 }
 
 void FilterContent::initConnections()
@@ -164,12 +164,27 @@ void FilterContent::setAppComboBoxItem()
     }
 }
 
-void FilterContent::setComboBoxVisible(bool first, bool second)
+void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool period, bool needMove)
 {
-    cbx_lv->setVisible(first);
-    lvTxt->setVisible(first);
-    cbx_app->setVisible(second);
-    appTxt->setVisible(second);
+    lvTxt->setVisible(lvCbx);
+    cbx_lv->setVisible(lvCbx);
+
+    appTxt->setVisible(appListCbx);
+    cbx_app->setVisible(appListCbx);
+
+    periodLabel->setVisible(period);
+    for (int i = 0; i < 6; i++) {
+        QPushButton *pushBtn = static_cast<QPushButton *>(m_btnGroup->button(i));
+        pushBtn->setVisible(period);
+    }
+
+    if (needMove) {
+        hLayout_period->addWidget(m_btnGroup->button(EXPORT));
+        hLayout_all->removeWidget(m_btnGroup->button(EXPORT));
+    } else {
+        hLayout_period->removeWidget(m_btnGroup->button(EXPORT));
+        hLayout_all->addWidget(m_btnGroup->button(EXPORT));
+    }
 }
 
 void FilterContent::setUeButtonSytle()
@@ -228,17 +243,19 @@ void FilterContent::slot_treeClicked(const QModelIndex &index)
 
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         this->setAppComboBoxItem();
-        this->setComboBoxVisible(true, true);
+        this->setSelectorVisible(true, true, true, false);
         cbx_app->setCurrentIndex(0);
         emit sigCbxAppIdxChanged(cbx_app->itemData(0, Qt::UserRole + 1).toString());
     } else if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
-        this->setComboBoxVisible(true, false);
+        this->setSelectorVisible(true, false, true, false);
         cbx_lv->setCurrentIndex(INF);
-    } else if (itemData.contains(".cache")) {
-        this->setComboBoxVisible(true, true);
-        cbx_lv->setCurrentIndex(INF);
-    } else {
-        this->setComboBoxVisible(false, false);
+        //    } else if (itemData.contains(".cache")) {
+        //        this->setSelectorVisible(true, true);
+        //        cbx_lv->setCurrentIndex(INF);
+    } else if (itemData.contains(BOOT_TREE_DATA) || itemData.contains(XORG_TREE_DATA)) {
+        this->setSelectorVisible(false, false, false, true);
+    } else if (itemData.contains(KERN_TREE_DATA) || itemData.contains(DPKG_TREE_DATA)) {
+        this->setSelectorVisible(false, false, true, true);
     }
 }
 

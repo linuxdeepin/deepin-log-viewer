@@ -6,6 +6,7 @@
 #include <DSuggestButton>
 #include <DWidget>
 #include <QButtonGroup>
+#include <QHBoxLayout>
 #include <QWidget>
 
 class FilterContent : public Dtk::Widget::DFrame
@@ -20,7 +21,7 @@ public:
 
 private:
     void setAppComboBoxItem();
-    void setComboBoxVisible(bool first, bool second);
+    void setSelectorVisible(bool lvCbx, bool appListCbx, bool period, bool needMove);
     void setUeButtonSytle();
     void paintEvent(QPaintEvent *event);
 
@@ -39,12 +40,16 @@ public slots:
 private:
     QButtonGroup *m_btnGroup;
     Dtk::Widget::DLabel *lvTxt;
+    Dtk::Widget::DLabel *periodLabel;
     Dtk::Widget::DComboBox *cbx_lv;
     Dtk::Widget::DLabel *appTxt;
     Dtk::Widget::DComboBox *cbx_app;
     QModelIndex m_curTreeIndex;
 
     int m_curBtnId, m_curLvCbxId;
+
+    QHBoxLayout *hLayout_period;
+    QHBoxLayout *hLayout_all;
 };
 
 #endif  // FILTERCONTENT_H
