@@ -1,5 +1,6 @@
 #include "displaycontent.h"
 
+#include <sys/utsname.h>
 #include <DApplication>
 #include <DFileDialog>
 #include <DHorizontalLine>
@@ -549,30 +550,37 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 
     cleanText();
 
+    // get hostname.
+    utsname _utsname;
+    uname(&_utsname);
+    QString hostname = QString(_utsname.nodename);
+
     QString dataStr = index.data(Qt::UserRole + 1).toString();
 
     if (dataStr.contains(DPKG_TABLE_DATA)) {
-        fillDetailInfo("Dpkg", "", "", m_pModel->item(index.row(), 0)->text(), "",
+        fillDetailInfo("Dpkg", hostname, "", m_pModel->item(index.row(), 0)->text(), "",
                        m_pModel->item(index.row(), 1)->text(),
                        m_pModel->item(index.row(), 2)->text());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {
-        fillDetailInfo("Xorg", "", "", "", "", m_pModel->item(index.row(), 0)->text());
+        fillDetailInfo("Xorg", hostname, "", "", "", m_pModel->item(index.row(), 0)->text());
     } else if (dataStr.contains(BOOT_TABLE_DATA)) {
-        fillDetailInfo("Boot", "", "", "", "", m_pModel->item(index.row(), 1)->text(),
+        fillDetailInfo("Boot", hostname, "", "", "", m_pModel->item(index.row(), 1)->text(),
                        m_pModel->item(index.row(), 0)->text());
     } else if (dataStr.contains(KERN_TABLE_DATA)) {
-        fillDetailInfo(
-            m_pModel->item(index.row(), 2)->text(), m_pModel->item(index.row(), 1)->text(), "",
-            m_pModel->item(index.row(), 0)->text(), "", m_pModel->item(index.row(), 3)->text());
+        fillDetailInfo(m_pModel->item(index.row(), 2)->text(),
+                       /*m_pModel->item(index.row(), 1)->text()*/ hostname, "",
+                       m_pModel->item(index.row(), 0)->text(), "",
+                       m_pModel->item(index.row(), 3)->text());
     } else if (dataStr.contains(JOUR_TABLE_DATA)) {
         fillDetailInfo(
-            m_pModel->item(index.row(), 1)->text(), m_pModel->item(index.row(), 4)->text(),
+            m_pModel->item(index.row(), 1)->text(),
+            /*m_pModel->item(index.row(), 4)->text()*/ hostname,
             m_pModel->item(index.row(), 5)->text(), m_pModel->item(index.row(), 2)->text(),
             m_pModel->item(index.row(), 0)->text(), m_pModel->item(index.row(), 3)->text());
     } else if (dataStr.contains(APP_TABLE_DATA)) {
-        fillDetailInfo(m_curAppLog.section("/", -1), "", "", m_pModel->item(index.row(), 1)->text(),
-                       m_pModel->item(index.row(), 0)->text(),
-                       m_pModel->item(index.row(), 3)->text());
+        fillDetailInfo(
+            m_curAppLog.section("/", -1), hostname, "", m_pModel->item(index.row(), 1)->text(),
+            m_pModel->item(index.row(), 0)->text(), m_pModel->item(index.row(), 3)->text());
     }
 }
 
