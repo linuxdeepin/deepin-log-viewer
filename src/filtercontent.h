@@ -21,6 +21,7 @@ public:
 private:
     void setAppComboBoxItem();
     void setComboBoxVisible(bool first, bool second);
+    void setUeButtonSytle();
     void paintEvent(QPaintEvent *event);
 
 signals:

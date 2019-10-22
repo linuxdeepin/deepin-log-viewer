@@ -35,23 +35,23 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_period = new QHBoxLayout;
     QLabel *txtLabel = new QLabel(DApplication::translate("Label", "Period:"), this);
     m_btnGroup = new QButtonGroup;
-    DSuggestButton *m_allBtn = new DSuggestButton(DApplication::translate("Button", "All"), this);
+    DPushButton *m_allBtn = new DPushButton(DApplication::translate("Button", "All"), this);
+    m_allBtn->setObjectName("allBtn");
     m_btnGroup->addButton(m_allBtn, 0);
-    DSuggestButton *m_todayBtn =
-        new DSuggestButton(DApplication::translate("Button", "Today"), this);
+    DPushButton *m_todayBtn = new DPushButton(DApplication::translate("Button", "Today"), this);
     m_btnGroup->addButton(m_todayBtn, 1);
-    DSuggestButton *m_threeDayBtn =
-        new DSuggestButton(DApplication::translate("Button", "3 days"), this);
+    DPushButton *m_threeDayBtn = new DPushButton(DApplication::translate("Button", "3 days"), this);
     m_btnGroup->addButton(m_threeDayBtn, 2);
-    DSuggestButton *m_lastWeekBtn =
-        new DSuggestButton(DApplication::translate("Button", "1 week"), this);
+    DPushButton *m_lastWeekBtn = new DPushButton(DApplication::translate("Button", "1 week"), this);
     m_btnGroup->addButton(m_lastWeekBtn, 3);
-    DSuggestButton *m_lastMonthBtn =
-        new DSuggestButton(DApplication::translate("Button", "1 month"), this);
+    DPushButton *m_lastMonthBtn =
+        new DPushButton(DApplication::translate("Button", "1 month"), this);
     m_btnGroup->addButton(m_lastMonthBtn, 4);
-    DSuggestButton *m_threeMonthBtn =
-        new DSuggestButton(DApplication::translate("Button", "3 months"), this);
+    DPushButton *m_threeMonthBtn =
+        new DPushButton(DApplication::translate("Button", "3 months"), this);
     m_btnGroup->addButton(m_threeMonthBtn, 5);
+
+    setUeButtonSytle();
 
     hLayout_period->addWidget(txtLabel);
     hLayout_period->addWidget(m_allBtn);
@@ -170,6 +170,17 @@ void FilterContent::setComboBoxVisible(bool first, bool second)
     lvTxt->setVisible(first);
     cbx_app->setVisible(second);
     appTxt->setVisible(second);
+}
+
+void FilterContent::setUeButtonSytle()
+{
+    for (QAbstractButton *abtn : m_btnGroup->buttons()) {
+        QPushButton *btn = static_cast<QPushButton *>(abtn);
+        btn->setFlat(true);
+        btn->setCheckable(true);
+        if (btn->objectName() == "allBtn")
+            btn->setChecked(true);
+    }
 }
 
 void FilterContent::paintEvent(QPaintEvent *event)
