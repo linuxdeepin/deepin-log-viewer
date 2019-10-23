@@ -470,6 +470,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
         int col = 0;
 
         item = new DStandardItem(logList[i].level);
+        item->setIcon(QIcon("://images/logo.svg"));
         item->setData(JOUR_TABLE_DATA);
         m_pModel->setItem(i, col++, item);
 
@@ -545,10 +546,10 @@ void DisplayContent::fillDetailInfo(QString deamonName, QString usrName, QString
 
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
+    cleanText();
+
     if (!index.isValid())
         return;
-
-    cleanText();
 
     // get hostname.
     utsname _utsname;
