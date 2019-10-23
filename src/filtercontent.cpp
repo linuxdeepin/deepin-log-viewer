@@ -174,7 +174,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool period,
 
     periodLabel->setVisible(period);
     for (int i = 0; i < 6; i++) {
-        QPushButton *pushBtn = static_cast<QPushButton *>(m_btnGroup->button(i));
+        DPushButton *pushBtn = static_cast<DPushButton *>(m_btnGroup->button(i));
         pushBtn->setVisible(period);
     }
 
@@ -190,7 +190,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool period,
 void FilterContent::setUeButtonSytle()
 {
     for (QAbstractButton *abtn : m_btnGroup->buttons()) {
-        QPushButton *btn = static_cast<QPushButton *>(abtn);
+        DPushButton *btn = static_cast<DPushButton *>(abtn);
         btn->setFlat(true);
         btn->setCheckable(true);
         if (btn->objectName() == "allBtn")

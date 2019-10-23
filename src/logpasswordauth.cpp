@@ -9,7 +9,7 @@ DWIDGET_USE_NAMESPACE
 LogPasswordAuth::LogPasswordAuth(DWidget *parent)
     : DDialog(parent)
 {
-    this->setFixedSize(350, 120);
+    //    this->setFixedSize(350, 120);
 
     initUI();
     initConnections();
@@ -23,10 +23,11 @@ void LogPasswordAuth::initUI()
     m_edt->setEchoMode(QLineEdit::Password);
     m_edt->setMaximumHeight(30);
     QList<QWidget *> list;
-    DPushButton *hs = new DPushButton("show");
+    DPushButton *hs = new DPushButton("s");
     hs->setCheckable(true);
     list.append(hs);
     m_edt->setRightWidgets(list);
+    this->addSpacing(10);
     this->addContent(m_edt);
     this->setIcon(QIcon("://images/logo.svg"), QSize(50, 50));
     this->addButton(DApplication::translate("Button", "Cancel"));
@@ -35,10 +36,10 @@ void LogPasswordAuth::initUI()
     connect(hs, &DPushButton::clicked, this, [=](bool checked) {
         if (checked) {
             m_edt->setEchoMode(QLineEdit::Normal);
-            hs->setText("hide");
+            hs->setText("h");
         } else {
             m_edt->setEchoMode(QLineEdit::Password);
-            hs->setText("show");
+            hs->setText("s");
         }
     });
 }
