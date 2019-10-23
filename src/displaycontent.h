@@ -67,6 +67,9 @@ public slots:
     void slot_searchResult(QString str);
 
 private:
+    void paintEvent(QPaintEvent *event);
+
+private:
     Dtk::Widget::DTableView *m_tableView;
     QStandardItemModel *m_pModel;
     Dtk::Widget::DLabel *m_daemonName, *m_dateTime, *m_userName, *m_pid, *m_level, *m_status;

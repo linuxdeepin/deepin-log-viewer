@@ -2,6 +2,7 @@
 
 #include <sys/utsname.h>
 #include <DApplication>
+#include <DApplicationHelper>
 #include <DFileDialog>
 #include <DHorizontalLine>
 #include <DScrollBar>
@@ -11,6 +12,8 @@
 #include <QDebug>
 #include <QHeaderView>
 #include <QIcon>
+#include <QPaintEvent>
+#include <QPainter>
 #include <QThread>
 #include <QVBoxLayout>
 #include "logexportwidget.h"
@@ -92,7 +95,9 @@ void DisplayContent::initUI()
 
     vLy->addLayout(hLy1);
     vLy->addLayout(hLy2);
-    vLy->addWidget(new DHorizontalLine());
+    DHorizontalLine *hline = new DHorizontalLine;
+    hline->setLineWidth(4);
+    vLy->addWidget(hline);
     vLy->addWidget(m_textBrowser);
     vLy->setContentsMargins(0, 0, 0, 0);
 
@@ -903,4 +908,35 @@ void DisplayContent::slot_searchResult(QString str)
         //        m_noResultWdg->setContent(str);
         //        m_noResultWdg->hide();
     }
+}
+void DisplayContent::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event)
+    return;
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    // Save pen
+    QPen oldPen = painter.pen();
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    DPalette pa = DApplicationHelper::instance()->palette(this);
+    painter.setBrush(QBrush(pa.color(DPalette::Base)));
+    QColor penColor = pa.color(DPalette::FrameBorder);
+    penColor.setAlphaF(0.05);
+    painter.setPen(QPen(penColor));
+
+    QRectF rect = this->rect();
+    rect.setX(0.5);
+    rect.setY(0.5);
+    rect.setWidth(rect.width() - 0.5);
+    rect.setHeight(rect.height() - 0.5);
+
+    QPainterPath painterPath;
+    painterPath.addRoundedRect(rect, 8, 8);
+    painter.drawPath(painterPath);
+
+    // Restore the pen
+    painter.setPen(oldPen);
 }
