@@ -5,7 +5,10 @@
 #include "logcollectormain.h"
 #include "logpasswordauth.h"
 
+#include <DLog>
+
 DWIDGET_USE_NAMESPACE
+DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
@@ -24,6 +27,8 @@ int main(int argc, char *argv[])
         "Main", "Deepin Log Viewer is a small tool for viewing system logs."));
     DApplicationSettings settings;
     //    a.setTheme("dark");
+    DLogManager::registerConsoleAppender();
+    DLogManager::registerFileAppender();
 
     LogCollectorMain w;
     w.setMinimumSize(1000, 600);

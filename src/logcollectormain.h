@@ -3,6 +3,7 @@
 
 #include <DMainWindow>
 #include <DSearchEdit>
+#include <DSplitter>
 #include <DTreeView>
 #include <QHBoxLayout>
 #include <QSplitter>
@@ -30,7 +31,7 @@ private:
     QHBoxLayout *m_hLayout;
     QVBoxLayout *m_vLayout;
 
-    QSplitter *m_hSplitter;
+    Dtk::Widget::DSplitter *m_hSplitter;
 };
 
 #endif  // LOGCOLLECTORMAIN_H

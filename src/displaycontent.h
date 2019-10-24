@@ -8,6 +8,7 @@
 #include <QWidget>
 #include "logfileparser.h"
 #include "logsearchnoresultwidget.h"
+#include "logtableview.h"
 #include "structdef.h"
 
 class DisplayContent : public Dtk::Widget::DWidget
@@ -71,6 +72,7 @@ private:
 
 private:
     Dtk::Widget::DTableView *m_tableView;
+    //    LogTableView *m_tableView;
     QStandardItemModel *m_pModel;
     Dtk::Widget::DLabel *m_daemonName, *m_dateTime, *m_userName, *m_pid, *m_level, *m_status;
     Dtk::Widget::DLabel *m_userLabel, *m_pidLabel, *m_statusLabel;
