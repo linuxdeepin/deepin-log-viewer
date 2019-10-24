@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     a.loadTranslator();
     a.setOrganizationName("deepin");
-    a.setApplicationName("Deepin Log Viewer");
+    a.setApplicationName("dde-log-viewer");
     a.setApplicationVersion(DApplication::buildVersion("20191016"));
     a.setProductIcon(QIcon("://images/logo.svg"));
     a.setWindowIcon(QIcon("://images/logo.svg"));
