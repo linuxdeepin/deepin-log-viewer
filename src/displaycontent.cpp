@@ -103,6 +103,7 @@ void DisplayContent::initUI()
 
     // layout for widgets
     vLayout->addWidget(m_tableView, 10);
+
     noResultLabel = new DLabel;
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
     QFont labelFont;
@@ -898,6 +899,7 @@ void DisplayContent::slot_searchResult(QString str)
     }
     if (0 == m_pModel->rowCount()) {
         m_tableView->hide();
+
         noResultLabel->show();
         //        m_noResultWdg->setContent(str);
         //        m_noResultWdg->show();

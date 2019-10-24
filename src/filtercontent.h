@@ -21,7 +21,9 @@ public:
 
 private:
     void setAppComboBoxItem();
+
     void setSelectorVisible(bool lvCbx, bool appListCbx, bool period, bool needMove);
+
     void setUeButtonSytle();
     void paintEvent(QPaintEvent *event);
 

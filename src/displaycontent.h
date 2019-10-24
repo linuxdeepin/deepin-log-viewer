@@ -8,7 +8,6 @@
 #include <QWidget>
 #include "logfileparser.h"
 #include "logsearchnoresultwidget.h"
-#include "logtableview.h"
 #include "structdef.h"
 
 class DisplayContent : public Dtk::Widget::DWidget
