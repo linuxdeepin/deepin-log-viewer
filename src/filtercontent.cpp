@@ -200,8 +200,6 @@ void FilterContent::setUeButtonSytle()
 
 void FilterContent::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event)
-
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -227,6 +225,8 @@ void FilterContent::paintEvent(QPaintEvent *event)
 
     // Restore the pen
     painter.setPen(oldPen);
+
+    DFrame::paintEvent(event);
 }
 
 void FilterContent::slot_treeClicked(const QModelIndex &index)

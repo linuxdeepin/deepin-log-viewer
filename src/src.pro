@@ -1,4 +1,4 @@
-QT += core gui dtkwidget dtkgui
+QT += core gui dtkwidget dtkgui gui-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
