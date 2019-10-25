@@ -53,6 +53,9 @@ target.path = $$INSTROOT$$BINDIR
 desktop.path = $$INSTROOT$$APPDIR
 desktop.files = $$PWD/dde-log-viewer.desktop
 
+# Automating generation .qm files from .ts files
+!system($$PWD/translate_generation.sh): error("Failed to generate translation")
+
 translations.path = /usr/share/dde-log-viewer/translations
 translations.files = $$PWD/translations/*.qm
 
