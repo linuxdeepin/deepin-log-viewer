@@ -19,7 +19,7 @@ LogListView::LogListView(QWidget *parent)
 void LogListView::initUI()
 {
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    //    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    this->setItemSpacing(2);
     m_pModel = new QStandardItemModel;
 
     QStandardItem *item = nullptr;

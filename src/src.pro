@@ -9,6 +9,8 @@ CONFIG += c++11 link_pkgconfig
 
 LIBS += -L /usr/lib
 
+#DEFINES += USE_POLKIT
+
 include(../thirdlib/QtXlsxWriter/src/xlsx/qtxlsx.pri)
 include(../thirdlib/docx/docx.pri)
 
@@ -24,7 +26,8 @@ SOURCES += \
     logexportwidget.cpp \
     utils.cpp \
     loglistview.cpp \
-    logsearchnoresultwidget.cpp
+    logsearchnoresultwidget.cpp \
+    logperiodbutton.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -40,10 +43,12 @@ HEADERS += \
     logexportwidget.h \
     utils.h \
     loglistview.h \
-    logsearchnoresultwidget.h
+    logsearchnoresultwidget.h \
+    logperiodbutton.h
 
 
 TRANSLATIONS += translations/dde-log-viewer_zh_CN.ts
+
 
 isEmpty(BINDIR):BINDIR=/usr/bin
 isEmpty(APPDIR):APPDIR=/usr/share/applications
@@ -62,8 +67,11 @@ translations.files = $$PWD/translations/*.qm
 icon_files.path = /usr/share/icons/hicolor/scalable/apps
 icon_files.files = $$PWD/images/log.svg
 
+policy.path = /usr/share/polkit-1/actions
+policy.files = $$PWD/com.deepin.pkexec.dde-log-viewer.policy
+
 
 DISTFILES += \
     translations/dde-log-viewer_zh_CN.ts
 
-INSTALLS += target desktop translations icon_files
+INSTALLS += target desktop translations icon_files policy

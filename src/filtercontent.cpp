@@ -13,6 +13,7 @@
 #include <QPainter>
 #include <QProcess>
 #include <QVBoxLayout>
+#include "logperiodbutton.h"
 #include "structdef.h"
 
 DWIDGET_USE_NAMESPACE
@@ -35,20 +36,23 @@ void FilterContent::initUI()
     hLayout_period = new QHBoxLayout;
     periodLabel = new DLabel(DApplication::translate("Label", "Period:"), this);
     m_btnGroup = new QButtonGroup;
-    DPushButton *m_allBtn = new DPushButton(DApplication::translate("Button", "All"), this);
+    LogPeriodButton *m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
     m_allBtn->setObjectName("allBtn");
     m_btnGroup->addButton(m_allBtn, 0);
-    DPushButton *m_todayBtn = new DPushButton(DApplication::translate("Button", "Today"), this);
+    LogPeriodButton *m_todayBtn =
+        new LogPeriodButton(DApplication::translate("Button", "Today"), this);
     m_btnGroup->addButton(m_todayBtn, 1);
-    DPushButton *m_threeDayBtn = new DPushButton(DApplication::translate("Button", "3 days"), this);
+    LogPeriodButton *m_threeDayBtn =
+        new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
     m_btnGroup->addButton(m_threeDayBtn, 2);
-    DPushButton *m_lastWeekBtn = new DPushButton(DApplication::translate("Button", "1 week"), this);
+    LogPeriodButton *m_lastWeekBtn =
+        new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
     m_btnGroup->addButton(m_lastWeekBtn, 3);
-    DPushButton *m_lastMonthBtn =
-        new DPushButton(DApplication::translate("Button", "1 month"), this);
+    LogPeriodButton *m_lastMonthBtn =
+        new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
     m_btnGroup->addButton(m_lastMonthBtn, 4);
-    DPushButton *m_threeMonthBtn =
-        new DPushButton(DApplication::translate("Button", "3 months"), this);
+    LogPeriodButton *m_threeMonthBtn =
+        new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
     m_btnGroup->addButton(m_threeMonthBtn, 5);
 
     setUeButtonSytle();
@@ -174,7 +178,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool period,
 
     periodLabel->setVisible(period);
     for (int i = 0; i < 6; i++) {
-        DPushButton *pushBtn = static_cast<DPushButton *>(m_btnGroup->button(i));
+        LogPeriodButton *pushBtn = static_cast<LogPeriodButton *>(m_btnGroup->button(i));
         pushBtn->setVisible(period);
     }
 
@@ -190,7 +194,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool period,
 void FilterContent::setUeButtonSytle()
 {
     for (QAbstractButton *abtn : m_btnGroup->buttons()) {
-        DPushButton *btn = static_cast<DPushButton *>(abtn);
+        LogPeriodButton *btn = static_cast<LogPeriodButton *>(abtn);
         btn->setFlat(true);
         btn->setCheckable(true);
         if (btn->objectName() == "allBtn")

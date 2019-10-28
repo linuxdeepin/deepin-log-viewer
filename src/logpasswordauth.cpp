@@ -19,29 +19,14 @@ void LogPasswordAuth::initUI()
 {
     this->setTitle(
         DApplication::translate("password", "please input sudo password to execute operate"));
-    m_edt = new DLineEdit(this);
+    m_edt = new DPasswordEdit(this);
     m_edt->setEchoMode(QLineEdit::Password);
-    m_edt->setMaximumHeight(30);
-    QList<QWidget *> list;
-    DPushButton *hs = new DPushButton("s");
-    hs->setCheckable(true);
-    list.append(hs);
-    m_edt->setRightWidgets(list);
+    //    m_edt->setMaximumHeight(30);
     this->addSpacing(10);
     this->addContent(m_edt);
     this->setIcon(QIcon("://images/logo.svg"), QSize(50, 50));
     this->addButton(DApplication::translate("Button", "Cancel"));
     this->addButton(DApplication::translate("Button", "Comfirm"), true);
-
-    connect(hs, &DPushButton::clicked, this, [=](bool checked) {
-        if (checked) {
-            m_edt->setEchoMode(QLineEdit::Normal);
-            hs->setText("h");
-        } else {
-            m_edt->setEchoMode(QLineEdit::Password);
-            hs->setText("s");
-        }
-    });
 }
 
 void LogPasswordAuth::initConnections()

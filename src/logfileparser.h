@@ -18,7 +18,7 @@ public:
     void parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms = 0);
     void parseByXlog(QStringList &xList);
     void parseByBoot(QList<LOG_MSG_BOOT> &bList);
-    void parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms = 0, QString opt = "");
+    void parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms = 0);
     void parseByApp(QString path, QList<LOG_MSG_APPLICATOIN> &appList, int lv = 6, qint64 ms = 0);
 
     void createFile(QString output, int count);
