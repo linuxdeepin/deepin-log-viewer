@@ -122,17 +122,29 @@ void LogFileParser::parseByXlog(QStringList &xList)
 
 void LogFileParser::parseByBoot(QList<LOG_MSG_BOOT> &bList)
 {
+#ifndef USE_POLKIT
     if (m_rootPasswd.isEmpty()) {
         m_logPasswdWgt->exec();
         m_rootPasswd = m_logPasswdWgt->getPasswd();
     }
     if (m_rootPasswd.isEmpty())
         return;
+
     QProcess proc;
     QStringList arg;
     arg << "-c" << QString("echo '%1' | sudo -S cat /var/log/boot.log").arg(m_rootPasswd);
+
     proc.start("/bin/bash", arg);  // file path is fixed. So write cmd direct
     proc.waitForFinished();
+#else
+    QProcess proc;
+    QStringList arg;
+    //    arg << "/bin/bash"
+    arg << "bash"
+        << "-c" << QString("cat /var/log/boot.log");
+    proc.start("pkexec", arg);  // file path is fixed. So write cmd direct
+    proc.waitForFinished();
+#endif
 
     if (isErroCommand(QString(proc.readAllStandardError())))
         return;
@@ -169,23 +181,34 @@ void LogFileParser::parseByBoot(QList<LOG_MSG_BOOT> &bList)
     emit bootFinished();
 }
 
-void LogFileParser::parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms, QString opt)
+void LogFileParser::parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms)
 {
     // opt ==> "| grep "ERR"
+#ifndef USE_POLKIT
     if (m_rootPasswd.isEmpty()) {
         m_logPasswdWgt->exec();
         m_rootPasswd = m_logPasswdWgt->getPasswd();
     }
     if (m_rootPasswd.isEmpty())
         return;
+
     QProcess proc;
     QStringList arg;
+
     arg << "-c" << QString("echo '%1' | sudo -S cat /var/log/kern.log").arg(m_rootPasswd);
-    if (!opt.isEmpty())
-        arg.append(opt);
 
     proc.start("/bin/bash", arg);
     proc.waitForFinished();
+#else
+    QProcess proc;
+    QStringList arg;
+    //    arg << "/bin/bash"
+    arg << "bash"
+        << "-c" << QString("cat /var/log/kern.log");
+
+    proc.start("pkexec", arg);
+    proc.waitForFinished();
+#endif
 
     if (isErroCommand(QString(proc.readAllStandardError())))
         return;

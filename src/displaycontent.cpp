@@ -98,11 +98,11 @@ void DisplayContent::initUI()
     DHorizontalLine *hline = new DHorizontalLine;
     hline->setLineWidth(4);
     vLy->addWidget(hline);
-    vLy->addWidget(m_textBrowser);
+    vLy->addWidget(m_textBrowser, 2);
     vLy->setContentsMargins(0, 0, 0, 0);
 
     // layout for widgets
-    vLayout->addWidget(m_tableView, 10);
+    vLayout->addWidget(m_tableView, 5);
 
     noResultLabel = new DLabel;
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
@@ -110,7 +110,7 @@ void DisplayContent::initUI()
     labelFont.setPixelSize(20);
     noResultLabel->setFont(labelFont);
     noResultLabel->setAlignment(Qt::AlignCenter);
-    vLayout->addWidget(noResultLabel, 10);
+    vLayout->addWidget(noResultLabel, 5);
     noResultLabel->hide();
 
     //    m_noResultWdg = new LogSearchNoResultWidget(this);
@@ -157,6 +157,7 @@ void DisplayContent::initTableView()
     m_tableView = new DTableView(this);
     m_tableView->verticalHeader()->hide();
     m_tableView->horizontalHeader()->setStretchLastSection(true);
+    m_tableView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_tableView->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerItem);

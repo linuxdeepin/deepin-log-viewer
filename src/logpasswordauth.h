@@ -4,7 +4,7 @@
 #include <dabstractdialog.h>
 #include <DDialog>
 #include <DLabel>
-#include <DLineEdit>
+#include <DPasswordEdit>
 #include <DPushButton>
 #include <DWidget>
 #include <QTimer>
@@ -24,7 +24,7 @@ public slots:
 private:
     void setPasswd(QString str);
     QString m_passwd;
-    Dtk::Widget::DLineEdit *m_edt;
+    Dtk::Widget::DPasswordEdit *m_edt;
     Dtk::Widget::DPushButton *m_okBtn, *m_cancleBtn;
     QTimer *m_timer;
 };
