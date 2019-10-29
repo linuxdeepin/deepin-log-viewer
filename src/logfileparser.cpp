@@ -137,19 +137,21 @@ void LogFileParser::parseByBoot(QList<LOG_MSG_BOOT> &bList)
     proc.start("/bin/bash", arg);  // file path is fixed. So write cmd direct
     proc.waitForFinished();
 #else
+
     QProcess proc;
-    QStringList arg;
-    //    arg << "/bin/bash"
-    arg << "bash"
-        << "-c" << QString("cat /var/log/boot.log");
-    proc.start("pkexec", arg);  // file path is fixed. So write cmd direct
+    proc.setProcessChannelMode(QProcess::MergedChannels);
+    proc.start("pkexec", QStringList() << "logViewerAuth"
+                                       << "/var/log/boot.log");
     proc.waitForFinished();
+
+//    return;
 #endif
 
     if (isErroCommand(QString(proc.readAllStandardError())))
         return;
 
     QString output = proc.readAllStandardOutput();
+
     proc.close();
 
     for (QString lineStr : output.split('\n')) {
@@ -200,14 +202,20 @@ void LogFileParser::parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms)
     proc.start("/bin/bash", arg);
     proc.waitForFinished();
 #else
-    QProcess proc;
-    QStringList arg;
-    //    arg << "/bin/bash"
-    arg << "bash"
-        << "-c" << QString("cat /var/log/kern.log");
+    //    QProcess proc;
+    //    QStringList arg;
+    //    //    arg << "/bin/bash"
+    //    arg << "logViewerAuth" << QString("cat /var/log/kern.log");
 
-    proc.start("pkexec", arg);
+    //    proc.start("pkexec", arg);
+    //    proc.waitForFinished();
+
+    QProcess proc;
+    proc.setProcessChannelMode(QProcess::MergedChannels);
+    proc.start("pkexec", QStringList() << "logViewerAuth"
+                                       << "/var/log/kern.log");
     proc.waitForFinished();
+
 #endif
 
     if (isErroCommand(QString(proc.readAllStandardError())))
