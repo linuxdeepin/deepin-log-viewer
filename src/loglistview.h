@@ -10,6 +10,9 @@ public:
     LogListView(QWidget *parent = nullptr);
     void initUI();
 
+protected:
+    void paintEvent(QPaintEvent *event);
+
 private:
     QStandardItemModel *m_pModel;
 };
