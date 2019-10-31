@@ -11,6 +11,7 @@ LIBS += -L /usr/lib
 
 DEFINES += USE_POLKIT
 
+
 include(../thirdlib/QtXlsxWriter/src/xlsx/qtxlsx.pri)
 include(../thirdlib/docx/docx.pri)
 

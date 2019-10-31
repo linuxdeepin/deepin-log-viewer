@@ -144,7 +144,6 @@ void LogFileParser::parseByBoot(QList<LOG_MSG_BOOT> &bList)
                                        << "/var/log/boot.log");
     proc.waitForFinished();
 
-//    return;
 #endif
 
     if (isErroCommand(QString(proc.readAllStandardError())))
@@ -200,14 +199,6 @@ void LogFileParser::parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms)
     proc.start("/bin/bash", arg);
     proc.waitForFinished();
 #else
-    //    QProcess proc;
-    //    QStringList arg;
-    //    //    arg << "/bin/bash"
-    //    arg << "logViewerAuth" << QString("cat /var/log/kern.log");
-
-    //    proc.start("pkexec", arg);
-    //    proc.waitForFinished();
-
     QProcess proc;
     proc.setProcessChannelMode(QProcess::MergedChannels);
     proc.start("pkexec", QStringList() << "logViewerAuth"
