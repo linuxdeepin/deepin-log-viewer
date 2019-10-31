@@ -30,5 +30,7 @@ int main(int argc, char *argv[])
     proc.waitForFinished(-1);
     std::cout << proc.readAllStandardOutput().data();
 
+    proc.close();
+
     return 0;
 }

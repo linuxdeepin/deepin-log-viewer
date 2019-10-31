@@ -25,6 +25,7 @@ void LogListView::initUI()
     this->setBackgroundRole(DPalette::Base);
 
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     this->setItemSpacing(2);
     m_pModel = new QStandardItemModel;
 

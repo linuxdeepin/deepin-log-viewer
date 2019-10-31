@@ -166,16 +166,14 @@ void LogFileParser::parseByBoot(QList<LOG_MSG_BOOT> &bList)
         retList = lineStr.split(" ", QString::SkipEmptyParts);
         if (lineStr.startsWith("[")) {
             bMsg.status = retList[1];
-            for (int i = 3; i < retList.size(); i++) {
-                bMsg.msg = bMsg.msg + retList[i] + " ";
-            }
+            QStringList leftList = retList.mid(3);
+            bMsg.msg += leftList.join(" ");
             bList.append(bMsg);
         } else {
             if (bList.size() == 0)
                 continue;
-            for (int i = 0; i < retList.size(); ++i) {
-                bList[bList.size() - 1].msg += retList[i] + " ";
-            }
+
+            bList[bList.size() - 1].msg += retList.join(" ");
         }
     }
 
