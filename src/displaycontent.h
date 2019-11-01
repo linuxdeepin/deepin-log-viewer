@@ -1,6 +1,8 @@
 #ifndef DISPLAYCONTENT_H
 #define DISPLAYCONTENT_H
 
+#include <DApplicationHelper>
+#include <DIconButton>
 #include <DLabel>
 #include <DTableView>
 #include <DTextBrowser>
@@ -8,6 +10,7 @@
 #include <QWidget>
 #include "logfileparser.h"
 #include "logsearchnoresultwidget.h"
+#include "logtreeview.h"
 #include "structdef.h"
 
 class DisplayContent : public Dtk::Widget::DWidget
@@ -43,7 +46,7 @@ private:
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
 
     void fillDetailInfo(QString deamonName, QString usrName, QString pid, QString dateTime,
-                        QString level, QString msg, QString status = "");
+                        QModelIndex level, QString msg, QString status = "");
 signals:
     void loadMoreInfo();
 
@@ -66,14 +69,17 @@ public slots:
 
     void slot_searchResult(QString str);
 
+    void slot_themeChanged(Dtk::Widget::DApplicationHelper::ColorType colorType);
+
 private:
     void paintEvent(QPaintEvent *event);
 
 private:
-    Dtk::Widget::DTableView *m_tableView;
-    //    LogTableView *m_tableView;
+    //    Dtk::Widget::DTableView *m_tableView;
+    LogTreeView *m_treeView;
     QStandardItemModel *m_pModel;
-    Dtk::Widget::DLabel *m_daemonName, *m_dateTime, *m_userName, *m_pid, *m_level, *m_status;
+    Dtk::Widget::DLabel *m_daemonName, *m_dateTime, *m_userName, *m_pid, *m_status;
+    Dtk::Widget::DIconButton *m_level;
     Dtk::Widget::DLabel *m_userLabel, *m_pidLabel, *m_statusLabel;
     Dtk::Widget::DTextBrowser *m_textBrowser;
     Dtk::Widget::DLabel *noResultLabel {nullptr};
@@ -97,6 +103,10 @@ private:
     QList<LOG_MSG_BOOT> bList;           // boot.log
     QList<LOG_MSG_JOURNAL> kList;        // kern.log
     QList<LOG_MSG_APPLICATOIN> appList;  //~/.cache/deepin/xxx.log(.xxx)
+
+    QString m_iconPrefix;
+    QMap<QString, QString> m_icon_name_map;
+    QString getIconByname(QString str) { return m_icon_name_map.value(str); }
 };
 
 #endif  // DISPLAYCONTENT_H

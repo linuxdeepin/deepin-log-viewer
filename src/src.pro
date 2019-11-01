@@ -28,7 +28,9 @@ SOURCES += \
     utils.cpp \
     loglistview.cpp \
     logsearchnoresultwidget.cpp \
-    logperiodbutton.cpp
+    logperiodbutton.cpp \
+    logviewheaderview.cpp \
+    logviewitemdelegate.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -45,7 +47,9 @@ HEADERS += \
     utils.h \
     loglistview.h \
     logsearchnoresultwidget.h \
-    logperiodbutton.h
+    logperiodbutton.h \
+    logviewheaderview.h \
+    logviewitemdelegate.h
 
 
 TRANSLATIONS += translations/dde-log-viewer_zh_CN.ts

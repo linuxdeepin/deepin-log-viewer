@@ -34,9 +34,9 @@ DisplayContent::DisplayContent(QWidget *parent)
 
 DisplayContent::~DisplayContent()
 {
-    if (m_tableView) {
-        delete m_tableView;
-        m_tableView = nullptr;
+    if (m_treeView) {
+        delete m_treeView;
+        m_treeView = nullptr;
     }
     if (m_pModel) {
         delete m_pModel;
@@ -51,7 +51,9 @@ void DisplayContent::initUI()
     m_userName = new DLabel(this);
     m_pid = new DLabel(this);
     m_status = new DLabel(this);
-    m_level = new DLabel(this);
+    m_level = new DIconButton(this);
+    m_level->setFlat(true);
+    m_level->setIconSize(QSize(32, 32));
     m_textBrowser = new DTextBrowser(this);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
@@ -102,7 +104,7 @@ void DisplayContent::initUI()
     vLy->setContentsMargins(0, 0, 0, 0);
 
     // layout for widgets
-    vLayout->addWidget(m_tableView, 5);
+    vLayout->addWidget(m_treeView, 5);
 
     noResultLabel = new DLabel;
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
@@ -124,12 +126,29 @@ void DisplayContent::initUI()
     this->setLayout(vLayout);
 
     cleanText();
+
+    DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
+    slot_themeChanged(ct);
 }
 
 void DisplayContent::initMap()
 {
+    m_transDict.clear();
     m_transDict.insert("Warning", DApplication::translate("Level", "warning"));
     m_transDict.insert("Debug", DApplication::translate("Level", "debug"));
+
+    // icon <==> level
+    m_icon_name_map.clear();
+    m_icon_name_map.insert(DApplication::translate("Level", "Emer"), "");
+    m_icon_name_map.insert(DApplication::translate("Level", "Alert"), "warning2.svg");
+    m_icon_name_map.insert(DApplication::translate("Level", "Critical"), "");
+    m_icon_name_map.insert(DApplication::translate("Level", "Error"), "wrong.svg");
+    m_icon_name_map.insert(DApplication::translate("Level", "Warning"), "warning.svg");
+    m_icon_name_map.insert(DApplication::translate("Level", "Notice"), "");
+    m_icon_name_map.insert(DApplication::translate("Level", "Info"), "");
+    m_icon_name_map.insert(DApplication::translate("Level", "Debug"), "");
+    m_icon_name_map.insert(DApplication::translate("Level", "warning"), "warning.svg");
+    m_icon_name_map.insert(DApplication::translate("Level", "debug"), "");
 }
 
 void DisplayContent::cleanText()
@@ -154,24 +173,27 @@ void DisplayContent::cleanText()
 
 void DisplayContent::initTableView()
 {
-    m_tableView = new DTableView(this);
-    m_tableView->verticalHeader()->hide();
-    m_tableView->horizontalHeader()->setStretchLastSection(true);
-    m_tableView->horizontalHeader()->setDefaultAlignment(Qt::AlignLeft);
-    m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_tableView->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerItem);
-    m_tableView->horizontalHeader()->setHighlightSections(false);
-    m_tableView->setAlternatingRowColors(true);
+    m_treeView = new LogTreeView(this);
+
+    //    auto changeTheme = [this]() {
+    //        DPalette pa = DApplicationHelper::instance()->palette(this);
+    //        pa.setColorGroup(QPalette::Inactive, pa.base(), pa.button(), pa.light(), pa.dark(),
+    //                         pa.mid(), pa.text(), pa.brightText(), pa.base(), pa.window());
+    //        DApplicationHelper::instance()->setPalette(m_tableView, pa);
+    //    };
+
+    //    changeTheme();
+    //    connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
+    //            changeTheme);
 
     m_pModel = new QStandardItemModel(this);
 
-    m_tableView->setModel(m_pModel);
+    m_treeView->setModel(m_pModel);
 }
 
 void DisplayContent::initConnections()
 {
-    connect(m_tableView, SIGNAL(clicked(const QModelIndex &)), this,
+    connect(m_treeView, SIGNAL(clicked(const QModelIndex &)), this,
             SLOT(slot_tableItemClicked(const QModelIndex &)));
     connect(&m_logFileParse, SIGNAL(dpkgFinished()), this, SLOT(slot_dpkgFinished()));
     connect(&m_logFileParse, SIGNAL(xlogFinished()), this, SLOT(slot_XorgFinished()));
@@ -181,8 +203,11 @@ void DisplayContent::initConnections()
             SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
     connect(&m_logFileParse, &LogFileParser::applicationFinished, this,
             &DisplayContent::slot_applicationFinished);
-    connect(m_tableView->verticalScrollBar(), &QScrollBar::valueChanged, this,
+    connect(m_treeView->verticalScrollBar(), &QScrollBar::valueChanged, this,
             &DisplayContent::slot_vScrollValueChanged);
+
+    connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
+            &DisplayContent::slot_themeChanged);
 }
 
 void DisplayContent::generateJournalFile(int id, int lId)
@@ -294,12 +319,15 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
         item->setData(DPKG_TABLE_DATA);
         m_pModel->setItem(i, 2, item);
     }
-    m_tableView->hideColumn(2);
+    m_treeView->hideColumn(2);
 
-    m_tableView->setModel(m_pModel);
+    m_treeView->setModel(m_pModel);
 
     // default first row select
-    m_tableView->selectRow(0);
+    //    m_treeView->selectRow(0);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
@@ -357,10 +385,13 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
         m_pModel->setItem(i, 3, item);
     }
 
-    m_tableView->setModel(m_pModel);
+    m_treeView->setModel(m_pModel);
 
     // default first row select
-    m_tableView->selectRow(0);
+    //    m_treeView->selectRow(0);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
@@ -405,9 +436,12 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
     DStandardItem *item = nullptr;
     for (int i = 0; i < list.size(); i++) {
         int col = 0;
-        QString CH_str = m_transDict.value(list[i].level);
-        QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
-        item = new DStandardItem(lvStr);
+        //        QString CH_str = m_transDict.value(list[i].level);
+        //        QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
+        //        item = new DStandardItem(lvStr);
+        item = new DStandardItem();
+        QString iconPath = m_iconPrefix + getIconByname(list[i].level);
+        item->setIcon(QIcon(iconPath));
         item->setData(APP_TABLE_DATA);
         m_pModel->setItem(i, col++, item);
         item = new DStandardItem(list[i].dateTime);
@@ -421,10 +455,13 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
         m_pModel->setItem(i, col++, item);
     }
 
-    m_tableView->setModel(m_pModel);
+    m_treeView->setModel(m_pModel);
 
     // default first row select
-    m_tableView->selectRow(0);
+    //    m_treeView->selectRow(0);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
@@ -444,10 +481,13 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
         m_pModel->setItem(i, 1, item);
     }
 
-    m_tableView->setModel(m_pModel);
+    m_treeView->setModel(m_pModel);
 
     // default first row select
-    m_tableView->selectRow(0);
+    //    m_treeView->selectRow(0);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
@@ -463,10 +503,13 @@ void DisplayContent::createXorgTable(QStringList &list)
         m_pModel->setItem(i, 0, item);
     }
 
-    m_tableView->setModel(m_pModel);
+    m_treeView->setModel(m_pModel);
 
     // default first row select
-    m_tableView->selectRow(0);
+    //    m_treeView->selectRow(0);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
@@ -476,8 +519,9 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
     for (int i = start; i < end; i++) {
         int col = 0;
 
-        item = new DStandardItem(logList[i].level);
-        item->setIcon(QIcon("://images/logo.svg"));
+        item = new DStandardItem();
+        QString iconPath = m_iconPrefix + getIconByname(logList[i].level);
+        item->setIcon(QIcon(iconPath));
         item->setData(JOUR_TABLE_DATA);
         m_pModel->setItem(i, col++, item);
 
@@ -501,18 +545,23 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
         item->setData(JOUR_TABLE_DATA);
         m_pModel->setItem(i, col++, item);
     }
-    m_tableView->hideColumn(4);
-    m_tableView->hideColumn(5);
+    m_treeView->hideColumn(4);
+    m_treeView->hideColumn(5);
 
-    m_tableView->setModel(m_pModel);
+    //    qDebug() << m_pModel->index(0, 0).data(Qt::DecorationRole);
+
+    m_treeView->setModel(m_pModel);
 
     // default first row select
-    m_tableView->selectRow(0);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::fillDetailInfo(QString deamonName, QString usrName, QString pid,
-                                    QString dateTime, QString level, QString msg, QString status)
+                                    QString dateTime, QModelIndex level, QString msg,
+                                    QString status)
 {
     m_dateTime->show();
     m_daemonName->show();
@@ -525,7 +574,14 @@ void DisplayContent::fillDetailInfo(QString deamonName, QString usrName, QString
     m_statusLabel->show();
 
     deamonName.isEmpty() ? m_daemonName->hide() : m_daemonName->setText(deamonName);
-    level.isEmpty() ? m_level->hide() : m_level->setText(level);
+
+    if (!level.isValid()) {
+        m_level->hide();
+    } else {
+        QIcon icon = m_pModel->item(level.row())->icon();
+        m_level->setIcon(icon);
+    }
+
     dateTime.isEmpty() ? m_dateTime->hide() : m_dateTime->setText(dateTime);
 
     if (usrName.isEmpty()) {
@@ -566,29 +622,31 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
     QString dataStr = index.data(Qt::UserRole + 1).toString();
 
     if (dataStr.contains(DPKG_TABLE_DATA)) {
-        fillDetailInfo("Dpkg", hostname, "", m_pModel->item(index.row(), 0)->text(), "",
+        fillDetailInfo("Dpkg", hostname, "", m_pModel->item(index.row(), 0)->text(), QModelIndex(),
                        m_pModel->item(index.row(), 1)->text(),
                        m_pModel->item(index.row(), 2)->text());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {
-        fillDetailInfo("Xorg", hostname, "", "", "", m_pModel->item(index.row(), 0)->text());
+        fillDetailInfo("Xorg", hostname, "", "", QModelIndex(),
+                       m_pModel->item(index.row(), 0)->text());
     } else if (dataStr.contains(BOOT_TABLE_DATA)) {
-        fillDetailInfo("Boot", hostname, "", "", "", m_pModel->item(index.row(), 1)->text(),
+        fillDetailInfo("Boot", hostname, "", "", QModelIndex(),
+                       m_pModel->item(index.row(), 1)->text(),
                        m_pModel->item(index.row(), 0)->text());
     } else if (dataStr.contains(KERN_TABLE_DATA)) {
         fillDetailInfo(m_pModel->item(index.row(), 2)->text(),
                        /*m_pModel->item(index.row(), 1)->text()*/ hostname, "",
-                       m_pModel->item(index.row(), 0)->text(), "",
+                       m_pModel->item(index.row(), 0)->text(), QModelIndex(),
                        m_pModel->item(index.row(), 3)->text());
     } else if (dataStr.contains(JOUR_TABLE_DATA)) {
-        fillDetailInfo(
-            m_pModel->item(index.row(), 1)->text(),
-            /*m_pModel->item(index.row(), 4)->text()*/ hostname,
-            m_pModel->item(index.row(), 5)->text(), m_pModel->item(index.row(), 2)->text(),
-            m_pModel->item(index.row(), 0)->text(), m_pModel->item(index.row(), 3)->text());
+        fillDetailInfo(m_pModel->item(index.row(), 1)->text(),
+                       /*m_pModel->item(index.row(), 4)->text()*/ hostname,
+                       m_pModel->item(index.row(), 5)->text(),
+                       m_pModel->item(index.row(), 2)->text(), index,
+                       m_pModel->item(index.row(), 3)->text());
     } else if (dataStr.contains(APP_TABLE_DATA)) {
-        fillDetailInfo(
-            m_curAppLog.section("/", -1), hostname, "", m_pModel->item(index.row(), 1)->text(),
-            m_pModel->item(index.row(), 0)->text(), m_pModel->item(index.row(), 3)->text());
+        fillDetailInfo(m_curAppLog.section("/", -1), hostname, "",
+                       m_pModel->item(index.row(), 1)->text(), index,
+                       m_pModel->item(index.row(), 3)->text());
     }
 }
 
@@ -788,7 +846,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
         return;
 
     int rate = (value + 25) / SINGLE_LOAD;
-    //    qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
+    qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
 
     if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
         if (m_limitTag == rate)
@@ -796,14 +854,13 @@ void DisplayContent::slot_vScrollValueChanged(int value)
 
         int leftCnt = jList.count() - SINGLE_LOAD * rate;
         int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-        //        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
-        //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD *
-        //                 rate;
+        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
+                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD * rate;
         insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
         m_limitTag = rate;
     }
-    m_tableView->verticalScrollBar()->setValue(value);
+    m_treeView->verticalScrollBar()->setValue(value);
 }
 
 void DisplayContent::slot_searchResult(QString str)
@@ -899,19 +956,29 @@ void DisplayContent::slot_searchResult(QString str)
             break;
     }
     if (0 == m_pModel->rowCount()) {
-        m_tableView->hide();
+        m_treeView->hide();
 
         noResultLabel->show();
         //        m_noResultWdg->setContent(str);
         //        m_noResultWdg->show();
         cleanText();
     } else {
-        m_tableView->show();
+        m_treeView->show();
         noResultLabel->hide();
         //        m_noResultWdg->setContent(str);
         //        m_noResultWdg->hide();
     }
 }
+
+void DisplayContent::slot_themeChanged(DGuiApplicationHelper::ColorType colorType)
+{
+    if (colorType == DGuiApplicationHelper::DarkType) {
+        m_iconPrefix = ":/images/dark/";
+    } else if (colorType == DGuiApplicationHelper::LightType) {
+        m_iconPrefix = ":/images/light/";
+    }
+}
+
 void DisplayContent::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)

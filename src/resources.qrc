@@ -2,5 +2,20 @@
     <qresource prefix="/">
         <file>images/logo.svg</file>
         <file>../doc_template/template.doc</file>
+        <file>images/light/application.svg</file>
+        <file>images/light/start_checked.svg</file>
+        <file>images/light/system_checked.svg</file>
+        <file>images/light/wrong.svg</file>
+        <file>images/light/x_checked.svg</file>
+        <file>images/light/d_checked.svg</file>
+        <file>images/light/start.svg</file>
+        <file>images/light/application_checked.svg</file>
+        <file>images/light/core.svg</file>
+        <file>images/light/d.svg</file>
+        <file>images/light/x.svg</file>
+        <file>images/light/system.svg</file>
+        <file>images/light/warning2.svg</file>
+        <file>images/light/core_checked.svg</file>
+        <file>images/light/warning.svg</file>
     </qresource>
 </RCC>

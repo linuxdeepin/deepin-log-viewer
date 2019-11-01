@@ -1,5 +1,6 @@
 #include "logtreeview.h"
 #include <DApplication>
+#include <DApplicationHelper>
 #include <DStyledItemDelegate>
 #include <QDebug>
 #include <QDir>
@@ -18,100 +19,65 @@ LogTreeView::LogTreeView(QWidget *parent)
 
 void LogTreeView::initUI()
 {
-    this->setAnimated(true);
-    this->header()->setHidden(true);
+    m_itemDelegate = new LogViewItemDelegate(this);
+    setItemDelegate(m_itemDelegate);
+
+    m_headerDelegate = new LogViewHeaderView(Qt::Horizontal, this);
+    //    this->setHorizontalHeader(m_headerDelegate);
+    setHeader(m_headerDelegate);
+    //    this->verticalHeader()->hide();
+
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setRootIsDecorated(false);
 
-    m_pModel = new QStandardItemModel;
-    QStandardItem *item = nullptr;
+    // this is setting is necessary,because scrollperpixel is default in dtk!!
+    this->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerItem);
 
-    item = new QStandardItem(DApplication::translate("Tree", "System Log"));
-    item->setData(JOUR_TREE_DATA);
-    item->setIcon(QIcon("://images/logo.svg"));
-    m_pModel->appendRow(item);
-
-#if 0
-    item = new QStandardItem("系统日志");
-    QStandardItem *cItem = nullptr;
-    cItem = new QStandardItem(DApplication::translate("Tree", "Kernel log"));
-    cItem->setData(KERN_TREE_DATA);
-    item->appendRow(cItem);
-    cItem = new QStandardItem(DApplication::translate("Tree", "Boot log"));
-    cItem->setData(BOOT_TREE_DATA);
-    item->appendRow(cItem);
-    cItem = new QStandardItem(DApplication::translate("Tree", "dpkg log"));
-    cItem->setData(DPKG_TREE_DATA);
-    item->appendRow(cItem);
-    cItem = new QStandardItem(DApplication::translate("Tree", "Xorg log"));
-    cItem->setData(XORG_TREE_DATA);
-    item->appendRow(cItem);
-    m_pModel->appendRow(item);
-#endif
-
-    item = new QStandardItem(DApplication::translate("Tree", "Kernel Log"));
-    item->setData(KERN_TREE_DATA);
-    item->setIcon(QIcon("://images/logo.svg"));
-    m_pModel->appendRow(item);
-
-    item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
-    item->setData(BOOT_TREE_DATA);
-    item->setIcon(QIcon("://images/logo.svg"));
-    m_pModel->appendRow(item);
-
-    item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
-    item->setData(DPKG_TREE_DATA);
-    item->setIcon(QIcon("://images/logo.svg"));
-    m_pModel->appendRow(item);
-
-    item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
-    item->setData(XORG_TREE_DATA);
-    item->setIcon(QIcon("://images/logo.svg"));
-    m_pModel->appendRow(item);
-
-    item = new QStandardItem(DApplication::translate("Tree", "Application log"));
-    item->setData(APP_TREE_DATA);
-    item->setIcon(QIcon("://images/logo.svg"));
-    m_pModel->appendRow(item);
-
-    this->setModel(m_pModel);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    this->header()->setStretchLastSection(true);
+    setRootIsDecorated(false);
+    setItemsExpandable(false);
+    setFrameStyle(QFrame::NoFrame);
+    this->viewport()->setAutoFillBackground(false);
 }
 
-void LogTreeView::clearChildren(QStandardItem *pItem)
+void LogTreeView::paintEvent(QPaintEvent *event)
 {
-    int childCnt = pItem->rowCount();
-    for (int i = 0; i < childCnt; i++) {
-        pItem->removeRow(0);
+    QPainter painter(viewport());
+    painter.save();
+    painter.setRenderHints(QPainter::Antialiasing);
+    painter.setOpacity(1);
+    painter.setClipping(true);
+
+    QWidget *wnd = DApplication::activeWindow();
+    DPalette::ColorGroup cg;
+    if (!wnd) {
+        cg = DPalette::Inactive;
+    } else {
+        cg = DPalette::Active;
     }
-}
 
-void LogTreeView::slot_addAppLogs(QString path)
-{
-    /*** 20191010,discard this func.
-     **  clicked application node, display all logs in application-list combobox
-     **  select log then show in the table direct.
-     ***/
-    Q_UNUSED(path)
-#if 0
-    QStandardItem *lastItem = m_pModel->item(2);
-    if (nullptr == lastItem)
-        return;
+    auto style = dynamic_cast<DStyle *>(DApplication::style());
+    auto *dAppHelper = DApplicationHelper::instance();
+    auto palette = dAppHelper->applicationPalette();
 
-    clearChildren(lastItem);
+    QBrush bgBrush(palette.color(cg, DPalette::Base));
 
-    QDir dir(path);
-    if (dir.exists()) {
-        QStringList logFiles = dir.entryList(QDir::NoDotAndDotDot | QDir::Files);
-        QStandardItem *cItem = nullptr;
-        for (int i = 0; i < logFiles.count(); i++) {
-            QString fileName = logFiles.at(i);
-            if (!fileName.contains(".log"))
-                continue;
-            cItem = new QStandardItem(logFiles.at(i));
-            cItem->setData(path + "/" + logFiles.at(i), Qt::UserRole + 1);
-            lastItem->appendRow(cItem);
-        }
-    }
-    this->expandAll();
-#endif
+    QStyleOptionFrame option;
+    initStyleOption(&option);
+    int radius = style->pixelMetric(DStyle::PM_FrameRadius, &option);
+
+    QRect rect = viewport()->rect();
+    QRectF clipRect(rect.x(), rect.y() - rect.height(), rect.width(), rect.height() * 2);
+    QRectF subRect(rect.x(), rect.y() - rect.height(), rect.width(), rect.height());
+    QPainterPath clipPath, subPath;
+    clipPath.addRoundedRect(clipRect, radius, radius);
+    subPath.addRect(subRect);
+    clipPath = clipPath.subtracted(subPath);
+
+    painter.fillPath(clipPath, bgBrush);
+
+    painter.restore();
+    DTreeView::paintEvent(event);
 }

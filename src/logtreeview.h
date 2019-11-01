@@ -3,22 +3,21 @@
 
 #include <DTreeView>
 #include <QStandardItem>
-#include <QStandardItemModel>
-#include <QTreeView>
+#include "logviewheaderview.h"
+#include "logviewitemdelegate.h"
 
 class LogTreeView : public Dtk::Widget::DTreeView
 {
 public:
     LogTreeView(QWidget *parent = nullptr);
 
-    void slot_addAppLogs(QString path);
-
 private:
     void initUI();
-    void clearChildren(QStandardItem *pItem);
+    void paintEvent(QPaintEvent *event);
 
 private:
-    QStandardItemModel *m_pModel;
+    LogViewItemDelegate *m_itemDelegate;
+    LogViewHeaderView *m_headerDelegate;
 };
 
 #endif  // LOGTREEVIEW_H
