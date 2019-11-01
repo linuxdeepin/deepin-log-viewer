@@ -99,6 +99,9 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
             painter->setClipPath(clipPath);
             path.addRect(rect);
         } break;
+        case QStyleOptionViewItem::OnlyOne: {
+            path.addRoundedRect(rect, radius, radius);
+        } break;
         default: {
             painter->restore();
             QStyledItemDelegate::paint(painter, option, index);
