@@ -156,5 +156,6 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
         }
     }
 
+    emit itemChanged();
     DListView::currentChanged(current, previous);
 }

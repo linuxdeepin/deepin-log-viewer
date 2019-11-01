@@ -51,7 +51,7 @@ void DisplayContent::initUI()
     m_userName = new DLabel(this);
     m_pid = new DLabel(this);
     m_status = new DLabel(this);
-    m_level = new DIconButton(this);
+    m_level = new DPushButton(this);
     m_level->setFlat(true);
     m_level->setIconSize(QSize(32, 32));
     m_textBrowser = new DTextBrowser(this);
@@ -139,16 +139,16 @@ void DisplayContent::initMap()
 
     // icon <==> level
     m_icon_name_map.clear();
-    m_icon_name_map.insert(DApplication::translate("Level", "Emer"), "");
-    m_icon_name_map.insert(DApplication::translate("Level", "Alert"), "warning2.svg");
-    m_icon_name_map.insert(DApplication::translate("Level", "Critical"), "");
+    m_icon_name_map.insert(DApplication::translate("Level", "Emer"), "warning2.svg");
+    m_icon_name_map.insert(DApplication::translate("Level", "Alert"), "warning3.svg");
+    m_icon_name_map.insert(DApplication::translate("Level", "Critical"), "warning2.svg");
     m_icon_name_map.insert(DApplication::translate("Level", "Error"), "wrong.svg");
     m_icon_name_map.insert(DApplication::translate("Level", "Warning"), "warning.svg");
-    m_icon_name_map.insert(DApplication::translate("Level", "Notice"), "");
+    m_icon_name_map.insert(DApplication::translate("Level", "Notice"), "warning.svg");
     m_icon_name_map.insert(DApplication::translate("Level", "Info"), "");
     m_icon_name_map.insert(DApplication::translate("Level", "Debug"), "");
-    m_icon_name_map.insert(DApplication::translate("Level", "warning"), "warning.svg");
-    m_icon_name_map.insert(DApplication::translate("Level", "debug"), "");
+    m_icon_name_map.insert("Warning", "warning.svg");
+    m_icon_name_map.insert("Debug", "");
 }
 
 void DisplayContent::cleanText()
@@ -520,6 +520,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
         int col = 0;
 
         item = new DStandardItem();
+        qDebug() << "journal level" << logList[i].level;
         QString iconPath = m_iconPrefix + getIconByname(logList[i].level);
         item->setIcon(QIcon(iconPath));
         item->setData(JOUR_TABLE_DATA);
@@ -1009,4 +1010,10 @@ void DisplayContent::paintEvent(QPaintEvent *event)
 
     // Restore the pen
     painter.setPen(oldPen);
+}
+
+QString DisplayContent::getIconByname(QString str)
+{
+    qDebug() << str << m_icon_name_map.value(str);
+    return m_icon_name_map.value(str);
 }

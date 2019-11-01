@@ -79,7 +79,7 @@ private:
     LogTreeView *m_treeView;
     QStandardItemModel *m_pModel;
     Dtk::Widget::DLabel *m_daemonName, *m_dateTime, *m_userName, *m_pid, *m_status;
-    Dtk::Widget::DIconButton *m_level;
+    Dtk::Widget::DPushButton *m_level;
     Dtk::Widget::DLabel *m_userLabel, *m_pidLabel, *m_statusLabel;
     Dtk::Widget::DTextBrowser *m_textBrowser;
     Dtk::Widget::DLabel *noResultLabel {nullptr};
@@ -106,7 +106,7 @@ private:
 
     QString m_iconPrefix;
     QMap<QString, QString> m_icon_name_map;
-    QString getIconByname(QString str) { return m_icon_name_map.value(str); }
+    QString getIconByname(QString str);
 };
 
 #endif  // DISPLAYCONTENT_H

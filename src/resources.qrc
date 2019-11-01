@@ -17,5 +17,6 @@
         <file>images/light/warning2.svg</file>
         <file>images/light/core_checked.svg</file>
         <file>images/light/warning.svg</file>
+        <file>images/light/warning3.svg</file>
     </qresource>
 </RCC>
