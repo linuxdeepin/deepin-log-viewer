@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
+    <title>system</title>
+    <desc>Created with Sketch.</desc>
+    <g id="浅色切图标注" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="内核日志" transform="translate(-527.000000, -243.000000)">
+            <g id="system" transform="translate(527.000000, 243.000000)">
+                <g id="日志">
+                    <g transform="translate(2.500000, 1.500000)">
+                        <rect id="矩形" stroke="#626E88" x="2.5" y="0" width="6" height="2" rx="1"></rect>
+                        <polyline id="路径-3" stroke="#626E88" stroke-linecap="round" stroke-linejoin="round" points="1 1 0 1 0 13 11 13 11 1 10 1"></polyline>
+                        <path d="M2,5.5 L9,5.5 C9.27614237,5.5 9.5,5.27614237 9.5,5 C9.5,4.72385763 9.27614237,4.5 9,4.5 L2,4.5 C1.72385763,4.5 1.5,4.72385763 1.5,5 C1.5,5.27614237 1.72385763,5.5 2,5.5 Z" id="直线-5" fill="#626E88" fill-rule="nonzero"></path>
+                        <path d="M2,7.5 L9,7.5 C9.27614237,7.5 9.5,7.27614237 9.5,7 C9.5,6.72385763 9.27614237,6.5 9,6.5 L2,6.5 C1.72385763,6.5 1.5,6.72385763 1.5,7 C1.5,7.27614237 1.72385763,7.5 2,7.5 Z" id="直线-5备份" fill="#626E88" fill-rule="nonzero"></path>
+                        <path d="M2,9.5 L6,9.5 C6.27614237,9.5 6.5,9.27614237 6.5,9 C6.5,8.72385763 6.27614237,8.5 6,8.5 L2,8.5 C1.72385763,8.5 1.5,8.72385763 1.5,9 C1.5,9.27614237 1.72385763,9.5 2,9.5 Z" id="路径-4" fill="#626E88" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
