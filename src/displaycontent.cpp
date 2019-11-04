@@ -218,8 +218,8 @@ void DisplayContent::generateJournalFile(int id, int lId)
     jList.clear();
 
     m_spinnerWgt->spinnerStart();
-    m_spinnerWgt->show();
     m_treeView->hide();
+    m_spinnerWgt->show();
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());
@@ -283,6 +283,11 @@ void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
 void DisplayContent::generateDpkgFile(int id)
 {
     dList.clear();
+
+    m_spinnerWgt->spinnerStop();
+    m_treeView->show();
+    m_spinnerWgt->hide();
+
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
@@ -346,6 +351,9 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
 void DisplayContent::generateKernFile(int id)
 {
     kList.clear();
+    m_spinnerWgt->spinnerStop();
+    m_treeView->show();
+    m_spinnerWgt->hide();
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
@@ -790,6 +798,12 @@ void DisplayContent::slot_treeClicked(const QModelIndex &index)
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         m_pModel->clear();  // clicked parent node application, clear table contents
         m_flag = APP;
+    }
+
+    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
+        m_spinnerWgt->spinnerStop();
+        m_treeView->show();
+        m_spinnerWgt->hide();
     }
 }
 
