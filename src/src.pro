@@ -30,7 +30,8 @@ SOURCES += \
     logsearchnoresultwidget.cpp \
     logperiodbutton.cpp \
     logviewheaderview.cpp \
-    logviewitemdelegate.cpp
+    logviewitemdelegate.cpp \
+    logiconbutton.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -49,7 +50,8 @@ HEADERS += \
     logsearchnoresultwidget.h \
     logperiodbutton.h \
     logviewheaderview.h \
-    logviewitemdelegate.h
+    logviewitemdelegate.h \
+    logiconbutton.h
 
 
 TRANSLATIONS += translations/dde-log-viewer_zh_CN.ts
