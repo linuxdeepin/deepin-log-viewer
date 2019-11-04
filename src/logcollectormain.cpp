@@ -113,5 +113,9 @@ void LogCollectorMain::initConnection()
     connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_topRightWgt,
             SLOT(slot_treeClicked(const QModelIndex &)));
 
+    // when item changed clear search text
     connect(m_logCatelogue, &LogListView::itemChanged, this, [=]() { m_searchEdt->clear(); });
+    connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [=]() { m_searchEdt->clear(); });
+    connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this,
+            [=]() { m_searchEdt->clear(); });
 }

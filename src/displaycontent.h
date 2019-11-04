@@ -9,6 +9,7 @@
 #include <QStandardItemModel>
 #include <QWidget>
 #include "logfileparser.h"
+#include "logiconbutton.h"
 #include "logsearchnoresultwidget.h"
 #include "logtreeview.h"
 #include "structdef.h"
@@ -79,7 +80,7 @@ private:
     LogTreeView *m_treeView;
     QStandardItemModel *m_pModel;
     Dtk::Widget::DLabel *m_daemonName, *m_dateTime, *m_userName, *m_pid, *m_status;
-    Dtk::Widget::DPushButton *m_level;
+    LogIconButton *m_level;
     Dtk::Widget::DLabel *m_userLabel, *m_pidLabel, *m_statusLabel;
     Dtk::Widget::DTextBrowser *m_textBrowser;
     Dtk::Widget::DLabel *noResultLabel {nullptr};

@@ -51,9 +51,7 @@ void DisplayContent::initUI()
     m_userName = new DLabel(this);
     m_pid = new DLabel(this);
     m_status = new DLabel(this);
-    m_level = new DPushButton(this);
-    m_level->setFlat(true);
-    m_level->setIconSize(QSize(32, 32));
+    m_level = new LogIconButton(this);
     m_textBrowser = new DTextBrowser(this);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
@@ -255,6 +253,9 @@ void DisplayContent::generateJournalFile(int id, int lId)
 
 void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
 {
+    m_treeView->show();
+    noResultLabel->hide();
+
     m_pModel->clear();
 
     m_pModel->setColumnCount(6);
@@ -301,6 +302,8 @@ void DisplayContent::generateDpkgFile(int id)
 
 void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
 {
+    m_treeView->show();
+    noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(3);
     m_pModel->setHorizontalHeaderLabels(QStringList()
@@ -362,6 +365,8 @@ void DisplayContent::generateKernFile(int id)
 
 void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
 {
+    m_treeView->show();
+    noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(4);
     m_pModel->setHorizontalHeaderLabels(QStringList()
@@ -426,6 +431,8 @@ void DisplayContent::generateAppFile(QString path, int id, int lId)
 
 void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
 {
+    m_treeView->show();
+    noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(4);
     m_pModel->setHorizontalHeaderLabels(QStringList()
@@ -436,20 +443,24 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
     DStandardItem *item = nullptr;
     for (int i = 0; i < list.size(); i++) {
         int col = 0;
-        //        QString CH_str = m_transDict.value(list[i].level);
-        //        QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
+        QString CH_str = m_transDict.value(list[i].level);
+        QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
         //        item = new DStandardItem(lvStr);
         item = new DStandardItem();
         QString iconPath = m_iconPrefix + getIconByname(list[i].level);
         item->setIcon(QIcon(iconPath));
         item->setData(APP_TABLE_DATA);
+        item->setData(lvStr, Qt::UserRole + 6);
         m_pModel->setItem(i, col++, item);
+
         item = new DStandardItem(list[i].dateTime);
         item->setData(APP_TABLE_DATA);
         m_pModel->setItem(i, col++, item);
+
         item = new DStandardItem(list[i].src);
         item->setData(APP_TABLE_DATA);
         m_pModel->setItem(i, col++, item);
+
         item = new DStandardItem(list[i].msg);
         item->setData(APP_TABLE_DATA);
         m_pModel->setItem(i, col++, item);
@@ -467,6 +478,8 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
 
 void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
 {
+    m_treeView->show();
+    noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(2);
     m_pModel->setHorizontalHeaderLabels(QStringList() << DApplication::translate("Table", "Status")
@@ -493,6 +506,8 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
 
 void DisplayContent::createXorgTable(QStringList &list)
 {
+    m_treeView->show();
+    noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(1);
     m_pModel->setHorizontalHeaderLabels(QStringList() << DApplication::translate("Table", "Info"));
@@ -524,6 +539,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
         QString iconPath = m_iconPrefix + getIconByname(logList[i].level);
         item->setIcon(QIcon(iconPath));
         item->setData(JOUR_TABLE_DATA);
+        item->setData(logList[i].level, Qt::UserRole + 6);
         m_pModel->setItem(i, col++, item);
 
         item = new DStandardItem(logList[i].daemonName);
@@ -581,6 +597,7 @@ void DisplayContent::fillDetailInfo(QString deamonName, QString usrName, QString
     } else {
         QIcon icon = m_pModel->item(level.row())->icon();
         m_level->setIcon(icon);
+        m_level->setText(m_pModel->item(level.row())->data(Qt::UserRole + 6).toString());
     }
 
     dateTime.isEmpty() ? m_dateTime->hide() : m_dateTime->setText(dateTime);

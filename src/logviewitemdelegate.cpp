@@ -113,7 +113,7 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QRect iconRect = rect;
     if (opt.viewItemPosition == QStyleOptionViewItem::Beginning &&
         index.data(Qt::DecorationRole).isValid()) {
-        iconRect.setX(rect.x() + margin);
+        iconRect.setX(rect.x() - margin);
         iconRect.setWidth(64);
         QIcon ic = index.data(Qt::DecorationRole).value<QIcon>();
         ic.paint(painter, iconRect);
