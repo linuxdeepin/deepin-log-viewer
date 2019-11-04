@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     DLogManager::registerFileAppender();
 
     LogCollectorMain w;
-    w.setMinimumSize(1000, 600);
+    w.setMinimumSize(1000, 750);
     w.show();
 
     Dtk::Widget::moveToCenter(&w);

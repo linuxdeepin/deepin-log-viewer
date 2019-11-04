@@ -4,6 +4,7 @@
 #include <DApplicationHelper>
 #include <DIconButton>
 #include <DLabel>
+#include <DSpinner>
 #include <DTableView>
 #include <DTextBrowser>
 #include <QStandardItemModel>
@@ -11,6 +12,7 @@
 #include "logfileparser.h"
 #include "logiconbutton.h"
 #include "logsearchnoresultwidget.h"
+#include "logspinnerwidget.h"
 #include "logtreeview.h"
 #include "structdef.h"
 
@@ -48,6 +50,8 @@ private:
 
     void fillDetailInfo(QString deamonName, QString usrName, QString pid, QString dateTime,
                         QModelIndex level, QString msg, QString status = "");
+
+    QString getAppName(QString filePath);
 signals:
     void loadMoreInfo();
 
@@ -89,6 +93,8 @@ private:
     int m_limitTag {0};
 
     LogSearchNoResultWidget *m_noResultWdg;
+
+    LogSpinnerWidget *m_spinnerWgt;
 
     QString m_curAppLog;
 

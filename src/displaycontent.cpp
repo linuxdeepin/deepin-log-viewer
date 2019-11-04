@@ -96,7 +96,7 @@ void DisplayContent::initUI()
     vLy->addLayout(hLy1);
     vLy->addLayout(hLy2);
     DHorizontalLine *hline = new DHorizontalLine;
-    hline->setLineWidth(4);
+    hline->setLineWidth(3);
     vLy->addWidget(hline);
     vLy->addWidget(m_textBrowser, 2);
     vLy->setContentsMargins(0, 0, 0, 0);
@@ -113,12 +113,17 @@ void DisplayContent::initUI()
     vLayout->addWidget(noResultLabel, 5);
     noResultLabel->hide();
 
+    m_spinnerWgt = new LogSpinnerWidget;
+
+    vLayout->addWidget(m_spinnerWgt, 5);
+    m_spinnerWgt->hide();
+
     //    m_noResultWdg = new LogSearchNoResultWidget(this);
     //    m_noResultWdg->setContent("");
     //    vLayout->addWidget(m_noResultWdg, 10);
     //    m_noResultWdg->hide();
 
-    vLayout->addLayout(vLy, 2);
+    vLayout->addLayout(vLy, 3);
     vLayout->setContentsMargins(0, 0, 0, 0);
 
     this->setLayout(vLayout);
@@ -211,6 +216,10 @@ void DisplayContent::initConnections()
 void DisplayContent::generateJournalFile(int id, int lId)
 {
     jList.clear();
+
+    m_spinnerWgt->spinnerStart();
+    m_spinnerWgt->show();
+    m_treeView->hide();
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());
@@ -457,7 +466,8 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
         item->setData(APP_TABLE_DATA);
         m_pModel->setItem(i, col++, item);
 
-        item = new DStandardItem(list[i].src);
+        //        item = new DStandardItem(list[i].src);
+        item = new DStandardItem(getAppName(m_curAppLog));
         item->setData(APP_TABLE_DATA);
         m_pModel->setItem(i, col++, item);
 
@@ -535,7 +545,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
         int col = 0;
 
         item = new DStandardItem();
-        qDebug() << "journal level" << logList[i].level;
+        //        qDebug() << "journal level" << logList[i].level;
         QString iconPath = m_iconPrefix + getIconByname(logList[i].level);
         item->setIcon(QIcon(iconPath));
         item->setData(JOUR_TABLE_DATA);
@@ -625,6 +635,29 @@ void DisplayContent::fillDetailInfo(QString deamonName, QString usrName, QString
     m_textBrowser->setText(msg);
 }
 
+QString DisplayContent::getAppName(QString filePath)
+{
+    QString ret;
+    if (filePath.isEmpty())
+        return ret;
+
+    QStringList strList = filePath.split("/");
+    if (strList.count() < 2) {
+        if (filePath.contains("."))
+            ret = filePath.section(".", 0, 0);
+        else {
+            ret = filePath;
+        }
+        return ret;
+    }
+
+    QString desStr = filePath.section("/", -1);
+    if (desStr.contains(".")) {
+        return desStr.section(".", 0, 0);
+    }
+    return ret;
+}
+
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
     cleanText();
@@ -662,7 +695,7 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
                        m_pModel->item(index.row(), 2)->text(), index,
                        m_pModel->item(index.row(), 3)->text());
     } else if (dataStr.contains(APP_TABLE_DATA)) {
-        fillDetailInfo(m_curAppLog.section("/", -1), hostname, "",
+        fillDetailInfo(getAppName(m_curAppLog), hostname, "",
                        m_pModel->item(index.row(), 1)->text(), index,
                        m_pModel->item(index.row(), 3)->text());
     }
@@ -847,6 +880,10 @@ void DisplayContent::slot_journalFinished(QList<LOG_MSG_JOURNAL> logList)
 
     jList = logList;
 
+    m_spinnerWgt->spinnerStop();
+    m_treeView->show();
+    m_spinnerWgt->hide();
+
     createJournalTable(logList);
 }
 
@@ -864,7 +901,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
         return;
 
     int rate = (value + 25) / SINGLE_LOAD;
-    qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
+    //    qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
 
     if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
         if (m_limitTag == rate)
@@ -872,8 +909,9 @@ void DisplayContent::slot_vScrollValueChanged(int value)
 
         int leftCnt = jList.count() - SINGLE_LOAD * rate;
         int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
-                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD * rate;
+        //        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
+        //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD *
+        //                 rate;
         insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
         m_limitTag = rate;
@@ -991,9 +1029,9 @@ void DisplayContent::slot_searchResult(QString str)
 void DisplayContent::slot_themeChanged(DGuiApplicationHelper::ColorType colorType)
 {
     if (colorType == DGuiApplicationHelper::DarkType) {
-        m_iconPrefix = ":/images/dark/";
+        m_iconPrefix = "://images/dark/";
     } else if (colorType == DGuiApplicationHelper::LightType) {
-        m_iconPrefix = ":/images/light/";
+        m_iconPrefix = "://images/light/";
     }
 }
 
@@ -1031,6 +1069,6 @@ void DisplayContent::paintEvent(QPaintEvent *event)
 
 QString DisplayContent::getIconByname(QString str)
 {
-    qDebug() << str << m_icon_name_map.value(str);
+    //    qDebug() << str << m_icon_name_map.value(str);
     return m_icon_name_map.value(str);
 }
