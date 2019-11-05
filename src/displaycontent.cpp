@@ -1047,6 +1047,7 @@ void DisplayContent::slot_themeChanged(DGuiApplicationHelper::ColorType colorTyp
     } else if (colorType == DGuiApplicationHelper::LightType) {
         m_iconPrefix = "://images/light/";
     }
+    slot_BtnSelected(m_curBtnId, m_curLvId, curIdx);
 }
 
 void DisplayContent::paintEvent(QPaintEvent *event)

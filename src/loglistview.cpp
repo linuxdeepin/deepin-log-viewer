@@ -77,6 +77,10 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
 
     QString _itemIcon;
 
+    QModelIndex idx = this->currentIndex();
+
+    QStandardItem *currentItem = m_pModel->itemFromIndex(idx);
+
     for (auto i = 0; i < m_pModel->rowCount(); i++) {
         QStandardItem *item = m_pModel->item(i);
         if (item) {
@@ -96,6 +100,9 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
 
             } else if (item->data().toString() == APP_TREE_DATA) {
                 _itemIcon = icon + "application.svg";
+            }
+            if (currentItem != nullptr && item == currentItem) {
+                _itemIcon.replace(".svg", "_checked.svg");
             }
             item->setIcon(QIcon(_itemIcon));
             item->setData(_itemIcon, ICON_DATA);
