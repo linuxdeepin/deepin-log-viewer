@@ -44,6 +44,7 @@ private:
     void createAppTable(QList<LOG_MSG_APPLICATOIN> &list);
 
     void createBootTable(QList<LOG_MSG_BOOT> &list);
+
     void createXorgTable(QStringList &list);
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
@@ -52,6 +53,7 @@ private:
                         QModelIndex level, QString msg, QString status = "");
 
     QString getAppName(QString filePath);
+
 signals:
     void loadMoreInfo();
 
@@ -60,8 +62,10 @@ public slots:
     void slot_BtnSelected(int btnId, int lId, QModelIndex idx);
     void slot_appLogs(QString path);
 
-    void slot_treeClicked(const QModelIndex &index);
+    void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_exportClicked();
+
+    void slot_statusChagned(QString status);
 
     void slot_dpkgFinished();
     void slot_XorgFinished();
@@ -88,7 +92,7 @@ private:
     Dtk::Widget::DLabel *m_userLabel, *m_pidLabel, *m_statusLabel;
     Dtk::Widget::DTextBrowser *m_textBrowser;
     Dtk::Widget::DLabel *noResultLabel {nullptr};
-    QModelIndex curIdx;
+    QModelIndex m_curListIdx;
     QMap<QString, QString> m_transDict;
     int m_limitTag {0};
 
@@ -97,6 +101,7 @@ private:
     LogSpinnerWidget *m_spinnerWgt;
 
     QString m_curAppLog;
+    QString m_currentStatus;
 
     int m_curBtnId {ALL};
     int m_curLvId {INF};
@@ -104,12 +109,12 @@ private:
     LOG_FLAG m_flag {NONE};
 
     LogFileParser m_logFileParse;
-    QList<LOG_MSG_JOURNAL> jList;        // journalctl cmd.
-    QList<LOG_MSG_DPKG> dList;           // dpkg.log
-    QStringList xList;                   // Xorg.0.log
-    QList<LOG_MSG_BOOT> bList;           // boot.log
-    QList<LOG_MSG_JOURNAL> kList;        // kern.log
-    QList<LOG_MSG_APPLICATOIN> appList;  //~/.cache/deepin/xxx.log(.xxx)
+    QList<LOG_MSG_JOURNAL> jList;                // journalctl cmd.
+    QList<LOG_MSG_DPKG> dList;                   // dpkg.log
+    QStringList xList;                           // Xorg.0.log
+    QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
+    QList<LOG_MSG_JOURNAL> kList;                // kern.log
+    QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)
 
     QString m_iconPrefix;
     QMap<QString, QString> m_icon_name_map;

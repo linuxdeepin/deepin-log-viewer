@@ -12,6 +12,11 @@ public:
     LogListView(QWidget *parent = nullptr);
     void initUI();
 
+    void setDefaultSelect();
+
+private:
+    void setCustomFont(QStandardItem *item);
+
 protected slots:
     void onChangedTheme(Dtk::Widget::DApplicationHelper::ColorType themeType);
 

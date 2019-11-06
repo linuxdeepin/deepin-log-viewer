@@ -23,6 +23,11 @@ DWIDGET_USE_NAMESPACE
 
 #define SINGLE_LOAD 500
 
+#define LEVEL_WIDTH 80
+#define STATUS_WIDTH 90
+#define DATETIME_WIDTH 160
+#define DEAMON_WIDTH 150
+
 DisplayContent::DisplayContent(QWidget *parent)
     : DWidget(parent)
 
@@ -48,11 +53,34 @@ void DisplayContent::initUI()
 {
     // init pointer
     m_dateTime = new DLabel(this);
+    DPalette pa = DApplicationHelper::instance()->palette(m_dateTime);
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
+    m_dateTime->setPalette(pa);
+
     m_userName = new DLabel(this);
+    pa = DApplicationHelper::instance()->palette(m_userName);
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
+    m_userName->setPalette(pa);
+
     m_pid = new DLabel(this);
+    pa = DApplicationHelper::instance()->palette(m_pid);
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
+    m_pid->setPalette(pa);
+
     m_status = new DLabel(this);
+    pa = DApplicationHelper::instance()->palette(m_status);
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
+    m_status->setPalette(pa);
+
     m_level = new LogIconButton(this);
+    pa = DApplicationHelper::instance()->palette(m_level);
+    pa.setBrush(DPalette::ButtonText, pa.color(DPalette::TextTips));
+    m_level->setPalette(pa);
+
     m_textBrowser = new DTextBrowser(this);
+    pa = DApplicationHelper::instance()->palette(m_textBrowser);
+    pa.setBrush(DPalette::Text, pa.color(DPalette::TextTips));
+    m_textBrowser->setPalette(pa);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
 
@@ -178,17 +206,6 @@ void DisplayContent::initTableView()
 {
     m_treeView = new LogTreeView(this);
 
-    //    auto changeTheme = [this]() {
-    //        DPalette pa = DApplicationHelper::instance()->palette(this);
-    //        pa.setColorGroup(QPalette::Inactive, pa.base(), pa.button(), pa.light(), pa.dark(),
-    //                         pa.mid(), pa.text(), pa.brightText(), pa.base(), pa.window());
-    //        DApplicationHelper::instance()->setPalette(m_tableView, pa);
-    //    };
-
-    //    changeTheme();
-    //    connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
-    //            changeTheme);
-
     m_pModel = new QStandardItemModel(this);
 
     m_treeView->setModel(m_pModel);
@@ -276,6 +293,10 @@ void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
                                         << DApplication::translate("Table", "User")
                                         << DApplication::translate("Table", "PID"));
 
+    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(1, DEAMON_WIDTH);
+    m_treeView->setColumnWidth(2, DATETIME_WIDTH);
+
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertJournalTable(list, 0, end);
 }
@@ -324,6 +345,7 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
                                         << DApplication::translate("Table", "Date and Time")
                                         << DApplication::translate("Table", "Info")
                                         << DApplication::translate("Table", "Action"));
+    m_treeView->setColumnWidth(0, DATETIME_WIDTH);
     DStandardItem *item = nullptr;
     for (int i = 0; i < list.size(); i++) {
         item = new DStandardItem(list[i].dateTime);
@@ -391,6 +413,10 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
                                         << DApplication::translate("Table", "User")
                                         << DApplication::translate("Table", "Daemon")
                                         << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(0, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(1, DEAMON_WIDTH);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
     DStandardItem *item = nullptr;
     for (int i = 0; i < list.size(); i++) {
         item = new DStandardItem(list[i].dateTime);
@@ -457,6 +483,10 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
                                         << DApplication::translate("Table", "Date and Time")
                                         << DApplication::translate("Table", "Source")
                                         << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(1, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
     DStandardItem *item = nullptr;
     for (int i = 0; i < list.size(); i++) {
         int col = 0;
@@ -502,7 +532,11 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
     m_pModel->setColumnCount(2);
     m_pModel->setHorizontalHeaderLabels(QStringList() << DApplication::translate("Table", "Status")
                                                       << DApplication::translate("Table", "Info"));
+
+    m_treeView->setColumnWidth(0, STATUS_WIDTH);
+
     DStandardItem *item = nullptr;
+
     for (int i = 0; i < list.size(); i++) {
         item = new DStandardItem(list[i].status);
         item->setData(BOOT_TABLE_DATA);
@@ -714,12 +748,12 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
     qDebug() << QString("Button %1 clicked, combobox id is %2 tree %3 node!!")
                     .arg(btnId)
                     .arg(lId)
-                    .arg(idx.data(Qt::UserRole + 1).toString());
+                    .arg(idx.data(ITEM_DATE_ROLE).toString());
 
     m_curLvId = lId;
     m_curBtnId = btnId;
 
-    QString treeData = idx.data(Qt::UserRole + 1).toString();
+    QString treeData = idx.data(ITEM_DATE_ROLE).toString();
     if (treeData.isEmpty())
         return;
 
@@ -749,34 +783,30 @@ void DisplayContent::slot_appLogs(QString path)
     generateAppFile(path, m_curBtnId, m_curLvId);
 }
 
-void DisplayContent::slot_treeClicked(const QModelIndex &index)
+void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
 {
     if (!index.isValid()) {
         return;
     }
 
-    if (curIdx == index && (m_flag != KERN && m_flag != BOOT)) {
+    if (m_curListIdx == index && (m_flag != KERN && m_flag != BOOT)) {
         qDebug() << "repeat click" << m_flag;
         return;
     }
-    curIdx = index;
+    m_curListIdx = index;
 
     cleanText();
     m_pModel->clear();
 
-    QString itemData = index.data(Qt::UserRole + 1).toString();
+    QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty())
         return;
 
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         // default level is info so PRIORITY=6
-        //        jList.clear();
-        //        m_logFileParse.parseByJournal(QStringList() << "PRIORITY=6");
         m_flag = JOURNAL;
         generateJournalFile(m_curBtnId, m_curLvId);
     } else if (itemData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
-        //        dList.clear();
-        //        m_logFileParse.parseByDpkg(dList);
         m_flag = DPKG;
         generateDpkgFile(m_curBtnId);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
@@ -788,13 +818,9 @@ void DisplayContent::slot_treeClicked(const QModelIndex &index)
         m_flag = BOOT;
         m_logFileParse.parseByBoot(bList);
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
-        //        kList.clear();
-        //        m_logFileParse.parseByKern(kList);
         m_flag = KERN;
         generateKernFile(m_curBtnId);
     } else if (itemData.contains(".cache")) {
-        //        appList.clear();
-        //        m_logFileParse.parseByApp(itemData, appList);
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         m_pModel->clear();  // clicked parent node application, clear table contents
         m_flag = APP;
@@ -810,15 +836,16 @@ void DisplayContent::slot_treeClicked(const QModelIndex &index)
 void DisplayContent::slot_exportClicked()
 {
     QString logName;
-    if (curIdx.isValid())
-        logName = QString("/%1").arg(curIdx.data().toString());
+    if (m_curListIdx.isValid())
+        logName = QString("/%1").arg(m_curListIdx.data().toString());
     else {
         logName = QString("/%1").arg(DApplication::translate("File", "New File"));
     }
 
     QString selectFilter;
     QString fileName = DFileDialog::getSaveFileName(
-        this, DApplication::translate("File", "Export File"), QDir::homePath() + logName + ".txt",
+        this, DApplication::translate("File", "Export File"),
+        QDir::homePath() + "/Documents" + logName + ".txt",
         tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
 
     if (fileName.isEmpty())
@@ -855,6 +882,24 @@ void DisplayContent::slot_exportClicked()
     }
 }
 
+void DisplayContent::slot_statusChagned(QString status)
+{
+    currentBootList.clear();
+
+    if (status.isEmpty()) {
+        currentBootList = bList;
+    } else {
+        for (int i = 0; i < bList.size(); i++) {
+            QString _statusStr = bList[i].status;
+            if (_statusStr.compare(status, Qt::CaseInsensitive) != 0)
+                continue;
+            currentBootList.append(bList[i]);
+        }
+    }
+
+    createBootTable(currentBootList);
+}
+
 void DisplayContent::slot_dpkgFinished()
 {
     if (m_flag != DPKG)
@@ -876,6 +921,8 @@ void DisplayContent::slot_bootFinished()
     if (m_flag != BOOT)
         return;
 
+    currentBootList.clear();
+    currentBootList = bList;
     createBootTable(bList);
 }
 
@@ -924,8 +971,8 @@ void DisplayContent::slot_vScrollValueChanged(int value)
         int leftCnt = jList.count() - SINGLE_LOAD * rate;
         int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
         //        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
-        //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD *
-        //                 rate;
+        //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD
+        //                 * rate;
         insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
         m_limitTag = rate;
@@ -937,7 +984,7 @@ void DisplayContent::slot_searchResult(QString str)
 {
     qDebug() << QString("search: %1  treeIndex: %2")
                     .arg(str)
-                    .arg(curIdx.data(Qt::UserRole + 1).toString());
+                    .arg(m_curListIdx.data(Qt::UserRole + 1).toString());
 
     if (m_flag == NONE)
         return;
@@ -974,7 +1021,7 @@ void DisplayContent::slot_searchResult(QString str)
             createKernTable(tmp);
         } break;
         case BOOT: {
-            QList<LOG_MSG_BOOT> tmp = bList;
+            QList<LOG_MSG_BOOT> tmp = currentBootList;
             int cnt = tmp.count();
             for (int i = cnt - 1; i >= 0; --i) {
                 LOG_MSG_BOOT msg = tmp.at(i);
@@ -1047,7 +1094,7 @@ void DisplayContent::slot_themeChanged(DGuiApplicationHelper::ColorType colorTyp
     } else if (colorType == DGuiApplicationHelper::LightType) {
         m_iconPrefix = "://images/light/";
     }
-    slot_BtnSelected(m_curBtnId, m_curLvId, curIdx);
+    slot_BtnSelected(m_curBtnId, m_curLvId, m_curListIdx);
 }
 
 void DisplayContent::paintEvent(QPaintEvent *event)

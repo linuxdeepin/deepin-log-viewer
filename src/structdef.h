@@ -59,5 +59,6 @@ enum LOG_FLAG { JOURNAL = 0, KERN, BOOT, XORG, DPKG, APP, NONE = 9999 };
 #define BOOT_TREE_DATA "/var/log/boot.log"
 #define KERN_TREE_DATA "/var/log/kern.log"
 #define APP_TREE_DATA "application"
+#define ITEM_DATE_ROLE (Qt::UserRole + 66)
 
 #endif  // STRUCTDEF_H

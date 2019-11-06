@@ -4,6 +4,7 @@
 #include <DComboBox>
 #include <DCommandLinkButton>
 #include <DFileDialog>
+#include <QAbstractItemView>
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
@@ -15,6 +16,9 @@
 #include <QVBoxLayout>
 #include "logperiodbutton.h"
 #include "structdef.h"
+
+#define BUTTON_WIDTH_MIN 68
+#define BUTTON_HEIGHT_MIN 36
 
 DWIDGET_USE_NAMESPACE
 
@@ -72,6 +76,7 @@ void FilterContent::initUI()
     cmdLinkBtn->hide();
     m_btnGroup->addButton(cmdLinkBtn, 6);
     hLayout_period->addWidget(cmdLinkBtn);
+    hLayout_period->setSpacing(10);
 
     // set level info
     hLayout_all = new QHBoxLayout;
@@ -101,10 +106,20 @@ void FilterContent::initUI()
     hLayout_app->addWidget(cbx_app, 1);
     hLayout_all->addLayout(hLayout_app);
 
+    // add status item
+    QHBoxLayout *hLayout_status = new QHBoxLayout;
+    statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
+    cbx_status = new DComboBox(this);
+    cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
+                                       << "Failed");
+    hLayout_status->addWidget(statusTxt);
+    hLayout_status->addWidget(cbx_status, 1);
+    hLayout_all->addLayout(hLayout_status);
+
     hLayout_all->addStretch();
 
     DPushButton *exportBtn = new DPushButton(DApplication::translate("Button", "Export"), this);
-    exportBtn->setMinimumSize(m_allBtn->size());
+    exportBtn->setMinimumSize(QSize(BUTTON_WIDTH_MIN * 2, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(exportBtn, 7);
     hLayout_all->addWidget(exportBtn);
 
@@ -113,8 +128,8 @@ void FilterContent::initUI()
     vLayout->addLayout(hLayout_all);
     this->setLayout(vLayout);
 
-    // default application list is invisible
-    setSelectorVisible(true, false, true, false);
+    // default application list is not visible
+    setSelectorVisible(true, false, false, true, false);
 }
 
 void FilterContent::initConnections()
@@ -122,6 +137,7 @@ void FilterContent::initConnections()
     connect(m_btnGroup, SIGNAL(buttonClicked(int)), this, SLOT(slot_buttonClicked(int)));
     connect(cbx_lv, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxLvIdxChanged(int)));
     connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
+    connect(cbx_status, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxStatusChanged(int)));
 }
 
 void FilterContent::setAppComboBoxItem()
@@ -168,13 +184,17 @@ void FilterContent::setAppComboBoxItem()
     }
 }
 
-void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool period, bool needMove)
+void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
+                                       bool needMove)
 {
     lvTxt->setVisible(lvCbx);
     cbx_lv->setVisible(lvCbx);
 
     appTxt->setVisible(appListCbx);
     cbx_app->setVisible(appListCbx);
+
+    statusTxt->setVisible(statusCbx);
+    cbx_status->setVisible(statusCbx);
 
     periodLabel->setVisible(period);
     for (int i = 0; i < 6; i++) {
@@ -197,6 +217,7 @@ void FilterContent::setUeButtonSytle()
         LogPeriodButton *btn = static_cast<LogPeriodButton *>(abtn);
         btn->setFlat(true);
         btn->setCheckable(true);
+        btn->setMinimumSize(QSize(BUTTON_WIDTH_MIN, BUTTON_HEIGHT_MIN));
         if (btn->objectName() == "allBtn")
             btn->setChecked(true);
     }
@@ -233,12 +254,12 @@ void FilterContent::paintEvent(QPaintEvent *event)
     DFrame::paintEvent(event);
 }
 
-void FilterContent::slot_treeClicked(const QModelIndex &index)
+void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
 {
     if (!index.isValid())
         return;
 
-    QString itemData = index.data(Qt::UserRole + 1).toString();
+    QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty()) {
         return;
     }
@@ -247,19 +268,21 @@ void FilterContent::slot_treeClicked(const QModelIndex &index)
 
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         this->setAppComboBoxItem();
-        this->setSelectorVisible(true, true, true, false);
+        this->setSelectorVisible(true, true, false, true, false);
         cbx_app->setCurrentIndex(0);
         emit sigCbxAppIdxChanged(cbx_app->itemData(0, Qt::UserRole + 1).toString());
     } else if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
-        this->setSelectorVisible(true, false, true, false);
+        this->setSelectorVisible(true, false, false, true, false);
         cbx_lv->setCurrentIndex(INF);
         //    } else if (itemData.contains(".cache")) {
         //        this->setSelectorVisible(true, true);
         //        cbx_lv->setCurrentIndex(INF);
-    } else if (itemData.contains(BOOT_TREE_DATA) || itemData.contains(XORG_TREE_DATA)) {
-        this->setSelectorVisible(false, false, false, true);
+    } else if (itemData.contains(BOOT_TREE_DATA)) {
+        this->setSelectorVisible(false, false, true, false, false);
     } else if (itemData.contains(KERN_TREE_DATA) || itemData.contains(DPKG_TREE_DATA)) {
-        this->setSelectorVisible(false, false, true, true);
+        this->setSelectorVisible(false, false, false, true, true);
+    } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
+        this->setSelectorVisible(false, false, false, false, false);
     }
 }
 
@@ -315,4 +338,14 @@ void FilterContent::slot_cbxAppIdxChanged(int idx)
     QString path = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
 
     emit sigCbxAppIdxChanged(path);
+}
+
+void FilterContent::slot_cbxStatusChanged(int idx)
+{
+    QString str;
+    if (idx == 1)
+        str = "OK";
+    else if (idx == 2)
+        str = "Failed";
+    emit sigStatusChanged(str);
 }

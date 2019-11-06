@@ -1,17 +1,19 @@
 #include <DApplication>
 #include <QHeaderView>
+#include <QItemSelectionModel>
 #include <QMargins>
-
 #include <QPaintEvent>
 #include <QPainter>
 
 #include "loglistview.h"
 #include "structdef.h"
 
-#define ITEM_HEIGHT 36
+#define ITEM_HEIGHT 40
 #define ITEM_WIDTH 108
 
 #define ICON_DATA (Qt::UserRole + 99)
+
+Q_DECLARE_METATYPE(QMargins)
 
 DWIDGET_USE_NAMESPACE
 
@@ -33,40 +35,67 @@ void LogListView::initUI()
 
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    this->setItemSpacing(2);
+    this->setItemSpacing(0);
+
+    const QMargins ListViweItemMargin(10, 0, 0, 0);
+    const QVariant VListViewItemMargin = QVariant::fromValue(ListViweItemMargin);
 
     m_pModel = new QStandardItemModel;
     QStandardItem *item = nullptr;
     item = new QStandardItem(DApplication::translate("Tree", "System Log"));
-    item->setData(JOUR_TREE_DATA);
+    item->setData(JOUR_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
 
     item = new QStandardItem(DApplication::translate("Tree", "Kernel Log"));
-    item->setData(KERN_TREE_DATA);
+    item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
 
     item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
-    item->setData(BOOT_TREE_DATA);
+    item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
 
     item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
-    item->setData(DPKG_TREE_DATA);
+    item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
 
     item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
-    item->setData(XORG_TREE_DATA);
+    item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
 
     item = new QStandardItem(DApplication::translate("Tree", "Application log"));
-    item->setData(APP_TREE_DATA);
+    item->setData(APP_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
     this->setModel(m_pModel);
+
+    // set first item is select when app start.
+    this->setCurrentIndex(m_pModel->index(0, 0));
+}
+
+void LogListView::setDefaultSelect()
+{
+    emit clicked(currentIndex());
+}
+
+void LogListView::setCustomFont(QStandardItem *item)
+{
+    QFont font = item->font();
+    font.setPointSize(11);
+    item->setFont(font);
+    this->setIconSize(QSize(20, 20));
+
+    //    item->setTextAlignment(Qt::AlignCenter);
 }
 
 void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
@@ -83,22 +112,24 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
 
     for (auto i = 0; i < m_pModel->rowCount(); i++) {
         QStandardItem *item = m_pModel->item(i);
+
+        setCustomFont(item);
         if (item) {
-            if (item->data().toString() == JOUR_TREE_DATA) {
+            if (item->data(ITEM_DATE_ROLE).toString() == JOUR_TREE_DATA) {
                 _itemIcon = icon + "system.svg";
-            } else if (item->data().toString() == KERN_TREE_DATA) {
+            } else if (item->data(ITEM_DATE_ROLE).toString() == KERN_TREE_DATA) {
                 _itemIcon = icon + "core.svg";
 
-            } else if (item->data().toString() == BOOT_TREE_DATA) {
+            } else if (item->data(ITEM_DATE_ROLE).toString() == BOOT_TREE_DATA) {
                 _itemIcon = icon + "start.svg";
 
-            } else if (item->data().toString() == DPKG_TREE_DATA) {
+            } else if (item->data(ITEM_DATE_ROLE).toString() == DPKG_TREE_DATA) {
                 _itemIcon = icon + "d.svg";
 
-            } else if (item->data().toString() == XORG_TREE_DATA) {
+            } else if (item->data(ITEM_DATE_ROLE).toString() == XORG_TREE_DATA) {
                 _itemIcon = icon + "x.svg";
 
-            } else if (item->data().toString() == APP_TREE_DATA) {
+            } else if (item->data(ITEM_DATE_ROLE).toString() == APP_TREE_DATA) {
                 _itemIcon = icon + "application.svg";
             }
             if (currentItem != nullptr && item == currentItem) {

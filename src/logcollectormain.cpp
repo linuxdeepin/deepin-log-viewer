@@ -14,6 +14,8 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
 {
     initUI();
     initConnection();
+
+    m_logCatelogue->setDefaultSelect();
 }
 
 LogCollectorMain::~LogCollectorMain()
@@ -34,7 +36,7 @@ void LogCollectorMain::initUI()
     titlebar()->setCustomWidget(m_searchEdt, true);
 
     /** add titleBar */
-    titlebar()->setIcon(QIcon("://images/logo.svg"));
+    titlebar()->setIcon(QIcon::fromTheme("dde-log-viewer"));
     titlebar()->setTitle("");
 
     /** menu */
@@ -48,7 +50,6 @@ void LogCollectorMain::initUI()
     m_hSplitter->setOrientation(Qt::Horizontal);
 
     /** left frame */
-    //    m_treeView = new LogTreeView(m_hSplitter);
     m_logCatelogue = new LogListView(m_hSplitter);
     m_hSplitter->addWidget(m_logCatelogue);
 
@@ -106,12 +107,15 @@ void LogCollectorMain::initConnection()
     connect(m_topRightWgt, &FilterContent::sigExportInfo, m_midRightWgt,
             &DisplayContent::slot_exportClicked);
 
+    connect(m_topRightWgt, &FilterContent::sigStatusChanged, m_midRightWgt,
+            &DisplayContent::slot_statusChagned);
+
     //! treeView widget
     connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_midRightWgt,
-            SLOT(slot_treeClicked(const QModelIndex &)));
+            SLOT(slot_logCatelogueClicked(const QModelIndex &)));
     //! set tree <==> combobox visible
     connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_topRightWgt,
-            SLOT(slot_treeClicked(const QModelIndex &)));
+            SLOT(slot_logCatelogueClicked(const QModelIndex &)));
 
     // when item changed clear search text
     connect(m_logCatelogue, &LogListView::itemChanged, this, [=]() { m_searchEdt->clear(); });
