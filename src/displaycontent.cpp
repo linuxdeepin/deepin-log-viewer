@@ -14,6 +14,7 @@
 #include <QIcon>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QProcess>
 #include <QThread>
 #include <QVBoxLayout>
 #include "logexportwidget.h"
@@ -698,6 +699,15 @@ QString DisplayContent::getAppName(QString filePath)
         return desStr.section(".", 0, 0);
     }
     return ret;
+}
+
+bool DisplayContent::isAuthProcessAlive()
+{
+    bool ret = false;
+    QProcess proc;
+    int rslt = proc.execute("ps -aux | grep 'logViewerAuth'");
+    qDebug() << rslt << "*************";
+    return !(ret = (rslt == 0));
 }
 
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)

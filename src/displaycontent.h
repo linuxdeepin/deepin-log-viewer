@@ -54,6 +54,8 @@ private:
 
     QString getAppName(QString filePath);
 
+    bool isAuthProcessAlive();
+
 signals:
     void loadMoreInfo();
 

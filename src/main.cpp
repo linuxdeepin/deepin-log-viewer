@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     }
 
     LogCollectorMain w;
-    w.setMinimumSize(1000, 750);
+    w.setMinimumSize(958, 736);
     w.show();
 
     Dtk::Widget::moveToCenter(&w);

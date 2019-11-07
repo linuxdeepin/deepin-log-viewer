@@ -30,9 +30,6 @@ LogListView::LogListView(QWidget *parent)
 
 void LogListView::initUI()
 {
-    this->setAutoFillBackground(true);
-    this->setBackgroundRole(DPalette::Base);
-
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     this->setItemSpacing(0);
@@ -139,6 +136,14 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
             item->setData(_itemIcon, ICON_DATA);
         }
     }
+
+    // set itembackground color
+    DPalette pa = DApplicationHelper::instance()->palette(this);
+    pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
+    pa.setColor(DPalette::Background, pa.color(DPalette::Base));
+    //    this->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(this, pa);
+    this->setAutoFillBackground(true);
 }
 
 void LogListView::paintEvent(QPaintEvent *event)
