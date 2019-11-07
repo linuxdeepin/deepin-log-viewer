@@ -30,9 +30,11 @@ LogListView::LogListView(QWidget *parent)
 
 void LogListView::initUI()
 {
+    this->setMinimumWidth(120);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     this->setItemSpacing(0);
+    this->setViewportMargins(0, 0, 8, 0);
 
     const QMargins ListViweItemMargin(10, 0, 0, 0);
     const QVariant VListViewItemMargin = QVariant::fromValue(ListViweItemMargin);

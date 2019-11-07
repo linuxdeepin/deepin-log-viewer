@@ -1099,12 +1099,12 @@ void DisplayContent::slot_searchResult(QString str)
 
 void DisplayContent::slot_themeChanged(DGuiApplicationHelper::ColorType colorType)
 {
-    if (colorType == DGuiApplicationHelper::DarkType) {
-        m_iconPrefix = "://images/dark/";
-    } else if (colorType == DGuiApplicationHelper::LightType) {
-        m_iconPrefix = "://images/light/";
-    }
-    slot_BtnSelected(m_curBtnId, m_curLvId, m_curListIdx);
+    //    if (colorType == DGuiApplicationHelper::DarkType) {
+    //        m_iconPrefix = "://images/dark/";
+    //    } else if (colorType == DGuiApplicationHelper::LightType) {
+    //        m_iconPrefix = "://images/light/";
+    //    }
+    //    slot_BtnSelected(m_curBtnId, m_curLvId, m_curListIdx);
 }
 
 void DisplayContent::paintEvent(QPaintEvent *event)

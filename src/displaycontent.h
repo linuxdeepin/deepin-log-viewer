@@ -118,7 +118,7 @@ private:
     QList<LOG_MSG_JOURNAL> kList;                // kern.log
     QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)
 
-    QString m_iconPrefix;
+    QString m_iconPrefix {"://images/"};
     QMap<QString, QString> m_icon_name_map;
     QString getIconByname(QString str);
 };

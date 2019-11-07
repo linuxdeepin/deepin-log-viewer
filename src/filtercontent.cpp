@@ -84,7 +84,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_lv = new QHBoxLayout;
     lvTxt = new DLabel(DApplication::translate("Label", "Level:"), this);
     cbx_lv = new DComboBox(this);
-    cbx_lv->setMinimumWidth(150);
+    cbx_lv->setMinimumWidth(120);
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "Emer")
                                    << DApplication::translate("ComboBox", "Alert")
                                    << DApplication::translate("ComboBox", "Critical")

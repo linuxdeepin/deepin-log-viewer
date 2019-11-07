@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 58 (84663) - https://sketch.com -->
+    <title>dpkg</title>
+    <desc>Created with Sketch.</desc>
+    <g id="深色" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="系统日志" transform="translate(-527.000000, -364.000000)">
+            <g id="侧边栏-" transform="translate(509.000000, 222.000000)">
+                <g id="d-2" transform="translate(18.000000, 142.000000)">
+                    <g id="d">
+                        <g id="日志" stroke-width="1" fill-rule="evenodd" transform="translate(2.000000, 1.000000)" stroke="#C5CFE0" stroke-linejoin="round">
+                            <polygon id="路径-3" stroke-linecap="round" points="1.5 0.5 0.5 0.5 0.5 13.5 11.5 13.5 11.5 3.75 8 0.5"></polygon>
+                            <polygon id="路径-9" points="8 0.5 8 4 11.5 4"></polygon>
+                        </g>
+                        <path d="M6.74908425,6 C8.81868132,6 10,7.01902174 10,8.97554348 C10,10.923913 8.81868132,12 6.8040293,12 L6.8040293,12 L5.8,12 C5.3581722,12 5,11.6418278 5,11.2 L5,11.2 L5,6.8 C5,6.3581722 5.3581722,6 5.8,6 L5.8,6 Z M6.6483871,7 L6,7 L6,11 L6.6483871,11 C8.17741935,11 9,10.3199269 9,8.98171846 C9,7.63619744 8.17741935,7 6.6483871,7 L6.6483871,7 Z" id="D" fill="#C5CFE0" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
