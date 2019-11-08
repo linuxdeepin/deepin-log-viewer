@@ -335,13 +335,14 @@
     <message>
         <location filename="../main.cpp" line="25"/>
         <source>Deepin Log Viewer</source>
-        <translatorcomment>深度日志收集工具</translatorcomment>
-        <translation type="unfinished">深度日志收集工具</translation>
+        <translatorcomment>日志收集工具</translatorcomment>
+        <translation type="unfinished">日志收集工具</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="26"/>
         <source>Deepin Log Viewer is a small tool for viewing system logs.</source>
-        <translation type="unfinished">深度日志收集工具是一款查看系统日志的小工具。</translation>
+        <translatorcomment>日志收集工具是深度操作系统中专门用于收集日志的小工具，方便深度用户方便易用的查看运行日志、操作日志和安全日志。</translatorcomment>
+        <translation type="unfinished">日志收集工具是深度操作系统中专门用于收集日志的小工具，方便深度用户方便易用的查看运行日志、操作日志和安全日志。</translation>
     </message>
 </context>
 <context>

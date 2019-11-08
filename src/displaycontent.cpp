@@ -1,3 +1,24 @@
+/*
+ * Copyright (C) 2019 ~ 2019 Deepin Technology Co., Ltd.
+ *
+ * Author:     LZ <zhou.lu@archermind.com>
+ *
+ * Maintainer: LZ <zhou.lu@archermind.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "displaycontent.h"
 
 #include <sys/utsname.h>
@@ -56,32 +77,41 @@ void DisplayContent::initUI()
     m_dateTime = new DLabel(this);
     DPalette pa = DApplicationHelper::instance()->palette(m_dateTime);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    m_dateTime->setPalette(pa);
+    //    m_dateTime->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(m_dateTime, pa);
 
     m_userName = new DLabel(this);
     pa = DApplicationHelper::instance()->palette(m_userName);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    m_userName->setPalette(pa);
+    //    m_userName->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(m_userName, pa);
 
     m_pid = new DLabel(this);
     pa = DApplicationHelper::instance()->palette(m_pid);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    m_pid->setPalette(pa);
+    //    m_pid->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(m_pid, pa);
 
     m_status = new DLabel(this);
     pa = DApplicationHelper::instance()->palette(m_status);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    m_status->setPalette(pa);
+    //    m_status->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(m_status, pa);
 
     m_level = new LogIconButton(this);
     pa = DApplicationHelper::instance()->palette(m_level);
     pa.setBrush(DPalette::ButtonText, pa.color(DPalette::TextTips));
-    m_level->setPalette(pa);
+    //    m_level->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(m_level, pa);
 
     m_textBrowser = new DTextBrowser(this);
     pa = DApplicationHelper::instance()->palette(m_textBrowser);
     pa.setBrush(DPalette::Text, pa.color(DPalette::TextTips));
-    m_textBrowser->setPalette(pa);
+    //    m_textBrowser->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(m_textBrowser, pa);
+    m_textBrowser->setFrameShape(QFrame::NoFrame);
+
+    m_textBrowser->viewport()->setAutoFillBackground(false);
 
     QVBoxLayout *vLayout = new QVBoxLayout;
 
@@ -90,6 +120,7 @@ void DisplayContent::initUI()
 
     // display single table row's detail info
     QVBoxLayout *vLy = new QVBoxLayout;
+
     QHBoxLayout *hLy1 = new QHBoxLayout;
     m_daemonName = new DLabel(this);
     QFont font;
@@ -125,7 +156,7 @@ void DisplayContent::initUI()
     vLy->addLayout(hLy1);
     vLy->addLayout(hLy2);
     DHorizontalLine *hline = new DHorizontalLine;
-    hline->setLineWidth(3);
+    //    hline->setLineWidth(3);
     vLy->addWidget(hline);
     vLy->addWidget(m_textBrowser, 2);
     vLy->setContentsMargins(0, 0, 0, 0);
@@ -133,7 +164,11 @@ void DisplayContent::initUI()
     // layout for widgets
     vLayout->addWidget(m_treeView, 5);
 
-    noResultLabel = new DLabel;
+    noResultLabel = new DLabel(this);
+    pa = DApplicationHelper::instance()->palette(noResultLabel);
+    pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
+    DApplicationHelper::instance()->setPalette(noResultLabel, pa);
+    noResultLabel->setAutoFillBackground(true);
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
     QFont labelFont;
     labelFont.setPixelSize(20);
@@ -361,7 +396,7 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
     }
     m_treeView->hideColumn(2);
 
-    m_treeView->setModel(m_pModel);
+    //    m_treeView->setModel(m_pModel);
 
     // default first row select
     //    m_treeView->selectRow(0);
@@ -434,7 +469,7 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
         m_pModel->setItem(i, 3, item);
     }
 
-    m_treeView->setModel(m_pModel);
+    //    m_treeView->setModel(m_pModel);
 
     // default first row select
     //    m_treeView->selectRow(0);
@@ -496,6 +531,8 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
         //        item = new DStandardItem(lvStr);
         item = new DStandardItem();
         QString iconPath = m_iconPrefix + getIconByname(list[i].level);
+        if (getIconByname(list[i].level).isEmpty())
+            item->setText(lvStr);
         item->setIcon(QIcon(iconPath));
         item->setData(APP_TABLE_DATA);
         item->setData(lvStr, Qt::UserRole + 6);
@@ -515,7 +552,7 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
         m_pModel->setItem(i, col++, item);
     }
 
-    m_treeView->setModel(m_pModel);
+    //    m_treeView->setModel(m_pModel);
 
     // default first row select
     //    m_treeView->selectRow(0);
@@ -547,7 +584,7 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
         m_pModel->setItem(i, 1, item);
     }
 
-    m_treeView->setModel(m_pModel);
+    //    m_treeView->setModel(m_pModel);
 
     // default first row select
     //    m_treeView->selectRow(0);
@@ -571,7 +608,7 @@ void DisplayContent::createXorgTable(QStringList &list)
         m_pModel->setItem(i, 0, item);
     }
 
-    m_treeView->setModel(m_pModel);
+    //    m_treeView->setModel(m_pModel);
 
     // default first row select
     //    m_treeView->selectRow(0);
@@ -590,6 +627,8 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
         item = new DStandardItem();
         //        qDebug() << "journal level" << logList[i].level;
         QString iconPath = m_iconPrefix + getIconByname(logList[i].level);
+        if (getIconByname(logList[i].level).isEmpty())
+            item->setText(logList[i].level);
         item->setIcon(QIcon(iconPath));
         item->setData(JOUR_TABLE_DATA);
         item->setData(logList[i].level, Qt::UserRole + 6);
@@ -620,7 +659,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
 
     //    qDebug() << m_pModel->index(0, 0).data(Qt::DecorationRole);
 
-    m_treeView->setModel(m_pModel);
+    //    m_treeView->setModel(m_pModel);
 
     // default first row select
     QItemSelectionModel *p = m_treeView->selectionModel();
