@@ -168,7 +168,6 @@ void DisplayContent::initUI()
     pa = DApplicationHelper::instance()->palette(noResultLabel);
     pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
     DApplicationHelper::instance()->setPalette(noResultLabel, pa);
-    noResultLabel->setAutoFillBackground(true);
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
     QFont labelFont;
     labelFont.setPixelSize(20);

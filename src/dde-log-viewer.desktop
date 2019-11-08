@@ -1,11 +1,11 @@
 [Desktop Entry]
 Categories=Utility
 Exec=dde-log-viewer %f
-#Icon=logo
+Icon=dde-log-viewer
 MimeType=font/collection;font/ttf;font/otf;application/x-font-otf;application/x-font-ttf;application/x-font-type1;
 Name=Log Viewer
 StartupNotify=true
 TryExec=dde-log-viewer
 Type=Application
 X-Deepin-Vendor=deepin
-Name[zh_CN]=日志收集
+Name[zh_CN]=日志收集工具
