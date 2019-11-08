@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
     a.setProductIcon(QIcon::fromTheme("dde-log-viewer"));
     //    a.setWindowIcon(QIcon("://images/logo.svg"));
     a.setProductName(DApplication::translate("Main", "Deepin Log Viewer"));
-    a.setApplicationDescription(DApplication::translate(
-        "Main", "Deepin Log Viewer is a small tool for viewing system logs."));
+    a.setApplicationDescription(
+        DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs. "));
     DApplicationSettings settings;
     //    a.setTheme("dark");
     DLogManager::registerConsoleAppender();
