@@ -1032,7 +1032,7 @@ void DisplayContent::slot_searchResult(QString str)
 {
     qDebug() << QString("search: %1  treeIndex: %2")
                     .arg(str)
-                    .arg(m_curListIdx.data(Qt::UserRole + 1).toString());
+                    .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
 
     if (m_flag == NONE)
         return;

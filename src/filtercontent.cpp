@@ -316,7 +316,7 @@ void FilterContent::slot_buttonClicked(int idx)
     //    if (!m_curTreeIndex.isValid())
     //        return;
 
-    QString itemData = m_curTreeIndex.data(Qt::UserRole + 1).toString();
+    QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
 
     switch (idx) {
         case ALL:
