@@ -34,7 +34,8 @@ void LogSpinnerWidget::initUI()
 {
     m_spinner = new DSpinner(this);
     m_spinner->setFixedSize(QSize(32, 32));
-    QHBoxLayout *hh = new QHBoxLayout(this);
+
+    //    QHBoxLayout *hh = new QHBoxLayout(this);
 
     QHBoxLayout *h = new QHBoxLayout;
     h->addStretch(1);
@@ -47,7 +48,8 @@ void LogSpinnerWidget::initUI()
     h->addLayout(v);
     h->addStretch(1);
 
-    hh->addLayout(h);
+    //    hh->addLayout(h);
+    this->setLayout(h);
 }
 
 void LogSpinnerWidget::spinnerStart()

@@ -10,31 +10,6 @@
         <translation type="unfinished">全部</translation>
     </message>
     <message>
-        <source>One day</source>
-        <translatorcomment>今天</translatorcomment>
-        <translation type="obsolete">今天</translation>
-    </message>
-    <message>
-        <source>Three days</source>
-        <translatorcomment>近三天</translatorcomment>
-        <translation type="obsolete">近三天</translation>
-    </message>
-    <message>
-        <source>One Week</source>
-        <translatorcomment>近一周</translatorcomment>
-        <translation type="obsolete">近一周</translation>
-    </message>
-    <message>
-        <source>One month</source>
-        <translatorcomment>近一个月</translatorcomment>
-        <translation type="obsolete">近一个月</translation>
-    </message>
-    <message>
-        <source>Three months</source>
-        <translatorcomment>近三个月</translatorcomment>
-        <translation type="obsolete">近三个月</translation>
-    </message>
-    <message>
         <location filename="../filtercontent.cpp" line="68"/>
         <source>Today</source>
         <translatorcomment>今天</translatorcomment>
@@ -170,11 +145,6 @@
 <context>
     <name>Label</name>
     <message>
-        <source>Time period:</source>
-        <translatorcomment>周期：</translatorcomment>
-        <translation type="obsolete">周期：</translation>
-    </message>
-    <message>
         <location filename="../filtercontent.cpp" line="62"/>
         <source>Period:</source>
         <translatorcomment>周期：</translatorcomment>
@@ -193,16 +163,6 @@
         <translation type="unfinished">应用列表：</translation>
     </message>
     <message>
-        <source>Source:</source>
-        <translatorcomment>来源：</translatorcomment>
-        <translation type="obsolete">来源：</translation>
-    </message>
-    <message>
-        <source>Type:</source>
-        <translatorcomment>类型：</translatorcomment>
-        <translation type="obsolete">类型：</translation>
-    </message>
-    <message>
         <location filename="../displaycontent.cpp" line="136"/>
         <source>User:</source>
         <translation type="unfinished">主机名：</translation>
@@ -218,16 +178,6 @@
         <source>Status:</source>
         <translatorcomment>状态：</translatorcomment>
         <translation type="unfinished">状态：</translation>
-    </message>
-    <message>
-        <source>Account:</source>
-        <translatorcomment>用户帐户：</translatorcomment>
-        <translation type="obsolete">用户帐户：</translation>
-    </message>
-    <message>
-        <source>Keyword:</source>
-        <translatorcomment>关键字：</translatorcomment>
-        <translation type="obsolete">关键字：</translation>
     </message>
 </context>
 <context>
@@ -323,16 +273,6 @@
 <context>
     <name>Main</name>
     <message>
-        <source>Deepin Log Collection Tool</source>
-        <translatorcomment>深度日志收集工具</translatorcomment>
-        <translation type="obsolete">深度日志收集工具</translation>
-    </message>
-    <message>
-        <source>The log collection tool is a small tool for viewing system logs.</source>
-        <translatorcomment>日志收集工具是一款查看系统日志的小工具。</translatorcomment>
-        <translation type="obsolete">日志收集工具是一款查看系统日志的小工具。</translation>
-    </message>
-    <message>
         <location filename="../main.cpp" line="46"/>
         <source>Deepin Log Viewer</source>
         <translatorcomment>日志收集工具</translatorcomment>
@@ -340,14 +280,9 @@
     </message>
     <message>
         <location filename="../main.cpp" line="48"/>
-        <source>Log Viewer is a useful tool for viewing system logs. </source>
+        <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translatorcomment>日志收集工具是一款查看系统日志的小工具。</translatorcomment>
         <translation type="unfinished">日志收集工具是一款查看系统日志的小工具。</translation>
-    </message>
-    <message>
-        <source>Deepin Log Viewer is a small tool for viewing system logs.</source>
-        <translatorcomment>日志收集工具是深度操作系统中专门用于收集日志的小工具，方便深度用户方便易用的查看运行日志、操作日志和安全日志。</translatorcomment>
-        <translation type="obsolete">日志收集工具是深度操作系统中专门用于收集日志的小工具，方便深度用户方便易用的查看运行日志、操作日志和安全日志。</translation>
     </message>
 </context>
 <context>
@@ -362,31 +297,9 @@
         <source>, please retry another keyword.</source>
         <translation type="unfinished">的结果，请尝试搜索新词。</translation>
     </message>
-    <message>
-        <source>, please retry another keyword</source>
-        <translation type="obsolete">的结果，请尝试搜索新词</translation>
-    </message>
-</context>
-<context>
-    <name>Search</name>
-    <message>
-        <source>No Results</source>
-        <translatorcomment>无搜索结果</translatorcomment>
-        <translation type="obsolete">无搜索结果</translation>
-    </message>
-    <message>
-        <source>Search</source>
-        <translatorcomment>搜索</translatorcomment>
-        <translation type="obsolete">搜索</translation>
-    </message>
 </context>
 <context>
     <name>SearchBar</name>
-    <message>
-        <source>No Results</source>
-        <translatorcomment>无搜索结果</translatorcomment>
-        <translation type="obsolete">无搜索结果</translation>
-    </message>
     <message>
         <location filename="../logcollectormain.cpp" line="55"/>
         <source>Search</source>
@@ -401,11 +314,6 @@
 </context>
 <context>
     <name>Table</name>
-    <message>
-        <source>Time</source>
-        <translatorcomment>时间</translatorcomment>
-        <translation type="obsolete">时间</translation>
-    </message>
     <message>
         <location filename="../displaycontent.cpp" line="328"/>
         <location filename="../displaycontent.cpp" line="448"/>
@@ -464,11 +372,6 @@
         <translation type="unfinished">级别</translation>
     </message>
     <message>
-        <source>Information</source>
-        <translatorcomment>消息</translatorcomment>
-        <translation type="obsolete">消息</translation>
-    </message>
-    <message>
         <location filename="../displaycontent.cpp" line="519"/>
         <source>Source</source>
         <translatorcomment>来源</translatorcomment>
@@ -514,34 +417,9 @@
 <context>
     <name>Tree</name>
     <message>
-        <source>System log</source>
-        <translatorcomment>系统日志</translatorcomment>
-        <translation type="obsolete">系统日志</translation>
-    </message>
-    <message>
         <location filename="../loglistview.cpp" line="65"/>
         <source>System Log</source>
         <translation type="unfinished">系统日志</translation>
-    </message>
-    <message>
-        <source>Kernel log</source>
-        <translatorcomment>内核日志</translatorcomment>
-        <translation type="obsolete">内核日志</translation>
-    </message>
-    <message>
-        <source>Boot log</source>
-        <translatorcomment>启动日志</translatorcomment>
-        <translation type="obsolete">启动日志</translation>
-    </message>
-    <message>
-        <source>dpkg log</source>
-        <translatorcomment>dpkg日志</translatorcomment>
-        <translation type="obsolete">dpkg日志</translation>
-    </message>
-    <message>
-        <source>Xorg log</source>
-        <translatorcomment>Xorg日志</translatorcomment>
-        <translation type="obsolete">Xorg日志</translation>
     </message>
     <message>
         <location filename="../loglistview.cpp" line="71"/>

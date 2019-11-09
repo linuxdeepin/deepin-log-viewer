@@ -45,15 +45,18 @@ int main(int argc, char *argv[])
     //    a.setWindowIcon(QIcon("://images/logo.svg"));
     a.setProductName(DApplication::translate("Main", "Deepin Log Viewer"));
     a.setApplicationDescription(
-        DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs. "));
+        DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
     DApplicationSettings settings;
     //    a.setTheme("dark");
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
 
-    if (!a.setSingleInstance("dde-log-viewer")) {
+    //    if (!a.setSingleInstance("dde-log-viewer")) {
+    //        return 0;
+    //    }
+
+    if (!DGuiApplicationHelper::instance()->setSingleInstance("dde-log-viewer"))
         return 0;
-    }
 
     LogCollectorMain w;
     w.setMinimumSize(958, 736);
