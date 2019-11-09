@@ -173,7 +173,7 @@ void DisplayContent::initUI()
     labelFont.setPixelSize(20);
     noResultLabel->setFont(labelFont);
     noResultLabel->setAlignment(Qt::AlignCenter);
-    vLayout->addWidget(noResultLabel, 5);
+    //    vLayout->addWidget(noResultLabel, 5);
     noResultLabel->hide();
 
     m_spinnerWgt = new LogSpinnerWidget;
@@ -372,7 +372,7 @@ void DisplayContent::generateDpkgFile(int id)
 
 void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
 {
-    m_treeView->show();
+    //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(3);
@@ -439,7 +439,7 @@ void DisplayContent::generateKernFile(int id)
 
 void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
 {
-    m_treeView->show();
+    //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(4);
@@ -509,7 +509,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId)
 
 void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
 {
-    m_treeView->show();
+    //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(4);
@@ -563,7 +563,7 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
 
 void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
 {
-    m_treeView->show();
+    //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(2);
@@ -595,7 +595,7 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
 
 void DisplayContent::createXorgTable(QStringList &list)
 {
-    m_treeView->show();
+    //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(1);
@@ -1121,17 +1121,11 @@ void DisplayContent::slot_searchResult(QString str)
             break;
     }
     if (0 == m_pModel->rowCount()) {
-        m_treeView->hide();
-
+        noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noResultLabel->show();
-        //        m_noResultWdg->setContent(str);
-        //        m_noResultWdg->show();
         cleanText();
     } else {
-        m_treeView->show();
         noResultLabel->hide();
-        //        m_noResultWdg->setContent(str);
-        //        m_noResultWdg->hide();
     }
 }
 
@@ -1175,6 +1169,11 @@ void DisplayContent::paintEvent(QPaintEvent *event)
 
     // Restore the pen
     painter.setPen(oldPen);
+}
+
+void DisplayContent::resizeEvent(QResizeEvent *event)
+{
+    noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
 }
 
 QString DisplayContent::getIconByname(QString str)

@@ -105,6 +105,7 @@ public slots:
 
 private:
     void paintEvent(QPaintEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 private:
     //    Dtk::Widget::DTableView *m_tableView;
