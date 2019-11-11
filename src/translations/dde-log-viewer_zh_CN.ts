@@ -122,7 +122,7 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <location filename="../displaycontent.cpp" line="897"/>
+        <location filename="../displaycontent.cpp" line="713"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -130,13 +130,13 @@
 <context>
     <name>File</name>
     <message>
-        <location filename="../displaycontent.cpp" line="890"/>
+        <location filename="../displaycontent.cpp" line="706"/>
         <source>New File</source>
         <translatorcomment>新建文件</translatorcomment>
         <translation type="unfinished">新建文件</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="895"/>
+        <location filename="../displaycontent.cpp" line="711"/>
         <source>Export File</source>
         <translatorcomment>导出文件</translatorcomment>
         <translation type="unfinished">导出文件</translation>
@@ -163,18 +163,18 @@
         <translation type="unfinished">应用列表：</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="136"/>
+        <location filename="../logdetailinfowidget.cpp" line="84"/>
         <source>User:</source>
         <translation type="unfinished">主机名：</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="141"/>
+        <location filename="../logdetailinfowidget.cpp" line="85"/>
         <source>PID:</source>
         <translation type="unfinished">进程号：</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="146"/>
         <location filename="../filtercontent.cpp" line="132"/>
+        <location filename="../logdetailinfowidget.cpp" line="86"/>
         <source>Status:</source>
         <translatorcomment>状态：</translatorcomment>
         <translation type="unfinished">状态：</translation>
@@ -183,68 +183,68 @@
 <context>
     <name>Level</name>
     <message>
-        <location filename="../displaycontent.cpp" line="203"/>
+        <location filename="../displaycontent.cpp" line="120"/>
         <source>warning</source>
         <translatorcomment>警告</translatorcomment>
         <translation type="unfinished">警告</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="204"/>
+        <location filename="../displaycontent.cpp" line="121"/>
         <source>debug</source>
         <translatorcomment>调试</translatorcomment>
         <translation type="unfinished">调试</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="208"/>
+        <location filename="../displaycontent.cpp" line="125"/>
         <location filename="../journalwork.cpp" line="114"/>
         <source>Emer</source>
         <translatorcomment>紧急</translatorcomment>
         <translation type="unfinished">紧急</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="209"/>
+        <location filename="../displaycontent.cpp" line="126"/>
         <location filename="../journalwork.cpp" line="115"/>
         <source>Alert</source>
         <translatorcomment>严重警告</translatorcomment>
         <translation type="unfinished">严重警告</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="210"/>
+        <location filename="../displaycontent.cpp" line="127"/>
         <location filename="../journalwork.cpp" line="116"/>
         <source>Critical</source>
         <translatorcomment>严重</translatorcomment>
         <translation type="unfinished">严重</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="211"/>
+        <location filename="../displaycontent.cpp" line="128"/>
         <location filename="../journalwork.cpp" line="117"/>
         <source>Error</source>
         <translatorcomment>错误</translatorcomment>
         <translation type="unfinished">错误</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="212"/>
+        <location filename="../displaycontent.cpp" line="129"/>
         <location filename="../journalwork.cpp" line="118"/>
         <source>Warning</source>
         <translatorcomment>警告</translatorcomment>
         <translation type="unfinished">警告</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="213"/>
+        <location filename="../displaycontent.cpp" line="130"/>
         <location filename="../journalwork.cpp" line="119"/>
         <source>Notice</source>
         <translatorcomment>注意</translatorcomment>
         <translation type="unfinished">注意</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="214"/>
+        <location filename="../displaycontent.cpp" line="131"/>
         <location filename="../journalwork.cpp" line="120"/>
         <source>Info</source>
         <translatorcomment>信息</translatorcomment>
         <translation type="unfinished">信息</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="215"/>
+        <location filename="../displaycontent.cpp" line="132"/>
         <location filename="../journalwork.cpp" line="121"/>
         <source>Debug</source>
         <translatorcomment>调试</translatorcomment>
@@ -274,7 +274,7 @@
     <name>Main</name>
     <message>
         <location filename="../main.cpp" line="46"/>
-        <source>Deepin Log Viewer</source>
+        <source>Log Viewer</source>
         <translatorcomment>日志收集工具</translatorcomment>
         <translation type="unfinished">日志收集工具</translation>
     </message>
@@ -307,7 +307,7 @@
         <translation type="unfinished">搜索</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="171"/>
+        <location filename="../displaycontent.cpp" line="88"/>
         <source>No search results</source>
         <translation type="unfinished">无搜索结果</translation>
     </message>
@@ -315,70 +315,70 @@
 <context>
     <name>Table</name>
     <message>
-        <location filename="../displaycontent.cpp" line="328"/>
-        <location filename="../displaycontent.cpp" line="448"/>
+        <location filename="../displaycontent.cpp" line="228"/>
+        <location filename="../displaycontent.cpp" line="348"/>
         <location filename="../logexportwidget.cpp" line="246"/>
         <source>User</source>
         <translatorcomment>主机名</translatorcomment>
         <translation type="unfinished">主机名</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="325"/>
-        <location filename="../displaycontent.cpp" line="449"/>
+        <location filename="../displaycontent.cpp" line="225"/>
+        <location filename="../displaycontent.cpp" line="349"/>
         <location filename="../logexportwidget.cpp" line="247"/>
         <source>Daemon</source>
         <translatorcomment>守护进程</translatorcomment>
         <translation type="unfinished">守护进程</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="326"/>
-        <location filename="../displaycontent.cpp" line="380"/>
-        <location filename="../displaycontent.cpp" line="447"/>
-        <location filename="../displaycontent.cpp" line="518"/>
+        <location filename="../displaycontent.cpp" line="226"/>
+        <location filename="../displaycontent.cpp" line="280"/>
+        <location filename="../displaycontent.cpp" line="347"/>
+        <location filename="../displaycontent.cpp" line="418"/>
         <location filename="../logexportwidget.cpp" line="245"/>
         <source>Date and Time</source>
         <translatorcomment>时间</translatorcomment>
         <translation type="unfinished">时间</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="327"/>
-        <location filename="../displaycontent.cpp" line="381"/>
-        <location filename="../displaycontent.cpp" line="450"/>
-        <location filename="../displaycontent.cpp" line="520"/>
-        <location filename="../displaycontent.cpp" line="571"/>
-        <location filename="../displaycontent.cpp" line="602"/>
+        <location filename="../displaycontent.cpp" line="227"/>
+        <location filename="../displaycontent.cpp" line="281"/>
+        <location filename="../displaycontent.cpp" line="350"/>
+        <location filename="../displaycontent.cpp" line="420"/>
+        <location filename="../displaycontent.cpp" line="471"/>
+        <location filename="../displaycontent.cpp" line="502"/>
         <location filename="../logexportwidget.cpp" line="250"/>
         <source>Info</source>
         <translation type="unfinished">消息</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="329"/>
+        <location filename="../displaycontent.cpp" line="229"/>
         <location filename="../logexportwidget.cpp" line="248"/>
         <source>PID</source>
         <translatorcomment>进程号</translatorcomment>
         <translation type="unfinished">进程号</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="382"/>
+        <location filename="../displaycontent.cpp" line="282"/>
         <source>Action</source>
         <translation type="unfinished">状态</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="324"/>
-        <location filename="../displaycontent.cpp" line="517"/>
+        <location filename="../displaycontent.cpp" line="224"/>
+        <location filename="../displaycontent.cpp" line="417"/>
         <location filename="../logexportwidget.cpp" line="249"/>
         <source>Level</source>
         <translatorcomment>级别</translatorcomment>
         <translation type="unfinished">级别</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="519"/>
+        <location filename="../displaycontent.cpp" line="419"/>
         <source>Source</source>
         <translatorcomment>来源</translatorcomment>
         <translation type="unfinished">来源</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="570"/>
+        <location filename="../displaycontent.cpp" line="470"/>
         <source>Status</source>
         <translatorcomment>状态</translatorcomment>
         <translation type="unfinished">状态</translation>
