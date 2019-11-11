@@ -68,7 +68,6 @@ void LogTreeView::initUI()
 
 void LogTreeView::paintEvent(QPaintEvent *event)
 {
-#if 0
     QPainter painter(viewport());
     painter.save();
     painter.setRenderHints(QPainter::Antialiasing);
@@ -83,7 +82,7 @@ void LogTreeView::paintEvent(QPaintEvent *event)
         cg = DPalette::Active;
     }
 
-    auto style = dynamic_cast<DStyle *>(DApplication::style());
+    //    auto style = dynamic_cast<DStyle *>(DApplication::style());
     auto *dAppHelper = DApplicationHelper::instance();
     auto palette = dAppHelper->applicationPalette();
 
@@ -91,19 +90,20 @@ void LogTreeView::paintEvent(QPaintEvent *event)
 
     QStyleOptionFrame option;
     initStyleOption(&option);
-    int radius = style->pixelMetric(DStyle::PM_FrameRadius, &option);
+    //    int radius = style->pixelMetric(DStyle::PM_FrameRadius, &option);
 
     QRect rect = viewport()->rect();
     QRectF clipRect(rect.x(), rect.y() - rect.height(), rect.width(), rect.height() * 2);
     QRectF subRect(rect.x(), rect.y() - rect.height(), rect.width(), rect.height());
     QPainterPath clipPath, subPath;
-    clipPath.addRoundedRect(clipRect, radius, radius);
-    subPath.addRect(subRect);
-    clipPath = clipPath.subtracted(subPath);
+    //    clipPath.addRoundedRect(clipRect, radius, radius);
+    //    subPath.addRect(subRect);
+    //    clipPath = clipPath.subtracted(subPath);
+    clipPath.addRect(rect);
 
     painter.fillPath(clipPath, bgBrush);
 
     painter.restore();
-#endif
+
     DTreeView::paintEvent(event);
 }
