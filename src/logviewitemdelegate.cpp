@@ -121,6 +121,8 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
             path.addRect(rect);
         } break;
         case QStyleOptionViewItem::OnlyOne: {
+            rect.setX(rect.x() + margin);          // left margin
+            rect.setWidth(rect.width() - margin);  // right margin
             path.addRoundedRect(rect, radius, radius);
         } break;
         default: {
