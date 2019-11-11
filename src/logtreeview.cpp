@@ -57,6 +57,9 @@ void LogTreeView::initUI()
     setSelectionMode(QAbstractItemView::SingleSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     this->header()->setStretchLastSection(true);
+
+    this->header()->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    this->header()->setFixedHeight(37);
     setRootIsDecorated(false);
     setItemsExpandable(false);
     setFrameStyle(QFrame::NoFrame);
@@ -65,6 +68,7 @@ void LogTreeView::initUI()
 
 void LogTreeView::paintEvent(QPaintEvent *event)
 {
+#if 0
     QPainter painter(viewport());
     painter.save();
     painter.setRenderHints(QPainter::Antialiasing);
@@ -100,5 +104,6 @@ void LogTreeView::paintEvent(QPaintEvent *event)
     painter.fillPath(clipPath, bgBrush);
 
     painter.restore();
+#endif
     DTreeView::paintEvent(event);
 }

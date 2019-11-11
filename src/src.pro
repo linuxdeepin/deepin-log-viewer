@@ -32,7 +32,8 @@ SOURCES += \
     logviewheaderview.cpp \
     logviewitemdelegate.cpp \
     logiconbutton.cpp \
-    logspinnerwidget.cpp
+    logspinnerwidget.cpp \
+    logdetailinfowidget.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -53,7 +54,8 @@ HEADERS += \
     logviewheaderview.h \
     logviewitemdelegate.h \
     logiconbutton.h \
-    logspinnerwidget.h
+    logspinnerwidget.h \
+    logdetailinfowidget.h
 
 
 TRANSLATIONS += translations/dde-log-viewer_zh_CN.ts

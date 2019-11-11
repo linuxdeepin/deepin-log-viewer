@@ -73,98 +73,15 @@ DisplayContent::~DisplayContent()
 
 void DisplayContent::initUI()
 {
-    // init pointer
-    m_dateTime = new DLabel(this);
-    DPalette pa = DApplicationHelper::instance()->palette(m_dateTime);
-    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_dateTime->setPalette(pa);
-    DApplicationHelper::instance()->setPalette(m_dateTime, pa);
-
-    m_userName = new DLabel(this);
-    pa = DApplicationHelper::instance()->palette(m_userName);
-    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_userName->setPalette(pa);
-    DApplicationHelper::instance()->setPalette(m_userName, pa);
-
-    m_pid = new DLabel(this);
-    pa = DApplicationHelper::instance()->palette(m_pid);
-    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_pid->setPalette(pa);
-    DApplicationHelper::instance()->setPalette(m_pid, pa);
-
-    m_status = new DLabel(this);
-    pa = DApplicationHelper::instance()->palette(m_status);
-    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_status->setPalette(pa);
-    DApplicationHelper::instance()->setPalette(m_status, pa);
-
-    m_level = new LogIconButton(this);
-    pa = DApplicationHelper::instance()->palette(m_level);
-    pa.setBrush(DPalette::ButtonText, pa.color(DPalette::TextTips));
-    //    m_level->setPalette(pa);
-    DApplicationHelper::instance()->setPalette(m_level, pa);
-
-    m_textBrowser = new DTextBrowser(this);
-    pa = DApplicationHelper::instance()->palette(m_textBrowser);
-    pa.setBrush(DPalette::Text, pa.color(DPalette::TextTips));
-    //    m_textBrowser->setPalette(pa);
-    DApplicationHelper::instance()->setPalette(m_textBrowser, pa);
-    m_textBrowser->setFrameShape(QFrame::NoFrame);
-
-    m_textBrowser->viewport()->setAutoFillBackground(false);
-
     QVBoxLayout *vLayout = new QVBoxLayout;
-
     // set table for display log data
     initTableView();
-
-    // display single table row's detail info
-    QVBoxLayout *vLy = new QVBoxLayout;
-
-    QHBoxLayout *hLy1 = new QHBoxLayout;
-    m_daemonName = new DLabel(this);
-    QFont font;
-    font.setBold(true);
-    m_daemonName->setFont(font);
-    hLy1->addWidget(m_daemonName);
-    hLy1->addStretch(1);
-    hLy1->addWidget(m_dateTime);
-
-    QHBoxLayout *hLy2 = new QHBoxLayout;
-
-    QHBoxLayout *hLy21 = new QHBoxLayout;
-    m_userLabel = new DLabel(DApplication::translate("Label", "User:"), this);
-    hLy21->addWidget(m_userLabel);
-    hLy21->addWidget(m_userName, 1);
-
-    QHBoxLayout *hLy22 = new QHBoxLayout;
-    m_pidLabel = new DLabel(DApplication::translate("Label", "PID:"), this);
-    hLy22->addWidget(m_pidLabel);
-    hLy22->addWidget(m_pid, 1);
-
-    QHBoxLayout *hLy23 = new QHBoxLayout;
-    m_statusLabel = new DLabel(DApplication::translate("Label", "Status:"), this);
-    hLy23->addWidget(m_statusLabel);
-    hLy23->addWidget(m_status, 1);
-
-    hLy2->addLayout(hLy21, 1);
-    hLy2->addLayout(hLy22, 1);
-    hLy2->addLayout(hLy23, 1);
-    hLy2->addStretch(1);
-    hLy2->addWidget(m_level);
-
-    vLy->addLayout(hLy1);
-    vLy->addLayout(hLy2);
-    DHorizontalLine *hline = new DHorizontalLine;
-    //    hline->setLineWidth(3);
-    vLy->addWidget(hline);
-    vLy->addWidget(m_textBrowser, 2);
-    vLy->setContentsMargins(0, 0, 0, 0);
 
     // layout for widgets
     vLayout->addWidget(m_treeView, 5);
 
     noResultLabel = new DLabel(this);
+    DPalette pa;
     pa = DApplicationHelper::instance()->palette(noResultLabel);
     pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
     DApplicationHelper::instance()->setPalette(noResultLabel, pa);
@@ -186,12 +103,11 @@ void DisplayContent::initUI()
     //    vLayout->addWidget(m_noResultWdg, 10);
     //    m_noResultWdg->hide();
 
-    vLayout->addLayout(vLy, 3);
+    m_detailWgt = new logDetailInfoWidget;
+    vLayout->addWidget(m_detailWgt, 3);
     vLayout->setContentsMargins(0, 0, 0, 0);
 
     this->setLayout(vLayout);
-
-    cleanText();
 
     DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
     slot_themeChanged(ct);
@@ -217,26 +133,6 @@ void DisplayContent::initMap()
     m_icon_name_map.insert("Debug", "");
 }
 
-void DisplayContent::cleanText()
-{
-    m_dateTime->hide();
-
-    m_userName->hide();
-    m_userLabel->hide();
-
-    m_pid->hide();
-    m_pidLabel->hide();
-
-    m_status->hide();
-    m_statusLabel->hide();
-
-    m_level->hide();
-
-    m_daemonName->hide();
-
-    m_textBrowser->clear();
-}
-
 void DisplayContent::initTableView()
 {
     m_treeView = new LogTreeView(this);
@@ -250,6 +146,9 @@ void DisplayContent::initConnections()
 {
     connect(m_treeView, SIGNAL(clicked(const QModelIndex &)), this,
             SLOT(slot_tableItemClicked(const QModelIndex &)));
+
+    connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString)),
+            m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, QStandardItemModel *, QString)));
     connect(&m_logFileParse, SIGNAL(dpkgFinished()), this, SLOT(slot_dpkgFinished()));
     connect(&m_logFileParse, SIGNAL(xlogFinished()), this, SLOT(slot_XorgFinished()));
     connect(&m_logFileParse, SIGNAL(bootFinished()), this, SLOT(slot_bootFinished()));
@@ -667,55 +566,6 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-void DisplayContent::fillDetailInfo(QString deamonName, QString usrName, QString pid,
-                                    QString dateTime, QModelIndex level, QString msg,
-                                    QString status)
-{
-    m_dateTime->show();
-    m_daemonName->show();
-    m_level->show();
-    m_userName->show();
-    m_userLabel->show();
-    m_pid->show();
-    m_pidLabel->show();
-    m_status->show();
-    m_statusLabel->show();
-
-    deamonName.isEmpty() ? m_daemonName->hide() : m_daemonName->setText(deamonName);
-
-    if (!level.isValid()) {
-        m_level->hide();
-    } else {
-        QIcon icon = m_pModel->item(level.row())->icon();
-        m_level->setIcon(icon);
-        m_level->setText(m_pModel->item(level.row())->data(Qt::UserRole + 6).toString());
-    }
-
-    dateTime.isEmpty() ? m_dateTime->hide() : m_dateTime->setText(dateTime);
-
-    if (usrName.isEmpty()) {
-        m_userName->hide();
-        m_userLabel->hide();
-    } else {
-        m_userName->setText(usrName);
-    }
-
-    if (pid.isEmpty()) {
-        m_pid->hide();
-        m_pidLabel->hide();
-    } else {
-        m_pid->setText(pid);
-    }
-
-    if (status.isEmpty()) {
-        m_status->hide();
-        m_statusLabel->hide();
-    } else {
-        m_status->setText(status);
-    }
-    m_textBrowser->setText(msg);
-}
-
 QString DisplayContent::getAppName(QString filePath)
 {
     QString ret;
@@ -750,45 +600,10 @@ bool DisplayContent::isAuthProcessAlive()
 
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
-    cleanText();
-
     if (!index.isValid())
         return;
 
-    // get hostname.
-    utsname _utsname;
-    uname(&_utsname);
-    QString hostname = QString(_utsname.nodename);
-
-    QString dataStr = index.data(Qt::UserRole + 1).toString();
-
-    if (dataStr.contains(DPKG_TABLE_DATA)) {
-        fillDetailInfo("Dpkg", hostname, "", m_pModel->item(index.row(), 0)->text(), QModelIndex(),
-                       m_pModel->item(index.row(), 1)->text(),
-                       m_pModel->item(index.row(), 2)->text());
-    } else if (dataStr.contains(XORG_TABLE_DATA)) {
-        fillDetailInfo("Xorg", hostname, "", "", QModelIndex(),
-                       m_pModel->item(index.row(), 0)->text());
-    } else if (dataStr.contains(BOOT_TABLE_DATA)) {
-        fillDetailInfo("Boot", hostname, "", "", QModelIndex(),
-                       m_pModel->item(index.row(), 1)->text(),
-                       m_pModel->item(index.row(), 0)->text());
-    } else if (dataStr.contains(KERN_TABLE_DATA)) {
-        fillDetailInfo(m_pModel->item(index.row(), 2)->text(),
-                       /*m_pModel->item(index.row(), 1)->text()*/ hostname, "",
-                       m_pModel->item(index.row(), 0)->text(), QModelIndex(),
-                       m_pModel->item(index.row(), 3)->text());
-    } else if (dataStr.contains(JOUR_TABLE_DATA)) {
-        fillDetailInfo(m_pModel->item(index.row(), 1)->text(),
-                       /*m_pModel->item(index.row(), 4)->text()*/ hostname,
-                       m_pModel->item(index.row(), 5)->text(),
-                       m_pModel->item(index.row(), 2)->text(), index,
-                       m_pModel->item(index.row(), 3)->text());
-    } else if (dataStr.contains(APP_TABLE_DATA)) {
-        fillDetailInfo(getAppName(m_curAppLog), hostname, "",
-                       m_pModel->item(index.row(), 1)->text(), index,
-                       m_pModel->item(index.row(), 3)->text());
-    }
+    emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
 }
 
 void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
@@ -843,7 +658,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     }
     m_curListIdx = index;
 
-    cleanText();
+    m_detailWgt->cleanText();
     m_pModel->clear();
 
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
@@ -1123,7 +938,7 @@ void DisplayContent::slot_searchResult(QString str)
     if (0 == m_pModel->rowCount()) {
         noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noResultLabel->show();
-        cleanText();
+        m_detailWgt->cleanText();
     } else {
         noResultLabel->hide();
     }

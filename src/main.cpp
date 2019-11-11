@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     a.setApplicationVersion(DApplication::buildVersion("20191016"));
     a.setProductIcon(QIcon::fromTheme("dde-log-viewer"));
     //    a.setWindowIcon(QIcon("://images/logo.svg"));
-    a.setProductName(DApplication::translate("Main", "Deepin Log Viewer"));
+    a.setProductName(DApplication::translate("Main", "Log Viewer"));
     a.setApplicationDescription(
         DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
     DApplicationSettings settings;

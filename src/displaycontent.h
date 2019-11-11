@@ -30,6 +30,7 @@
 #include <DTextBrowser>
 #include <QStandardItemModel>
 #include <QWidget>
+#include "logdetailinfowidget.h"
 #include "logfileparser.h"
 #include "logiconbutton.h"
 #include "logsearchnoresultwidget.h"
@@ -47,7 +48,6 @@ public:
 private:
     void initUI();
     void initMap();
-    void cleanText();
     void initTableView();
     void setTableViewData();
     void initConnections();
@@ -70,15 +70,13 @@ private:
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
 
-    void fillDetailInfo(QString deamonName, QString usrName, QString pid, QString dateTime,
-                        QModelIndex level, QString msg, QString status = "");
-
     QString getAppName(QString filePath);
 
     bool isAuthProcessAlive();
 
 signals:
     void loadMoreInfo();
+    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name);
 
 public slots:
     void slot_tableItemClicked(const QModelIndex &index);
@@ -111,10 +109,7 @@ private:
     //    Dtk::Widget::DTableView *m_tableView;
     LogTreeView *m_treeView;
     QStandardItemModel *m_pModel;
-    Dtk::Widget::DLabel *m_daemonName, *m_dateTime, *m_userName, *m_pid, *m_status;
-    LogIconButton *m_level;
-    Dtk::Widget::DLabel *m_userLabel, *m_pidLabel, *m_statusLabel;
-    Dtk::Widget::DTextBrowser *m_textBrowser;
+    logDetailInfoWidget *m_detailWgt {nullptr};
     Dtk::Widget::DLabel *noResultLabel {nullptr};
     QModelIndex m_curListIdx;
     QMap<QString, QString> m_transDict;

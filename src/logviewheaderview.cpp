@@ -86,7 +86,9 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     QRect textRect(contentRect.x() + margin, contentRect.y(), contentRect.width() - margin * 3 - 8,
                    contentRect.height());
     QString title = model()->headerData(logicalIndex, orientation(), Qt::DisplayRole).toString();
-    int align = model()->headerData(logicalIndex, orientation(), Qt::TextAlignmentRole).toInt();
+    //    int align = model()->headerData(logicalIndex, orientation(),
+    //    Qt::TextAlignmentRole).toInt();
+    int align = Qt::AlignLeft | Qt::AlignVCenter;
     painter->drawText(textRect, static_cast<int>(align), title);
 
     // sort indicator

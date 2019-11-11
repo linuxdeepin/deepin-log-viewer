@@ -85,13 +85,15 @@ void LogCollectorMain::initUI()
     /** midRight frame */
     m_midRightWgt = new DisplayContent(layoutWidget);
     m_vLayout->addWidget(m_midRightWgt, 1);
-    m_vLayout->setContentsMargins(6, 0, 0, 0);
+    m_vLayout->setContentsMargins(10, 0, 0, 0);
     m_vLayout->setSpacing(6);
 
     m_hSplitter->addWidget(layoutWidget);
+    layoutWidget->setContentsMargins(0, 10, 0, 10);
 
     m_hLayout->addWidget(m_hSplitter);
     m_hLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
+    m_hLayout->setContentsMargins(0, 0, 10, 0);
 
     m_hSplitter->setStretchFactor(0, 5);
     m_hSplitter->setStretchFactor(1, 15);
