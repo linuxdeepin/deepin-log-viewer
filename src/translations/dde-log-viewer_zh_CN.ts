@@ -4,46 +4,46 @@
 <context>
     <name>Button</name>
     <message>
-        <location filename="../filtercontent.cpp" line="64"/>
+        <location filename="../filtercontent.cpp" line="65"/>
         <source>All</source>
         <translatorcomment>全部</translatorcomment>
         <translation type="unfinished">全部</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="68"/>
+        <location filename="../filtercontent.cpp" line="69"/>
         <source>Today</source>
         <translatorcomment>今天</translatorcomment>
         <translation type="unfinished">今天</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="71"/>
+        <location filename="../filtercontent.cpp" line="72"/>
         <source>3 days</source>
         <translatorcomment>近三天</translatorcomment>
         <translation type="unfinished">近三天</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="74"/>
+        <location filename="../filtercontent.cpp" line="75"/>
         <source>1 week</source>
         <translation type="unfinished">近一周</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="77"/>
+        <location filename="../filtercontent.cpp" line="78"/>
         <source>1 month</source>
         <translation type="unfinished">近一个月</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="80"/>
+        <location filename="../filtercontent.cpp" line="81"/>
         <source>3 months</source>
         <translation type="unfinished">近三个月</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="95"/>
+        <location filename="../filtercontent.cpp" line="96"/>
         <source>Reset</source>
         <translatorcomment>重置</translatorcomment>
         <translation type="unfinished">重置</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="142"/>
+        <location filename="../filtercontent.cpp" line="144"/>
         <source>Export</source>
         <translatorcomment>导出</translatorcomment>
         <translation type="unfinished">导出</translation>
@@ -64,56 +64,56 @@
 <context>
     <name>ComboBox</name>
     <message>
-        <location filename="../filtercontent.cpp" line="109"/>
+        <location filename="../filtercontent.cpp" line="111"/>
         <source>Emer</source>
         <translatorcomment>紧急</translatorcomment>
         <translation type="unfinished">紧急</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="110"/>
+        <location filename="../filtercontent.cpp" line="112"/>
         <source>Alert</source>
         <translatorcomment>严重警告</translatorcomment>
         <translation type="unfinished">严重警告</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="111"/>
+        <location filename="../filtercontent.cpp" line="113"/>
         <source>Critical</source>
         <translatorcomment>严重</translatorcomment>
         <translation type="unfinished">严重</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="112"/>
+        <location filename="../filtercontent.cpp" line="114"/>
         <source>Error</source>
         <translatorcomment>错误</translatorcomment>
         <translation type="unfinished">错误</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="113"/>
+        <location filename="../filtercontent.cpp" line="115"/>
         <source>Warning</source>
         <translatorcomment>警告</translatorcomment>
         <translation type="unfinished">警告</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="114"/>
+        <location filename="../filtercontent.cpp" line="116"/>
         <source>Notice</source>
         <translatorcomment>注意</translatorcomment>
         <translation type="unfinished">注意</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="115"/>
         <location filename="../filtercontent.cpp" line="117"/>
+        <location filename="../filtercontent.cpp" line="119"/>
         <source>Info</source>
         <translatorcomment>信息</translatorcomment>
         <translation type="unfinished">信息</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="116"/>
+        <location filename="../filtercontent.cpp" line="118"/>
         <source>Debug</source>
         <translatorcomment>调试</translatorcomment>
         <translation type="unfinished">调试</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="134"/>
+        <location filename="../filtercontent.cpp" line="136"/>
         <source>All</source>
         <translatorcomment>全部</translatorcomment>
         <translation type="unfinished">全部</translation>
@@ -145,19 +145,18 @@
 <context>
     <name>Label</name>
     <message>
-        <location filename="../filtercontent.cpp" line="62"/>
+        <location filename="../filtercontent.cpp" line="63"/>
         <source>Period:</source>
         <translatorcomment>周期：</translatorcomment>
         <translation type="unfinished">周期：</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="106"/>
-        <source>Level:</source>
-        <translatorcomment>级别：</translatorcomment>
-        <translation type="unfinished">级别：</translation>
+        <location filename="../filtercontent.cpp" line="107"/>
+        <source>Level:    </source>
+        <translation>级别： </translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="124"/>
+        <location filename="../filtercontent.cpp" line="126"/>
         <source>Application list:</source>
         <translatorcomment>应用列表：</translatorcomment>
         <translation type="unfinished">应用列表：</translation>
@@ -173,7 +172,7 @@
         <translation type="unfinished">进程号：</translation>
     </message>
     <message>
-        <location filename="../filtercontent.cpp" line="132"/>
+        <location filename="../filtercontent.cpp" line="134"/>
         <location filename="../logdetailinfowidget.cpp" line="86"/>
         <source>Status:</source>
         <translatorcomment>状态：</translatorcomment>
@@ -254,18 +253,18 @@
 <context>
     <name>LogFileParser</name>
     <message>
-        <location filename="../logfileparser.cpp" line="340"/>
-        <location filename="../logfileparser.cpp" line="345"/>
+        <location filename="../logfileparser.cpp" line="339"/>
+        <location filename="../logfileparser.cpp" line="344"/>
         <source>infomation</source>
         <translation type="unfinished">提示</translation>
     </message>
     <message>
-        <location filename="../logfileparser.cpp" line="341"/>
+        <location filename="../logfileparser.cpp" line="340"/>
         <source>Please use &apos;sudo&apos; run this application</source>
         <translation type="unfinished">请使用sudo权限运行该程序</translation>
     </message>
     <message>
-        <location filename="../logfileparser.cpp" line="346"/>
+        <location filename="../logfileparser.cpp" line="345"/>
         <source>The password is incorrect,please try again</source>
         <translation type="unfinished">密码输入错误，请重试</translation>
     </message>

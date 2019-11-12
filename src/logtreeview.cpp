@@ -44,9 +44,7 @@ void LogTreeView::initUI()
     setItemDelegate(m_itemDelegate);
 
     m_headerDelegate = new LogViewHeaderView(Qt::Horizontal, this);
-    //    this->setHorizontalHeader(m_headerDelegate);
     setHeader(m_headerDelegate);
-    //    this->verticalHeader()->hide();
 
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setRootIsDecorated(false);

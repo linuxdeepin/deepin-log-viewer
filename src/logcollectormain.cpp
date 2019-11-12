@@ -66,7 +66,31 @@ void LogCollectorMain::initUI()
     /** inherit QMainWidow, why need new centralWidget?? */
     this->setCentralWidget(new DWidget());
 
+    m_hLayout = new QHBoxLayout;
+
+    /** left frame */
+    m_logCatelogue = new LogListView();
+    m_hLayout->addWidget(m_logCatelogue, 1);
+
+    m_vLayout = new QVBoxLayout;
+    /** topRight frame */
+    m_topRightWgt = new FilterContent();
+    m_vLayout->addWidget(m_topRightWgt);
+    /** midRight frame */
+    m_midRightWgt = new DisplayContent();
+    m_vLayout->addWidget(m_midRightWgt, 1);
+    m_vLayout->setContentsMargins(0, 10, 0, 10);
+    m_vLayout->setSpacing(6);
+
+    m_hLayout->addLayout(m_vLayout, 10);
+    m_hLayout->setContentsMargins(0, 0, 10, 0);
+    m_hLayout->setSpacing(10);
+
+    this->centralWidget()->setLayout(m_hLayout);
+
+#if 0
     m_hLayout = new QHBoxLayout(this->centralWidget());
+
     m_hSplitter = new QSplitter(this->centralWidget());
     m_hSplitter->setOrientation(Qt::Horizontal);
 
@@ -97,6 +121,7 @@ void LogCollectorMain::initUI()
 
     m_hSplitter->setStretchFactor(0, 5);
     m_hSplitter->setStretchFactor(1, 15);
+#endif
 
 #if 0
     // filter button

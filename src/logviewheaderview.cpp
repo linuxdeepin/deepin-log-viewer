@@ -89,7 +89,13 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     //    int align = model()->headerData(logicalIndex, orientation(),
     //    Qt::TextAlignmentRole).toInt();
     int align = Qt::AlignLeft | Qt::AlignVCenter;
-    painter->drawText(textRect, static_cast<int>(align), title);
+    if (logicalIndex == 0) {
+        QRect col0Rect = textRect;
+        col0Rect.setX(textRect.x() + margin - 2);
+        painter->drawText(col0Rect, static_cast<int>(align), title);
+    } else {
+        painter->drawText(textRect, static_cast<int>(align), title);
+    }
 
     // sort indicator
     if (isSortIndicatorShown() && logicalIndex == sortIndicatorSection()) {

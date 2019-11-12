@@ -40,6 +40,7 @@
 
 #define BUTTON_WIDTH_MIN 68
 #define BUTTON_HEIGHT_MIN 36
+#define BUTTON_EXPORT_WIDTH_MIN 142
 
 DWIDGET_USE_NAMESPACE
 
@@ -61,23 +62,35 @@ void FilterContent::initUI()
     hLayout_period = new QHBoxLayout;
     periodLabel = new DLabel(DApplication::translate("Label", "Period:"), this);
     m_btnGroup = new QButtonGroup;
+
     LogPeriodButton *m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
     m_allBtn->setObjectName("allBtn");
+    m_allBtn->setFixedSize(QSize(BUTTON_WIDTH_MIN, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_allBtn, 0);
+
     LogPeriodButton *m_todayBtn =
         new LogPeriodButton(DApplication::translate("Button", "Today"), this);
+    m_todayBtn->setFixedSize(QSize(64, 40));
     m_btnGroup->addButton(m_todayBtn, 1);
+
     LogPeriodButton *m_threeDayBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
+    m_threeDayBtn->setFixedSize(QSize(78, 40));
     m_btnGroup->addButton(m_threeDayBtn, 2);
+
     LogPeriodButton *m_lastWeekBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
+    m_lastWeekBtn->setFixedSize(QSize(78, 40));
     m_btnGroup->addButton(m_lastWeekBtn, 3);
+
     LogPeriodButton *m_lastMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
+    m_lastMonthBtn->setFixedSize(QSize(92, 40));
     m_btnGroup->addButton(m_lastMonthBtn, 4);
+
     LogPeriodButton *m_threeMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
+    m_threeMonthBtn->setFixedSize(QSize(92, 40));
     m_btnGroup->addButton(m_threeMonthBtn, 5);
 
     setUeButtonSytle();
@@ -103,9 +116,10 @@ void FilterContent::initUI()
     hLayout_all = new QHBoxLayout;
 
     QHBoxLayout *hLayout_lv = new QHBoxLayout;
-    lvTxt = new DLabel(DApplication::translate("Label", "Level:"), this);
+    lvTxt = new DLabel(DApplication::translate("Label", "Level:    "), this);
     cbx_lv = new DComboBox(this);
-    cbx_lv->setMinimumWidth(120);
+    //    cbx_lv->setMinimumWidth(120);
+    cbx_lv->setFixedSize(QSize(208, 38));
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "Emer")
                                    << DApplication::translate("ComboBox", "Alert")
                                    << DApplication::translate("ComboBox", "Critical")
@@ -137,10 +151,10 @@ void FilterContent::initUI()
     hLayout_status->addWidget(cbx_status, 1);
     hLayout_all->addLayout(hLayout_status);
 
-    hLayout_all->addStretch();
+    hLayout_all->addStretch(1);
 
     DPushButton *exportBtn = new DPushButton(DApplication::translate("Button", "Export"), this);
-    exportBtn->setMinimumSize(QSize(BUTTON_WIDTH_MIN * 2, BUTTON_HEIGHT_MIN));
+    exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(exportBtn, 7);
     hLayout_all->addWidget(exportBtn);
 
@@ -238,7 +252,6 @@ void FilterContent::setUeButtonSytle()
         LogPeriodButton *btn = static_cast<LogPeriodButton *>(abtn);
         btn->setFlat(true);
         btn->setCheckable(true);
-        btn->setMinimumSize(QSize(BUTTON_WIDTH_MIN, BUTTON_HEIGHT_MIN));
         if (btn->objectName() == "allBtn")
             btn->setChecked(true);
     }

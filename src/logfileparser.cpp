@@ -87,7 +87,7 @@ void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
 {
     QProcess proc;
     proc.start("cat /var/log/dpkg.log");  // file path is fixed. so write cmd direct
-    proc.waitForFinished();
+    proc.waitForFinished(-1);
     QString output = proc.readAllStandardOutput();
     proc.close();
 
@@ -120,7 +120,7 @@ void LogFileParser::parseByXlog(QStringList &xList)
 {
     QProcess proc;
     proc.start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
-    proc.waitForFinished();
+    proc.waitForFinished(-1);
 
     if (isErroCommand(QString(proc.readAllStandardError())))
         return;
@@ -158,12 +158,11 @@ void LogFileParser::parseByBoot(QList<LOG_MSG_BOOT> &bList)
     proc.start("/bin/bash", arg);  // file path is fixed. So write cmd direct
     proc.waitForFinished();
 #else
-
     QProcess proc;
     proc.setProcessChannelMode(QProcess::MergedChannels);
     proc.start("pkexec", QStringList() << "logViewerAuth"
                                        << "/var/log/boot.log");
-    proc.waitForFinished();
+    proc.waitForFinished(-1);
 
 #endif
 
@@ -224,7 +223,7 @@ void LogFileParser::parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms)
     proc.setProcessChannelMode(QProcess::MergedChannels);
     proc.start("pkexec", QStringList() << "logViewerAuth"
                                        << "/var/log/kern.log");
-    proc.waitForFinished();
+    proc.waitForFinished(-1);
 
 #endif
 
@@ -283,7 +282,7 @@ void LogFileParser::parseByApp(QString path, QList<LOG_MSG_APPLICATOIN> &appList
     arg << "-c" << QString("cat %1").arg(path);
 
     proc.start("/bin/bash", arg);
-    proc.waitForFinished();
+    proc.waitForFinished(-1);
 
     if (isErroCommand(QString(proc.readAllStandardError())))
         return;

@@ -188,7 +188,15 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
         m_level->setText(m_pModel->item(level.row())->data(Qt::UserRole + 6).toString());
     }
 
-    dateTime.isEmpty() ? m_dateTime->hide() : m_dateTime->setText(dateTime);
+    if (dateTime.isEmpty()) {
+        m_dateTime->hide();
+    } else {
+        QStringList dtlist = dateTime.split(".");
+        if (dtlist.count() == 2)
+            m_dateTime->setText(dtlist[0]);
+        else
+            m_dateTime->setText(dateTime);
+    }
 
     if (usrName.isEmpty()) {
         m_userName->hide();

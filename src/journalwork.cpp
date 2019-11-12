@@ -57,7 +57,7 @@ void journalWork::doWork()
     //! by time: --since="xxxx-xx-xx" --until="xxxx-xx-xx" exclude U
     //! by priority: journalctl PRIORITY=x
     proc.start("journalctl", m_arg);
-    proc.waitForFinished();
+    proc.waitForFinished(-1);
 
     QByteArray output = proc.readAllStandardOutput();
     proc.close();
