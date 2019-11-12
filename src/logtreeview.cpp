@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QHeaderView>
+#include <QScrollBar>
 #include "structdef.h"
 
 DWIDGET_USE_NAMESPACE
@@ -104,4 +105,12 @@ void LogTreeView::paintEvent(QPaintEvent *event)
     painter.restore();
 
     DTreeView::paintEvent(event);
+}
+
+void LogTreeView::keyPressEvent(QKeyEvent *event)
+{
+    DTreeView::keyPressEvent(event);
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down) {
+        emit clicked(this->currentIndex());
+    }
 }

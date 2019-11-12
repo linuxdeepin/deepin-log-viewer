@@ -106,7 +106,7 @@ void DisplayContent::initUI()
     m_detailWgt = new logDetailInfoWidget;
     vLayout->addWidget(m_detailWgt, 3);
     vLayout->setContentsMargins(0, 0, 0, 0);
-    vLayout->setSpacing(0);
+    vLayout->setSpacing(3);
 
     this->setLayout(vLayout);
 

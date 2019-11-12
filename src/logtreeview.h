@@ -23,6 +23,7 @@
 #define LOGTREEVIEW_H
 
 #include <DTreeView>
+#include <QKeyEvent>
 #include <QStandardItem>
 #include "logviewheaderview.h"
 #include "logviewitemdelegate.h"
@@ -35,6 +36,8 @@ public:
 private:
     void initUI();
     void paintEvent(QPaintEvent *event);
+
+    void keyPressEvent(QKeyEvent *event);
 
 private:
     LogViewItemDelegate *m_itemDelegate;

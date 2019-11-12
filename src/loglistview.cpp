@@ -20,6 +20,7 @@
  */
 
 #include <DApplication>
+#include <QDebug>
 #include <QHeaderView>
 #include <QItemSelectionModel>
 #include <QMargins>
@@ -133,8 +134,8 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
     for (auto i = 0; i < m_pModel->rowCount(); i++) {
         QStandardItem *item = m_pModel->item(i);
 
-        setCustomFont(item);
         if (item) {
+            setCustomFont(item);
             if (item->data(ITEM_DATE_ROLE).toString() == JOUR_TREE_DATA) {
                 _itemIcon = icon + "system.svg";
             } else if (item->data(ITEM_DATE_ROLE).toString() == KERN_TREE_DATA) {
@@ -163,9 +164,10 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
     // set itembackground color
     DPalette pa = DApplicationHelper::instance()->palette(this);
     pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
-    pa.setColor(DPalette::Background, pa.color(DPalette::Base));
-    //    this->setPalette(pa);
+    pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
+    this->setPalette(pa);
     DApplicationHelper::instance()->setPalette(this, pa);
+
     this->setAutoFillBackground(true);
 }
 

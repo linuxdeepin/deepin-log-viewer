@@ -42,18 +42,12 @@ int main(int argc, char *argv[])
     a.setApplicationName("dde-log-viewer");
     a.setApplicationVersion(DApplication::buildVersion("20191016"));
     a.setProductIcon(QIcon::fromTheme("dde-log-viewer"));
-    //    a.setWindowIcon(QIcon("://images/logo.svg"));
     a.setProductName(DApplication::translate("Main", "Log Viewer"));
     a.setApplicationDescription(
         DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
     DApplicationSettings settings;
-    //    a.setTheme("dark");
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
-
-    //    if (!a.setSingleInstance("dde-log-viewer")) {
-    //        return 0;
-    //    }
 
     if (!DGuiApplicationHelper::instance()->setSingleInstance("dde-log-viewer"))
         return 0;
