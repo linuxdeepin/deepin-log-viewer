@@ -33,6 +33,9 @@ void logDetailInfoWidget::cleanText()
     m_pid->hide();
     m_pidLabel->hide();
 
+    m_action->hide();
+    m_actionLabel->hide();
+
     m_status->hide();
     m_statusLabel->hide();
 
@@ -69,6 +72,12 @@ void logDetailInfoWidget::initUI()
     //    m_pid->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_pid, pa);
 
+    m_action = new DLabel(this);
+    pa = DApplicationHelper::instance()->palette(m_action);
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
+    //    m_status->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(m_action, pa);
+
     m_status = new DLabel(this);
     pa = DApplicationHelper::instance()->palette(m_status);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
@@ -84,6 +93,7 @@ void logDetailInfoWidget::initUI()
     m_userLabel = new DLabel(DApplication::translate("Label", "User:"), this);
     m_pidLabel = new DLabel(DApplication::translate("Label", "PID:"), this);
     m_statusLabel = new DLabel(DApplication::translate("Label", "Status:"), this);
+    m_actionLabel = new DLabel(DApplication::translate("Label", "Action:"), this);
 
     DHorizontalLine *hline = new DHorizontalLine;
 
@@ -115,10 +125,14 @@ void logDetailInfoWidget::initUI()
     QHBoxLayout *h23 = new QHBoxLayout;
     h23->addWidget(m_statusLabel);
     h23->addWidget(m_status, 1);
+    QHBoxLayout *h24 = new QHBoxLayout;
+    h24->addWidget(m_actionLabel);
+    h24->addWidget(m_action, 1);
 
     h2->addLayout(h21, 1);
     h2->addLayout(h22, 1);
     h2->addLayout(h23, 1);
+    h2->addLayout(h24, 1);
     h2->addStretch(1);
     h2->addWidget(m_level);
 
@@ -166,7 +180,7 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 
 void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QString pid,
                                          QString dateTime, QModelIndex level, QString msg,
-                                         QString status)
+                                         QString status, QString action)
 {
     m_dateTime->show();
     m_daemonName->show();
@@ -177,6 +191,8 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     m_pidLabel->show();
     m_status->show();
     m_statusLabel->show();
+    m_action->show();
+    m_actionLabel->show();
 
     deamonName.isEmpty() ? m_daemonName->hide() : m_daemonName->setText(deamonName);
 
@@ -218,6 +234,14 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     } else {
         m_status->setText(status);
     }
+
+    if (action.isEmpty()) {
+        m_action->hide();
+        m_actionLabel->hide();
+    } else {
+        m_action->setText(action);
+    }
+
     m_textBrowser->setText(msg);
 }
 
@@ -243,7 +267,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
 
     if (dataStr.contains(DPKG_TABLE_DATA)) {
         fillDetailInfo("Dpkg", hostname, "", m_pModel->item(index.row(), 0)->text(), QModelIndex(),
-                       m_pModel->item(index.row(), 1)->text(),
+                       m_pModel->item(index.row(), 1)->text(), "",
                        m_pModel->item(index.row(), 2)->text());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {
         fillDetailInfo("Xorg", hostname, "", "", QModelIndex(),

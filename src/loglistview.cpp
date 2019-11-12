@@ -58,7 +58,7 @@ void LogListView::initUI()
     this->setItemSpacing(0);
     this->setViewportMargins(10, 10, 10, 0);
 
-    const QMargins ListViweItemMargin(10, 0, 0, 0);
+    const QMargins ListViweItemMargin(5, 0, 0, 0);
     const QVariant VListViewItemMargin = QVariant::fromValue(ListViweItemMargin);
 
     m_pModel = new QStandardItemModel;

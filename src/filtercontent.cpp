@@ -145,6 +145,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_status = new QHBoxLayout;
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
     cbx_status = new DComboBox(this);
+    cbx_status->setMinimumWidth(120);
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
                                        << "Failed");
     hLayout_status->addWidget(statusTxt);
