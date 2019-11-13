@@ -111,10 +111,10 @@ void LogListView::setDefaultSelect()
 
 void LogListView::setCustomFont(QStandardItem *item)
 {
-    QFont font = item->font();
-    font.setPointSize(11);
-    item->setFont(font);
-    this->setIconSize(QSize(20, 20));
+    //    QFont font = item->font();
+    //    font.setPointSize(11);
+    //    item->setFont(font);
+    //    this->setIconSize(QSize(20, 20));
 
     //    item->setTextAlignment(Qt::AlignCenter);
 }

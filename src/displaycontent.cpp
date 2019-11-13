@@ -81,12 +81,12 @@ void DisplayContent::initUI()
     vLayout->addWidget(m_treeView, 5);
 
     noResultLabel = new DLabel(this);
-    DPalette pa;
-    pa = DApplicationHelper::instance()->palette(noResultLabel);
-    pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
+    DPalette pa = DApplicationHelper::instance()->palette(noResultLabel);
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     DApplicationHelper::instance()->setPalette(noResultLabel, pa);
+
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
-    QFont labelFont;
+    QFont labelFont = noResultLabel->font();
     labelFont.setPixelSize(20);
     noResultLabel->setFont(labelFont);
     noResultLabel->setAlignment(Qt::AlignCenter);
@@ -105,13 +105,14 @@ void DisplayContent::initUI()
 
     m_detailWgt = new logDetailInfoWidget;
     vLayout->addWidget(m_detailWgt, 3);
+
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(3);
 
     this->setLayout(vLayout);
 
-    DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
-    slot_themeChanged(ct);
+    //    DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
+    //    slot_themeChanged(ct);
 }
 
 void DisplayContent::initMap()
@@ -959,7 +960,7 @@ void DisplayContent::slot_themeChanged(DGuiApplicationHelper::ColorType colorTyp
 
 void DisplayContent::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event)
+    DWidget::paintEvent(event);
     return;
 
     QPainter painter(this);

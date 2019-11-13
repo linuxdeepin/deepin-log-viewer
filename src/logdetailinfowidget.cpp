@@ -16,6 +16,8 @@
 
 DWIDGET_USE_NAMESPACE
 
+#define LABEL_MIN_WIDTH 120
+
 logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
     : DWidget(parent)
 {
@@ -59,36 +61,46 @@ void logDetailInfoWidget::initUI()
     m_daemonName->setFont(font);
 
     m_dateTime = new DLabel(this);
+    setTextCustomSize(m_dateTime);
     DPalette pa = DApplicationHelper::instance()->palette(m_dateTime);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     //    m_dateTime->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_dateTime, pa);
 
     m_userName = new DLabel(this);
+    setTextCustomSize(m_userName);
+    m_userName->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_userName);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     //    m_userName->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_userName, pa);
 
     m_pid = new DLabel(this);
+    setTextCustomSize(m_pid);
+    m_pid->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_pid);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     //    m_pid->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_pid, pa);
 
     m_action = new DLabel(this);
+    setTextCustomSize(m_action);
+    m_action->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_action);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     //    m_status->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_action, pa);
 
     m_status = new DLabel(this);
+    setTextCustomSize(m_status);
+    m_status->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_status);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     //    m_status->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_status, pa);
 
     m_level = new LogIconButton(this);
+    setTextCustomSize(m_level);
     pa = DApplicationHelper::instance()->palette(m_level);
     pa.setBrush(DPalette::ButtonText, pa.color(DPalette::TextTips));
     //    m_level->setPalette(pa);
@@ -102,6 +114,7 @@ void logDetailInfoWidget::initUI()
     m_hline = new DHorizontalLine;
 
     m_textBrowser = new DTextBrowser(this);
+    setTextCustomSize(m_textBrowser);
     pa = DApplicationHelper::instance()->palette(m_textBrowser);
     pa.setBrush(DPalette::Text, pa.color(DPalette::TextTips));
     //    m_textBrowser->setPalette(pa);
@@ -133,10 +146,10 @@ void logDetailInfoWidget::initUI()
     h24->addWidget(m_actionLabel);
     h24->addWidget(m_action, 1);
 
-    h2->addLayout(h21, 1);
-    h2->addLayout(h22, 1);
-    h2->addLayout(h23, 1);
-    h2->addLayout(h24, 1);
+    h2->addLayout(h21);
+    h2->addLayout(h22);
+    h2->addLayout(h23);
+    h2->addLayout(h24);
     h2->addStretch(1);
     h2->addWidget(m_level);
 
@@ -149,6 +162,14 @@ void logDetailInfoWidget::initUI()
     v->setSpacing(4);
 
     this->setLayout(v);
+}
+
+void logDetailInfoWidget::setTextCustomSize(QWidget *w)
+{
+    QFont font = w->font();
+    int size = font.pointSize();
+    font.setPointSize(size);
+    w->setFont(font);
 }
 
 void logDetailInfoWidget::paintEvent(QPaintEvent *event)

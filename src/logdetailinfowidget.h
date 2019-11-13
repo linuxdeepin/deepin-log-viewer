@@ -19,6 +19,7 @@ public:
 
 private:
     void initUI();
+    void setTextCustomSize(QWidget *w);
 
     void fillDetailInfo(QString deamonName, QString usrName, QString pid, QString dateTime,
                         QModelIndex level, QString msg, QString status = "", QString action = "");

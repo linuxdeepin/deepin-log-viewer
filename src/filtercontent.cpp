@@ -156,6 +156,7 @@ void FilterContent::initUI()
 
     DPushButton *exportBtn = new DPushButton(DApplication::translate("Button", "Export"), this);
     exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
+    exportBtn->setFocusPolicy(Qt::NoFocus);
     m_btnGroup->addButton(exportBtn, 7);
     hLayout_all->addWidget(exportBtn);
 
