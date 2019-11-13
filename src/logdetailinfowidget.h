@@ -1,6 +1,7 @@
 #ifndef LOGDETAILINFOWIDGET_H
 #define LOGDETAILINFOWIDGET_H
 
+#include <DHorizontalLine>
 #include <DWidget>
 #include <QModelIndex>
 #include <QStandardItemModel>
@@ -13,6 +14,8 @@ public:
     logDetailInfoWidget(QWidget *parent = nullptr);
 
     void cleanText();
+
+    void hideLine(bool isHidden);
 
 private:
     void initUI();
@@ -31,6 +34,7 @@ private:
     LogIconButton *m_level;
     Dtk::Widget::DLabel *m_userLabel, *m_pidLabel, *m_statusLabel, *m_actionLabel;
     Dtk::Widget::DTextBrowser *m_textBrowser;
+    Dtk::Widget::DHorizontalLine *m_hline;
 
     QStandardItemModel *m_pModel;
 };

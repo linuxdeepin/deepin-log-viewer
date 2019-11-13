@@ -940,8 +940,10 @@ void DisplayContent::slot_searchResult(QString str)
         noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noResultLabel->show();
         m_detailWgt->cleanText();
+        m_detailWgt->hideLine(true);
     } else {
         noResultLabel->hide();
+        m_detailWgt->hideLine(false);
     }
 }
 

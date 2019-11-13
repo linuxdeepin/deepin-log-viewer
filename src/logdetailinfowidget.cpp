@@ -3,7 +3,6 @@
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DGuiApplicationHelper>
-#include <DHorizontalLine>
 #include <DLabel>
 #include <DStyle>
 #include <DTextBrowser>
@@ -44,6 +43,11 @@ void logDetailInfoWidget::cleanText()
     m_daemonName->hide();
 
     m_textBrowser->clear();
+}
+
+void logDetailInfoWidget::hideLine(bool isHidden)
+{
+    m_hline->setHidden(isHidden);
 }
 
 void logDetailInfoWidget::initUI()
@@ -95,7 +99,7 @@ void logDetailInfoWidget::initUI()
     m_statusLabel = new DLabel(DApplication::translate("Label", "Status:"), this);
     m_actionLabel = new DLabel(DApplication::translate("Label", "Action:"), this);
 
-    DHorizontalLine *hline = new DHorizontalLine;
+    m_hline = new DHorizontalLine;
 
     m_textBrowser = new DTextBrowser(this);
     pa = DApplicationHelper::instance()->palette(m_textBrowser);
@@ -138,7 +142,7 @@ void logDetailInfoWidget::initUI()
 
     v->addLayout(h1);
     v->addLayout(h2);
-    v->addWidget(hline);
+    v->addWidget(m_hline);
     v->addWidget(m_textBrowser, 3);
 
     v->setContentsMargins(20, 10, 20, 0);
