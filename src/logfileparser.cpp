@@ -67,20 +67,25 @@ LogFileParser::~LogFileParser()
 
 void LogFileParser::parseByJournal(QStringList arg)
 {
-    journalWork *work = new journalWork(arg);
-    work->moveToThread(&m_thread);
-    //    connect(work, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
-    //            SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
-    connect(work, &journalWork::journalFinished, this, [=](QList<LOG_MSG_JOURNAL> list) {
-        emit journalFinished(list);
-        //        work->deleteLater();
-        work->deleteLater();
-        m_thread.quit();
-        m_thread.wait();
-    });
+    if (work) {
+        disconnect(work, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
+                   SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
+        work->stopWork();
+    }
+    work = new journalWork(arg);
+    //    work->moveToThread(&m_thread);
+    //    connect(work, &journalWork::journalFinished, this, [=](QList<LOG_MSG_JOURNAL> list) {
+    //        emit journalFinished(list);
+    //        work->deleteLater();
+    //        m_thread.quit();
+    //        m_thread.wait();
+    //    });
+    connect(work, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
+            SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
+    work->start();
 
-    m_thread.start();
-    QMetaObject::invokeMethod(work, "doWork", Qt::AutoConnection);
+    //    m_thread.start();
+    //    QMetaObject::invokeMethod(work, "doWork", Qt::AutoConnection);
 }
 
 void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
@@ -109,13 +114,65 @@ void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
         dpkgLog.action = strList[2];
         dpkgLog.msg = info;
 
-        dList.append(dpkgLog);
+        //        dList.append(dpkgLog);
+        dList.insert(0, dpkgLog);
     }
 
     createFile(output, dList.count());
     emit dpkgFinished();
 }
 
+void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList)
+{
+    QProcess proc;
+    proc.start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
+    proc.waitForFinished(-1);
+
+    if (isErroCommand(QString(proc.readAllStandardError())))
+        return;
+
+    QString output = proc.readAllStandardOutput();
+    proc.close();
+
+    QDateTime curDt = QDateTime::currentDateTime();
+    qint64 curDtSecond = curDt.toMSecsSinceEpoch();
+    for (QString str : output.split('\n')) {
+        //        if (str.startsWith("[")) {
+        //            //            xList.append(str);
+        //            xList.insert(0, str);
+        //        } else {
+        //            str += " ";
+        //            //            xList[xList.size() - 1] += str;
+        //            xList[0] += str;
+        //        }
+        if (str.startsWith("[")) {
+            QStringList list = str.split("]", QString::SkipEmptyParts);
+            if (list.count() != 2)
+                continue;
+
+            QString timeStr = list[0];
+            QString msgInfo = list[1];
+
+            // get time
+            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
+            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
+
+            LOG_MSG_XORG msg;
+            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
+            msg.msg = msgInfo;
+
+            xList.insert(0, msg);
+        } else {
+            xList[0].msg += str;
+        }
+    }
+    createFile(output, xList.count());
+
+    emit xlogFinished();
+}
+
+#if 0
 void LogFileParser::parseByXlog(QStringList &xList)
 {
     QProcess proc;
@@ -130,149 +187,113 @@ void LogFileParser::parseByXlog(QStringList &xList)
 
     for (QString str : output.split('\n')) {
         if (str.startsWith("[")) {
-            xList.append(str);
+            //            xList.append(str);
+            xList.insert(0, str);
         } else {
             str += " ";
-            xList[xList.size() - 1] += str;
+            //            xList[xList.size() - 1] += str;
+            xList[0] += str;
         }
     }
     createFile(output, xList.count());
 
     emit xlogFinished();
 }
+#endif
 
 void LogFileParser::parseByBoot(QList<LOG_MSG_BOOT> &bList)
 {
-#ifndef USE_POLKIT
-    if (m_rootPasswd.isEmpty()) {
-        m_logPasswdWgt->exec();
-        m_rootPasswd = m_logPasswdWgt->getPasswd();
-    }
-    if (m_rootPasswd.isEmpty())
-        return;
+    LogAuthThread *m_authThread = new LogAuthThread;
+    m_authThread->setParam(QStringList() << "logViewerAuth"
+                                         << "/var/log/boot.log");
 
-    QProcess proc;
-    QStringList arg;
-    arg << "-c" << QString("echo '%1' | sudo -S cat /var/log/boot.log").arg(m_rootPasswd);
+    //    if (isErroCommand(m_authThread->getStandardError()))
+    //        return;
 
-    proc.start("/bin/bash", arg);  // file path is fixed. So write cmd direct
-    proc.waitForFinished();
-#else
-    QProcess proc;
-    proc.setProcessChannelMode(QProcess::MergedChannels);
-    proc.start("pkexec", QStringList() << "logViewerAuth"
-                                       << "/var/log/boot.log");
-    proc.waitForFinished(-1);
-
-#endif
-
-    if (isErroCommand(QString(proc.readAllStandardError())))
-        return;
-
-    QString output = proc.readAllStandardOutput();
-
-    proc.close();
-
-    for (QString lineStr : output.split('\n')) {
-        if (lineStr.startsWith("/dev"))
-            continue;
-
-        // remove Useless characters
-        lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-
-        QStringList retList;
-        LOG_MSG_BOOT bMsg;
-        retList = lineStr.split(" ", QString::SkipEmptyParts);
-        if (lineStr.startsWith("[")) {
-            bMsg.status = retList[1];
-            QStringList leftList = retList.mid(3);
-            bMsg.msg += leftList.join(" ");
-            bList.append(bMsg);
-        } else {
-            if (bList.size() == 0)
+    connect(m_authThread, &LogAuthThread::cmdFinished, this, [=, &bList](QString output) {
+        for (QString lineStr : output.split('\n')) {
+            if (lineStr.startsWith("/dev"))
                 continue;
 
-            bList[bList.size() - 1].msg += retList.join(" ");
-        }
-    }
+            // remove Useless characters
+            lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
 
-    createFile(output, bList.count());
-    emit bootFinished();
+            QStringList retList;
+            LOG_MSG_BOOT bMsg;
+            retList = lineStr.split(" ", QString::SkipEmptyParts);
+            if (lineStr.startsWith("[")) {
+                bMsg.status = retList[1];
+                QStringList leftList = retList.mid(3);
+                bMsg.msg += leftList.join(" ");
+                //                bList.append(bMsg);
+                bList.insert(0, bMsg);
+            } else {
+                if (bList.size() == 0)
+                    continue;
+
+                //                bList[bList.size() - 1].msg += retList.join(" ");
+                bList[0].msg += retList.join(" ");
+            }
+        }
+
+        createFile(output, bList.count());
+        emit bootFinished();
+    });
+
+    m_authThread->start();
 }
 
 void LogFileParser::parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms)
 {
-    // opt ==> "| grep "ERR"
-#ifndef USE_POLKIT
-    if (m_rootPasswd.isEmpty()) {
-        m_logPasswdWgt->exec();
-        m_rootPasswd = m_logPasswdWgt->getPasswd();
-    }
-    if (m_rootPasswd.isEmpty())
-        return;
+    LogAuthThread *m_authThread = new LogAuthThread;
+    m_authThread->setParam(QStringList() << "logViewerAuth"
+                                         << "/var/log/kern.log");
 
-    QProcess proc;
-    QStringList arg;
+    connect(m_authThread, &LogAuthThread::cmdFinished, this, [=, &kList, &ms](QString output) {
+        for (QString str : output.split('\n')) {
+            LOG_MSG_JOURNAL msg;
 
-    arg << "-c" << QString("echo '%1' | sudo -S cat /var/log/kern.log").arg(m_rootPasswd);
+            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            if (list.size() < 5)
+                continue;
 
-    proc.start("/bin/bash", arg);
-    proc.waitForFinished();
-#else
-    QProcess proc;
-    proc.setProcessChannelMode(QProcess::MergedChannels);
-    proc.start("pkexec", QStringList() << "logViewerAuth"
-                                       << "/var/log/kern.log");
-    proc.waitForFinished(-1);
+            QStringList timeList;
+            timeList.append(list[0]);
+            timeList.append(list[1]);
+            timeList.append(list[2]);
+            qint64 iTime = formatDateTime(list[0], list[1], list[2]);
+            if (iTime < ms)
+                continue;
 
-#endif
+            msg.dateTime = timeList.join(" ");
+            msg.hostName = list[3];
 
-    if (isErroCommand(QString(proc.readAllStandardError())))
-        return;
+            QStringList tmpList = list[4].split("[");
+            if (tmpList.size() != 2) {
+                msg.daemonName = list[4].split(":")[0];
+            } else {
+                msg.daemonName = list[4].split("[")[0];
+                QString id = list[4].split("[")[1];
+                id.chop(2);
+                msg.daemonId = id;
+            }
 
-    QString output = proc.readAllStandardOutput();
-    proc.close();
+            QString msgInfo;
+            for (auto i = 5; i < list.size(); i++) {
+                msgInfo.append(list[i] + " ");
+            }
+            msg.msg = msgInfo;
 
-    for (QString str : output.split('\n')) {
-        LOG_MSG_JOURNAL msg;
-
-        str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-        QStringList list = str.split(" ", QString::SkipEmptyParts);
-        if (list.size() < 5)
-            continue;
-
-        QStringList timeList;
-        timeList.append(list[0]);
-        timeList.append(list[1]);
-        timeList.append(list[2]);
-        qint64 iTime = formatDateTime(list[0], list[1], list[2]);
-        if (iTime < ms)
-            continue;
-
-        msg.dateTime = timeList.join(" ");
-        msg.hostName = list[3];
-
-        QStringList tmpList = list[4].split("[");
-        if (tmpList.size() != 2) {
-            msg.daemonName = list[4].split(":")[0];
-        } else {
-            msg.daemonName = list[4].split("[")[0];
-            QString id = list[4].split("[")[1];
-            id.chop(2);
-            msg.daemonId = id;
+            //            kList.append(msg);
+            kList.insert(0, msg);
         }
 
-        QString msgInfo;
-        for (auto i = 5; i < list.size(); i++) {
-            msgInfo.append(list[i] + " ");
-        }
-        msg.msg = msgInfo;
+        createFile(output, kList.count());
+        emit kernFinished();
+    });
 
-        kList.append(msg);
-    }
-
-    createFile(output, kList.count());
-    emit kernFinished();
+    m_authThread->start();
 }
 
 void LogFileParser::parseByApp(QString path, QList<LOG_MSG_APPLICATOIN> &appList, int lv, qint64 ms)
@@ -300,17 +321,28 @@ void LogFileParser::parseByApp(QString path, QList<LOG_MSG_APPLICATOIN> &appList
             continue;
 
         QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
-        qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd, hh:mm:ss.zzz").toMSecsSinceEpoch();
+        if (dateTime.contains(",")) {
+            dateTime.replace(",", "");
+        }
+        //        if (dateTime.split(".").count() == 2) {
+        //            dateTime = dateTime.split(".")[0];
+        //        }
+        qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
         if (dt < ms)
             continue;
         msg.dateTime = dateTime;
         msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
-        if (m_levelDict.value(msg.level) != lv)
-            continue;
+
+        if (lv != LVALL) {
+            if (m_levelDict.value(msg.level) != lv)
+                continue;
+        }
+
         msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
         msg.msg = list[2];
 
-        appList.append(msg);
+        //        appList.append(msg);
+        appList.insert(0, msg);
     }
 
     createFile(output, appList.count());
@@ -353,9 +385,12 @@ qint64 LogFileParser::formatDateTime(QString m, QString d, QString t)
 {
     //    QDateTime::fromString("9月 24 2019 10:32:34", "MMM d yyyy hh:mm:ss");
     // default year =2019
-    QString month = m_dateDict.value(m);
-    QString tStr = QString("%1 %2 2019 %3").arg(month).arg(d).arg(t);
-    QDateTime dt = QDateTime::fromString(tStr, "MMM d yyyy hh:mm:ss");
+    QLocale local(QLocale::English, QLocale::UnitedStates);
+
+    QDate curdt = QDate::currentDate();
+
+    QString tStr = QString("%1 %2 %3 %4").arg(m).arg(d).arg(curdt.year()).arg(t);
+    QDateTime dt = local.toDateTime(tStr, "MMM d yyyy hh:mm:ss");
     return dt.toMSecsSinceEpoch();
 }
 

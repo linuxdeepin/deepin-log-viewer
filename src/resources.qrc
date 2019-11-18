@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/logo.svg</file>
         <file>../doc_template/template.doc</file>
         <file>images/light/application.svg</file>
         <file>images/light/start_checked.svg</file>
@@ -30,5 +29,6 @@
         <file>images/dark/application_checked.svg</file>
         <file>images/dark/start.svg</file>
         <file>images/dark/start_checked.svg</file>
+        <file>images/deepin-log-viewer.svg</file>
     </qresource>
 </RCC>

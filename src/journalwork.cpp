@@ -31,7 +31,8 @@
 DWIDGET_USE_NAMESPACE
 
 journalWork::journalWork(QStringList arg, QObject *parent)
-    : QObject(parent)
+    //    : QObject(parent)
+    : QThread(parent)
 {
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
 
@@ -45,32 +46,41 @@ journalWork::journalWork(QStringList arg, QObject *parent)
 
 journalWork::~journalWork()
 {
-    logList.clear();
-    m_map.clear();
+    //    logList.clear();
+    //    m_map.clear();
+}
+
+void journalWork::stopWork()
+{
+    if (proc)
+        proc->kill();
+}
+
+void journalWork::run()
+{
+    doWork();
 }
 
 void journalWork::doWork()
 {
     logList.clear();
-    QProcess proc;
 
+    proc = new QProcess;
     //! by time: --since="xxxx-xx-xx" --until="xxxx-xx-xx" exclude U
     //! by priority: journalctl PRIORITY=x
-    proc.start("journalctl", m_arg);
-    proc.waitForFinished(-1);
+    proc->start("journalctl", m_arg);
+    proc->waitForFinished(-1);
 
-    QByteArray output = proc.readAllStandardOutput();
-    proc.close();
+    QByteArray output = proc->readAllStandardOutput();
+    proc->close();
 
-    for (QByteArray data : output.split('\n')) {
+    // reverse by time
+    QList<QByteArray> arrayList = output.split('\n');
+    for (auto i = arrayList.count() - 1; i >= 0; i--) {
+        QByteArray data = arrayList.at(i);
+        //    for (QByteArray data : output.split('\n')) {
         if (data.isEmpty())
             continue;
-        //        QFile fi("/home/archermind/jour.json");
-        //        if (fi.open(QIODevice::ReadWrite | QIODevice::Append)) {
-        //            fi.write(QString::number(logList.count()).toLatin1());
-        //            fi.write(data);
-        //            fi.write("\n");
-        //        }
 
         LOG_MSG_JOURNAL logMsg;
 
@@ -104,7 +114,7 @@ QString journalWork::getDateTimeFromStamp(QString str)
     QString ums = str.right(6);
     QString dtstr = str.left(str.length() - 6);
     QDateTime dt = QDateTime::fromTime_t(dtstr.toUInt());
-    ret = dt.toString("yyyy-MM-dd hh:mm:ss") + QString(".%1").arg(ums);
+    ret = dt.toString("yyyy-MM-dd hh:mm:ss");  // + QString(".%1").arg(ums);
     return ret;
 }
 

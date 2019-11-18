@@ -2,7 +2,7 @@ QT += core gui dtkwidget dtkgui gui-private
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = dde-log-viewer
+TARGET = deepin-log-viewer
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 #PKGCONFIG +=
@@ -33,7 +33,8 @@ SOURCES += \
     logviewitemdelegate.cpp \
     logiconbutton.cpp \
     logspinnerwidget.cpp \
-    logdetailinfowidget.cpp
+    logdetailinfowidget.cpp \
+    logauththread.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -55,34 +56,35 @@ HEADERS += \
     logviewitemdelegate.h \
     logiconbutton.h \
     logspinnerwidget.h \
-    logdetailinfowidget.h
+    logdetailinfowidget.h \
+    logauththread.h
 
 
-TRANSLATIONS += translations/dde-log-viewer_zh_CN.ts
+TRANSLATIONS += translations/deepin-log-viewer_zh_CN.ts
 
 
 isEmpty(BINDIR):BINDIR=/usr/bin
 isEmpty(APPDIR):APPDIR=/usr/share/applications
-isEmpty(DSRDIR):DSRDIR=/usr/share/dde-log-viewer
+isEmpty(DSRDIR):DSRDIR=/usr/share/deepin-log-viewer
 
 target.path = $$INSTROOT$$BINDIR
 desktop.path = $$INSTROOT$$APPDIR
-desktop.files = $$PWD/dde-log-viewer.desktop
+desktop.files = $$PWD/deepin-log-viewer.desktop
 
 # Automating generation .qm files from .ts files
 !system($$PWD/translate_generation.sh): error("Failed to generate translation")
 
-translations.path = /usr/share/dde-log-viewer/translations
+translations.path = /usr/share/deepin-log-viewer/translations
 translations.files = $$PWD/translations/*.qm
 
 icon_files.path = /usr/share/icons/hicolor/scalable/apps
-icon_files.files = $$PWD/images/log.svg
+icon_files.files = $$PWD/images/deepin-log-viewer.svg
 
 policy.path = /usr/share/polkit-1/actions
 policy.files = $$PWD/com.deepin.pkexec.logViewerAuth.policy
 
 
 DISTFILES += \
-    translations/dde-log-viewer_zh_CN.ts
+    translations/deepin-log-viewer_zh_CN.ts
 
 INSTALLS += target desktop translations icon_files policy

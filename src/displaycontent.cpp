@@ -47,7 +47,7 @@ DWIDGET_USE_NAMESPACE
 
 #define LEVEL_WIDTH 80
 #define STATUS_WIDTH 90
-#define DATETIME_WIDTH 160
+#define DATETIME_WIDTH 175
 #define DEAMON_WIDTH 150
 
 DisplayContent::DisplayContent(QWidget *parent)
@@ -170,6 +170,7 @@ void DisplayContent::generateJournalFile(int id, int lId)
 {
     jList.clear();
 
+    m_spinnerWgt->spinnerStop();
     m_spinnerWgt->spinnerStart();
     m_treeView->hide();
     m_spinnerWgt->show();
@@ -178,8 +179,10 @@ void DisplayContent::generateJournalFile(int id, int lId)
     dt.setTime(QTime());
 
     QStringList arg;
-    QString prio = QString("PRIORITY=%1").arg(lId);
-    arg.append(prio);
+    if (lId != LVALL) {
+        QString prio = QString("PRIORITY=%1").arg(lId);
+        arg.append(prio);
+    }
     switch (id) {
         case ALL: {
             m_logFileParse.parseByJournal(arg);
@@ -349,7 +352,7 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
                                         << DApplication::translate("Table", "User")
                                         << DApplication::translate("Table", "Daemon")
                                         << DApplication::translate("Table", "Info"));
-    m_treeView->setColumnWidth(0, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
 
@@ -420,7 +423,7 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
                                         << DApplication::translate("Table", "Source")
                                         << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
-    m_treeView->setColumnWidth(1, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
 
     DStandardItem *item = nullptr;
@@ -494,18 +497,24 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-void DisplayContent::createXorgTable(QStringList &list)
+void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
 {
     //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
-    m_pModel->setColumnCount(1);
-    m_pModel->setHorizontalHeaderLabels(QStringList() << DApplication::translate("Table", "Info"));
+    m_pModel->setColumnCount(2);
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(0, DATETIME_WIDTH + 20);
     DStandardItem *item = nullptr;
     for (int i = 0; i < list.size(); i++) {
-        item = new DStandardItem(list[i]);
+        item = new DStandardItem(list[i].dateTime);
         item->setData(XORG_TABLE_DATA);
         m_pModel->setItem(i, 0, item);
+        item = new DStandardItem(list[i].msg);
+        item->setData(XORG_TABLE_DATA);
+        m_pModel->setItem(i, 1, item);
     }
 
     //    m_treeView->setModel(m_pModel);
@@ -610,12 +619,13 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 
 void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 {
-    qDebug() << QString("Button %1 clicked, combobox id is %2 tree %3 node!!")
+    qDebug() << QString("Button %1 clicked\n combobox: level is %2, cbxIdx is %3 tree %4 node!!")
                     .arg(btnId)
                     .arg(lId)
+                    .arg(lId + 1)
                     .arg(idx.data(ITEM_DATE_ROLE).toString());
 
-    m_curLvId = lId;
+    m_curLevel = lId;  // m_curLevel equal combobox index-1;
     m_curBtnId = btnId;
 
     QString treeData = idx.data(ITEM_DATE_ROLE).toString();
@@ -623,7 +633,7 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         return;
 
     if (treeData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
-        generateJournalFile(btnId, lId);
+        generateJournalFile(btnId, m_curLevel);
     } else if (treeData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
         generateDpkgFile(btnId);
     } else if (treeData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
@@ -632,7 +642,7 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         //        generateAppFile(treeData, btnId, lId);
     } else if (treeData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         if (!m_curAppLog.isEmpty()) {
-            generateAppFile(m_curAppLog, btnId, lId);
+            generateAppFile(m_curAppLog, btnId, m_curLevel);
         }
     }
 }
@@ -645,7 +655,7 @@ void DisplayContent::slot_appLogs(QString path)
     appList.clear();
     m_curAppLog = path;
     //    m_logFileParse.parseByApp(path, appList);
-    generateAppFile(path, m_curBtnId, m_curLvId);
+    generateAppFile(path, m_curBtnId, m_curLevel);
 }
 
 void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
@@ -670,7 +680,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         // default level is info so PRIORITY=6
         m_flag = JOURNAL;
-        generateJournalFile(m_curBtnId, m_curLvId);
+        generateJournalFile(m_curBtnId, m_curLevel);
     } else if (itemData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = DPKG;
         generateDpkgFile(m_curBtnId);
@@ -898,11 +908,12 @@ void DisplayContent::slot_searchResult(QString str)
             createBootTable(tmp);
         } break;
         case XORG: {
-            QStringList tmp = xList;
+            QList<LOG_MSG_XORG> tmp = xList;
             int cnt = tmp.count();
             for (int i = cnt - 1; i >= 0; --i) {
-                QString msg = tmp.at(i);
-                if (msg.contains(str, Qt::CaseInsensitive))
+                LOG_MSG_XORG msg = tmp.at(i);
+                if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
+                    msg.msg.contains(str, Qt::CaseInsensitive))
                     continue;
                 tmp.removeAt(i);
             }

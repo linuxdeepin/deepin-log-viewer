@@ -51,7 +51,12 @@ struct LOG_MSG_APPLICATOIN {
     QString msg;
 };
 
-enum PRIORITY { EMER = 0, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
+struct LOG_MSG_XORG {
+    QString dateTime;
+    QString msg;
+};
+
+enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 
 enum BUTTONID {
     ALL = 0,

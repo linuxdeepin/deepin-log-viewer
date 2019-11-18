@@ -120,7 +120,8 @@ void FilterContent::initUI()
     cbx_lv = new DComboBox(this);
     //    cbx_lv->setMinimumWidth(120);
     cbx_lv->setFixedSize(QSize(208, 38));
-    cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "Emer")
+    cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
+                                   << DApplication::translate("ComboBox", "Emer")
                                    << DApplication::translate("ComboBox", "Alert")
                                    << DApplication::translate("ComboBox", "Critical")
                                    << DApplication::translate("ComboBox", "Error")
@@ -309,7 +310,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         emit sigCbxAppIdxChanged(cbx_app->itemData(0, Qt::UserRole + 1).toString());
     } else if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         this->setSelectorVisible(true, false, false, true, false);
-        cbx_lv->setCurrentIndex(INF);
+        cbx_lv->setCurrentIndex(INF + 1);  // index+1
         //    } else if (itemData.contains(".cache")) {
         //        this->setSelectorVisible(true, true);
         //        cbx_lv->setCurrentIndex(INF);
@@ -349,7 +350,7 @@ void FilterContent::slot_buttonClicked(int idx)
             //                itemData.contains(".cache"))
             if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
                 itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
-                cbx_lv->setCurrentIndex(INF);
+                cbx_lv->setCurrentIndex(INF + 1);
             } else {
                 emit sigButtonClicked(m_curBtnId, INVALID, m_curTreeIndex);
             }
@@ -365,8 +366,8 @@ void FilterContent::slot_buttonClicked(int idx)
 
 void FilterContent::slot_cbxLvIdxChanged(int idx)
 {
-    m_curLvCbxId = idx;
-    emit sigButtonClicked(m_curBtnId, idx, m_curTreeIndex);
+    m_curLvCbxId = idx - 1;
+    emit sigButtonClicked(m_curBtnId, m_curLvCbxId, m_curTreeIndex);
 }
 
 void FilterContent::slot_cbxAppIdxChanged(int idx)

@@ -39,9 +39,10 @@ int main(int argc, char *argv[])
 
     a.loadTranslator();
     a.setOrganizationName("deepin");
-    a.setApplicationName("dde-log-viewer");
+    a.setApplicationName("deepin-log-viewer");
     a.setApplicationVersion(DApplication::buildVersion("20191016"));
-    a.setProductIcon(QIcon::fromTheme("dde-log-viewer"));
+    a.setProductIcon(QIcon::fromTheme("deepin-log-viewer"));
+    a.setWindowIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setProductName(DApplication::translate("Main", "Log Viewer"));
     a.setApplicationDescription(
         DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
 
-    if (!DGuiApplicationHelper::instance()->setSingleInstance("dde-log-viewer"))
+    if (!DGuiApplicationHelper::instance()->setSingleInstance("deepin-log-viewer"))
         return 0;
 
     LogCollectorMain w;

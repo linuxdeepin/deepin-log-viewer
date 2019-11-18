@@ -295,8 +295,8 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        m_pModel->item(index.row(), 1)->text(), "",
                        m_pModel->item(index.row(), 2)->text());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {
-        fillDetailInfo("Xorg", hostname, "", "", QModelIndex(),
-                       m_pModel->item(index.row(), 0)->text());
+        fillDetailInfo("Xorg", hostname, "", m_pModel->item(index.row(), 0)->text(), QModelIndex(),
+                       m_pModel->item(index.row(), 1)->text());
     } else if (dataStr.contains(BOOT_TABLE_DATA)) {
         fillDetailInfo("Boot", hostname, "", "", QModelIndex(),
                        m_pModel->item(index.row(), 1)->text(),

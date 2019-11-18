@@ -52,7 +52,7 @@ LogListView::LogListView(QWidget *parent)
 
 void LogListView::initUI()
 {
-    this->setMinimumWidth(128);
+    this->setMinimumWidth(150);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     this->setItemSpacing(0);
@@ -114,7 +114,7 @@ void LogListView::setCustomFont(QStandardItem *item)
     //    QFont font = item->font();
     //    font.setPointSize(11);
     //    item->setFont(font);
-    //    this->setIconSize(QSize(20, 20));
+    this->setIconSize(QSize(16, 16));
 
     //    item->setTextAlignment(Qt::AlignCenter);
 }

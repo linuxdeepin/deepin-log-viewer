@@ -25,6 +25,8 @@
 #include <QMap>
 #include <QObject>
 #include <QThread>
+#include "journalwork.h"
+#include "logauththread.h"
 #include "logpasswordauth.h"
 #include "structdef.h"
 
@@ -37,7 +39,10 @@ public:
 
     void parseByJournal(QStringList arg = QStringList());
     void parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms = 0);
+#if 0
     void parseByXlog(QStringList &xList);
+#endif
+    void parseByXlog(QList<LOG_MSG_XORG> &xList);
     void parseByBoot(QList<LOG_MSG_BOOT> &bList);
     void parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms = 0);
     void parseByApp(QString path, QList<LOG_MSG_APPLICATOIN> &appList, int lv = 6, qint64 ms = 0);
@@ -64,6 +69,7 @@ private:
     QThread m_thread;
     QString m_rootPasswd;
     LogPasswordAuth *m_logPasswdWgt;
+    journalWork *work {nullptr};
 
     QMap<QString, QString> m_dateDict;
     QMap<QString, int> m_levelDict;  // example:warning=>4

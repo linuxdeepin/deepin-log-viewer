@@ -66,7 +66,7 @@ private:
 
     void createBootTable(QList<LOG_MSG_BOOT> &list);
 
-    void createXorgTable(QStringList &list);
+    void createXorgTable(QList<LOG_MSG_XORG> &list);
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
 
@@ -123,14 +123,15 @@ private:
     QString m_currentStatus;
 
     int m_curBtnId {ALL};
-    int m_curLvId {INF};
+    int m_curLevel {INF};
 
     LOG_FLAG m_flag {NONE};
 
     LogFileParser m_logFileParse;
-    QList<LOG_MSG_JOURNAL> jList;                // journalctl cmd.
-    QList<LOG_MSG_DPKG> dList;                   // dpkg.log
-    QStringList xList;                           // Xorg.0.log
+    QList<LOG_MSG_JOURNAL> jList;  // journalctl cmd.
+    QList<LOG_MSG_DPKG> dList;     // dpkg.log
+                                   //    QStringList xList;                           // Xorg.0.log
+    QList<LOG_MSG_XORG> xList;     // Xorg.0.log
     QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
     QList<LOG_MSG_JOURNAL> kList;                // kern.log
     QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)

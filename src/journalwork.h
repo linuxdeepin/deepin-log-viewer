@@ -24,14 +24,22 @@
 
 #include <QMap>
 #include <QObject>
+#include <QProcess>
 #include "structdef.h"
 
-class journalWork : public QObject
+#include <QThread>
+
+// class journalWork : public QObject
+class journalWork : public QThread
 {
     Q_OBJECT
 public:
     explicit journalWork(QStringList arg, QObject *parent = nullptr);
     ~journalWork();
+
+    void stopWork();
+
+    void run();
 
 signals:
     void journalFinished(QList<LOG_MSG_JOURNAL> list);
@@ -47,6 +55,8 @@ private:
     QStringList m_arg;
     QList<LOG_MSG_JOURNAL> logList;
     QMap<int, QString> m_map;
+
+    QProcess *proc {nullptr};
 };
 
 #endif  // JOURNALWORK_H

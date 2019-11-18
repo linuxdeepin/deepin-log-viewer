@@ -57,7 +57,7 @@ void LogCollectorMain::initUI()
     titlebar()->setCustomWidget(m_searchEdt, true);
 
     /** add titleBar */
-    titlebar()->setIcon(QIcon::fromTheme("dde-log-viewer"));
+    titlebar()->setIcon(QIcon::fromTheme("deepin-log-viewer"));
     titlebar()->setTitle("");
 
     /** menu */
