@@ -8,5 +8,5 @@ StartupNotify=true
 TryExec=deepin-log-viewer
 Type=Application
 X-Deepin-Vendor=deepin
-GenericName[zh_CN]=??????
-Name[zh_CN]=????????
+GenericName[zh_CN]=日志收集工具
+Name[zh_CN]=深度日志收集工具
