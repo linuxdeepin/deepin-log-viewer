@@ -1,36 +1,15 @@
 #include "logauththread.h"
 #include <QDebug>
 
-static LogAuthThread *INSTANCE = nullptr;
+std::atomic<LogAuthThread *> LogAuthThread::m_instance;
+std::mutex LogAuthThread::m_mutex;
+
 LogAuthThread::LogAuthThread(QObject *parent)
     : QThread(parent)
 {
 }
 
-LogAuthThread::~LogAuthThread()
-{
-    this->wait();
-    this->terminate();
-}
-
-LogAuthThread *LogAuthThread::instance()
-{
-    if (!INSTANCE) {
-        INSTANCE = new LogAuthThread;
-    }
-
-    return INSTANCE;
-}
-
-void LogAuthThread::setType(LOG_FLAG type)
-{
-    m_type = type;
-}
-
-void LogAuthThread::setParam(QStringList list)
-{
-    m_list = list;
-}
+LogAuthThread::~LogAuthThread() {}
 
 QString LogAuthThread::getStandardOutput()
 {
@@ -44,10 +23,35 @@ QString LogAuthThread::getStandardError()
 
 void LogAuthThread::run()
 {
-    proc = new QProcess;
+    switch (m_type) {
+        case KERN:
+            handleKern();
+            break;
+        case BOOT:
+            handleBoot();
+            break;
+        default:
+            break;
+    }
+}
+
+void LogAuthThread::handleBoot()
+{
+    QProcess *proc = new QProcess;
     connect(proc, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     proc->setProcessChannelMode(QProcess::MergedChannels);
-    proc->start("pkexec", m_list);
+    proc->start("pkexec", QStringList() << "logViewerAuth"
+                                        << "/var/log/boot.log");
+    proc->waitForFinished(-1);
+}
+
+void LogAuthThread::handleKern()
+{
+    QProcess *proc = new QProcess;
+    connect(proc, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
+    proc->setProcessChannelMode(QProcess::MergedChannels);
+    proc->start("pkexec", QStringList() << "logViewerAuth"
+                                        << "/var/log/kern.log");
     proc->waitForFinished(-1);
 }
 
@@ -56,6 +60,6 @@ void LogAuthThread::onFinished(int exitCode)
     Q_UNUSED(exitCode)
 
     QProcess *process = dynamic_cast<QProcess *>(sender());
-    emit cmdFinished(process->readAllStandardOutput());
+    emit cmdFinished(m_type, process->readAllStandardOutput());
     process->deleteLater();
 }

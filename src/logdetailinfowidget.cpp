@@ -136,15 +136,19 @@ void logDetailInfoWidget::initUI()
     QHBoxLayout *h21 = new QHBoxLayout;
     h21->addWidget(m_userLabel);
     h21->addWidget(m_userName, 1);
+    h21->setSpacing(0);
     QHBoxLayout *h22 = new QHBoxLayout;
     h22->addWidget(m_pidLabel);
     h22->addWidget(m_pid, 1);
+    h22->setSpacing(0);
     QHBoxLayout *h23 = new QHBoxLayout;
     h23->addWidget(m_statusLabel);
     h23->addWidget(m_status, 1);
+    h23->setSpacing(0);
     QHBoxLayout *h24 = new QHBoxLayout;
     h24->addWidget(m_actionLabel);
     h24->addWidget(m_action, 1);
+    h24->setSpacing(0);
 
     h2->addLayout(h21);
     h2->addLayout(h22);
@@ -152,6 +156,7 @@ void logDetailInfoWidget::initUI()
     h2->addLayout(h24);
     h2->addStretch(1);
     h2->addWidget(m_level);
+    h2->setSpacing(20);
 
     v->addLayout(h1);
     v->addLayout(h2);

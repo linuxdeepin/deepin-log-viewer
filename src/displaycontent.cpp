@@ -154,8 +154,10 @@ void DisplayContent::initConnections()
             m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, QStandardItemModel *, QString)));
     connect(&m_logFileParse, SIGNAL(dpkgFinished()), this, SLOT(slot_dpkgFinished()));
     connect(&m_logFileParse, SIGNAL(xlogFinished()), this, SLOT(slot_XorgFinished()));
-    connect(&m_logFileParse, SIGNAL(bootFinished()), this, SLOT(slot_bootFinished()));
-    connect(&m_logFileParse, SIGNAL(kernFinished()), this, SLOT(slot_kernFinished()));
+    connect(&m_logFileParse, SIGNAL(bootFinished(QList<LOG_MSG_BOOT>)), this,
+            SLOT(slot_bootFinished(QList<LOG_MSG_BOOT>)));
+    connect(&m_logFileParse, SIGNAL(kernFinished(QList<LOG_MSG_JOURNAL>)), this,
+            SLOT(slot_kernFinished(QList<LOG_MSG_JOURNAL>)));
     connect(&m_logFileParse, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
             SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
     connect(&m_logFileParse, &LogFileParser::applicationFinished, this,
@@ -320,22 +322,22 @@ void DisplayContent::generateKernFile(int id)
     dt.setTime(QTime());  // get zero time
     switch (id) {
         case ALL:
-            m_logFileParse.parseByKern(kList);
+            m_logFileParse.parseByKern(0);
             break;
         case ONE_DAY: {
-            m_logFileParse.parseByKern(kList, dt.toMSecsSinceEpoch());
+            m_logFileParse.parseByKern(dt.toMSecsSinceEpoch());
         } break;
         case THREE_DAYS: {
-            m_logFileParse.parseByKern(kList, dt.addDays(-2).toMSecsSinceEpoch());
+            m_logFileParse.parseByKern(dt.addDays(-2).toMSecsSinceEpoch());
         } break;
         case ONE_WEEK: {
-            m_logFileParse.parseByKern(kList, dt.addDays(-6).toMSecsSinceEpoch());
+            m_logFileParse.parseByKern(dt.addDays(-6).toMSecsSinceEpoch());
         } break;
         case ONE_MONTH: {
-            m_logFileParse.parseByKern(kList, dt.addDays(-29).toMSecsSinceEpoch());
+            m_logFileParse.parseByKern(dt.addDays(-29).toMSecsSinceEpoch());
         } break;
         case THREE_MONTHS: {
-            m_logFileParse.parseByKern(kList, dt.addDays(-89).toMSecsSinceEpoch());
+            m_logFileParse.parseByKern(dt.addDays(-89).toMSecsSinceEpoch());
         } break;
         default:
             break;
@@ -692,7 +694,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         bList.clear();
         m_flag = BOOT;
-        m_logFileParse.parseByBoot(bList);
+        m_logFileParse.parseByBoot();
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = KERN;
         generateKernFile(m_curBtnId);
@@ -792,21 +794,24 @@ void DisplayContent::slot_XorgFinished()
     createXorgTable(xList);
 }
 
-void DisplayContent::slot_bootFinished()
+void DisplayContent::slot_bootFinished(QList<LOG_MSG_BOOT> list)
 {
     if (m_flag != BOOT)
         return;
 
+    bList.clear();
+    bList = list;
     currentBootList.clear();
     currentBootList = bList;
     createBootTable(bList);
 }
 
-void DisplayContent::slot_kernFinished()
+void DisplayContent::slot_kernFinished(QList<LOG_MSG_JOURNAL> list)
 {
     if (m_flag != KERN)
         return;
 
+    kList = list;
     createKernTable(kList);
 }
 

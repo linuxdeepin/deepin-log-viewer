@@ -2,6 +2,7 @@
 #define LOGAUTHTHREAD_H
 #include <QProcess>
 #include <QThread>
+#include <mutex>
 #include "structdef.h"
 
 class LogAuthThread : public QThread
@@ -11,19 +12,33 @@ public:
     LogAuthThread(QObject *parent = nullptr);
     ~LogAuthThread();
 
-    static LogAuthThread *instance();
-
-    void setType(LOG_FLAG type);
-    void setParam(QStringList list);
+    static LogAuthThread *instance()
+    {
+        LogAuthThread *sin = m_instance.load();
+        if (!sin) {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            sin = m_instance.load();
+            if (!sin) {
+                sin = new LogAuthThread();
+                m_instance.store(sin);
+            }
+        }
+        return sin;
+    }
 
     QString getStandardOutput();
     QString getStandardError();
 
+    void setType(LOG_FLAG flag) { m_type = flag; }
+
 protected:
     void run() override;
 
+    void handleBoot();
+    void handleKern();
+
 signals:
-    void cmdFinished(QString output);
+    void cmdFinished(LOG_FLAG, QString output);
 
 public slots:
     void onFinished(int exitCode);
@@ -33,7 +48,9 @@ private:
     QString m_output;
     QString m_error;
     LOG_FLAG m_type;
-    QProcess *proc {nullptr};
+
+    static std::atomic<LogAuthThread *> m_instance;
+    static std::mutex m_mutex;
 };
 
 #endif  // LOGAUTHTHREAD_H

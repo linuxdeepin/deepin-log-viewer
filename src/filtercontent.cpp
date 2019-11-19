@@ -71,27 +71,27 @@ void FilterContent::initUI()
 
     LogPeriodButton *m_todayBtn =
         new LogPeriodButton(DApplication::translate("Button", "Today"), this);
-    m_todayBtn->setFixedSize(QSize(64, 40));
+    m_todayBtn->setFixedSize(QSize(64, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_todayBtn, 1);
 
     LogPeriodButton *m_threeDayBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
-    m_threeDayBtn->setFixedSize(QSize(78, 40));
+    m_threeDayBtn->setFixedSize(QSize(78, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_threeDayBtn, 2);
 
     LogPeriodButton *m_lastWeekBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
-    m_lastWeekBtn->setFixedSize(QSize(78, 40));
+    m_lastWeekBtn->setFixedSize(QSize(78, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_lastWeekBtn, 3);
 
     LogPeriodButton *m_lastMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
-    m_lastMonthBtn->setFixedSize(QSize(92, 40));
+    m_lastMonthBtn->setFixedSize(QSize(92, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_lastMonthBtn, 4);
 
     LogPeriodButton *m_threeMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
-    m_threeMonthBtn->setFixedSize(QSize(92, 40));
+    m_threeMonthBtn->setFixedSize(QSize(92, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_threeMonthBtn, 5);
 
     setUeButtonSytle();
@@ -148,7 +148,7 @@ void FilterContent::initUI()
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
     cbx_status = new DComboBox(this);
     cbx_status->setMinimumWidth(120);
-    cbx_status->setMinimumSize(QSize(120, 40));
+    cbx_status->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
                                        << "Failed");
     hLayout_status->addWidget(statusTxt);
@@ -191,48 +191,6 @@ void FilterContent::setAppComboBoxItem()
         cbx_app->setItemData(cbx_app->count() - 1, iter.value(), Qt::UserRole + 1);
         ++iter;
     }
-#if 0
-    QString homePath = QDir::homePath();
-    if (homePath.isEmpty()) {
-        return;
-    }
-    QString path = homePath + "/.cache/deepin/";
-    QDir dir(path);
-    if (!dir.exists()) {
-        return;
-    }
-    cbx_app->clear();
-
-    QStringList fileInfoList = dir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
-
-    QMap<QString, QString> name_path_map;
-    name_path_map.clear();
-
-    for (int i = 0; i < fileInfoList.size(); ++i) {
-        QString appName = fileInfoList.at(i);
-        QString fullPath = path + appName;
-        QDir subdir(fullPath);
-        if (!subdir.exists()) {
-            continue;
-        }
-        QStringList logFiles = subdir.entryList(QDir::NoDotAndDotDot | QDir::Files);
-
-        for (int j = 0; j < logFiles.count(); j++) {
-            QString fileName = logFiles.at(j);
-            if (!fileName.contains(".log"))
-                continue;
-            QString absPath = QString("%1/%2").arg(fullPath).arg(fileName);
-            name_path_map.insert(fileName, absPath);
-        }
-    }
-
-    QMap<QString, QString>::const_iterator iter = name_path_map.constBegin();
-    while (iter != name_path_map.constEnd()) {
-        cbx_app->addItem(iter.key());
-        cbx_app->setItemData(cbx_app->count() - 1, iter.value(), Qt::UserRole + 1);
-        ++iter;
-    }
-#endif
 }
 
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
@@ -324,9 +282,6 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         this->setSelectorVisible(true, false, false, true, false);
         cbx_lv->setCurrentIndex(INF + 1);  // index+1
-        //    } else if (itemData.contains(".cache")) {
-        //        this->setSelectorVisible(true, true);
-        //        cbx_lv->setCurrentIndex(INF);
     } else if (itemData.contains(BOOT_TREE_DATA)) {
         this->setSelectorVisible(false, false, true, false, false);
     } else if (itemData.contains(KERN_TREE_DATA) || itemData.contains(DPKG_TREE_DATA)) {

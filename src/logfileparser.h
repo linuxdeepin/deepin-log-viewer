@@ -43,8 +43,8 @@ public:
     void parseByXlog(QStringList &xList);
 #endif
     void parseByXlog(QList<LOG_MSG_XORG> &xList);
-    void parseByBoot(QList<LOG_MSG_BOOT> &bList);
-    void parseByKern(QList<LOG_MSG_JOURNAL> &kList, qint64 ms = 0);
+    void parseByBoot();
+    void parseByKern(qint64 ms = 0);
     void parseByApp(QString path, QList<LOG_MSG_APPLICATOIN> &appList, int lv = 6, qint64 ms = 0);
 
     void createFile(QString output, int count);
@@ -52,8 +52,8 @@ public:
 signals:
     void dpkgFinished();
     void xlogFinished();
-    void bootFinished();
-    void kernFinished();
+    void bootFinished(QList<LOG_MSG_BOOT>);
+    void kernFinished(QList<LOG_MSG_JOURNAL>);
     void journalFinished(QList<LOG_MSG_JOURNAL>);
     void applicationFinished();
 
@@ -65,6 +65,8 @@ signals:
 public slots:
     void slot_journalFinished(QList<LOG_MSG_JOURNAL> list);
 
+    void slot_threadFinished(LOG_FLAG flag, QString output);
+
 private:
     QThread m_thread;
     QString m_rootPasswd;
@@ -75,6 +77,8 @@ private:
     QMap<QString, int> m_levelDict;  // example:warning=>4
 
     LogAuthThread *m_authThread {nullptr};
+
+    qint64 m_selectTime {0};
 };
 
 #endif  // LOGFILEPARSER_H

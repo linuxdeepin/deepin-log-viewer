@@ -90,8 +90,8 @@ public slots:
 
     void slot_dpkgFinished();
     void slot_XorgFinished();
-    void slot_bootFinished();
-    void slot_kernFinished();
+    void slot_bootFinished(QList<LOG_MSG_BOOT> list);
+    void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
     void slot_journalFinished(QList<LOG_MSG_JOURNAL> logList);
     void slot_applicationFinished();
 
