@@ -1,6 +1,5 @@
 #include "logauththread.h"
 #include <QDebug>
-#include <QProcess>
 
 static LogAuthThread *INSTANCE = nullptr;
 LogAuthThread::LogAuthThread(QObject *parent)
@@ -23,6 +22,11 @@ LogAuthThread *LogAuthThread::instance()
     return INSTANCE;
 }
 
+void LogAuthThread::setType(LOG_FLAG type)
+{
+    m_type = type;
+}
+
 void LogAuthThread::setParam(QStringList list)
 {
     m_list = list;
@@ -40,7 +44,7 @@ QString LogAuthThread::getStandardError()
 
 void LogAuthThread::run()
 {
-    QProcess *proc = new QProcess;
+    proc = new QProcess;
     connect(proc, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     proc->setProcessChannelMode(QProcess::MergedChannels);
     proc->start("pkexec", m_list);
@@ -52,8 +56,6 @@ void LogAuthThread::onFinished(int exitCode)
     Q_UNUSED(exitCode)
 
     QProcess *process = dynamic_cast<QProcess *>(sender());
-    //    qDebug() << process->processId();
-    //    qDebug() << exitCode << endl;
     emit cmdFinished(process->readAllStandardOutput());
     process->deleteLater();
 }

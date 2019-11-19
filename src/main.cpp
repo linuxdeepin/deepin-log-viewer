@@ -23,6 +23,7 @@
 #include <DApplicationSettings>
 #include <DMainWindow>
 #include <DWidgetUtil>
+#include "logapplicationhelper.h"
 #include "logcollectormain.h"
 #include "logpasswordauth.h"
 
@@ -52,6 +53,8 @@ int main(int argc, char *argv[])
 
     if (!DGuiApplicationHelper::instance()->setSingleInstance("deepin-log-viewer"))
         return 0;
+
+    LogApplicationHelper::instance();
 
     LogCollectorMain w;
     w.setMinimumSize(958, 736);

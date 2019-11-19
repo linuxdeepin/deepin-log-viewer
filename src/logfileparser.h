@@ -73,6 +73,8 @@ private:
 
     QMap<QString, QString> m_dateDict;
     QMap<QString, int> m_levelDict;  // example:warning=>4
+
+    LogAuthThread *m_authThread {nullptr};
 };
 
 #endif  // LOGFILEPARSER_H

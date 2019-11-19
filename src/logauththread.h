@@ -1,6 +1,8 @@
 #ifndef LOGAUTHTHREAD_H
 #define LOGAUTHTHREAD_H
+#include <QProcess>
 #include <QThread>
+#include "structdef.h"
 
 class LogAuthThread : public QThread
 {
@@ -11,6 +13,7 @@ public:
 
     static LogAuthThread *instance();
 
+    void setType(LOG_FLAG type);
     void setParam(QStringList list);
 
     QString getStandardOutput();
@@ -29,6 +32,8 @@ private:
     QStringList m_list;
     QString m_output;
     QString m_error;
+    LOG_FLAG m_type;
+    QProcess *proc {nullptr};
 };
 
 #endif  // LOGAUTHTHREAD_H

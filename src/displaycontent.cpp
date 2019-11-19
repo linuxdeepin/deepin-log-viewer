@@ -38,6 +38,7 @@
 #include <QProcess>
 #include <QThread>
 #include <QVBoxLayout>
+#include "logapplicationhelper.h"
 #include "logexportwidget.h"
 #include "logfileparser.h"
 
@@ -48,7 +49,7 @@ DWIDGET_USE_NAMESPACE
 #define LEVEL_WIDTH 80
 #define STATUS_WIDTH 90
 #define DATETIME_WIDTH 175
-#define DEAMON_WIDTH 150
+#define DEAMON_WIDTH 100
 
 DisplayContent::DisplayContent(QWidget *parent)
     : DWidget(parent)
@@ -590,14 +591,14 @@ QString DisplayContent::getAppName(QString filePath)
         else {
             ret = filePath;
         }
-        return ret;
+        return LogApplicationHelper::instance()->transName(ret);
     }
 
     QString desStr = filePath.section("/", -1);
     if (desStr.contains(".")) {
-        return desStr.section(".", 0, 0);
+        ret = desStr.section(".", 0, 0);
     }
-    return ret;
+    return LogApplicationHelper::instance()->transName(ret);
 }
 
 bool DisplayContent::isAuthProcessAlive()

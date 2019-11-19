@@ -35,6 +35,7 @@
 #include <QPainter>
 #include <QProcess>
 #include <QVBoxLayout>
+#include "logapplicationhelper.h"
 #include "logperiodbutton.h"
 #include "structdef.h"
 
@@ -147,6 +148,7 @@ void FilterContent::initUI()
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
     cbx_status = new DComboBox(this);
     cbx_status->setMinimumWidth(120);
+    cbx_status->setMinimumSize(QSize(120, 40));
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
                                        << "Failed");
     hLayout_status->addWidget(statusTxt);
@@ -180,6 +182,16 @@ void FilterContent::initConnections()
 
 void FilterContent::setAppComboBoxItem()
 {
+    cbx_app->clear();
+    auto *appHelper = LogApplicationHelper::instance();
+    QMap<QString, QString> _map = appHelper->getMap();
+    QMap<QString, QString>::const_iterator iter = _map.constBegin();
+    while (iter != _map.constEnd()) {
+        cbx_app->addItem(iter.key());
+        cbx_app->setItemData(cbx_app->count() - 1, iter.value(), Qt::UserRole + 1);
+        ++iter;
+    }
+#if 0
     QString homePath = QDir::homePath();
     if (homePath.isEmpty()) {
         return;
@@ -220,6 +232,7 @@ void FilterContent::setAppComboBoxItem()
         cbx_app->setItemData(cbx_app->count() - 1, iter.value(), Qt::UserRole + 1);
         ++iter;
     }
+#endif
 }
 
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,

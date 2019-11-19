@@ -34,7 +34,8 @@ SOURCES += \
     logiconbutton.cpp \
     logspinnerwidget.cpp \
     logdetailinfowidget.cpp \
-    logauththread.cpp
+    logauththread.cpp \
+    logapplicationhelper.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -57,7 +58,8 @@ HEADERS += \
     logiconbutton.h \
     logspinnerwidget.h \
     logdetailinfowidget.h \
-    logauththread.h
+    logauththread.h \
+    logapplicationhelper.h
 
 
 TRANSLATIONS += translations/deepin-log-viewer_zh_CN.ts
