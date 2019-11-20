@@ -117,7 +117,7 @@ void FilterContent::initUI()
     hLayout_all = new QHBoxLayout;
 
     QHBoxLayout *hLayout_lv = new QHBoxLayout;
-    lvTxt = new DLabel(DApplication::translate("Label", "Level:    "), this);
+    lvTxt = new DLabel(DApplication::translate("Label", "Level:"), this);
     cbx_lv = new DComboBox(this);
     //    cbx_lv->setMinimumWidth(120);
     cbx_lv->setFixedSize(QSize(208, 38));
@@ -133,6 +133,7 @@ void FilterContent::initUI()
     cbx_lv->setCurrentText(DApplication::translate("ComboBox", "Info"));
     hLayout_lv->addWidget(lvTxt);
     hLayout_lv->addWidget(cbx_lv, 1);
+    hLayout_lv->setSpacing(10);
     hLayout_all->addLayout(hLayout_lv);
 
     // set all files under ~/.cache/deepin
@@ -141,6 +142,7 @@ void FilterContent::initUI()
     cbx_app = new DComboBox(this);
     hLayout_app->addWidget(appTxt);
     hLayout_app->addWidget(cbx_app, 1);
+    hLayout_app->setSpacing(10);
     hLayout_all->addLayout(hLayout_app);
 
     // add status item
@@ -153,6 +155,7 @@ void FilterContent::initUI()
                                        << "Failed");
     hLayout_status->addWidget(statusTxt);
     hLayout_status->addWidget(cbx_status, 1);
+    hLayout_status->setSpacing(10);
     hLayout_all->addLayout(hLayout_status);
 
     hLayout_all->addStretch(1);

@@ -35,7 +35,8 @@ SOURCES += \
     logspinnerwidget.cpp \
     logdetailinfowidget.cpp \
     logauththread.cpp \
-    logapplicationhelper.cpp
+    logapplicationhelper.cpp \
+    logapplicationparsethread.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -59,7 +60,8 @@ HEADERS += \
     logspinnerwidget.h \
     logdetailinfowidget.h \
     logauththread.h \
-    logapplicationhelper.h
+    logapplicationhelper.h \
+    logapplicationparsethread.h
 
 
 TRANSLATIONS += translations/deepin-log-viewer_zh_CN.ts

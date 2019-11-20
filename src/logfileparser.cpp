@@ -217,8 +217,18 @@ void LogFileParser::parseByKern(qint64 ms)
     m_authThread->start();
 }
 
-void LogFileParser::parseByApp(QString path, QList<LOG_MSG_APPLICATOIN> &appList, int lv, qint64 ms)
+void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 {
+    if (m_appThread) {
+        disconnect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
+                   SIGNAL(applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
+    }
+    m_appThread = new LogApplicationParseThread(path, lv, ms);
+    connect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
+            SIGNAL(applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
+    m_appThread->start();
+
+#if 0
     QProcess proc;
     QStringList arg;
     arg << "-c" << QString("cat %1").arg(path);
@@ -268,6 +278,7 @@ void LogFileParser::parseByApp(QString path, QList<LOG_MSG_APPLICATOIN> &appList
 
     createFile(output, appList.count());
     emit applicationFinished();
+#endif
 }
 
 void LogFileParser::createFile(QString output, int count)

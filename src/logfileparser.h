@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QThread>
 #include "journalwork.h"
+#include "logapplicationparsethread.h"
 #include "logauththread.h"
 #include "logpasswordauth.h"
 #include "structdef.h"
@@ -45,7 +46,7 @@ public:
     void parseByXlog(QList<LOG_MSG_XORG> &xList);
     void parseByBoot();
     void parseByKern(qint64 ms = 0);
-    void parseByApp(QString path, QList<LOG_MSG_APPLICATOIN> &appList, int lv = 6, qint64 ms = 0);
+    void parseByApp(QString path, int lv = 6, qint64 ms = 0);
 
     void createFile(QString output, int count);
 
@@ -55,7 +56,7 @@ signals:
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kernFinished(QList<LOG_MSG_JOURNAL>);
     void journalFinished(QList<LOG_MSG_JOURNAL>);
-    void applicationFinished();
+    void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
 
 private:
     bool isErroCommand(QString str);
@@ -77,6 +78,7 @@ private:
     QMap<QString, int> m_levelDict;  // example:warning=>4
 
     LogAuthThread *m_authThread {nullptr};
+    LogApplicationParseThread *m_appThread {nullptr};
 
     qint64 m_selectTime {0};
 };

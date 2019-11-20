@@ -392,22 +392,22 @@ void DisplayContent::generateAppFile(QString path, int id, int lId)
     dt.setTime(QTime());  // get zero time
     switch (id) {
         case ALL:
-            m_logFileParse.parseByApp(path, appList, lId);
+            m_logFileParse.parseByApp(path, lId);
             break;
         case ONE_DAY: {
-            m_logFileParse.parseByApp(path, appList, lId, dt.toMSecsSinceEpoch());
+            m_logFileParse.parseByApp(path, lId, dt.toMSecsSinceEpoch());
         } break;
         case THREE_DAYS: {
-            m_logFileParse.parseByApp(path, appList, lId, dt.addDays(-2).toMSecsSinceEpoch());
+            m_logFileParse.parseByApp(path, lId, dt.addDays(-2).toMSecsSinceEpoch());
         } break;
         case ONE_WEEK: {
-            m_logFileParse.parseByApp(path, appList, lId, dt.addDays(-6).toMSecsSinceEpoch());
+            m_logFileParse.parseByApp(path, lId, dt.addDays(-6).toMSecsSinceEpoch());
         } break;
         case ONE_MONTH: {
-            m_logFileParse.parseByApp(path, appList, lId, dt.addDays(-29).toMSecsSinceEpoch());
+            m_logFileParse.parseByApp(path, lId, dt.addDays(-29).toMSecsSinceEpoch());
         } break;
         case THREE_MONTHS: {
-            m_logFileParse.parseByApp(path, appList, lId, dt.addDays(-89).toMSecsSinceEpoch());
+            m_logFileParse.parseByApp(path, lId, dt.addDays(-89).toMSecsSinceEpoch());
         } break;
         default:
             break;
@@ -829,11 +829,12 @@ void DisplayContent::slot_journalFinished(QList<LOG_MSG_JOURNAL> logList)
     createJournalTable(logList);
 }
 
-void DisplayContent::slot_applicationFinished()
+void DisplayContent::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list)
 {
     if (m_flag != APP)
         return;
 
+    appList = list;
     createAppTable(appList);
 }
 

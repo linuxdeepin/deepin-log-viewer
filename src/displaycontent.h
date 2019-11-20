@@ -93,7 +93,7 @@ public slots:
     void slot_bootFinished(QList<LOG_MSG_BOOT> list);
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
     void slot_journalFinished(QList<LOG_MSG_JOURNAL> logList);
-    void slot_applicationFinished();
+    void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
 
     void slot_vScrollValueChanged(int value);
 
