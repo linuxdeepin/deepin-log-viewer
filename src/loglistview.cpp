@@ -93,7 +93,7 @@ void LogListView::initUI()
     item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
 
-    item = new QStandardItem(DApplication::translate("Tree", "Application log"));
+    item = new QStandardItem(DApplication::translate("Tree", "Application Log"));
     item->setData(APP_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
     item->setData(VListViewItemMargin, Dtk::MarginsRole);

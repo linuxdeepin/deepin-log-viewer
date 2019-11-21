@@ -62,6 +62,7 @@ void FilterContent::initUI()
     // set period info
     hLayout_period = new QHBoxLayout;
     periodLabel = new DLabel(DApplication::translate("Label", "Period:"), this);
+    periodLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     m_btnGroup = new QButtonGroup;
 
     LogPeriodButton *m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
@@ -111,16 +112,16 @@ void FilterContent::initUI()
     cmdLinkBtn->hide();
     m_btnGroup->addButton(cmdLinkBtn, 6);
     hLayout_period->addWidget(cmdLinkBtn);
-    hLayout_period->setSpacing(10);
+    hLayout_period->setSpacing(6);
 
     // set level info
     hLayout_all = new QHBoxLayout;
 
     QHBoxLayout *hLayout_lv = new QHBoxLayout;
-    lvTxt = new DLabel(DApplication::translate("Label", "Level:"), this);
+    lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
+    lvTxt->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     cbx_lv = new DComboBox(this);
-    //    cbx_lv->setMinimumWidth(120);
-    cbx_lv->setFixedSize(QSize(208, 38));
+    cbx_lv->setMinimumSize(QSize(208, BUTTON_HEIGHT_MIN));
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                                    << DApplication::translate("ComboBox", "Emer")
                                    << DApplication::translate("ComboBox", "Alert")
@@ -133,7 +134,7 @@ void FilterContent::initUI()
     cbx_lv->setCurrentText(DApplication::translate("ComboBox", "Info"));
     hLayout_lv->addWidget(lvTxt);
     hLayout_lv->addWidget(cbx_lv, 1);
-    hLayout_lv->setSpacing(10);
+    hLayout_lv->setSpacing(6);
     hLayout_all->addLayout(hLayout_lv);
 
     // set all files under ~/.cache/deepin
@@ -142,7 +143,7 @@ void FilterContent::initUI()
     cbx_app = new DComboBox(this);
     hLayout_app->addWidget(appTxt);
     hLayout_app->addWidget(cbx_app, 1);
-    hLayout_app->setSpacing(10);
+    hLayout_app->setSpacing(6);
     hLayout_all->addLayout(hLayout_app);
 
     // add status item
@@ -155,7 +156,7 @@ void FilterContent::initUI()
                                        << "Failed");
     hLayout_status->addWidget(statusTxt);
     hLayout_status->addWidget(cbx_status, 1);
-    hLayout_status->setSpacing(10);
+    hLayout_status->setSpacing(6);
     hLayout_all->addLayout(hLayout_status);
 
     hLayout_all->addStretch(1);
@@ -169,6 +170,7 @@ void FilterContent::initUI()
     // set layout
     vLayout->addLayout(hLayout_period);
     vLayout->addLayout(hLayout_all);
+    vLayout->setSpacing(16);
     this->setLayout(vLayout);
 
     // default application list is not visible

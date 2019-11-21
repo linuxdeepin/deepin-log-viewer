@@ -366,7 +366,7 @@ void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
         } break;
         case KERN: {
             QList<LOG_MSG_JOURNAL> kList;
-            qDebug() << "ms::" << m_selectTime;
+            //            qDebug() << "ms::" << m_selectTime << output;
 
             for (QString str : output.split('\n')) {
                 LOG_MSG_JOURNAL msg;
