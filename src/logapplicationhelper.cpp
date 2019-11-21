@@ -1,4 +1,5 @@
 #include "logapplicationhelper.h"
+#include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QLocale>
@@ -48,18 +49,31 @@ void LogApplicationHelper::createDesktopFiles()
         if (!fi.open(QIODevice::ReadOnly))
             continue;
 
+        // insert map at first, en-en, then repalce transName if has name,
+        m_en_trans_map.insert(var.section(".", 0, 0), var.section(".", 0, 0));
+
         while (!fi.atEnd()) {
             QString lineStr = fi.readLine();
             lineStr.replace("\n", "");
-            if (lineStr.contains(m_current_system_language) && lineStr.contains("GenericName")) {
-                QStringList gNameList = lineStr.split("=");
-                if (gNameList.count() == 2) {
-                    QString genericName = gNameList[1];
+
+            if (!lineStr.contains("GenericName"))
+                continue;
+
+            QStringList gNameList = lineStr.split("=", QString::SkipEmptyParts);
+            if (gNameList.count() != 2)
+                continue;
+
+            QString leftStr = gNameList[0];
+            QString genericName = gNameList[1];
+
+            if (leftStr.split("_").count() == 2) {
+                if (leftStr.contains(m_current_system_language)) {
                     m_en_trans_map.insert(var.section(".", 0, 0), genericName);
+                    break;
                 }
+            } else if (leftStr.contains(m_current_system_language.split("_")[0])) {
+                m_en_trans_map.insert(var.section(".", 0, 0), genericName);
                 break;
-            } else {
-                m_en_trans_map.insert(var.section(".", 0, 0), var.section(".", 0, 0));
             }
         }
     }

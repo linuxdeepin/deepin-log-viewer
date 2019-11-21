@@ -24,6 +24,7 @@
 
 #include <DComboBox>
 #include <DFrame>
+#include <DLabel>
 #include <DSuggestButton>
 #include <DWidget>
 #include <QButtonGroup>

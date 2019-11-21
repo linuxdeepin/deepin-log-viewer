@@ -2,6 +2,7 @@
 #define LOGDETAILINFOWIDGET_H
 
 #include <DHorizontalLine>
+#include <DLabel>
 #include <DWidget>
 #include <QModelIndex>
 #include <QStandardItemModel>
