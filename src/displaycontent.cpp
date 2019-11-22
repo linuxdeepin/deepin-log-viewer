@@ -25,6 +25,7 @@
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DFileDialog>
+#include <DFontSizeManager>
 #include <DHorizontalLine>
 #include <DScrollBar>
 #include <DStandardItem>
@@ -87,9 +88,11 @@ void DisplayContent::initUI()
     DApplicationHelper::instance()->setPalette(noResultLabel, pa);
 
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
-    QFont labelFont = noResultLabel->font();
-    labelFont.setPixelSize(20);
-    noResultLabel->setFont(labelFont);
+
+    DFontSizeManager::instance()->bind(noResultLabel, DFontSizeManager::T4);
+    //    QFont labelFont = noResultLabel->font();
+    //    labelFont.setPixelSize(20);
+    //    noResultLabel->setFont(labelFont);
     noResultLabel->setAlignment(Qt::AlignCenter);
     //    vLayout->addWidget(noResultLabel, 5);
     noResultLabel->hide();

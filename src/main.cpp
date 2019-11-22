@@ -28,6 +28,7 @@
 #include "logpasswordauth.h"
 
 #include <DLog>
+#include <QDateTime>
 
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -41,7 +42,7 @@ int main(int argc, char *argv[])
     a.loadTranslator();
     a.setOrganizationName("deepin");
     a.setApplicationName("deepin-log-viewer");
-    a.setApplicationVersion(DApplication::buildVersion("20191016"));
+    a.setApplicationVersion(DApplication::buildVersion("Test version"));
     a.setProductIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setWindowIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setProductName(DApplication::translate("Main", "Log Viewer"));

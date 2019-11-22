@@ -30,6 +30,9 @@
 
 DWIDGET_USE_NAMESPACE
 
+std::atomic<journalWork *> journalWork::m_instance;
+std::mutex journalWork::m_mutex;
+
 journalWork::journalWork(QStringList arg, QObject *parent)
     //    : QObject(parent)
     : QThread(parent)
@@ -44,16 +47,33 @@ journalWork::journalWork(QStringList arg, QObject *parent)
         m_arg.append(arg);
 }
 
+journalWork::journalWork(QObject *parent)
+    : QThread(parent)
+{
+    qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
+
+    initMap();
+
+    m_arg.append("-o");
+    m_arg.append("json");
+}
+
 journalWork::~journalWork()
 {
-    //    logList.clear();
-    //    m_map.clear();
+    logList.clear();
+    m_map.clear();
 }
 
 void journalWork::stopWork()
 {
     if (proc)
         proc->kill();
+}
+
+void journalWork::setArg(QStringList arg)
+{
+    if (!arg.isEmpty())
+        m_arg.append(arg);
 }
 
 void journalWork::run()

@@ -23,6 +23,7 @@
 
 #include <DApplication>
 #include <DTitlebar>
+#include <QDateTime>
 #include <QDebug>
 #include <QHeaderView>
 #include <QStandardItem>
@@ -35,6 +36,8 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
 {
     initUI();
     initConnection();
+
+    initShortCut();
 
     m_logCatelogue->setDefaultSelect();
 }
@@ -87,56 +90,6 @@ void LogCollectorMain::initUI()
     m_hLayout->setSpacing(10);
 
     this->centralWidget()->setLayout(m_hLayout);
-
-#if 0
-    m_hLayout = new QHBoxLayout(this->centralWidget());
-
-    m_hSplitter = new QSplitter(this->centralWidget());
-    m_hSplitter->setOrientation(Qt::Horizontal);
-
-    /** left frame */
-    m_logCatelogue = new LogListView(m_hSplitter);
-    m_hSplitter->addWidget(m_logCatelogue);
-
-    QWidget *layoutWidget = new QWidget(m_hSplitter);
-
-    m_vLayout = new QVBoxLayout(layoutWidget);
-
-    /** topRight frame */
-    m_topRightWgt = new FilterContent(layoutWidget);
-    m_vLayout->addWidget(m_topRightWgt);
-
-    /** midRight frame */
-    m_midRightWgt = new DisplayContent(layoutWidget);
-    m_vLayout->addWidget(m_midRightWgt, 1);
-    m_vLayout->setContentsMargins(10, 0, 0, 0);
-    m_vLayout->setSpacing(6);
-
-    m_hSplitter->addWidget(layoutWidget);
-    layoutWidget->setContentsMargins(0, 10, 0, 10);
-
-    m_hLayout->addWidget(m_hSplitter);
-    m_hLayout->setSizeConstraint(QLayout::SetMinAndMaxSize);
-    m_hLayout->setContentsMargins(0, 0, 10, 0);
-
-    m_hSplitter->setStretchFactor(0, 5);
-    m_hSplitter->setStretchFactor(1, 15);
-#endif
-
-#if 0
-    // filter button
-    DPushButton *filterBtn = new DPushButton("filter");
-    filterBtn->setCheckable(true);
-    filterBtn->setChecked(true);
-    titlebar()->addWidget(filterBtn);
-    connect(filterBtn, &DPushButton::clicked, this, [=](bool checked) {
-        if (checked) {
-            m_topRightWgt->show();
-        } else {
-            m_topRightWgt->hide();
-        }
-    });
-#endif
 }
 
 void LogCollectorMain::initConnection()
@@ -170,4 +123,45 @@ void LogCollectorMain::initConnection()
     connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [=]() { m_searchEdt->clear(); });
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this,
             [=]() { m_searchEdt->clear(); });
+}
+
+void LogCollectorMain::initShortCut()
+{
+    // Resize Window --> Ctrl+Alt+F
+    if (nullptr == m_scWndReize) {
+        m_scWndReize = new QShortcut(this);
+        m_scWndReize->setKey(tr("Ctrl+Alt+F"));
+        m_scWndReize->setContext(Qt::ApplicationShortcut);
+        m_scWndReize->setAutoRepeat(false);
+
+        connect(m_scWndReize, &QShortcut::activated, this, [this] {
+            if (this->windowState() & Qt::WindowMaximized) {
+                this->showNormal();
+            } else if (this->windowState() == Qt::WindowNoState) {
+                this->showMaximized();
+            }
+        });
+    }
+
+    // Find font --> Ctrl+F
+    if (nullptr == m_scFindFont) {
+        m_scFindFont = new QShortcut(this);
+        m_scFindFont->setKey(tr("Ctrl+F"));
+        m_scFindFont->setContext(Qt::ApplicationShortcut);
+        m_scFindFont->setAutoRepeat(false);
+
+        connect(m_scFindFont, &QShortcut::activated, this,
+                [this] { this->m_searchEdt->lineEdit()->setFocus(Qt::MouseFocusReason); });
+    }
+
+    // export file --> Ctrl+E
+    if (nullptr == m_scExport) {
+        m_scExport = new QShortcut(this);
+        m_scExport->setKey(tr("Ctrl+E"));
+        m_scExport->setContext(Qt::ApplicationShortcut);
+        m_scExport->setAutoRepeat(false);
+
+        connect(m_scExport, &QShortcut::activated, this,
+                [this] { this->m_topRightWgt->shortCutExport(); });
+    }
 }

@@ -41,6 +41,8 @@ public:
     void initUI();
     void initConnections();
 
+    void shortCutExport();
+
 private:
     void setAppComboBoxItem();
 

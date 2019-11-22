@@ -27,6 +27,7 @@
 #include <DSplitter>
 #include <DTreeView>
 #include <QHBoxLayout>
+#include <QShortcut>
 #include <QSplitter>
 #include <QVBoxLayout>
 #include "displaycontent.h"
@@ -43,6 +44,8 @@ public:
     void initUI();
     void initConnection();
 
+    void initShortCut();
+
 private:
     Dtk::Widget::DSearchEdit *m_searchEdt;
     FilterContent *m_topRightWgt;
@@ -53,6 +56,10 @@ private:
     QVBoxLayout *m_vLayout;
 
     Dtk::Widget::DSplitter *m_hSplitter;
+
+    QShortcut *m_scWndReize {nullptr};  // Resize Window      --> Ctrl+Alt+F
+    QShortcut *m_scFindFont {nullptr};  // Find font          --> Ctrl+F
+    QShortcut *m_scExport {nullptr};    // export file          --> Ctrl+E
 };
 
 #endif  // LOGCOLLECTORMAIN_H

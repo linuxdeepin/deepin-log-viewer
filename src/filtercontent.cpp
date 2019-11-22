@@ -185,6 +185,13 @@ void FilterContent::initConnections()
     connect(cbx_status, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxStatusChanged(int)));
 }
 
+void FilterContent::shortCutExport()
+{
+    QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
+    if (!itemData.isEmpty())
+        emit sigExportInfo();
+}
+
 void FilterContent::setAppComboBoxItem()
 {
     cbx_app->clear();
@@ -306,7 +313,8 @@ void FilterContent::slot_buttonClicked(int idx)
     //        return;
 
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
-
+    // because button has no focus,so focus on label;
+    lvTxt->setFocus();
     switch (idx) {
         case ALL:
         case ONE_DAY:

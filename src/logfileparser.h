@@ -69,16 +69,15 @@ public slots:
     void slot_threadFinished(LOG_FLAG flag, QString output);
 
 private:
-    QThread m_thread;
     QString m_rootPasswd;
     LogPasswordAuth *m_logPasswdWgt;
-    journalWork *work {nullptr};
 
     QMap<QString, QString> m_dateDict;
     QMap<QString, int> m_levelDict;  // example:warning=>4
 
     LogAuthThread *m_authThread {nullptr};
     LogApplicationParseThread *m_appThread {nullptr};
+    journalWork *work {nullptr};
 
     qint64 m_selectTime {0};
 };

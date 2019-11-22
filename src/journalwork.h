@@ -25,6 +25,7 @@
 #include <QMap>
 #include <QObject>
 #include <QProcess>
+#include <mutex>
 #include "structdef.h"
 
 #include <QThread>
@@ -35,11 +36,28 @@ class journalWork : public QThread
     Q_OBJECT
 public:
     explicit journalWork(QStringList arg, QObject *parent = nullptr);
+    explicit journalWork(QObject *parent = nullptr);
     ~journalWork();
+
+    static journalWork *instance()
+    {
+        journalWork *sin = m_instance.load();
+        if (!sin) {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            sin = m_instance.load();
+            if (!sin) {
+                sin = new journalWork();
+                m_instance.store(sin);
+            }
+        }
+        return sin;
+    }
 
     void stopWork();
 
-    void run();
+    void setArg(QStringList arg);
+
+    void run() override;
 
 signals:
     void journalFinished(QList<LOG_MSG_JOURNAL> list);
@@ -57,6 +75,9 @@ private:
     QMap<int, QString> m_map;
 
     QProcess *proc {nullptr};
+
+    static std::atomic<journalWork *> m_instance;
+    static std::mutex m_mutex;
 };
 
 #endif  // JOURNALWORK_H

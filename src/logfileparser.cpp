@@ -59,20 +59,14 @@ LogFileParser::LogFileParser(QWidget *parent)
     m_logPasswdWgt = new LogPasswordAuth;
 }
 
-LogFileParser::~LogFileParser()
-{
-    m_thread.quit();
-    m_thread.wait();
-}
+LogFileParser::~LogFileParser() {}
 
 void LogFileParser::parseByJournal(QStringList arg)
 {
-    if (work) {
-        disconnect(work, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
-                   SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
-        work->stopWork();
-    }
-    work = new journalWork(arg);
+    work = journalWork::instance();
+    disconnect(work, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
+               SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
+    work->setArg(arg);
     connect(work, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
             SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
     work->start();
@@ -193,7 +187,7 @@ void LogFileParser::parseByXlog(QStringList &xList)
 
 void LogFileParser::parseByBoot()
 {
-    auto *m_authThread = LogAuthThread::instance();
+    m_authThread = LogAuthThread::instance();
 
     disconnect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
                SLOT(slot_threadFinished(LOG_FLAG, QString)));
@@ -206,7 +200,7 @@ void LogFileParser::parseByBoot()
 
 void LogFileParser::parseByKern(qint64 ms)
 {
-    auto *m_authThread = LogAuthThread::instance();
+    m_authThread = LogAuthThread::instance();
     disconnect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
                SLOT(slot_threadFinished(LOG_FLAG, QString)));
     m_authThread->setType(KERN);
