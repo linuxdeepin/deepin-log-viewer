@@ -35,6 +35,7 @@ DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+    DApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -42,7 +43,7 @@ int main(int argc, char *argv[])
     a.loadTranslator();
     a.setOrganizationName("deepin");
     a.setApplicationName("deepin-log-viewer");
-    a.setApplicationVersion(DApplication::buildVersion("Test version"));
+    a.setApplicationVersion(DApplication::buildVersion(""));
     a.setProductIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setWindowIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setProductName(DApplication::translate("Main", "Log Viewer"));

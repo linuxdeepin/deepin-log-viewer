@@ -162,42 +162,26 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
     }
 
     // set itembackground color
-    DPalette pa = DApplicationHelper::instance()->palette(this);
-    pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
-    pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
-    this->setPalette(pa);
-    DApplicationHelper::instance()->setPalette(this, pa);
+    //    DPalette pa = DApplicationHelper::instance()->palette(this);
+    //    pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
+    //    pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
 
-    this->setAutoFillBackground(true);
+    //    this->setPalette(pa);
+    //    DApplicationHelper::instance()->setPalette(this, pa);
+
+    //    this->setAutoFillBackground(true);
 }
 
 void LogListView::paintEvent(QPaintEvent *event)
 {
-    //    QPainter painter(this->viewport());
-    //    painter.setRenderHint(QPainter::Antialiasing, true);
+    DPalette pa = DApplicationHelper::instance()->palette(this);
+    pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
+    pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
 
-    //    // Save pen
-    //    QPen oldPen = painter.pen();
+    this->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(this, pa);
 
-    //    painter.setRenderHint(QPainter::Antialiasing);
-    //    DPalette pa = DApplicationHelper::instance()->palette(this);
-    //    painter.setBrush(QBrush(pa.color(DPalette::Base)));
-    //    QColor penColor = pa.color(DPalette::FrameBorder);
-    //    penColor.setAlphaF(0.05);
-    //    painter.setPen(QPen(penColor));
-
-    //    QRectF rect = this->rect();
-    //    rect.setX(0.5);
-    //    rect.setY(0.5);
-    //    rect.setWidth(rect.width() - 0.5);
-    //    rect.setHeight(rect.height() - 0.5);
-
-    //    QPainterPath painterPath;
-    //    painterPath.addRoundedRect(rect, 8, 8);
-    //    painter.drawPath(painterPath);
-
-    //    // Restore the pen
-    //    painter.setPen(oldPen);
+    this->setAutoFillBackground(true);
 
     DListView::paintEvent(event);
 }
