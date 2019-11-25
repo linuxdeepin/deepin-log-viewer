@@ -53,9 +53,6 @@ journalWork::journalWork(QObject *parent)
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
 
     initMap();
-
-    m_arg.append("-o");
-    m_arg.append("json");
 }
 
 journalWork::~journalWork()
@@ -72,6 +69,11 @@ void journalWork::stopWork()
 
 void journalWork::setArg(QStringList arg)
 {
+    m_arg.clear();
+
+    m_arg.append("-o");
+    m_arg.append("json");
+
     if (!arg.isEmpty())
         m_arg.append(arg);
 }

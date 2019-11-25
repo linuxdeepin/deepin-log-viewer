@@ -40,19 +40,31 @@ LogExportWidget::LogExportWidget(QWidget *parent)
 {
 }
 
-bool LogExportWidget::exportToTxt(QString fileName, QStandardItemModel *pModel)
+bool LogExportWidget::exportToTxt(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     QFile fi(fileName);
     if (!fi.open(QIODevice::WriteOnly))
         return false;
 
     QTextStream out(&fi);
-    for (int row = 0; row < pModel->rowCount(); row++) {
-        for (int col = 0; col < pModel->columnCount(); col++) {
-            out << pModel->horizontalHeaderItem(col)->text() << ": "
-                << pModel->item(row, col)->text() << " ";
+    if (flag == APP) {
+        for (int row = 0; row < pModel->rowCount(); ++row) {
+            out << pModel->horizontalHeaderItem(0)->text() << ": "
+                << pModel->item(row, 0)->data(Qt::UserRole + 6).toString() << " ";
+            for (int col = 1; col < pModel->columnCount(); ++col) {
+                out << pModel->horizontalHeaderItem(col)->text() << ": "
+                    << pModel->item(row, col)->text() << " ";
+            }
+            out << "\n";
         }
-        out << "\n";
+    } else {
+        for (int row = 0; row < pModel->rowCount(); row++) {
+            for (int col = 0; col < pModel->columnCount(); col++) {
+                out << pModel->horizontalHeaderItem(col)->text() << ": "
+                    << pModel->item(row, col)->text() << " ";
+            }
+            out << "\n";
+        }
     }
     fi.close();
     return true;
@@ -80,7 +92,7 @@ bool LogExportWidget::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
     return true;
 }
 
-bool LogExportWidget::exportToDoc(QString fileName, QStandardItemModel *pModel)
+bool LogExportWidget::exportToDoc(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
 #if 1
     Docx::Document doc(":/doc_template/template.doc");
@@ -94,11 +106,21 @@ bool LogExportWidget::exportToDoc(QString fileName, QStandardItemModel *pModel)
             cel->addText(pModel->horizontalHeaderItem(col)->text());
         }
     }
-
-    for (int row = 0; row < pModel->rowCount(); ++row) {
-        for (int col = 0; col < pModel->columnCount(); ++col) {
-            auto cel = tab->cell(row + 1, col);
-            cel->addText(pModel->item(row, col)->text());
+    if (flag == APP) {
+        for (int row = 0; row < pModel->rowCount(); ++row) {
+            auto cel = tab->cell(row + 1, 0);
+            cel->addText(pModel->item(row, 0)->data(Qt::UserRole + 6).toString());
+            for (int col = 1; col < pModel->columnCount(); ++col) {
+                auto cel = tab->cell(row + 1, col);
+                cel->addText(pModel->item(row, col)->text());
+            }
+        }
+    } else {
+        for (int row = 0; row < pModel->rowCount(); ++row) {
+            for (int col = 0; col < pModel->columnCount(); ++col) {
+                auto cel = tab->cell(row + 1, col);
+                cel->addText(pModel->item(row, col)->text());
+            }
         }
     }
     doc.save(fileName);
@@ -195,7 +217,7 @@ bool LogExportWidget::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
     return true;
 }
 
-bool LogExportWidget::exportToHtml(QString fileName, QStandardItemModel *pModel)
+bool LogExportWidget::exportToHtml(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     QFile html(fileName);
     if (!html.open(QIODevice::WriteOnly))
@@ -212,13 +234,29 @@ bool LogExportWidget::exportToHtml(QString fileName, QStandardItemModel *pModel)
     }
     html.write("</tr>");
     // write contents
-    for (int row = 0; row < pModel->rowCount(); ++row) {
-        html.write("<tr>");
-        for (int col = 0; col < pModel->columnCount(); ++col) {
-            QString info = QString("<td>%1</td>").arg(pModel->item(row, col)->text());
+    if (flag == APP) {
+        for (int row = 0; row < pModel->rowCount(); ++row) {
+            html.write("<tr>");
+
+            QString info =
+                QString("<td>%1</td>").arg(pModel->item(row, 0)->data(Qt::UserRole + 6).toString());
             html.write(info.toUtf8().data());
+
+            for (int col = 1; col < pModel->columnCount(); ++col) {
+                QString info = QString("<td>%1</td>").arg(pModel->item(row, col)->text());
+                html.write(info.toUtf8().data());
+            }
+            html.write("</tr>");
         }
-        html.write("</tr>");
+    } else {
+        for (int row = 0; row < pModel->rowCount(); ++row) {
+            html.write("<tr>");
+            for (int col = 0; col < pModel->columnCount(); ++col) {
+                QString info = QString("<td>%1</td>").arg(pModel->item(row, col)->text());
+                html.write(info.toUtf8().data());
+            }
+            html.write("</tr>");
+        }
     }
     html.write("</table>\n");
     html.write("</body>\n");
@@ -270,7 +308,7 @@ bool LogExportWidget::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
     return true;
 }
 
-bool LogExportWidget::exportToXls(QString fileName, QStandardItemModel *pModel)
+bool LogExportWidget::exportToXls(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     auto currentXlsRow = 1;
     QXlsx::Document xlsx;
@@ -285,11 +323,22 @@ bool LogExportWidget::exportToXls(QString fileName, QStandardItemModel *pModel)
     }
     ++currentXlsRow;
 
-    for (int row = 0; row < pModel->rowCount(); ++row) {
-        for (int col = 0; col < pModel->columnCount(); ++col) {
-            xlsx.write(currentXlsRow, col + 1, pModel->item(row, col)->text());
+    if (flag == APP) {
+        for (int row = 0; row < pModel->rowCount(); ++row) {
+            xlsx.write(currentXlsRow, 0 + 1,
+                       pModel->item(row, 0)->data(Qt::UserRole + 6).toString());
+            for (int col = 1; col < pModel->columnCount(); ++col) {
+                xlsx.write(currentXlsRow, col + 1, pModel->item(row, col)->text());
+            }
+            ++currentXlsRow;
         }
-        ++currentXlsRow;
+    } else {
+        for (int row = 0; row < pModel->rowCount(); ++row) {
+            for (int col = 0; col < pModel->columnCount(); ++col) {
+                xlsx.write(currentXlsRow, col + 1, pModel->item(row, col)->text());
+            }
+            ++currentXlsRow;
+        }
     }
 
     ++currentXlsRow;

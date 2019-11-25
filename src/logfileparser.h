@@ -70,7 +70,6 @@ public slots:
 
 private:
     QString m_rootPasswd;
-    LogPasswordAuth *m_logPasswdWgt;
 
     QMap<QString, QString> m_dateDict;
     QMap<QString, int> m_levelDict;  // example:warning=>4

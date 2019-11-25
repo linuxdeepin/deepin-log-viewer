@@ -63,12 +63,14 @@ private:
 
     void generateAppFile(QString path, int id, int lId);
     void createAppTable(QList<LOG_MSG_APPLICATOIN> &list);
+    void createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list);
 
     void createBootTable(QList<LOG_MSG_BOOT> &list);
 
     void createXorgTable(QList<LOG_MSG_XORG> &list);
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
+    void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
 
     QString getAppName(QString filePath);
 

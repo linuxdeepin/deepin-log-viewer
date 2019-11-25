@@ -55,8 +55,6 @@ LogFileParser::LogFileParser(QWidget *parent)
     // TODO::
     m_levelDict.insert("Warning", WARN);
     m_levelDict.insert("Debug", DEB);
-
-    m_logPasswdWgt = new LogPasswordAuth;
 }
 
 LogFileParser::~LogFileParser() {}
@@ -213,66 +211,17 @@ void LogFileParser::parseByKern(qint64 ms)
 
 void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 {
-    if (m_appThread) {
-        disconnect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
-                   SIGNAL(applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
-    }
-    m_appThread = new LogApplicationParseThread(path, lv, ms);
+    m_appThread = LogApplicationParseThread::instance();
+
+    disconnect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
+               SIGNAL(applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
+
+    m_appThread->setParam(path, lv, ms);
+
     connect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
             SIGNAL(applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
+
     m_appThread->start();
-
-#if 0
-    QProcess proc;
-    QStringList arg;
-    arg << "-c" << QString("cat %1").arg(path);
-
-    proc.start("/bin/bash", arg);
-    proc.waitForFinished(-1);
-
-    if (isErroCommand(QString(proc.readAllStandardError())))
-        return;
-
-    QString output = proc.readAllStandardOutput();
-    proc.close();
-
-    for (QString str : output.split('\n')) {
-        LOG_MSG_APPLICATOIN msg;
-
-        str.replace(QRegExp("\\s{2,}"), "");
-
-        QStringList list = str.split("]", QString::SkipEmptyParts);
-        if (list.count() < 3)
-            continue;
-
-        QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
-        if (dateTime.contains(",")) {
-            dateTime.replace(",", "");
-        }
-        //        if (dateTime.split(".").count() == 2) {
-        //            dateTime = dateTime.split(".")[0];
-        //        }
-        qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
-        if (dt < ms)
-            continue;
-        msg.dateTime = dateTime;
-        msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
-
-        if (lv != LVALL) {
-            if (m_levelDict.value(msg.level) != lv)
-                continue;
-        }
-
-        msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
-        msg.msg = list[2];
-
-        //        appList.append(msg);
-        appList.insert(0, msg);
-    }
-
-    createFile(output, appList.count());
-    emit applicationFinished();
-#endif
 }
 
 void LogFileParser::createFile(QString output, int count)

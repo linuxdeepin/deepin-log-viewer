@@ -45,7 +45,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-#define SINGLE_LOAD 500
+#define SINGLE_LOAD 200
 
 #define LEVEL_WIDTH 80
 #define STATUS_WIDTH 90
@@ -251,8 +251,8 @@ void DisplayContent::generateDpkgFile(int id)
     dList.clear();
 
     m_spinnerWgt->spinnerStop();
-    m_treeView->show();
     m_spinnerWgt->hide();
+    m_treeView->show();
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
@@ -319,8 +319,8 @@ void DisplayContent::generateKernFile(int id)
 {
     kList.clear();
     m_spinnerWgt->spinnerStop();
-    m_treeView->show();
     m_spinnerWgt->hide();
+    m_treeView->show();
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
@@ -391,6 +391,12 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
 void DisplayContent::generateAppFile(QString path, int id, int lId)
 {
     appList.clear();
+
+    m_spinnerWgt->spinnerStop();
+    m_spinnerWgt->spinnerStart();
+    m_treeView->hide();
+    m_spinnerWgt->show();
+
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
@@ -738,25 +744,25 @@ void DisplayContent::slot_exportClicked()
     }
     if (selectFilter == "TEXT (*.txt)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToTxt(fileName, m_pModel);
+            LogExportWidget::exportToTxt(fileName, m_pModel, m_flag);
         } else {
             LogExportWidget::exportToTxt(fileName, jList);
         }
     } else if (selectFilter == "Html (*.html)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToHtml(fileName, m_pModel);
+            LogExportWidget::exportToHtml(fileName, m_pModel, m_flag);
         } else {
             LogExportWidget::exportToHtml(fileName, jList);
         }
     } else if (selectFilter == "Doc (*.doc)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToDoc(fileName, m_pModel);
+            LogExportWidget::exportToDoc(fileName, m_pModel, m_flag);
         } else {
             LogExportWidget::exportToDoc(fileName, jList, labels);
         }
     } else if (selectFilter == "Xls (*.xls)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToXls(fileName, m_pModel);
+            LogExportWidget::exportToXls(fileName, m_pModel, m_flag);
         } else {
             LogExportWidget::exportToXls(fileName, jList, labels);
         }
@@ -837,32 +843,57 @@ void DisplayContent::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list)
     if (m_flag != APP)
         return;
 
+    appList.clear();
+
+    m_spinnerWgt->hide();
+    m_treeView->show();
+    m_spinnerWgt->spinnerStop();
+
     appList = list;
-    createAppTable(appList);
+    createApplicationTable(appList);
 }
 
 void DisplayContent::slot_vScrollValueChanged(int value)
 {
-    if (m_flag != JOURNAL)
-        return;
+    if (m_flag == JOURNAL) {
+        int rate = (value + 25) / SINGLE_LOAD;
+        //    qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
 
-    int rate = (value + 25) / SINGLE_LOAD;
-    //    qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
+        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
+            if (m_limitTag == rate)
+                return;
 
-    if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-        if (m_limitTag == rate)
-            return;
+            int leftCnt = jList.count() - SINGLE_LOAD * rate;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            //        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
+            //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD
+            //                 * rate;
+            insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
-        int leftCnt = jList.count() - SINGLE_LOAD * rate;
-        int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-        //        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
-        //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD
-        //                 * rate;
-        insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+            m_limitTag = rate;
+        }
+        m_treeView->verticalScrollBar()->setValue(value);
+    } else if (m_flag == APP) {
+        int rate = (value + 25) / SINGLE_LOAD;
+        //        qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
 
-        m_limitTag = rate;
+        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
+            if (m_limitTag == rate)
+                return;
+
+            int leftCnt = appList.count() - SINGLE_LOAD * rate;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            //            qDebug() << "total count: " << appList.count() << "left count : " <<
+            //            leftCnt
+            //                     << " start : " << SINGLE_LOAD * rate << "end: " << end +
+            //                     SINGLE_LOAD * rate;
+
+            insertApplicationTable(appList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+
+            m_limitTag = rate;
+        }
+        m_treeView->verticalScrollBar()->setValue(value);
     }
-    m_treeView->verticalScrollBar()->setValue(value);
 }
 
 void DisplayContent::slot_searchResult(QString str)
@@ -1020,4 +1051,60 @@ QString DisplayContent::getIconByname(QString str)
 {
     //    qDebug() << str << m_icon_name_map.value(str);
     return m_icon_name_map.value(str);
+}
+
+void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
+{
+    //    m_treeView->show();
+    noResultLabel->hide();
+    m_pModel->clear();
+    m_pModel->setColumnCount(4);
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Level")
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Source")
+                                        << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertApplicationTable(list, 0, end);
+}
+
+void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end)
+{
+    DStandardItem *item = nullptr;
+    for (int i = start; i < end; i++) {
+        int col = 0;
+        QString CH_str = m_transDict.value(list[i].level);
+        QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
+        //        item = new DStandardItem(lvStr);
+        item = new DStandardItem();
+        QString iconPath = m_iconPrefix + getIconByname(list[i].level);
+        if (getIconByname(list[i].level).isEmpty())
+            item->setText(lvStr);
+        item->setIcon(QIcon(iconPath));
+        item->setData(APP_TABLE_DATA);
+        item->setData(lvStr, Qt::UserRole + 6);
+        m_pModel->setItem(i, col++, item);
+
+        item = new DStandardItem(list[i].dateTime);
+        item->setData(APP_TABLE_DATA);
+        m_pModel->setItem(i, col++, item);
+
+        //        item = new DStandardItem(list[i].src);
+        item = new DStandardItem(getAppName(m_curAppLog));
+        item->setData(APP_TABLE_DATA);
+        m_pModel->setItem(i, col++, item);
+
+        item = new DStandardItem(list[i].msg);
+        item->setData(APP_TABLE_DATA);
+        m_pModel->setItem(i, col++, item);
+    }
+
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
