@@ -141,6 +141,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
     cbx_app = new DComboBox(this);
+    cbx_app->setMinimumSize(QSize(180, BUTTON_HEIGHT_MIN));
     hLayout_app->addWidget(appTxt);
     hLayout_app->addWidget(cbx_app, 1);
     hLayout_app->setSpacing(6);

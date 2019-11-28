@@ -123,6 +123,12 @@ void LogCollectorMain::initConnection()
     connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [=]() { m_searchEdt->clear(); });
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this,
             [=]() { m_searchEdt->clear(); });
+
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::newProcessInstance, this,
+            [=] {
+                this->setWindowState(Qt::WindowActive);
+                this->activateWindow();
+            });
 }
 
 void LogCollectorMain::initShortCut()

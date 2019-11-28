@@ -38,6 +38,14 @@ int main(int argc, char *argv[])
     DApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
+
+    qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
+    if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
+                                                              DGuiApplicationHelper::UserScope)) {
+        qDebug() << "DGuiApplicationHelper::instance()->setSingleInstance";
+        exit(0);
+    }
+
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     a.loadTranslator();
@@ -53,8 +61,8 @@ int main(int argc, char *argv[])
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
 
-    if (!DGuiApplicationHelper::instance()->setSingleInstance("deepin-log-viewer"))
-        return 0;
+    //    if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName()))
+    //        return 0;
 
     LogApplicationHelper::instance();
 
