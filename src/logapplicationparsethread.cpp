@@ -134,6 +134,8 @@ void LogApplicationParseThread::initMap()
 {
     m_levelDict.insert("Warning", WARN);
     m_levelDict.insert("Debug", DEB);
+    m_levelDict.insert("Info", INF);
+    m_levelDict.insert("Error", ERR);
 }
 
 void LogApplicationParseThread::run()
