@@ -124,6 +124,8 @@ void DisplayContent::initMap()
     m_transDict.clear();
     m_transDict.insert("Warning", DApplication::translate("Level", "warning"));
     m_transDict.insert("Debug", DApplication::translate("Level", "debug"));
+    m_transDict.insert("Info", DApplication::translate("Level", "Info"));
+    m_transDict.insert("Error", DApplication::translate("Level", "Error"));
 
     // icon <==> level
     m_icon_name_map.clear();
@@ -137,6 +139,7 @@ void DisplayContent::initMap()
     m_icon_name_map.insert(DApplication::translate("Level", "Debug"), "");
     m_icon_name_map.insert("Warning", "warning.svg");
     m_icon_name_map.insert("Debug", "");
+    m_icon_name_map.insert("Error", "wrong.svg");
 }
 
 void DisplayContent::initTableView()
@@ -636,6 +639,8 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
                     .arg(lId)
                     .arg(lId + 1)
                     .arg(idx.data(ITEM_DATE_ROLE).toString());
+
+    m_detailWgt->cleanText();
 
     m_curLevel = lId;  // m_curLevel equal combobox index-1;
     m_curBtnId = btnId;
