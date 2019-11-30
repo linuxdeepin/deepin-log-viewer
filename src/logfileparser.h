@@ -28,7 +28,6 @@
 #include "journalwork.h"
 #include "logapplicationparsethread.h"
 #include "logauththread.h"
-#include "logpasswordauth.h"
 #include "structdef.h"
 
 class LogFileParser : public QObject

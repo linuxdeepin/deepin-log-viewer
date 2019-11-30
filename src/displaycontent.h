@@ -33,7 +33,6 @@
 #include "logdetailinfowidget.h"
 #include "logfileparser.h"
 #include "logiconbutton.h"
-#include "logsearchnoresultwidget.h"
 #include "logspinnerwidget.h"
 #include "logtreeview.h"
 #include "structdef.h"
@@ -116,8 +115,6 @@ private:
     QModelIndex m_curListIdx;
     QMap<QString, QString> m_transDict;
     int m_limitTag {0};
-
-    LogSearchNoResultWidget *m_noResultWdg;
 
     LogSpinnerWidget *m_spinnerWgt;
 

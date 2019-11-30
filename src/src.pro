@@ -5,9 +5,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = deepin-log-viewer
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
-#PKGCONFIG +=
-
-LIBS += -L /usr/lib
 
 DEFINES += USE_POLKIT
 
@@ -23,11 +20,9 @@ SOURCES += \
     logfileparser.cpp \
     logtreeview.cpp \
     journalwork.cpp \
-    logpasswordauth.cpp \
     logexportwidget.cpp \
     utils.cpp \
     loglistview.cpp \
-    logsearchnoresultwidget.cpp \
     logperiodbutton.cpp \
     logviewheaderview.cpp \
     logviewitemdelegate.cpp \
@@ -48,11 +43,9 @@ HEADERS += \
     structdef.h \
     logtreeview.h \
     journalwork.h \
-    logpasswordauth.h \
     logexportwidget.h \
     utils.h \
     loglistview.h \
-    logsearchnoresultwidget.h \
     logperiodbutton.h \
     logviewheaderview.h \
     logviewitemdelegate.h \

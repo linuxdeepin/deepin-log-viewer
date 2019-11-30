@@ -25,7 +25,6 @@
 #include <DWidgetUtil>
 #include "logapplicationhelper.h"
 #include "logcollectormain.h"
-#include "logpasswordauth.h"
 
 #include <DLog>
 #include <QDateTime>
