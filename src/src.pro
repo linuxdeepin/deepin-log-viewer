@@ -6,7 +6,7 @@ TARGET = deepin-log-viewer
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 
-DEFINES += USE_POLKIT
+DEFINES += USE_POLKIT ENABLE_INACTIVE_DISPLAY
 
 
 include(../thirdlib/QtXlsxWriter/src/xlsx/qtxlsx.pri)
