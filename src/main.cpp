@@ -34,7 +34,7 @@ DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    DApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    //    DApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
 
