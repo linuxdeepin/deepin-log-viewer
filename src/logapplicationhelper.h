@@ -36,6 +36,8 @@ private:
     void createDesktopFiles();
     void createLogFiles();
 
+    void parseField(QString path, QString name, bool isDeepin);
+
     QString getLogFile(QString path);
 
 signals:

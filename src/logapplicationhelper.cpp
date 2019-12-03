@@ -45,16 +45,39 @@ void LogApplicationHelper::createDesktopFiles()
     }
 
     for (QString var : m_desktop_files) {
-        QFile fi(path + "/" + var);
+        QString filePath = path + "/" + var;
+
+        QFile fi(filePath);
         if (!fi.open(QIODevice::ReadOnly))
             continue;
 
-        // insert map at first, en-en, then repalce transName if has name,
-        m_en_trans_map.insert(var.section(".", 0, 0), var.section(".", 0, 0));
+        bool isDeepin = false;
 
         while (!fi.atEnd()) {
             QString lineStr = fi.readLine();
             lineStr.replace("\n", "");
+
+            if (!lineStr.contains("X-Deepin-Vendor", Qt::CaseInsensitive)) {
+                continue;
+            }
+
+            QStringList _x_vendor_list = lineStr.split("=", QString::SkipEmptyParts);
+            if (_x_vendor_list.count() != 2) {
+                continue;
+            }
+
+            QString rval = _x_vendor_list[1];
+            if (0 == rval.compare("deepin", Qt::CaseInsensitive)) {
+                isDeepin = true;
+                break;
+            }
+        }
+        fi.close();
+
+        parseField(filePath, var, isDeepin);
+    }
+}
+#if 0
 
             if (!lineStr.contains("GenericName"))
                 continue;
@@ -76,8 +99,8 @@ void LogApplicationHelper::createDesktopFiles()
                 break;
             }
         }
-    }
 }
+#endif
 
 void LogApplicationHelper::createLogFiles()
 {
@@ -101,6 +124,54 @@ void LogApplicationHelper::createLogFiles()
                 m_en_log_map.insert(_name, logPath);
                 break;
             }
+        }
+    }
+}
+
+void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin)
+{
+    QFile fi(path);
+    if (!fi.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    // insert map at first, en-en, then repalce transName if has name,
+    m_en_trans_map.insert(name.section(".", 0, 0), name.section(".", 0, 0));  // desktop name
+
+    while (!fi.atEnd()) {
+        QString lineStr = fi.readLine();
+        lineStr.replace("\n", "");
+
+        if (isDeepin) {
+            // GenericName所对应的当前语言的值=》GenericName无任何语言标记的值=》Name对应语言的值
+            // =》Name无任何语言标记的值 =》desktop的名称
+            if (!lineStr.startsWith("GenericName") && !lineStr.startsWith("Name"))
+                continue;
+
+        } else {
+            // Name对应语言的值 =》Name无任何语言标记的值 =》desktop的名称
+            if (!lineStr.startsWith("Name"))
+                continue;
+        }
+
+        QStringList gNameList = lineStr.split("=", QString::SkipEmptyParts);
+        if (gNameList.count() != 2)
+            continue;
+
+        QString leftStr = gNameList[0];
+        QString genericName = gNameList[1];
+
+        // could not find GenericName[...], use GenericName=
+        m_en_trans_map.insert(name.section(".", 0, 0), genericName);  // GenericName=xxxx
+
+        if (leftStr.split("_").count() == 2) {
+            if (leftStr.contains(m_current_system_language)) {
+                m_en_trans_map.insert(name.section(".", 0, 0), genericName);
+                break;
+            }
+        } else if (leftStr.contains(m_current_system_language.split("_")[0])) {
+            m_en_trans_map.insert(name.section(".", 0, 0), genericName);
+            break;
         }
     }
 }
