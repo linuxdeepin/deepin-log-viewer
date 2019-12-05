@@ -62,6 +62,9 @@ LogFileParser::~LogFileParser() {}
 void LogFileParser::parseByJournal(QStringList arg)
 {
     work = journalWork::instance();
+    if (work->isRunning())
+        work->terminate();
+    //    work = new journalWork();
     disconnect(work, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
                SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
     work->setArg(arg);
@@ -186,6 +189,8 @@ void LogFileParser::parseByXlog(QStringList &xList)
 void LogFileParser::parseByBoot()
 {
     m_authThread = LogAuthThread::instance();
+    if (m_authThread->isRunning())
+        m_authThread->terminate();
 
     disconnect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
                SLOT(slot_threadFinished(LOG_FLAG, QString)));
@@ -199,6 +204,9 @@ void LogFileParser::parseByBoot()
 void LogFileParser::parseByKern(qint64 ms)
 {
     m_authThread = LogAuthThread::instance();
+    if (m_authThread->isRunning())
+        m_authThread->terminate();
+
     disconnect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
                SLOT(slot_threadFinished(LOG_FLAG, QString)));
     m_authThread->setType(KERN);
@@ -212,6 +220,8 @@ void LogFileParser::parseByKern(qint64 ms)
 void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 {
     m_appThread = LogApplicationParseThread::instance();
+    if (m_appThread->isRunning())
+        m_appThread->terminate();
 
     disconnect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
                SIGNAL(applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
