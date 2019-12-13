@@ -26,25 +26,23 @@
 #include "xlsxzipreader_p.h"
 
 #include <private/qzipreader_p.h>
+#include <QVector>
 
 namespace QXlsx {
 
-ZipReader::ZipReader(const QString &filePath) :
-    m_reader(new QZipReader(filePath))
+ZipReader::ZipReader(const QString &filePath)
+    : m_reader(new QZipReader(filePath))
 {
     init();
 }
 
-ZipReader::ZipReader(QIODevice *device) :
-    m_reader(new QZipReader(device))
+ZipReader::ZipReader(QIODevice *device)
+    : m_reader(new QZipReader(device))
 {
     init();
 }
 
-ZipReader::~ZipReader()
-{
-
-}
+ZipReader::~ZipReader() {}
 
 void ZipReader::init()
 {
@@ -70,4 +68,4 @@ QByteArray ZipReader::fileData(const QString &fileName) const
     return m_reader->fileData(fileName);
 }
 
-} // namespace QXlsx
+}  // namespace QXlsx
