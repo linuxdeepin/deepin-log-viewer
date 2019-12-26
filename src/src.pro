@@ -69,7 +69,20 @@ desktop.path = $$INSTROOT$$APPDIR
 desktop.files = $$PWD/deepin-log-viewer.desktop
 
 # Automating generation .qm files from .ts files
-!system($$PWD/translate_generation.sh): error("Failed to generate translation")
+#!system($$PWD/translate_generation.sh): error("Failed to generate translation")
+
+CONFIG(release, debug|release) {
+    TRANSLATIONS = $$files($$PWD/translations/*.ts)
+    #遍历目录中的ts文件，调用lrelease将其生成为qm文件
+    for(tsfile, TRANSLATIONS) {
+        qmfile = $$replace(tsfile, .ts$, .qm)
+        system(lrelease $$tsfile -qm $$qmfile) | error("Failed to lrelease")
+    }
+#    #将qm文件添加到安装包
+#    dtk_translations.path = /usr/share/$$TARGET/translations
+#    dtk_translations.files = $$PWD/translations/*.qm
+#    INSTALLS += dtk_translations
+}
 
 translations.path = /usr/share/deepin-log-viewer/translations
 translations.files = $$PWD/translations/*.qm
@@ -79,6 +92,7 @@ icon_files.files = $$PWD/images/deepin-log-viewer.svg
 
 policy.path = /usr/share/polkit-1/actions
 policy.files = $$PWD/com.deepin.pkexec.logViewerAuth.policy
+
 
 
 DISTFILES += \
