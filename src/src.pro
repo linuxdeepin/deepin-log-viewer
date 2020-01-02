@@ -56,9 +56,10 @@ HEADERS += \
     logapplicationhelper.h \
     logapplicationparsethread.h
 
-
-TRANSLATIONS += translations/deepin-log-viewer_zh_CN.ts
-
+!system(deepin-policy-ts-convert policy2ts com.deepin.pkexec.logViewerAuth.policy.tmp translations/policy): message("Failed policy to ts")
+!system(deepin-policy-ts-convert ts2policy com.deepin.pkexec.logViewerAuth.policy.tmp policy-install-translation com.deepin.pkexec.logViewerAuth.policy) {
+    system(cp com.deepin.pkexec.logViewerAuth.policy.tmp com.deepin.pkexec.logViewerAuth.policy)
+}
 
 isEmpty(BINDIR):BINDIR=/usr/bin
 isEmpty(APPDIR):APPDIR=/usr/share/applications
@@ -93,9 +94,5 @@ icon_files.files = $$PWD/images/deepin-log-viewer.svg
 policy.path = /usr/share/polkit-1/actions
 policy.files = $$PWD/com.deepin.pkexec.logViewerAuth.policy
 
-
-
-DISTFILES += \
-    translations/deepin-log-viewer_zh_CN.ts
 
 INSTALLS += target desktop translations icon_files policy

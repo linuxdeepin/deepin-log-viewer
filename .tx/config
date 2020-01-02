@@ -3,14 +3,20 @@ host = https://www.transifex.com
 minimum_perc = 80
 mode = developer
 
-[deepin-log_viewer.dwidget]
-file_filter = src/translations/dtkwidget_<lang>.ts
-source_file = src/translations/dtkwidget_en_US.ts
+[deepin-log-viewer.deepin-log-viewer]
+file_filter = src/translations/deepin-log-viewer_<lang>.ts
+source_file = src/translations/deepin-log-viewer.ts
 source_lang = en
 type = QT
 
-[deepin-log_viewer.desktop]
+[deepin-log-viewer.deepin-log-viewer-desktop-ts]
 file_filter = src/translations/desktop/desktop_<lang>.ts
 source_file = src/translations/desktop/desktop.ts
+source_lang = en
+type = QT
+
+[deepin-log-viewer.deepin-log-viewer-policy-ts]
+file_filter = src/translations/policy/policy_<lang>.ts
+source_file = src/translations/policy/policy.ts
 source_lang = en
 type = QT
