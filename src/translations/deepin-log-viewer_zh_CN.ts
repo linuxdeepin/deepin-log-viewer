@@ -317,7 +317,7 @@
     <message>
         <location filename="../displaycontent.cpp" line="241"/>
         <location filename="../displaycontent.cpp" line="361"/>
-        <location filename="../logexportwidget.cpp" line="284"/>
+        <location filename="../logexportwidget.cpp" line="308"/>
         <source>User</source>
         <translatorcomment>主机名</translatorcomment>
         <translation type="unfinished">主机名</translation>
@@ -325,7 +325,7 @@
     <message>
         <location filename="../displaycontent.cpp" line="238"/>
         <location filename="../displaycontent.cpp" line="362"/>
-        <location filename="../logexportwidget.cpp" line="285"/>
+        <location filename="../logexportwidget.cpp" line="304"/>
         <source>Daemon</source>
         <translatorcomment>进程</translatorcomment>
         <translation type="unfinished">进程</translation>
@@ -337,7 +337,7 @@
         <location filename="../displaycontent.cpp" line="437"/>
         <location filename="../displaycontent.cpp" line="522"/>
         <location filename="../displaycontent.cpp" line="1069"/>
-        <location filename="../logexportwidget.cpp" line="283"/>
+        <location filename="../logexportwidget.cpp" line="306"/>
         <source>Date and Time</source>
         <translatorcomment>时间</translatorcomment>
         <translation type="unfinished">时间</translation>
@@ -350,13 +350,13 @@
         <location filename="../displaycontent.cpp" line="490"/>
         <location filename="../displaycontent.cpp" line="523"/>
         <location filename="../displaycontent.cpp" line="1071"/>
-        <location filename="../logexportwidget.cpp" line="288"/>
+        <location filename="../logexportwidget.cpp" line="307"/>
         <source>Info</source>
         <translation type="unfinished">信息</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="242"/>
-        <location filename="../logexportwidget.cpp" line="286"/>
+        <location filename="../logexportwidget.cpp" line="309"/>
         <source>PID</source>
         <translatorcomment>进程号</translatorcomment>
         <translation type="unfinished">进程号</translation>
@@ -370,7 +370,7 @@
         <location filename="../displaycontent.cpp" line="237"/>
         <location filename="../displaycontent.cpp" line="436"/>
         <location filename="../displaycontent.cpp" line="1068"/>
-        <location filename="../logexportwidget.cpp" line="287"/>
+        <location filename="../logexportwidget.cpp" line="303"/>
         <source>Level</source>
         <translatorcomment>级别</translatorcomment>
         <translation type="unfinished">级别</translation>
@@ -389,34 +389,41 @@
         <translation type="unfinished">状态</translation>
     </message>
     <message>
-        <location filename="../logexportwidget.cpp" line="83"/>
+        <location filename="../logexportwidget.cpp" line="92"/>
         <source>Date and Time:</source>
         <translation type="unfinished">时间：</translation>
     </message>
     <message>
-        <location filename="../logexportwidget.cpp" line="84"/>
+        <location filename="../logexportwidget.cpp" line="95"/>
+        <source>Null</source>
+        <translatorcomment>无</translatorcomment>
+        <translation>无</translation>
+    </message>
+    <message>
+        <location filename="../logexportwidget.cpp" line="99"/>
         <source>User:</source>
-        <translation type="unfinished">主机名：</translation>
+        <translation>主机名：</translation>
     </message>
     <message>
-        <location filename="../logexportwidget.cpp" line="85"/>
+        <location filename="../logexportwidget.cpp" line="91"/>
         <source>Daemon:</source>
-        <translation type="unfinished">进程：</translation>
+        <translation>进程：</translation>
     </message>
     <message>
-        <location filename="../logexportwidget.cpp" line="86"/>
+        <location filename="../logexportwidget.cpp" line="100"/>
         <source>PID:</source>
-        <translation type="unfinished">进程号：</translation>
+        <translation>进程号：</translation>
     </message>
     <message>
-        <location filename="../logexportwidget.cpp" line="87"/>
+        <location filename="../logexportwidget.cpp" line="90"/>
         <source>Level:</source>
-        <translation type="unfinished">级别：</translation>
+        <translation>级别：</translation>
     </message>
     <message>
-        <location filename="../logexportwidget.cpp" line="88"/>
+        <location filename="../logexportwidget.cpp" line="94"/>
+        <location filename="../logexportwidget.cpp" line="97"/>
         <source>Info:</source>
-        <translation type="unfinished">信息：</translation>
+        <translation>信息：</translation>
     </message>
 </context>
 <context>
@@ -424,12 +431,12 @@
     <message>
         <location filename="../loglistview.cpp" line="66"/>
         <source>System Log</source>
-        <translation type="unfinished">系统日志</translation>
+        <translation>系统日志</translation>
     </message>
     <message>
         <location filename="../loglistview.cpp" line="72"/>
         <source>Kernel Log</source>
-        <translation type="unfinished">内核日志</translation>
+        <translation>内核日志</translation>
     </message>
     <message>
         <location filename="../loglistview.cpp" line="78"/>

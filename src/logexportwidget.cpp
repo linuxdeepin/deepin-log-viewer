@@ -80,12 +80,24 @@ bool LogExportWidget::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
     out.setCodec(QTextCodec::codecForName("utf-8"));
     for (int i = 0; i < jList.count(); i++) {
         LOG_MSG_JOURNAL jMsg = jList.at(i);
-        out << QString(DApplication::translate("Table", "Date and Time:")) << jMsg.dateTime << " ";
-        out << QString(DApplication::translate("Table", "User:")) << jMsg.hostName << " ";
-        out << QString(DApplication::translate("Table", "Daemon:")) << jMsg.daemonName << " ";
-        out << QString(DApplication::translate("Table", "PID:")) << jMsg.daemonId << " ";
+        //        out << QString(DApplication::translate("Table", "Date and Time:")) <<
+        //        jMsg.dateTime << " "; out << QString(DApplication::translate("Table", "User:")) <<
+        //        jMsg.hostName << " "; out << QString(DApplication::translate("Table", "Daemon:"))
+        //        << jMsg.daemonName << " "; out << QString(DApplication::translate("Table",
+        //        "PID:")) << jMsg.daemonId << " "; out << QString(DApplication::translate("Table",
+        //        "Level:")) << jMsg.level << " "; out << QString(DApplication::translate("Table",
+        //        "Info:")) << jMsg.msg << " "; //delete bug
         out << QString(DApplication::translate("Table", "Level:")) << jMsg.level << " ";
-        out << QString(DApplication::translate("Table", "Info:")) << jMsg.msg << " ";
+        out << QString(DApplication::translate("Table", "Daemon:")) << jMsg.daemonName << " ";
+        out << QString(DApplication::translate("Table", "Date and Time:")) << jMsg.dateTime << " ";
+        if (jMsg.msg.isEmpty()) {
+            out << QString(DApplication::translate("Table", "Info:"))
+                << QString(DApplication::translate("Table", "Null")) << " ";  // modify for bug
+        } else {
+            out << QString(DApplication::translate("Table", "Info:")) << jMsg.msg << " ";
+        }
+        out << QString(DApplication::translate("Table", "User:")) << jMsg.hostName << " ";
+        out << QString(DApplication::translate("Table", "PID:")) << jMsg.daemonId << " ";
         out << "\n";
     }
     fi.close();
@@ -279,25 +291,42 @@ bool LogExportWidget::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
     //    QString title = QString(
     //        "<tr><td>时间</td><td>主机名</td><td>守护进程</td><td>进程ID</td><td>级别</td><td>消息</"
     //        "td></tr>");
-    QString title = QString("<tr><td>") +
-                    QString(DApplication::translate("Table", "Date and Time")) +
-                    QString("</td><td>") + QString(DApplication::translate("Table", "User")) +
+    //    QString title = QString("<tr><td>") +
+    //                    QString(DApplication::translate("Table", "Date and Time")) +
+    //                    QString("</td><td>") + QString(DApplication::translate("Table", "User")) +
+    //                    QString("</td><td>") + QString(DApplication::translate("Table", "Daemon"))
+    //                    + QString("</td><td>") + QString(DApplication::translate("Table", "PID"))
+    //                    + QString("</td><td>") + QString(DApplication::translate("Table",
+    //                    "Level")) + QString("</td><td>") +
+    //                    QString(DApplication::translate("Table", "Info")) + QString("</td></tr>");
+    //                    //delete  for bug
+    QString title = QString("<tr><td>") + QString(DApplication::translate("Table", "Level")) +
                     QString("</td><td>") + QString(DApplication::translate("Table", "Daemon")) +
-                    QString("</td><td>") + QString(DApplication::translate("Table", "PID")) +
-                    QString("</td><td>") + QString(DApplication::translate("Table", "Level")) +
+                    QString("</td><td>") +
+                    QString(DApplication::translate("Table", "Date and Time")) +
                     QString("</td><td>") + QString(DApplication::translate("Table", "Info")) +
+                    QString("</td><td>") + QString(DApplication::translate("Table", "User")) +
+                    QString("</td><td>") + QString(DApplication::translate("Table", "PID")) +
                     QString("</td></tr>");
     html.write(title.toUtf8().data());
     for (int i = 0; i < jList.count(); i++) {
         LOG_MSG_JOURNAL jMsg = jList.at(i);
+        //        QString info =
+        //            QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td></tr>")
+        //                .arg(jMsg.dateTime)
+        //                .arg(jMsg.hostName)
+        //                .arg(jMsg.daemonName)
+        //                .arg(jMsg.daemonId)
+        //                .arg(jMsg.level)
+        //                .arg(jMsg.msg); //delete for bug
         QString info =
             QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td></tr>")
-                .arg(jMsg.dateTime)
-                .arg(jMsg.hostName)
-                .arg(jMsg.daemonName)
-                .arg(jMsg.daemonId)
                 .arg(jMsg.level)
-                .arg(jMsg.msg);
+                .arg(jMsg.daemonName)
+                .arg(jMsg.dateTime)
+                .arg(jMsg.msg)
+                .arg(jMsg.hostName)
+                .arg(jMsg.daemonId);
         html.write(info.toUtf8().data());
     }
 
