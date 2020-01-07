@@ -4,47 +4,47 @@
     <message>
         <location filename="../filtercontent.cpp" line="68"/>
         <source>All</source>
-        <translatorcomment>全部</translatorcomment>
-        <translation>全部</translation>
+        <translatorcomment>All</translatorcomment>
+        <translation>All</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="74"/>
         <source>Today</source>
-        <translatorcomment>今天</translatorcomment>
-        <translation>今天</translation>
+        <translatorcomment>Today</translatorcomment>
+        <translation>Today</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="79"/>
         <source>3 days</source>
-        <translatorcomment>近三天</translatorcomment>
-        <translation>近三天</translation>
+        <translatorcomment>3 days</translatorcomment>
+        <translation>3 days</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="84"/>
         <source>1 week</source>
-        <translation>近一周</translation>
+        <translation>1 week</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="89"/>
         <source>1 month</source>
-        <translation>近一个月</translation>
+        <translation>1 month</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="94"/>
         <source>3 months</source>
-        <translation>近三个月</translation>
+        <translation>3 months</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="110"/>
         <source>Reset</source>
-        <translatorcomment>重置</translatorcomment>
-        <translation>重置</translation>
+        <translatorcomment>Reset</translatorcomment>
+        <translation>Reset</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="165"/>
         <source>Export</source>
-        <translatorcomment>导出</translatorcomment>
-        <translation>导出</translation>
+        <translatorcomment>Export</translatorcomment>
+        <translation>Export</translation>
     </message>
 </context>
 <context>
@@ -52,58 +52,58 @@
     <message>
         <location filename="../filtercontent.cpp" line="126"/>
         <source>Emer</source>
-        <translatorcomment>紧急</translatorcomment>
-        <translation>紧急</translation>
+        <translatorcomment>Emer</translatorcomment>
+        <translation>Emer</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="127"/>
         <source>Alert</source>
-        <translatorcomment>严重警告</translatorcomment>
-        <translation>严重警告</translation>
+        <translatorcomment>Alert</translatorcomment>
+        <translation>Alert</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="128"/>
         <source>Critical</source>
-        <translatorcomment>严重</translatorcomment>
-        <translation>严重</translation>
+        <translatorcomment>Critical</translatorcomment>
+        <translation>Critical</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="129"/>
         <source>Error</source>
-        <translatorcomment>错误</translatorcomment>
-        <translation>错误</translation>
+        <translatorcomment>Error</translatorcomment>
+        <translation>Error</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="130"/>
         <source>Warning</source>
-        <translatorcomment>警告</translatorcomment>
-        <translation>警告</translation>
+        <translatorcomment>Warning</translatorcomment>
+        <translation>Warning</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="131"/>
         <source>Notice</source>
-        <translatorcomment>注意</translatorcomment>
-        <translation>注意</translation>
+        <translatorcomment>Notice</translatorcomment>
+        <translation>Notice</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="132"/>
         <location filename="../filtercontent.cpp" line="134"/>
         <source>Info</source>
-        <translatorcomment>信息</translatorcomment>
-        <translation>信息</translation>
+        <translatorcomment>Info</translatorcomment>
+        <translation>Info</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="133"/>
         <source>Debug</source>
-        <translatorcomment>调试</translatorcomment>
-        <translation>调试</translation>
+        <translatorcomment>Debug</translatorcomment>
+        <translation>Debug</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="125"/>
         <location filename="../filtercontent.cpp" line="156"/>
         <source>All</source>
-        <translatorcomment>全部</translatorcomment>
-        <translation>全部</translation>
+        <translatorcomment>All</translatorcomment>
+        <translation>All</translation>
     </message>
 </context>
 <context>
@@ -119,14 +119,14 @@
     <message>
         <location filename="../displaycontent.cpp" line="734"/>
         <source>New File</source>
-        <translatorcomment>新建文件</translatorcomment>
-        <translation>新建文件</translation>
+        <translatorcomment>New File</translatorcomment>
+        <translation>New File</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="739"/>
         <source>Export File</source>
-        <translatorcomment>导出文件</translatorcomment>
-        <translation>导出文件</translation>
+        <translatorcomment>Export File</translatorcomment>
+        <translation>Export File</translation>
     </message>
 </context>
 <context>
@@ -134,41 +134,41 @@
     <message>
         <location filename="../filtercontent.cpp" line="64"/>
         <source>Period:</source>
-        <translatorcomment>周期：</translatorcomment>
-        <translation>周期：</translation>
+        <translatorcomment>Period:</translatorcomment>
+        <translation>Period:</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="121"/>
         <source>Level:  </source>
-        <translation>级别：</translation>
+        <translation>Level: </translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="142"/>
         <source>Application list:</source>
-        <translatorcomment>应用列表：</translatorcomment>
-        <translation>应用列表：</translation>
+        <translatorcomment>Application list:</translatorcomment>
+        <translation>Application list:</translation>
     </message>
     <message>
         <location filename="../logdetailinfowidget.cpp" line="109"/>
         <source>User:</source>
-        <translation>主机名：</translation>
+        <translation>User:</translation>
     </message>
     <message>
         <location filename="../logdetailinfowidget.cpp" line="110"/>
         <source>PID:</source>
-        <translation>进程号：</translation>
+        <translation>PID:</translation>
     </message>
     <message>
         <location filename="../logdetailinfowidget.cpp" line="112"/>
         <source>Action:</source>
-        <translation>动作：</translation>
+        <translation>Action:</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="152"/>
         <location filename="../logdetailinfowidget.cpp" line="111"/>
         <source>Status:</source>
-        <translatorcomment>状态：</translatorcomment>
-        <translation>状态：</translation>
+        <translatorcomment>Status:</translatorcomment>
+        <translation>Status:</translation>
     </message>
 </context>
 <context>
@@ -176,72 +176,72 @@
     <message>
         <location filename="../displaycontent.cpp" line="125"/>
         <source>warning</source>
-        <translatorcomment>警告</translatorcomment>
-        <translation>警告</translation>
+        <translatorcomment>warning</translatorcomment>
+        <translation>warning</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="126"/>
         <source>debug</source>
-        <translatorcomment>调试</translatorcomment>
-        <translation>调试</translation>
+        <translatorcomment>debug</translatorcomment>
+        <translation>debug</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="132"/>
         <location filename="../journalwork.cpp" line="146"/>
         <source>Emer</source>
-        <translatorcomment>紧急</translatorcomment>
-        <translation>紧急</translation>
+        <translatorcomment>Emer</translatorcomment>
+        <translation>Emer</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="133"/>
         <location filename="../journalwork.cpp" line="147"/>
         <source>Alert</source>
-        <translatorcomment>严重警告</translatorcomment>
-        <translation>严重警告</translation>
+        <translatorcomment>Alert</translatorcomment>
+        <translation>Alert</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="134"/>
         <location filename="../journalwork.cpp" line="148"/>
         <source>Critical</source>
-        <translatorcomment>严重</translatorcomment>
-        <translation>严重</translation>
+        <translatorcomment>Critical</translatorcomment>
+        <translation>Critical</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="128"/>
         <location filename="../displaycontent.cpp" line="135"/>
         <location filename="../journalwork.cpp" line="149"/>
         <source>Error</source>
-        <translatorcomment>错误</translatorcomment>
-        <translation>错误</translation>
+        <translatorcomment>Error</translatorcomment>
+        <translation>Error</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="136"/>
         <location filename="../journalwork.cpp" line="150"/>
         <source>Warning</source>
-        <translatorcomment>警告</translatorcomment>
-        <translation>警告</translation>
+        <translatorcomment>Warning</translatorcomment>
+        <translation>Warning</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="137"/>
         <location filename="../journalwork.cpp" line="151"/>
         <source>Notice</source>
-        <translatorcomment>注意</translatorcomment>
-        <translation>注意</translation>
+        <translatorcomment>Notice</translatorcomment>
+        <translation>Notice</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="127"/>
         <location filename="../displaycontent.cpp" line="138"/>
         <location filename="../journalwork.cpp" line="152"/>
         <source>Info</source>
-        <translatorcomment>信息</translatorcomment>
-        <translation>信息</translation>
+        <translatorcomment>Info</translatorcomment>
+        <translation>Info</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="139"/>
         <location filename="../journalwork.cpp" line="153"/>
         <source>Debug</source>
-        <translatorcomment>调试</translatorcomment>
-        <translation>调试</translation>
+        <translatorcomment>Debug</translatorcomment>
+        <translation>Debug</translation>
     </message>
 </context>
 <context>
@@ -268,17 +268,17 @@
         <location filename="../logfileparser.cpp" line="256"/>
         <location filename="../logfileparser.cpp" line="261"/>
         <source>infomation</source>
-        <translation>提示</translation>
+        <translation>infomation</translation>
     </message>
     <message>
         <location filename="../logfileparser.cpp" line="257"/>
         <source>Please use &apos;sudo&apos; run this application</source>
-        <translation>请使用sudo权限运行该程序</translation>
+        <translation>Please use &apos;sudo&apos; run this application</translation>
     </message>
     <message>
         <location filename="../logfileparser.cpp" line="262"/>
         <source>The password is incorrect,please try again</source>
-        <translation>密码输入错误，请重试</translation>
+        <translation>The password is incorrect,please try again</translation>
     </message>
 </context>
 <context>
@@ -286,14 +286,14 @@
     <message>
         <location filename="../main.cpp" line="56"/>
         <source>Log Viewer</source>
-        <translatorcomment>日志收集工具</translatorcomment>
-        <translation>日志收集工具</translation>
+        <translatorcomment>Log Viewer</translatorcomment>
+        <translation>Log Viewer</translation>
     </message>
     <message>
         <location filename="../main.cpp" line="58"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translatorcomment>日志收集工具是一款查看系统日志的小工具。</translatorcomment>
-        <translation>日志收集工具是一款查看系统日志的小工具。</translation>
+        <translatorcomment>Log Viewer is a useful tool for viewing system logs.</translatorcomment>
+        <translation>Log Viewer is a useful tool for viewing system logs.</translation>
     </message>
 </context>
 <context>
@@ -301,13 +301,13 @@
     <message>
         <location filename="../logcollectormain.cpp" line="58"/>
         <source>Search</source>
-        <translatorcomment>搜索</translatorcomment>
-        <translation>搜索</translation>
+        <translatorcomment>Search</translatorcomment>
+        <translation>Search</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="90"/>
         <source>No search results</source>
-        <translation>无搜索结果</translation>
+        <translation>No search results</translation>
     </message>
 </context>
 <context>
@@ -317,16 +317,16 @@
         <location filename="../displaycontent.cpp" line="361"/>
         <location filename="../logexportwidget.cpp" line="284"/>
         <source>User</source>
-        <translatorcomment>主机名</translatorcomment>
-        <translation>主机名</translation>
+        <translatorcomment>User</translatorcomment>
+        <translation>User</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="238"/>
         <location filename="../displaycontent.cpp" line="362"/>
         <location filename="../logexportwidget.cpp" line="285"/>
         <source>Daemon</source>
-        <translatorcomment>进程</translatorcomment>
-        <translation>进程</translation>
+        <translatorcomment>Daemon</translatorcomment>
+        <translation>Daemon</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="239"/>
@@ -337,8 +337,8 @@
         <location filename="../displaycontent.cpp" line="1069"/>
         <location filename="../logexportwidget.cpp" line="283"/>
         <source>Date and Time</source>
-        <translatorcomment>时间</translatorcomment>
-        <translation>时间</translation>
+        <translatorcomment>Date and Time</translatorcomment>
+        <translation>Date and Time</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="240"/>
@@ -350,19 +350,19 @@
         <location filename="../displaycontent.cpp" line="1071"/>
         <location filename="../logexportwidget.cpp" line="288"/>
         <source>Info</source>
-        <translation>信息</translation>
+        <translation>Info</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="242"/>
         <location filename="../logexportwidget.cpp" line="286"/>
         <source>PID</source>
-        <translatorcomment>进程号</translatorcomment>
-        <translation>进程号</translation>
+        <translatorcomment>PID</translatorcomment>
+        <translation>PID</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="295"/>
         <source>Action</source>
-        <translation>动作</translation>
+        <translation>Action</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="237"/>
@@ -370,51 +370,51 @@
         <location filename="../displaycontent.cpp" line="1068"/>
         <location filename="../logexportwidget.cpp" line="287"/>
         <source>Level</source>
-        <translatorcomment>级别</translatorcomment>
-        <translation>级别</translation>
+        <translatorcomment>Level</translatorcomment>
+        <translation>Level</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="438"/>
         <location filename="../displaycontent.cpp" line="1070"/>
         <source>Source</source>
-        <translatorcomment>来源</translatorcomment>
-        <translation>来源</translation>
+        <translatorcomment>Source</translatorcomment>
+        <translation>Source</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="489"/>
         <source>Status</source>
-        <translatorcomment>状态</translatorcomment>
-        <translation>状态</translation>
+        <translatorcomment>Status</translatorcomment>
+        <translation>Status</translation>
     </message>
     <message>
         <location filename="../logexportwidget.cpp" line="83"/>
         <source>Date and Time:</source>
-        <translation>时间：</translation>
+        <translation>Date and Time:</translation>
     </message>
     <message>
         <location filename="../logexportwidget.cpp" line="84"/>
         <source>User:</source>
-        <translation>主机名：</translation>
+        <translation>User:</translation>
     </message>
     <message>
         <location filename="../logexportwidget.cpp" line="85"/>
         <source>Daemon:</source>
-        <translation>进程：</translation>
+        <translation>Daemon:</translation>
     </message>
     <message>
         <location filename="../logexportwidget.cpp" line="86"/>
         <source>PID:</source>
-        <translation>进程号：</translation>
+        <translation>PID:</translation>
     </message>
     <message>
         <location filename="../logexportwidget.cpp" line="87"/>
         <source>Level:</source>
-        <translation>级别：</translation>
+        <translation>Level:</translation>
     </message>
     <message>
         <location filename="../logexportwidget.cpp" line="88"/>
         <source>Info:</source>
-        <translation>信息：</translation>
+        <translation>Info:</translation>
     </message>
 </context>
 <context>
@@ -422,33 +422,33 @@
     <message>
         <location filename="../loglistview.cpp" line="66"/>
         <source>System Log</source>
-        <translation>系统日志</translation>
+        <translation>System Log</translation>
     </message>
     <message>
         <location filename="../loglistview.cpp" line="72"/>
         <source>Kernel Log</source>
-        <translation>内核日志</translation>
+        <translation>Kernel Log</translation>
     </message>
     <message>
         <location filename="../loglistview.cpp" line="78"/>
         <source>Boot Log</source>
-        <translation>启动日志</translation>
+        <translation>Boot Log</translation>
     </message>
     <message>
         <location filename="../loglistview.cpp" line="84"/>
         <source>dpkg Log</source>
-        <translation>dpkg日志</translation>
+        <translation>dpkg Log</translation>
     </message>
     <message>
         <location filename="../loglistview.cpp" line="90"/>
         <source>Xorg Log</source>
-        <translation>Xorg日志</translation>
+        <translation>Xorg Log</translation>
     </message>
     <message>
         <location filename="../loglistview.cpp" line="96"/>
         <source>Application Log</source>
-        <translatorcomment>应用日志</translatorcomment>
-        <translation>应用日志</translation>
+        <translatorcomment>Application Log</translatorcomment>
+        <translation>Application Log</translation>
     </message>
 </context>
 </TS>
