@@ -8,6 +8,7 @@ CONFIG += c++11 link_pkgconfig
 
 DEFINES += USE_POLKIT ENABLE_INACTIVE_DISPLAY
 
+LIBS += -lsystemd
 
 include(../thirdlib/QtXlsxWriter/src/xlsx/qtxlsx.pri)
 include(../thirdlib/docx/docx.pri)

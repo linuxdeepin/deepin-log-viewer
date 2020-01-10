@@ -101,7 +101,9 @@ void journalWork::doWork()
 //    sd_journal_add_match(j, "PRIORITY=3", 0);
 
     if (!m_arg.isEmpty()) {
-        sd_journal_add_match(j, m_arg.at(0).toStdString().c_str(), 0);
+        QString _priority = m_arg.at(0);
+        if (_priority != "all")
+            sd_journal_add_match(j, m_arg.at(0).toStdString().c_str(), 0);
     }
 
     int cnt = 0;

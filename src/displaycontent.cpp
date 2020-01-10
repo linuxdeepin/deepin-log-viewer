@@ -191,6 +191,8 @@ void DisplayContent::generateJournalFile(int id, int lId)
     if (lId != LVALL) {
         QString prio = QString("PRIORITY=%1").arg(lId);
         arg.append(prio);
+    } else {
+        arg.append("all");
     }
     switch (id) {
     case ALL: {
@@ -855,7 +857,7 @@ void DisplayContent::slot_journalFinished()
     }
 
     jList.append(journalWork::instance()->logList);
-    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
+//    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
     journalWork::instance()->logList.clear();
     journalWork::instance()->mutex.unlock();
 
