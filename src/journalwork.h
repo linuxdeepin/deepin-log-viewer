@@ -29,7 +29,8 @@
 #include "structdef.h"
 
 #include <QThread>
-
+#include <QMutexLocker>
+#include <QMutex>
 // class journalWork : public QObject
 class journalWork : public QThread
 {
@@ -60,10 +61,14 @@ public:
     void run() override;
 
 signals:
-    void journalFinished(QList<LOG_MSG_JOURNAL> list);
+//    void journalFinished(QList<LOG_MSG_JOURNAL> list);
+    void journalFinished();
 
 public slots:
     void doWork();
+public:
+    QList<LOG_MSG_JOURNAL> logList;
+    QMutex mutex;
 
 private:
     QString getDateTimeFromStamp(QString str);
@@ -71,13 +76,13 @@ private:
     QString i2str(int prio);
 
     QStringList m_arg;
-    QList<LOG_MSG_JOURNAL> logList;
     QMap<int, QString> m_map;
 
     QProcess *proc {nullptr};
 
     static std::atomic<journalWork *> m_instance;
     static std::mutex m_mutex;
+
 };
 
 #endif  // JOURNALWORK_H

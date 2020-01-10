@@ -54,7 +54,7 @@ signals:
     void xlogFinished();
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kernFinished(QList<LOG_MSG_JOURNAL>);
-    void journalFinished(QList<LOG_MSG_JOURNAL>);
+    void journalFinished();
     void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
 
 private:
@@ -63,7 +63,7 @@ private:
 signals:
 
 public slots:
-    void slot_journalFinished(QList<LOG_MSG_JOURNAL> list);
+    void slot_journalFinished();
 
     void slot_threadFinished(LOG_FLAG flag, QString output);
 

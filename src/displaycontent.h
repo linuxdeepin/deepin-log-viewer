@@ -93,7 +93,7 @@ public slots:
     void slot_XorgFinished();
     void slot_bootFinished(QList<LOG_MSG_BOOT> list);
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
-    void slot_journalFinished(QList<LOG_MSG_JOURNAL> logList);
+    void slot_journalFinished();
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
 
     void slot_vScrollValueChanged(int value);
@@ -129,7 +129,7 @@ private:
     LogFileParser m_logFileParse;
     QList<LOG_MSG_JOURNAL> jList;  // journalctl cmd.
     QList<LOG_MSG_DPKG> dList;     // dpkg.log
-                                   //    QStringList xList;                           // Xorg.0.log
+    //    QStringList xList;                           // Xorg.0.log
     QList<LOG_MSG_XORG> xList;     // Xorg.0.log
     QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
     QList<LOG_MSG_JOURNAL> kList;                // kern.log

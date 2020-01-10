@@ -34,7 +34,7 @@ std::atomic<journalWork *> journalWork::m_instance;
 std::mutex journalWork::m_mutex;
 
 journalWork::journalWork(QStringList arg, QObject *parent)
-    //    : QObject(parent)
+//    : QObject(parent)
     : QThread(parent)
 {
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
@@ -71,8 +71,8 @@ void journalWork::setArg(QStringList arg)
 {
     m_arg.clear();
 
-    m_arg.append("-o");
-    m_arg.append("json");
+//    m_arg.append("-o");
+//    m_arg.append("json");
 
     if (!arg.isEmpty())
         m_arg.append(arg);
@@ -83,10 +83,108 @@ void journalWork::run()
     doWork();
 }
 
+#include <systemd/sd-journal.h>
 void journalWork::doWork()
 {
     logList.clear();
+#if 1
+    int r;
+    sd_journal *j;
+    r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
+    if (r < 0) {
+        fprintf(stderr, "Failed to open journal: %s\n", strerror(-r));
+        return;
+    }
 
+    sd_journal_seek_tail(j);
+
+//    sd_journal_add_match(j, "PRIORITY=3", 0);
+
+    if (!m_arg.isEmpty()) {
+        sd_journal_add_match(j, m_arg.at(0).toStdString().c_str(), 0);
+    }
+
+    int cnt = 0;
+    SD_JOURNAL_FOREACH_BACKWARDS(j) {
+        const char *d;
+        size_t l;
+
+        LOG_MSG_JOURNAL logMsg;
+
+//        r = sd_journal_get_data(j, "SYSLOG_TIMESTAMP", (const void **)&d, &l);
+//        if (r < 0) {
+        r = sd_journal_get_data(j, "_SOURCE_REALTIME_TIMESTAMP", (const void **)&d, &l);
+        if (r < 0) {
+            r = sd_journal_get_data(j, "__REALTIME_TIMESTAMP", (const void **)&d, &l);
+            if (r < 0) {
+                continue;
+            }
+//            }
+        }
+        uint64_t t;
+        sd_journal_get_realtime_usec(j, &t);
+
+        QString dt = QString(d).split("=")[1];
+        if (m_arg.size() == 2) {
+            if (t < m_arg.at(1).toLongLong())
+                continue;
+        }
+        logMsg.dateTime = getDateTimeFromStamp(dt);;
+
+        r = sd_journal_get_data(j, "_HOSTNAME", (const void **)&d, &l);
+        if (r < 0)
+            logMsg.hostName = "";
+        else {
+            logMsg.hostName = QString(d).split("=")[1];
+        }
+
+        r = sd_journal_get_data(j, "_COMM", (const void **)&d, &l);
+        if (r < 0)
+            logMsg.daemonName = "";
+        else {
+            logMsg.daemonName = QString(d).split("=")[1];
+        }
+
+        r = sd_journal_get_data(j, "_PID", (const void **)&d, &l);
+        if (r < 0)
+            logMsg.daemonId = "";
+        else {
+            logMsg.daemonId = QString(d).split("=")[1];
+        }
+
+        r = sd_journal_get_data(j, "MESSAGE", (const void **)&d, &l);
+        if (r < 0) {
+            logMsg.msg = "";
+        } else {
+            logMsg.msg = QString(d).split("=")[1];
+        }
+
+        r = sd_journal_get_data(j, "PRIORITY", (const void **)&d, &l);
+        if (r < 0) {
+            logMsg.level = "";
+        } else {
+            logMsg.level = i2str(QString(d).split("=")[1].toInt());
+        }
+
+        cnt++;
+        mutex.lock();
+        logList.append(logMsg);
+        mutex.unlock();
+
+        if (cnt % 500 == 0) {
+            mutex.lock();
+            emit journalFinished();
+            usleep(100);
+        }
+    }
+    sd_journal_close(j);
+
+    if (logList.count() >= 0)
+        emit journalFinished();
+
+//    emit journalFinished(logList);
+
+#else
     proc = new QProcess;
     //! by time: --since="xxxx-xx-xx" --until="xxxx-xx-xx" exclude U
     //! by priority: journalctl PRIORITY=x
@@ -105,6 +203,8 @@ void journalWork::doWork()
             continue;
 
         LOG_MSG_JOURNAL logMsg;
+
+        cnt++;
 
         QJsonParseError erro;
         QJsonDocument jsonDoc(QJsonDocument::fromJson(data, &erro));
@@ -125,9 +225,12 @@ void journalWork::doWork()
         logMsg.msg = jsonObj.value("MESSAGE").toString();
         logMsg.level = i2str(jsonObj.value("PRIORITY").toString().toInt());
         logList.append(logMsg);
+        if (cnt == 500)
+            break;
     }
 
     emit journalFinished(logList);
+#endif
 }
 
 QString journalWork::getDateTimeFromStamp(QString str)

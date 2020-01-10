@@ -65,11 +65,11 @@ void LogFileParser::parseByJournal(QStringList arg)
     if (work->isRunning())
         work->terminate();
     //    work = new journalWork();
-    disconnect(work, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
-               SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
+    disconnect(work, SIGNAL(journalFinished()), this,
+               SLOT(slot_journalFinished()));
     work->setArg(arg);
-    connect(work, SIGNAL(journalFinished(QList<LOG_MSG_JOURNAL>)), this,
-            SLOT(slot_journalFinished(QList<LOG_MSG_JOURNAL>)));
+    connect(work, SIGNAL(journalFinished()), this,
+            SLOT(slot_journalFinished()), Qt::QueuedConnection);
     work->start();
 }
 
@@ -279,91 +279,91 @@ qint64 LogFileParser::formatDateTime(QString m, QString d, QString t)
     return dt.toMSecsSinceEpoch();
 }
 
-void LogFileParser::slot_journalFinished(QList<LOG_MSG_JOURNAL> list)
+void LogFileParser::slot_journalFinished()
 {
-    emit journalFinished(list);
+    emit journalFinished();
 }
 
 void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
 {
     switch (flag) {
-        case BOOT: {
-            QList<LOG_MSG_BOOT> bList;
+    case BOOT: {
+        QList<LOG_MSG_BOOT> bList;
 
-            for (QString lineStr : output.split('\n')) {
-                if (lineStr.startsWith("/dev"))
+        for (QString lineStr : output.split('\n')) {
+            if (lineStr.startsWith("/dev"))
+                continue;
+
+            // remove Useless characters
+            lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+
+            QStringList retList;
+            LOG_MSG_BOOT bMsg;
+            retList = lineStr.split(" ", QString::SkipEmptyParts);
+            if (lineStr.startsWith("[")) {
+                bMsg.status = retList[1];
+                QStringList leftList = retList.mid(3);
+                bMsg.msg += leftList.join(" ");
+                bList.insert(0, bMsg);
+            } else {
+                if (bList.size() == 0)
                     continue;
 
-                // remove Useless characters
-                lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+                bList[0].msg += retList.join(" ");
+            }
+        }
 
-                QStringList retList;
-                LOG_MSG_BOOT bMsg;
-                retList = lineStr.split(" ", QString::SkipEmptyParts);
-                if (lineStr.startsWith("[")) {
-                    bMsg.status = retList[1];
-                    QStringList leftList = retList.mid(3);
-                    bMsg.msg += leftList.join(" ");
-                    bList.insert(0, bMsg);
-                } else {
-                    if (bList.size() == 0)
-                        continue;
+        createFile(output, bList.count());
+        emit bootFinished(bList);
 
-                    bList[0].msg += retList.join(" ");
-                }
+    } break;
+    case KERN: {
+        QList<LOG_MSG_JOURNAL> kList;
+        //            qDebug() << "ms::" << m_selectTime << output;
+
+        for (QString str : output.split('\n')) {
+            LOG_MSG_JOURNAL msg;
+
+            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            if (list.size() < 5)
+                continue;
+
+            QStringList timeList;
+            timeList.append(list[0]);
+            timeList.append(list[1]);
+            timeList.append(list[2]);
+            qint64 iTime = formatDateTime(list[0], list[1], list[2]);
+            if (iTime < m_selectTime)
+                continue;
+
+            msg.dateTime = timeList.join(" ");
+            msg.hostName = list[3];
+
+            QStringList tmpList = list[4].split("[");
+            if (tmpList.size() != 2) {
+                msg.daemonName = list[4].split(":")[0];
+            } else {
+                msg.daemonName = list[4].split("[")[0];
+                QString id = list[4].split("[")[1];
+                id.chop(2);
+                msg.daemonId = id;
             }
 
-            createFile(output, bList.count());
-            emit bootFinished(bList);
-
-        } break;
-        case KERN: {
-            QList<LOG_MSG_JOURNAL> kList;
-            //            qDebug() << "ms::" << m_selectTime << output;
-
-            for (QString str : output.split('\n')) {
-                LOG_MSG_JOURNAL msg;
-
-                str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-                QStringList list = str.split(" ", QString::SkipEmptyParts);
-                if (list.size() < 5)
-                    continue;
-
-                QStringList timeList;
-                timeList.append(list[0]);
-                timeList.append(list[1]);
-                timeList.append(list[2]);
-                qint64 iTime = formatDateTime(list[0], list[1], list[2]);
-                if (iTime < m_selectTime)
-                    continue;
-
-                msg.dateTime = timeList.join(" ");
-                msg.hostName = list[3];
-
-                QStringList tmpList = list[4].split("[");
-                if (tmpList.size() != 2) {
-                    msg.daemonName = list[4].split(":")[0];
-                } else {
-                    msg.daemonName = list[4].split("[")[0];
-                    QString id = list[4].split("[")[1];
-                    id.chop(2);
-                    msg.daemonId = id;
-                }
-
-                QString msgInfo;
-                for (auto i = 5; i < list.size(); i++) {
-                    msgInfo.append(list[i] + " ");
-                }
-                msg.msg = msgInfo;
-
-                //            kList.append(msg);
-                kList.insert(0, msg);
+            QString msgInfo;
+            for (auto i = 5; i < list.size(); i++) {
+                msgInfo.append(list[i] + " ");
             }
+            msg.msg = msgInfo;
 
-            createFile(output, kList.count());
-            emit kernFinished(kList);
-        } break;
-        default:
-            break;
+            //            kList.append(msg);
+            kList.insert(0, msg);
+        }
+
+        createFile(output, kList.count());
+        emit kernFinished(kList);
+    } break;
+    default:
+        break;
     }
 }
