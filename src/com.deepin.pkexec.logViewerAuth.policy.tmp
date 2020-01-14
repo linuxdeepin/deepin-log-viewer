@@ -7,7 +7,7 @@
   <vendor_url>https://www.deepin.com/</vendor_url>
   <action id="com.deepin.pkexec.logViewerAuth">
     <description>authentication</description>
-    <description xml:lang="zh_CN">认证</message>
+    <description xml:lang="zh_CN">认证</description>
     <message>Authentication is required to super permissions</message>
     <message xml:lang="zh_CN">查看日志需要授权</message>
     <icon_name></icon_name>
