@@ -6,6 +6,8 @@ TARGET = deepin-log-viewer
 TEMPLATE = app
 CONFIG += c++11 link_pkgconfig
 
+LIBS += -lsystemd
+
 DEFINES += USE_POLKIT ENABLE_INACTIVE_DISPLAY
 
 LIBS += -lsystemd

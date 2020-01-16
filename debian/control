@@ -9,4 +9,4 @@ Package: deepin-log-viewer
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: <insert up to 60 chars description>
- <insert long description, indented with spaces>
+ <Log Viewer is a useful tool for viewing system logs.>
