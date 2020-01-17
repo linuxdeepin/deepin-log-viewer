@@ -164,8 +164,8 @@ void DisplayContent::initConnections()
             SLOT(slot_bootFinished(QList<LOG_MSG_BOOT>)));
     connect(&m_logFileParse, SIGNAL(kernFinished(QList<LOG_MSG_JOURNAL>)), this,
             SLOT(slot_kernFinished(QList<LOG_MSG_JOURNAL>)));
-    connect(&m_logFileParse, SIGNAL(journalFinished()), this,
-            SLOT(slot_journalFinished()), Qt::QueuedConnection);
+    connect(&m_logFileParse, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()),
+            Qt::QueuedConnection);
     connect(&m_logFileParse, &LogFileParser::applicationFinished, this,
             &DisplayContent::slot_applicationFinished);
     connect(m_treeView->verticalScrollBar(), &QScrollBar::valueChanged, this,
@@ -195,41 +195,41 @@ void DisplayContent::generateJournalFile(int id, int lId)
         arg.append("all");
     }
     switch (id) {
-    case ALL: {
-        m_logFileParse.parseByJournal(arg);
-    } break;
-    case ONE_DAY: {
-//        arg << "--since" << dt.toString("yyyy-MM-dd");
-        arg << QString::number(dt.toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
-    } break;
-    case THREE_DAYS: {
-//        QString t = dt.addDays(-2).toString("yyyy-MM-dd");
-//        arg << "--since" << t;
-        arg << QString::number(dt.addDays(-2).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
-    } break;
-    case ONE_WEEK: {
-//        QString t = dt.addDays(-6).toString("yyyy-MM-dd");
-//        arg << "--since" << t;
+        case ALL: {
+            m_logFileParse.parseByJournal(arg);
+        } break;
+        case ONE_DAY: {
+            //        arg << "--since" << dt.toString("yyyy-MM-dd");
+            arg << QString::number(dt.toMSecsSinceEpoch() * 1000);
+            m_logFileParse.parseByJournal(arg);
+        } break;
+        case THREE_DAYS: {
+            //        QString t = dt.addDays(-2).toString("yyyy-MM-dd");
+            //        arg << "--since" << t;
+            arg << QString::number(dt.addDays(-2).toMSecsSinceEpoch() * 1000);
+            m_logFileParse.parseByJournal(arg);
+        } break;
+        case ONE_WEEK: {
+            //        QString t = dt.addDays(-6).toString("yyyy-MM-dd");
+            //        arg << "--since" << t;
 
-        arg << QString::number(dt.addDays(-6).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
-    } break;
-    case ONE_MONTH: {
-//        QString t = dt.addDays(-29).toString("yyyy-MM-dd");
-//        arg << "--since" << t;
-        arg << QString::number(dt.addDays(-29).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
-    } break;
-    case THREE_MONTHS: {
-//        QString t = dt.addDays(-89).toString("yyyy-MM-dd");
-//        arg << "--since" << t;
-        arg << QString::number(dt.addDays(-89).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
-    } break;
-    default:
-        break;
+            arg << QString::number(dt.addDays(-6).toMSecsSinceEpoch() * 1000);
+            m_logFileParse.parseByJournal(arg);
+        } break;
+        case ONE_MONTH: {
+            //        QString t = dt.addDays(-29).toString("yyyy-MM-dd");
+            //        arg << "--since" << t;
+            arg << QString::number(dt.addDays(-29).toMSecsSinceEpoch() * 1000);
+            m_logFileParse.parseByJournal(arg);
+        } break;
+        case THREE_MONTHS: {
+            //        QString t = dt.addDays(-89).toString("yyyy-MM-dd");
+            //        arg << "--since" << t;
+            arg << QString::number(dt.addDays(-89).toMSecsSinceEpoch() * 1000);
+            m_logFileParse.parseByJournal(arg);
+        } break;
+        default:
+            break;
     }
 }
 
@@ -271,26 +271,26 @@ void DisplayContent::generateDpkgFile(int id)
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
-    case ALL:
-        m_logFileParse.parseByDpkg(dList);
-        break;
-    case ONE_DAY: {
-        m_logFileParse.parseByDpkg(dList, dt.toMSecsSinceEpoch());
-    } break;
-    case THREE_DAYS: {
-        m_logFileParse.parseByDpkg(dList, dt.addDays(-2).toMSecsSinceEpoch());
-    } break;
-    case ONE_WEEK: {
-        m_logFileParse.parseByDpkg(dList, dt.addDays(-6).toMSecsSinceEpoch());
-    } break;
-    case ONE_MONTH: {
-        m_logFileParse.parseByDpkg(dList, dt.addDays(-29).toMSecsSinceEpoch());
-    } break;
-    case THREE_MONTHS: {
-        m_logFileParse.parseByDpkg(dList, dt.addDays(-89).toMSecsSinceEpoch());
-    } break;
-    default:
-        break;
+        case ALL:
+            m_logFileParse.parseByDpkg(dList);
+            break;
+        case ONE_DAY: {
+            m_logFileParse.parseByDpkg(dList, dt.toMSecsSinceEpoch());
+        } break;
+        case THREE_DAYS: {
+            m_logFileParse.parseByDpkg(dList, dt.addDays(-2).toMSecsSinceEpoch());
+        } break;
+        case ONE_WEEK: {
+            m_logFileParse.parseByDpkg(dList, dt.addDays(-6).toMSecsSinceEpoch());
+        } break;
+        case ONE_MONTH: {
+            m_logFileParse.parseByDpkg(dList, dt.addDays(-29).toMSecsSinceEpoch());
+        } break;
+        case THREE_MONTHS: {
+            m_logFileParse.parseByDpkg(dList, dt.addDays(-89).toMSecsSinceEpoch());
+        } break;
+        default:
+            break;
     }
 }
 
@@ -338,29 +338,30 @@ void DisplayContent::generateKernFile(int id)
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
-    case ALL:
-        m_logFileParse.parseByKern(0);
-        break;
-    case ONE_DAY: {
-        m_logFileParse.parseByKern(dt.toMSecsSinceEpoch());
-    } break;
-    case THREE_DAYS: {
-        m_logFileParse.parseByKern(dt.addDays(-2).toMSecsSinceEpoch());
-    } break;
-    case ONE_WEEK: {
-        m_logFileParse.parseByKern(dt.addDays(-6).toMSecsSinceEpoch());
-    } break;
-    case ONE_MONTH: {
-        m_logFileParse.parseByKern(dt.addDays(-29).toMSecsSinceEpoch());
-    } break;
-    case THREE_MONTHS: {
-        m_logFileParse.parseByKern(dt.addDays(-89).toMSecsSinceEpoch());
-    } break;
-    default:
-        break;
+        case ALL:
+            m_logFileParse.parseByKern(0);
+            break;
+        case ONE_DAY: {
+            m_logFileParse.parseByKern(dt.toMSecsSinceEpoch());
+        } break;
+        case THREE_DAYS: {
+            m_logFileParse.parseByKern(dt.addDays(-2).toMSecsSinceEpoch());
+        } break;
+        case ONE_WEEK: {
+            m_logFileParse.parseByKern(dt.addDays(-6).toMSecsSinceEpoch());
+        } break;
+        case ONE_MONTH: {
+            m_logFileParse.parseByKern(dt.addDays(-29).toMSecsSinceEpoch());
+        } break;
+        case THREE_MONTHS: {
+            m_logFileParse.parseByKern(dt.addDays(-89).toMSecsSinceEpoch());
+        } break;
+        default:
+            break;
     }
 }
 
+// modified by Airy for bug  12263
 void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
 {
     //    m_treeView->show();
@@ -376,8 +377,41 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
 
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertKernTable(list, 0, end);
+
+    //    DStandardItem *item = nullptr;
+    //    for (int i = 0; i < list.size(); i++) {
+    //        item = new DStandardItem(list[i].dateTime);
+    //        item->setData(KERN_TABLE_DATA);
+    //        m_pModel->setItem(i, 0, item);
+    //        item = new DStandardItem(list[i].hostName);
+    //        item->setData(KERN_TABLE_DATA);
+    //        m_pModel->setItem(i, 1, item);
+    //        item = new DStandardItem(list[i].daemonName);
+    //        item->setData(KERN_TABLE_DATA);
+    //        m_pModel->setItem(i, 2, item);
+    //        item = new DStandardItem(list[i].msg);
+    //        item->setData(KERN_TABLE_DATA);
+    //        m_pModel->setItem(i, 3, item);
+    //    }
+
+    //    //    m_treeView->setModel(m_pModel);
+
+    //    // default first row select
+    //    //    m_treeView->selectRow(0);
+    //    QItemSelectionModel *p = m_treeView->selectionModel();
+    //    if (p)
+    //        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows |
+    //        QItemSelectionModel::Select);
+    //    slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
+// add by Airy for bug
+void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int end)
+{
     DStandardItem *item = nullptr;
-    for (int i = 0; i < list.size(); i++) {
+    for (int i = start; i < end; i++) {
         item = new DStandardItem(list[i].dateTime);
         item->setData(KERN_TABLE_DATA);
         m_pModel->setItem(i, 0, item);
@@ -414,26 +448,26 @@ void DisplayContent::generateAppFile(QString path, int id, int lId)
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
-    case ALL:
-        m_logFileParse.parseByApp(path, lId);
-        break;
-    case ONE_DAY: {
-        m_logFileParse.parseByApp(path, lId, dt.toMSecsSinceEpoch());
-    } break;
-    case THREE_DAYS: {
-        m_logFileParse.parseByApp(path, lId, dt.addDays(-2).toMSecsSinceEpoch());
-    } break;
-    case ONE_WEEK: {
-        m_logFileParse.parseByApp(path, lId, dt.addDays(-6).toMSecsSinceEpoch());
-    } break;
-    case ONE_MONTH: {
-        m_logFileParse.parseByApp(path, lId, dt.addDays(-29).toMSecsSinceEpoch());
-    } break;
-    case THREE_MONTHS: {
-        m_logFileParse.parseByApp(path, lId, dt.addDays(-89).toMSecsSinceEpoch());
-    } break;
-    default:
-        break;
+        case ALL:
+            m_logFileParse.parseByApp(path, lId);
+            break;
+        case ONE_DAY: {
+            m_logFileParse.parseByApp(path, lId, dt.toMSecsSinceEpoch());
+        } break;
+        case THREE_DAYS: {
+            m_logFileParse.parseByApp(path, lId, dt.addDays(-2).toMSecsSinceEpoch());
+        } break;
+        case ONE_WEEK: {
+            m_logFileParse.parseByApp(path, lId, dt.addDays(-6).toMSecsSinceEpoch());
+        } break;
+        case ONE_MONTH: {
+            m_logFileParse.parseByApp(path, lId, dt.addDays(-29).toMSecsSinceEpoch());
+        } break;
+        case THREE_MONTHS: {
+            m_logFileParse.parseByApp(path, lId, dt.addDays(-89).toMSecsSinceEpoch());
+        } break;
+        default:
+            break;
     }
 }
 
@@ -498,7 +532,7 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
     m_pModel->clear();
     m_pModel->setColumnCount(2);
     m_pModel->setHorizontalHeaderLabels(QStringList() << DApplication::translate("Table", "Status")
-                                        << DApplication::translate("Table", "Info"));
+                                                      << DApplication::translate("Table", "Info"));
 
     m_treeView->setColumnWidth(0, STATUS_WIDTH);
 
@@ -646,10 +680,10 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 {
     qDebug() << QString("Button %1 clicked\n combobox: level is %2, cbxIdx is %3 tree %4 node!!")
-             .arg(btnId)
-             .arg(lId)
-             .arg(lId + 1)
-             .arg(idx.data(ITEM_DATE_ROLE).toString());
+                    .arg(btnId)
+                    .arg(lId)
+                    .arg(lId + 1)
+                    .arg(idx.data(ITEM_DATE_ROLE).toString());
 
     m_detailWgt->cleanText();
 
@@ -747,9 +781,9 @@ void DisplayContent::slot_exportClicked()
 
     QString selectFilter;
     QString fileName = DFileDialog::getSaveFileName(
-                           this, DApplication::translate("File", "Export File"),
-                           QDir::homePath() + "/Documents" + logName + ".txt",
-                           tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
+        this, DApplication::translate("File", "Export File"),
+        QDir::homePath() + "/Documents" + logName + ".txt",
+        tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
 
     if (fileName.isEmpty())
         return;
@@ -845,8 +879,8 @@ void DisplayContent::slot_journalFinished()
     if (m_flag != JOURNAL)
         return;
 
-//    jList = logList;
-//    journalWork::instance()->mutex.lock();
+    //    jList = logList;
+    //    journalWork::instance()->mutex.lock();
     if (journalWork::instance()->logList.isEmpty()) {
         m_spinnerWgt->spinnerStop();
         m_treeView->show();
@@ -857,7 +891,7 @@ void DisplayContent::slot_journalFinished()
     }
 
     jList.append(journalWork::instance()->logList);
-//    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
+    //    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
     journalWork::instance()->logList.clear();
     journalWork::instance()->mutex.unlock();
 
@@ -923,101 +957,116 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             m_limitTag = rate;
         }
         m_treeView->verticalScrollBar()->setValue(value);
+    } else if (m_flag == KERN) {  // modified by Airy for bug 12263
+        int rate = (value + 25) / SINGLE_LOAD;
+
+        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
+            if (m_limitTag == rate)
+                return;
+
+            int leftCnt = kList.count() - SINGLE_LOAD * rate;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertKernTable(kList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+
+            m_limitTag = rate;
+        }
+        m_treeView->verticalScrollBar()->setValue(value);
     }
 }
 
 void DisplayContent::slot_searchResult(QString str)
 {
     qDebug() << QString("search: %1  treeIndex: %2")
-             .arg(str)
-             .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
+                    .arg(str)
+                    .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
 
     if (m_flag == NONE)
         return;
 
     switch (m_flag) {
-    case JOURNAL: {
-        QList<LOG_MSG_JOURNAL> tmp = jList;
-        int cnt = tmp.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_JOURNAL msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
+        case JOURNAL: {
+            QList<LOG_MSG_JOURNAL> tmp = jList;
+            int cnt = tmp.count();
+            for (int i = cnt - 1; i >= 0; --i) {
+                LOG_MSG_JOURNAL msg = tmp.at(i);
+                if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
                     msg.hostName.contains(str, Qt::CaseInsensitive) ||
                     msg.daemonName.contains(str, Qt::CaseInsensitive) ||
                     msg.daemonId.contains(str, Qt::CaseInsensitive) ||
                     msg.level.contains(str, Qt::CaseInsensitive) ||
                     msg.msg.contains(str, Qt::CaseInsensitive))
-                continue;
-            tmp.removeAt(i);
-        }
-        createJournalTable(tmp);
-    } break;
-    case KERN: {
-        QList<LOG_MSG_JOURNAL> tmp = kList;
-        int cnt = tmp.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_JOURNAL msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
+                    continue;
+                tmp.removeAt(i);
+            }
+            createJournalTable(tmp);
+        } break;
+        case KERN: {
+            QList<LOG_MSG_JOURNAL> tmp = kList;
+            int cnt = tmp.count();
+            for (int i = cnt - 1; i >= 0; --i) {
+                LOG_MSG_JOURNAL msg = tmp.at(i);
+                if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
                     msg.hostName.contains(str, Qt::CaseInsensitive) ||
                     msg.daemonName.contains(str, Qt::CaseInsensitive) ||
                     msg.msg.contains(str, Qt::CaseInsensitive))
-                continue;
-            tmp.removeAt(i);
-        }
-        createKernTable(tmp);
-    } break;
-    case BOOT: {
-        QList<LOG_MSG_BOOT> tmp = currentBootList;
-        int cnt = tmp.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_BOOT msg = tmp.at(i);
-            if (msg.status.contains(str, Qt::CaseInsensitive) ||
+                    continue;
+                tmp.removeAt(i);
+            }
+            createKernTable(tmp);
+        } break;
+        case BOOT: {
+            QList<LOG_MSG_BOOT> tmp = currentBootList;
+            int cnt = tmp.count();
+            for (int i = cnt - 1; i >= 0; --i) {
+                LOG_MSG_BOOT msg = tmp.at(i);
+                if (msg.status.contains(str, Qt::CaseInsensitive) ||
                     msg.msg.contains(str, Qt::CaseInsensitive))
-                continue;
-            tmp.removeAt(i);
-        }
-        createBootTable(tmp);
-    } break;
-    case XORG: {
-        QList<LOG_MSG_XORG> tmp = xList;
-        int cnt = tmp.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_XORG msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
+                    continue;
+                tmp.removeAt(i);
+            }
+            createBootTable(tmp);
+        } break;
+        case XORG: {
+            QList<LOG_MSG_XORG> tmp = xList;
+            int cnt = tmp.count();
+            for (int i = cnt - 1; i >= 0; --i) {
+                LOG_MSG_XORG msg = tmp.at(i);
+                if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
                     msg.msg.contains(str, Qt::CaseInsensitive))
-                continue;
-            tmp.removeAt(i);
-        }
-        createXorgTable(tmp);
-    } break;
-    case DPKG: {
-        QList<LOG_MSG_DPKG> tmp = dList;
-        int cnt = tmp.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_DPKG msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
+                    continue;
+                tmp.removeAt(i);
+            }
+            createXorgTable(tmp);
+        } break;
+        case DPKG: {
+            QList<LOG_MSG_DPKG> tmp = dList;
+            int cnt = tmp.count();
+            for (int i = cnt - 1; i >= 0; --i) {
+                LOG_MSG_DPKG msg = tmp.at(i);
+                if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
                     msg.msg.contains(str, Qt::CaseInsensitive))
-                continue;
-            tmp.removeAt(i);
-        }
-        createDpkgTable(tmp);
-    } break;
-    case APP: {
-        QList<LOG_MSG_APPLICATOIN> tmp = appList;
-        int cnt = tmp.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_APPLICATOIN msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
+                    continue;
+                tmp.removeAt(i);
+            }
+            createDpkgTable(tmp);
+        } break;
+        case APP: {
+            QList<LOG_MSG_APPLICATOIN> tmp = appList;
+            int cnt = tmp.count();
+            for (int i = cnt - 1; i >= 0; --i) {
+                LOG_MSG_APPLICATOIN msg = tmp.at(i);
+                if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
                     msg.level.contains(str, Qt::CaseInsensitive) ||
                     msg.src.contains(str, Qt::CaseInsensitive) ||
                     msg.msg.contains(str, Qt::CaseInsensitive))
-                continue;
-            tmp.removeAt(i);
-        }
-        createAppTable(tmp);
-    } break;
-    default:
-        break;
+                    continue;
+                tmp.removeAt(i);
+            }
+            createAppTable(tmp);
+        } break;
+        default:
+            break;
     }
     if (0 == m_pModel->rowCount()) {
         noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());

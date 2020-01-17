@@ -70,6 +70,8 @@ private:
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
+    void insertKernTable(QList<LOG_MSG_JOURNAL> list, int start,
+                         int end);  // add by Airy for bug 12263
 
     QString getAppName(QString filePath);
 
@@ -130,7 +132,7 @@ private:
     QList<LOG_MSG_JOURNAL> jList;  // journalctl cmd.
     QList<LOG_MSG_DPKG> dList;     // dpkg.log
     //    QStringList xList;                           // Xorg.0.log
-    QList<LOG_MSG_XORG> xList;     // Xorg.0.log
+    QList<LOG_MSG_XORG> xList;                   // Xorg.0.log
     QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
     QList<LOG_MSG_JOURNAL> kList;                // kern.log
     QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)
