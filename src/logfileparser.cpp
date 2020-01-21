@@ -253,13 +253,13 @@ void LogFileParser::createFile(QString output, int count)
 bool LogFileParser::isErroCommand(QString str)
 {
     if (str.contains("权限") || str.contains("permission", Qt::CaseInsensitive)) {
-        DMessageBox::information(nullptr, tr("infomation"),
-                                 str + "\n" + tr("Please use 'sudo' run this application"));
+        DMessageBox::information(nullptr, tr("information"),
+                                 str + "\n" + "Please use 'sudo' run this application");
         return true;
     }
     if (str.contains("请重试") || str.contains("retry", Qt::CaseInsensitive)) {
-        DMessageBox::information(nullptr, tr("infomation"),
-                                 tr("The password is incorrect,please try again"));
+        DMessageBox::information(nullptr, tr("information"),
+                                 "The password is incorrect,please try again");
         m_rootPasswd = "";
         return true;
     }

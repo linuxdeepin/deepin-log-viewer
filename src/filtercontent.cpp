@@ -107,7 +107,7 @@ void FilterContent::initUI()
     hLayout_period->addStretch(1);
 
     DSuggestButton *cmdLinkBtn =
-        new DSuggestButton(DApplication::translate("Button", "Reset"), this);
+        new DSuggestButton(("Reset"), this);
     cmdLinkBtn->setFlat(true);
     cmdLinkBtn->hide();
     m_btnGroup->addButton(cmdLinkBtn, 6);

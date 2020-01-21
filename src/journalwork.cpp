@@ -248,7 +248,7 @@ QString journalWork::getDateTimeFromStamp(QString str)
 void journalWork::initMap()
 {
     m_map.clear();
-    m_map.insert(0, DApplication::translate("Level", "Emer"));
+    m_map.insert(0, DApplication::translate("Level", "Emergency"));
     m_map.insert(1, DApplication::translate("Level", "Alert"));
     m_map.insert(2, DApplication::translate("Level", "Critical"));
     m_map.insert(3, DApplication::translate("Level", "Error"));

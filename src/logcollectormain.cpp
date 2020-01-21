@@ -136,7 +136,8 @@ void LogCollectorMain::initShortCut()
     // Resize Window --> Ctrl+Alt+F
     if (nullptr == m_scWndReize) {
         m_scWndReize = new QShortcut(this);
-        m_scWndReize->setKey(tr("Ctrl+Alt+F"));
+//      m_scWndReize->setKey(tr("Ctrl+Alt+F"));
+      m_scWndReize->setKey(Qt::CTRL + Qt::ALT + Qt::Key_F);
         m_scWndReize->setContext(Qt::ApplicationShortcut);
         m_scWndReize->setAutoRepeat(false);
 
@@ -152,7 +153,8 @@ void LogCollectorMain::initShortCut()
     // Find font --> Ctrl+F
     if (nullptr == m_scFindFont) {
         m_scFindFont = new QShortcut(this);
-        m_scFindFont->setKey(tr("Ctrl+F"));
+//        m_scFindFont->setKey(tr("Ctrl+F"));
+        m_scFindFont->setKey(Qt::CTRL + Qt::Key_F);
         m_scFindFont->setContext(Qt::ApplicationShortcut);
         m_scFindFont->setAutoRepeat(false);
 
@@ -163,7 +165,8 @@ void LogCollectorMain::initShortCut()
     // export file --> Ctrl+E
     if (nullptr == m_scExport) {
         m_scExport = new QShortcut(this);
-        m_scExport->setKey(tr("Ctrl+E"));
+//        m_scExport->setKey(tr("Ctrl+E"));
+        m_scExport->setKey(Qt::CTRL + Qt::Key_E);
         m_scExport->setContext(Qt::ApplicationShortcut);
         m_scExport->setAutoRepeat(false);
 

@@ -122,14 +122,14 @@ void DisplayContent::initUI()
 void DisplayContent::initMap()
 {
     m_transDict.clear();
-    m_transDict.insert("Warning", DApplication::translate("Level", "warning"));
-    m_transDict.insert("Debug", DApplication::translate("Level", "debug"));
+    m_transDict.insert("Warning","warning");
+    m_transDict.insert("Debug","debug");
     m_transDict.insert("Info", DApplication::translate("Level", "Info"));
     m_transDict.insert("Error", DApplication::translate("Level", "Error"));
 
     // icon <==> level
     m_icon_name_map.clear();
-    m_icon_name_map.insert(DApplication::translate("Level", "Emer"), "warning2.svg");
+    m_icon_name_map.insert(DApplication::translate("Level", "Emergency"), "warning2.svg");
     m_icon_name_map.insert(DApplication::translate("Level", "Alert"), "warning3.svg");
     m_icon_name_map.insert(DApplication::translate("Level", "Critical"), "warning2.svg");
     m_icon_name_map.insert(DApplication::translate("Level", "Error"), "wrong.svg");
@@ -776,7 +776,7 @@ void DisplayContent::slot_exportClicked()
     if (m_curListIdx.isValid())
         logName = QString("/%1").arg(m_curListIdx.data().toString());
     else {
-        logName = QString("/%1").arg(DApplication::translate("File", "New File"));
+        logName = QString("/%1").arg(("New File"));
     }
 
     QString selectFilter;
