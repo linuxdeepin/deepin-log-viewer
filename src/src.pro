@@ -57,7 +57,8 @@ HEADERS += \
     logdetailinfowidget.h \
     logauththread.h \
     logapplicationhelper.h \
-    logapplicationparsethread.h
+    logapplicationparsethread.h \
+    wtmpparse.h
 
 !system(deepin-policy-ts-convert policy2ts com.deepin.pkexec.logViewerAuth.policy.tmp translations/policy): message("Failed policy to ts")
 !system(deepin-policy-ts-convert ts2policy com.deepin.pkexec.logViewerAuth.policy.tmp policy-install-translation com.deepin.pkexec.logViewerAuth.policy) {

@@ -46,8 +46,8 @@ public:
 private:
     void setAppComboBoxItem();
 
-    void setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
-                            bool needMove);
+    void setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period, bool needMove,
+                            bool typecbx = false);  // modified by Airy
 
     void setUeButtonSytle();
     void paintEvent(QPaintEvent *event);
@@ -60,12 +60,15 @@ signals:
 
     void sigStatusChanged(QString str);
 
+    void sigLogtypeChanged(int tId);  // add by Airy
+
 public slots:
     void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_buttonClicked(int idx);
     void slot_cbxLvIdxChanged(int idx);
     void slot_cbxAppIdxChanged(int idx);
     void slot_cbxStatusChanged(int idx);
+    void slot_cbxLogTypeChanged(int idx);  // add  by Airy
 
 private:
     QButtonGroup *m_btnGroup;
@@ -76,6 +79,8 @@ private:
     Dtk::Widget::DComboBox *cbx_app;
     Dtk::Widget::DLabel *statusTxt;
     Dtk::Widget::DComboBox *cbx_status;
+    Dtk::Widget::DLabel *typeTxt;     // add by Airy
+    Dtk::Widget::DComboBox *typeCbx;  // add by Airy
     QModelIndex m_curTreeIndex;
 
     int m_curBtnId, m_curLvCbxId;

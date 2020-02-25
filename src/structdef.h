@@ -56,6 +56,15 @@ struct LOG_MSG_XORG {
     QString msg;
 };
 
+// add by Airy
+struct LOG_MSG_NORMAL {
+    QString user;
+    QString src;
+    QString time;
+    QString datetime;
+    QString status;
+};
+
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 
 enum BUTTONID {
@@ -70,7 +79,17 @@ enum BUTTONID {
     INVALID = 9999
 };
 
-enum LOG_FLAG { JOURNAL = 0, KERN, BOOT, XORG, DPKG, APP, NONE = 9999 };
+enum LOG_FLAG {
+    JOURNAL = 0,
+    KERN,
+    BOOT,
+    XORG,
+    DPKG,
+    APP,
+    Normal,
+    NONE = 9999
+};  // modified by
+    // Airy
 
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"
@@ -78,6 +97,7 @@ enum LOG_FLAG { JOURNAL = 0, KERN, BOOT, XORG, DPKG, APP, NONE = 9999 };
 #define KERN_TABLE_DATA "kernItemData"
 #define JOUR_TABLE_DATA "journalItemData"
 #define APP_TABLE_DATA "applicationItemData"
+#define LAST_TABLE_DATA "lastItemData"  // add by Airy
 
 #define JOUR_TREE_DATA "journalctl"
 #define DPKG_TREE_DATA "/var/log/dpkg.log"
@@ -85,6 +105,8 @@ enum LOG_FLAG { JOURNAL = 0, KERN, BOOT, XORG, DPKG, APP, NONE = 9999 };
 #define BOOT_TREE_DATA "/var/log/boot.log"
 #define KERN_TREE_DATA "/var/log/kern.log"
 #define APP_TREE_DATA "application"
+
+#define LAST_TREE_DATA "last"  // add by Airy
 #define ITEM_DATE_ROLE (Qt::UserRole + 66)
 
 #endif  // STRUCTDEF_H

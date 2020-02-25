@@ -100,6 +100,14 @@ void LogListView::initUI()
     m_pModel->appendRow(item);
     this->setModel(m_pModel);
 
+    // add by Airy
+    item = new QStandardItem(DApplication::translate("Tree", "Boot-Shutdown Event"));
+    item->setData(LAST_TREE_DATA, ITEM_DATE_ROLE);
+    item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
+    m_pModel->appendRow(item);
+    this->setModel(m_pModel);
+
     // set first item is select when app start.
     this->setCurrentIndex(m_pModel->index(0, 0));
 }
@@ -152,6 +160,8 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
 
             } else if (item->data(ITEM_DATE_ROLE).toString() == APP_TREE_DATA) {
                 _itemIcon = icon + "application.svg";
+            } else if (item->data(ITEM_DATE_ROLE).toString() == LAST_TREE_DATA) {
+                _itemIcon = icon + "start.svg";
             }
             if (currentItem != nullptr && item == currentItem) {
                 _itemIcon.replace(".svg", "_checked.svg");

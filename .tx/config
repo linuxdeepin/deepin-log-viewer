@@ -20,3 +20,4 @@ file_filter = src/translations/policy/policy_<lang>.ts
 source_file = src/translations/policy/policy.ts
 source_lang = en
 type = QT
+

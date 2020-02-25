@@ -30,6 +30,7 @@
 #include <DTextBrowser>
 #include <QStandardItemModel>
 #include <QWidget>
+#include "filtercontent.h"  //add by Airy
 #include "logdetailinfowidget.h"
 #include "logfileparser.h"
 #include "logiconbutton.h"
@@ -67,6 +68,7 @@ private:
     void createBootTable(QList<LOG_MSG_BOOT> &list);
 
     void createXorgTable(QList<LOG_MSG_XORG> &list);
+    void createNormalTable(QList<LOG_MSG_NORMAL> &list);  // add by Airy
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
@@ -97,12 +99,15 @@ public slots:
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
     void slot_journalFinished();
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
+    void slot_NormalFinished();  // add by Airy
 
     void slot_vScrollValueChanged(int value);
 
     void slot_searchResult(QString str);
 
     void slot_themeChanged(Dtk::Widget::DApplicationHelper::ColorType colorType);
+
+    void slot_getLogtype(int tcbx);  // add by Airy
 
 private:
     void paintEvent(QPaintEvent *event);
@@ -136,6 +141,8 @@ private:
     QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
     QList<LOG_MSG_JOURNAL> kList;                // kern.log
     QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)
+    QList<LOG_MSG_NORMAL> norList;               // add by Airy
+    QList<LOG_MSG_NORMAL> nortempList;           // add by Airy
 
     QString m_iconPrefix {"://images/"};
     QMap<QString, QString> m_icon_name_map;

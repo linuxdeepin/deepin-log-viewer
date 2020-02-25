@@ -106,8 +106,7 @@ void FilterContent::initUI()
     hLayout_period->addWidget(m_threeMonthBtn);
     hLayout_period->addStretch(1);
 
-    DSuggestButton *cmdLinkBtn =
-        new DSuggestButton(("Reset"), this);
+    DSuggestButton *cmdLinkBtn = new DSuggestButton(("Reset"), this);
     cmdLinkBtn->setFlat(true);
     cmdLinkBtn->hide();
     m_btnGroup->addButton(cmdLinkBtn, 6);
@@ -123,7 +122,7 @@ void FilterContent::initUI()
     cbx_lv = new DComboBox(this);
     cbx_lv->setMinimumSize(QSize(208, BUTTON_HEIGHT_MIN));
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
-                                   << DApplication::translate("ComboBox", "Emer")
+                                   << DApplication::translate("ComboBox", "Emergency")
                                    << DApplication::translate("ComboBox", "Alert")
                                    << DApplication::translate("ComboBox", "Critical")
                                    << DApplication::translate("ComboBox", "Error")
@@ -160,6 +159,21 @@ void FilterContent::initUI()
     hLayout_status->setSpacing(6);
     hLayout_all->addLayout(hLayout_status);
 
+    // add by Airy for adding type item
+    QHBoxLayout *hLayout_type = new QHBoxLayout;
+    typeTxt = new DLabel(DApplication::translate("Label", "Log Type:"), this);
+    typeCbx = new DComboBox(this);
+    typeCbx->setMinimumWidth(120);
+    typeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
+    typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
+                                    << DApplication::translate("ComboBox", "Login record")
+                                    << DApplication::translate("ComboBox", "Reboot record")
+                                    << DApplication::translate("ComboBox", "Shutdown record"));
+    hLayout_status->addWidget(typeTxt);
+    hLayout_status->addWidget(typeCbx, 1);
+    hLayout_status->setSpacing(6);
+    hLayout_all->addLayout(hLayout_type);  // end add
+
     hLayout_all->addStretch(1);
 
     DPushButton *exportBtn = new DPushButton(DApplication::translate("Button", "Export"), this);
@@ -184,6 +198,8 @@ void FilterContent::initConnections()
     connect(cbx_lv, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxLvIdxChanged(int)));
     connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
     connect(cbx_status, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxStatusChanged(int)));
+    connect(typeCbx, SIGNAL(currentIndexChanged(int)), this,
+            SLOT(slot_cbxLogTypeChanged(int)));  // add by Airy
 }
 
 void FilterContent::shortCutExport()
@@ -207,8 +223,12 @@ void FilterContent::setAppComboBoxItem()
 }
 
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
-                                       bool needMove)
+                                       bool needMove, bool typecbx)
 {
+    //    va_list arg_ptr;//定义一个可变参数指针
+    //    va_start(arg_ptr,needMove); //设置needMove为最后一个固定参数
+    //    bool typecbx = va_arg(arg_ptr,bool); //设置第二个可变参数
+
     lvTxt->setVisible(lvCbx);
     cbx_lv->setVisible(lvCbx);
 
@@ -217,6 +237,9 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 
     statusTxt->setVisible(statusCbx);
     cbx_status->setVisible(statusCbx);
+
+    typeTxt->setVisible(typecbx);  // add by Airy
+    typeCbx->setVisible(typecbx);  // add by Airy
 
     periodLabel->setVisible(period);
     for (int i = 0; i < 6; i++) {
@@ -231,6 +254,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
         hLayout_period->removeWidget(m_btnGroup->button(EXPORT));
         hLayout_all->addWidget(m_btnGroup->button(EXPORT));
     }
+    //    va_end(arg_ptr);  //清除可变参数指针
 }
 
 void FilterContent::setUeButtonSytle()
@@ -301,6 +325,8 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         this->setSelectorVisible(false, false, false, true, true);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
         this->setSelectorVisible(false, false, false, false, false);
+    } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
+        this->setSelectorVisible(false, false, false, false, false, true);
     }
 }
 
@@ -367,4 +393,11 @@ void FilterContent::slot_cbxStatusChanged(int idx)
     else if (idx == 2)
         str = "Failed";
     emit sigStatusChanged(str);
+}
+
+// add by Airy
+void FilterContent::slot_cbxLogTypeChanged(int idx)
+{
+    emit sigLogtypeChanged(idx);
+    qDebug() << "emit signal " + QString::number(idx);
 }

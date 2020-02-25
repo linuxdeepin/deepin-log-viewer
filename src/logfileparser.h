@@ -47,6 +47,8 @@ public:
     void parseByKern(qint64 ms = 0);
     void parseByApp(QString path, int lv = 6, qint64 ms = 0);
 
+    void parseByNormal(QList<LOG_MSG_NORMAL> &nList);  // add by Airy
+
     void createFile(QString output, int count);
 
 signals:
@@ -56,6 +58,7 @@ signals:
     void kernFinished(QList<LOG_MSG_JOURNAL>);
     void journalFinished();
     void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
+    void normalFinished();  // add by Airy
 
 private:
     bool isErroCommand(QString str);

@@ -320,5 +320,9 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     } else if (dataStr.contains(APP_TABLE_DATA)) {
         fillDetailInfo(name, hostname, "", m_pModel->item(index.row(), 1)->text(), index,
                        m_pModel->item(index.row(), 3)->text());
-    }
+    } else if (dataStr.contains(LAST_TABLE_DATA)) {
+        fillDetailInfo("Event", m_pModel->item(index.row(), 0)->text(), "",
+                       m_pModel->item(index.row(), 2)->text(), QModelIndex(),
+                       m_pModel->item(index.row(), 4)->text());
+    }  // modified by Airy
 }

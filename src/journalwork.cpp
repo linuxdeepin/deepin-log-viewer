@@ -34,7 +34,7 @@ std::atomic<journalWork *> journalWork::m_instance;
 std::mutex journalWork::m_mutex;
 
 journalWork::journalWork(QStringList arg, QObject *parent)
-//    : QObject(parent)
+    //    : QObject(parent)
     : QThread(parent)
 {
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
@@ -71,8 +71,8 @@ void journalWork::setArg(QStringList arg)
 {
     m_arg.clear();
 
-//    m_arg.append("-o");
-//    m_arg.append("json");
+    //    m_arg.append("-o");
+    //    m_arg.append("json");
 
     if (!arg.isEmpty())
         m_arg.append(arg);
@@ -98,7 +98,7 @@ void journalWork::doWork()
 
     sd_journal_seek_tail(j);
 
-//    sd_journal_add_match(j, "PRIORITY=3", 0);
+    //    sd_journal_add_match(j, "PRIORITY=3", 0);
 
     if (!m_arg.isEmpty()) {
         QString _priority = m_arg.at(0);
@@ -107,21 +107,22 @@ void journalWork::doWork()
     }
 
     int cnt = 0;
-    SD_JOURNAL_FOREACH_BACKWARDS(j) {
+    SD_JOURNAL_FOREACH_BACKWARDS(j)
+    {
         const char *d;
         size_t l;
 
         LOG_MSG_JOURNAL logMsg;
 
-//        r = sd_journal_get_data(j, "SYSLOG_TIMESTAMP", (const void **)&d, &l);
-//        if (r < 0) {
+        //        r = sd_journal_get_data(j, "SYSLOG_TIMESTAMP", (const void **)&d, &l);
+        //        if (r < 0) {
         r = sd_journal_get_data(j, "_SOURCE_REALTIME_TIMESTAMP", (const void **)&d, &l);
         if (r < 0) {
             r = sd_journal_get_data(j, "__REALTIME_TIMESTAMP", (const void **)&d, &l);
             if (r < 0) {
                 continue;
             }
-//            }
+            //            }
         }
         uint64_t t;
         sd_journal_get_realtime_usec(j, &t);
@@ -131,7 +132,7 @@ void journalWork::doWork()
             if (t < m_arg.at(1).toLongLong())
                 continue;
         }
-        logMsg.dateTime = getDateTimeFromStamp(dt);;
+        logMsg.dateTime = getDateTimeFromStamp(dt);
 
         r = sd_journal_get_data(j, "_HOSTNAME", (const void **)&d, &l);
         if (r < 0)
@@ -184,7 +185,7 @@ void journalWork::doWork()
     if (logList.count() >= 0)
         emit journalFinished();
 
-//    emit journalFinished(logList);
+        //    emit journalFinished(logList);
 
 #else
     proc = new QProcess;
