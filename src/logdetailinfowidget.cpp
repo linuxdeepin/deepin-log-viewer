@@ -321,8 +321,23 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
         fillDetailInfo(name, hostname, "", m_pModel->item(index.row(), 1)->text(), index,
                        m_pModel->item(index.row(), 3)->text());
     } else if (dataStr.contains(LAST_TABLE_DATA)) {
-        fillDetailInfo("Event", m_pModel->item(index.row(), 0)->text(), "",
-                       m_pModel->item(index.row(), 2)->text(), QModelIndex(),
+        //        fillDetailInfo("Event", m_pModel->item(index.row(), 0)->text(), "",
+        //                       m_pModel->item(index.row(), 2)->text(), QModelIndex(),
+        //                       m_pModel->item(index.row(), 4)->text());
+
+        QString str = "";
+
+        if (m_pModel->item(index.row(), 0)->text().compare("reboot") == 0) {
+            str = DApplication::translate("ComboBox", "Reboot record");
+        } else if (m_pModel->item(index.row(), 0)->text().compare("shutdown") == 0) {
+            str = DApplication::translate("ComboBox", "Shutdown record");
+        } else if (m_pModel->item(index.row(), 0)->text().compare("shutdown") != 0 &&
+                   m_pModel->item(index.row(), 0)->text().compare("reboot") != 0) {
+            str = DApplication::translate("ComboBox", "Login record");
+        }
+        fillDetailInfo(str, m_pModel->item(index.row(), 0)->text(),
+                       "",  // add pid label
+                       m_pModel->item(index.row(), 1)->text(), QModelIndex(),
                        m_pModel->item(index.row(), 4)->text());
     }  // modified by Airy
 }

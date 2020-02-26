@@ -599,7 +599,7 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
                                         << DApplication::translate("Tbble", "Date and Time")
                                         << DApplication::translate("Table", "Device")
                                         << DApplication::translate("Table", "Kernel/IP")
-                                        << DApplication::translate("Table", "Record"));
+                                        << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, DATETIME_WIDTH - 70);
     m_treeView->setColumnWidth(1, DATETIME_WIDTH);
     m_treeView->setColumnWidth(3, DATETIME_WIDTH - 60);
