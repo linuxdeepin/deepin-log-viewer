@@ -101,21 +101,21 @@
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="169"/>
-        <source>Login record</source>
-        <translatorcomment>Login record</translatorcomment>
-        <translation>Login record</translation>
+        <source>Login</source>
+        <translatorcomment>Login</translatorcomment>
+        <translation type="unfinished">Login</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="170"/>
-        <source>Reboot record</source>
-        <translatorcomment>Reboot record</translatorcomment>
-        <translation>Reboot record</translation>
+        <source>Reboot</source>
+        <translatorcomment>Reboot</translatorcomment>
+        <translation type="unfinished">Reboot</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="171"/>
-        <source>Shutdown record</source>
-        <translatorcomment>Shutdown record</translatorcomment>
-        <translation>Shutdown record</translation>
+        <source>Shutdown</source>
+        <translatorcomment>Shutdown</translatorcomment>
+        <translation type="unfinished">Shutdown</translation>
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="124"/>
@@ -125,11 +125,26 @@
         <translatorcomment>All</translatorcomment>
         <translation>All</translation>
     </message>
+    <message>
+        <source>Reboot record</source>
+        <translatorcomment>Reboot record</translatorcomment>
+        <translation type="obsolete">Reboot record</translation>
+    </message>
+    <message>
+        <source>Shutdown record</source>
+        <translatorcomment>Shutdown record</translatorcomment>
+        <translation type="obsolete">Shutdown record</translation>
+    </message>
+    <message>
+        <source>Login record</source>
+        <translatorcomment>Login record</translatorcomment>
+        <translation type="obsolete">Login record</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <location filename="../displaycontent.cpp" line="835"/>
+        <location filename="../displaycontent.cpp" line="907"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
@@ -142,7 +157,7 @@
         <translation type="vanished">New File</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="833"/>
+        <location filename="../displaycontent.cpp" line="905"/>
         <source>Export File</source>
         <translatorcomment>Export File</translatorcomment>
         <translation>Export File</translation>
@@ -169,28 +184,50 @@
     </message>
     <message>
         <location filename="../filtercontent.cpp" line="164"/>
-        <source>Log Type:</source>
-        <translatorcomment>Log Type:</translatorcomment>
-        <translation>Log Type:</translation>
+        <location filename="../logdetailinfowidget.cpp" line="137"/>
+        <source>Event Type:</source>
+        <translatorcomment>Event Type:</translatorcomment>
+        <translation type="unfinished">Event Type:</translation>
     </message>
     <message>
-        <location filename="../logdetailinfowidget.cpp" line="109"/>
+        <location filename="../logdetailinfowidget.cpp" line="132"/>
         <source>User:</source>
         <translation>User:</translation>
     </message>
     <message>
-        <location filename="../logdetailinfowidget.cpp" line="110"/>
+        <location filename="../logdetailinfowidget.cpp" line="133"/>
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
     <message>
-        <location filename="../logdetailinfowidget.cpp" line="112"/>
+        <location filename="../logdetailinfowidget.cpp" line="135"/>
         <source>Action:</source>
         <translation>Action:</translation>
     </message>
     <message>
+        <location filename="../logdetailinfowidget.cpp" line="138"/>
+        <source>Username:</source>
+        <translatorcomment>Username:</translatorcomment>
+        <translation type="unfinished">Username:</translation>
+    </message>
+    <message>
+        <location filename="../logdetailinfowidget.cpp" line="391"/>
+        <source>Reboot record</source>
+        <translation type="unfinished">Reboot record</translation>
+    </message>
+    <message>
+        <location filename="../logdetailinfowidget.cpp" line="393"/>
+        <source>Shutdown record</source>
+        <translation type="unfinished">Shutdown record</translation>
+    </message>
+    <message>
+        <location filename="../logdetailinfowidget.cpp" line="396"/>
+        <source>Login record</source>
+        <translation type="unfinished">Login record</translation>
+    </message>
+    <message>
         <location filename="../filtercontent.cpp" line="151"/>
-        <location filename="../logdetailinfowidget.cpp" line="111"/>
+        <location filename="../logdetailinfowidget.cpp" line="134"/>
         <source>Status:</source>
         <translatorcomment>Status:</translatorcomment>
         <translation>Status:</translation>
@@ -270,8 +307,8 @@
 <context>
     <name>LogFileParser</name>
     <message>
-        <location filename="../logfileparser.cpp" line="353"/>
-        <location filename="../logfileparser.cpp" line="358"/>
+        <location filename="../logfileparser.cpp" line="368"/>
+        <location filename="../logfileparser.cpp" line="373"/>
         <source>information</source>
         <translation>information</translation>
     </message>
@@ -316,7 +353,6 @@
         <translation>User</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="251"/>
         <location filename="../displaycontent.cpp" line="376"/>
         <location filename="../logexportwidget.cpp" line="304"/>
         <source>Daemon</source>
@@ -329,11 +365,17 @@
         <location filename="../displaycontent.cpp" line="374"/>
         <location filename="../displaycontent.cpp" line="484"/>
         <location filename="../displaycontent.cpp" line="569"/>
-        <location filename="../displaycontent.cpp" line="1248"/>
+        <location filename="../displaycontent.cpp" line="1319"/>
         <location filename="../logexportwidget.cpp" line="306"/>
         <source>Date and Time</source>
         <translatorcomment>Date and Time</translatorcomment>
         <translation>Date and Time</translation>
+    </message>
+    <message>
+        <location filename="../displaycontent.cpp" line="251"/>
+        <source>Process</source>
+        <translatorcomment>Process</translatorcomment>
+        <translation type="unfinished">Process</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="253"/>
@@ -342,7 +384,8 @@
         <location filename="../displaycontent.cpp" line="486"/>
         <location filename="../displaycontent.cpp" line="537"/>
         <location filename="../displaycontent.cpp" line="570"/>
-        <location filename="../displaycontent.cpp" line="1250"/>
+        <location filename="../displaycontent.cpp" line="635"/>
+        <location filename="../displaycontent.cpp" line="1321"/>
         <location filename="../logexportwidget.cpp" line="307"/>
         <source>Info</source>
         <translation>Info</translation>
@@ -360,31 +403,21 @@
         <translation>Action</translation>
     </message>
     <message>
-        <location filename="../displaycontent.cpp" line="598"/>
+        <location filename="../displaycontent.cpp" line="632"/>
+        <source>Event Type</source>
+        <translatorcomment>Event Type</translatorcomment>
+        <translation type="unfinished">Event Type</translation>
+    </message>
+    <message>
+        <location filename="../displaycontent.cpp" line="633"/>
         <source>Username</source>
+        <translatorcomment>Username</translatorcomment>
         <translation>Username</translation>
-    </message>
-    <message>
-        <location filename="../displaycontent.cpp" line="601"/>
-        <source>Kernel/IP</source>
-        <translation>Kernel/IP</translation>
-    </message>
-    <message>
-        <location filename="../displaycontent.cpp" line="600"/>
-        <source>Device</source>
-        <translatorcomment>Device</translatorcomment>
-        <translation>Device</translation>
-    </message>
-    <message>
-        <location filename="../displaycontent.cpp" line="602"/>
-        <source>Record</source>
-        <translatorcomment>Record</translatorcomment>
-        <translation>Record</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="250"/>
         <location filename="../displaycontent.cpp" line="483"/>
-        <location filename="../displaycontent.cpp" line="1247"/>
+        <location filename="../displaycontent.cpp" line="1318"/>
         <location filename="../logexportwidget.cpp" line="303"/>
         <source>Level</source>
         <translatorcomment>Level</translatorcomment>
@@ -392,7 +425,7 @@
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="485"/>
-        <location filename="../displaycontent.cpp" line="1249"/>
+        <location filename="../displaycontent.cpp" line="1320"/>
         <source>Source</source>
         <translatorcomment>Source</translatorcomment>
         <translation>Source</translation>
@@ -443,7 +476,7 @@
 <context>
     <name>Tbble</name>
     <message>
-        <location filename="../displaycontent.cpp" line="599"/>
+        <location filename="../displaycontent.cpp" line="634"/>
         <source>Date and Time</source>
         <translation>Date and Time</translation>
     </message>

@@ -106,7 +106,7 @@ void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
     emit dpkgFinished();
 }
 
-void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList)
+void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms)  // modifed by Airy
 {
     QProcess proc;
     proc.start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
@@ -141,6 +141,8 @@ void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList)
             QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
             qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
             QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
+            if (realDt.toMSecsSinceEpoch() < ms)  // add by Airy
+                continue;
 
             LOG_MSG_XORG msg;
             msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
@@ -161,7 +163,7 @@ void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList)
 #include <utmp.h>
 #include <utmpx.h>
 #include <wtmpparse.h>
-void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList)
+void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
 {
     int ret = -2;
     struct utmp *utbufp, *wtmp_next();
@@ -184,20 +186,26 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList)
 
     normalList = normalList->next;
 
+    QString a_name = "~";
     while (normalList) {
+        QString strtmp = normalList->value.ut_name;
+        if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
+            normalList = normalList->next;
+            continue;
+        }
         memset(nodeUTMP, 0, sizeof(struct utmp));
         ret = list_get_ele_and_del(deadList, normalList->value.ut_line, nodeUTMP);
 
         LOG_MSG_NORMAL Nmsg;
-        Nmsg.user = normalList->value.ut_name;
-        if (strcmp(normalList->value.ut_name, "reboot") == 0) {
-            Nmsg.src = "System boot";
-        } else if (strcmp(normalList->value.ut_name, "shutdown") == 0) {
-            Nmsg.src = "System down";
+
+        if (normalList->value.ut_type == USER_PROCESS) {
+            Nmsg.eventType = "Login";
+            Nmsg.userName = normalList->value.ut_name;
+            a_name = Nmsg.userName;
         } else {
-            Nmsg.src = normalList->value.ut_line;
+            Nmsg.eventType = normalList->value.ut_name;
+            Nmsg.userName = a_name;
         }
-        Nmsg.status = normalList->value.ut_host;
 
         QString end_str;
         if (deadList != NULL && ret != -1)
@@ -210,13 +218,20 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList)
         QString start_str = show_start_time(normalList->value.ut_time);
 
         QString n_time =
-            QDateTime::fromTime_t(normalList->value.ut_time).toString("yyyy-MM-dd hh:mm:ss.zzz");
+            QDateTime::fromTime_t(normalList->value.ut_time).toString("yyyy-MM-dd hh:mm:ss");
 
         end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
         start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
 
-        Nmsg.time = n_time;
-        Nmsg.datetime = start_str + "  ~  " + end_str;
+        Nmsg.dateTime = n_time;
+        QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
+        if (nn_time.toMSecsSinceEpoch() < ms)  // add by Airy
+        {
+            normalList = normalList->next;
+            continue;
+        }
+
+        Nmsg.msg = start_str + "  ~  " + end_str;
         normalList = normalList->next;
         printf("\n");
         nList.insert(0, Nmsg);

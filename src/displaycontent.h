@@ -68,7 +68,10 @@ private:
     void createBootTable(QList<LOG_MSG_BOOT> &list);
 
     void createXorgTable(QList<LOG_MSG_XORG> &list);
+    void generateXorgFile(int id);  // add by Airy for peroid
+
     void createNormalTable(QList<LOG_MSG_NORMAL> &list);  // add by Airy
+    void generateNormalFile(int id);                      // add by Airy for peroid
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);

@@ -161,14 +161,14 @@ void FilterContent::initUI()
 
     // add by Airy for adding type item
     QHBoxLayout *hLayout_type = new QHBoxLayout;
-    typeTxt = new DLabel(DApplication::translate("Label", "Log Type:"), this);
+    typeTxt = new DLabel(DApplication::translate("Label", "Event Type:"), this);
     typeCbx = new DComboBox(this);
     typeCbx->setMinimumWidth(120);
     typeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
-                                    << DApplication::translate("ComboBox", "Login record")
-                                    << DApplication::translate("ComboBox", "Reboot record")
-                                    << DApplication::translate("ComboBox", "Shutdown record"));
+                                    << DApplication::translate("ComboBox", "Login")
+                                    << DApplication::translate("ComboBox", "Reboot")
+                                    << DApplication::translate("ComboBox", "Shutdown"));
     hLayout_status->addWidget(typeTxt);
     hLayout_status->addWidget(typeCbx, 1);
     hLayout_status->setSpacing(6);
@@ -324,9 +324,11 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(KERN_TREE_DATA) || itemData.contains(DPKG_TREE_DATA)) {
         this->setSelectorVisible(false, false, false, true, true);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
-        this->setSelectorVisible(false, false, false, false, false);
+        this->setSelectorVisible(false, false, false, true,
+                                 true);  // modified by Airy for showing  peroid
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
-        this->setSelectorVisible(false, false, false, false, false, true);
+        this->setSelectorVisible(false, false, false, true, false,
+                                 true);  // modifed by Airy for showing peroid
     }
 }
 

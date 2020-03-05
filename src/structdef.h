@@ -58,11 +58,10 @@ struct LOG_MSG_XORG {
 
 // add by Airy
 struct LOG_MSG_NORMAL {
-    QString user;
-    QString src;
-    QString time;
-    QString datetime;
-    QString status;
+    QString eventType;
+    QString userName;
+    QString dateTime;
+    QString msg;
 };
 
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };

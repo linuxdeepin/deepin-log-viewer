@@ -45,6 +45,12 @@ void logDetailInfoWidget::cleanText()
     m_daemonName->hide();
 
     m_textBrowser->clear();
+
+    // add by Airy
+    m_name->hide();
+    m_nameLabel->hide();
+    m_event->hide();
+    m_eventLabel->hide();
 }
 
 void logDetailInfoWidget::hideLine(bool isHidden)
@@ -106,10 +112,30 @@ void logDetailInfoWidget::initUI()
     //    m_level->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_level, pa);
 
+    // add by Airy
+    m_event = new DLabel(this);
+    setTextCustomSize(m_event);
+    m_event->setMinimumWidth(LABEL_MIN_WIDTH);
+    pa = DApplicationHelper::instance()->palette(m_event);
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
+    //    m_status->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(m_event, pa);
+
+    m_name = new DLabel(this);
+    setTextCustomSize(m_name);
+    m_name->setMinimumWidth(LABEL_MIN_WIDTH);
+    pa = DApplicationHelper::instance()->palette(m_name);
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
+    //    m_status->setPalette(pa);
+    DApplicationHelper::instance()->setPalette(m_name, pa);  // end
+
     m_userLabel = new DLabel(DApplication::translate("Label", "User:"), this);
     m_pidLabel = new DLabel(DApplication::translate("Label", "PID:"), this);
     m_statusLabel = new DLabel(DApplication::translate("Label", "Status:"), this);
     m_actionLabel = new DLabel(DApplication::translate("Label", "Action:"), this);
+    m_eventLabel =
+        new DLabel(DApplication::translate("Label", "Event Type:"), this);          // add by Airy
+    m_nameLabel = new DLabel(DApplication::translate("Label", "Username:"), this);  // add by Airy
 
     m_hline = new DHorizontalLine;
 
@@ -150,10 +176,24 @@ void logDetailInfoWidget::initUI()
     h24->addWidget(m_action, 1);
     h24->setSpacing(0);
 
+    // add by Airy
+    QHBoxLayout *h25 = new QHBoxLayout;
+    h25->addWidget(m_eventLabel);
+    h25->addWidget(m_event, 1);
+    h25->setSpacing(8);
+
+    QHBoxLayout *h26 = new QHBoxLayout;
+    h26->addWidget(m_nameLabel);
+    h26->addWidget(m_name, 1);
+    h26->setSpacing(8);
+    // end
+
     h2->addLayout(h21);
     h2->addLayout(h22);
     h2->addLayout(h23);
     h2->addLayout(h24);
+    h2->addLayout(h25);  // add by Airy
+    h2->addLayout(h26);  // add by Airy
     h2->addStretch(1);
     h2->addWidget(m_level);
     h2->setSpacing(20);
@@ -210,7 +250,8 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 
 void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QString pid,
                                          QString dateTime, QModelIndex level, QString msg,
-                                         QString status, QString action)
+                                         QString status, QString action, QString uname,
+                                         QString event)
 {
     m_dateTime->show();
     m_daemonName->show();
@@ -223,6 +264,10 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     m_statusLabel->show();
     m_action->show();
     m_actionLabel->show();
+    m_name->show();        // add by Airy
+    m_nameLabel->show();   // add by Airy
+    m_event->show();       // add by Airy
+    m_eventLabel->show();  // add by Airy
 
     deamonName.isEmpty() ? m_daemonName->hide() : m_daemonName->setText(deamonName);
 
@@ -271,6 +316,21 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     } else {
         m_action->setText(action);
     }
+
+    // add by Airy
+    if (uname.isEmpty()) {
+        m_name->hide();
+        m_nameLabel->hide();
+    } else {
+        m_name->setText(uname);
+    }
+    if (event.isEmpty()) {
+        m_event->hide();
+        m_eventLabel->hide();
+    } else {
+        m_event->setText(event);
+    }
+    // end
 
     m_textBrowser->setText(msg);
 }
@@ -328,16 +388,16 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
         QString str = "";
 
         if (m_pModel->item(index.row(), 0)->text().compare("reboot") == 0) {
-            str = DApplication::translate("ComboBox", "Reboot record");
+            str = DApplication::translate("Label", "Reboot record");
         } else if (m_pModel->item(index.row(), 0)->text().compare("shutdown") == 0) {
-            str = DApplication::translate("ComboBox", "Shutdown record");
+            str = DApplication::translate("Label", "Shutdown record");
         } else if (m_pModel->item(index.row(), 0)->text().compare("shutdown") != 0 &&
                    m_pModel->item(index.row(), 0)->text().compare("reboot") != 0) {
-            str = DApplication::translate("ComboBox", "Login record");
+            str = DApplication::translate("Label", "Login record");
         }
-        fillDetailInfo(str, m_pModel->item(index.row(), 0)->text(),
-                       "",  // add pid label
-                       m_pModel->item(index.row(), 1)->text(), QModelIndex(),
-                       m_pModel->item(index.row(), 4)->text());
+        fillDetailInfo(str, hostname, "", m_pModel->item(index.row(), 2)->text(), QModelIndex(),
+                       m_pModel->item(index.row(), 3)->text(), "", "",
+                       m_pModel->item(index.row(), 1)->text(),
+                       m_pModel->item(index.row(), 0)->text());
     }  // modified by Airy
 }

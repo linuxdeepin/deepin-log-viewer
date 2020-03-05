@@ -246,13 +246,13 @@ void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
     m_pModel->clear();
 
     m_pModel->setColumnCount(6);
-    m_pModel->setHorizontalHeaderLabels(QStringList()
-                                        << DApplication::translate("Table", "Level")
-                                        << DApplication::translate("Table", "Daemon")
-                                        << DApplication::translate("Table", "Date and Time")
-                                        << DApplication::translate("Table", "Info")
-                                        << DApplication::translate("Table", "User")
-                                        << DApplication::translate("Table", "PID"));
+    m_pModel->setHorizontalHeaderLabels(
+        QStringList() << DApplication::translate("Table", "Level")
+                      << DApplication::translate("Table", "Process")  // modified by Airy
+                      << DApplication::translate("Table", "Date and Time")
+                      << DApplication::translate("Table", "Info")
+                      << DApplication::translate("Table", "User")
+                      << DApplication::translate("Table", "PID"));
 
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
@@ -335,8 +335,9 @@ void DisplayContent::generateKernFile(int id)
 {
     kList.clear();
     m_spinnerWgt->spinnerStop();
-    m_spinnerWgt->hide();
+    m_spinnerWgt->show();
     m_treeView->show();
+
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
@@ -373,7 +374,7 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
     m_pModel->setHorizontalHeaderLabels(QStringList()
                                         << DApplication::translate("Table", "Date and Time")
                                         << DApplication::translate("Table", "User")
-                                        << DApplication::translate("Table", "Daemon")
+                                        << DApplication::translate("Table", "Process")
                                         << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
@@ -589,37 +590,68 @@ void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
+void DisplayContent::generateXorgFile(int id)
+{
+    xList.clear();
+
+    m_spinnerWgt->spinnerStop();
+    m_spinnerWgt->hide();
+    m_treeView->show();
+
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime());  // get zero time
+    switch (id) {
+        case ALL:
+            m_logFileParse.parseByXlog(xList);
+            break;
+        case ONE_DAY: {
+            m_logFileParse.parseByXlog(xList, dt.toMSecsSinceEpoch());
+        } break;
+        case THREE_DAYS: {
+            m_logFileParse.parseByXlog(xList, dt.addDays(-2).toMSecsSinceEpoch());
+        } break;
+        case ONE_WEEK: {
+            m_logFileParse.parseByXlog(xList, dt.addDays(-6).toMSecsSinceEpoch());
+        } break;
+        case ONE_MONTH: {
+            m_logFileParse.parseByXlog(xList, dt.addDays(-29).toMSecsSinceEpoch());
+        } break;
+        case THREE_MONTHS: {
+            m_logFileParse.parseByXlog(xList, dt.addDays(-89).toMSecsSinceEpoch());
+        } break;
+        default:
+            break;
+    }
+}
+
 void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 {
     noResultLabel->hide();
     m_pModel->clear();
     m_pModel->setColumnCount(4);
     m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Event Type")
                                         << DApplication::translate("Table", "Username")
                                         << DApplication::translate("Tbble", "Date and Time")
-                                        << DApplication::translate("Table", "Device")
-                                        << DApplication::translate("Table", "Kernel/IP")
                                         << DApplication::translate("Table", "Info"));
-    m_treeView->setColumnWidth(0, DATETIME_WIDTH - 70);
+    m_treeView->setColumnWidth(0, DATETIME_WIDTH - 20);
     m_treeView->setColumnWidth(1, DATETIME_WIDTH);
-    m_treeView->setColumnWidth(3, DATETIME_WIDTH - 60);
+    m_treeView->setColumnWidth(2, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(3, DATETIME_WIDTH);
     DStandardItem *item = nullptr;
     for (int i = 0; i < list.size(); i++) {
-        item = new DStandardItem(list[i].user);
+        item = new DStandardItem(list[i].eventType);
         item->setData(LAST_TABLE_DATA);
         m_pModel->setItem(i, 0, item);
-        item = new DStandardItem(list[i].time);
+        item = new DStandardItem(list[i].userName);
         item->setData(LAST_TABLE_DATA);
         m_pModel->setItem(i, 1, item);
-        item = new DStandardItem(list[i].src);
+        item = new DStandardItem(list[i].dateTime);
         item->setData(LAST_TABLE_DATA);
         m_pModel->setItem(i, 2, item);
-        item = new DStandardItem(list[i].status);
+        item = new DStandardItem(list[i].msg);
         item->setData(LAST_TABLE_DATA);
         m_pModel->setItem(i, 3, item);
-        item = new DStandardItem(list[i].datetime);
-        item->setData(LAST_TABLE_DATA);
-        m_pModel->setItem(i, 4, item);
     }
 
     //    m_treeView->setModel(m_pModel);
@@ -630,6 +662,41 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
+// add by Airy
+void DisplayContent::generateNormalFile(int id)
+{
+    norList.clear();
+
+    m_spinnerWgt->spinnerStop();
+    m_spinnerWgt->hide();
+    m_treeView->show();
+
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime());  // get zero time
+    switch (id) {
+        case ALL:
+            m_logFileParse.parseByNormal(norList);
+            break;
+        case ONE_DAY: {
+            m_logFileParse.parseByNormal(norList, dt.toMSecsSinceEpoch());
+        } break;
+        case THREE_DAYS: {
+            m_logFileParse.parseByNormal(norList, dt.addDays(-2).toMSecsSinceEpoch());
+        } break;
+        case ONE_WEEK: {
+            m_logFileParse.parseByNormal(norList, dt.addDays(-6).toMSecsSinceEpoch());
+        } break;
+        case ONE_MONTH: {
+            m_logFileParse.parseByNormal(norList, dt.addDays(-29).toMSecsSinceEpoch());
+        } break;
+        case THREE_MONTHS: {
+            m_logFileParse.parseByNormal(norList, dt.addDays(-89).toMSecsSinceEpoch());
+        } break;
+        default:
+            break;
+    }
 }
 
 void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end)
@@ -751,6 +818,10 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         if (!m_curAppLog.isEmpty()) {
             generateAppFile(m_curAppLog, btnId, m_curLevel);
         }
+    } else if (treeData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
+        generateXorgFile(btnId);
+    } else if (treeData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
+        generateNormalFile(btnId);
     }
 }
 
@@ -794,7 +865,8 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
         xList.clear();
         m_flag = XORG;
-        m_logFileParse.parseByXlog(xList);
+        //        m_logFileParse.parseByXlog(xList);
+        generateXorgFile(m_curBtnId);
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         bList.clear();
         m_flag = BOOT;
@@ -809,7 +881,8 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
         norList.clear();
         m_flag = Normal;
-        m_logFileParse.parseByNormal(norList);
+        //        m_logFileParse.parseByNormal(norList);
+        generateNormalFile(m_curBtnId);
     }
 
     if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
@@ -1128,11 +1201,10 @@ void DisplayContent::slot_searchResult(QString str)
             int cnt = tmp.count();
             for (int i = cnt - 1; i >= 0; --i) {
                 LOG_MSG_NORMAL msg = tmp.at(i);
-                if (msg.user.contains(str, Qt::CaseInsensitive) ||
-                    msg.time.contains(str, Qt::CaseInsensitive) ||
-                    msg.src.contains(str, Qt::CaseInsensitive) ||
-                    msg.status.contains(str, Qt::CaseInsensitive) ||
-                    msg.datetime.contains(str, Qt::CaseInsensitive))
+                if (msg.eventType.contains(str, Qt::CaseInsensitive) ||
+                    msg.userName.contains(str, Qt::CaseInsensitive) ||
+                    msg.dateTime.contains(str, Qt::CaseInsensitive) ||
+                    msg.msg.contains(str, Qt::CaseInsensitive))
                     continue;
                 tmp.removeAt(i);
             }
@@ -1173,21 +1245,21 @@ void DisplayContent::slot_getLogtype(int tcbx)
     } else if (1 == tcbx) {
         nortempList.clear();
         for (auto i = 0; i < norList.size(); i++) {
-            if (norList[i].user.compare("reboot", Qt::CaseInsensitive) != 0 &&
-                norList[i].user.compare("shutdown", Qt::CaseInsensitive) != 0 &&
-                norList[i].user.compare("runlevel", Qt::CaseInsensitive) != 0)
+            if (norList[i].eventType.compare("reboot", Qt::CaseInsensitive) != 0 &&
+                norList[i].eventType.compare("shutdown", Qt::CaseInsensitive) != 0 &&
+                norList[i].eventType.compare("runlevel", Qt::CaseInsensitive) != 0)
                 nortempList.append(norList[i]);
         }
     } else if (2 == tcbx) {
         nortempList.clear();
         for (auto i = 0; i < norList.size(); i++) {
-            if (norList[i].user.compare("reboot", Qt::CaseInsensitive) == 0)
+            if (norList[i].eventType.compare("reboot", Qt::CaseInsensitive) == 0)
                 nortempList.append(norList[i]);
         }
     } else if (3 == tcbx) {
         nortempList.clear();
         for (auto i = 0; i < norList.size(); i++) {
-            if (norList[i].user.compare("shutdown", Qt::CaseInsensitive) == 0)
+            if (norList[i].eventType.compare("shutdown", Qt::CaseInsensitive) == 0)
                 nortempList.append(norList[i]);
         }
     }
