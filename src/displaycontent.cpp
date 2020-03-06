@@ -1245,7 +1245,7 @@ void DisplayContent::slot_getLogtype(int tcbx)
     } else if (1 == tcbx) {
         nortempList.clear();
         for (auto i = 0; i < norList.size(); i++) {
-            if (norList[i].eventType.compare("reboot", Qt::CaseInsensitive) != 0 &&
+            if (norList[i].eventType.compare("Boot", Qt::CaseInsensitive) != 0 &&
                 norList[i].eventType.compare("shutdown", Qt::CaseInsensitive) != 0 &&
                 norList[i].eventType.compare("runlevel", Qt::CaseInsensitive) != 0)
                 nortempList.append(norList[i]);
@@ -1253,7 +1253,7 @@ void DisplayContent::slot_getLogtype(int tcbx)
     } else if (2 == tcbx) {
         nortempList.clear();
         for (auto i = 0; i < norList.size(); i++) {
-            if (norList[i].eventType.compare("reboot", Qt::CaseInsensitive) == 0)
+            if (norList[i].eventType.compare("Boot", Qt::CaseInsensitive) == 0)
                 nortempList.append(norList[i]);
         }
     } else if (3 == tcbx) {

@@ -387,12 +387,12 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
 
         QString str = "";
 
-        if (m_pModel->item(index.row(), 0)->text().compare("reboot") == 0) {
-            str = DApplication::translate("Label", "Reboot record");
+        if (m_pModel->item(index.row(), 0)->text().compare("Boot") == 0) {
+            str = DApplication::translate("Label", "Boot record");
         } else if (m_pModel->item(index.row(), 0)->text().compare("shutdown") == 0) {
             str = DApplication::translate("Label", "Shutdown record");
         } else if (m_pModel->item(index.row(), 0)->text().compare("shutdown") != 0 &&
-                   m_pModel->item(index.row(), 0)->text().compare("reboot") != 0) {
+                   m_pModel->item(index.row(), 0)->text().compare("Boot") != 0) {
             str = DApplication::translate("Label", "Login record");
         }
         fillDetailInfo(str, hostname, "", m_pModel->item(index.row(), 2)->text(), QModelIndex(),

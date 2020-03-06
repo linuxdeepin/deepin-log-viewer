@@ -193,6 +193,7 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
             normalList = normalList->next;
             continue;
         }
+
         memset(nodeUTMP, 0, sizeof(struct utmp));
         ret = list_get_ele_and_del(deadList, normalList->value.ut_line, nodeUTMP);
 
@@ -204,6 +205,9 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
             a_name = Nmsg.userName;
         } else {
             Nmsg.eventType = normalList->value.ut_name;
+            if (strtmp.compare("reboot") == 0) {
+                Nmsg.eventType = "Boot";
+            }
             Nmsg.userName = a_name;
         }
 

@@ -167,7 +167,7 @@ void FilterContent::initUI()
     typeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                                     << DApplication::translate("ComboBox", "Login")
-                                    << DApplication::translate("ComboBox", "Reboot")
+                                    << DApplication::translate("ComboBox", "Boot")
                                     << DApplication::translate("ComboBox", "Shutdown"));
     hLayout_status->addWidget(typeTxt);
     hLayout_status->addWidget(typeCbx, 1);
