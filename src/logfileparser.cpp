@@ -74,6 +74,10 @@ void LogFileParser::parseByJournal(QStringList arg)
 
 void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
 {
+    QFile file("/var/log/dpkg.log");  // if not,maybe crash
+    if (!file.exists())
+        return;
+
     QProcess proc;
     proc.start("cat /var/log/dpkg.log");  // file path is fixed. so write cmd direct
     proc.waitForFinished(-1);
@@ -108,6 +112,10 @@ void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
 
 void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms)  // modifed by Airy
 {
+    QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
+    if (!file.exists())
+        return;
+
     QProcess proc;
     proc.start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
     proc.waitForFinished(-1);
