@@ -335,7 +335,7 @@ void DisplayContent::generateKernFile(int id)
 {
     kList.clear();
     m_spinnerWgt->spinnerStop();
-    m_spinnerWgt->show();
+    m_spinnerWgt->hide();  // modified by Airy for bug 15520
     m_treeView->show();
 
     QDateTime dt = QDateTime::currentDateTime();
