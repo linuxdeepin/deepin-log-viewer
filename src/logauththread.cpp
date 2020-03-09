@@ -35,8 +35,13 @@ void LogAuthThread::run()
     }
 }
 
+#include <QFile>
 void LogAuthThread::handleBoot()
 {
+    QFile file("/var/log/boot.log");  // add by Airy
+    if (!file.exists())
+        return;
+
     QProcess *proc = new QProcess;
     connect(proc, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     proc->setProcessChannelMode(QProcess::MergedChannels);
@@ -47,6 +52,10 @@ void LogAuthThread::handleBoot()
 
 void LogAuthThread::handleKern()
 {
+    QFile file("/var/log/kern.log");  // add by Airy
+    if (!file.exists())
+        return;
+
     QProcess *proc = new QProcess;
     connect(proc, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     proc->setProcessChannelMode(QProcess::MergedChannels);
