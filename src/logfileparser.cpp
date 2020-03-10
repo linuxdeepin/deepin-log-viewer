@@ -408,6 +408,8 @@ void LogFileParser::slot_journalFinished()
     emit journalFinished();
 }
 
+#include <unistd.h>
+#include <QApplication>
 void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
 {
     switch (flag) {
@@ -482,6 +484,8 @@ void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
 
                 //            kList.append(msg);
                 kList.insert(0, msg);
+
+                QApplication::processEvents();  // devide UI and parser
             }
 
             createFile(output, kList.count());

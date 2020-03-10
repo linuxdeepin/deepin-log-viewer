@@ -98,6 +98,10 @@ void DisplayContent::initUI()
     noResultLabel->hide();
 
     m_spinnerWgt = new LogSpinnerWidget;
+    m_spinnerWgt_K = new LogSpinnerWidget;
+
+    vLayout->addWidget(m_spinnerWgt_K, 5);
+    m_spinnerWgt_K->hide();
 
     vLayout->addWidget(m_spinnerWgt, 5);
     m_spinnerWgt->hide();
@@ -334,9 +338,12 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
 void DisplayContent::generateKernFile(int id)
 {
     kList.clear();
-    m_spinnerWgt->spinnerStop();
-    m_spinnerWgt->hide();  // modified by Airy for bug 15520
-    m_treeView->show();
+    m_spinnerWgt_K->spinnerStop();
+    m_spinnerWgt_K->spinnerStart();
+    m_treeView->hide();
+    m_spinnerWgt_K->show();
+    //    m_spinnerWgt->hide();  // modified by Airy for bug 15520
+    //    m_treeView->show();
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
@@ -885,10 +892,11 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         generateNormalFile(m_curBtnId);
     }
 
-    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
-        m_spinnerWgt->spinnerStop();
+    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) &&
+        !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
+        m_spinnerWgt_K->spinnerStop();
         m_treeView->show();
-        m_spinnerWgt->hide();
+        m_spinnerWgt_K->hide();
     }
 }
 
@@ -993,6 +1001,11 @@ void DisplayContent::slot_kernFinished(QList<LOG_MSG_JOURNAL> list)
         return;
 
     kList = list;
+
+    m_spinnerWgt_K->spinnerStop();  // add by Airy
+    m_treeView->show();
+    m_spinnerWgt_K->hide();
+
     createKernTable(kList);
 }
 

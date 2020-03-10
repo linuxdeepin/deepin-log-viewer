@@ -127,6 +127,7 @@ private:
     int m_limitTag {0};
 
     LogSpinnerWidget *m_spinnerWgt;
+    LogSpinnerWidget *m_spinnerWgt_K;  // add by Airy
 
     QString m_curAppLog;
     QString m_currentStatus;

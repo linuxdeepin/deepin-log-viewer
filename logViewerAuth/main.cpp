@@ -23,7 +23,8 @@ int main(int argc, char *argv[])
     }
     QStringList arg;
     arg.append(fileList[0]);
-    //    arg << "/var/log/boot.log";//开机的时候系统核心去侦测与启动，接下来开始各种核心支援的功能启动等；
+    //    arg <<
+    //    "/var/log/boot.log";//开机的时候系统核心去侦测与启动，接下来开始各种核心支援的功能启动等；
     QProcess proc;
 
     proc.start("cat", arg);
