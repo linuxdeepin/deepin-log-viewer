@@ -104,7 +104,7 @@ void DisplayContent::initUI()
     m_spinnerWgt_K->hide();
 
     vLayout->addWidget(m_spinnerWgt, 5);
-    m_spinnerWgt->hide();
+    m_spinnerWgt->hide();  // hide spinner
 
     //    m_noResultWdg = new LogSearchNoResultWidget(this);
     //    m_noResultWdg->setContent("");
