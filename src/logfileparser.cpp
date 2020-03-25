@@ -178,7 +178,7 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
 
     if (wtmp_open(WTMP_FILE) == -1) {
         printf("open WTMP_FILE file error\n");
-        exit(1);
+        return;  // exit(1) will exit this application
     }
 
     struct utmp_list *normalList = st_list_init();

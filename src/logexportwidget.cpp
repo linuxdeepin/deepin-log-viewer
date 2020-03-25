@@ -88,7 +88,7 @@ bool LogExportWidget::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
         //        "Level:")) << jMsg.level << " "; out << QString(DApplication::translate("Table",
         //        "Info:")) << jMsg.msg << " "; //delete bug
         out << QString(DApplication::translate("Table", "Level:")) << jMsg.level << " ";
-        out << QString(DApplication::translate("Table", "Daemon:")) << jMsg.daemonName << " ";
+        out << QString(DApplication::translate("Table", "Process:")) << jMsg.daemonName << " ";
         out << QString(DApplication::translate("Table", "Date and Time:")) << jMsg.dateTime << " ";
         if (jMsg.msg.isEmpty()) {
             out << QString(DApplication::translate("Table", "Info:"))
@@ -301,7 +301,7 @@ bool LogExportWidget::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
     //                    QString(DApplication::translate("Table", "Info")) + QString("</td></tr>");
     //                    //delete  for bug
     QString title = QString("<tr><td>") + QString(DApplication::translate("Table", "Level")) +
-                    QString("</td><td>") + QString(DApplication::translate("Table", "Daemon")) +
+                    QString("</td><td>") + QString(DApplication::translate("Table", "Process")) +
                     QString("</td><td>") +
                     QString(DApplication::translate("Table", "Date and Time")) +
                     QString("</td><td>") + QString(DApplication::translate("Table", "Info")) +
