@@ -128,7 +128,7 @@ int list_get_ele_and_del(struct utmp_list *list, char *value, struct utmp *retUt
             beforeNode->next = pList->next;
             if (retUtmp)
                 memcpy(retUtmp, &pList->value, sizeof(struct utmp));
-            free(pList);
+            //            free(pList);         //if pList->value is null,this will crash
             return 0;
         } else {
             beforeNode = pList;
