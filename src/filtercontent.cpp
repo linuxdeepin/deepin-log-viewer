@@ -72,26 +72,36 @@ void FilterContent::initUI()
 
     LogPeriodButton *m_todayBtn =
         new LogPeriodButton(DApplication::translate("Button", "Today"), this);
+    m_todayBtn->setToolTip(DApplication::translate("Button", "Today"));  // add by Airy for bug
+                                                                         // 16245
     m_todayBtn->setFixedSize(QSize(64, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_todayBtn, 1);
 
     LogPeriodButton *m_threeDayBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
+    m_threeDayBtn->setToolTip(
+        DApplication::translate("Button", "3 days"));  // add by Airy for bug 16245
     m_threeDayBtn->setFixedSize(QSize(78, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_threeDayBtn, 2);
 
     LogPeriodButton *m_lastWeekBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
+    m_lastWeekBtn->setToolTip(
+        DApplication::translate("Button", "1 week"));  // add by Airy for bug 16245
     m_lastWeekBtn->setFixedSize(QSize(78, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_lastWeekBtn, 3);
 
     LogPeriodButton *m_lastMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
+    m_lastMonthBtn->setToolTip(
+        DApplication::translate("Button", "1 month"));  // add by Airy for bug 16245
     m_lastMonthBtn->setFixedSize(QSize(92, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_lastMonthBtn, 4);
 
     LogPeriodButton *m_threeMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
+    m_threeMonthBtn->setToolTip(
+        DApplication::translate("Button", "3 months"));  // add by Airy for bug 16245
     m_threeMonthBtn->setFixedSize(QSize(92, BUTTON_HEIGHT_MIN));
     m_btnGroup->addButton(m_threeMonthBtn, 5);
 
