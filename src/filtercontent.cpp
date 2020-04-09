@@ -334,7 +334,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         emit sigCbxAppIdxChanged(cbx_app->itemData(0, Qt::UserRole + 1).toString());
     } else if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         this->setSelectorVisible(true, false, false, true, false);
-        cbx_lv->setCurrentIndex(INF + 1);  // index+1
+//        cbx_lv->setCurrentIndex(INF + 1);  // index+1 //delete by Airy for bug 19660
     } else if (itemData.contains(BOOT_TREE_DATA)) {
         this->setSelectorVisible(false, false, true, false, false);
     } else if (itemData.contains(KERN_TREE_DATA) || itemData.contains(DPKG_TREE_DATA)) {
