@@ -126,8 +126,10 @@ void DisplayContent::initUI()
 void DisplayContent::initMap()
 {
     m_transDict.clear();
-    m_transDict.insert("Warning", "warning");
-    m_transDict.insert("Debug", "debug");
+//    m_transDict.insert("Warning", "warning");
+//    m_transDict.insert("Debug", "debug");
+    m_transDict.insert("Warning", DApplication::translate("Level", "Warning"));  //add by Airy for bug 19167 and 19161
+    m_transDict.insert("Debug", DApplication::translate("Level", "Debug")); //add by Airy for bug 19167 and 19161
     m_transDict.insert("Info", DApplication::translate("Level", "Info"));
     m_transDict.insert("Error", DApplication::translate("Level", "Error"));
 
