@@ -30,65 +30,69 @@ void LogApplicationParseThread::doWork()
 
     QProcess *proc = new QProcess;
     //    connect(proc, SIGNAL(finished(int)), this, SLOT(onProcFinished(int)));
+    if(m_logPath.isEmpty())     //modified by Airy for bug 20457::if path is empty,item is not empty
+    {
+        emit appCmdFinished(m_appList);
+    }else {
+        QStringList arg;
+        arg << "-c" << QString("cat %1").arg(m_logPath);
 
-    QStringList arg;
-    arg << "-c" << QString("cat %1").arg(m_logPath);
+        proc->start("/bin/bash", arg);
+        proc->waitForFinished(-1);
 
-    proc->start("/bin/bash", arg);
-    proc->waitForFinished(-1);
+        QString output = proc->readAllStandardOutput();
+        proc->deleteLater();
 
-    QString output = proc->readAllStandardOutput();
-    proc->deleteLater();
+        for (QString str : output.split('\n')) {
+            LOG_MSG_APPLICATOIN msg;
 
-    for (QString str : output.split('\n')) {
-        LOG_MSG_APPLICATOIN msg;
+            str.replace(QRegExp("\\s{2,}"), "");
 
-        str.replace(QRegExp("\\s{2,}"), "");
-
-        QStringList list = str.split("]", QString::SkipEmptyParts);
-        if (list.count() < 3)
-            continue;
-
-        QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
-        if (dateTime.contains(",")) {
-            dateTime.replace(",", "");
-        }
-        //        if (dateTime.split(".").count() == 2) {
-        //            dateTime = dateTime.split(".")[0];
-        //        }
-
-        // add by Airy
-        // boot maker log can not show
-        if (dateTime.split(".").count() > 2) {
-            list[1] = " " + list[1];
-            QDateTime g_time = QDateTime::fromString(dateTime, "yyyyMMdd.hh:mm:ss.zzz");
-            QString gg_time = g_time.toString("yyyy-MM-dd hh:mm:ss.zzz");
-            dateTime = gg_time;
-        }  // add
-
-        qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
-        if (dt < m_periorTime)
-            continue;
-        msg.dateTime = dateTime;
-        msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
-
-        if (m_level != LVALL) {
-            if (m_levelDict.value(msg.level) != m_level)
+            QStringList list = str.split("]", QString::SkipEmptyParts);
+            if (list.count() < 3)
                 continue;
+
+            QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
+            if (dateTime.contains(",")) {
+                dateTime.replace(",", "");
+            }
+            //        if (dateTime.split(".").count() == 2) {
+            //            dateTime = dateTime.split(".")[0];
+            //        }
+
+            // add by Airy
+            // boot maker log can not show
+            if (dateTime.split(".").count() > 2) {
+                list[1] = " " + list[1];
+                QDateTime g_time = QDateTime::fromString(dateTime, "yyyyMMdd.hh:mm:ss.zzz");
+                QString gg_time = g_time.toString("yyyy-MM-dd hh:mm:ss.zzz");
+                dateTime = gg_time;
+            }  // add
+
+            qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
+            if (dt < m_periorTime)
+                continue;
+            msg.dateTime = dateTime;
+            msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
+
+            if (m_level != LVALL) {
+                if (m_levelDict.value(msg.level) != m_level)
+                    continue;
+            }
+
+            msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
+
+            if (list.count() >= 4) {
+                msg.msg = list.mid(2).join("]");
+            } else {
+                msg.msg = list[2];
+            }
+
+            m_appList.insert(0, msg);
         }
 
-        msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
-
-        if (list.count() >= 4) {
-            msg.msg = list.mid(2).join("]");
-        } else {
-            msg.msg = list[2];
-        }
-
-        m_appList.insert(0, msg);
+        emit appCmdFinished(m_appList);
     }
-
-    emit appCmdFinished(m_appList);
 }
 
 void LogApplicationParseThread::onProcFinished(int ret)

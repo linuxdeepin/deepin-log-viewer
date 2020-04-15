@@ -836,8 +836,8 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 
 void DisplayContent::slot_appLogs(QString path)
 {
-    if (path.isEmpty())
-        return;
+//    if (path.isEmpty())
+//        return;        //delete by Airy for bug 20457 :if path is empty,item is not empty
 
     appList.clear();
     m_curAppLog = path;
