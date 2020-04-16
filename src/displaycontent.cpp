@@ -894,7 +894,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         generateNormalFile(m_curBtnId);
     }
 
-    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) &&
+    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||   //modified by Airy for bug 19660:spinner always running
         !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
         m_spinnerWgt_K->spinnerStop();
         m_treeView->show();
