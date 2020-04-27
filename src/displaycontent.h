@@ -45,6 +45,7 @@ public:
     explicit DisplayContent(QWidget *parent = nullptr);
     ~DisplayContent();
 
+
 private:
     void initUI();
     void initMap();
@@ -82,6 +83,9 @@ private:
 
     bool isAuthProcessAlive();
 
+
+    //
+
 signals:
     void loadMoreInfo();
     void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name);
@@ -111,7 +115,13 @@ public slots:
     void slot_themeChanged(Dtk::Widget::DApplicationHelper::ColorType colorType);
 
     void slot_getLogtype(int tcbx);  // add by Airy
-
+//导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
+    void parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel);
 private:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
@@ -147,7 +157,6 @@ private:
     QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)
     QList<LOG_MSG_NORMAL> norList;               // add by Airy
     QList<LOG_MSG_NORMAL> nortempList;           // add by Airy
-
     QString m_iconPrefix {"://images/"};
     QMap<QString, QString> m_icon_name_map;
     QString getIconByname(QString str);

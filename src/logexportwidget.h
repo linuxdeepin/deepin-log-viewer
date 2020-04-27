@@ -34,15 +34,39 @@ public:
 
     static bool exportToTxt(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
     static bool exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList);
+    static bool exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels);
+    static bool exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels);
+    static bool exportToTxt(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels);
+    static bool exportToTxt(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels);
+    static bool exportToTxt(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels);
+    static bool exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
+
+
 
     static bool exportToDoc(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
-    static bool exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels);
+    static bool exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag);
+    static bool exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels);
+    static bool exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels);
+    static bool exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels);
+    static bool exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels);
+    static bool exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
 
     static bool exportToHtml(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
     static bool exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jList);
+    static bool exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels);
+    static bool exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels);
+    static bool exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels);
+    static bool exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels);
+    static bool exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels);
+    static bool exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
 
     static bool exportToXls(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
-    static bool exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels);
+    static bool exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag);
+    static bool exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels);
+    static bool exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels);
+    static bool exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels);
+    static bool exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels);
+    static bool exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
 };
 
 #endif  // LOGEXPORTWIDGET_H

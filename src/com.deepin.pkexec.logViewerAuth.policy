@@ -7,7 +7,6 @@
 	<action id="com.deepin.pkexec.logViewerAuth">
 		<description>authentication</description>
 		<message>Authentication is required to view the log</message>
-        <message xml:lang="zh_CN">查看此日志需要授权</message>
 		<icon_name />
 		<defaults>
 			<allow_any>no</allow_any>

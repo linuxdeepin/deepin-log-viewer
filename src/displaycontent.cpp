@@ -307,24 +307,8 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
     //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
-    m_pModel->setColumnCount(3);
-    m_pModel->setHorizontalHeaderLabels(QStringList()
-                                        << DApplication::translate("Table", "Date and Time")
-                                        << DApplication::translate("Table", "Info")
-                                        << DApplication::translate("Table", "Action"));
+    parseListToModel(list, m_pModel);
     m_treeView->setColumnWidth(0, DATETIME_WIDTH);
-    DStandardItem *item = nullptr;
-    for (int i = 0; i < list.size(); i++) {
-        item = new DStandardItem(list[i].dateTime);
-        item->setData(DPKG_TABLE_DATA);
-        m_pModel->setItem(i, 0, item);
-        item = new DStandardItem(list[i].msg);
-        item->setData(DPKG_TABLE_DATA);
-        m_pModel->setItem(i, 1, item);
-        item = new DStandardItem(list[i].action);
-        item->setData(DPKG_TABLE_DATA);
-        m_pModel->setItem(i, 2, item);
-    }
     m_treeView->hideColumn(2);
 
     //    m_treeView->setModel(m_pModel);
@@ -379,12 +363,6 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
     //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
-    m_pModel->setColumnCount(4);
-    m_pModel->setHorizontalHeaderLabels(QStringList()
-                                        << DApplication::translate("Table", "Date and Time")
-                                        << DApplication::translate("Table", "User")
-                                        << DApplication::translate("Table", "Process")
-                                        << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
@@ -422,22 +400,11 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
 // add by Airy for bug
 void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int end)
 {
-    DStandardItem *item = nullptr;
-    for (int i = start; i < end; i++) {
-        item = new DStandardItem(list[i].dateTime);
-        item->setData(KERN_TABLE_DATA);
-        m_pModel->setItem(i, 0, item);
-        item = new DStandardItem(list[i].hostName);
-        item->setData(KERN_TABLE_DATA);
-        m_pModel->setItem(i, 1, item);
-        item = new DStandardItem(list[i].daemonName);
-        item->setData(KERN_TABLE_DATA);
-        m_pModel->setItem(i, 2, item);
-        item = new DStandardItem(list[i].msg);
-        item->setData(KERN_TABLE_DATA);
-        m_pModel->setItem(i, 3, item);
+    QList<LOG_MSG_JOURNAL> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
     }
-
+    parseListToModel(midList, m_pModel);
     //    m_treeView->setModel(m_pModel);
 
     // default first row select
@@ -542,25 +509,9 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
     //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
-    m_pModel->setColumnCount(2);
-    m_pModel->setHorizontalHeaderLabels(QStringList() << DApplication::translate("Table", "Status")
-                                        << DApplication::translate("Table", "Info"));
-
     m_treeView->setColumnWidth(0, STATUS_WIDTH);
-
-    DStandardItem *item = nullptr;
-
-    for (int i = 0; i < list.size(); i++) {
-        item = new DStandardItem(list[i].status);
-        item->setData(BOOT_TABLE_DATA);
-        m_pModel->setItem(i, 0, item);
-        item = new DStandardItem(list[i].msg);
-        item->setData(BOOT_TABLE_DATA);
-        m_pModel->setItem(i, 1, item);
-    }
-
+    parseListToModel(list, m_pModel);
     //    m_treeView->setModel(m_pModel);
-
     // default first row select
     //    m_treeView->selectRow(0);
     QItemSelectionModel *p = m_treeView->selectionModel();
@@ -574,20 +525,9 @@ void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
     //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
-    m_pModel->setColumnCount(2);
-    m_pModel->setHorizontalHeaderLabels(QStringList()
-                                        << DApplication::translate("Table", "Date and Time")
-                                        << DApplication::translate("Table", "Info"));
+    parseListToModel(list, m_pModel);
     m_treeView->setColumnWidth(0, DATETIME_WIDTH + 20);
-    DStandardItem *item = nullptr;
-    for (int i = 0; i < list.size(); i++) {
-        item = new DStandardItem(list[i].dateTime);
-        item->setData(XORG_TABLE_DATA);
-        m_pModel->setItem(i, 0, item);
-        item = new DStandardItem(list[i].msg);
-        item->setData(XORG_TABLE_DATA);
-        m_pModel->setItem(i, 1, item);
-    }
+
 
     //    m_treeView->setModel(m_pModel);
 
@@ -637,32 +577,11 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 {
     noResultLabel->hide();
     m_pModel->clear();
-    m_pModel->setColumnCount(4);
-    m_pModel->setHorizontalHeaderLabels(QStringList()
-                                        << DApplication::translate("Table", "Event Type")
-                                        << DApplication::translate("Table", "Username")
-                                        << DApplication::translate("Tbble", "Date and Time")
-                                        << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, DATETIME_WIDTH - 20);
     m_treeView->setColumnWidth(1, DATETIME_WIDTH);
     m_treeView->setColumnWidth(2, DATETIME_WIDTH);
     m_treeView->setColumnWidth(3, DATETIME_WIDTH);
-    DStandardItem *item = nullptr;
-    for (int i = 0; i < list.size(); i++) {
-        item = new DStandardItem(list[i].eventType);
-        item->setData(LAST_TABLE_DATA);
-        m_pModel->setItem(i, 0, item);
-        item = new DStandardItem(list[i].userName);
-        item->setData(LAST_TABLE_DATA);
-        m_pModel->setItem(i, 1, item);
-        item = new DStandardItem(list[i].dateTime);
-        item->setData(LAST_TABLE_DATA);
-        m_pModel->setItem(i, 2, item);
-        item = new DStandardItem(list[i].msg);
-        item->setData(LAST_TABLE_DATA);
-        m_pModel->setItem(i, 3, item);
-    }
-
+    parseListToModel(list, m_pModel);
     //    m_treeView->setModel(m_pModel);
 
     // default first row select
@@ -677,7 +596,7 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 void DisplayContent::generateNormalFile(int id)
 {
     norList.clear();
-
+    nortempList.clear();
     m_spinnerWgt->spinnerStop();
     m_spinnerWgt->hide();
     m_treeView->show();
@@ -706,6 +625,7 @@ void DisplayContent::generateNormalFile(int id)
     default:
         break;
     }
+    nortempList = norList;
 }
 
 void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end)
@@ -921,30 +841,57 @@ void DisplayContent::slot_exportClicked()
     for (int col = 0; col < m_pModel->columnCount(); ++col) {
         labels.append(m_pModel->horizontalHeaderItem(col)->text());
     }
+    QStandardItemModel *exportTempModel = new QStandardItemModel(this) ;
+    switch (m_flag) {
+    case APP:
+        parseListToModel(appList, exportTempModel);
+        break;
+    case DPKG:
+        parseListToModel(dList, exportTempModel);
+        break;
+    case BOOT:
+        parseListToModel(currentBootList, exportTempModel);
+        break;
+    case XORG:
+        parseListToModel(xList, exportTempModel);
+        break;
+    case Normal:
+        parseListToModel(nortempList, exportTempModel);
+        break;
+    case KERN:
+        parseListToModel(kList, exportTempModel);
+        break;
+    default:
+        break;
+    }
     if (selectFilter == "TEXT (*.txt)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToTxt(fileName, m_pModel, m_flag);
+            LogExportWidget::exportToTxt(fileName, exportTempModel, m_flag);
         } else {
             LogExportWidget::exportToTxt(fileName, jList);
         }
     } else if (selectFilter == "Html (*.html)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToHtml(fileName, m_pModel, m_flag);
+            LogExportWidget::exportToHtml(fileName, exportTempModel, m_flag);
         } else {
             LogExportWidget::exportToHtml(fileName, jList);
         }
     } else if (selectFilter == "Doc (*.doc)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToDoc(fileName, m_pModel, m_flag);
+            LogExportWidget::exportToDoc(fileName, exportTempModel, m_flag);
         } else {
-            LogExportWidget::exportToDoc(fileName, jList, labels);
+            LogExportWidget::exportToDoc(fileName, jList, labels, m_flag);
         }
     } else if (selectFilter == "Xls (*.xls)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToXls(fileName, m_pModel, m_flag);
+            LogExportWidget::exportToXls(fileName, exportTempModel, m_flag);
         } else {
-            LogExportWidget::exportToXls(fileName, jList, labels);
+            LogExportWidget::exportToXls(fileName, jList, labels, m_flag);
         }
+    }
+    if (exportTempModel) {
+        exportTempModel->deleteLater();
+        exportTempModel = nullptr;
     }
 }
 
@@ -991,7 +938,7 @@ void DisplayContent::slot_bootFinished(QList<LOG_MSG_BOOT> list)
     bList = list;
     currentBootList.clear();
     currentBootList = bList;
-    createBootTable(bList);
+    createBootTable(currentBootList);
 }
 
 void DisplayContent::slot_kernFinished(QList<LOG_MSG_JOURNAL> list)
@@ -1055,9 +1002,9 @@ void DisplayContent::slot_NormalFinished()
 {
     if (m_flag != Normal)
         return;
-
+    nortempList = norList;
     //    createXorgTable(xList);
-    createNormalTable(norList);
+    createNormalTable(nortempList);
 }
 
 void DisplayContent::slot_vScrollValueChanged(int value)
@@ -1278,6 +1225,205 @@ void DisplayContent::slot_getLogtype(int tcbx)
     createNormalTable(nortempList);
 }
 
+void DisplayContent::parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+
+    oPModel->setColumnCount(3);
+    oPModel->setHorizontalHeaderLabels(QStringList()
+                                       << DApplication::translate("Table", "Date and Time")
+                                       << DApplication::translate("Table", "Info")
+                                       << DApplication::translate("Table", "Action"));
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<LOG_MSG_DPKG> list = iList;
+    DStandardItem *item = nullptr;
+    for (int i = 0; i < list.size(); i++) {
+        item = new DStandardItem(list[i].dateTime);
+        item->setData(DPKG_TABLE_DATA);
+        oPModel->setItem(i, 0, item);
+        item = new DStandardItem(list[i].msg);
+        item->setData(DPKG_TABLE_DATA);
+        oPModel->setItem(i, 1, item);
+        item = new DStandardItem(list[i].action);
+        item->setData(DPKG_TABLE_DATA);
+        oPModel->setItem(i, 2, item);
+    }
+
+}
+
+void DisplayContent::parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    oPModel->setColumnCount(2);
+    oPModel->setHorizontalHeaderLabels(QStringList() << DApplication::translate("Table", "Status")
+                                       << DApplication::translate("Table", "Info"));
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<LOG_MSG_BOOT> list = iList;
+    DStandardItem *item = nullptr;
+    for (int i = 0; i < list.size(); i++) {
+        item = new DStandardItem(list[i].status);
+        item->setData(BOOT_TABLE_DATA);
+        oPModel->setItem(i, 0, item);
+        item = new DStandardItem(list[i].msg);
+        item->setData(BOOT_TABLE_DATA);
+        oPModel->setItem(i, 1, item);
+    }
+}
+
+void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    oPModel->setColumnCount(4);
+    oPModel->setHorizontalHeaderLabels(QStringList()
+                                       << DApplication::translate("Table", "Level")
+                                       << DApplication::translate("Table", "Date and Time")
+                                       << DApplication::translate("Table", "Source")
+                                       << DApplication::translate("Table", "Info"));
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<LOG_MSG_APPLICATOIN> list = iList;
+    DStandardItem *item = nullptr;
+    for (int i = 0; i < list.size(); i++) {
+        int col = 0;
+        QString CH_str = m_transDict.value(list[i].level);
+        QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
+        //        item = new DStandardItem(lvStr);
+        item = new DStandardItem();
+        QString iconPath = m_iconPrefix + getIconByname(list[i].level);
+        if (getIconByname(list[i].level).isEmpty())
+            item->setText(lvStr);
+        item->setIcon(QIcon(iconPath));
+        item->setData(APP_TABLE_DATA);
+        item->setData(lvStr, Qt::UserRole + 6);
+        oPModel->setItem(i, col++, item);
+
+        item = new DStandardItem(list[i].dateTime);
+        item->setData(APP_TABLE_DATA);
+        oPModel->setItem(i, col++, item);
+
+        //        item = new DStandardItem(list[i].src);
+        item = new DStandardItem(getAppName(m_curAppLog));
+        item->setData(APP_TABLE_DATA);
+        oPModel->setItem(i, col++, item);
+
+        item = new DStandardItem(list[i].msg);
+        item->setData(APP_TABLE_DATA);
+        oPModel->setItem(i, col++, item);
+    }
+}
+
+void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    oPModel->setColumnCount(2);
+    oPModel->setHorizontalHeaderLabels(QStringList()
+                                       << DApplication::translate("Table", "Date and Time")
+                                       << DApplication::translate("Table", "Info"));
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<LOG_MSG_XORG> list = iList;
+    DStandardItem *item = nullptr;
+    for (int i = 0; i < list.size(); i++) {
+        item = new DStandardItem(list[i].dateTime);
+        item->setData(XORG_TABLE_DATA);
+        oPModel->setItem(i, 0, item);
+        item = new DStandardItem(list[i].msg);
+        item->setData(XORG_TABLE_DATA);
+        oPModel->setItem(i, 1, item);
+    }
+}
+
+void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    oPModel->setColumnCount(4);
+    oPModel->setHorizontalHeaderLabels(QStringList()
+                                       << DApplication::translate("Table", "Event Type")
+                                       << DApplication::translate("Table", "Username")
+                                       << DApplication::translate("Tbble", "Date and Time")
+                                       << DApplication::translate("Table", "Info"));
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<LOG_MSG_NORMAL> list = iList;
+    DStandardItem *item = nullptr;
+    for (int i = 0; i < list.size(); i++) {
+        item = new DStandardItem(list[i].eventType);
+        item->setData(LAST_TABLE_DATA);
+        oPModel->setItem(i, 0, item);
+        item = new DStandardItem(list[i].userName);
+        item->setData(LAST_TABLE_DATA);
+        oPModel->setItem(i, 1, item);
+        item = new DStandardItem(list[i].dateTime);
+        item->setData(LAST_TABLE_DATA);
+        oPModel->setItem(i, 2, item);
+        item = new DStandardItem(list[i].msg);
+        item->setData(LAST_TABLE_DATA);
+        oPModel->setItem(i, 3, item);
+    }
+}
+
+void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    oPModel->setColumnCount(4);
+    oPModel->setHorizontalHeaderLabels(QStringList()
+                                       << DApplication::translate("Table", "Date and Time")
+                                       << DApplication::translate("Table", "User")
+                                       << DApplication::translate("Table", "Process")
+                                       << DApplication::translate("Table", "Info"));
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<LOG_MSG_JOURNAL> list = iList;
+    DStandardItem *item = nullptr;
+    for (int i = 0; i < list.size(); i++) {
+        item = new DStandardItem(list[i].dateTime);
+        item->setData(KERN_TABLE_DATA);
+        oPModel->setItem(i, 0, item);
+        item = new DStandardItem(list[i].hostName);
+        item->setData(KERN_TABLE_DATA);
+        oPModel->setItem(i, 1, item);
+        item = new DStandardItem(list[i].daemonName);
+        item->setData(KERN_TABLE_DATA);
+        oPModel->setItem(i, 2, item);
+        item = new DStandardItem(list[i].msg);
+        item->setData(KERN_TABLE_DATA);
+        oPModel->setItem(i, 3, item);
+    }
+
+}
+
 void DisplayContent::paintEvent(QPaintEvent *event)
 {
     DWidget::paintEvent(event);
@@ -1326,12 +1472,6 @@ void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
     //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
-    m_pModel->setColumnCount(4);
-    m_pModel->setHorizontalHeaderLabels(QStringList()
-                                        << DApplication::translate("Table", "Level")
-                                        << DApplication::translate("Table", "Date and Time")
-                                        << DApplication::translate("Table", "Source")
-                                        << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
     m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
@@ -1342,35 +1482,11 @@ void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
 
 void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end)
 {
-    DStandardItem *item = nullptr;
-    for (int i = start; i < end; i++) {
-        int col = 0;
-        QString CH_str = m_transDict.value(list[i].level);
-        QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
-        //        item = new DStandardItem(lvStr);
-        item = new DStandardItem();
-        QString iconPath = m_iconPrefix + getIconByname(list[i].level);
-        if (getIconByname(list[i].level).isEmpty())
-            item->setText(lvStr);
-        item->setIcon(QIcon(iconPath));
-        item->setData(APP_TABLE_DATA);
-        item->setData(lvStr, Qt::UserRole + 6);
-        m_pModel->setItem(i, col++, item);
-
-        item = new DStandardItem(list[i].dateTime);
-        item->setData(APP_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
-
-        //        item = new DStandardItem(list[i].src);
-        item = new DStandardItem(getAppName(m_curAppLog));
-        item->setData(APP_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
-
-        item = new DStandardItem(list[i].msg);
-        item->setData(APP_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
+    QList<LOG_MSG_APPLICATOIN> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
     }
-
+    parseListToModel(midList, m_pModel);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);

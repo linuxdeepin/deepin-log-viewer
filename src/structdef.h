@@ -88,7 +88,7 @@ enum LOG_FLAG {
     Normal,
     NONE = 9999
 };  // modified by
-    // Airy
+// Airy
 
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"

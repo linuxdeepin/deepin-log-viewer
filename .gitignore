@@ -33,3 +33,4 @@ debian/*
 *.qmake*
 Makefile
 moc_*
+
