@@ -10,7 +10,7 @@ LIBS += -lsystemd
 
 DEFINES += USE_POLKIT ENABLE_INACTIVE_DISPLAY
 
-LIBS += -lsystemd
+LIBS += -lsystemd -licui18n -licuuc
 
 include(../thirdlib/QtXlsxWriter/src/xlsx/qtxlsx.pri)
 include(../thirdlib/docx/docx.pri)
@@ -34,7 +34,9 @@ SOURCES += \
     logdetailinfowidget.cpp \
     logauththread.cpp \
     logapplicationhelper.cpp \
-    logapplicationparsethread.cpp
+    logapplicationparsethread.cpp \
+    model/log_sort_filter_proxy_model.cpp \
+    common/collator.cpp
 
 RESOURCES +=         resources.qrc
 
@@ -58,7 +60,9 @@ HEADERS += \
     logauththread.h \
     logapplicationhelper.h \
     logapplicationparsethread.h \
-    wtmpparse.h
+    wtmpparse.h \
+    model/log_sort_filter_proxy_model.h \
+    common/collator.h
 
 !system(deepin-policy-ts-convert policy2ts com.deepin.pkexec.logViewerAuth.policy.tmp translations/policy): message("Failed policy to ts")
 !system(deepin-policy-ts-convert ts2policy com.deepin.pkexec.logViewerAuth.policy.tmp policy-install-translation com.deepin.pkexec.logViewerAuth.policy) {

@@ -7,7 +7,7 @@
 #include <QModelIndex>
 #include <QStandardItemModel>
 #include "logiconbutton.h"
-
+class QStandardItemModel;
 class logDetailInfoWidget : public Dtk::Widget::DWidget
 {
     Q_OBJECT

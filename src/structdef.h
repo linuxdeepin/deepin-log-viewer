@@ -89,6 +89,59 @@ enum LOG_FLAG {
     NONE = 9999
 };  // modified by
 // Airy
+namespace Log_Item_SPACE {
+enum LogItemDataRole {
+    levelRole = Qt::UserRole + 6
+};
+}
+namespace JOURNAL_SPACE {
+enum JOURNAL_DISPLAY_COLUMN {
+    journalLevelColumn = 0,
+    journalDaemonNameColumn,
+    journalDateTimeColumn,
+    journalMsgColumn,
+    journalHostNameColumn,
+    journalDaemonIdColumn
+};
+}
+namespace KERN_SPACE {
+enum KERN_DISPLAY_COLUMN {
+    kernDateTimeColumn = 0,
+    kernHostNameColumn,
+    kernDaemonNameColumn,
+    kernMsgColumn
+};
+}
+namespace DKPG_SPACE {
+enum DKPG_DISPLAY_COLUMN {
+    dkpgDateTimeColumn = 0,
+    dkpgMsgColumn
+};
+}
+namespace XORG_SPACE {
+enum XORG_DISPLAY_COLUMN {
+    xorgDateTimeColumn = 0,
+    xorgMsgColumn
+};
+}
+namespace APP_SPACE {
+enum APP_DISPLAY_COLUMN {
+    appLevelColumn = 0,
+    appDateTimeColumn,
+    appSrcColumn,
+    appMsgColumn
+};
+}
+namespace NORMAL_SPACE {
+enum NORMAL_DISPLAY_COLUMN {
+    normalEventTypeColumn = 0,
+    normalUserNameColumn,
+    normalDateTimeColumn,
+    normalMsgColumn
+};
+}
+
+
 
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"

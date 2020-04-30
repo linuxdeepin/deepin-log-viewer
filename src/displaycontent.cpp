@@ -42,6 +42,8 @@
 #include "logapplicationhelper.h"
 #include "logexportwidget.h"
 #include "logfileparser.h"
+#include "model/log_sort_filter_proxy_model.h"
+
 
 DWIDGET_USE_NAMESPACE
 
@@ -151,10 +153,10 @@ void DisplayContent::initMap()
 void DisplayContent::initTableView()
 {
     m_treeView = new LogTreeView(this);
-
     m_pModel = new QStandardItemModel(this);
-
-    m_treeView->setModel(m_pModel);
+    m_pProxyModel = new LogSortFilterProxyModel(this);
+    m_pProxyModel->setSourceModel(m_pModel);
+    m_treeView->setModel(m_pProxyModel);
 }
 
 void DisplayContent::initConnections()
@@ -251,7 +253,7 @@ void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
 
     m_pModel->clear();
 
-    m_pModel->setColumnCount(6);
+    //m_pModel->setColumnCount(6);
     m_pModel->setHorizontalHeaderLabels(
         QStringList() << DApplication::translate("Table", "Level")
         << DApplication::translate("Table", "Process")  // modified by Airy
@@ -260,9 +262,7 @@ void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
         << DApplication::translate("Table", "User")
         << DApplication::translate("Table", "PID"));
 
-    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
-    m_treeView->setColumnWidth(1, DEAMON_WIDTH);
-    m_treeView->setColumnWidth(2, DATETIME_WIDTH);
+
 
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertJournalTable(list, 0, end);
@@ -363,9 +363,7 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
     //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
-    m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
-    m_treeView->setColumnWidth(1, DEAMON_WIDTH);
-    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
 
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertKernTable(list, 0, end);
@@ -409,6 +407,10 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
 
     // default first row select
     //    m_treeView->selectRow(0);
+    //排序插入后可能列宽会改变，故把调整列宽放到insert中 by zyc
+    m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
+    m_treeView->setColumnWidth(1, DEAMON_WIDTH);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
@@ -454,54 +456,8 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
 {
     //    m_treeView->show();
     noResultLabel->hide();
-    m_pModel->clear();
-    m_pModel->setColumnCount(4);
-    m_pModel->setHorizontalHeaderLabels(QStringList()
-                                        << DApplication::translate("Table", "Level")
-                                        << DApplication::translate("Table", "Date and Time")
-                                        << DApplication::translate("Table", "Source")
-                                        << DApplication::translate("Table", "Info"));
-    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
-    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
-    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
-
-    DStandardItem *item = nullptr;
-    for (int i = 0; i < list.size(); i++) {
-        int col = 0;
-        QString CH_str = m_transDict.value(list[i].level);
-        QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
-        //        item = new DStandardItem(lvStr);
-        item = new DStandardItem();
-        QString iconPath = m_iconPrefix + getIconByname(list[i].level);
-        if (getIconByname(list[i].level).isEmpty())
-            item->setText(lvStr);
-        item->setIcon(QIcon(iconPath));
-        item->setData(APP_TABLE_DATA);
-        item->setData(lvStr, Qt::UserRole + 6);
-        m_pModel->setItem(i, col++, item);
-
-        item = new DStandardItem(list[i].dateTime);
-        item->setData(APP_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
-
-        //        item = new DStandardItem(list[i].src);
-        item = new DStandardItem(getAppName(m_curAppLog));
-        item->setData(APP_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
-
-        item = new DStandardItem(list[i].msg);
-        item->setData(APP_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
-    }
-
-    //    m_treeView->setModel(m_pModel);
-
-    // default first row select
-    //    m_treeView->selectRow(0);
-    QItemSelectionModel *p = m_treeView->selectionModel();
-    if (p)
-        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_pModel->index(0, 0));
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertApplicationTable(list, 0, end);
 }
 
 void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
@@ -577,11 +533,12 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 {
     noResultLabel->hide();
     m_pModel->clear();
+
+    parseListToModel(list, m_pModel);
     m_treeView->setColumnWidth(0, DATETIME_WIDTH - 20);
     m_treeView->setColumnWidth(1, DATETIME_WIDTH);
     m_treeView->setColumnWidth(2, DATETIME_WIDTH);
     m_treeView->setColumnWidth(3, DATETIME_WIDTH);
-    parseListToModel(list, m_pModel);
     //    m_treeView->setModel(m_pModel);
 
     // default first row select
@@ -631,47 +588,57 @@ void DisplayContent::generateNormalFile(int id)
 void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end)
 {
     DStandardItem *item = nullptr;
+    //  m_treeView->setUpdatesEnabled(false);
+    // m_pModel->beginInsertRows(logList.size());
+    QList<QStandardItem *> items;
     for (int i = start; i < end; i++) {
         int col = 0;
-
+        items.clear();
         item = new DStandardItem();
         //        qDebug() << "journal level" << logList[i].level;
         QString iconPath = m_iconPrefix + getIconByname(logList[i].level);
+
         if (getIconByname(logList[i].level).isEmpty())
             item->setText(logList[i].level);
         item->setIcon(QIcon(iconPath));
         item->setData(JOUR_TABLE_DATA);
-        item->setData(logList[i].level, Qt::UserRole + 6);
-        m_pModel->setItem(i, col++, item);
-
+        item->setData(logList[i].level, Log_Item_SPACE::levelRole);
+        //m_pModel->setItem(i, JOURNAL_SPACE::journalLevelColumn, item);
+        items << item;
         item = new DStandardItem(logList[i].daemonName);
         item->setData(JOUR_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
-
+        // m_pModel->setItem(i, JOURNAL_SPACE::journalDaemonNameColumn, item);
+        items << item;
         item = new DStandardItem(logList[i].dateTime);
         item->setData(JOUR_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
-
+        //m_pModel->setItem(i, JOURNAL_SPACE::journalDateTimeColumn, item);
+        items << item;
         item = new DStandardItem(logList[i].msg);
         item->setData(JOUR_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
-
+        //m_pModel->setItem(i, JOURNAL_SPACE::journalMsgColumn, item);
+        items << item;
         item = new DStandardItem(logList[i].hostName);
         item->setData(JOUR_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
-
+        // m_pModel->setItem(i, JOURNAL_SPACE::journalHostNameColumn, item);
+        items << item;
         item = new DStandardItem(logList[i].daemonId);
         item->setData(JOUR_TABLE_DATA);
-        m_pModel->setItem(i, col++, item);
+        //  m_pModel->setItem(i, JOURNAL_SPACE::journalDaemonIdColumn, item);
+        items << item;
+        m_pModel->insertRow(m_pModel->rowCount(), items);
     }
-    m_treeView->hideColumn(4);
-    m_treeView->hideColumn(5);
-
+    //  m_pModel->endInsertRows();
+    m_treeView->hideColumn(JOURNAL_SPACE::journalHostNameColumn);
+    m_treeView->hideColumn(JOURNAL_SPACE::journalDaemonIdColumn);
+    //m_treeView->setUpdatesEnabled(true);
     //    qDebug() << m_pModel->index(0, 0).data(Qt::DecorationRole);
 
     //    m_treeView->setModel(m_pModel);
 
     // default first row select
+    m_treeView->setColumnWidth(JOURNAL_SPACE::journalLevelColumn, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDaemonNameColumn, DEAMON_WIDTH);
+    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
@@ -1014,7 +981,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
         //    qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
 
         if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag == rate)
+            if (m_limitTag >= rate)
                 return;
 
             int leftCnt = jList.count() - SINGLE_LOAD * rate;
@@ -1022,6 +989,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             //        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
             //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD
             //                 * rate;
+            qDebug() << "rate" << rate;
             insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
             m_limitTag = rate;
@@ -1032,7 +1000,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
         //        qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
 
         if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag == rate)
+            if (m_limitTag >= rate)
                 return;
 
             int leftCnt = appList.count() - SINGLE_LOAD * rate;
@@ -1051,7 +1019,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
         int rate = (value + 25) / SINGLE_LOAD;
 
         if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag == rate)
+            if (m_limitTag >= rate)
                 return;
 
             int leftCnt = kList.count() - SINGLE_LOAD * rate;
@@ -1243,18 +1211,21 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemMo
     }
     QList<LOG_MSG_DPKG> list = iList;
     DStandardItem *item = nullptr;
+    QList<QStandardItem *> items;
+    //每次插一行，减少刷新次数，重写QStandardItemModel有问题
     for (int i = 0; i < list.size(); i++) {
+        items.clear();
         item = new DStandardItem(list[i].dateTime);
         item->setData(DPKG_TABLE_DATA);
-        oPModel->setItem(i, 0, item);
+        items << item;
         item = new DStandardItem(list[i].msg);
         item->setData(DPKG_TABLE_DATA);
-        oPModel->setItem(i, 1, item);
+        items << item;
         item = new DStandardItem(list[i].action);
         item->setData(DPKG_TABLE_DATA);
-        oPModel->setItem(i, 2, item);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
     }
-
 }
 
 void DisplayContent::parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel)
@@ -1272,13 +1243,16 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemMo
     }
     QList<LOG_MSG_BOOT> list = iList;
     DStandardItem *item = nullptr;
+    QList<QStandardItem *> items;
     for (int i = 0; i < list.size(); i++) {
+        items.clear();
         item = new DStandardItem(list[i].status);
         item->setData(BOOT_TABLE_DATA);
-        oPModel->setItem(i, 0, item);
+        items << item;
         item = new DStandardItem(list[i].msg);
         item->setData(BOOT_TABLE_DATA);
-        oPModel->setItem(i, 1, item);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
     }
 }
 
@@ -1299,8 +1273,10 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
         return;
     }
     QList<LOG_MSG_APPLICATOIN> list = iList;
+    QList<QStandardItem *> items;
     DStandardItem *item = nullptr;
     for (int i = 0; i < list.size(); i++) {
+        items.clear();
         int col = 0;
         QString CH_str = m_transDict.value(list[i].level);
         QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
@@ -1311,21 +1287,19 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
             item->setText(lvStr);
         item->setIcon(QIcon(iconPath));
         item->setData(APP_TABLE_DATA);
-        item->setData(lvStr, Qt::UserRole + 6);
-        oPModel->setItem(i, col++, item);
-
+        item->setData(lvStr, Log_Item_SPACE::levelRole);
+        items << item;
         item = new DStandardItem(list[i].dateTime);
         item->setData(APP_TABLE_DATA);
-        oPModel->setItem(i, col++, item);
-
+        items << item;
         //        item = new DStandardItem(list[i].src);
         item = new DStandardItem(getAppName(m_curAppLog));
         item->setData(APP_TABLE_DATA);
-        oPModel->setItem(i, col++, item);
-
+        items << item;
         item = new DStandardItem(list[i].msg);
         item->setData(APP_TABLE_DATA);
-        oPModel->setItem(i, col++, item);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
     }
 }
 
@@ -1345,13 +1319,16 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemMo
     }
     QList<LOG_MSG_XORG> list = iList;
     DStandardItem *item = nullptr;
+    QList<QStandardItem *> items;
     for (int i = 0; i < list.size(); i++) {
+        items.clear();
         item = new DStandardItem(list[i].dateTime);
         item->setData(XORG_TABLE_DATA);
-        oPModel->setItem(i, 0, item);
+        items << item;
         item = new DStandardItem(list[i].msg);
         item->setData(XORG_TABLE_DATA);
-        oPModel->setItem(i, 1, item);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
     }
 }
 
@@ -1373,19 +1350,22 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItem
     }
     QList<LOG_MSG_NORMAL> list = iList;
     DStandardItem *item = nullptr;
+    QList<QStandardItem *> items;
     for (int i = 0; i < list.size(); i++) {
+        items.clear();
         item = new DStandardItem(list[i].eventType);
         item->setData(LAST_TABLE_DATA);
-        oPModel->setItem(i, 0, item);
+        items << item;
         item = new DStandardItem(list[i].userName);
         item->setData(LAST_TABLE_DATA);
-        oPModel->setItem(i, 1, item);
+        items << item;
         item = new DStandardItem(list[i].dateTime);
         item->setData(LAST_TABLE_DATA);
-        oPModel->setItem(i, 2, item);
+        items << item;
         item = new DStandardItem(list[i].msg);
         item->setData(LAST_TABLE_DATA);
-        oPModel->setItem(i, 3, item);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
     }
 }
 
@@ -1395,7 +1375,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardIte
         qWarning() << "parse model is  Empty" << __LINE__;
         return;
     }
-    oPModel->setColumnCount(4);
+    //oPModel->setColumnCount(4);
     oPModel->setHorizontalHeaderLabels(QStringList()
                                        << DApplication::translate("Table", "Date and Time")
                                        << DApplication::translate("Table", "User")
@@ -1407,21 +1387,23 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardIte
     }
     QList<LOG_MSG_JOURNAL> list = iList;
     DStandardItem *item = nullptr;
+    QList<QStandardItem *> items;
     for (int i = 0; i < list.size(); i++) {
+        items.clear();
         item = new DStandardItem(list[i].dateTime);
         item->setData(KERN_TABLE_DATA);
-        oPModel->setItem(i, 0, item);
+        items << item;
         item = new DStandardItem(list[i].hostName);
         item->setData(KERN_TABLE_DATA);
-        oPModel->setItem(i, 1, item);
+        items << item;
         item = new DStandardItem(list[i].daemonName);
         item->setData(KERN_TABLE_DATA);
-        oPModel->setItem(i, 2, item);
+        items << item;
         item = new DStandardItem(list[i].msg);
         item->setData(KERN_TABLE_DATA);
-        oPModel->setItem(i, 3, item);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
     }
-
 }
 
 void DisplayContent::paintEvent(QPaintEvent *event)
@@ -1472,9 +1454,7 @@ void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
     //    m_treeView->show();
     noResultLabel->hide();
     m_pModel->clear();
-    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
-    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
-    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
 
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertApplicationTable(list, 0, end);
@@ -1488,6 +1468,9 @@ void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int
     }
     parseListToModel(midList, m_pModel);
     QItemSelectionModel *p = m_treeView->selectionModel();
+    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));

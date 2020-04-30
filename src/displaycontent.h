@@ -38,6 +38,8 @@
 #include "logtreeview.h"
 #include "structdef.h"
 
+
+class LogSortFilterProxyModel;
 class DisplayContent : public Dtk::Widget::DWidget
 {
     Q_OBJECT
@@ -130,6 +132,8 @@ private:
     //    Dtk::Widget::DTableView *m_tableView;
     LogTreeView *m_treeView;
     QStandardItemModel *m_pModel;
+
+    LogSortFilterProxyModel *m_pProxyModel{nullptr};
     logDetailInfoWidget *m_detailWgt {nullptr};
     Dtk::Widget::DLabel *noResultLabel {nullptr};
     QModelIndex m_curListIdx;

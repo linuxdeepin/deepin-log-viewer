@@ -26,7 +26,6 @@
 #include <QObject>
 #include <QStandardItemModel>
 #include "structdef.h"
-
 class LogExportWidget : public Dtk::Widget::DWidget
 {
 public:
