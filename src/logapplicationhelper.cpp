@@ -190,6 +190,8 @@ QString LogApplicationHelper::getLogFile(QString path)
 
 QMap<QString, QString> LogApplicationHelper::getMap()
 {
+//    qDebug() << "m_en_log_map" << m_en_log_map;
+//    qDebug() << "m_en_trans_map" << m_en_trans_map;
     QMap<QString, QString>::const_iterator iter = m_en_log_map.constBegin();
     while (iter != m_en_log_map.constEnd()) {
         QString displayName = m_en_trans_map.value(iter.key());

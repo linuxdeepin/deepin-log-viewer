@@ -196,7 +196,6 @@ bool LogSortFilterProxyModel::normalLessThan(const QModelIndex &left, const QMod
         QString rightStr = right.data(Qt::DisplayRole).toString();
         int leftType = normalEventTypeStr2Int(leftStr);
         int rightype = normalEventTypeStr2Int(rightStr);
-        qDebug() << leftType << rightype;
         int compareResult = leftType < rightype;
         return compareResult;// == 0 ? dateTimeSiblingLessThan(left, right, NORMAL_SPACE::normalDateTimeColumn) : compareResult;
     }
