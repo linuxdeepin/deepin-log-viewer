@@ -1,4 +1,5 @@
 #include "logdetailinfowidget.h"
+#include "model/log_sort_filter_proxy_model.h"
 #include <sys/utsname.h>
 #include <DApplication>
 #include <DApplicationHelper>
@@ -274,9 +275,9 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     if (!level.isValid()) {
         m_level->hide();
     } else {
-        QIcon icon = m_pModel->item(level.row())->icon();
+        QIcon icon =  level.siblingAtColumn(0).data(Qt::DecorationRole).value<QIcon>();
         m_level->setIcon(icon);
-        m_level->setText(m_pModel->item(level.row())->data(Qt::UserRole + 6).toString());
+        m_level->setText(level.siblingAtColumn(0).data(Qt::UserRole + 6).toString());
     }
 
     if (dateTime.isEmpty()) {
@@ -335,7 +336,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     m_textBrowser->setText(msg);
 }
 
-void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel,
+void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, LogSortFilterProxyModel *pModel,
                                           QString name)
 {
     cleanText();
@@ -354,50 +355,51 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     QString hostname = QString(_utsname.nodename);
 
     QString dataStr = index.data(Qt::UserRole + 1).toString();
-
+    index.row();
     if (dataStr.contains(DPKG_TABLE_DATA)) {
-        fillDetailInfo("Dpkg", hostname, "", m_pModel->item(index.row(), 0)->text(), QModelIndex(),
-                       m_pModel->item(index.row(), 1)->text(), "",
-                       m_pModel->item(index.row(), 2)->text());
+
+        fillDetailInfo("Dpkg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
+                       index.siblingAtColumn(1).data().toString(), "",
+                       index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {
-        fillDetailInfo("Xorg", hostname, "", m_pModel->item(index.row(), 0)->text(), QModelIndex(),
-                       m_pModel->item(index.row(), 1)->text());
+        fillDetailInfo("Xorg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
+                       index.siblingAtColumn(1).data().toString());
     } else if (dataStr.contains(BOOT_TABLE_DATA)) {
         fillDetailInfo("Boot", hostname, "", "", QModelIndex(),
-                       m_pModel->item(index.row(), 1)->text(),
-                       m_pModel->item(index.row(), 0)->text());
+                       index.siblingAtColumn(1).data().toString(),
+                       index.siblingAtColumn(0).data().toString());
     } else if (dataStr.contains(KERN_TABLE_DATA)) {
-        fillDetailInfo(m_pModel->item(index.row(), 2)->text(),
+        fillDetailInfo(index.siblingAtColumn(2).data().toString(),
                        /*m_pModel->item(index.row(), 1)->text()*/ hostname, "",
-                       m_pModel->item(index.row(), 0)->text(), QModelIndex(),
-                       m_pModel->item(index.row(), 3)->text());
+                       index.siblingAtColumn(0).data().toString(), QModelIndex(),
+                       index.siblingAtColumn(3).data().toString());
     } else if (dataStr.contains(JOUR_TABLE_DATA)) {
-        fillDetailInfo(m_pModel->item(index.row(), 1)->text(),
+        fillDetailInfo(index.siblingAtColumn(1).data().toString(),
                        /*m_pModel->item(index.row(), 4)->text()*/ hostname,
-                       m_pModel->item(index.row(), 5)->text(),
-                       m_pModel->item(index.row(), 2)->text(), index,
-                       m_pModel->item(index.row(), 3)->text());
+                       index.siblingAtColumn(5).data().toString(),
+                       index.siblingAtColumn(2).data().toString(), index,
+                       index.siblingAtColumn(3).data().toString());
     } else if (dataStr.contains(APP_TABLE_DATA)) {
-        fillDetailInfo(name, hostname, "", m_pModel->item(index.row(), 1)->text(), index,
-                       m_pModel->item(index.row(), 3)->text());
+        fillDetailInfo(name, hostname, "", index.siblingAtColumn(1).data().toString(), index,
+                       index.siblingAtColumn(3).data().toString());
     } else if (dataStr.contains(LAST_TABLE_DATA)) {
         //        fillDetailInfo("Event", m_pModel->item(index.row(), 0)->text(), "",
         //                       m_pModel->item(index.row(), 2)->text(), QModelIndex(),
         //                       m_pModel->item(index.row(), 4)->text());
 
         QString str = "";
-
-        if (m_pModel->item(index.row(), 0)->text().compare("Boot") == 0) {
+        QString typeStr = index.siblingAtColumn(0).data().toString();
+        if (typeStr.compare("Boot") == 0) {
             str = DApplication::translate("Label", "Boot record");
-        } else if (m_pModel->item(index.row(), 0)->text().compare("shutdown") == 0) {
+        } else if (typeStr.compare("shutdown") == 0) {
             str = DApplication::translate("Label", "Shutdown record");
-        } else if (m_pModel->item(index.row(), 0)->text().compare("shutdown") != 0 &&
-                   m_pModel->item(index.row(), 0)->text().compare("Boot") != 0) {
+        } else if (typeStr.compare("shutdown") != 0 &&
+                   typeStr.compare("Boot") != 0) {
             str = DApplication::translate("Label", "Login record");
         }
-        fillDetailInfo(str, hostname, "", m_pModel->item(index.row(), 2)->text(), QModelIndex(),
-                       m_pModel->item(index.row(), 3)->text(), "", "",
-                       m_pModel->item(index.row(), 1)->text(),
-                       m_pModel->item(index.row(), 0)->text());
+        fillDetailInfo(str, hostname, "", index.siblingAtColumn(2).data().toString(), QModelIndex(),
+                       index.siblingAtColumn(3).data().toString(), "", "",
+                       index.siblingAtColumn(1).data().toString(),
+                       index.siblingAtColumn(0).data().toString());
     }  // modified by Airy
 }

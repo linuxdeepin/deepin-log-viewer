@@ -90,7 +90,7 @@ private:
 
 signals:
     void loadMoreInfo();
-    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name);
+    void sigDetailInfo(QModelIndex index, LogSortFilterProxyModel *pModel, QString name);
 
 public slots:
     void slot_tableItemClicked(const QModelIndex &index);

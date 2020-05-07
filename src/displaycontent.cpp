@@ -164,8 +164,8 @@ void DisplayContent::initConnections()
     connect(m_treeView, SIGNAL(clicked(const QModelIndex &)), this,
             SLOT(slot_tableItemClicked(const QModelIndex &)));
 
-    connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString)),
-            m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, QStandardItemModel *, QString)));
+    connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, LogSortFilterProxyModel *, QString)),
+            m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, LogSortFilterProxyModel *, QString)));
     connect(&m_logFileParse, SIGNAL(dpkgFinished()), this, SLOT(slot_dpkgFinished()));
     connect(&m_logFileParse, SIGNAL(xlogFinished()), this, SLOT(slot_XorgFinished()));
     connect(&m_logFileParse, SIGNAL(bootFinished(QList<LOG_MSG_BOOT>)), this,
@@ -317,8 +317,8 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
     //    m_treeView->selectRow(0);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_pModel->index(0, 0));
+        p->select(m_pProxyModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pProxyModel->index(0, 0));
 }
 
 void DisplayContent::generateKernFile(int id)
@@ -413,8 +413,8 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_pModel->index(0, 0));
+        p->select(m_pProxyModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pProxyModel->index(0, 0));
 }
 
 void DisplayContent::generateAppFile(QString path, int id, int lId)
@@ -472,8 +472,8 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
     //    m_treeView->selectRow(0);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_pModel->index(0, 0));
+        p->select(m_pProxyModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pProxyModel->index(0, 0));
 }
 
 void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
@@ -491,8 +491,8 @@ void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
     //    m_treeView->selectRow(0);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_pModel->index(0, 0));
+        p->select(m_pProxyModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pProxyModel->index(0, 0));
 }
 
 void DisplayContent::generateXorgFile(int id)
@@ -545,8 +545,8 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
     //    m_treeView->selectRow(0);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_pModel->index(0, 0));
+        p->select(m_pProxyModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pProxyModel->index(0, 0));
 }
 
 // add by Airy
@@ -641,8 +641,8 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_pModel->index(0, 0));
+        p->select(m_pProxyModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pProxyModel->index(0, 0));
 }
 
 QString DisplayContent::getAppName(QString filePath)
@@ -679,7 +679,7 @@ bool DisplayContent::isAuthProcessAlive()
 
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
-    emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
+    emit sigDetailInfo(index, m_pProxyModel, getAppName(m_curAppLog));
 }
 
 void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
@@ -1472,6 +1472,6 @@ void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int
     m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
     if (p)
-        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_pModel->index(0, 0));
+        p->select(m_pProxyModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pProxyModel->index(0, 0));
 }

@@ -8,6 +8,7 @@
 #include <QStandardItemModel>
 #include "logiconbutton.h"
 class QStandardItemModel;
+class LogSortFilterProxyModel;
 class logDetailInfoWidget : public Dtk::Widget::DWidget
 {
     Q_OBJECT
@@ -30,7 +31,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
 
 public slots:
-    void slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel, QString name);
+    void slot_DetailInfo(const QModelIndex &index, LogSortFilterProxyModel *pModel, QString name);
 
 private:
     Dtk::Widget::DLabel *m_daemonName, *m_dateTime, *m_userName, *m_pid, *m_action, *m_status,
@@ -41,7 +42,7 @@ private:
     Dtk::Widget::DTextBrowser *m_textBrowser;
     Dtk::Widget::DHorizontalLine *m_hline;
 
-    QStandardItemModel *m_pModel;
+    LogSortFilterProxyModel *m_pModel;
 };
 
 #endif  // LOGDETAILINFOWIDGET_H
