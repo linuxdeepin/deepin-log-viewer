@@ -293,8 +293,10 @@ int LogSortFilterProxyModel::normalEventTypeStr2Int(const QString &iLevelStr) co
 QDateTime LogSortFilterProxyModel::str2DateTime(const QString &iLevelStr) const
 {
     QDateTime resultDateTime;
+    QLocale locale = QLocale::English;
     foreach (QString fomulastr, m_DateFomulaList) {
-        resultDateTime = QDateTime::fromString(iLevelStr, fomulastr);
+        //   应用英文转换，因为log全是英文的,内核日志的月份是英文
+        resultDateTime = locale.toDateTime(iLevelStr, fomulastr);
         if (resultDateTime.isValid()) {
             return resultDateTime;
         }
