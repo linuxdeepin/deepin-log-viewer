@@ -66,6 +66,7 @@ signals:
 
 public slots:
     void doWork();
+    QString getReplaceColorStr(const char *d);
 public:
     QList<LOG_MSG_JOURNAL> logList;
     QMutex mutex;

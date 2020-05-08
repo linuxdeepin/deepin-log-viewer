@@ -85,6 +85,7 @@ void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
     proc.close();
 
     for (QString str : output.split('\n')) {
+        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
         QStringList strList = str.split(" ", QString::SkipEmptyParts);
         if (strList.size() < 3)
             continue;
@@ -129,6 +130,8 @@ void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms)  // modif
     QDateTime curDt = QDateTime::currentDateTime();
     qint64 curDtSecond = curDt.toMSecsSinceEpoch();
     for (QString str : output.split('\n')) {
+        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+
         //        if (str.startsWith("[")) {
         //            //            xList.append(str);
         //            xList.insert(0, str);
@@ -184,7 +187,8 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
     struct utmp_list *normalList = st_list_init();
     struct utmp_list *deadList = st_list_init();
     struct utmp *nodeUTMP = st_utmp_init();
-
+    struct utmp_list *firstNormalList = normalList;
+    struct utmp_list *firstDeadList = deadList;
     while ((utbufp = wtmp_next()) != ((struct utmp *)NULL)) {
         if (utbufp->ut_type != DEAD_PROCESS)
             list_insert(normalList, utbufp);
@@ -237,8 +241,7 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
 
         Nmsg.dateTime = n_time;
         QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
-        if (nn_time.toMSecsSinceEpoch() < ms)  // add by Airy
-        {
+        if (nn_time.toMSecsSinceEpoch() < ms) { // add by Airy
             normalList = normalList->next;
             continue;
         }
@@ -248,7 +251,11 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
         printf("\n");
         nList.insert(0, Nmsg);
     }
-
+    free(nodeUTMP);
+    list_delete(firstNormalList);
+    list_delete(firstDeadList);
+    free(normalList);
+    free(deadList);
     wtmp_close();
     emit normalFinished();
 
@@ -413,85 +420,85 @@ void LogFileParser::slot_journalFinished()
 void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
 {
     switch (flag) {
-        case BOOT: {
-            QList<LOG_MSG_BOOT> bList;
+    case BOOT: {
+        QList<LOG_MSG_BOOT> bList;
 
-            for (QString lineStr : output.split('\n')) {
-                if (lineStr.startsWith("/dev"))
+        for (QString lineStr : output.split('\n')) {
+            if (lineStr.startsWith("/dev"))
+                continue;
+
+            // remove Useless characters
+            lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+
+            QStringList retList;
+            LOG_MSG_BOOT bMsg;
+            retList = lineStr.split(" ", QString::SkipEmptyParts);
+            if (lineStr.startsWith("[")) {
+                bMsg.status = retList[1];
+                QStringList leftList = retList.mid(3);
+                bMsg.msg += leftList.join(" ");
+                bList.insert(0, bMsg);
+            } else {
+                if (bList.size() == 0)
                     continue;
 
-                // remove Useless characters
-                lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+                bList[0].msg += retList.join(" ");
+            }
+        }
 
-                QStringList retList;
-                LOG_MSG_BOOT bMsg;
-                retList = lineStr.split(" ", QString::SkipEmptyParts);
-                if (lineStr.startsWith("[")) {
-                    bMsg.status = retList[1];
-                    QStringList leftList = retList.mid(3);
-                    bMsg.msg += leftList.join(" ");
-                    bList.insert(0, bMsg);
-                } else {
-                    if (bList.size() == 0)
-                        continue;
+        createFile(output, bList.count());
+        emit bootFinished(bList);
 
-                    bList[0].msg += retList.join(" ");
-                }
+    } break;
+    case KERN: {
+        QList<LOG_MSG_JOURNAL> kList;
+        //            qDebug() << "ms::" << m_selectTime << output;
+
+        for (QString str : output.split('\n')) {
+            LOG_MSG_JOURNAL msg;
+
+            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            if (list.size() < 5)
+                continue;
+
+            QStringList timeList;
+            timeList.append(list[0]);
+            timeList.append(list[1]);
+            timeList.append(list[2]);
+            qint64 iTime = formatDateTime(list[0], list[1], list[2]);
+            if (iTime < m_selectTime)
+                continue;
+
+            msg.dateTime = timeList.join(" ");
+            msg.hostName = list[3];
+
+            QStringList tmpList = list[4].split("[");
+            if (tmpList.size() != 2) {
+                msg.daemonName = list[4].split(":")[0];
+            } else {
+                msg.daemonName = list[4].split("[")[0];
+                QString id = list[4].split("[")[1];
+                id.chop(2);
+                msg.daemonId = id;
             }
 
-            createFile(output, bList.count());
-            emit bootFinished(bList);
-
-        } break;
-        case KERN: {
-            QList<LOG_MSG_JOURNAL> kList;
-            //            qDebug() << "ms::" << m_selectTime << output;
-
-            for (QString str : output.split('\n')) {
-                LOG_MSG_JOURNAL msg;
-
-                str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-                QStringList list = str.split(" ", QString::SkipEmptyParts);
-                if (list.size() < 5)
-                    continue;
-
-                QStringList timeList;
-                timeList.append(list[0]);
-                timeList.append(list[1]);
-                timeList.append(list[2]);
-                qint64 iTime = formatDateTime(list[0], list[1], list[2]);
-                if (iTime < m_selectTime)
-                    continue;
-
-                msg.dateTime = timeList.join(" ");
-                msg.hostName = list[3];
-
-                QStringList tmpList = list[4].split("[");
-                if (tmpList.size() != 2) {
-                    msg.daemonName = list[4].split(":")[0];
-                } else {
-                    msg.daemonName = list[4].split("[")[0];
-                    QString id = list[4].split("[")[1];
-                    id.chop(2);
-                    msg.daemonId = id;
-                }
-
-                QString msgInfo;
-                for (auto i = 5; i < list.size(); i++) {
-                    msgInfo.append(list[i] + " ");
-                }
-                msg.msg = msgInfo;
-
-                //            kList.append(msg);
-                kList.insert(0, msg);
-
-                QApplication::processEvents();  // devide UI and parser
+            QString msgInfo;
+            for (auto i = 5; i < list.size(); i++) {
+                msgInfo.append(list[i] + " ");
             }
+            msg.msg = msgInfo;
 
-            createFile(output, kList.count());
-            emit kernFinished(kList);
-        } break;
-        default:
-            break;
+            //            kList.append(msg);
+            kList.insert(0, msg);
+
+            QApplication::processEvents();  // devide UI and parser
+        }
+
+        createFile(output, kList.count());
+        emit kernFinished(kList);
+    } break;
+    default:
+        break;
     }
 }

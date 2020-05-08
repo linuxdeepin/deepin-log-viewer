@@ -63,7 +63,7 @@ void FilterContent::initUI()
     hLayout_period = new QHBoxLayout;
     periodLabel = new DLabel(DApplication::translate("Label", "Period:"), this);
     periodLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
-    m_btnGroup = new QButtonGroup;
+    m_btnGroup = new QButtonGroup(this);
 
     LogPeriodButton *m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
     m_allBtn->setToolTip(DApplication::translate("Button", "All"));  // add by Airy for bug 16245
@@ -75,7 +75,7 @@ void FilterContent::initUI()
     LogPeriodButton *m_todayBtn =
         new LogPeriodButton(DApplication::translate("Button", "Today"), this);
     m_todayBtn->setToolTip(DApplication::translate("Button", "Today"));  // add by Airy for bug
-                                                                         // 16245
+    // 16245
     m_todayBtn->setFixedSize(QSize(64 + 10, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
     m_btnGroup->addButton(m_todayBtn, 1);
 
@@ -138,14 +138,14 @@ void FilterContent::initUI()
     cbx_lv = new DComboBox(this);
     cbx_lv->setMinimumSize(QSize(208, BUTTON_HEIGHT_MIN));
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
-                                   << DApplication::translate("ComboBox", "Emergency")
-                                   << DApplication::translate("ComboBox", "Alert")
-                                   << DApplication::translate("ComboBox", "Critical")
-                                   << DApplication::translate("ComboBox", "Error")
-                                   << DApplication::translate("ComboBox", "Warning")
-                                   << DApplication::translate("ComboBox", "Notice")
-                                   << DApplication::translate("ComboBox", "Info")
-                                   << DApplication::translate("ComboBox", "Debug"));
+                     << DApplication::translate("ComboBox", "Emergency")
+                     << DApplication::translate("ComboBox", "Alert")
+                     << DApplication::translate("ComboBox", "Critical")
+                     << DApplication::translate("ComboBox", "Error")
+                     << DApplication::translate("ComboBox", "Warning")
+                     << DApplication::translate("ComboBox", "Notice")
+                     << DApplication::translate("ComboBox", "Info")
+                     << DApplication::translate("ComboBox", "Debug"));
     cbx_lv->setCurrentText(DApplication::translate("ComboBox", "Info"));
     hLayout_lv->addWidget(lvTxt);
     hLayout_lv->addWidget(cbx_lv, 1);
@@ -169,7 +169,7 @@ void FilterContent::initUI()
     cbx_status->setMinimumWidth(120);
     cbx_status->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
-                                       << "Failed");
+                         << "Failed");
     hLayout_status->addWidget(statusTxt);
     hLayout_status->addWidget(cbx_status, 1);
     hLayout_status->setSpacing(6);
@@ -182,9 +182,9 @@ void FilterContent::initUI()
     typeCbx->setMinimumWidth(120);
     typeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
-                                    << DApplication::translate("ComboBox", "Login")
-                                    << DApplication::translate("ComboBox", "Boot")
-                                    << DApplication::translate("ComboBox", "Shutdown"));
+                      << DApplication::translate("ComboBox", "Login")
+                      << DApplication::translate("ComboBox", "Boot")
+                      << DApplication::translate("ComboBox", "Shutdown"));
     hLayout_status->addWidget(typeTxt);
     hLayout_status->addWidget(typeCbx, 1);
     hLayout_status->setSpacing(6);
@@ -247,16 +247,16 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 
     lvTxt->setVisible(lvCbx);
     cbx_lv->setVisible(lvCbx);
-
+    cbx_lv->setCurrentIndex(INF + 1);
     appTxt->setVisible(appListCbx);
     cbx_app->setVisible(appListCbx);
-
+    cbx_app->setCurrentIndex(0);
     statusTxt->setVisible(statusCbx);
     cbx_status->setVisible(statusCbx);
-
+    cbx_status->setCurrentIndex(0);
     typeTxt->setVisible(typecbx);  // add by Airy
     typeCbx->setVisible(typecbx);  // add by Airy
-
+    typeCbx->setCurrentIndex(0);
     periodLabel->setVisible(period);
     for (int i = 0; i < 6; i++) {
         LogPeriodButton *pushBtn = static_cast<LogPeriodButton *>(m_btnGroup->button(i));
@@ -363,32 +363,32 @@ void FilterContent::slot_buttonClicked(int idx)
     // because button has no focus,so focus on label;
     lvTxt->setFocus();
     switch (idx) {
-        case ALL:
-        case ONE_DAY:
-        case THREE_DAYS:
-        case ONE_WEEK:
-        case ONE_MONTH:
-        case THREE_MONTHS: {
-            m_curBtnId = idx;
-            emit sigButtonClicked(idx, m_curLvCbxId, m_curTreeIndex);
-        } break;
-        case RESET: {
-            m_curBtnId = ALL;
-            //            if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
-            //                itemData.contains(".cache"))
-            if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
+    case ALL:
+    case ONE_DAY:
+    case THREE_DAYS:
+    case ONE_WEEK:
+    case ONE_MONTH:
+    case THREE_MONTHS: {
+        m_curBtnId = idx;
+        emit sigButtonClicked(idx, m_curLvCbxId, m_curTreeIndex);
+    } break;
+    case RESET: {
+        m_curBtnId = ALL;
+        //            if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
+        //                itemData.contains(".cache"))
+        if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
                 itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
-                cbx_lv->setCurrentIndex(INF + 1);
-            } else {
-                emit sigButtonClicked(m_curBtnId, INVALID, m_curTreeIndex);
-            }
-        } break;
-        case EXPORT:
-            if (!itemData.isEmpty())
-                emit sigExportInfo();
-            break;
-        default:
-            break;
+            cbx_lv->setCurrentIndex(INF + 1);
+        } else {
+            emit sigButtonClicked(m_curBtnId, INVALID, m_curTreeIndex);
+        }
+    } break;
+    case EXPORT:
+        if (!itemData.isEmpty())
+            emit sigExportInfo();
+        break;
+    default:
+        break;
     }
 }
 

@@ -30,10 +30,9 @@ void LogApplicationParseThread::doWork()
 
     QProcess *proc = new QProcess;
     //    connect(proc, SIGNAL(finished(int)), this, SLOT(onProcFinished(int)));
-    if(m_logPath.isEmpty())     //modified by Airy for bug 20457::if path is empty,item is not empty
-    {
+    if (m_logPath.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
         emit appCmdFinished(m_appList);
-    }else {
+    } else {
         QStringList arg;
         arg << "-c" << QString("cat %1").arg(m_logPath);
 
@@ -47,6 +46,7 @@ void LogApplicationParseThread::doWork()
             LOG_MSG_APPLICATOIN msg;
 
             str.replace(QRegExp("\\s{2,}"), "");
+            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
 
             QStringList list = str.split("]", QString::SkipEmptyParts);
             if (list.count() < 3)

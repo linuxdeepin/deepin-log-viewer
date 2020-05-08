@@ -24,14 +24,15 @@ DWIDGET_USE_NAMESPACE
 LogSortFilterProxyModel::LogSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
 {
-
+    intDateFomulaList();
 }
 
 void LogSortFilterProxyModel::intDateFomulaList()
 {
     m_DateFomulaList.clear();
+    m_DateFomulaList.append("yyyy-MM-dd hh:mm:ss.zzz");
     m_DateFomulaList.append("yyyy-MM-dd hh:mm:ss");
-    m_DateFomulaList.append("MMM dd hh:mm:ss");
+    m_DateFomulaList.append("MMM d hh:mm:ss");
 }
 
 bool LogSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const
@@ -313,6 +314,6 @@ bool LogSortFilterProxyModel::dateTimeSiblingLessThan(const QModelIndex &left, c
     if (!rightDateTime.isValid()) {
         return  false;
     }
-    return  leftDateTime > rightDateTime;
+    return  leftDateTime < rightDateTime;
 }
 

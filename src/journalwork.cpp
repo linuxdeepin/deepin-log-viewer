@@ -34,7 +34,7 @@ std::atomic<journalWork *> journalWork::m_instance;
 std::mutex journalWork::m_mutex;
 
 journalWork::journalWork(QStringList arg, QObject *parent)
-    //    : QObject(parent)
+//    : QObject(parent)
     : QThread(parent)
 {
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
@@ -107,8 +107,7 @@ void journalWork::doWork()
     }
 
     int cnt = 0;
-    SD_JOURNAL_FOREACH_BACKWARDS(j)
-    {
+    SD_JOURNAL_FOREACH_BACKWARDS(j) {
         const char *d;
         size_t l;
 
@@ -127,7 +126,7 @@ void journalWork::doWork()
         uint64_t t;
         sd_journal_get_realtime_usec(j, &t);
 
-        QString dt = QString(d).split("=")[1];
+        QString dt = getReplaceColorStr(d).split("=").value(1);
         if (m_arg.size() == 2) {
             if (t < m_arg.at(1).toLongLong())
                 continue;
@@ -138,35 +137,35 @@ void journalWork::doWork()
         if (r < 0)
             logMsg.hostName = "";
         else {
-            logMsg.hostName = QString(d).split("=")[1];
+            logMsg.hostName = getReplaceColorStr(d).split("=").value(1);
         }
 
         r = sd_journal_get_data(j, "_COMM", (const void **)&d, &l);
         if (r < 0)
             logMsg.daemonName = "";
         else {
-            logMsg.daemonName = QString(d).split("=")[1];
+            logMsg.daemonName = getReplaceColorStr(d).split("=").value(1);
         }
 
         r = sd_journal_get_data(j, "_PID", (const void **)&d, &l);
         if (r < 0)
             logMsg.daemonId = "";
         else {
-            logMsg.daemonId = QString(d).split("=")[1];
+            logMsg.daemonId = getReplaceColorStr(d).split("=").value(1);
         }
 
         r = sd_journal_get_data(j, "MESSAGE", (const void **)&d, &l);
         if (r < 0) {
             logMsg.msg = "";
         } else {
-            logMsg.msg = QString(d).split("=")[1];
+            logMsg.msg = getReplaceColorStr(d).split("=").value(1);
         }
 
         r = sd_journal_get_data(j, "PRIORITY", (const void **)&d, &l);
         if (r < 0) {
             logMsg.level = "";
         } else {
-            logMsg.level = i2str(QString(d).split("=")[1].toInt());
+            logMsg.level = i2str(getReplaceColorStr(d).split("=").value(1).toInt());
         }
 
         cnt++;
@@ -180,12 +179,11 @@ void journalWork::doWork()
             usleep(100);
         }
     }
+    emit journalFinished();
+    //第一次加载时这个之后的代码都不执行?故放到最后
     sd_journal_close(j);
 
-    if (logList.count() >= 0)
-        emit journalFinished();
-
-        //    emit journalFinished(logList);
+    //    emit journalFinished(logList);
 
 #else
     proc = new QProcess;
@@ -234,6 +232,13 @@ void journalWork::doWork()
 
     emit journalFinished(logList);
 #endif
+}
+
+QString journalWork::getReplaceColorStr(const char *d)
+{
+    QString d_str = QString(d);
+    d_str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+    return  d_str;
 }
 
 QString journalWork::getDateTimeFromStamp(QString str)

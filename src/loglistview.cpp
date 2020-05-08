@@ -61,7 +61,7 @@ void LogListView::initUI()
     const QMargins ListViweItemMargin(5, 0, 0, 0);
     const QVariant VListViewItemMargin = QVariant::fromValue(ListViweItemMargin);
 
-    m_pModel = new QStandardItemModel;
+    m_pModel = new QStandardItemModel(this);
     QStandardItem *item = nullptr;
     if (isFileExist("/var/log/journal")) {
         item = new QStandardItem(DApplication::translate("Tree", "System Log"));

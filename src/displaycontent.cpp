@@ -1038,7 +1038,7 @@ void DisplayContent::slot_searchResult(QString str)
     qDebug() << QString("search: %1  treeIndex: %2")
              .arg(str)
              .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
-
+    m_currentSearchStr = str;
     if (m_flag == NONE)
         return;
 
@@ -1048,12 +1048,12 @@ void DisplayContent::slot_searchResult(QString str)
         int cnt = tmp.count();
         for (int i = cnt - 1; i >= 0; --i) {
             LOG_MSG_JOURNAL msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
-                    msg.hostName.contains(str, Qt::CaseInsensitive) ||
-                    msg.daemonName.contains(str, Qt::CaseInsensitive) ||
-                    msg.daemonId.contains(str, Qt::CaseInsensitive) ||
-                    msg.level.contains(str, Qt::CaseInsensitive) ||
-                    msg.msg.contains(str, Qt::CaseInsensitive))
+            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.hostName.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.daemonName.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.daemonId.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.level.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
             tmp.removeAt(i);
         }
@@ -1064,10 +1064,10 @@ void DisplayContent::slot_searchResult(QString str)
         int cnt = tmp.count();
         for (int i = cnt - 1; i >= 0; --i) {
             LOG_MSG_JOURNAL msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
-                    msg.hostName.contains(str, Qt::CaseInsensitive) ||
-                    msg.daemonName.contains(str, Qt::CaseInsensitive) ||
-                    msg.msg.contains(str, Qt::CaseInsensitive))
+            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.hostName.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.daemonName.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
             tmp.removeAt(i);
         }
@@ -1078,8 +1078,8 @@ void DisplayContent::slot_searchResult(QString str)
         int cnt = tmp.count();
         for (int i = cnt - 1; i >= 0; --i) {
             LOG_MSG_BOOT msg = tmp.at(i);
-            if (msg.status.contains(str, Qt::CaseInsensitive) ||
-                    msg.msg.contains(str, Qt::CaseInsensitive))
+            if (msg.status.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
             tmp.removeAt(i);
         }
@@ -1090,8 +1090,8 @@ void DisplayContent::slot_searchResult(QString str)
         int cnt = tmp.count();
         for (int i = cnt - 1; i >= 0; --i) {
             LOG_MSG_XORG msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
-                    msg.msg.contains(str, Qt::CaseInsensitive))
+            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
             tmp.removeAt(i);
         }
@@ -1102,8 +1102,8 @@ void DisplayContent::slot_searchResult(QString str)
         int cnt = tmp.count();
         for (int i = cnt - 1; i >= 0; --i) {
             LOG_MSG_DPKG msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
-                    msg.msg.contains(str, Qt::CaseInsensitive))
+            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
             tmp.removeAt(i);
         }
@@ -1114,10 +1114,10 @@ void DisplayContent::slot_searchResult(QString str)
         int cnt = tmp.count();
         for (int i = cnt - 1; i >= 0; --i) {
             LOG_MSG_APPLICATOIN msg = tmp.at(i);
-            if (msg.dateTime.contains(str, Qt::CaseInsensitive) ||
-                    msg.level.contains(str, Qt::CaseInsensitive) ||
-                    msg.src.contains(str, Qt::CaseInsensitive) ||
-                    msg.msg.contains(str, Qt::CaseInsensitive))
+            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.level.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.src.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
             tmp.removeAt(i);
         }
@@ -1128,10 +1128,10 @@ void DisplayContent::slot_searchResult(QString str)
         int cnt = tmp.count();
         for (int i = cnt - 1; i >= 0; --i) {
             LOG_MSG_NORMAL msg = tmp.at(i);
-            if (msg.eventType.contains(str, Qt::CaseInsensitive) ||
-                    msg.userName.contains(str, Qt::CaseInsensitive) ||
-                    msg.dateTime.contains(str, Qt::CaseInsensitive) ||
-                    msg.msg.contains(str, Qt::CaseInsensitive))
+            if (msg.eventType.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.userName.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
             tmp.removeAt(i);
         }

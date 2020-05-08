@@ -164,6 +164,7 @@ private:
     QString m_iconPrefix {"://images/"};
     QMap<QString, QString> m_icon_name_map;
     QString getIconByname(QString str);
+    QString m_currentSearchStr{""};
 };
 
 #endif  // DISPLAYCONTENT_H

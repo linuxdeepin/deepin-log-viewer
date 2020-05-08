@@ -89,7 +89,15 @@ struct utmp *st_utmp_init(void)
 
     return stUTMP;
 }
-
+void list_delete(struct utmp_list *list)
+{
+    struct utmp_list *pList = list;
+    while (pList->next) {
+        struct utmp_list *p = pList;
+        pList = pList->next;
+        free(p);
+    }
+}
 void list_insert(struct utmp_list *list, struct utmp *value)
 {
     if (!list)
