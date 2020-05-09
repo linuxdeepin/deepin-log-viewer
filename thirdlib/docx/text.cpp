@@ -35,7 +35,7 @@ Paragraph::Paragraph(DocumentPart *part, const QDomElement &element)
  * \param style
  * \return
  */
-Run *Paragraph::addRun(const QString &text, const QString &style)    
+Run *Paragraph::addRun(const QString &text, const QString &style)
 {
     Run *run = new Run(m_part, m_pEle);
     if (!text.isEmpty())
@@ -105,6 +105,9 @@ Paragraph::~Paragraph()
 {
     qDeleteAll(m_runs);
     delete m_pEle;
+    if (m_style) {
+        delete m_style;
+    }
 }
 
 // End Paragraph
@@ -118,7 +121,7 @@ Run::Run(DocumentPart *part, QDomElement *parent)
     m_parent->appendChild(m_rEle);
     QDomElement pPr = m_dom->createElement(QStringLiteral("w:pPr"));
     QDomElement jc = m_dom->createElement(QStringLiteral("w:jc"));
-    jc.setAttribute("w:val","left");
+    jc.setAttribute("w:val", "left");
     pPr.appendChild(jc);
     m_parent->appendChild(pPr);
 
@@ -213,7 +216,7 @@ InlineShape *Run::scalePicture(InlineShape *picture, const Length &width, const 
         }
         picture->setWidth(lwidth);
         picture->setHeight(lheight);
-    }    
+    }
     return picture;
 }
 

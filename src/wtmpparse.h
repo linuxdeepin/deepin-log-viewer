@@ -9,7 +9,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <utmp.h>
-
+#include <QDebug>
 #define NRECS 16
 #define NULLUT ((struct utmp *)NULL)
 #define UTSIZE (sizeof(struct utmp))

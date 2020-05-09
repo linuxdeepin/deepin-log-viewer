@@ -7,7 +7,7 @@
 #include "../parts/documentpart.h"
 
 #include <QList>
-
+#include <QDebug>
 using namespace Docx;
 
 OpcPackage::OpcPackage()
@@ -17,7 +17,7 @@ OpcPackage::OpcPackage()
 
 DocumentPart *OpcPackage::mainDocument()
 {
-    Part * part = partByRelated(Constants::OFFICE_DOCUMENT);
+    Part *part = partByRelated(Constants::OFFICE_DOCUMENT);
     DocumentPart *mainPart = dynamic_cast<DocumentPart *>(part);
     return mainPart;
 }
@@ -43,8 +43,8 @@ OpcPackage::~OpcPackage()
 void OpcPackage::partsbyRels(const Relationships *rels, QList<Part *> *parts) const
 {
     QList<Relationship *> relsCol = rels->rels().values();
-    for (const Relationship * rel : relsCol) {
-        Part * p = rel->target();
+    for (const Relationship *rel : relsCol) {
+        Part *p = rel->target();
         parts->append(p);
         Relationships *pRels = p->rels();
         if (pRels->count() > 0) {
@@ -68,10 +68,11 @@ void Unmarshaller::unmarshal(PackageReader *pkgReader, Package *package)
     parts = Unmarshaller::unmarshalParts(pkgReader, package);
     Unmarshaller::unmarshalRelationships(pkgReader, package, parts);
 
-    for (Part * p : parts.values()) {
+    for (Part *p : parts.values()) {
         p->afterUnmarshal();
     }
     package->afterUnmarshal();
+    return  ;
 }
 
 /*!
@@ -103,11 +104,11 @@ void Unmarshaller::unmarshalRelationships(PackageReader *pkgReader, Package *pac
     for (const QString &key : partRel.keys()) {
         QVector<SerializedRelationship> rels = partRel[key];
         for (const SerializedRelationship &r : rels) {
-            Part * target = parts[r.targetPartName()];
+            Part *target = parts[r.targetPartName()];
             if (key.isEmpty() || key == QStringLiteral("/")) {
                 package->loadRel(r.relType(), r.target(), target, r.rId(), r.isExternal());
             } else {
-                Part * part = parts[key];
+                Part *part = parts[key];
                 part->loadRel(r.relType(), r.target(), target, r.rId(), r.isExternal());
             }
         }
@@ -116,5 +117,4 @@ void Unmarshaller::unmarshalRelationships(PackageReader *pkgReader, Package *pac
 
 Unmarshaller::~Unmarshaller()
 {
-
 }

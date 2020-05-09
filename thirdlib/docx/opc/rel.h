@@ -17,7 +17,7 @@ public:
     Relationship(const QString &rId, const QString &reltypet, const QString &targetRef, Part *target, const QString &baseURI, bool external = false);
     QString rId() const { return m_rId; }
     QString relType() const { return m_reltype; }
-    Part * target() const { return m_target; }
+    Part *target() const { return m_target; }
     QString targetRef() const;
     QString baseURI() const { return m_baseURI; }
     bool isExternal() const { return m_isexternal; }
@@ -27,7 +27,7 @@ private:
     QString m_rId;
     QString m_reltype;
     QString m_targetRef;
-    Part *m_target;
+    Part *m_target{nullptr};
     QString m_baseURI;
     bool m_isexternal;
 
@@ -42,8 +42,8 @@ public:
     int count() const;
     QMap<QString, Relationship *> rels() const;
     QByteArray blob() const;
-    Relationship * getOrAddPart(const QString &reltype, Part *target, const QString &baseUri);
-    Relationship * getOrAddExtPart(const QString &reltype, const QString &targetref);
+    Relationship *getOrAddPart(const QString &reltype, Part *target, const QString &baseUri);
+    Relationship *getOrAddExtPart(const QString &reltype, const QString &targetref);
     virtual ~Relationships();
 
 private:
@@ -52,7 +52,7 @@ private:
     QString nextrId();
 
 private:
-    QString m_baseURI;    
+    QString m_baseURI;
     QMap<QString, Part *> m_targetPartsByrId;
     QMap<QString, Relationship *> m_rels;
 };

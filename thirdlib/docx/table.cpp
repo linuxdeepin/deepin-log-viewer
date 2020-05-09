@@ -46,6 +46,8 @@ Cell *Table::cell(int rowIndex, int colIndex)
 Table::~Table()
 {
     delete m_ctTbl;
+    qDeleteAll(m_columns);
+    qDeleteAll(m_rows);
 }
 
 /*!
@@ -58,7 +60,9 @@ Column *Table::addColumn()
     for (Row *row : m_rows) {
         row->addTc();
     }
-    return new Column(gridCol, m_ctTbl->m_tblGrid->count(), this);
+    Column *column =   new Column(gridCol, m_ctTbl->m_tblGrid->count(), this);
+    m_columns.append(column);
+    return column;
 }
 
 /*!
@@ -228,7 +232,10 @@ int Row::rowIndex()
     return m_table->m_rows.indexOf(this);
 }
 
-Row::~Row() {}
+Row::~Row()
+{
+    qDeleteAll(m_cells);
+}
 
 Cell::Cell(const QDomElement &element, Row *row)
     : m_row(row)
@@ -311,6 +318,7 @@ Table *Cell::table()
 Cell::~Cell()
 {
     qDeleteAll(m_paras);
+
 }
 
 }  // namespace Docx

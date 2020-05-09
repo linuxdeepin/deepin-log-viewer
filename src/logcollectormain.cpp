@@ -72,7 +72,7 @@ void LogCollectorMain::initUI()
     m_hLayout = new QHBoxLayout;
 
     /** left frame */
-    m_logCatelogue = new LogListView();
+    m_logCatelogue = new LogListView(this);
     m_hLayout->addWidget(m_logCatelogue, 1);
 
     m_vLayout = new QVBoxLayout;
@@ -80,7 +80,7 @@ void LogCollectorMain::initUI()
     m_topRightWgt = new FilterContent();
     m_vLayout->addWidget(m_topRightWgt);
     /** midRight frame */
-    m_midRightWgt = new DisplayContent();
+    m_midRightWgt = new DisplayContent(this);
     m_vLayout->addWidget(m_midRightWgt, 1);
     m_vLayout->setContentsMargins(0, 10, 0, 10);
     m_vLayout->setSpacing(6);
@@ -122,16 +122,16 @@ void LogCollectorMain::initConnection()
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));
 
     // when item changed clear search text
-    connect(m_logCatelogue, &LogListView::itemChanged, this, [=]() { m_searchEdt->clear(); });
-    connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [=]() { m_searchEdt->clear(); });
+    connect(m_logCatelogue, &LogListView::itemChanged, this, [ = ]() { m_searchEdt->clear(); });
+    connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [ = ]() { m_searchEdt->clear(); });
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this,
-            [=]() { m_searchEdt->clear(); });
+    [ = ]() { m_searchEdt->clear(); });
 
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::newProcessInstance, this,
-            [=] {
-                this->setWindowState(Qt::WindowActive);
-                this->activateWindow();
-            });
+    [ = ] {
+        this->setWindowState(Qt::WindowActive);
+        this->activateWindow();
+    });
 }
 
 void LogCollectorMain::initShortCut()
@@ -145,9 +145,11 @@ void LogCollectorMain::initShortCut()
         m_scWndReize->setAutoRepeat(false);
 
         connect(m_scWndReize, &QShortcut::activated, this, [this] {
-            if (this->windowState() & Qt::WindowMaximized) {
+            if (this->windowState() & Qt::WindowMaximized)
+            {
                 this->showNormal();
-            } else if (this->windowState() == Qt::WindowNoState) {
+            } else if (this->windowState() == Qt::WindowNoState)
+            {
                 this->showMaximized();
             }
         });

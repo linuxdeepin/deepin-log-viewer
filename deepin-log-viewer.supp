@@ -1,0 +1,51 @@
+{
+   Dtk::Widget::DStyledItemDelegate::setBackgroundType(Dtk::Widget::DStyledItemDelegate::BackgroundType)[Memcheck:Cond]
+   Memcheck:Cond
+   fun:_ZN3Dtk6Widget19DStyledItemDelegate17setBackgroundTypeENS1_14BackgroundTypeE
+   fun:_ZN3Dtk6Widget19DStyledItemDelegateC1EP17QAbstractItemView
+   fun:_ZN3Dtk6Widget16DListViewPrivate4initEv
+   fun:_ZN3Dtk6Widget9DListViewC1EP7QWidget
+   fun:_ZN11LogListViewC1EP7QWidget
+   fun:_ZN16LogCollectorMain6initUIEv
+   fun:_ZN16LogCollectorMainC1EP7QWidget
+   fun:main
+}
+{
+   Dtk::Widget::DStyledItemDelegate::setBackgroundType(Dtk::Widget::DStyledItemDelegate::BackgroundType)[Memcheck:Cond]
+   Memcheck:Cond
+   fun:_ZN3Dtk6Widget19DStyledItemDelegate17setBackgroundTypeENS1_14BackgroundTypeE
+   fun:_ZN3Dtk6Widget19DStyledItemDelegateC1EP17QAbstractItemView
+   fun:_ZN3Dtk6Widget16DListViewPrivate4initEv
+   fun:_ZN3Dtk6Widget9DListViewC1EP7QWidget
+   fun:_ZN11LogListViewC1EP7QWidget
+   fun:_ZN16LogCollectorMain6initUIEv
+   fun:_ZN16LogCollectorMainC1EP7QWidget
+   fun:main
+}
+{
+   operator new(unsigned long)[Memcheck:Leak]
+   Memcheck:Leak
+   fun:_Znwm
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Xml.so.5.11.3
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Xml.so.5.11.3
+   fun:_ZN12QDomDocument13createElementERK7QString
+   fun:_ZN4Docx6CT_TblC1EPNS_5TableERK11QDomElement
+   fun:_ZN4Docx5TableC1EPNS_12DocumentPartERK11QDomElement
+   fun:_ZN4Docx12DocumentPart8addTableEiiRK7QString
+   fun:_ZN4Docx8Document8addTableEiiRK7QString
+   fun:_ZN15LogExportWidget11exportToDocE7QString5QListI15LOG_MSG_JOURNALE11QStringList8LOG_FLAG
+   fun:_ZN14DisplayContent18slot_exportClickedEv
+   fun:_ZN9QtPrivate11FunctorCallINS_11IndexesListIJEEENS_4ListIJEEEvM14DisplayContentFvvEE4callES7_PS5_PPv
+   fun:_ZN9QtPrivate15FunctionPointerIM14DisplayContentFvvEE4callINS_4ListIJEEEvEEvS3_PS1_PPv
+   fun:_ZN9QtPrivate11QSlotObjectIM14DisplayContentFvvENS_4ListIJEEEvE4implEiPNS_15QSlotObjectBaseEP7QObjectPPvPb
+   fun:_ZN11QMetaObject8activateEP7QObjectiiPPv
+   fun:_ZN13FilterContent13sigExportInfoEv
+   fun:_ZN13FilterContent18slot_buttonClickedEi
+   fun:_ZN13FilterContent18qt_static_metacallEP7QObjectN11QMetaObject4CallEiPPv
+   fun:_ZN11QMetaObject8activateEP7QObjectiiPPv
+   fun:_ZN12QButtonGroup13buttonClickedEi
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Widgets.so.5.11.3
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Widgets.so.5.11.3
+   fun:_ZN15QAbstractButton17mouseReleaseEventEP11QMouseEvent
+   fun:_ZN7QWidget5eventEP6QEvent
+}

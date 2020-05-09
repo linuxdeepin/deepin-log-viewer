@@ -24,7 +24,7 @@ PackageReader *PackageReader::fromFile(const QString &pkgFile)
     ContentTypeMap *contentypes = ContentTypeMap::fromXml(physReader->contentTypesData());
     SerializedRelationships *rels = PackageReader::srelsFrom(physReader, QStringLiteral("/"));
     QList<SerializedPart> sparts = PackageReader::loadSerializedParts(physReader, rels, contentypes);
-
+    delete  physReader;
     return new PackageReader(rels, contentypes, sparts);
 }
 
@@ -45,7 +45,7 @@ PackageReader *PackageReader::fromFile(QIODevice *device)
  * \return
  */
 SerializedRelationships *PackageReader::srelsFrom(PhysPkgReader *physReader, const QString &sourceUri)
-{    
+{
     PackURI packUri = PackURI(sourceUri);
     QByteArray rels_xml = physReader->relsFrom(packUri);
     return SerializedRelationships::loadFromData(packUri.baseURI(), rels_xml);
@@ -75,6 +75,7 @@ QList<SerializedPart> PackageReader::loadSerializedParts(PhysPkgReader *physRead
         if (partSrels->rels().count() > 0) {
             sparts.append(PackageReader::loadSerializedParts(physReader, partSrels, contentTypes));
         }
+        delete partSrels;
     }
 
     return sparts;
@@ -97,7 +98,8 @@ QMap<QString, QVector<SerializedRelationship> > PackageReader::partRels() const
 
 PackageReader::~PackageReader()
 {
-
+    delete  m_srels;
+    delete  m_contentTypes;
 }
 
 }

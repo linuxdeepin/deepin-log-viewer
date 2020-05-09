@@ -21,12 +21,12 @@ class DOCX_EXPORT Table
 {
 public:
 
-    Table(DocumentPart *part, const QDomElement &element);    
-    Cell* cell(int rowIndex, int colIndex);
-    Row* addRow();    
-    Column* addColumn();
-    QList<Cell*> rowCells(int rowIndex);
-    QList<Row *> rows();    
+    Table(DocumentPart *part, const QDomElement &element);
+    Cell *cell(int rowIndex, int colIndex);
+    Row *addRow();
+    Column *addColumn();
+    QList<Cell *> rowCells(int rowIndex);
+    QList<Row *> rows();
     void setStyle(const QString &style);
     void setAlignment(WD_TABLE_ALIGNMENT alignment);
     virtual ~Table();
@@ -34,10 +34,11 @@ public:
     void loadExistRowElement();
 
 private:
-    QList<Row*> m_rows;
+    QList<Row *> m_rows;
     DocumentPart *m_part = nullptr;
-    QDomDocument *m_dom = nullptr;        
+    QDomDocument *m_dom = nullptr;
     CT_Tbl *m_ctTbl = nullptr;
+    QList<Column *> m_columns;
     friend class Row;
     friend class CT_Tbl;
 };
@@ -57,10 +58,10 @@ public:
 
 private:
     QDomDocument *m_dom;
-    DocumentPart *m_part;    
+    DocumentPart *m_part;
     QList<Paragraph *> m_paras;
     Paragraph *m_currentpara;
-    Row *m_row;    
+    Row *m_row;
     QSharedPointer<CT_Tc> m_tc;
     friend class CT_Tc;
     friend class Row;
@@ -69,7 +70,7 @@ private:
 class DOCX_EXPORT Columns
 {
 public:
-    Columns();    
+    Columns();
     virtual ~Columns();
 
 private:

@@ -16,7 +16,7 @@ class OpcPackage
 public:
     OpcPackage();
     DocumentPart *mainDocument();
-    Part * partByRelated(const QString &reltype);
+    Part *partByRelated(const QString &reltype);
     QList<Part *> parts() const;
     virtual ~OpcPackage();
 
@@ -36,6 +36,7 @@ public:
     static QMap<QString, Part *> unmarshalParts(PackageReader *pkgReader, Package *package);
     static void unmarshalRelationships(PackageReader *pkgReader, Package *package, const QMap<QString, Part *> &parts);
     virtual ~Unmarshaller();
+    //  static QList<QMap<QString, Part *>> m_partBuffer;
 
 };
 }

@@ -28,7 +28,7 @@ public:
 
     Paragraph(DocumentPart *part, const QDomElement &element);
 
-    Run* addRun(const QString &text = QString(), const QString &style = QString());
+    Run *addRun(const QString &text = QString(), const QString &style = QString());
 
     void addText(const QString &text);
 
@@ -38,7 +38,7 @@ public:
 
     void setAlignment(WD_PARAGRAPH_ALIGNMENT align);
 
-    Paragraph* insertParagraphBefore(const QString &text, const QString &style = QString());
+    Paragraph *insertParagraphBefore(const QString &text, const QString &style = QString());
 
     virtual ~Paragraph();
 
@@ -54,7 +54,7 @@ private:
 
 class DOCX_EXPORT Run
 {
-public:    
+public:
     Run(DocumentPart *part, QDomElement *parent);
     Run(DocumentPart *part, QDomElement *parent, const QDomElement &ele);
     virtual ~Run();
@@ -66,8 +66,8 @@ public:
 
     QString text() const;
 
-    InlineShape* addPicture(const QString &path, const Length &width = Length(), const Length &height = Length());
-    InlineShape* addPicture(const QImage &img, const Length &width = Length(), const Length &height = Length());
+    InlineShape *addPicture(const QString &path, const Length &width = Length(), const Length &height = Length());
+    InlineShape *addPicture(const QImage &img, const Length &width = Length(), const Length &height = Length());
 
     void setStyle(const QString &style);
 
@@ -88,7 +88,7 @@ public:
     void addDrawing(CT_Inline *imline);
 
 private:
-    InlineShape* scalePicture(InlineShape *picture, const Length &width, const Length &height);
+    InlineShape *scalePicture(InlineShape *picture, const Length &width, const Length &height);
 
 private:
 

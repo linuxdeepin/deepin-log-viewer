@@ -247,7 +247,7 @@ void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
 {
     if (list.count() > 500)
         return;
-
+    m_limitTag = 0;
     m_treeView->show();
     noResultLabel->hide();
 
@@ -305,6 +305,7 @@ void DisplayContent::generateDpkgFile(int id)
 void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
 {
     //    m_treeView->show();
+    m_limitTag = 0;
     noResultLabel->hide();
     m_pModel->clear();
     parseListToModel(list, m_pModel);
@@ -364,7 +365,7 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
     noResultLabel->hide();
     m_pModel->clear();
 
-
+    m_limitTag = 0;
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertKernTable(list, 0, end);
 
@@ -455,6 +456,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId)
 void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
 {
     //    m_treeView->show();
+    m_limitTag = 0;
     noResultLabel->hide();
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertApplicationTable(list, 0, end);
@@ -463,6 +465,7 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
 void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
 {
     //    m_treeView->show();
+    m_limitTag = 0;
     noResultLabel->hide();
     m_pModel->clear();
     m_treeView->setColumnWidth(0, STATUS_WIDTH);
@@ -479,6 +482,7 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
 void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
 {
     //    m_treeView->show();
+    m_limitTag = 0;
     noResultLabel->hide();
     m_pModel->clear();
     parseListToModel(list, m_pModel);
@@ -533,7 +537,7 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 {
     noResultLabel->hide();
     m_pModel->clear();
-
+    m_limitTag = 0;
     parseListToModel(list, m_pModel);
     m_treeView->setColumnWidth(0, DATETIME_WIDTH - 20);
     m_treeView->setColumnWidth(1, DATETIME_WIDTH);
@@ -998,7 +1002,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
     } else if (m_flag == APP) {
         int rate = (value + 25) / SINGLE_LOAD;
         //        qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
-
+        qDebug() << "m_limitTag" << m_limitTag << "rate" << rate;
         if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
             if (m_limitTag >= rate)
                 return;
@@ -1452,6 +1456,7 @@ QString DisplayContent::getIconByname(QString str)
 void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
 {
     //    m_treeView->show();
+    m_limitTag = 0;
     noResultLabel->hide();
     m_pModel->clear();
 
@@ -1462,6 +1467,7 @@ void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
 
 void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end)
 {
+    qDebug() << __FUNCTION__ << "------------------" << list.length();
     QList<LOG_MSG_APPLICATOIN> midList = list;
     if (end >= start) {
         midList = midList.mid(start, end - start);

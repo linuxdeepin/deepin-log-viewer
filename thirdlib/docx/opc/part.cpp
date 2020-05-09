@@ -18,7 +18,7 @@ Part::Part(const PackURI &partName, const QString &contentType, const QByteArray
     m_rels = new Relationships(partName.baseURI());
 }
 
-Part* Part::load(const PackURI &partName, const QString &contentType, const QByteArray &blob, Package *package)
+Part *Part::load(const PackURI &partName, const QString &contentType, const QByteArray &blob, Package *package)
 {
     return new Part(partName, contentType, blob, package);
 }
@@ -72,7 +72,7 @@ QString Part::relateTo(Part *target, const QString &reltype, const QString &base
 
 Part::~Part()
 {
-    delete m_rels;
+
 }
 
 PartFactory::PartFactory()
@@ -82,7 +82,7 @@ PartFactory::PartFactory()
 
 Part *PartFactory::newPart(const PackURI &partname, const QString &contentType, const QString &reltype, const QByteArray &blob, Package *package)
 {
-    if (reltype == Constants::IMAGE){
+    if (reltype == Constants::IMAGE) {
         return ImagePart::load(partname, contentType, blob);
     }
     if (contentType == Constants::WML_DOCUMENT_MAIN) {
