@@ -39,7 +39,7 @@
 #include "structdef.h"
 
 
-class LogSortFilterProxyModel;
+
 class DisplayContent : public Dtk::Widget::DWidget
 {
     Q_OBJECT
@@ -90,7 +90,7 @@ private:
 
 signals:
     void loadMoreInfo();
-    void sigDetailInfo(QModelIndex index, LogSortFilterProxyModel *pModel, QString name);
+    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name);
 
 public slots:
     void slot_tableItemClicked(const QModelIndex &index);
@@ -133,7 +133,7 @@ private:
     LogTreeView *m_treeView;
     QStandardItemModel *m_pModel;
 
-    LogSortFilterProxyModel *m_pProxyModel{nullptr};
+
     logDetailInfoWidget *m_detailWgt {nullptr};
     Dtk::Widget::DLabel *noResultLabel {nullptr};
     QModelIndex m_curListIdx;
