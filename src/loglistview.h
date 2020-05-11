@@ -25,6 +25,7 @@
 #include <DApplicationHelper>
 #include <DListView>
 #include <QStandardItemModel>
+#include "filtercontent.h" //add by Airy for new menu
 
 class LogListView : public Dtk::Widget::DListView
 {
@@ -34,6 +35,7 @@ public:
     void initUI();
 
     void setDefaultSelect();
+    void truncateFile(QString path_); //add by Airy for truncate file
 
 private:
     void setCustomFont(QStandardItem *item);
@@ -42,17 +44,31 @@ private:
 protected slots:
     void onChangedTheme(Dtk::Widget::DApplicationHelper::ColorType themeType);
 
+public slots:
+    void slot_getAppPath(QString path);  // add by Airy
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;   //add by Airy
 
 signals:
     void itemChanged();
+    void sigRefresh(const QModelIndex &index);  // add refresh
 
 private:
     QStandardItemModel *m_pModel;
 
     QString icon {"://images/"};
+
+    // add
+    QMenu *g_context;
+    QAction *g_openForder;
+    QAction *g_clear;
+    QAction *g_refresh;  // add
+
+    QString g_path;                  // add by Airy
+    FilterContent *g_filtercontent;  // add
 };
 
 #endif  // LOGLISTVIEW_H

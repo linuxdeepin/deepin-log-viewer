@@ -26,6 +26,7 @@
 #include <QMargins>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QProcess> //add by Airy
 
 #include "loglistview.h"
 #include "structdef.h"
@@ -251,4 +252,129 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
 
     emit itemChanged();
     DListView::currentChanged(current, previous);
+}
+
+/**
+ * @author Airy
+ * @brief LogListView::truncateFile for truncating file
+ * @param path_
+ */
+void LogListView::truncateFile(QString path_)
+{
+    QProcess prc;
+    if(path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA)
+    {
+        prc.start("pkexec",QStringList() << "truncate"
+                                           << "-s"
+                                           << "0"
+                                           << path_);
+    }
+    else
+    {
+        prc.start("truncate",QStringList() << "-s"
+                                           << "0"
+                                           << path_);
+    }
+
+    prc.waitForFinished();
+}
+
+/**
+ * @author Airy
+ * @brief LogListView::slot_getAppPath for get app path
+ * @param path
+ */
+void LogListView::slot_getAppPath(QString path)
+{
+    g_path = path;
+}
+
+#include <DDesktopServices>
+#include <DDialog>
+#include <DDialogButtonBox>
+#include <DInputDialog>
+#include <QDir>
+#include <QMenu>
+/**
+ * @author Airy
+ * @brief LogListView::contextMenuEvent for adding context Menu
+ * @param event
+ */
+void LogListView::contextMenuEvent(QContextMenuEvent *event)
+{
+    Q_UNUSED(event);
+    QModelIndex idx = this->currentIndex();
+
+    if (!this->selectionModel()->selectedIndexes().empty()) {
+
+        g_context = new QMenu(this);
+        g_openForder = new QAction(/*tr("在文件管理器中显示")*/DApplication::translate("Action","Display in file manager"),this);
+        g_clear = new QAction(/*tr("清除日志内容")*/DApplication::translate("Action","Clear log"),this);
+        g_refresh = new QAction(/*tr("刷新")*/DApplication::translate("Action","Refresh"),this);
+
+        g_context->addAction(g_openForder);
+        g_context->addAction(g_clear);
+        g_context->addAction(g_refresh);
+
+        if (idx.row() == 0 || idx.row() == 6) {
+            g_clear->setEnabled(false);
+            g_openForder->setEnabled(false);
+        }
+
+        QString dirPath = QDir::homePath();
+        QString _path_ = g_path;      //get app path
+        QString path = "";
+
+        switch (idx.row()) {
+            case 1:
+                path = KERN_TREE_DATA;
+                break;
+            case 2:
+                path = BOOT_TREE_DATA;
+                break;
+            case 3:
+                path = DPKG_TREE_DATA;
+                break;
+            case 4:
+                path = XORG_TREE_DATA;
+                break;
+            case 5:
+                //                    path = dirPath + QString("/.cache/deepin/.");
+                path = _path_;
+                break;
+            default:
+                break;
+        }
+
+        connect(g_openForder, &QAction::triggered, this, [=] {
+            DDesktopServices::showFileItem(path);
+        });
+
+        QModelIndex index = idx;
+        connect(g_refresh, &QAction::triggered, this, [=]() {
+            emit sigRefresh(index);
+        });
+
+        connect(g_clear, &QAction::triggered, this, [=]() {
+
+            DDialog *dialog = new DDialog(this);
+            dialog->setWindowFlags(dialog->windowFlags() | Qt::WindowStaysOnTopHint);
+            dialog->setIcon(QIcon::fromTheme("dialog-warning"));
+            dialog->setMessage(/*"清除日志内容"*/DApplication::translate("Action","Are you sure you want to clear the log?"));
+            dialog->addButton(QString(/*tr("取消")*/DApplication::translate("Action","Cancel")), false, DDialog::ButtonNormal);
+            dialog->addButton(QString(/*tr("确定")*/DApplication::translate("Action","Confirm")), true, DDialog::ButtonRecommend);
+//            dialog->setModal(true);
+//            dialog->show(); //modal
+
+            int Ok = dialog->exec();
+            if (Ok == DDialog::Accepted) {
+                truncateFile(path);
+                emit sigRefresh(index);
+            }
+        });
+
+        this->setContextMenuPolicy(Qt::DefaultContextMenu);
+        g_context->exec(QCursor::pos());
+    }
+//    this->selectionModel()->clear();  // if Cursor is empty,clear the context Menu
 }

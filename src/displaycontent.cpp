@@ -1475,3 +1475,62 @@ void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int
         p->select(m_pProxyModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pProxyModel->index(0, 0));
 }
+
+/**
+ * @author Airy
+ * @brief DisplayContent::slot_refreshClicked for refresh
+ * @param index
+ */
+void DisplayContent::slot_refreshClicked(const QModelIndex &index)
+{
+    if (!index.isValid()) {
+        return;
+    }
+
+    m_curListIdx = index;
+
+    m_detailWgt->cleanText();
+    m_pModel->clear();
+
+    QString itemData = index.data(ITEM_DATE_ROLE).toString();
+    if (itemData.isEmpty())
+        return;
+
+    if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
+        // default level is info so PRIORITY=6
+        m_flag = JOURNAL;
+        generateJournalFile(m_curBtnId, m_curLevel);
+    } else if (itemData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = DPKG;
+        generateDpkgFile(m_curBtnId);
+    } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
+        xList.clear();
+        m_flag = XORG;
+        //        m_logFileParse.parseByXlog(xList);
+        generateXorgFile(m_curBtnId);
+    } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
+        bList.clear();
+        m_flag = BOOT;
+        m_logFileParse.parseByBoot();
+    } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = KERN;
+        generateKernFile(m_curBtnId);
+    } else if (itemData.contains(".cache")) {
+    } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
+//        m_pModel->clear();  // clicked parent node application, clear table contents
+        m_flag = APP;
+        generateAppFile(m_curAppLog, m_curBtnId, m_curLevel);
+    } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
+        norList.clear();
+        m_flag = Normal;
+        //        m_logFileParse.parseByNormal(norList);
+        generateNormalFile(m_curBtnId);
+    }
+
+    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
+        !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
+//        m_spinnerWgt_K->spinnerStop();
+//        m_treeView->show();
+//        m_spinnerWgt_K->hide();
+    }
+}

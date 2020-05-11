@@ -117,6 +117,7 @@ public slots:
     void slot_themeChanged(Dtk::Widget::DApplicationHelper::ColorType colorType);
 
     void slot_getLogtype(int tcbx);  // add by Airy
+    void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
 //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
     void parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel);

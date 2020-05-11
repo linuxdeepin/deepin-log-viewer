@@ -114,6 +114,12 @@ void LogCollectorMain::initConnection()
     connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, m_midRightWgt,
             &DisplayContent::slot_getLogtype);  // add by Airy
 
+    connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_logCatelogue,
+            &LogListView::slot_getAppPath);  // add by Airy for getting app path
+
+    connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_midRightWgt,
+            SLOT(slot_refreshClicked(const QModelIndex &)));  // add by Airy for adding refresh
+
     //! treeView widget
     connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_midRightWgt,
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));
