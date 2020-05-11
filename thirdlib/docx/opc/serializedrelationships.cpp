@@ -84,7 +84,7 @@ SerializedRelationships *SerializedRelationships::loadFromData(const QString bas
                                                    ele.attribute(QStringLiteral("Id")),
                                                    ele.attribute(QStringLiteral("Type")),
                                                    ele.attribute(QStringLiteral("Target"),
-                                                   ele.attribute(QStringLiteral("TargetMode"), Constants::INTERNAL))));
+                                                                 ele.attribute(QStringLiteral("TargetMode"), Constants::INTERNAL))));
     }
     return rels;
 

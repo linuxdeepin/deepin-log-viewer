@@ -41,7 +41,6 @@ LogTreeView::LogTreeView(QWidget *parent)
 
 void LogTreeView::initUI()
 {
-    setSortingEnabled(true);
     m_itemDelegate = new LogViewItemDelegate(this);
     setItemDelegate(m_itemDelegate);
 

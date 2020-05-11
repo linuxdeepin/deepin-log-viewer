@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>Action</name>
     <message>
@@ -166,7 +168,11 @@
 <context>
     <name>DisplayContent</name>
     <message>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="802"/>
+=======
+        <location filename="../displaycontent.cpp" line="806"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
@@ -179,7 +185,11 @@
         <translation type="vanished">新文件</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="800"/>
+=======
+        <location filename="../displaycontent.cpp" line="804"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Export File</source>
         <translatorcomment>Export File</translatorcomment>
         <translation>导出文件</translation>
@@ -270,7 +280,11 @@
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="141"/>
+<<<<<<< HEAD
         <location filename="../journalwork.cpp" line="258"/>
+=======
+        <location filename="../journalwork.cpp" line="262"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../model/log_sort_filter_proxy_model.cpp" line="262"/>
         <source>Alert</source>
         <translatorcomment>Alert</translatorcomment>
@@ -278,7 +292,11 @@
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="142"/>
+<<<<<<< HEAD
         <location filename="../journalwork.cpp" line="259"/>
+=======
+        <location filename="../journalwork.cpp" line="263"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../model/log_sort_filter_proxy_model.cpp" line="264"/>
         <source>Critical</source>
         <translatorcomment>Critical</translatorcomment>
@@ -287,7 +305,11 @@
     <message>
         <location filename="../displaycontent.cpp" line="136"/>
         <location filename="../displaycontent.cpp" line="143"/>
+<<<<<<< HEAD
         <location filename="../journalwork.cpp" line="260"/>
+=======
+        <location filename="../journalwork.cpp" line="264"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../model/log_sort_filter_proxy_model.cpp" line="266"/>
         <source>Error</source>
         <translatorcomment>Error</translatorcomment>
@@ -295,7 +317,11 @@
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="140"/>
+<<<<<<< HEAD
         <location filename="../journalwork.cpp" line="257"/>
+=======
+        <location filename="../journalwork.cpp" line="261"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../model/log_sort_filter_proxy_model.cpp" line="260"/>
         <source>Emergency</source>
         <translatorcomment>Emergency</translatorcomment>
@@ -304,7 +330,11 @@
     <message>
         <location filename="../displaycontent.cpp" line="133"/>
         <location filename="../displaycontent.cpp" line="144"/>
+<<<<<<< HEAD
         <location filename="../journalwork.cpp" line="261"/>
+=======
+        <location filename="../journalwork.cpp" line="265"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../model/log_sort_filter_proxy_model.cpp" line="268"/>
         <source>Warning</source>
         <translatorcomment>Warning</translatorcomment>
@@ -312,7 +342,11 @@
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="145"/>
+<<<<<<< HEAD
         <location filename="../journalwork.cpp" line="262"/>
+=======
+        <location filename="../journalwork.cpp" line="266"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../model/log_sort_filter_proxy_model.cpp" line="270"/>
         <source>Notice</source>
         <translatorcomment>Notice</translatorcomment>
@@ -321,7 +355,11 @@
     <message>
         <location filename="../displaycontent.cpp" line="135"/>
         <location filename="../displaycontent.cpp" line="146"/>
+<<<<<<< HEAD
         <location filename="../journalwork.cpp" line="263"/>
+=======
+        <location filename="../journalwork.cpp" line="267"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../model/log_sort_filter_proxy_model.cpp" line="272"/>
         <source>Info</source>
         <translatorcomment>Info</translatorcomment>
@@ -330,7 +368,11 @@
     <message>
         <location filename="../displaycontent.cpp" line="134"/>
         <location filename="../displaycontent.cpp" line="147"/>
+<<<<<<< HEAD
         <location filename="../journalwork.cpp" line="264"/>
+=======
+        <location filename="../journalwork.cpp" line="268"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../model/log_sort_filter_proxy_model.cpp" line="274"/>
         <source>Debug</source>
         <translatorcomment>Debug</translatorcomment>
@@ -379,7 +421,11 @@
     <name>Table</name>
     <message>
         <location filename="../displaycontent.cpp" line="262"/>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1381"/>
+=======
+        <location filename="../displaycontent.cpp" line="1385"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../logexportwidget.cpp" line="548"/>
         <source>User</source>
         <translatorcomment>User</translatorcomment>
@@ -392,10 +438,17 @@
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="260"/>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1205"/>
         <location filename="../displaycontent.cpp" line="1268"/>
         <location filename="../displaycontent.cpp" line="1314"/>
         <location filename="../displaycontent.cpp" line="1380"/>
+=======
+        <location filename="../displaycontent.cpp" line="1209"/>
+        <location filename="../displaycontent.cpp" line="1272"/>
+        <location filename="../displaycontent.cpp" line="1318"/>
+        <location filename="../displaycontent.cpp" line="1384"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../logexportwidget.cpp" line="546"/>
         <source>Date and Time</source>
         <translatorcomment>Date and Time</translatorcomment>
@@ -403,7 +456,11 @@
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="259"/>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1382"/>
+=======
+        <location filename="../displaycontent.cpp" line="1386"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../logexportwidget.cpp" line="544"/>
         <source>Process</source>
         <translatorcomment>Process</translatorcomment>
@@ -411,12 +468,21 @@
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="261"/>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1206"/>
         <location filename="../displaycontent.cpp" line="1239"/>
         <location filename="../displaycontent.cpp" line="1270"/>
         <location filename="../displaycontent.cpp" line="1315"/>
         <location filename="../displaycontent.cpp" line="1346"/>
         <location filename="../displaycontent.cpp" line="1383"/>
+=======
+        <location filename="../displaycontent.cpp" line="1210"/>
+        <location filename="../displaycontent.cpp" line="1243"/>
+        <location filename="../displaycontent.cpp" line="1274"/>
+        <location filename="../displaycontent.cpp" line="1319"/>
+        <location filename="../displaycontent.cpp" line="1350"/>
+        <location filename="../displaycontent.cpp" line="1387"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../logexportwidget.cpp" line="547"/>
         <source>Info</source>
         <translation>信息</translation>
@@ -429,38 +495,62 @@
         <translation>进程号</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1207"/>
+=======
+        <location filename="../displaycontent.cpp" line="1211"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Action</source>
         <translation>动作</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1343"/>
+=======
+        <location filename="../displaycontent.cpp" line="1347"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Event Type</source>
         <translatorcomment>Event Type</translatorcomment>
         <translation>事件类型</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1344"/>
+=======
+        <location filename="../displaycontent.cpp" line="1348"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Username</source>
         <translatorcomment>Username</translatorcomment>
         <translation>用户名</translation>
     </message>
     <message>
         <location filename="../displaycontent.cpp" line="258"/>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1267"/>
+=======
+        <location filename="../displaycontent.cpp" line="1271"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <location filename="../logexportwidget.cpp" line="543"/>
         <source>Level</source>
         <translatorcomment>Level</translatorcomment>
         <translation>级别</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1269"/>
+=======
+        <location filename="../displaycontent.cpp" line="1273"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Source</source>
         <translatorcomment>Source</translatorcomment>
         <translation>来源</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1238"/>
+=======
+        <location filename="../displaycontent.cpp" line="1242"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Status</source>
         <translatorcomment>Status</translatorcomment>
         <translation>状态</translation>
@@ -509,7 +599,11 @@
 <context>
     <name>Tbble</name>
     <message>
+<<<<<<< HEAD
         <location filename="../displaycontent.cpp" line="1345"/>
+=======
+        <location filename="../displaycontent.cpp" line="1349"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Date and Time</source>
         <translation>时间</translation>
     </message>
@@ -517,45 +611,80 @@
 <context>
     <name>Tree</name>
     <message>
+<<<<<<< HEAD
         <location filename="../loglistview.cpp" line="68"/>
         <location filename="../loglistview.cpp" line="69"/>
+=======
+        <location filename="../loglistview.cpp" line="67"/>
+        <location filename="../loglistview.cpp" line="68"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>System Log</source>
         <translation>系统日志</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../loglistview.cpp" line="77"/>
         <location filename="../loglistview.cpp" line="78"/>
+=======
+        <location filename="../loglistview.cpp" line="76"/>
+        <location filename="../loglistview.cpp" line="77"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Kernel Log</source>
         <translation>内核日志</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../loglistview.cpp" line="86"/>
         <location filename="../loglistview.cpp" line="87"/>
+=======
+        <location filename="../loglistview.cpp" line="85"/>
+        <location filename="../loglistview.cpp" line="86"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Boot Log</source>
         <translation>启动日志</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../loglistview.cpp" line="94"/>
         <location filename="../loglistview.cpp" line="95"/>
+=======
+        <location filename="../loglistview.cpp" line="93"/>
+        <location filename="../loglistview.cpp" line="94"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>dpkg Log</source>
         <translation>dpkg日志</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../loglistview.cpp" line="102"/>
         <location filename="../loglistview.cpp" line="103"/>
+=======
+        <location filename="../loglistview.cpp" line="101"/>
+        <location filename="../loglistview.cpp" line="102"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Xorg Log</source>
         <translation>Xorg日志</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../loglistview.cpp" line="112"/>
         <location filename="../loglistview.cpp" line="114"/>
+=======
+        <location filename="../loglistview.cpp" line="111"/>
+        <location filename="../loglistview.cpp" line="113"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Application Log</source>
         <translatorcomment>Application Log</translatorcomment>
         <translation>应用日志</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../loglistview.cpp" line="126"/>
         <location filename="../loglistview.cpp" line="129"/>
+=======
+        <location filename="../loglistview.cpp" line="125"/>
+        <location filename="../loglistview.cpp" line="128"/>
+>>>>>>> 09ec77f5100d8fb720284d296a2fcecdcd73cf8d
         <source>Boot-Shutdown Event</source>
         <translatorcomment>Boot-Shutdown Event</translatorcomment>
         <translation>开关机事件</translation>

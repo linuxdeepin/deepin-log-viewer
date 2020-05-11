@@ -3,12 +3,12 @@
 
 #include <QXmlStreamWriter>
 #include <QBuffer>
-
+#include <QDebug>
 namespace Docx {
 
 
 Relationship::Relationship(const QString &rId, const QString &reltype, const QString &targetRef, Part *target, const QString &baseURI, bool external)
-    : m_rId(rId),m_targetRef(targetRef), m_reltype(reltype), m_baseURI(baseURI), m_isexternal(external), m_target(target)
+    : m_rId(rId), m_targetRef(targetRef), m_reltype(reltype), m_baseURI(baseURI), m_isexternal(external), m_target(target)
 {
 
 }
@@ -24,7 +24,7 @@ QString Relationship::targetRef() const
 
 Relationship::~Relationship()
 {
-    delete m_target;
+    // delete  m_target;
 }
 
 
@@ -74,7 +74,7 @@ QByteArray Relationships::blob() const
     writer.writeAttribute(QStringLiteral("xmlns"), QStringLiteral("http://schemas.openxmlformats.org/package/2006/relationships"));
 
     QMapIterator<QString, Relationship *> iter(m_rels);
-    while(iter.hasNext()) {
+    while (iter.hasNext()) {
         iter.next();
         Relationship *rel = iter.value();
         writer.writeStartElement(QStringLiteral("Relationship"));
@@ -126,7 +126,8 @@ Relationship *Relationships::getOrAddExtPart(const QString &reltype, const QStri
 Relationships::~Relationships()
 {
     m_targetPartsByrId.clear();
-    m_rels.clear();
+    qDeleteAll(m_rels);
+    //m_rels.clear();
 }
 
 Relationship *Relationships::getMatching(const QString &reltype, Part *target)
@@ -162,7 +163,7 @@ QString Relationships::nextrId()
     int size = m_rels.count() + 2;
     QList<QString> keys = m_rels.keys();
     QString rId(QStringLiteral("rId1"));
-    for (int i = 1; i< size; i++) {
+    for (int i = 1; i < size; i++) {
         rId = QString("rId%1").arg(i);
         if (!keys.contains(rId))
             return rId;

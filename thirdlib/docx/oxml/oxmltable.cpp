@@ -97,6 +97,9 @@ void CT_Tbl::setAlignment(WD_TABLE_ALIGNMENT alignment)
 CT_Tbl::~CT_Tbl()
 {
     delete m_style;
+    if (m_tblGrid) {
+        delete  m_tblGrid;
+    }
 }
 
 CT_TblGrid::CT_TblGrid(QDomDocument *dom, const QDomElement &ele)
@@ -585,7 +588,7 @@ void CT_Tc::removeTrailingEmptyP()
 {
     QDomNode lastN = m_ele.lastChild();
     if (lastN.isNull() || lastN.nodeName() != QStringLiteral("w:p") ||
-        lastN.childNodes().count() > 0)
+            lastN.childNodes().count() > 0)
         return;
 
     m_ele.removeChild(lastN);

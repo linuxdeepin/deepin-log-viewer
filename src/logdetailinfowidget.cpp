@@ -336,7 +336,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     m_textBrowser->setText(msg);
 }
 
-void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, LogSortFilterProxyModel *pModel,
+void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel,
                                           QString name)
 {
     cleanText();

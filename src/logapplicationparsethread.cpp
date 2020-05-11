@@ -29,7 +29,7 @@ void LogApplicationParseThread::doWork()
     m_appList.clear();
 
     QProcess *proc = new QProcess;
-    //    connect(proc, SIGNAL(finished(int)), this, SLOT(onProcFinished(int)));
+    connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
     if (m_logPath.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
         emit appCmdFinished(m_appList);
     } else {
@@ -40,8 +40,7 @@ void LogApplicationParseThread::doWork()
         proc->waitForFinished(-1);
 
         QString output = proc->readAllStandardOutput();
-        proc->deleteLater();
-
+        qDebug() << __FUNCTION__ << "---output.length()" << output.length() << "output.split('\n')" << output.split('\n').length();
         for (QString str : output.split('\n')) {
             LOG_MSG_APPLICATOIN msg;
 
@@ -93,6 +92,10 @@ void LogApplicationParseThread::doWork()
 
         emit appCmdFinished(m_appList);
     }
+    if (proc) {
+        delete  proc;
+    }
+
 }
 
 void LogApplicationParseThread::onProcFinished(int ret)
