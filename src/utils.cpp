@@ -93,7 +93,7 @@ bool Utils::isFontMimeType(const QString &filePath)
     const QString mimeName = QMimeDatabase().mimeTypeForFile(filePath).name();;
 
     if (mimeName.startsWith("font/") ||
-        mimeName.startsWith("application/x-font")) {
+            mimeName.startsWith("application/x-font")) {
         return true;
     }
 
@@ -139,20 +139,24 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
     QString fontFamilyName = "";
 
     QFile fontFile(fontFileName);
-    if(!fontFile.open(QIODevice::ReadOnly))
-    {
-        qDebug()<<"Open font file error";
+    if (!fontFile.open(QIODevice::ReadOnly)) {
+        qDebug() << "Open font file error";
         return fontFamilyName;
     }
 
     int loadedFontID = QFontDatabase::addApplicationFontFromData(fontFile.readAll());
     QStringList loadedFontFamilies = QFontDatabase::applicationFontFamilies(loadedFontID);
-    if(!loadedFontFamilies.empty())
-    {
+    if (!loadedFontFamilies.empty()) {
         fontFamilyName = loadedFontFamilies.at(0);
     }
     fontFile.close();
 
     m_fontNameCache.insert(fontFileName, fontFamilyName);
     return fontFamilyName;
+}
+//必须要replace \u0000,不然QByteArray会忽略这以后的内容
+QByteArray Utils::replaceEmptyByteArray(QByteArray &iReplaceStr)
+{
+    QByteArray byteOutput = iReplaceStr;
+    return byteOutput.replace('\u0000', "");
 }

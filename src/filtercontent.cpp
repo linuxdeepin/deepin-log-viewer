@@ -247,16 +247,20 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 
     lvTxt->setVisible(lvCbx);
     cbx_lv->setVisible(lvCbx);
-    cbx_lv->setCurrentIndex(INF + 1);
+    if (cbx_lv->isVisible())
+        cbx_lv->setCurrentIndex(INF + 1);
     appTxt->setVisible(appListCbx);
     cbx_app->setVisible(appListCbx);
-    cbx_app->setCurrentIndex(0);
+    if (cbx_app->isVisible())
+        cbx_app->setCurrentIndex(0);
     statusTxt->setVisible(statusCbx);
     cbx_status->setVisible(statusCbx);
-    cbx_status->setCurrentIndex(0);
+    if (cbx_status->isVisible())
+        cbx_status->setCurrentIndex(0);
     typeTxt->setVisible(typecbx);  // add by Airy
     typeCbx->setVisible(typecbx);  // add by Airy
-    typeCbx->setCurrentIndex(0);
+    if (typeCbx->isVisible())
+        typeCbx->setCurrentIndex(0);
     periodLabel->setVisible(period);
     for (int i = 0; i < 6; i++) {
         LogPeriodButton *pushBtn = static_cast<LogPeriodButton *>(m_btnGroup->button(i));

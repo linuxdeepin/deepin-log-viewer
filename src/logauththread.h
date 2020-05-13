@@ -42,7 +42,7 @@ signals:
 
 public slots:
     void onFinished(int exitCode);
-
+    void onFinishedRead();
 private:
     QStringList m_list;
     QString m_output;

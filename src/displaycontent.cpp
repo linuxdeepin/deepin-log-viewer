@@ -77,7 +77,7 @@ DisplayContent::~DisplayContent()
 
 void DisplayContent::initUI()
 {
-    QVBoxLayout *vLayout = new QVBoxLayout;
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
     // set table for display log data
     initTableView();
 
@@ -97,30 +97,25 @@ void DisplayContent::initUI()
     //    noResultLabel->setFont(labelFont);
     noResultLabel->setAlignment(Qt::AlignCenter);
     //    vLayout->addWidget(noResultLabel, 5);
-    noResultLabel->hide();
-
-    m_spinnerWgt = new LogSpinnerWidget;
-    m_spinnerWgt_K = new LogSpinnerWidget;
+    m_spinnerWgt = new LogSpinnerWidget(this);
+    m_spinnerWgt_K = new LogSpinnerWidget(this);
 
     vLayout->addWidget(m_spinnerWgt_K, 5);
-    m_spinnerWgt_K->hide();
-
     vLayout->addWidget(m_spinnerWgt, 5);
-    m_spinnerWgt->hide();  // hide spinner
 
     //    m_noResultWdg = new LogSearchNoResultWidget(this);
     //    m_noResultWdg->setContent("");
     //    vLayout->addWidget(m_noResultWdg, 10);
     //    m_noResultWdg->hide();
 
-    m_detailWgt = new logDetailInfoWidget;
+    m_detailWgt = new logDetailInfoWidget(this);
     vLayout->addWidget(m_detailWgt, 3);
 
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(3);
 
     this->setLayout(vLayout);
-
+    setLoadState(DATA_COMPLETE);
     //    DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
     //    slot_themeChanged(ct);
 }
@@ -187,14 +182,9 @@ void DisplayContent::generateJournalFile(int id, int lId)
 {
     jList.clear();
 
-    m_spinnerWgt->spinnerStop();
-    m_spinnerWgt->spinnerStart();
-    m_treeView->hide();
-    m_spinnerWgt->show();
-
+    setLoadState(DATA_LOADING);
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());
-
     QStringList arg;
     if (lId != LVALL) {
         QString prio = QString("PRIORITY=%1").arg(lId);
@@ -246,8 +236,7 @@ void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
     if (list.count() > 500)
         return;
     m_limitTag = 0;
-    m_treeView->show();
-    noResultLabel->hide();
+    setLoadState(DATA_COMPLETE);
 
     m_pModel->clear();
 
@@ -270,9 +259,7 @@ void DisplayContent::generateDpkgFile(int id)
 {
     dList.clear();
 
-    m_spinnerWgt->spinnerStop();
-    m_spinnerWgt->hide();
-    m_treeView->show();
+    setLoadState(DATA_LOADING);
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
@@ -304,7 +291,7 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
 {
     //    m_treeView->show();
     m_limitTag = 0;
-    noResultLabel->hide();
+    setLoadState(DATA_COMPLETE);
     m_pModel->clear();
     parseListToModel(list, m_pModel);
     m_treeView->setColumnWidth(0, DATETIME_WIDTH);
@@ -323,10 +310,7 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
 void DisplayContent::generateKernFile(int id)
 {
     kList.clear();
-    m_spinnerWgt_K->spinnerStop();
-    m_spinnerWgt_K->spinnerStart();
-    m_treeView->hide();
-    m_spinnerWgt_K->show();
+    setLoadState(DATA_LOADING_K);
     //    m_spinnerWgt->hide();  // modified by Airy for bug 15520
     //    m_treeView->show();
 
@@ -360,7 +344,7 @@ void DisplayContent::generateKernFile(int id)
 void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
 {
     //    m_treeView->show();
-    noResultLabel->hide();
+    setLoadState(DATA_COMPLETE);
     m_pModel->clear();
 
     m_limitTag = 0;
@@ -419,11 +403,8 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
 void DisplayContent::generateAppFile(QString path, int id, int lId)
 {
     appList.clear();
-
-    m_spinnerWgt->spinnerStop();
-    m_spinnerWgt->spinnerStart();
-    m_treeView->hide();
-    m_spinnerWgt->show();
+    qDebug() << __FUNCTION__;
+    setLoadState(DATA_LOADING);
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
@@ -455,7 +436,7 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
 {
     //    m_treeView->show();
     m_limitTag = 0;
-    noResultLabel->hide();
+    setLoadState(DATA_COMPLETE);
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertApplicationTable(list, 0, end);
 }
@@ -464,7 +445,7 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
 {
     //    m_treeView->show();
     m_limitTag = 0;
-    noResultLabel->hide();
+    setLoadState(DATA_COMPLETE);
     m_pModel->clear();
     m_treeView->setColumnWidth(0, STATUS_WIDTH);
     parseListToModel(list, m_pModel);
@@ -481,7 +462,7 @@ void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
 {
     //    m_treeView->show();
     m_limitTag = 0;
-    noResultLabel->hide();
+    setLoadState(DATA_COMPLETE);
     m_pModel->clear();
     parseListToModel(list, m_pModel);
     m_treeView->setColumnWidth(0, DATETIME_WIDTH + 20);
@@ -500,10 +481,8 @@ void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
 void DisplayContent::generateXorgFile(int id)
 {
     xList.clear();
-
-    m_spinnerWgt->spinnerStop();
-    m_spinnerWgt->hide();
-    m_treeView->show();
+    qDebug() << __FUNCTION__ << id;
+    setLoadState(DATA_LOADING);
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
@@ -533,7 +512,7 @@ void DisplayContent::generateXorgFile(int id)
 
 void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 {
-    noResultLabel->hide();
+    setLoadState(DATA_COMPLETE);
     m_pModel->clear();
     m_limitTag = 0;
     parseListToModel(list, m_pModel);
@@ -556,9 +535,7 @@ void DisplayContent::generateNormalFile(int id)
 {
     norList.clear();
     nortempList.clear();
-    m_spinnerWgt->spinnerStop();
-    m_spinnerWgt->hide();
-    m_treeView->show();
+    setLoadState(DATA_LOADING);
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
@@ -711,6 +688,7 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         //        generateAppFile(treeData, btnId, lId);
     } else if (treeData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         if (!m_curAppLog.isEmpty()) {
+            qDebug() << __FUNCTION__ << __LINE__;
             generateAppFile(m_curAppLog, btnId, m_curLevel);
         }
     } else if (treeData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
@@ -724,10 +702,10 @@ void DisplayContent::slot_appLogs(QString path)
 {
 //    if (path.isEmpty())
 //        return;        //delete by Airy for bug 20457 :if path is empty,item is not empty
-
     appList.clear();
     m_curAppLog = path;
     //    m_logFileParse.parseByApp(path, appList);
+    qDebug() << __FUNCTION__ << __LINE__;
     generateAppFile(path, m_curBtnId, m_curLevel);
 }
 
@@ -782,9 +760,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
 
     if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||   //modified by Airy for bug 19660:spinner always running
             !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
-        m_spinnerWgt_K->spinnerStop();
-        m_treeView->show();
-        m_spinnerWgt_K->hide();
+        setLoadState(DATA_COMPLETE);
     }
 }
 
@@ -916,11 +892,7 @@ void DisplayContent::slot_kernFinished(QList<LOG_MSG_JOURNAL> list)
         return;
 
     kList = list;
-
-    m_spinnerWgt_K->spinnerStop();  // add by Airy
-    m_treeView->show();
-    m_spinnerWgt_K->hide();
-
+    setLoadState(DATA_COMPLETE);
     createKernTable(kList);
 }
 
@@ -932,10 +904,7 @@ void DisplayContent::slot_journalFinished()
     //    jList = logList;
     //    journalWork::instance()->mutex.lock();
     if (journalWork::instance()->logList.isEmpty()) {
-        m_spinnerWgt->spinnerStop();
-        m_treeView->show();
-        m_spinnerWgt->hide();
-
+        setLoadState(DATA_COMPLETE);
         createJournalTable(jList);
         return;
     }
@@ -944,11 +913,7 @@ void DisplayContent::slot_journalFinished()
     //    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
     journalWork::instance()->logList.clear();
     journalWork::instance()->mutex.unlock();
-
-    m_spinnerWgt->spinnerStop();
-    m_treeView->show();
-    m_spinnerWgt->hide();
-
+    setLoadState(DATA_COMPLETE);
     createJournalTable(jList);
 }
 
@@ -958,11 +923,7 @@ void DisplayContent::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list)
         return;
 
     appList.clear();
-
-    m_spinnerWgt->hide();
-    m_treeView->show();
-    m_spinnerWgt->spinnerStop();
-
+    setLoadState(DATA_COMPLETE);
     appList = list;
     createApplicationTable(appList);
 }
@@ -971,6 +932,7 @@ void DisplayContent::slot_NormalFinished()
 {
     if (m_flag != Normal)
         return;
+    setLoadState(DATA_COMPLETE);
     nortempList = norList;
     //    createXorgTable(xList);
     createNormalTable(nortempList);
@@ -1143,12 +1105,11 @@ void DisplayContent::slot_searchResult(QString str)
         break;
     }
     if (0 == m_pModel->rowCount()) {
-        noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
-        noResultLabel->show();
+        setLoadState(DATA_NO_SEARCH_RESULT);
         m_detailWgt->cleanText();
         m_detailWgt->hideLine(true);
     } else {
-        noResultLabel->hide();
+        setLoadState(DATA_COMPLETE);
         m_detailWgt->hideLine(false);
     }
 }
@@ -1371,6 +1332,52 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItem
     }
 }
 
+void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
+{
+    if (!m_spinnerWgt->isHidden()) {
+        m_spinnerWgt->spinnerStop();
+        m_spinnerWgt->hide();
+    }
+    if (!m_spinnerWgt_K->isHidden()) {
+        m_spinnerWgt_K->spinnerStop();
+        m_spinnerWgt_K->hide();
+    }
+    if (!noResultLabel->isHidden()) {
+        noResultLabel->hide();
+    }
+    if (!m_treeView->isHidden()) {
+        m_treeView->hide();
+    }
+    switch (iState) {
+    case DATA_LOADING: {
+        qDebug() << __FUNCTION__ << "loading----------" << m_spinnerWgt->isHidden() << m_spinnerWgt_K->isHidden();
+
+        m_spinnerWgt->spinnerStart();
+        m_spinnerWgt->show();
+        break;
+    }
+    case DATA_COMPLETE: {
+        qDebug() << __FUNCTION__ << "compleste----------" << m_spinnerWgt->isHidden() << m_spinnerWgt_K->isHidden();
+        m_treeView->show();
+        break;
+    }
+    case DATA_LOADING_K: {
+        m_spinnerWgt_K->spinnerStart();
+        m_spinnerWgt_K->show();
+        break;
+    }
+    case DATA_NO_SEARCH_RESULT: {
+        m_treeView->show();
+        noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
+        noResultLabel->show();
+        break;
+    }
+    default:
+        break;
+    }
+    this->update();
+}
+
 void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
@@ -1455,7 +1462,7 @@ void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
 {
     //    m_treeView->show();
     m_limitTag = 0;
-    noResultLabel->hide();
+    setLoadState(DATA_COMPLETE);
     m_pModel->clear();
 
 
@@ -1523,6 +1530,7 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
 //        m_pModel->clear();  // clicked parent node application, clear table contents
         m_flag = APP;
+        qDebug() << __FUNCTION__ << __LINE__;
         generateAppFile(m_curAppLog, m_curBtnId, m_curLevel);
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
         norList.clear();
@@ -1532,7 +1540,7 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     }
 
     if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
-        !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
+            !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
 //        m_spinnerWgt_K->spinnerStop();
 //        m_treeView->show();
 //        m_spinnerWgt_K->hide();

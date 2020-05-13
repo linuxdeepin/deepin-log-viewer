@@ -50,6 +50,7 @@ public:
     void parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms = 0);  // add by Airy
 
     void createFile(QString output, int count);
+    void stopAllLoad();
 
 signals:
     void dpkgFinished();
@@ -67,7 +68,7 @@ signals:
 
 public slots:
     void slot_journalFinished();
-
+    void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slot_threadFinished(LOG_FLAG flag, QString output);
 
 private:
@@ -79,8 +80,17 @@ private:
     LogAuthThread *m_authThread {nullptr};
     LogApplicationParseThread *m_appThread {nullptr};
     journalWork *work {nullptr};
-
+    QProcess *m_pDkpgDataLoader{nullptr};
+    QProcess *m_pXlogDataLoader{nullptr};
+    bool m_isProcess = false;
     qint64 m_selectTime {0};
+    bool m_isJournalLoading = false;
+    bool m_isDpkgLoading = false;
+    bool m_isXlogLoading = false;
+    bool m_isBootLoading = false;
+    bool m_isKernLoading = false;
+    bool m_isAppLoading = false;
+    bool m_isNormalLoading = false;
 };
 
 #endif  // LOGFILEPARSER_H

@@ -20,7 +20,8 @@
  */
 
 #include "logfileparser.h"
-
+#include "journalwork.h"
+#include "utils.h"
 #include <DMessageBox>
 #include <QDateTime>
 #include <QDebug>
@@ -31,7 +32,7 @@
 #include <QJsonParseError>
 #include <QMessageBox>
 #include <QProcess>
-#include "journalwork.h"
+
 
 DWIDGET_USE_NAMESPACE
 
@@ -61,6 +62,10 @@ LogFileParser::~LogFileParser() {}
 
 void LogFileParser::parseByJournal(QStringList arg)
 {
+    if (m_isJournalLoading) {
+        return;
+    }
+    m_isJournalLoading = true;
     work = journalWork::instance();
     if (work->isRunning())
         work->terminate();
@@ -74,15 +79,22 @@ void LogFileParser::parseByJournal(QStringList arg)
 
 void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
 {
+    if (m_isDpkgLoading) {
+        return;
+    }
+    m_isDpkgLoading = true;
     QFile file("/var/log/dpkg.log");  // if not,maybe crash
     if (!file.exists())
         return;
 
-    QProcess proc;
-    proc.start("cat /var/log/dpkg.log");  // file path is fixed. so write cmd direct
-    proc.waitForFinished(-1);
-    QString output = proc.readAllStandardOutput();
-    proc.close();
+    if (!m_pDkpgDataLoader) {
+        m_pDkpgDataLoader = new QProcess(this);
+    }
+    m_pDkpgDataLoader->start("cat /var/log/dpkg.log");  // file path is fixed. so write cmd direct
+    m_pDkpgDataLoader->waitForFinished(-1);
+    QByteArray outByte = m_pDkpgDataLoader->readAllStandardOutput();
+    QString output = Utils::replaceEmptyByteArray(outByte);
+    m_pDkpgDataLoader->close();
 
     for (QString str : output.split('\n')) {
         str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
@@ -108,25 +120,31 @@ void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
     }
 
     createFile(output, dList.count());
+    m_isDpkgLoading = false;
     emit dpkgFinished();
+
 }
 
 void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms)  // modifed by Airy
 {
+    if (m_isXlogLoading) {
+        return;
+    }
+    m_isXlogLoading = true;
     QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
     if (!file.exists())
         return;
 
-    QProcess proc;
-    proc.start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
-    proc.waitForFinished(-1);
-
-    if (isErroCommand(QString(proc.readAllStandardError())))
+    if (!m_pXlogDataLoader) {
+        m_pXlogDataLoader = new QProcess(this);
+    }
+    m_pXlogDataLoader->start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
+    m_pXlogDataLoader->waitForFinished(-1);
+    if (isErroCommand(QString(m_pXlogDataLoader->readAllStandardError())))
         return;
-
-    QString output = proc.readAllStandardOutput();
-    proc.close();
-
+    QByteArray outByte = m_pXlogDataLoader->readAllStandardOutput();
+    QString output = Utils::replaceEmptyByteArray(outByte);
+    m_pXlogDataLoader->close();
     QDateTime curDt = QDateTime::currentDateTime();
     qint64 curDtSecond = curDt.toMSecsSinceEpoch();
     for (QString str : output.split('\n')) {
@@ -151,6 +169,7 @@ void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms)  // modif
             // get time
             QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
             qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
+            //   qint64 realT =  qint64(tStr.toDouble() * 1000);
             QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
             if (realDt.toMSecsSinceEpoch() < ms)  // add by Airy
                 continue;
@@ -165,8 +184,9 @@ void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms)  // modif
         }
     }
     createFile(output, xList.count());
-
+    m_isXlogLoading = false;
     emit xlogFinished();
+
 }
 
 // add by Airy
@@ -176,6 +196,10 @@ void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms)  // modif
 #include <wtmpparse.h>
 void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
 {
+    if (m_isNormalLoading) {
+        return;
+    }
+    m_isNormalLoading = true;
     int ret = -2;
     struct utmp *utbufp, *wtmp_next();
 
@@ -257,6 +281,7 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
     free(normalList);
     free(deadList);
     wtmp_close();
+    m_isNormalLoading = false;
     emit normalFinished();
 
     //    QProcess proc;
@@ -319,6 +344,10 @@ void LogFileParser::parseByXlog(QStringList &xList)
 
 void LogFileParser::parseByBoot()
 {
+    if (m_isBootLoading) {
+        return;
+    }
+    m_isBootLoading = true;
     m_authThread = LogAuthThread::instance();
     if (m_authThread->isRunning())
         m_authThread->terminate();
@@ -334,6 +363,10 @@ void LogFileParser::parseByBoot()
 
 void LogFileParser::parseByKern(qint64 ms)
 {
+    if (m_isKernLoading) {
+        return;
+    }
+    m_isKernLoading = true;
     m_authThread = LogAuthThread::instance();
     if (m_authThread->isRunning())
         m_authThread->terminate();
@@ -350,17 +383,22 @@ void LogFileParser::parseByKern(qint64 ms)
 
 void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 {
+    if (m_isAppLoading) {
+        return;
+    }
+    m_isAppLoading = true;
+
     m_appThread = LogApplicationParseThread::instance();
     if (m_appThread->isRunning())
         m_appThread->terminate();
 
     disconnect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
-               SIGNAL(applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
+               SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
 
     m_appThread->setParam(path, lv, ms);
 
     connect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
-            SIGNAL(applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
+            SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
 
     m_appThread->start();
 }
@@ -379,6 +417,36 @@ void LogFileParser::createFile(QString output, int count)
     fi.write(QString::number(count).toLatin1());
     fi.close();
 #endif
+}
+
+void LogFileParser::stopAllLoad()
+{
+    return;
+//    if (work && work->isRunning())
+//        work->terminate();
+//    if (m_pDkpgDataLoader && m_pDkpgDataLoader->isOpen()) {
+//        m_pDkpgDataLoader->terminate();
+//        m_pDkpgDataLoader->close();
+//    }
+//    if (m_pXlogDataLoader && m_pXlogDataLoader->isOpen()) {
+//        m_pXlogDataLoader->terminate();
+//        m_pXlogDataLoader->close();
+//    }
+
+//    if (m_authThread && m_authThread->isRunning()) {
+//        m_authThread->terminate();
+//        m_authThread->wait();
+//    }
+//    if (m_authThread && m_authThread->isRunning()) {
+//        m_authThread->terminate();
+//        m_authThread->wait();
+//    }
+
+//    if (m_appThread && m_appThread->isRunning()) {
+//        m_appThread->terminate();
+//        m_appThread->wait();
+//    }
+//    m_isProcess = false;
 }
 
 bool LogFileParser::isErroCommand(QString str)
@@ -412,7 +480,15 @@ qint64 LogFileParser::formatDateTime(QString m, QString d, QString t)
 
 void LogFileParser::slot_journalFinished()
 {
+    m_isJournalLoading = false;
     emit journalFinished();
+
+}
+
+void LogFileParser::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList)
+{
+    m_isAppLoading = false;
+    emit applicationFinished(iAppList);
 }
 
 #include <unistd.h>
@@ -447,14 +523,15 @@ void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
         }
 
         createFile(output, bList.count());
+        m_isBootLoading = false;
         emit bootFinished(bList);
 
     } break;
     case KERN: {
         QList<LOG_MSG_JOURNAL> kList;
         //            qDebug() << "ms::" << m_selectTime << output;
-
-        for (QString str : output.split('\n')) {
+        QStringList a = output.split('\n');
+        for (QString str : a) {
             LOG_MSG_JOURNAL msg;
 
             str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
@@ -496,6 +573,7 @@ void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
         }
 
         createFile(output, kList.count());
+        m_isKernLoading = false;
         emit kernFinished(kList);
     } break;
     default:

@@ -28,7 +28,7 @@
 class LogSpinnerWidget : public Dtk::Widget::DWidget
 {
 public:
-    LogSpinnerWidget();
+    LogSpinnerWidget(QWidget *parent = nullptr);
     void initUI();
 
     void spinnerStart();

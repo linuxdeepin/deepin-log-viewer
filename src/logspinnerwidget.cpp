@@ -25,7 +25,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-LogSpinnerWidget::LogSpinnerWidget()
+LogSpinnerWidget::LogSpinnerWidget(QWidget *parent): Dtk::Widget::DWidget(parent)
 {
     initUI();
 }
@@ -37,10 +37,10 @@ void LogSpinnerWidget::initUI()
 
     //    QHBoxLayout *hh = new QHBoxLayout(this);
 
-    QHBoxLayout *h = new QHBoxLayout;
+    QHBoxLayout *h = new QHBoxLayout(this);
     h->addStretch(1);
 
-    QVBoxLayout *v = new QVBoxLayout;
+    QVBoxLayout *v = new QVBoxLayout(this);
     v->addStretch(1);
     v->addWidget(m_spinner);
     v->addStretch(1);

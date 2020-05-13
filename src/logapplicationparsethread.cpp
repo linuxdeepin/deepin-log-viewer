@@ -1,4 +1,5 @@
 #include "logapplicationparsethread.h"
+#include "utils.h"
 #include <DMessageBox>
 #include <QDateTime>
 #include <QDebug>
@@ -38,9 +39,8 @@ void LogApplicationParseThread::doWork()
 
         proc->start("/bin/bash", arg);
         proc->waitForFinished(-1);
-
-        QString output = proc->readAllStandardOutput();
-        qDebug() << __FUNCTION__ << "---output.length()" << output.length() << "output.split('\n')" << output.split('\n').length();
+        QByteArray byteOutput = proc->readAllStandardOutput();
+        QString output(Utils::replaceEmptyByteArray(byteOutput));
         for (QString str : output.split('\n')) {
             LOG_MSG_APPLICATOIN msg;
 

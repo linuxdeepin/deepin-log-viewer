@@ -43,10 +43,17 @@
 class DisplayContent : public Dtk::Widget::DWidget
 {
     Q_OBJECT
+    enum LOAD_STATE {
+        DATA_LOADING = 0,
+        DATA_COMPLETE,
+        DATA_LOADING_K,
+        DATA_NO_SEARCH_RESULT,
+    };
 public:
     explicit DisplayContent(QWidget *parent = nullptr);
     ~DisplayContent();
 
+public:
 
 private:
     void initUI();
@@ -125,6 +132,7 @@ public slots:
     void parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel);
+    void setLoadState(LOAD_STATE iState);
 private:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);

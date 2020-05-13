@@ -61,6 +61,7 @@ public:
     static QString suffixList();
     static QPixmap renderSVG(const QString &filePath, const QSize &size);
     static QString loadFontFamilyFromFiles(const QString &fontFileName);
+    static QByteArray replaceEmptyByteArray(QByteArray &iReplaceStr);
 };
 
 #endif
