@@ -202,84 +202,65 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
     m_isNormalLoading = true;
     int ret = -2;
     struct utmp *utbufp, *wtmp_next();
-
     if (wtmp_open(WTMP_FILE) == -1) {
         printf("open WTMP_FILE file error\n");
         return;  // exit(1) will exit this application
     }
-
-    struct utmp_list *normalList = st_list_init();
-    struct utmp_list *deadList = st_list_init();
-    struct utmp *nodeUTMP = st_utmp_init();
-    struct utmp_list *firstNormalList = normalList;
-    struct utmp_list *firstDeadList = deadList;
+    QList<utmp > normalList;
+    QList<utmp > deadList;
     while ((utbufp = wtmp_next()) != ((struct utmp *)NULL)) {
-        if (utbufp->ut_type != DEAD_PROCESS)
-            list_insert(normalList, utbufp);
-        else if (utbufp->ut_type == DEAD_PROCESS)
-            list_insert(deadList, utbufp);
+        if (utbufp->ut_type != DEAD_PROCESS) {
+            utmp value_ = *utbufp;
+            normalList.append(value_);
+        } else if (utbufp->ut_type == DEAD_PROCESS) {
+            utmp value_ = *utbufp;
+
+            deadList.append(value_);
+        }
     }
-
-    normalList = normalList->next;
-
+    foreach (utmp item, normalList) {
+        //  qDebug() << "normalList" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+        // qDebug() << "normalList" << item.ut_type;
+    }
     QString a_name = "~";
-    while (normalList) {
-        QString strtmp = normalList->value.ut_name;
+    foreach (utmp value, normalList) {
+        QString strtmp = value.ut_name;
         if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
-            normalList = normalList->next;
             continue;
         }
-
-        memset(nodeUTMP, 0, sizeof(struct utmp));
-        ret = list_get_ele_and_del(deadList, normalList->value.ut_line, nodeUTMP);
-
+        struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
         LOG_MSG_NORMAL Nmsg;
-
-        if (normalList->value.ut_type == USER_PROCESS) {
+        if (value.ut_type == USER_PROCESS) {
             Nmsg.eventType = "Login";
-            Nmsg.userName = normalList->value.ut_name;
+            Nmsg.userName = value.ut_name;
             a_name = Nmsg.userName;
         } else {
-            Nmsg.eventType = normalList->value.ut_name;
+            Nmsg.eventType = value.ut_name;
             if (strtmp.compare("reboot") == 0) {
                 Nmsg.eventType = "Boot";
             }
             Nmsg.userName = a_name;
         }
-
         QString end_str;
-        if (deadList != NULL && ret != -1)
-            end_str = show_end_time(nodeUTMP->ut_time);
-        else if (ret == -1 && normalList->value.ut_type == USER_PROCESS)
+        if (deadList.length() > 0 && ret != -1)
+            end_str = show_end_time(nodeUTMP.ut_time);
+        else if (ret == -1 && value.ut_type == USER_PROCESS)
             end_str = "still logged in";
-        else if (ret == -1 && normalList->value.ut_type == BOOT_TIME)
+        else if (ret == -1 && value.ut_type == BOOT_TIME)
             end_str = "system boot";
-
-        QString start_str = show_start_time(normalList->value.ut_time);
-
-        QString n_time =
-            QDateTime::fromTime_t(normalList->value.ut_time).toString("yyyy-MM-dd hh:mm:ss");
-
+        QString start_str = show_start_time(value.ut_time);
+        QString n_time = QDateTime::fromTime_t(value.ut_time).toString("yyyy-MM-dd hh:mm:ss");
         end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
         start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
-
         Nmsg.dateTime = n_time;
         QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
         if (nn_time.toMSecsSinceEpoch() < ms) { // add by Airy
-            normalList = normalList->next;
             continue;
         }
-
         Nmsg.msg = start_str + "  ~  " + end_str;
-        normalList = normalList->next;
         printf("\n");
         nList.insert(0, Nmsg);
     }
-    free(nodeUTMP);
-    list_delete(firstNormalList);
-    list_delete(firstDeadList);
-    free(normalList);
-    free(deadList);
     wtmp_close();
     m_isNormalLoading = false;
     emit normalFinished();

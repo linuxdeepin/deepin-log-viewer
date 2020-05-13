@@ -98,53 +98,28 @@ void list_delete(struct utmp_list *list)
         free(p);
     }
 }
-void list_insert(struct utmp_list *list, struct utmp *value)
+void list_insert(QList<utmp *> plist, struct utmp *value)
 {
-    if (!list)
-        return;
+    utmp v = *value;
+    utmp *value_ = &(v);
+    plist.append(value_);
 
-    struct utmp_list *pList = list;
-
-    while (pList->next)
-        pList = pList->next;
-
-    struct utmp_list *node = (struct utmp_list *)malloc(sizeof(struct utmp_list));
-    if (!node) {
-        printf("malloc struct utmp_list failed\n");
-        return;
-    }
-
-    if (value)
-        memcpy(&node->value, value, sizeof(struct utmp));
-    node->next = NULL;
-
-    pList->next = node;
 }
 
-int list_get_ele_and_del(struct utmp_list *list, char *value, struct utmp *retUtmp)
+utmp list_get_ele_and_del(QList<utmp > &list, char *value, int &rs)
 {
-    if (!list) {
-        printf("List is empty, insert error\n");
-        return -1;
-    }
-
-    struct utmp_list *pList = list;
-    struct utmp_list *beforeNode = list;
-
-    while (pList) {
-        if (0 == strcmp(value, pList->value.ut_line)) {
-            beforeNode->next = pList->next;
-            if (retUtmp)
-                memcpy(retUtmp, &pList->value, sizeof(struct utmp));
-            //            free(pList);         //if pList->value is null,this will crash
-            return 0;
-        } else {
-            beforeNode = pList;
-            pList = pList->next;
+    utmp temp;
+    for (int i = 0; i < list.length(); ++i) {
+        utmp itemValue = list.value(i);
+        if (strcmp(value, itemValue.ut_line) == 0) {
+            list.removeAt(i);
+            rs = 0;
+            return itemValue;
         }
-    }
 
-    return -1;
+    }
+    rs = -1;
+    return temp;
 }
 
 char *show_end_time(long timeval)

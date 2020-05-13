@@ -403,9 +403,7 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
 void DisplayContent::generateAppFile(QString path, int id, int lId)
 {
     appList.clear();
-    qDebug() << __FUNCTION__;
     setLoadState(DATA_LOADING);
-
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
@@ -481,9 +479,7 @@ void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
 void DisplayContent::generateXorgFile(int id)
 {
     xList.clear();
-    qDebug() << __FUNCTION__ << id;
     setLoadState(DATA_LOADING);
-
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
@@ -688,7 +684,6 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         //        generateAppFile(treeData, btnId, lId);
     } else if (treeData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         if (!m_curAppLog.isEmpty()) {
-            qDebug() << __FUNCTION__ << __LINE__;
             generateAppFile(m_curAppLog, btnId, m_curLevel);
         }
     } else if (treeData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
@@ -705,7 +700,6 @@ void DisplayContent::slot_appLogs(QString path)
     appList.clear();
     m_curAppLog = path;
     //    m_logFileParse.parseByApp(path, appList);
-    qDebug() << __FUNCTION__ << __LINE__;
     generateAppFile(path, m_curBtnId, m_curLevel);
 }
 
@@ -1350,14 +1344,11 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     }
     switch (iState) {
     case DATA_LOADING: {
-        qDebug() << __FUNCTION__ << "loading----------" << m_spinnerWgt->isHidden() << m_spinnerWgt_K->isHidden();
-
         m_spinnerWgt->spinnerStart();
         m_spinnerWgt->show();
         break;
     }
     case DATA_COMPLETE: {
-        qDebug() << __FUNCTION__ << "compleste----------" << m_spinnerWgt->isHidden() << m_spinnerWgt_K->isHidden();
         m_treeView->show();
         break;
     }
@@ -1472,7 +1463,6 @@ void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
 
 void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end)
 {
-    qDebug() << __FUNCTION__ << "------------------" << list.length();
     QList<LOG_MSG_APPLICATOIN> midList = list;
     if (end >= start) {
         midList = midList.mid(start, end - start);
@@ -1530,7 +1520,6 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
 //        m_pModel->clear();  // clicked parent node application, clear table contents
         m_flag = APP;
-        qDebug() << __FUNCTION__ << __LINE__;
         generateAppFile(m_curAppLog, m_curBtnId, m_curLevel);
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
         norList.clear();
