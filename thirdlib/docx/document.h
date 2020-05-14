@@ -3,7 +3,7 @@
 
 #include "docx_global.h"
 #include "length.h"
-
+#include "opc/part.h"
 #include <QString>
 #include <QImage>
 
@@ -20,8 +20,8 @@ class DOCX_EXPORT Document
 {
 public:
     Document();
-    explicit Document(const QString& name);    
-    explicit Document(QIODevice* device);
+    explicit Document(const QString &name);
+    explicit Document(QIODevice *device);
 
     Paragraph *addParagraph(const QString &text = QString(), const QString &style = QString());
 
@@ -32,19 +32,20 @@ public:
     InlineShape *addPicture(const QString &imgPath, const Length &width = Length(), const Length &height = Length());
     InlineShape *addPicture(const QImage &img, const Length &width = Length(), const Length &height = Length());
     Paragraph *addPageBreak();
-    QList<Paragraph*> paragraphs();
-    QList<Table*> tables();
+    QList<Paragraph *> paragraphs();
+    QList<Table *> tables();
     virtual ~Document();
 
-    void save(const QString& path);
+    void save(const QString &path);
 
 private:
-    void open(const QString& name);
-    void open(QIODevice* device);
+    void open(const QString &name);
+    void open(QIODevice *device);
 
 private:
     DocumentPart *m_docPart;
     Package *m_package;
+    QList<Part *> m_partList;
 
 };
 

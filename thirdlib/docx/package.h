@@ -19,7 +19,7 @@ class Package : public OpcPackage
 public:
     Package();
     void loadRel(const QString &reltype, const QString &targetRef, Part *target, const QString rId, bool isternal = false);
-    static Package* open(const QString &pkgFile);
+    static QPair<Package *, QList<Part *> > open(const QString &pkgFile);
     static Package* open(QIODevice *device);
     void save(const QString &filePath);
     void afterUnmarshal();

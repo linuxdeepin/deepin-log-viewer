@@ -72,7 +72,7 @@ QString Part::relateTo(Part *target, const QString &reltype, const QString &base
 
 Part::~Part()
 {
-
+    delete  m_rels;
 }
 
 PartFactory::PartFactory()

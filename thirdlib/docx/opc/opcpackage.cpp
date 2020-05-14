@@ -62,7 +62,7 @@ Unmarshaller::Unmarshaller()
  * \param pkgReader
  * \param package
  */
-void Unmarshaller::unmarshal(PackageReader *pkgReader, Package *package)
+QList< Part *>Unmarshaller::unmarshal(PackageReader *pkgReader, Package *package)
 {
     QMap<QString, Part *> parts;
     parts = Unmarshaller::unmarshalParts(pkgReader, package);
@@ -71,8 +71,9 @@ void Unmarshaller::unmarshal(PackageReader *pkgReader, Package *package)
     for (Part *p : parts.values()) {
         p->afterUnmarshal();
     }
+
     package->afterUnmarshal();
-    return  ;
+    return parts.values() ;
 }
 
 /*!

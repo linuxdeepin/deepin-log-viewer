@@ -100,6 +100,7 @@ PackageReader::~PackageReader()
 {
     delete  m_srels;
     delete  m_contentTypes;
+    m_sparts.clear();
 }
 
 }

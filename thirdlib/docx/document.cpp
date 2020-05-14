@@ -36,7 +36,9 @@ Document::Document(QIODevice *device)
 
 void Document::open(const QString &name)
 {
-    m_package = Package::open(name);
+    QPair<Package *, QList<Part *>> tempALl = Package::open(name);
+    m_package = tempALl.first;
+    m_partList.append(tempALl.second);
     m_docPart = m_package->mainDocument();
 }
 
@@ -117,12 +119,18 @@ QList<Table *> Document::tables()
 Document::~Document()
 {
     qDebug() << "delete Docx::Document.";
-    delete m_docPart;
+    // delete m_docPart;
     delete m_package;
+    qDeleteAll(m_partList);
+//    foreach (Part *item, m_partList) {
+//        qDebug() << "Part-p" << item;
+//        qDebug() << "item" << item->contentType();
+//    }
 }
 
 void Document::save(const QString &path)
 {
     qDebug() << "save docx file: " << path;
     m_package->save(path);
+
 }

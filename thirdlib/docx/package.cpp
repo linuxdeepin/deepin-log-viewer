@@ -21,14 +21,17 @@ void Package::loadRel(const QString &reltype, const QString &targetRef, Part *ta
     m_rels->addRelationship(reltype, targetRef, target, rId, isternal);
 }
 
-Package *Package::open(const QString &pkgFile)
+QPair<Package *, QList<Part *>>Package::open(const QString &pkgFile)
 {
     PackageReader *reader = PackageReader::fromFile(pkgFile);
     //
     Package *package = new Package();
-    Unmarshaller::unmarshal(reader, package);
+    QList<Part *>list =  Unmarshaller::unmarshal(reader, package);
+    QPair<Package *, QList<Part *>>rs;
+    rs.first = package;
+    rs.second = list;
     delete reader;
-    return package;
+    return rs;
 }
 
 Package *Package::open(QIODevice *device)

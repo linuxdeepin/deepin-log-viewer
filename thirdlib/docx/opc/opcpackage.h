@@ -32,11 +32,11 @@ class Unmarshaller
 {
 public:
     Unmarshaller();
-    static void unmarshal(PackageReader *pkgReader, Package *package);
+    static QList<Part *> unmarshal(PackageReader *pkgReader, Package *package);
     static QMap<QString, Part *> unmarshalParts(PackageReader *pkgReader, Package *package);
     static void unmarshalRelationships(PackageReader *pkgReader, Package *package, const QMap<QString, Part *> &parts);
     virtual ~Unmarshaller();
-    //  static QList<QMap<QString, Part *>> m_partBuffer;
+
 
 };
 }
