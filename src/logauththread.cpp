@@ -88,7 +88,6 @@ void LogAuthThread::onFinishedRead()
 {
     QProcess *process = dynamic_cast<QProcess *>(sender());
     QString str = QString(process->readAllStandardOutput());
-    qDebug() << __FUNCTION__ << str.length();
     QStringList l = str.split('\n');
 
     process->deleteLater();
