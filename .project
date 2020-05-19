@@ -1,0 +1,6 @@
+   {
+       "type": "homebrew",
+       "3rdparty": ["./3rdparty"],
+       "ignore": ["./translations","./.git","/.tx","*.gitignore","*.md","*.doc","*.svg"],
+       "license": ["GPLv3"]
+   }
