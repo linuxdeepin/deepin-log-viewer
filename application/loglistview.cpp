@@ -320,25 +320,12 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         QString _path_ = g_path;      //get app path
         QString path = "";
 
-        switch (idx.row()) {
-        case 1:
-            path = KERN_TREE_DATA;
-            break;
-        case 2:
-            path = BOOT_TREE_DATA;
-            break;
-        case 3:
-            path = DPKG_TREE_DATA;
-            break;
-        case 4:
-            path = XORG_TREE_DATA;
-            break;
-        case 5:
+        QString pathData = idx.data(ITEM_DATE_ROLE).toString();
+        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA) {
+            path = pathData;
+        } else if (pathData == APP_TREE_DATA) {
             //                    path = dirPath + QString("/.cache/deepin/.");
             path = _path_;
-            break;
-        default:
-            break;
         }
 
         connect(g_openForder, &QAction::triggered, this, [ = ] {
