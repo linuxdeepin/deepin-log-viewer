@@ -180,7 +180,9 @@ void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms)  // modif
 
             xList.insert(0, msg);
         } else {
-            xList[0].msg += str;
+            if (xList.length() > 0) {
+                xList[0].msg += str;
+            }
         }
     }
     createFile(output, xList.count());
