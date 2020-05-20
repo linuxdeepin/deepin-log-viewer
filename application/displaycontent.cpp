@@ -178,7 +178,7 @@ void DisplayContent::initConnections()
             &DisplayContent::slot_themeChanged);
 }
 
-void DisplayContent::generateJournalFile(int id, int lId)
+void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearchStr)
 {
     jList.clear();
 
@@ -255,7 +255,7 @@ void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
     insertJournalTable(list, 0, end);
 }
 
-void DisplayContent::generateDpkgFile(int id)
+void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
 {
     dList.clear();
 
@@ -307,7 +307,7 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-void DisplayContent::generateKernFile(int id)
+void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
 {
     kList.clear();
     setLoadState(DATA_LOADING_K);
@@ -400,7 +400,7 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-void DisplayContent::generateAppFile(QString path, int id, int lId)
+void DisplayContent::generateAppFile(QString path, int id, int lId, const QString &iSearchStr)
 {
     appList.clear();
     setLoadState(DATA_LOADING);

@@ -62,16 +62,16 @@ private:
     void setTableViewData();
     void initConnections();
 
-    void generateJournalFile(int id, int lId);
+    void generateJournalFile(int id, int lId, const QString &iSearchStr = "");
     void createJournalTable(QList<LOG_MSG_JOURNAL> &list);
 
-    void generateDpkgFile(int id);
+    void generateDpkgFile(int id, const QString &iSearchStr = "");
     void createDpkgTable(QList<LOG_MSG_DPKG> &list);
 
-    void generateKernFile(int id);
+    void generateKernFile(int id, const QString &iSearchStr = "");
     void createKernTable(QList<LOG_MSG_JOURNAL> &list);
 
-    void generateAppFile(QString path, int id, int lId);
+    void generateAppFile(QString path, int id, int lId, const QString &iSearchStr = "");
     void createAppTable(QList<LOG_MSG_APPLICATOIN> &list);
     void createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list);
 
