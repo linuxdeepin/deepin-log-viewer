@@ -1,6 +1,6 @@
    {
        "type": "homebrew",
        "3rdparty": ["./3rdparty"],
-       "ignore": ["./translations","./.git","/.tx","*.gitignore","*.md","*.doc","*.svg"],
+       "ignore": ["./translations","./debian","/.tx","*.gitignore","*.md","*.doc","*.svg","LICENSE",".project"],
        "license": ["GPLv3"]
    }
