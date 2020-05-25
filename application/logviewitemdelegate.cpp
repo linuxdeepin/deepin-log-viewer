@@ -95,47 +95,47 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     QRect textRect = rect;
 
     switch (opt.viewItemPosition) {
-        case QStyleOptionViewItem::Beginning: {
-            rect.setX(rect.x() + margin);  // left margin
+    case QStyleOptionViewItem::Beginning: {
+        rect.setX(rect.x() + margin);  // left margin
 
-            QPainterPath rectPath, roundedPath;
-            roundedPath.addRoundedRect(rect.x(), rect.y(), rect.width() * 2, rect.height(), radius,
-                                       radius);
-            rectPath.addRect(rect.x() + rect.width(), rect.y(), rect.width(), rect.height());
-            clipPath = roundedPath.subtracted(rectPath);
-            painter->setClipPath(clipPath);
-            path.addRect(rect);
-        } break;
-        case QStyleOptionViewItem::Middle: {
-            path.addRect(rect);
-        } break;
-        case QStyleOptionViewItem::End: {
-            rect.setWidth(rect.width() - margin);  // right margin
+        QPainterPath rectPath, roundedPath;
+        roundedPath.addRoundedRect(rect.x(), rect.y(), rect.width() * 2, rect.height(), radius,
+                                   radius);
+        rectPath.addRect(rect.x() + rect.width(), rect.y(), rect.width(), rect.height());
+        clipPath = roundedPath.subtracted(rectPath);
+        painter->setClipPath(clipPath);
+        path.addRect(rect);
+    } break;
+    case QStyleOptionViewItem::Middle: {
+        path.addRect(rect);
+    } break;
+    case QStyleOptionViewItem::End: {
+        rect.setWidth(rect.width() - margin);  // right margin
 
-            QPainterPath rectPath, roundedPath;
-            roundedPath.addRoundedRect(rect.x() - rect.width(), rect.y(), rect.width() * 2,
-                                       rect.height(), radius, radius);
-            rectPath.addRect(rect.x() - rect.width(), rect.y(), rect.width(), rect.height());
-            clipPath = roundedPath.subtracted(rectPath);
-            painter->setClipPath(clipPath);
-            path.addRect(rect);
-        } break;
-        case QStyleOptionViewItem::OnlyOne: {
-            rect.setX(rect.x() + margin);          // left margin
-            rect.setWidth(rect.width() - margin);  // right margin
-            path.addRoundedRect(rect, radius, radius);
-        } break;
-        default: {
-            painter->restore();
-            QStyledItemDelegate::paint(painter, option, index);
-            return;
-        }
+        QPainterPath rectPath, roundedPath;
+        roundedPath.addRoundedRect(rect.x() - rect.width(), rect.y(), rect.width() * 2,
+                                   rect.height(), radius, radius);
+        rectPath.addRect(rect.x() - rect.width(), rect.y(), rect.width(), rect.height());
+        clipPath = roundedPath.subtracted(rectPath);
+        painter->setClipPath(clipPath);
+        path.addRect(rect);
+    } break;
+    case QStyleOptionViewItem::OnlyOne: {
+        rect.setX(rect.x() + margin);          // left margin
+        rect.setWidth(rect.width() - margin);  // right margin
+        path.addRoundedRect(rect, radius, radius);
+    } break;
+    default: {
+        painter->restore();
+        QStyledItemDelegate::paint(painter, option, index);
+        return;
+    }
     }
     painter->fillPath(path, background);
 
     QRect iconRect = rect;
     if (opt.viewItemPosition == QStyleOptionViewItem::Beginning &&
-        index.data(Qt::DecorationRole).isValid()) {
+            index.data(Qt::DecorationRole).isValid()) {
         iconRect.setX(rect.x() - margin);
         iconRect.setWidth(64);
         QIcon ic = index.data(Qt::DecorationRole).value<QIcon>();
@@ -146,7 +146,7 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     //    textRect.setWidth(textRect.width() - margin * 2);
     QString text = fm.elidedText(opt.text, opt.textElideMode, textRect.width());
 
-    painter->drawText(textRect, static_cast<int>(opt.displayAlignment), text);
+    painter->drawText(textRect, Qt::TextSingleLine | static_cast<int>(opt.displayAlignment), text);
 
     painter->restore();
 }

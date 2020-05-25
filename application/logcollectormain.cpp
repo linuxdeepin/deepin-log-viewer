@@ -81,7 +81,6 @@ void LogCollectorMain::initUI()
     /** left frame */
     m_logCatelogue = new LogListView(this);
     m_logCatelogue->setMaximumWidth(LEFT_LIST_WIDTH);
-    qDebug() << " m_logCatelogue->geometry().width()" << m_logCatelogue->geometry().width();
     m_logCatelogue->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     m_hSplitter->addWidget(m_logCatelogue);

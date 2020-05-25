@@ -20,6 +20,7 @@
  */
 
 #include "journalwork.h"
+#include "utils.h"
 #include <DApplication>
 #include <QDateTime>
 #include <QDebug>
@@ -125,7 +126,8 @@ void journalWork::doWork()
         }
         uint64_t t;
         sd_journal_get_realtime_usec(j, &t);
-
+        //解锁返回字符串长度上限，默认是64k，写0为无限
+        // sd_journal_set_data_threshold(j, 0);
         QString dt = getReplaceColorStr(d).split("=").value(1);
         if (m_arg.size() == 2) {
             if (t < m_arg.at(1).toLongLong())
@@ -140,19 +142,21 @@ void journalWork::doWork()
             logMsg.hostName = getReplaceColorStr(d).split("=").value(1);
         }
 
-        r = sd_journal_get_data(j, "_COMM", (const void **)&d, &l);
-        if (r < 0)
-            logMsg.daemonName = "";
-        else {
-            logMsg.daemonName = getReplaceColorStr(d).split("=").value(1);
-        }
-
         r = sd_journal_get_data(j, "_PID", (const void **)&d, &l);
         if (r < 0)
             logMsg.daemonId = "";
         else {
             logMsg.daemonId = getReplaceColorStr(d).split("=").value(1);
         }
+
+        r = sd_journal_get_data(j, "_COMM", (const void **)&d, &l);
+        if (r < 0) {
+            logMsg.daemonName = "";
+            qDebug() << logMsg.daemonId << "error code" << r;
+        } else {
+            logMsg.daemonName = getReplaceColorStr(d).split("=").value(1);
+        }
+
 
         r = sd_journal_get_data(j, "MESSAGE", (const void **)&d, &l);
         if (r < 0) {
@@ -179,8 +183,6 @@ void journalWork::doWork()
             usleep(100);
         }
         //  delete d;
-//        int sized = sizeof(d);
-//        qDebug() << "1111";
     }
     emit journalFinished();
     //第一次加载时这个之后的代码都不执行?故放到最后
@@ -239,10 +241,14 @@ void journalWork::doWork()
 
 QString journalWork::getReplaceColorStr(const char *d)
 {
-    QString d_str = QString(d);
+    QByteArray byteChar(d);
+    byteChar = Utils::replaceEmptyByteArray(byteChar);
+    QString d_str = QString(byteChar);
     d_str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
     return  d_str;
 }
+
+
 
 QString journalWork::getDateTimeFromStamp(QString str)
 {

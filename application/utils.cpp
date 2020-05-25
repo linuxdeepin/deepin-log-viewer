@@ -158,5 +158,8 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
 QByteArray Utils::replaceEmptyByteArray(QByteArray &iReplaceStr)
 {
     QByteArray byteOutput = iReplaceStr;
-    return byteOutput.replace('\u0000', "");
+    //\u0000是空字符，\x01是标题开始，出现于系统日志部分进程进程名称最后一个字符，不替换英文情况下显示错误
+    return byteOutput.replace('\u0000', "").replace("\x01", "");
 }
+
+
