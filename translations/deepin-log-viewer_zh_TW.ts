@@ -19,17 +19,17 @@
         <translation>重新整理</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="358"/>
+        <location filename="../application/loglistview.cpp" line="345"/>
         <source>Are you sure you want to clear the log?</source>
         <translation>您確定要清除該日誌嗎？</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="359"/>
+        <location filename="../application/loglistview.cpp" line="346"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="360"/>
+        <location filename="../application/loglistview.cpp" line="347"/>
         <source>Confirm</source>
         <translation>確定</translation>
     </message>
@@ -44,34 +44,34 @@
         <translation>全部</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="76"/>
         <location filename="../application/filtercontent.cpp" line="77"/>
+        <location filename="../application/filtercontent.cpp" line="78"/>
         <source>Today</source>
         <translatorcomment>Today</translatorcomment>
         <translation>今天</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="83"/>
         <location filename="../application/filtercontent.cpp" line="85"/>
+        <location filename="../application/filtercontent.cpp" line="87"/>
         <source>3 days</source>
         <translatorcomment>3 days</translatorcomment>
         <translation>近三天</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="91"/>
-        <location filename="../application/filtercontent.cpp" line="93"/>
+        <location filename="../application/filtercontent.cpp" line="94"/>
+        <location filename="../application/filtercontent.cpp" line="96"/>
         <source>1 week</source>
         <translation>近一週</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="99"/>
-        <location filename="../application/filtercontent.cpp" line="101"/>
+        <location filename="../application/filtercontent.cpp" line="103"/>
+        <location filename="../application/filtercontent.cpp" line="105"/>
         <source>1 month</source>
         <translation>近一個月</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="107"/>
-        <location filename="../application/filtercontent.cpp" line="109"/>
+        <location filename="../application/filtercontent.cpp" line="112"/>
+        <location filename="../application/filtercontent.cpp" line="114"/>
         <source>3 months</source>
         <translation>近三個月</translation>
     </message>
@@ -81,7 +81,7 @@
         <translation type="vanished">重設</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="195"/>
+        <location filename="../application/filtercontent.cpp" line="201"/>
         <source>Export</source>
         <translatorcomment>Export</translatorcomment>
         <translation>匯出</translation>
@@ -90,76 +90,76 @@
 <context>
     <name>ComboBox</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="141"/>
+        <location filename="../application/filtercontent.cpp" line="147"/>
         <source>Emergency</source>
         <translatorcomment>Emergency</translatorcomment>
         <translation>緊急</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="142"/>
+        <location filename="../application/filtercontent.cpp" line="148"/>
         <source>Alert</source>
         <translatorcomment>Alert</translatorcomment>
         <translation>嚴重警告</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="143"/>
+        <location filename="../application/filtercontent.cpp" line="149"/>
         <source>Critical</source>
         <translatorcomment>Critical</translatorcomment>
         <translation>嚴重</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="144"/>
+        <location filename="../application/filtercontent.cpp" line="150"/>
         <source>Error</source>
         <translatorcomment>Error</translatorcomment>
         <translation>錯誤</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="145"/>
+        <location filename="../application/filtercontent.cpp" line="151"/>
         <source>Warning</source>
         <translatorcomment>Warning</translatorcomment>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="146"/>
+        <location filename="../application/filtercontent.cpp" line="152"/>
         <source>Notice</source>
         <translatorcomment>Notice</translatorcomment>
         <translation>注意</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="147"/>
-        <location filename="../application/filtercontent.cpp" line="149"/>
+        <location filename="../application/filtercontent.cpp" line="153"/>
+        <location filename="../application/filtercontent.cpp" line="155"/>
         <source>Info</source>
         <translatorcomment>Info</translatorcomment>
         <translation>訊息</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="148"/>
+        <location filename="../application/filtercontent.cpp" line="154"/>
         <source>Debug</source>
         <translatorcomment>Debug</translatorcomment>
         <translation>除錯</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="185"/>
+        <location filename="../application/filtercontent.cpp" line="191"/>
         <source>Login</source>
         <translatorcomment>Login</translatorcomment>
         <translation>登入</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="186"/>
+        <location filename="../application/filtercontent.cpp" line="192"/>
         <source>Boot</source>
         <translatorcomment>Boot</translatorcomment>
         <translation>開機</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="187"/>
+        <location filename="../application/filtercontent.cpp" line="193"/>
         <source>Shutdown</source>
         <translatorcomment>Shutdown</translatorcomment>
         <translation>關機</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="140"/>
-        <location filename="../application/filtercontent.cpp" line="171"/>
-        <location filename="../application/filtercontent.cpp" line="184"/>
+        <location filename="../application/filtercontent.cpp" line="146"/>
+        <location filename="../application/filtercontent.cpp" line="177"/>
+        <location filename="../application/filtercontent.cpp" line="190"/>
         <source>All</source>
         <translatorcomment>All</translatorcomment>
         <translation>全部</translation>
@@ -196,18 +196,18 @@
         <translation>週期：</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="136"/>
+        <location filename="../application/filtercontent.cpp" line="142"/>
         <source>Level:  </source>
         <translation>級別：</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="157"/>
+        <location filename="../application/filtercontent.cpp" line="163"/>
         <source>Application list:</source>
         <translatorcomment>Application list:</translatorcomment>
         <translation> 應用程式列表：</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="180"/>
+        <location filename="../application/filtercontent.cpp" line="186"/>
         <location filename="../application/logdetailinfowidget.cpp" line="138"/>
         <source>Event Type:</source>
         <translatorcomment>Event Type:</translatorcomment>
@@ -251,7 +251,7 @@
         <translation>登入訊息</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="167"/>
+        <location filename="../application/filtercontent.cpp" line="173"/>
         <location filename="../application/logdetailinfowidget.cpp" line="135"/>
         <source>Status:</source>
         <translatorcomment>Status:</translatorcomment>
@@ -342,8 +342,8 @@
 <context>
     <name>LogFileParser</name>
     <message>
-        <location filename="../application/logfileparser.cpp" line="436"/>
-        <location filename="../application/logfileparser.cpp" line="441"/>
+        <location filename="../application/logfileparser.cpp" line="439"/>
+        <location filename="../application/logfileparser.cpp" line="444"/>
         <source>information</source>
         <translation>訊息</translation>
     </message>

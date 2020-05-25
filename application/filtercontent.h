@@ -51,6 +51,8 @@ private:
 
     void setUeButtonSytle();
     void paintEvent(QPaintEvent *event);
+    void resizeWidth();
+
 
 signals:
     void sigButtonClicked(int tId, int lId, QModelIndex idx);
@@ -61,6 +63,7 @@ signals:
     void sigStatusChanged(QString str);
 
     void sigLogtypeChanged(int tId);  // add by Airy
+    void sigResizeWidth(int iWidth);
 
 public slots:
     void slot_logCatelogueClicked(const QModelIndex &index);

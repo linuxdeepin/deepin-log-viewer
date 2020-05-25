@@ -182,7 +182,6 @@ void journalWork::doWork()
 //        int sized = sizeof(d);
 //        qDebug() << "1111";
     }
-
     emit journalFinished();
     //第一次加载时这个之后的代码都不执行?故放到最后
     sd_journal_close(j);

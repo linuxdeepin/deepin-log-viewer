@@ -28,7 +28,12 @@
 #include <QHeaderView>
 #include <QStandardItem>
 #include <QStandardItemModel>
-
+#include <QSizePolicy>
+#include <QList>
+//958+53+50
+#define MAINWINDOW_WIDTH 1011
+#define MAINWINDOW_HEIGHT 736
+#define LEFT_LIST_WIDTH 200
 DWIDGET_USE_NAMESPACE
 
 LogCollectorMain::LogCollectorMain(QWidget *parent)
@@ -40,6 +45,7 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
     initShortCut();
 
     m_logCatelogue->setDefaultSelect();
+    setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
 }
 
 LogCollectorMain::~LogCollectorMain()
@@ -69,27 +75,46 @@ void LogCollectorMain::initUI()
     /** inherit QMainWidow, why need new centralWidget?? */
     this->setCentralWidget(new DWidget());
 
-    m_hLayout = new QHBoxLayout;
-
+    //m_hLayout = new QHBoxLayout;
+    m_hSplitter = new Dtk::Widget::DSplitter(this);
+    m_hSplitter->setOrientation(Qt::Horizontal);
     /** left frame */
     m_logCatelogue = new LogListView(this);
-    m_hLayout->addWidget(m_logCatelogue, 1);
+    m_logCatelogue->setMaximumWidth(LEFT_LIST_WIDTH);
+    qDebug() << " m_logCatelogue->geometry().width()" << m_logCatelogue->geometry().width();
+    m_logCatelogue->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+
+    m_hSplitter->addWidget(m_logCatelogue);
+    m_hSplitter->setStretchFactor(0, 1);
 
     m_vLayout = new QVBoxLayout;
     /** topRight frame */
     m_topRightWgt = new FilterContent();
+    // m_topRightWgt->setMinimumWidth(8000);
+    // m_topRightWgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     m_vLayout->addWidget(m_topRightWgt);
     /** midRight frame */
     m_midRightWgt = new DisplayContent(this);
     m_vLayout->addWidget(m_midRightWgt, 1);
     m_vLayout->setContentsMargins(0, 10, 0, 10);
     m_vLayout->setSpacing(6);
-
-    m_hLayout->addLayout(m_vLayout, 10);
-    m_hLayout->setContentsMargins(0, 0, 10, 0);
-    m_hLayout->setSpacing(10);
-
-    this->centralWidget()->setLayout(m_hLayout);
+    DWidget *rightWidget = new DWidget(this);
+    //撑开右侧控件
+    rightWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    rightWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    rightWidget->setContentsMargins(10, 0, 0, 0);
+    rightWidget->setLayout(m_vLayout);
+    // rightWidget->setMinimumWidth(693);
+    m_hSplitter->addWidget(rightWidget);
+    m_hSplitter->setStretchFactor(1, 10);
+    m_hSplitter->setOpaqueResize(true);
+    m_hSplitter->setContentsMargins(0, 0, 10, 0);
+    m_hSplitter->setChildrenCollapsible(false);
+    m_hSplitter->setSizes(QList<int>() << 200);
+    //m_hSplitter->setSpacing(10);
+    this->setCentralWidget(m_hSplitter);
+    // this->centralWidget()->setLayout(m_hSplitter);
+    m_originFilterWidth = m_topRightWgt->geometry().width();
 }
 
 void LogCollectorMain::initConnection()
@@ -116,7 +141,9 @@ void LogCollectorMain::initConnection()
 
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_logCatelogue,
             &LogListView::slot_getAppPath);  // add by Airy for getting app path
-
+    //自适应宽度
+//    connect(m_topRightWgt, &FilterContent::sigResizeWidth, this,
+//            &LogCollectorMain::resizeWidthByFilterContentWidth);
     connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_midRightWgt,
             SLOT(slot_refreshClicked(const QModelIndex &)));  // add by Airy for adding refresh
 
@@ -185,3 +212,19 @@ void LogCollectorMain::initShortCut()
                 [this] { this->m_topRightWgt->shortCutExport(); });
     }
 }
+
+void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
+{
+    int otherWidth = MAINWINDOW_WIDTH - m_originFilterWidth;
+    qDebug() << "otherWidth" << otherWidth << iWidth;
+    int currentWidth = otherWidth + iWidth;
+    int  setedWidth = currentWidth > MAINWINDOW_WIDTH ? currentWidth : MAINWINDOW_WIDTH;
+    //  setMinimumWidth(setedWidth);
+    if (setedWidth <= MAINWINDOW_WIDTH) {
+        // setM
+        //setWidth(setWidth);
+    }
+}
+
+
+

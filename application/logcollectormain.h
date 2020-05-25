@@ -34,7 +34,7 @@
 #include "filtercontent.h"
 #include "loglistview.h"
 #include "logtreeview.h"
-
+class DSplitter;
 class LogCollectorMain : public Dtk::Widget::DMainWindow
 {
 public:
@@ -45,14 +45,15 @@ public:
     void initConnection();
 
     void initShortCut();
-
+public slots:
+    void resizeWidthByFilterContentWidth(int iWidth);
 private:
     Dtk::Widget::DSearchEdit *m_searchEdt;
     FilterContent *m_topRightWgt;
     //    LogTreeView *m_treeView;
     LogListView *m_logCatelogue;
     DisplayContent *m_midRightWgt;
-    QHBoxLayout *m_hLayout;
+    //QHBoxLayout *m_hLayout;
     QVBoxLayout *m_vLayout;
 
     Dtk::Widget::DSplitter *m_hSplitter;
@@ -60,6 +61,7 @@ private:
     QShortcut *m_scWndReize {nullptr};  // Resize Window      --> Ctrl+Alt+F
     QShortcut *m_scFindFont {nullptr};  // Find font          --> Ctrl+F
     QShortcut *m_scExport {nullptr};    // export file          --> Ctrl+E
+    int m_originFilterWidth = 0;
 };
 
 #endif  // LOGCOLLECTORMAIN_H

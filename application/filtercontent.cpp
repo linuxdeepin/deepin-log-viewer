@@ -68,47 +68,53 @@ void FilterContent::initUI()
     LogPeriodButton *m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
     m_allBtn->setToolTip(DApplication::translate("Button", "All"));  // add by Airy for bug 16245
     m_allBtn->setObjectName("allBtn");
-    m_allBtn->setFixedSize(
-        QSize(BUTTON_WIDTH_MIN - 4, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+    m_allBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
+//    m_allBtn->setFixedSize(
+//        QSize(BUTTON_WIDTH_MIN - 4, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
     m_btnGroup->addButton(m_allBtn, 0);
 
     LogPeriodButton *m_todayBtn =
         new LogPeriodButton(DApplication::translate("Button", "Today"), this);
     m_todayBtn->setToolTip(DApplication::translate("Button", "Today"));  // add by Airy for bug
     // 16245
-    m_todayBtn->setFixedSize(QSize(64 + 10, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+    // m_todayBtn->setFixedSize(QSize(64 + 10, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+    //  m_todayBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_todayBtn, 1);
 
     LogPeriodButton *m_threeDayBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
     m_threeDayBtn->setToolTip(
         DApplication::translate("Button", "3 days"));  // add by Airy for bug 16245
-    m_threeDayBtn->setFixedSize(
-        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    m_threeDayBtn->setFixedSize(
+//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+    //m_threeDayBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_threeDayBtn, 2);
 
     LogPeriodButton *m_lastWeekBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
     m_lastWeekBtn->setToolTip(
         DApplication::translate("Button", "1 week"));  // add by Airy for bug 16245
-    m_lastWeekBtn->setFixedSize(
-        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    m_lastWeekBtn->setFixedSize(
+//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+    //  m_lastWeekBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_lastWeekBtn, 3);
 
     LogPeriodButton *m_lastMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
     m_lastMonthBtn->setToolTip(
         DApplication::translate("Button", "1 month"));  // add by Airy for bug 16245
-    m_lastMonthBtn->setFixedSize(
-        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    m_lastMonthBtn->setFixedSize(
+//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+    //  m_lastMonthBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_lastMonthBtn, 4);
 
     LogPeriodButton *m_threeMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
     m_threeMonthBtn->setToolTip(
         DApplication::translate("Button", "3 months"));  // add by Airy for bug 16245
-    m_threeMonthBtn->setFixedSize(
-        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    m_threeMonthBtn->setFixedSize(
+//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+    //m_threeMonthBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_threeMonthBtn, 5);
 
     setUeButtonSytle();
@@ -127,7 +133,7 @@ void FilterContent::initUI()
     cmdLinkBtn->hide();
     m_btnGroup->addButton(cmdLinkBtn, 6);
     hLayout_period->addWidget(cmdLinkBtn);
-    hLayout_period->setSpacing(6);
+    hLayout_period->setSpacing(10);
 
     // set level info
     hLayout_all = new QHBoxLayout;
@@ -193,17 +199,20 @@ void FilterContent::initUI()
     hLayout_all->addStretch(1);
 
     DPushButton *exportBtn = new DPushButton(DApplication::translate("Button", "Export"), this);
-    exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
+
+    //exportBtn->setContentsMargins(10, 10, 20, 20);
+    //exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
+    exportBtn->setContentsMargins(0, 0, 18, 18);
+    exportBtn->setFixedWidth(BUTTON_EXPORT_WIDTH_MIN);
     exportBtn->setFocusPolicy(Qt::NoFocus);
     m_btnGroup->addButton(exportBtn, 7);
     hLayout_all->addWidget(exportBtn);
-
     // set layout
     vLayout->addLayout(hLayout_period);
     vLayout->addLayout(hLayout_all);
     vLayout->setSpacing(16);
-    this->setLayout(vLayout);
 
+    this->setLayout(vLayout);
     // default application list is not visible
     setSelectorVisible(true, false, false, true, false);
 }
@@ -224,6 +233,7 @@ void FilterContent::shortCutExport()
     if (!itemData.isEmpty())
         emit sigExportInfo();
 }
+
 
 void FilterContent::setAppComboBoxItem()
 {
@@ -273,8 +283,11 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     } else {
         hLayout_period->removeWidget(m_btnGroup->button(EXPORT));
         hLayout_all->addWidget(m_btnGroup->button(EXPORT));
+
     }
+    resizeWidth();
     //    va_end(arg_ptr);  //清除可变参数指针
+
 }
 
 void FilterContent::setUeButtonSytle()
@@ -283,6 +296,7 @@ void FilterContent::setUeButtonSytle()
         LogPeriodButton *btn = static_cast<LogPeriodButton *>(abtn);
         btn->setFlat(true);
         btn->setCheckable(true);
+        btn->setContentsMargins(18, 18, btn->contentsMargins().top(), btn->contentsMargins().bottom());
         if (btn->objectName() == "allBtn")
             btn->setChecked(true);
     }
@@ -316,7 +330,36 @@ void FilterContent::paintEvent(QPaintEvent *event)
     // Restore the pen
     painter.setPen(oldPen);
 
+//    m_allBtn->setFixedSize(
+//        QSize(BUTTON_WIDTH_MIN - 4, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    m_todayBtn->setFixedSize(QSize(64 + 10, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    m_threeDayBtn->setFixedSize(
+//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    m_lastWeekBtn->setFixedSize(
+//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    m_lastMonthBtn->setFixedSize(
+//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    m_threeMonthBtn->setFixedSize(
+//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
+//    exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
+
     DFrame::paintEvent(event);
+}
+//自适应宽度
+void FilterContent::resizeWidth()
+{
+    int periodWidth = 0;
+    int periodCount = hLayout_period->count();
+
+    for (int i = 0; i < periodCount ; ++i) {
+        QLayoutItem *item = hLayout_period->itemAt(i);
+        QWidget *item_w = item->widget();
+        if (item_w && (!item_w->isHidden())) {
+            int  itemWidth = item_w->geometry().width();
+            periodWidth += itemWidth;
+        }
+    }
+    emit   sigResizeWidth(periodWidth);
 }
 
 void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
