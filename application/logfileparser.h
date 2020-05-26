@@ -48,7 +48,7 @@ public:
     void parseByApp(QString path, int lv = 6, qint64 ms = 0);
 
     void parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms = 0);  // add by Airy
-
+    void parseByKwin(KWIN_FILTERS iKwinfilter);
     void createFile(QString output, int count);
     void stopAllLoad();
 
@@ -60,6 +60,8 @@ signals:
     void journalFinished();
     void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
     void normalFinished();  // add by Airy
+    void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
+
 
 private:
     bool isErroCommand(QString str);
@@ -70,7 +72,6 @@ public slots:
     void slot_journalFinished();
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slot_threadFinished(LOG_FLAG flag, QString output);
-
 private:
     QString m_rootPasswd;
 
@@ -82,11 +83,13 @@ private:
     journalWork *work {nullptr};
     QProcess *m_pDkpgDataLoader{nullptr};
     QProcess *m_pXlogDataLoader{nullptr};
+    QProcess *m_KwinDataLoader{nullptr};
     bool m_isProcess = false;
     qint64 m_selectTime {0};
     bool m_isJournalLoading = false;
     bool m_isDpkgLoading = false;
     bool m_isXlogLoading = false;
+    bool m_isKwinLoading = false;
     bool m_isBootLoading = false;
     bool m_isKernLoading = false;
     bool m_isAppLoading = false;

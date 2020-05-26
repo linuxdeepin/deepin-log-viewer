@@ -298,7 +298,22 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
     //            }
     //        }
     //    }
-}  // end add
+}
+
+void LogFileParser::parseByKwin(KWIN_FILTERS iKwinfilter)
+{
+    m_authThread = LogAuthThread::instance();
+    if (m_authThread->isRunning())
+        m_authThread->terminate();
+
+    disconnect(m_authThread, &LogAuthThread::kwinFinished, this,
+               &LogFileParser::kwinFinished);
+    m_authThread->setType(Kwin);
+    m_authThread->setFileterParam(iKwinfilter);
+    connect(m_authThread, &LogAuthThread::kwinFinished, this,
+            &LogFileParser::kwinFinished);
+    m_authThread->start();
+}
 #if 0
 void LogFileParser::parseByXlog(QStringList &xList)
 {
@@ -567,3 +582,7 @@ void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
         break;
     }
 }
+
+
+
+

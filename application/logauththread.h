@@ -30,15 +30,17 @@ public:
     QString getStandardError();
 
     void setType(LOG_FLAG flag) { m_type = flag; }
-
+    void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
 protected:
     void run() override;
 
     void handleBoot();
     void handleKern();
+    void handleKwin();
 
 signals:
     void cmdFinished(LOG_FLAG, QString output);
+    void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
 
 public slots:
     void onFinished(int exitCode);
@@ -48,7 +50,7 @@ private:
     QString m_output;
     QString m_error;
     LOG_FLAG m_type;
-
+    KWIN_FILTERS m_kwinFilters;
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
 };

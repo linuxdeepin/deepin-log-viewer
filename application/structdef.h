@@ -22,7 +22,7 @@
 #ifndef STRUCTDEF_H
 #define STRUCTDEF_H
 #include <QString>
-
+#include <QDir>
 struct LOG_MSG_JOURNAL {
     // include dateTime level type detailInfo...
     QString dateTime;
@@ -63,6 +63,13 @@ struct LOG_MSG_NORMAL {
     QString dateTime;
     QString msg;
 };
+struct LOG_MSG_KWIN {
+    QString msg;
+};
+//kwin筛选条件，kwin日志只有信息，没有任何可筛选的，但是先放在这，以后统一化
+struct KWIN_FILTERS {
+    QString msg;
+};
 
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 
@@ -86,6 +93,7 @@ enum LOG_FLAG {
     DPKG,
     APP,
     Normal,
+    Kwin,
     NONE = 9999
 };  // modified by
 // Airy
@@ -150,10 +158,12 @@ enum NORMAL_DISPLAY_COLUMN {
 #define JOUR_TABLE_DATA "journalItemData"
 #define APP_TABLE_DATA "applicationItemData"
 #define LAST_TABLE_DATA "lastItemData"  // add by Airy
+#define KWIN_TABLE_DATA "kwinItemData"
 
 #define JOUR_TREE_DATA "journalctl"
 #define DPKG_TREE_DATA "/var/log/dpkg.log"
 #define XORG_TREE_DATA "/var/log/Xorg.0.log"
+#define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"
 #define BOOT_TREE_DATA "/var/log/boot.log"
 #define KERN_TREE_DATA "/var/log/kern.log"
 #define APP_TREE_DATA "application"

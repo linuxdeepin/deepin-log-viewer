@@ -27,7 +27,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QProcess> //add by Airy
-
+#include <QDir>
 #include "loglistview.h"
 #include "logapplicationhelper.h"
 #define ITEM_HEIGHT 40
@@ -101,6 +101,14 @@ void LogListView::initUI()
         item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
         item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
         item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
+        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        m_pModel->appendRow(item);
+    }
+    if (isFileExist(QDir::homePath() + "/.kwin.log")) {
+        item = new QStandardItem(DApplication::translate("Tree", "Kwin Log"));
+        item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
+        item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
@@ -192,6 +200,8 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
                 _itemIcon = icon + "application.svg";
             } else if (item->data(ITEM_DATE_ROLE).toString() == LAST_TREE_DATA) {
                 _itemIcon = icon + "start.svg";
+            } else if (item->data(ITEM_DATE_ROLE).toString() == KWIN_TREE_DATA) {
+                _itemIcon = icon + "kwin.svg";
             }
             if (currentItem != nullptr && item == currentItem) {
                 _itemIcon.replace(".svg", "_checked.svg");
@@ -260,7 +270,7 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
 void LogListView::truncateFile(QString path_)
 {
     QProcess prc;
-    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA) {
+    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA) {
         prc.start("pkexec", QStringList() << "truncate"
                   << "-s"
                   << "0"
@@ -299,7 +309,7 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
 {
     Q_UNUSED(event);
     QModelIndex idx = this->currentIndex();
-
+    QString pathData = idx.data(ITEM_DATE_ROLE).toString();
     if (!this->selectionModel()->selectedIndexes().empty()) {
 
         g_context = new QMenu(this);
@@ -311,7 +321,7 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         g_context->addAction(g_clear);
         g_context->addAction(g_refresh);
 
-        if (idx.row() == 0 || idx.row() == 6) {
+        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA) {
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
@@ -320,8 +330,8 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         QString _path_ = g_path;      //get app path
         QString path = "";
 
-        QString pathData = idx.data(ITEM_DATE_ROLE).toString();
-        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA) {
+
+        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA) {
             path = pathData;
         } else if (pathData == APP_TREE_DATA) {
             //                    path = dirPath + QString("/.cache/deepin/.");

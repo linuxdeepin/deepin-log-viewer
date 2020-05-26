@@ -169,6 +169,8 @@ void DisplayContent::initConnections()
             Qt::QueuedConnection);
     connect(&m_logFileParse, &LogFileParser::applicationFinished, this,
             &DisplayContent::slot_applicationFinished);
+    connect(&m_logFileParse, &LogFileParser::kwinFinished, this,
+            &DisplayContent::slot_kwinFinished);
     connect(&m_logFileParse, SIGNAL(normalFinished()), this,
             SLOT(slot_NormalFinished()));  // add by Airy
     connect(m_treeView->verticalScrollBar(), &QScrollBar::valueChanged, this,
@@ -506,6 +508,26 @@ void DisplayContent::generateXorgFile(int id)
     }
 }
 
+void DisplayContent::creatKwinTable(QList<LOG_MSG_KWIN> &list)
+{
+    m_limitTag = 0;
+    setLoadState(DATA_COMPLETE);
+    m_pModel->clear();
+    parseListToModel(list, m_pModel);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
+void DisplayContent::generateKwinFile(KWIN_FILTERS iFilters)
+{
+    m_kwinList.clear();
+    m_currentKwinList.clear();
+    setLoadState(DATA_LOADING);
+    m_logFileParse.parseByKwin(iFilters);
+}
+
 void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 {
     setLoadState(DATA_COMPLETE);
@@ -713,6 +735,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         qDebug() << "repeat click" << m_flag;
         return;
     }
+    m_currentKwinFilter = {""};
     m_curListIdx = index;
 
     m_detailWgt->cleanText();
@@ -750,6 +773,11 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_flag = Normal;
         //        m_logFileParse.parseByNormal(norList);
         generateNormalFile(m_curBtnId);
+    } else if (itemData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
+        m_kwinList.clear();
+        m_currentKwinList.clear();
+        m_flag = Kwin;
+        m_logFileParse.parseByKwin(m_currentKwinFilter);
     }
 
     if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||   //modified by Airy for bug 19660:spinner always running
@@ -799,6 +827,9 @@ void DisplayContent::slot_exportClicked()
         break;
     case KERN:
         parseListToModel(kList, exportTempModel);
+        break;
+    case Kwin:
+        parseListToModel(m_currentKwinList, exportTempModel);
         break;
     default:
         break;
@@ -888,6 +919,17 @@ void DisplayContent::slot_kernFinished(QList<LOG_MSG_JOURNAL> list)
     kList = list;
     setLoadState(DATA_COMPLETE);
     createKernTable(kList);
+}
+
+void DisplayContent::slot_kwinFinished(QList<LOG_MSG_KWIN> list)
+{
+    if (m_flag != Kwin)
+        return;
+
+    m_kwinList = list;
+    m_currentKwinList = m_kwinList;
+    setLoadState(DATA_COMPLETE);
+    creatKwinTable(m_currentKwinList);
 }
 
 void DisplayContent::slot_journalFinished()
@@ -1095,6 +1137,18 @@ void DisplayContent::slot_searchResult(QString str)
         }
         createNormalTable(tmp);
     } break;  // add by Airy
+    case Kwin: {
+        m_currentKwinList = m_kwinList;
+
+        int cnt = m_currentKwinList.count();
+        for (int i = cnt - 1; i >= 0; --i) {
+            LOG_MSG_KWIN msg = m_currentKwinList.at(i);
+            if (msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
+                continue;
+            m_currentKwinList.removeAt(i);
+        }
+        creatKwinTable(m_currentKwinList);
+    } break;
     default:
         break;
     }
@@ -1326,6 +1380,31 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItem
     }
 }
 
+void DisplayContent::parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    oPModel->setColumnCount(1);
+    oPModel->setHorizontalHeaderLabels(QStringList()
+                                       << DApplication::translate("Table", "Info"));
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<LOG_MSG_KWIN> list = iList;
+    DStandardItem *item = nullptr;
+    QList<QStandardItem *> items;
+    for (int i = 0; i < list.size(); i++) {
+        items.clear();
+        item = new DStandardItem(list[i].msg);
+        item->setData(KWIN_TABLE_DATA);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
 void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
 {
     if (!m_spinnerWgt->isHidden()) {
@@ -1489,10 +1568,10 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     }
 
     m_curListIdx = index;
-
     m_detailWgt->cleanText();
     m_pModel->clear();
-
+    m_currentSearchStr.clear();
+    m_currentKwinFilter = {""};
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty())
         return;
@@ -1526,7 +1605,13 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         m_flag = Normal;
         //        m_logFileParse.parseByNormal(norList);
         generateNormalFile(m_curBtnId);
+    } else if (itemData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
+        m_kwinList.clear();
+        m_currentKwinList.clear();
+        m_flag = Kwin;
+        m_logFileParse.parseByKwin(m_currentKwinFilter);
     }
+
 
     if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
             !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy

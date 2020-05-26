@@ -1,4 +1,5 @@
 #include "logauththread.h"
+#include "utils.h"
 #include <QDebug>
 
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
@@ -30,6 +31,9 @@ void LogAuthThread::run()
     case BOOT:
         handleBoot();
         break;
+    case Kwin:
+        handleKwin();
+        break;
     default:
         break;
     }
@@ -39,9 +43,10 @@ void LogAuthThread::run()
 void LogAuthThread::handleBoot()
 {
     QFile file("/var/log/boot.log");  // add by Airy
-    if (!file.exists())
+    if (!file.exists()) {
+        emit cmdFinished(m_type, "");
         return;
-
+    }
     QProcess *proc = new QProcess;
     connect(proc, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     proc->setProcessChannelMode(QProcess::MergedChannels);
@@ -52,9 +57,11 @@ void LogAuthThread::handleBoot()
 
 void LogAuthThread::handleKern()
 {
-    QFile file("/var/log/kern.log");  // add by Airy
-    if (!file.exists())
+    QFile file("/var/log/kern.log"); // add by Airy
+    if (!file.exists()) {
+        emit cmdFinished(m_type, "");
         return;
+    }
     QProcess *proc = new QProcess;
     connect(proc, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
     // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
@@ -64,6 +71,36 @@ void LogAuthThread::handleKern()
     //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
     // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
     proc->waitForFinished(-1);
+}
+
+void LogAuthThread::handleKwin()
+{
+    QFile file(KWIN_TREE_DATA);
+    QList<LOG_MSG_KWIN> kwinList;
+    if (!file.exists()) {
+        emit kwinFinished(kwinList);
+        return;
+    }
+    QProcess proc ;
+    proc.start("cat", QStringList() << KWIN_TREE_DATA);
+    proc.waitForFinished(-1);
+    QByteArray outByte = proc.readAllStandardOutput();
+    QString output = Utils::replaceEmptyByteArray(outByte);
+    QString filterMsgStr = m_kwinFilters.msg;
+    QString filterMsgStr1 = m_kwinFilters.msg;
+    for (QString str : output.split('\n')) {
+//        if (!(filterMsgStr1.trimmed().isEmpty()) && !str.contains(filterMsgStr, Qt::CaseInsensitive)) {
+//            continue;
+//        }
+        if (str.trimmed().isEmpty()) {
+            continue;
+        }
+        LOG_MSG_KWIN kwinMsg;
+        kwinMsg.msg = str;
+        kwinList.insert(0, kwinMsg);
+    }
+    proc.close();
+    emit kwinFinished(kwinList);
 }
 
 void LogAuthThread::onFinished(int exitCode)

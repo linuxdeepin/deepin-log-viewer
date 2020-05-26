@@ -4,32 +4,32 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="306"/>
+        <location filename="../application/loglistview.cpp" line="316"/>
         <source>Display in file manager</source>
         <translation>在檔案管理員中顯示</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="307"/>
+        <location filename="../application/loglistview.cpp" line="317"/>
         <source>Clear log</source>
         <translation>清除日誌</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="308"/>
+        <location filename="../application/loglistview.cpp" line="318"/>
         <source>Refresh</source>
         <translation>重新整理</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="345"/>
+        <location filename="../application/loglistview.cpp" line="355"/>
         <source>Are you sure you want to clear the log?</source>
         <translation>您確定要清除該日誌嗎？</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="346"/>
+        <location filename="../application/loglistview.cpp" line="356"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="347"/>
+        <location filename="../application/loglistview.cpp" line="357"/>
         <source>Confirm</source>
         <translation>確定</translation>
     </message>
@@ -168,7 +168,7 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="774"/>
+        <location filename="../application/displaycontent.cpp" line="800"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
@@ -181,7 +181,7 @@
         <translation type="vanished">新文件</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="772"/>
+        <location filename="../application/displaycontent.cpp" line="798"/>
         <source>Export File</source>
         <translatorcomment>Export File</translatorcomment>
         <translation>匯出文件</translation>
@@ -272,7 +272,7 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="136"/>
-        <location filename="../application/journalwork.cpp" line="262"/>
+        <location filename="../application/journalwork.cpp" line="267"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
         <source>Alert</source>
         <translatorcomment>Alert</translatorcomment>
@@ -280,7 +280,7 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="137"/>
-        <location filename="../application/journalwork.cpp" line="263"/>
+        <location filename="../application/journalwork.cpp" line="268"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
         <source>Critical</source>
         <translatorcomment>Critical</translatorcomment>
@@ -289,7 +289,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="131"/>
         <location filename="../application/displaycontent.cpp" line="138"/>
-        <location filename="../application/journalwork.cpp" line="264"/>
+        <location filename="../application/journalwork.cpp" line="269"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
         <source>Error</source>
         <translatorcomment>Error</translatorcomment>
@@ -297,7 +297,7 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="135"/>
-        <location filename="../application/journalwork.cpp" line="261"/>
+        <location filename="../application/journalwork.cpp" line="266"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
         <source>Emergency</source>
         <translatorcomment>Emergency</translatorcomment>
@@ -306,7 +306,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="128"/>
         <location filename="../application/displaycontent.cpp" line="139"/>
-        <location filename="../application/journalwork.cpp" line="265"/>
+        <location filename="../application/journalwork.cpp" line="270"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
         <source>Warning</source>
         <translatorcomment>Warning</translatorcomment>
@@ -314,7 +314,7 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="140"/>
-        <location filename="../application/journalwork.cpp" line="266"/>
+        <location filename="../application/journalwork.cpp" line="271"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
         <source>Notice</source>
         <translatorcomment>Notice</translatorcomment>
@@ -323,7 +323,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="130"/>
         <location filename="../application/displaycontent.cpp" line="141"/>
-        <location filename="../application/journalwork.cpp" line="267"/>
+        <location filename="../application/journalwork.cpp" line="272"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
         <source>Info</source>
         <translatorcomment>Info</translatorcomment>
@@ -332,7 +332,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="129"/>
         <location filename="../application/displaycontent.cpp" line="142"/>
-        <location filename="../application/journalwork.cpp" line="268"/>
+        <location filename="../application/journalwork.cpp" line="273"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
         <source>Debug</source>
         <translatorcomment>Debug</translatorcomment>
@@ -342,8 +342,8 @@
 <context>
     <name>LogFileParser</name>
     <message>
-        <location filename="../application/logfileparser.cpp" line="439"/>
-        <location filename="../application/logfileparser.cpp" line="444"/>
+        <location filename="../application/logfileparser.cpp" line="457"/>
+        <location filename="../application/logfileparser.cpp" line="462"/>
         <source>information</source>
         <translation>訊息</translation>
     </message>
@@ -366,7 +366,7 @@
 <context>
     <name>SearchBar</name>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="58"/>
+        <location filename="../application/logcollectormain.cpp" line="64"/>
         <source>Search</source>
         <translatorcomment>Search</translatorcomment>
         <translation>搜尋</translation>
@@ -380,8 +380,8 @@
 <context>
     <name>Table</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="249"/>
-        <location filename="../application/displaycontent.cpp" line="1381"/>
+        <location filename="../application/displaycontent.cpp" line="251"/>
+        <location filename="../application/displaycontent.cpp" line="1454"/>
         <location filename="../application/logexportwidget.cpp" line="548"/>
         <source>User</source>
         <translatorcomment>User</translatorcomment>
@@ -393,76 +393,77 @@
         <translation type="vanished">守护进程</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="247"/>
-        <location filename="../application/displaycontent.cpp" line="1162"/>
-        <location filename="../application/displaycontent.cpp" line="1225"/>
-        <location filename="../application/displaycontent.cpp" line="1271"/>
-        <location filename="../application/displaycontent.cpp" line="1380"/>
+        <location filename="../application/displaycontent.cpp" line="249"/>
+        <location filename="../application/displaycontent.cpp" line="1210"/>
+        <location filename="../application/displaycontent.cpp" line="1273"/>
+        <location filename="../application/displaycontent.cpp" line="1319"/>
+        <location filename="../application/displaycontent.cpp" line="1453"/>
         <location filename="../application/logexportwidget.cpp" line="546"/>
         <source>Date and Time</source>
         <translatorcomment>Date and Time</translatorcomment>
         <translation>時間</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="246"/>
-        <location filename="../application/displaycontent.cpp" line="1382"/>
+        <location filename="../application/displaycontent.cpp" line="248"/>
+        <location filename="../application/displaycontent.cpp" line="1455"/>
         <location filename="../application/logexportwidget.cpp" line="544"/>
         <source>Process</source>
         <translatorcomment>Process</translatorcomment>
         <translation>行程</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="248"/>
-        <location filename="../application/displaycontent.cpp" line="1163"/>
-        <location filename="../application/displaycontent.cpp" line="1196"/>
-        <location filename="../application/displaycontent.cpp" line="1227"/>
-        <location filename="../application/displaycontent.cpp" line="1272"/>
-        <location filename="../application/displaycontent.cpp" line="1303"/>
-        <location filename="../application/displaycontent.cpp" line="1383"/>
+        <location filename="../application/displaycontent.cpp" line="250"/>
+        <location filename="../application/displaycontent.cpp" line="1211"/>
+        <location filename="../application/displaycontent.cpp" line="1244"/>
+        <location filename="../application/displaycontent.cpp" line="1275"/>
+        <location filename="../application/displaycontent.cpp" line="1320"/>
+        <location filename="../application/displaycontent.cpp" line="1351"/>
+        <location filename="../application/displaycontent.cpp" line="1385"/>
+        <location filename="../application/displaycontent.cpp" line="1456"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
         <source>Info</source>
         <translation>訊息</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="250"/>
+        <location filename="../application/displaycontent.cpp" line="252"/>
         <location filename="../application/logexportwidget.cpp" line="549"/>
         <source>PID</source>
         <translatorcomment>PID</translatorcomment>
         <translation>行程號</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1164"/>
+        <location filename="../application/displaycontent.cpp" line="1212"/>
         <source>Action</source>
         <translation>動作</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1300"/>
+        <location filename="../application/displaycontent.cpp" line="1348"/>
         <source>Event Type</source>
         <translatorcomment>Event Type</translatorcomment>
         <translation>事件類型</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1301"/>
+        <location filename="../application/displaycontent.cpp" line="1349"/>
         <source>Username</source>
         <translatorcomment>Username</translatorcomment>
         <translation>使用者名稱</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="245"/>
-        <location filename="../application/displaycontent.cpp" line="1224"/>
+        <location filename="../application/displaycontent.cpp" line="247"/>
+        <location filename="../application/displaycontent.cpp" line="1272"/>
         <location filename="../application/logexportwidget.cpp" line="543"/>
         <source>Level</source>
         <translatorcomment>Level</translatorcomment>
         <translation>級別</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1226"/>
+        <location filename="../application/displaycontent.cpp" line="1274"/>
         <source>Source</source>
         <translatorcomment>Source</translatorcomment>
         <translation>來源</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1195"/>
+        <location filename="../application/displaycontent.cpp" line="1243"/>
         <source>Status</source>
         <translatorcomment>Status</translatorcomment>
         <translation>狀態</translation>
@@ -511,7 +512,7 @@
 <context>
     <name>Tbble</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1302"/>
+        <location filename="../application/displaycontent.cpp" line="1350"/>
         <source>Date and Time</source>
         <translation>時間</translation>
     </message>
@@ -549,15 +550,21 @@
         <translation>Xorg日誌</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="111"/>
-        <location filename="../application/loglistview.cpp" line="113"/>
+        <location filename="../application/loglistview.cpp" line="109"/>
+        <location filename="../application/loglistview.cpp" line="110"/>
+        <source>Kwin Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../application/loglistview.cpp" line="119"/>
+        <location filename="../application/loglistview.cpp" line="121"/>
         <source>Application Log</source>
         <translatorcomment>Application Log</translatorcomment>
         <translation> 應用程式日誌：</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="125"/>
-        <location filename="../application/loglistview.cpp" line="128"/>
+        <location filename="../application/loglistview.cpp" line="133"/>
+        <location filename="../application/loglistview.cpp" line="136"/>
         <source>Boot-Shutdown Event</source>
         <translatorcomment>Boot-Shutdown Event</translatorcomment>
         <translation>開關機事件</translation>

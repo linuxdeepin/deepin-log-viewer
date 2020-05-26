@@ -30,5 +30,9 @@
         <file>assets/images/dark/start.svg</file>
         <file>assets/images/dark/start_checked.svg</file>
         <file>assets/images/deepin-log-viewer.svg</file>
+        <file>assets/images/dark/kwin_checked.svg</file>
+        <file>assets/images/dark/kwin.svg</file>
+        <file>assets/images/light/kwin_checked.svg</file>
+        <file>assets/images/light/kwin.svg</file>
     </qresource>
 </RCC>

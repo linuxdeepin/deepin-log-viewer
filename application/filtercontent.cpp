@@ -394,6 +394,8 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
         this->setSelectorVisible(false, false, false, true, false,
                                  true);  // modifed by Airy for showing peroid
+    } else if (itemData.contains(KWIN_TREE_DATA)) {
+        this->setSelectorVisible(false, false, false, false, false);
     }
 }
 

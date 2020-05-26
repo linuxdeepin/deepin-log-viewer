@@ -80,6 +80,9 @@ private:
     void createXorgTable(QList<LOG_MSG_XORG> &list);
     void generateXorgFile(int id);  // add by Airy for peroid
 
+    void creatKwinTable(QList<LOG_MSG_KWIN> &list);
+    void generateKwinFile(KWIN_FILTERS iFilters);
+
     void createNormalTable(QList<LOG_MSG_NORMAL> &list);  // add by Airy
     void generateNormalFile(int id);                      // add by Airy for peroid
 
@@ -113,6 +116,7 @@ public slots:
     void slot_XorgFinished();
     void slot_bootFinished(QList<LOG_MSG_BOOT> list);
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
+    void slot_kwinFinished(QList<LOG_MSG_KWIN> list);
     void slot_journalFinished();
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
     void slot_NormalFinished();  // add by Airy
@@ -132,6 +136,8 @@ public slots:
     void parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel);
+
     void setLoadState(LOAD_STATE iState);
 private:
     void paintEvent(QPaintEvent *event);
@@ -170,10 +176,14 @@ private:
     QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)
     QList<LOG_MSG_NORMAL> norList;               // add by Airy
     QList<LOG_MSG_NORMAL> nortempList;           // add by Airy
+    QList<LOG_MSG_KWIN> m_currentKwinList;
+    QList<LOG_MSG_KWIN> m_kwinList;                   //$HOME/.kwin.log
     QString m_iconPrefix = ICONPREFIX;
     QMap<QString, QString> m_icon_name_map;
     QString getIconByname(QString str);
     QString m_currentSearchStr{""};
+    KWIN_FILTERS m_currentKwinFilter;
+
 };
 
 #endif  // DISPLAYCONTENT_H

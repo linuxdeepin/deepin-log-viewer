@@ -59,6 +59,7 @@ int main(int argc, char *argv[])
     DApplicationSettings settings;
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
+    qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
 
     //    if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName()))
     //        return 0;
