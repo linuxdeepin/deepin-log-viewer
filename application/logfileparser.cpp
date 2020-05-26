@@ -221,8 +221,10 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
         }
     }
     foreach (utmp item, normalList) {
-        //  qDebug() << "normalList" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
-        // qDebug() << "normalList" << item.ut_type;
+        qDebug() << "normalList" << item.ut_name << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+    }
+    foreach (utmp item, deadList) {
+        qDebug() << "normalList" << item.ut_name << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
     }
     QString a_name = "~";
     foreach (utmp value, normalList) {

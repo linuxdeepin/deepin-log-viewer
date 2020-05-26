@@ -151,7 +151,7 @@ void journalWork::doWork()
 
         r = sd_journal_get_data(j, "_COMM", (const void **)&d, &l);
         if (r < 0) {
-            logMsg.daemonName = "";
+            logMsg.daemonName = "unknown";
             qDebug() << logMsg.daemonId << "error code" << r;
         } else {
             logMsg.daemonName = getReplaceColorStr(d).split("=").value(1);
