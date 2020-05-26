@@ -2,7 +2,7 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-           src \
+           application \
            logViewerAuth
 
 

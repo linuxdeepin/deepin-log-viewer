@@ -4,20 +4,20 @@ minimum_perc = 80
 mode = developer
 
 [deepin-log-viewer.deepin-log-viewer]
-file_filter = src/translations/deepin-log-viewer_<lang>.ts
-source_file = src/translations/deepin-log-viewer.ts
+file_filter = translations/deepin-log-viewer_<lang>.ts
+source_file = translations/deepin-log-viewer.ts
 source_lang = en
 type = QT
 
 [deepin-log-viewer.deepin-log-viewer-desktop-ts]
-file_filter = src/translations/desktop/desktop_<lang>.ts
-source_file = src/translations/desktop/desktop.ts
+file_filter = translations/desktop/desktop_<lang>.ts
+source_file = translations/desktop/desktop.ts
 source_lang = en
 type = QT
 
 [deepin-log-viewer.deepin-log-viewer-policy-ts]
-file_filter = src/translations/policy/policy_<lang>.ts
-source_file = src/translations/policy/policy.ts
+file_filter = translations/policy/policy_<lang>.ts
+source_file = translations/policy/policy.ts
 source_lang = en
 type = QT
 

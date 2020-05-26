@@ -1,0 +1,34 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/doc_template/template.doc</file>
+        <file>assets/images/light/application.svg</file>
+        <file>assets/images/light/start_checked.svg</file>
+        <file>assets/images/light/system_checked.svg</file>
+        <file>assets/images/wrong.svg</file>
+        <file>assets/images/light/x_checked.svg</file>
+        <file>assets/images/light/d_checked.svg</file>
+        <file>assets/images/light/start.svg</file>
+        <file>assets/images/light/application_checked.svg</file>
+        <file>assets/images/light/core.svg</file>
+        <file>assets/images/light/d.svg</file>
+        <file>assets/images/light/x.svg</file>
+        <file>assets/images/light/system.svg</file>
+        <file>assets/images/warning2.svg</file>
+        <file>assets/images/light/core_checked.svg</file>
+        <file>assets/images/warning.svg</file>
+        <file>assets/images/warning3.svg</file>
+        <file>assets/images/dark/core_checked.svg</file>
+        <file>assets/images/dark/system.svg</file>
+        <file>assets/images/dark/x.svg</file>
+        <file>assets/images/dark/system_checked.svg</file>
+        <file>assets/images/dark/x_checked.svg</file>
+        <file>assets/images/dark/core.svg</file>
+        <file>assets/images/dark/d.svg</file>
+        <file>assets/images/dark/application.svg</file>
+        <file>assets/images/dark/d_checked.svg</file>
+        <file>assets/images/dark/application_checked.svg</file>
+        <file>assets/images/dark/start.svg</file>
+        <file>assets/images/dark/start_checked.svg</file>
+        <file>assets/images/deepin-log-viewer.svg</file>
+    </qresource>
+</RCC>
