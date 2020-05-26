@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#define _GNU_SOURCE
 #include "logfileparser.h"
 #include "journalwork.h"
 #include "utils.h"
@@ -220,18 +220,19 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
             deadList.append(value_);
         }
     }
-    foreach (utmp item, normalList) {
-        qDebug() << "normalList" << item.ut_name << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
-    }
-    foreach (utmp item, deadList) {
-        qDebug() << "normalList" << item.ut_name << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
-    }
+//    foreach (utmp item, normalList) {
+//        qDebug() << "normalList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+//    }
+//    foreach (utmp item, deadList) {
+//        qDebug() << "deadList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+//    }
     QString a_name = "~";
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
-        if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
+        if (strtmp.compare("runlevel") == 0 || value.ut_type == RUN_LVL || value.ut_type == INIT_PROCESS) { // clear the runlevel
             continue;
         }
+
         struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
         LOG_MSG_NORMAL Nmsg;
         if (value.ut_type == USER_PROCESS) {
