@@ -104,3 +104,26 @@ policy.files = $$PWD/com.deepin.pkexec.logViewerAuth.policy
 
 
 INSTALLS += target desktop translations icon_files policy
+
+DISTFILES += \
+    ../translations/deepin-log-viewer_ar.ts \
+    ../translations/deepin-log-viewer_ca.ts \
+    ../translations/deepin-log-viewer_cs.ts \
+    ../translations/deepin-log-viewer_da.ts \
+    ../translations/deepin-log-viewer_de.ts \
+    ../translations/deepin-log-viewer_es.ts \
+    ../translations/deepin-log-viewer_fi.ts \
+    ../translations/deepin-log-viewer_fr.ts \
+    ../translations/deepin-log-viewer_it.ts \
+    ../translations/deepin-log-viewer_ko.ts \
+    ../translations/deepin-log-viewer_ms.ts \
+    ../translations/deepin-log-viewer_nl.ts \
+    ../translations/deepin-log-viewer_pl.ts \
+    ../translations/deepin-log-viewer_pt.ts \
+    ../translations/deepin-log-viewer_pt_BR.ts \
+    ../translations/deepin-log-viewer_ru.ts \
+    ../translations/deepin-log-viewer_sr.ts \
+    ../translations/deepin-log-viewer_tr.ts \
+    ../translations/deepin-log-viewer_uk.ts \
+    ../translations/deepin-log-viewer_zh_CN.ts \
+    ../translations/deepin-log-viewer_zh_TW.ts

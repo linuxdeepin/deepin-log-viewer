@@ -168,7 +168,7 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="800"/>
+        <location filename="../application/displaycontent.cpp" line="802"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>Platte tekst (*.txt);; DOC (*.doc);; XLS (*.xls);; HTML (*.html)</translation>
     </message>
@@ -181,7 +181,7 @@
         <translation type="vanished">Nieuw bestand</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="798"/>
+        <location filename="../application/displaycontent.cpp" line="800"/>
         <source>Export File</source>
         <translatorcomment>Export File</translatorcomment>
         <translation>Bestand exporteren</translation>
@@ -381,7 +381,7 @@
     <name>Table</name>
     <message>
         <location filename="../application/displaycontent.cpp" line="251"/>
-        <location filename="../application/displaycontent.cpp" line="1454"/>
+        <location filename="../application/displaycontent.cpp" line="1460"/>
         <location filename="../application/logexportwidget.cpp" line="548"/>
         <source>User</source>
         <translatorcomment>User</translatorcomment>
@@ -394,10 +394,10 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="249"/>
-        <location filename="../application/displaycontent.cpp" line="1210"/>
-        <location filename="../application/displaycontent.cpp" line="1273"/>
-        <location filename="../application/displaycontent.cpp" line="1319"/>
-        <location filename="../application/displaycontent.cpp" line="1453"/>
+        <location filename="../application/displaycontent.cpp" line="1216"/>
+        <location filename="../application/displaycontent.cpp" line="1279"/>
+        <location filename="../application/displaycontent.cpp" line="1325"/>
+        <location filename="../application/displaycontent.cpp" line="1459"/>
         <location filename="../application/logexportwidget.cpp" line="546"/>
         <source>Date and Time</source>
         <translatorcomment>Date and Time</translatorcomment>
@@ -405,7 +405,7 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="248"/>
-        <location filename="../application/displaycontent.cpp" line="1455"/>
+        <location filename="../application/displaycontent.cpp" line="1461"/>
         <location filename="../application/logexportwidget.cpp" line="544"/>
         <source>Process</source>
         <translatorcomment>Process</translatorcomment>
@@ -413,13 +413,13 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="250"/>
-        <location filename="../application/displaycontent.cpp" line="1211"/>
-        <location filename="../application/displaycontent.cpp" line="1244"/>
-        <location filename="../application/displaycontent.cpp" line="1275"/>
-        <location filename="../application/displaycontent.cpp" line="1320"/>
-        <location filename="../application/displaycontent.cpp" line="1351"/>
-        <location filename="../application/displaycontent.cpp" line="1385"/>
-        <location filename="../application/displaycontent.cpp" line="1456"/>
+        <location filename="../application/displaycontent.cpp" line="1217"/>
+        <location filename="../application/displaycontent.cpp" line="1250"/>
+        <location filename="../application/displaycontent.cpp" line="1281"/>
+        <location filename="../application/displaycontent.cpp" line="1326"/>
+        <location filename="../application/displaycontent.cpp" line="1357"/>
+        <location filename="../application/displaycontent.cpp" line="1391"/>
+        <location filename="../application/displaycontent.cpp" line="1462"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
         <source>Info</source>
         <translation>Informatie</translation>
@@ -432,38 +432,38 @@
         <translation>PID</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1212"/>
+        <location filename="../application/displaycontent.cpp" line="1218"/>
         <source>Action</source>
         <translation>Actie</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1348"/>
+        <location filename="../application/displaycontent.cpp" line="1354"/>
         <source>Event Type</source>
         <translatorcomment>Event Type</translatorcomment>
         <translation>Soort moment</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1349"/>
+        <location filename="../application/displaycontent.cpp" line="1355"/>
         <source>Username</source>
         <translatorcomment>Username</translatorcomment>
         <translation>Gebruikersnaam</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="247"/>
-        <location filename="../application/displaycontent.cpp" line="1272"/>
+        <location filename="../application/displaycontent.cpp" line="1278"/>
         <location filename="../application/logexportwidget.cpp" line="543"/>
         <source>Level</source>
         <translatorcomment>Level</translatorcomment>
         <translation>Niveau</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1274"/>
+        <location filename="../application/displaycontent.cpp" line="1280"/>
         <source>Source</source>
         <translatorcomment>Source</translatorcomment>
         <translation>Bron</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1243"/>
+        <location filename="../application/displaycontent.cpp" line="1249"/>
         <source>Status</source>
         <translatorcomment>Status</translatorcomment>
         <translation>Status</translation>
@@ -512,7 +512,7 @@
 <context>
     <name>Tbble</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1350"/>
+        <location filename="../application/displaycontent.cpp" line="1356"/>
         <source>Date and Time</source>
         <translation>Datum en tijd</translation>
     </message>
