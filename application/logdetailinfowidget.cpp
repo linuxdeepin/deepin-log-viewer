@@ -222,7 +222,6 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-
     // Save pen
     QPen oldPen = painter.pen();
 
@@ -254,35 +253,25 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
                                          QString status, QString action, QString uname,
                                          QString event)
 {
-    m_dateTime->show();
-    m_daemonName->show();
-    m_level->show();
-    m_userName->show();
-    m_userLabel->show();
-    m_pid->show();
-    m_pidLabel->show();
-    m_status->show();
-    m_statusLabel->show();
-    m_action->show();
-    m_actionLabel->show();
-    m_name->show();        // add by Airy
-    m_nameLabel->show();   // add by Airy
-    m_event->show();       // add by Airy
-    m_eventLabel->show();  // add by Airy
-
-    deamonName.isEmpty() ? m_daemonName->hide() : m_daemonName->setText(deamonName);
-
+    if (deamonName.isEmpty()) {
+        m_daemonName->hide();
+    } else {
+        m_daemonName->show();
+        m_daemonName->setText(deamonName);
+    }
     if (!level.isValid()) {
         m_level->hide();
     } else {
         QIcon icon =  level.siblingAtColumn(0).data(Qt::DecorationRole).value<QIcon>();
         m_level->setIcon(icon);
         m_level->setText(level.siblingAtColumn(0).data(Qt::UserRole + 6).toString());
+        m_level->show();
     }
 
     if (dateTime.isEmpty()) {
         m_dateTime->hide();
     } else {
+        m_dateTime->show();
         QStringList dtlist = dateTime.split(".");
         if (dtlist.count() == 2)
             m_dateTime->setText(dtlist[0]);
@@ -294,6 +283,8 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
         m_userName->hide();
         m_userLabel->hide();
     } else {
+        m_userName->show();
+        m_userLabel->show();
         m_userName->setText(usrName);
     }
 
@@ -301,6 +292,8 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
         m_pid->hide();
         m_pidLabel->hide();
     } else {
+        m_pid->show();
+        m_pidLabel->show();
         m_pid->setText(pid);
     }
 
@@ -308,6 +301,8 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
         m_status->hide();
         m_statusLabel->hide();
     } else {
+        m_status->show();
+        m_statusLabel->show();
         m_status->setText(status);
     }
 
@@ -315,6 +310,8 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
         m_action->hide();
         m_actionLabel->hide();
     } else {
+        m_action->show();
+        m_actionLabel->show();
         m_action->setText(action);
     }
 
@@ -323,12 +320,16 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
         m_name->hide();
         m_nameLabel->hide();
     } else {
+        m_name->show();        // add by Airy
+        m_nameLabel->show();   // add by Airy
         m_name->setText(uname);
     }
     if (event.isEmpty()) {
         m_event->hide();
         m_eventLabel->hide();
     } else {
+        m_event->show();       // add by Airy
+        m_eventLabel->show();  // add by Airy
         m_event->setText(event);
     }
     // end
