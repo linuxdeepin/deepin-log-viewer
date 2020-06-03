@@ -239,8 +239,6 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
 
 void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
 {
-    if (list.count() > 500)
-        return;
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
 
@@ -1062,6 +1060,7 @@ void DisplayContent::slot_searchResult(QString str)
                 continue;
             tmp.removeAt(i);
         }
+        qDebug() << "tmp" << tmp.length();
         createJournalTable(tmp);
     } break;
     case KERN: {
