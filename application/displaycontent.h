@@ -96,6 +96,7 @@ private:
     bool isAuthProcessAlive();
 
 
+
     //
 
 signals:

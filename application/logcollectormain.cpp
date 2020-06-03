@@ -72,8 +72,6 @@ void LogCollectorMain::initUI()
     /** menu */
     //    titlebar()->menu()->addAction(new QAction(tr("help")));
 
-    /** inherit QMainWidow, why need new centralWidget?? */
-    this->setCentralWidget(new DWidget());
 
     //m_hLayout = new QHBoxLayout;
     m_hSplitter = new Dtk::Widget::DSplitter(this);

@@ -27,6 +27,7 @@
 #include <DFileDialog>
 #include <DFontSizeManager>
 #include <DHorizontalLine>
+#include <DSplitter>
 #include <DScrollBar>
 #include <DStandardItem>
 #include <QAbstractItemView>
@@ -61,6 +62,7 @@ DisplayContent::DisplayContent(QWidget *parent)
     initUI();
     initMap();
     initConnections();
+
 }
 
 DisplayContent::~DisplayContent()
@@ -74,6 +76,8 @@ DisplayContent::~DisplayContent()
         m_pModel = nullptr;
     }
 }
+
+
 
 void DisplayContent::initUI()
 {
@@ -437,6 +441,7 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
     //    m_treeView->show();
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
+    m_pModel->clear();
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertApplicationTable(list, 0, end);
 }
@@ -1153,7 +1158,11 @@ void DisplayContent::slot_searchResult(QString str)
         break;
     }
     if (0 == m_pModel->rowCount()) {
-        setLoadState(DATA_NO_SEARCH_RESULT);
+        if (m_currentSearchStr.isEmpty()) {
+            setLoadState(DATA_COMPLETE);
+        } else {
+            setLoadState(DATA_NO_SEARCH_RESULT);
+        }
         m_detailWgt->cleanText();
         m_detailWgt->hideLine(true);
     } else {
