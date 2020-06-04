@@ -67,7 +67,6 @@ int main(int argc, char *argv[])
     LogApplicationHelper::instance();
 
     LogCollectorMain w;
-    w.setMinimumSize(958, 736);
     w.show();
 
     Dtk::Widget::moveToCenter(&w);
