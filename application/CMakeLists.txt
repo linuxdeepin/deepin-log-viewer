@@ -34,8 +34,30 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+#set(CMAKE_CXX_FLAGS "-g -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#${EXE_NAME}
 #-ldtkwidget -ldtkgui -ldtkcore
+if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "sw_64")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mieee")
+endif ()
+
+if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+    # generate qm files
+    execute_process(COMMAND bash "translate_generation.sh"
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE trans_var OUTPUT_VARIABLE trans_out ERROR_VARIABLE trans_error)
+                message("trans_var ${trans_var} ")#trans_out ${trans_out} trans_error ${trans_error}
+    execute_process(COMMAND deepin-policy-ts-convert "policy2ts" "com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy"
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE policy2ts_var OUTPUT_VARIABLE policy2ts_out ERROR_VARIABLE policy2ts_error)
+                 message("policy2ts_var ${policy2ts_var} policy2ts_out ${policy2ts_out} policy2ts_error ${policy2ts_error}")
+    execute_process(COMMAND deepin-policy-ts-convert "ts2policy" "com.deepin.pkexec.logViewerAuth.policy.tmp" "policy-install-translation" "com.deepin.pkexec.logViewerAuth.policy"
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE ts2policy_var OUTPUT_VARIABLE ts2policy_out ERROR_VARIABLE ts2policy_error)
+                 message("ts2policy_var ${ts2policy_var} ts2policy_out ${ts2policy_out} ts2policy_error ${ts2policy_error}")
+    execute_process(COMMAND cp "com.deepin.pkexec.logViewerAuth.policy.tmp" "com.deepin.pkexec.logViewerAuth.policy"
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE cp_var OUTPUT_VARIABLE cp_out ERROR_VARIABLE cp_error)
+                   message("cp_var ${cp_var} cp_out ${cp_out} cp_error ${cp_error}")
+endif ()
+
 add_definitions(-DUSE_POLKIT -DENABLE_INACTIVE_DISPLAY)
 # Find the library
 find_package(PkgConfig REQUIRED)
@@ -50,17 +72,17 @@ find_package(DtkCore REQUIRED)
 #pkg_search_module(DtkWidget REQUIRED dtkwidget)
 #pkg_search_module(DtkGui REQUIRED dtkgui)
 #pkg_search_module(DtkCore REQUIRED dtkcore)
-message(  "dtklib ${DtkWidget_LIBRARIES}
-    ${DtkCore_LIBRARIES}
-    ${DtkGUI_LIBRARIES}")
+#message(  "dtklib ${DtkWidget_LIBRARIES}
+#    ${DtkCore_LIBRARIES}
+#    ${DtkGUI_LIBRARIES}")
 
 
-message(  "dtkLDFLAGS ${DtkWidget_LDFLAGS}
-    ${DtkGui_LDFLAGS}
-    ${DtkCore_LDFLAGS} ")
-message(  "dtkinclude ${DtkWidget_INCLUDE_DIRS}
-    ${DtkGui_INCLUDE_DIRS}
-    ${DtkCore_INCLUDE_DIRS} ")
+#message(  "dtkLDFLAGS ${DtkWidget_LDFLAGS}
+#    ${DtkGui_LDFLAGS}
+#    ${DtkCore_LDFLAGS} ")
+#message(  "dtkinclude ${DtkWidget_INCLUDE_DIRS}
+#    ${DtkGui_INCLUDE_DIRS}
+#    ${DtkCore_INCLUDE_DIRS} ")
 #find_package(Icuil18n)
 #find_package(Icuuc)
 #find_package(Systemd)
