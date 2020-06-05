@@ -28,7 +28,9 @@ debian/*
 !debian/control
 !debian/compat
 !debian/source/*
-
+# cmake dir
+obj-x86_64-linux-gnu/*
+*.txt.user
 # other
 *.qmake*
 Makefile
