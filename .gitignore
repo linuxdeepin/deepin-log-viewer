@@ -31,6 +31,8 @@ debian/*
 # cmake dir
 obj-x86_64-linux-gnu/*
 *.txt.user
+#varlgind
+*.supp
 # other
 *.qmake*
 Makefile
