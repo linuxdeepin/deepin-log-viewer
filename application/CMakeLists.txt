@@ -44,16 +44,16 @@ endif ()
 if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
     # generate qm files
-    execute_process(COMMAND bash "translate_generation.sh"
+    execute_process(COMMAND bash "assets/translate_generation.sh"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE trans_var OUTPUT_VARIABLE trans_out ERROR_VARIABLE trans_error)
                 message("trans_var ${trans_var} ")#trans_out ${trans_out} trans_error ${trans_error}
-    execute_process(COMMAND deepin-policy-ts-convert "policy2ts" "com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy"
+    execute_process(COMMAND deepin-policy-ts-convert "policy2ts" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE policy2ts_var OUTPUT_VARIABLE policy2ts_out ERROR_VARIABLE policy2ts_error)
                  message("policy2ts_var ${policy2ts_var} policy2ts_out ${policy2ts_out} policy2ts_error ${policy2ts_error}")
-    execute_process(COMMAND deepin-policy-ts-convert "ts2policy" "com.deepin.pkexec.logViewerAuth.policy.tmp" "policy-install-translation" "com.deepin.pkexec.logViewerAuth.policy"
+    execute_process(COMMAND deepin-policy-ts-convert "ts2policy" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "policy-install-translation" "assets/com.deepin.pkexec.logViewerAuth.policy"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE ts2policy_var OUTPUT_VARIABLE ts2policy_out ERROR_VARIABLE ts2policy_error)
                  message("ts2policy_var ${ts2policy_var} ts2policy_out ${ts2policy_out} ts2policy_error ${ts2policy_error}")
-    execute_process(COMMAND cp "com.deepin.pkexec.logViewerAuth.policy.tmp" "com.deepin.pkexec.logViewerAuth.policy"
+    execute_process(COMMAND cp "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "assets/com.deepin.pkexec.logViewerAuth.policy"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE cp_var OUTPUT_VARIABLE cp_out ERROR_VARIABLE cp_error)
                    message("cp_var ${cp_var} cp_out ${cp_out} cp_error ${cp_error}")
 endif ()
@@ -117,7 +117,7 @@ set (APP_CPP_FILES
      common/collator.cpp
     )
 set (APP_QRC_FILES
-resources.qrc
+assets/resources.qrc
 )
 set (DOCX_CPP_FILES
     ../3rdparty/docx/document.cpp
@@ -283,11 +283,11 @@ target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc)
 
 file(GLOB APP_QM_FILES "../translations/*.qm")
 install(FILES ${APP_QM_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/translations)
-install(FILES deepin-log-viewer.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
-install(FILES com.deepin.pkexec.logViewerAuth.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
+install(FILES assets/deepin-log-viewer.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
+install(FILES assets/com.deepin.pkexec.logViewerAuth.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 install(FILES assets/images/deepin-log-viewer.svg
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps/)
-install(FILES com.deepin.pkexec.logViewerAuth.policy
+install(FILES assets/com.deepin.pkexec.logViewerAuth.policy
                     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
                 # Install files
                 install(TARGETS ${EXE_NAME} DESTINATION bin)
