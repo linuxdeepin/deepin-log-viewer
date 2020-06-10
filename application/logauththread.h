@@ -31,12 +31,15 @@ public:
 
     void setType(LOG_FLAG flag) { m_type = flag; }
     void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
+    void stopProccess();
 protected:
     void run() override;
 
     void handleBoot();
     void handleKern();
     void handleKwin();
+    void initProccess();
+
 
 signals:
     void cmdFinished(LOG_FLAG, QString output);
@@ -53,6 +56,7 @@ private:
     KWIN_FILTERS m_kwinFilters;
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
+    QProcess *m_process = nullptr;
 };
 
 #endif  // LOGAUTHTHREAD_H

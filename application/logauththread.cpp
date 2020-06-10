@@ -10,7 +10,15 @@ LogAuthThread::LogAuthThread(QObject *parent)
 {
 }
 
-LogAuthThread::~LogAuthThread() {}
+LogAuthThread::~LogAuthThread()
+{
+    if (m_process) {
+        m_process->kill();
+        m_process->close();
+        delete  m_process;
+        m_process = nullptr;
+    }
+}
 
 QString LogAuthThread::getStandardOutput()
 {
@@ -20,6 +28,17 @@ QString LogAuthThread::getStandardOutput()
 QString LogAuthThread::getStandardError()
 {
     return m_error;
+}
+
+void LogAuthThread::stopProccess()
+{
+    if (m_process && m_process->isOpen()) {
+        //m_process->kill();
+        m_process->terminate();
+        m_process->readAll();
+        m_process->close();
+        //m_process->waitForFinished(-1);
+    }
 }
 
 void LogAuthThread::run()
@@ -47,12 +66,11 @@ void LogAuthThread::handleBoot()
         emit cmdFinished(m_type, "");
         return;
     }
-    QProcess *proc = new QProcess;
-    connect(proc, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
-    proc->setProcessChannelMode(QProcess::MergedChannels);
-    proc->start("pkexec", QStringList() << "logViewerAuth"
-                << "/var/log/boot.log");
-    proc->waitForFinished(-1);
+    initProccess();
+    m_process->setProcessChannelMode(QProcess::MergedChannels);
+    m_process->start("pkexec", QStringList() << "logViewerAuth"
+                     << "/var/log/boot.log");
+    m_process->waitForFinished(-1);
 }
 
 void LogAuthThread::handleKern()
@@ -62,15 +80,14 @@ void LogAuthThread::handleKern()
         emit cmdFinished(m_type, "");
         return;
     }
-    QProcess *proc = new QProcess;
-    connect(proc, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
+    initProccess();
     // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
-    proc->setProcessChannelMode(QProcess::MergedChannels);
-    proc->start("pkexec", QStringList() << "logViewerAuth"
-                << "/var/log/kern.log");
+    m_process->setProcessChannelMode(QProcess::MergedChannels);
+    m_process->start("pkexec", QStringList() << "logViewerAuth"
+                     << "/var/log/kern.log");
     //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
     // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
-    proc->waitForFinished(-1);
+    m_process->waitForFinished(-1);
 }
 
 void LogAuthThread::handleKwin()
@@ -103,6 +120,15 @@ void LogAuthThread::handleKwin()
     emit kwinFinished(kwinList);
 }
 
+void LogAuthThread::initProccess()
+{
+    if (!m_process) {
+        m_process = new QProcess;
+        connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
+
+    }
+}
+
 void LogAuthThread::onFinished(int exitCode)
 {
     Q_UNUSED(exitCode)
@@ -118,7 +144,8 @@ void LogAuthThread::onFinished(int exitCode)
     qDebug() << __FUNCTION__ << "str" << str.length();
     //  qDebug() << __FUNCTION__ << "str" << str;
     emit cmdFinished(m_type, str);
-    process->deleteLater();
+//    process->deleteLater();
+//    process = nullptr;
 }
 
 void LogAuthThread::onFinishedRead()
