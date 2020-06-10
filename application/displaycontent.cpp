@@ -804,6 +804,21 @@ void DisplayContent::slot_exportClicked()
                            QDir::homePath() + "/Documents" + logName + ".txt",
                            tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
 
+//    QString fileName = "";
+//    DFileDialog dialog(this);
+//    dialog.setWindowTitle(DApplication::translate("File", "Export File"));
+
+//    dialog.setAcceptMode(QFileDialog::AcceptSave);//设置文件对话框为保存模式
+//    dialog.setViewMode(DFileDialog::List);
+//    dialog.setDirectory(QDir::homePath() + "/Documents");
+//    //dialog.selectFile(tr("Unnamed.ddf"));//设置默认的文件名
+//    dialog.selectFile(logName + ".doc"); //设置默认的文件名
+//    QStringList nameFilters;
+//    nameFilters << "*.doc" << "*.txt"  << "*.xls" << "*.html"; //<< "*.doc" << "*.xls" << "*.html"
+//    dialog.setNameFilters(nameFilters); //设置文件类型过滤器
+//    if (dialog.exec()) {
+//        fileName = dialog.selectedFiles().first();
+//    }
     if (fileName.isEmpty())
         return;
 

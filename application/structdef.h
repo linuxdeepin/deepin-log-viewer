@@ -169,10 +169,10 @@ enum NORMAL_DISPLAY_COLUMN {
 #define APP_TREE_DATA "application"
 #define LAST_TREE_DATA "last"  // add by Airy
 #define ITEM_DATE_ROLE (Qt::UserRole + 66)
-#define ICONPREFIX "://assets/images/"
-#define ICONLIGHTPREFIX "://assets/images/light/"
-#define ICONDARKPREFIX "://assets/images/dark/"
-#define DOCTEMPLATE "://assets/doc_template/template.doc"
+#define ICONPREFIX "://images/"
+#define ICONLIGHTPREFIX "://images/light/"
+#define ICONDARKPREFIX "://images/dark/"
+#define DOCTEMPLATE "://doc_template/template.doc"
 
 
 #endif  // STRUCTDEF_H

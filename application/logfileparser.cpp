@@ -67,8 +67,7 @@ void LogFileParser::parseByJournal(QStringList arg)
     }
     m_isJournalLoading = true;
     work = journalWork::instance();
-    if (work->isRunning())
-        work->terminate();
+    quitLogAuththread(work);
     //    work = new journalWork();
     disconnect(work, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()));
     work->setArg(arg);
@@ -303,8 +302,7 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
 void LogFileParser::parseByKwin(KWIN_FILTERS iKwinfilter)
 {
     m_authThread = LogAuthThread::instance();
-    if (m_authThread->isRunning())
-        m_authThread->terminate();
+    quitLogAuththread(m_authThread);
 
     disconnect(m_authThread, &LogAuthThread::kwinFinished, this,
                &LogFileParser::kwinFinished);
@@ -351,8 +349,7 @@ void LogFileParser::parseByBoot()
 //    }
     m_isBootLoading = true;
     m_authThread = LogAuthThread::instance();
-    if (m_authThread->isRunning())
-        m_authThread->terminate();
+    quitLogAuththread(m_authThread);
 
     disconnect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
                SLOT(slot_threadFinished(LOG_FLAG, QString)));
@@ -370,9 +367,7 @@ void LogFileParser::parseByKern(qint64 ms)
 //    }
     m_isKernLoading = true;
     m_authThread = LogAuthThread::instance();
-    if (m_authThread->isRunning())
-        m_authThread->terminate();
-
+    quitLogAuththread(m_authThread);
     disconnect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
                SLOT(slot_threadFinished(LOG_FLAG, QString)));
     m_authThread->setType(KERN);
@@ -391,8 +386,7 @@ void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
     m_isAppLoading = true;
 
     m_appThread = LogApplicationParseThread::instance();
-    if (m_appThread->isRunning())
-        m_appThread->terminate();
+    quitLogAuththread(m_appThread);
 
     disconnect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
                SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
@@ -478,6 +472,15 @@ qint64 LogFileParser::formatDateTime(QString m, QString d, QString t)
     QString tStr = QString("%1 %2 %3 %4").arg(m).arg(d).arg(curdt.year()).arg(t);
     QDateTime dt = local.toDateTime(tStr, "MMM d yyyy hh:mm:ss");
     return dt.toMSecsSinceEpoch();
+}
+
+void LogFileParser::quitLogAuththread(QThread *iThread)
+{
+    if (iThread && iThread->isRunning()) {
+        iThread->terminate();
+//        iThread->quit();
+//        iThread->wait();
+    }
 }
 
 void LogFileParser::slot_journalFinished()

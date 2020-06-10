@@ -66,6 +66,7 @@ signals:
 private:
     bool isErroCommand(QString str);
     qint64 formatDateTime(QString m, QString d, QString t);
+    void quitLogAuththread(QThread *iThread);
 signals:
 
 public slots:
