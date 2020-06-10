@@ -6,7 +6,7 @@
 #include <QString>
 #include <QList>
 #include <QMap>
-
+#include <QIODevice>
 namespace Docx {
 
 class PhysPkgReader;
@@ -17,9 +17,9 @@ class PackageReader
 {
 public:
     PackageReader(SerializedRelationships *srels, ContentTypeMap *contentTypes, const QList<SerializedPart> &sparts);
-    static PackageReader* fromFile(const QString &pkgFile);
-    static PackageReader* fromFile(QIODevice *device);
-    static SerializedRelationships* srelsFrom(PhysPkgReader *physReader, const QString &sourceUri);
+    static PackageReader *fromFile(const QString &pkgFile);
+    static PackageReader *fromFile(QIODevice *device);
+    static SerializedRelationships *srelsFrom(PhysPkgReader *physReader, const QString &sourceUri);
     static QList<SerializedPart> loadSerializedParts(PhysPkgReader *physReader, const SerializedRelationships *srels, const ContentTypeMap *contentTypes);
     QMap<QString, QVector<SerializedRelationship> > partRels() const;
     ContentTypeMap *contentTypes() const { return m_contentTypes; }

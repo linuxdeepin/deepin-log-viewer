@@ -12,7 +12,7 @@ class ImagePart;
 class DOCX_EXPORT InlineShape
 {
 public:
-    InlineShape(CT_Inline *inlinev);    
+    InlineShape(CT_Inline *inlinev);
     Length width() const;
     void setWidth(const Docx::Length &width);
     Length height() const;
@@ -21,7 +21,7 @@ public:
     virtual ~InlineShape();
 
 private:
-    CT_Inline* m_inline;
+    CT_Inline *m_inline;
 
 };
 
