@@ -25,7 +25,7 @@
 #include <DWidgetUtil>
 #include "logapplicationhelper.h"
 #include "logcollectormain.h"
-
+#include "environments.h"
 #include <DLog>
 #include <QDateTime>
 
@@ -50,7 +50,8 @@ int main(int argc, char *argv[])
     a.loadTranslator();
     a.setOrganizationName("deepin");
     a.setApplicationName("deepin-log-viewer");
-    a.setApplicationVersion(DApplication::buildVersion(""));
+    //a.setApplicationVersion(DApplication::buildVersion(""));
+    a.setApplicationVersion(VERSION);
     a.setProductIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setWindowIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setProductName(DApplication::translate("Main", "Log Viewer"));

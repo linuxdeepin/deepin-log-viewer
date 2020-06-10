@@ -9,7 +9,7 @@ endif ()
 #project(application)
 #add_subdirectory(../3rdparty/docx docx_binary_dir)
 #add_subdirectory(../3rdparty/QtXlsxWriter)
-
+configure_file(environments.h.in environments.h @ONLY)
 set (EXE_NAME deepin-log-viewer)
 set(LINK_LIBS
     Qt5::Core
