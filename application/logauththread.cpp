@@ -33,10 +33,11 @@ QString LogAuthThread::getStandardError()
 void LogAuthThread::stopProccess()
 {
     if (m_process && m_process->isOpen()) {
-        //m_process->kill();
-        m_process->terminate();
         m_process->readAll();
-        m_process->close();
+        m_process->kill();
+        //m_process->terminate();
+
+        //  m_process->close();
         //m_process->waitForFinished(-1);
     }
 }
