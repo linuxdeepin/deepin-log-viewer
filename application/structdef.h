@@ -70,7 +70,12 @@ struct LOG_MSG_KWIN {
 struct KWIN_FILTERS {
     QString msg;
 };
-
+struct XORG_FILTERS {
+    qint64 timeFilter ;
+};
+struct DKPG_FILTERS {
+    qint64 timeFilter ;
+};
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 
 enum BUTTONID {

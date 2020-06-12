@@ -30,6 +30,7 @@
 #include <DSplitter>
 #include <DScrollBar>
 #include <DStandardItem>
+#include <DStandardPaths>
 #include <QAbstractItemView>
 #include <QDateTime>
 #include <QDebug>
@@ -163,8 +164,8 @@ void DisplayContent::initConnections()
 
     connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString)),
             m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, QStandardItemModel *, QString)));
-    connect(&m_logFileParse, SIGNAL(dpkgFinished()), this, SLOT(slot_dpkgFinished()));
-    connect(&m_logFileParse, SIGNAL(xlogFinished()), this, SLOT(slot_XorgFinished()));
+    connect(&m_logFileParse, SIGNAL(dpkgFinished(QList<LOG_MSG_DPKG>)), this, SLOT(slot_dpkgFinished(QList<LOG_MSG_DPKG>)));
+    connect(&m_logFileParse, SIGNAL(xlogFinished(QList<LOG_MSG_XORG>)), this, SLOT(slot_XorgFinished(QList<LOG_MSG_XORG>)));
     connect(&m_logFileParse, SIGNAL(bootFinished(QList<LOG_MSG_BOOT>)), this,
             SLOT(slot_bootFinished(QList<LOG_MSG_BOOT>)));
     connect(&m_logFileParse, SIGNAL(kernFinished(QList<LOG_MSG_JOURNAL>)), this,
@@ -186,6 +187,7 @@ void DisplayContent::initConnections()
 
 void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearchStr)
 {
+    Q_UNUSED(iSearchStr)
     jList.clear();
 
     setLoadState(DATA_LOADING);
@@ -261,6 +263,7 @@ void DisplayContent::createJournalTable(QList<LOG_MSG_JOURNAL> &list)
 
 void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
 {
+    Q_UNUSED(iSearchStr)
     dList.clear();
 
     setLoadState(DATA_LOADING);
@@ -269,22 +272,22 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
     dt.setTime(QTime());  // get zero time
     switch (id) {
     case ALL:
-        m_logFileParse.parseByDpkg(dList);
+        m_logFileParse.parseByDpkg();
         break;
     case ONE_DAY: {
-        m_logFileParse.parseByDpkg(dList, dt.toMSecsSinceEpoch());
+        m_logFileParse.parseByDpkg(dt.toMSecsSinceEpoch());
     } break;
     case THREE_DAYS: {
-        m_logFileParse.parseByDpkg(dList, dt.addDays(-2).toMSecsSinceEpoch());
+        m_logFileParse.parseByDpkg(dt.addDays(-2).toMSecsSinceEpoch());
     } break;
     case ONE_WEEK: {
-        m_logFileParse.parseByDpkg(dList, dt.addDays(-6).toMSecsSinceEpoch());
+        m_logFileParse.parseByDpkg(dt.addDays(-6).toMSecsSinceEpoch());
     } break;
     case ONE_MONTH: {
-        m_logFileParse.parseByDpkg(dList, dt.addDays(-29).toMSecsSinceEpoch());
+        m_logFileParse.parseByDpkg(dt.addDays(-29).toMSecsSinceEpoch());
     } break;
     case THREE_MONTHS: {
-        m_logFileParse.parseByDpkg(dList, dt.addDays(-89).toMSecsSinceEpoch());
+        m_logFileParse.parseByDpkg(dt.addDays(-89).toMSecsSinceEpoch());
     } break;
     default:
         break;
@@ -313,6 +316,7 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
 
 void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
 {
+    Q_UNUSED(iSearchStr)
     kList.clear();
     setLoadState(DATA_LOADING_K);
     //    m_spinnerWgt->hide();  // modified by Airy for bug 15520
@@ -406,6 +410,7 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
 
 void DisplayContent::generateAppFile(QString path, int id, int lId, const QString &iSearchStr)
 {
+    Q_UNUSED(iSearchStr)
     appList.clear();
     setLoadState(DATA_LOADING);
     QDateTime dt = QDateTime::currentDateTime();
@@ -489,22 +494,22 @@ void DisplayContent::generateXorgFile(int id)
     dt.setTime(QTime());  // get zero time
     switch (id) {
     case ALL:
-        m_logFileParse.parseByXlog(xList);
+        m_logFileParse.parseByXlog();
         break;
     case ONE_DAY: {
-        m_logFileParse.parseByXlog(xList, dt.toMSecsSinceEpoch());
+        m_logFileParse.parseByXlog(dt.toMSecsSinceEpoch());
     } break;
     case THREE_DAYS: {
-        m_logFileParse.parseByXlog(xList, dt.addDays(-2).toMSecsSinceEpoch());
+        m_logFileParse.parseByXlog(dt.addDays(-2).toMSecsSinceEpoch());
     } break;
     case ONE_WEEK: {
-        m_logFileParse.parseByXlog(xList, dt.addDays(-6).toMSecsSinceEpoch());
+        m_logFileParse.parseByXlog(dt.addDays(-6).toMSecsSinceEpoch());
     } break;
     case ONE_MONTH: {
-        m_logFileParse.parseByXlog(xList, dt.addDays(-29).toMSecsSinceEpoch());
+        m_logFileParse.parseByXlog(dt.addDays(-29).toMSecsSinceEpoch());
     } break;
     case THREE_MONTHS: {
-        m_logFileParse.parseByXlog(xList, dt.addDays(-89).toMSecsSinceEpoch());
+        m_logFileParse.parseByXlog(dt.addDays(-89).toMSecsSinceEpoch());
     } break;
     default:
         break;
@@ -592,7 +597,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
     // m_pModel->beginInsertRows(logList.size());
     QList<QStandardItem *> items;
     for (int i = start; i < end; i++) {
-        int col = 0;
+        // int col = 0;
         items.clear();
         item = new DStandardItem();
         //        qDebug() << "journal level" << logList[i].level;
@@ -797,11 +802,11 @@ void DisplayContent::slot_exportClicked()
     else {
         logName = QString("/%1").arg(("New File"));
     }
-
     QString selectFilter;
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
     QString fileName = DFileDialog::getSaveFileName(
                            this, DApplication::translate("File", "Export File"),
-                           QDir::homePath() + "/Documents" + logName + ".txt",
+                           path,
                            tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
 
 //    QString fileName = "";
@@ -901,19 +906,19 @@ void DisplayContent::slot_statusChagned(QString status)
     createBootTable(currentBootList);
 }
 
-void DisplayContent::slot_dpkgFinished()
+void DisplayContent::slot_dpkgFinished(QList<LOG_MSG_DPKG> list)
 {
     if (m_flag != DPKG)
         return;
-
+    dList = list;
     createDpkgTable(dList);
 }
 
-void DisplayContent::slot_XorgFinished()
+void DisplayContent::slot_XorgFinished(QList<LOG_MSG_XORG> list)
 {
     if (m_flag != XORG)
         return;
-
+    xList = list;
     createXorgTable(xList);
 }
 
@@ -1187,6 +1192,7 @@ void DisplayContent::slot_searchResult(QString str)
 
 void DisplayContent::slot_themeChanged(DGuiApplicationHelper::ColorType colorType)
 {
+    Q_UNUSED(colorType)
     //    if (colorType == DGuiApplicationHelper::DarkType) {
     //        m_iconPrefix = "://images/dark/";
     //    } else if (colorType == DGuiApplicationHelper::LightType) {
@@ -1311,7 +1317,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
     DStandardItem *item = nullptr;
     for (int i = 0; i < list.size(); i++) {
         items.clear();
-        int col = 0;
+        //int col = 0;
         QString CH_str = m_transDict.value(list[i].level);
         QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
         //        item = new DStandardItem(lvStr);
@@ -1446,8 +1452,8 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     }
     switch (iState) {
     case DATA_LOADING: {
-        m_spinnerWgt->spinnerStart();
         m_spinnerWgt->show();
+        m_spinnerWgt->spinnerStart();
         break;
     }
     case DATA_COMPLETE: {
@@ -1455,8 +1461,8 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         break;
     }
     case DATA_LOADING_K: {
-        m_spinnerWgt_K->spinnerStart();
         m_spinnerWgt_K->show();
+        m_spinnerWgt_K->spinnerStart();
         break;
     }
     case DATA_NO_SEARCH_RESULT: {
@@ -1465,8 +1471,6 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         noResultLabel->show();
         break;
     }
-    default:
-        break;
     }
     this->update();
 }
@@ -1511,7 +1515,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardIte
 void DisplayContent::paintEvent(QPaintEvent *event)
 {
     DWidget::paintEvent(event);
-    return;
+    //  return;
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -1542,6 +1546,7 @@ void DisplayContent::paintEvent(QPaintEvent *event)
 
 void DisplayContent::resizeEvent(QResizeEvent *event)
 {
+    Q_UNUSED(event)
     noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
 }
 

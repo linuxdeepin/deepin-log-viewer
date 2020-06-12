@@ -8,7 +8,7 @@ namespace Docx {
 
 
 Relationship::Relationship(const QString &rId, const QString &reltype, const QString &targetRef, Part *target, const QString &baseURI, bool external)
-    : m_rId(rId), m_targetRef(targetRef), m_reltype(reltype), m_baseURI(baseURI), m_isexternal(external), m_target(target)
+    : m_rId(rId), m_reltype(reltype), m_targetRef(targetRef), m_target(target), m_baseURI(baseURI), m_isexternal(external)
 {
 
 }
@@ -145,7 +145,7 @@ Relationship *Relationships::getMatching(const QString &reltype, Part *target)
 
 Relationship *Relationships::getMatchingExt(const QString &reltype, const QString &targetref)
 {
-    for (Relationship *rel : m_rels.values()) {
+    foreach (Relationship *rel, m_rels.values()) {
         if (reltype != rel->relType())
             return nullptr;
         if (!rel->isExternal())
@@ -168,6 +168,7 @@ QString Relationships::nextrId()
         if (!keys.contains(rId))
             return rId;
     }
+    return rId;
 }
 
 

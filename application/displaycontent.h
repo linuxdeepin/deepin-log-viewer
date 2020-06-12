@@ -113,8 +113,8 @@ public slots:
 
     void slot_statusChagned(QString status);
 
-    void slot_dpkgFinished();
-    void slot_XorgFinished();
+    void slot_dpkgFinished(QList<LOG_MSG_DPKG> list);
+    void slot_XorgFinished(QList<LOG_MSG_XORG> list);
     void slot_bootFinished(QList<LOG_MSG_BOOT> list);
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
     void slot_kwinFinished(QList<LOG_MSG_KWIN> list);

@@ -77,6 +77,7 @@ Paragraph *Document::addHeading(const QString &text, int level)
 
 Table *Document::addTable(int rows, int cols, const QString &style)
 {
+    Q_UNUSED(style)
     return m_docPart->addTable(rows, cols);
 }
 

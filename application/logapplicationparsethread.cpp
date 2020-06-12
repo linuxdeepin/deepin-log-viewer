@@ -100,6 +100,7 @@ void LogApplicationParseThread::doWork()
 
 void LogApplicationParseThread::onProcFinished(int ret)
 {
+    Q_UNUSED(ret)
 #if 0
     QProcess *proc = dynamic_cast<QProcess *>(sender());
     QString output = proc->readAllStandardOutput();

@@ -103,8 +103,8 @@ CT_Tbl::~CT_Tbl()
 }
 
 CT_TblGrid::CT_TblGrid(QDomDocument *dom, const QDomElement &ele)
-    : m_dom(dom)
-    , m_element(ele)
+    : m_element(ele)
+    , m_dom(dom)
 {
     cols = m_element.childNodes().count();
 }
@@ -139,8 +139,8 @@ const QString strJc = QStringLiteral("w:jc");
  * \param ele
  */
 CT_TblPr::CT_TblPr(QDomDocument *dom, const QDomElement &ele)
-    : m_dom(dom)
-    , m_element(ele)
+    : m_element(ele),
+      m_dom(dom)
 {
     initAlignsMap();
     loadExistStyle();
@@ -447,12 +447,12 @@ Cell *CT_Tc::tcAbove() const
 Cell *CT_Tc::tcBelow() const
 {
     Row *row = trBelow();
-    int rowIndex = row->rowIndex();
+    // int rowIndex = row->rowIndex();
     if (row) {
         int index = m_cell->cellIndex();
         Cell *cell = row->cells().at(index);
         CT_Tc *tc = cell->m_tc.data();
-        rowIndex = tc->m_cell->rowIndex();
+        //   rowIndex = tc->m_cell->rowIndex();
         if (tc->m_ele == m_ele)
             return tc->tcBelow();
 

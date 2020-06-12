@@ -61,9 +61,9 @@ QT_BEGIN_NAMESPACE_XLSX
 
 WorksheetPrivate::WorksheetPrivate(Worksheet *p, Worksheet::CreateFlag flag)
     : AbstractSheetPrivate(p, flag)
-  , windowProtection(false), showFormulas(false), showGridLines(true), showRowColHeaders(true)
-  , showZeros(true), rightToLeft(false), tabSelected(false), showRuler(false)
-  , showOutlineSymbols(true), showWhiteSpace(true), urlPattern(QStringLiteral("^([fh]tt?ps?://)|(mailto:)|(file://)"))
+    , windowProtection(false), showFormulas(false), showGridLines(true), showRowColHeaders(true)
+    , showZeros(true), rightToLeft(false), tabSelected(false), showRuler(false)
+    , showOutlineSymbols(true), showWhiteSpace(true), urlPattern(QStringLiteral("^([fh]tt?ps?://)|(mailto:)|(file://)"))
 {
     previous_row = 0;
 
@@ -87,7 +87,7 @@ WorksheetPrivate::~WorksheetPrivate()
 void WorksheetPrivate::calculateSpans() const
 {
     row_spans.clear();
-    int span_min = XLSX_COLUMN_MAX+1;
+    int span_min = XLSX_COLUMN_MAX + 1;
     int span_max = -1;
 
     for (int row_num = dimension.firstRow(); row_num <= dimension.lastRow(); row_num++) {
@@ -122,10 +122,10 @@ void WorksheetPrivate::calculateSpans() const
             }
         }
 
-        if (row_num%16 == 0 || row_num == dimension.lastRow()) {
+        if (row_num % 16 == 0 || row_num == dimension.lastRow()) {
             if (span_max != -1) {
                 row_spans[row_num / 16] = QStringLiteral("%1:%2").arg(span_min).arg(span_max);
-                span_min = XLSX_COLUMN_MAX+1;
+                span_min = XLSX_COLUMN_MAX + 1;
                 span_max = -1;
             }
         }
@@ -150,8 +150,8 @@ QString WorksheetPrivate::generateDimensionString() const
 */
 int WorksheetPrivate::checkDimensions(int row, int col, bool ignore_row, bool ignore_col)
 {
-    Q_ASSERT_X(row!=0, "checkDimensions", "row should start from 1 instead of 0");
-    Q_ASSERT_X(col!=0, "checkDimensions", "column should start from 1 instead of 0");
+    Q_ASSERT_X(row != 0, "checkDimensions", "row should start from 1 instead of 0");
+    Q_ASSERT_X(col != 0, "checkDimensions", "column should start from 1 instead of 0");
 
     if (row > XLSX_ROW_MAX || row < 1 || col > XLSX_COLUMN_MAX || col < 1)
         return -1;
@@ -178,7 +178,7 @@ int WorksheetPrivate::checkDimensions(int row, int col, bool ignore_row, bool ig
  * \internal
  */
 Worksheet::Worksheet(const QString &name, int id, Workbook *workbook, CreateFlag flag)
-    :AbstractSheet(name, id, workbook, new WorksheetPrivate(this, flag))
+    : AbstractSheet(name, id, workbook, new WorksheetPrivate(this, flag))
 {
     if (!workbook) //For unit test propose only. Ignore the memery leak.
         d_func()->workbook = new Workbook(flag);
@@ -438,14 +438,14 @@ bool Worksheet::write(int row, int column, const QVariant &value, const Format &
         //String
         QString token = value.toString();
         bool ok;
-
+        value.toDouble(&ok);
         if (token.startsWith(QLatin1String("="))) {
             //convert to formula
             ret = writeFormula(row, column, CellFormula(token), format);
         } else if (d->workbook->isStringsToHyperlinksEnabled() && token.contains(d->urlPattern)) {
             //convert to url
             ret = writeHyperlink(row, column, QUrl(token));
-        } else if (d->workbook->isStringsToNumbersEnabled() && (value.toDouble(&ok), ok)) {
+        } else if (d->workbook->isStringsToNumbersEnabled() && (ok)) {
             //Try convert string to number if the flag enabled.
             ret = writeString(row, column, value.toString(), format);
         } else {
@@ -462,7 +462,7 @@ bool Worksheet::write(int row, int column, const QVariant &value, const Format &
         ret = writeNumeric(row, column, value.toDouble(), format);
     } else if (value.userType() == QMetaType::Bool) {
         //Bool
-        ret = writeBool(row,column, value.toBool(), format);
+        ret = writeBool(row, column, value.toBool(), format);
     } else if (value.userType() == QMetaType::QDateTime || value.userType() == QMetaType::QDate) {
         //DateTime, Date
         //  note that, QTime cann't convert to QDateTime
@@ -520,16 +520,16 @@ QVariant Worksheet::read(int row, int column) const
 
     if (cell->hasFormula()) {
         if (cell->formula().formulaType() == CellFormula::NormalType) {
-            return QVariant(QLatin1String("=")+cell->formula().formulaText());
+            return QVariant(QLatin1String("=") + cell->formula().formulaText());
         } else if (cell->formula().formulaType() == CellFormula::SharedType) {
             if (!cell->formula().formulaText().isEmpty()) {
-                return QVariant(QLatin1String("=")+cell->formula().formulaText());
+                return QVariant(QLatin1String("=") + cell->formula().formulaText());
             } else {
                 const CellFormula &rootFormula = d->sharedFormulaMap[cell->formula().sharedIndex()];
                 CellReference rootCellRef = rootFormula.reference().topLeft();
                 QString rootFormulaText = rootFormula.formulaText();
                 QString newFormulaText = convertSharedFormula(rootFormulaText, rootCellRef, CellReference(row, column));
-                return QVariant(QLatin1String("=")+newFormulaText);
+                return QVariant(QLatin1String("=") + newFormulaText);
             }
         }
     }
@@ -539,7 +539,7 @@ QVariant Worksheet::read(int row, int column) const
         QDateTime dt = cell->dateTime();
         if (val < 1)
             return dt.time();
-        if (fmod(val, 1.0) <  1.0/(1000*60*60*24)) //integer
+        if (fmod(val, 1.0) <  1.0 / (1000 * 60 * 60 * 24)) //integer
             return dt.date();
         return dt;
     }
@@ -554,7 +554,7 @@ QVariant Worksheet::read(int row, int column) const
 Cell *Worksheet::cellAt(const CellReference &row_column) const
 {
     if (!row_column.isValid())
-        return 0;
+        return nullptr;
 
     return cellAt(row_column.row(), row_column.column());
 }
@@ -567,9 +567,9 @@ Cell *Worksheet::cellAt(int row, int column) const
 {
     Q_D(const Worksheet);
     if (!d->cellTable.contains(row))
-        return 0;
+        return nullptr;
     if (!d->cellTable[row].contains(column))
-        return 0;
+        return nullptr;
 
     return d->cellTable[row][column].data();
 }
@@ -751,8 +751,8 @@ bool Worksheet::writeFormula(int row, int column, const CellFormula &formula_, c
     formula.d->ca = true;
     if (formula.formulaType() == CellFormula::SharedType) {
         //Assign proper shared index for shared formula
-        int si=0;
-        while(d->sharedFormulaMap.contains(si))
+        int si = 0;
+        while (d->sharedFormulaMap.contains(si))
             ++si;
         formula.d->si = si;
         d->sharedFormulaMap[si] = formula;
@@ -766,10 +766,10 @@ bool Worksheet::writeFormula(int row, int column, const CellFormula &formula_, c
     if (formula.formulaType() == CellFormula::SharedType) {
         CellFormula sf(QString(), CellFormula::SharedType);
         sf.d->si = formula.sharedIndex();
-        for (int r=range.firstRow(); r<=range.lastRow(); ++r) {
-            for (int c=range.firstColumn(); c<=range.lastColumn(); ++c) {
-                if (!(r==row && c==column)) {
-                    if(Cell *cell = cellAt(r, c)) {
+        for (int r = range.firstRow(); r <= range.lastRow(); ++r) {
+            for (int c = range.firstColumn(); c <= range.lastColumn(); ++c) {
+                if (!(r == row && c == column)) {
+                    if (Cell *cell = cellAt(r, c)) {
                         cell->d_ptr->formula = sf;
                     } else {
                         QSharedPointer<Cell> newCell = QSharedPointer<Cell>(new Cell(result, Cell::NumberType, fmt, this));
@@ -989,7 +989,7 @@ bool Worksheet::writeHyperlink(int row, int column, const QUrl &url, const Forma
 bool Worksheet::addDataValidation(const DataValidation &validation)
 {
     Q_D(Worksheet);
-    if (validation.ranges().isEmpty() || validation.validationType()==DataValidation::None)
+    if (validation.ranges().isEmpty() || validation.validationType() == DataValidation::None)
         return false;
 
     d->dataValidationsList.append(validation);
@@ -1006,7 +1006,7 @@ bool Worksheet::addConditionalFormatting(const ConditionalFormatting &cf)
     if (cf.ranges().isEmpty())
         return false;
 
-    for (int i=0; i<cf.d->cfRules.size(); ++i) {
+    for (int i = 0; i < cf.d->cfRules.size(); ++i) {
         const QSharedPointer<XlsxCfRuleData> &rule = cf.d->cfRules[i];
         if (!rule->dxfFormat.isEmpty())
             d->workbook->styles()->addDxfFormat(rule->dxfFormat);
@@ -1207,13 +1207,13 @@ void Worksheet::saveToXmlFile(QIODevice *device) const
             writer.writeStartElement(QStringLiteral("col"));
             writer.writeAttribute(QStringLiteral("min"), QString::number(col_info->firstColumn));
             writer.writeAttribute(QStringLiteral("max"), QString::number(col_info->lastColumn));
-            if (col_info->width)
+            if (static_cast<bool>(col_info->width))
                 writer.writeAttribute(QStringLiteral("width"), QString::number(col_info->width, 'g', 15));
             if (!col_info->format.isEmpty())
                 writer.writeAttribute(QStringLiteral("style"), QString::number(col_info->format.xfIndex()));
             if (col_info->hidden)
                 writer.writeAttribute(QStringLiteral("hidden"), QStringLiteral("1"));
-            if (col_info->width)
+            if (static_cast<bool>(col_info->width))
                 writer.writeAttribute(QStringLiteral("customWidth"), QStringLiteral("1"));
             if (col_info->outlineLevel)
                 writer.writeAttribute(QStringLiteral("outlineLevel"), QString::number(col_info->outlineLevel));
@@ -1249,7 +1249,7 @@ void WorksheetPrivate::saveXmlSheetData(QXmlStreamWriter &writer) const
             continue;
         }
 
-        int span_index = (row_num-1) / 16;
+        int span_index = (row_num - 1) / 16;
         QString span;
         if (row_spans.contains(span_index))
             span = row_spans[span_index];
@@ -1326,7 +1326,7 @@ void WorksheetPrivate::saveXmlCellData(QXmlStreamWriter &writer, int row, int co
         if (cell->isRichString()) {
             //Rich text string
             RichString string = cell->d_ptr->richString;
-            for (int i=0; i<string.fragmentCount(); ++i) {
+            for (int i = 0; i < string.fragmentCount(); ++i) {
                 writer.writeStartElement(QStringLiteral("r"));
                 if (string.fragmentFormat(i).hasFontData()) {
                     writer.writeStartElement(QStringLiteral("rPr"));
@@ -1349,7 +1349,7 @@ void WorksheetPrivate::saveXmlCellData(QXmlStreamWriter &writer, int row, int co
             writer.writeEndElement(); // t
         }
         writer.writeEndElement();//is
-    } else if (cell->cellType() == Cell::NumberType){
+    } else if (cell->cellType() == Cell::NumberType) {
         if (cell->hasFormula())
             cell->formula().saveToXml(writer);
         if (cell->value().isValid()) {//note that, invalid value means 'v' is blank
@@ -1441,7 +1441,7 @@ void WorksheetPrivate::saveXmlDrawings(QXmlStreamWriter &writer) const
         return;
 
     int idx = workbook->drawings().indexOf(drawing.data());
-    relationships->addWorksheetRelationship(QStringLiteral("/drawing"), QStringLiteral("../drawings/drawing%1.xml").arg(idx+1));
+    relationships->addWorksheetRelationship(QStringLiteral("/drawing"), QStringLiteral("../drawings/drawing%1.xml").arg(idx + 1));
 
     writer.writeEmptyElement(QStringLiteral("drawing"));
     writer.writeAttribute(QStringLiteral("r:id"), QStringLiteral("rId%1").arg(relationships->count()));
@@ -1540,7 +1540,7 @@ bool Worksheet::setColumnWidth(const CellRange &range, double width)
   Sets format property of a \a range of columns to \a format. Columns are 1-indexed.
   Returns true on success.
  */
-bool Worksheet::setColumnFormat(const CellRange& range, const Format &format)
+bool Worksheet::setColumnFormat(const CellRange &range, const Format &format)
 {
     if (!range.isValid())
         return false;
@@ -1571,8 +1571,8 @@ bool Worksheet::setColumnWidth(int colFirst, int colLast, double width)
     Q_D(Worksheet);
 
     QList <QSharedPointer<XlsxColumnInfo> > columnInfoList = d->getColumnInfoList(colFirst, colLast);
-    foreach(QSharedPointer<XlsxColumnInfo>  columnInfo, columnInfoList)
-       columnInfo->width = width;
+    foreach (QSharedPointer<XlsxColumnInfo>  columnInfo, columnInfoList)
+        columnInfo->width = width;
 
     return (columnInfoList.count() > 0);
 }
@@ -1587,12 +1587,12 @@ bool Worksheet::setColumnFormat(int colFirst, int colLast, const Format &format)
     Q_D(Worksheet);
 
     QList <QSharedPointer<XlsxColumnInfo> > columnInfoList = d->getColumnInfoList(colFirst, colLast);
-    foreach(QSharedPointer<XlsxColumnInfo>  columnInfo, columnInfoList)
-       columnInfo->format = format;
+    foreach (QSharedPointer<XlsxColumnInfo>  columnInfo, columnInfoList)
+        columnInfo->format = format;
 
-    if(columnInfoList.count() > 0) {
-       d->workbook->styles()->addXfFormat(format);
-       return true;
+    if (columnInfoList.count() > 0) {
+        d->workbook->styles()->addXfFormat(format);
+        return true;
     }
 
     return false;
@@ -1607,8 +1607,8 @@ bool Worksheet::setColumnHidden(int colFirst, int colLast, bool hidden)
     Q_D(Worksheet);
 
     QList <QSharedPointer<XlsxColumnInfo> > columnInfoList = d->getColumnInfoList(colFirst, colLast);
-    foreach(QSharedPointer<XlsxColumnInfo>  columnInfo, columnInfoList)
-       columnInfo->hidden = hidden;
+    foreach (QSharedPointer<XlsxColumnInfo>  columnInfo, columnInfoList)
+        columnInfo->hidden = hidden;
 
     return (columnInfoList.count() > 0);
 }
@@ -1622,7 +1622,7 @@ double Worksheet::columnWidth(int column)
 
     QList <QSharedPointer<XlsxColumnInfo> > columnInfoList = d->getColumnInfoList(column, column);
     if (columnInfoList.count() == 1)
-       return columnInfoList.at(0)->width ;
+        return columnInfoList.at(0)->width ;
 
     return d->sheetFormatProps.defaultColWidth;
 }
@@ -1636,7 +1636,7 @@ Format Worksheet::columnFormat(int column)
 
     QList <QSharedPointer<XlsxColumnInfo> > columnInfoList = d->getColumnInfoList(column, column);
     if (columnInfoList.count() == 1)
-       return columnInfoList.at(0)->format;
+        return columnInfoList.at(0)->format;
 
     return Format();
 }
@@ -1650,7 +1650,7 @@ bool Worksheet::isColumnHidden(int column)
 
     QList <QSharedPointer<XlsxColumnInfo> > columnInfoList = d->getColumnInfoList(column, column);
     if (columnInfoList.count() == 1)
-       return columnInfoList.at(0)->hidden;
+        return columnInfoList.at(0)->hidden;
 
     return false;
 }
@@ -1662,13 +1662,13 @@ bool Worksheet::isColumnHidden(int column)
 
   Returns true if success.
 */
-bool Worksheet::setRowHeight(int rowFirst,int rowLast, double height)
+bool Worksheet::setRowHeight(int rowFirst, int rowLast, double height)
 {
     Q_D(Worksheet);
 
-    QList <QSharedPointer<XlsxRowInfo> > rowInfoList = d->getRowInfoList(rowFirst,rowLast);
+    QList <QSharedPointer<XlsxRowInfo> > rowInfoList = d->getRowInfoList(rowFirst, rowLast);
 
-    foreach(QSharedPointer<XlsxRowInfo> rowInfo, rowInfoList) {
+    foreach (QSharedPointer<XlsxRowInfo> rowInfo, rowInfoList) {
         rowInfo->height = height;
         rowInfo->customHeight = true;
     }
@@ -1682,13 +1682,13 @@ bool Worksheet::setRowHeight(int rowFirst,int rowLast, double height)
 
   Returns true if success.
 */
-bool Worksheet::setRowFormat(int rowFirst,int rowLast, const Format &format)
+bool Worksheet::setRowFormat(int rowFirst, int rowLast, const Format &format)
 {
     Q_D(Worksheet);
 
-    QList <QSharedPointer<XlsxRowInfo> > rowInfoList = d->getRowInfoList(rowFirst,rowLast);
+    QList <QSharedPointer<XlsxRowInfo> > rowInfoList = d->getRowInfoList(rowFirst, rowLast);
 
-    foreach(QSharedPointer<XlsxRowInfo> rowInfo, rowInfoList)
+    foreach (QSharedPointer<XlsxRowInfo> rowInfo, rowInfoList)
         rowInfo->format = format;
 
     d->workbook->styles()->addXfFormat(format);
@@ -1701,12 +1701,12 @@ bool Worksheet::setRowFormat(int rowFirst,int rowLast, const Format &format)
 
   Returns true if success.
 */
-bool Worksheet::setRowHidden(int rowFirst,int rowLast, bool hidden)
+bool Worksheet::setRowHidden(int rowFirst, int rowLast, bool hidden)
 {
     Q_D(Worksheet);
 
-    QList <QSharedPointer<XlsxRowInfo> > rowInfoList = d->getRowInfoList(rowFirst,rowLast);
-    foreach(QSharedPointer<XlsxRowInfo> rowInfo, rowInfoList)
+    QList <QSharedPointer<XlsxRowInfo> > rowInfoList = d->getRowInfoList(rowFirst, rowLast);
+    foreach (QSharedPointer<XlsxRowInfo> rowInfo, rowInfoList)
         rowInfo->hidden = hidden;
 
     return rowInfoList.count() > 0;
@@ -1762,7 +1762,7 @@ bool Worksheet::groupRows(int rowFirst, int rowLast, bool collapsed)
 {
     Q_D(Worksheet);
 
-    for (int row=rowFirst; row<=rowLast; ++row) {
+    for (int row = rowFirst; row <= rowLast; ++row) {
         if (d->rowsInfo.contains(row)) {
             d->rowsInfo[row]->outlineLevel += 1;
         } else {
@@ -1774,9 +1774,9 @@ bool Worksheet::groupRows(int rowFirst, int rowLast, bool collapsed)
             d->rowsInfo[row]->hidden = true;
     }
     if (collapsed) {
-        if (!d->rowsInfo.contains(rowLast+1))
-            d->rowsInfo.insert(rowLast+1, QSharedPointer<XlsxRowInfo>(new XlsxRowInfo));
-        d->rowsInfo[rowLast+1]->collapsed = true;
+        if (!d->rowsInfo.contains(rowLast + 1))
+            d->rowsInfo.insert(rowLast + 1, QSharedPointer<XlsxRowInfo>(new XlsxRowInfo));
+        d->rowsInfo[rowLast + 1]->collapsed = true;
     }
     return true;
 }
@@ -1824,7 +1824,7 @@ bool Worksheet::groupColumns(int colFirst, int colLast, bool collapsed)
             if (collapsed)
                 info->hidden = true;
         } else {
-            int colEnd = (idx == nodes.size() - 1) ? colLast : nodes[idx+1] - 1;
+            int colEnd = (idx == nodes.size() - 1) ? colLast : nodes[idx + 1] - 1;
             QSharedPointer<XlsxColumnInfo> info(new XlsxColumnInfo(colStart, colEnd));
             info->outlineLevel += 1;
             d->colsInfo.insert(colFirst, info);
@@ -1836,7 +1836,7 @@ bool Worksheet::groupColumns(int colFirst, int colLast, bool collapsed)
     }
 
     if (collapsed) {
-        int col = colLast+1;
+        int col = colLast + 1;
         d->splitColsInfo(col, col);
         if (d->colsInfo.contains(col))
             d->colsInfo[col]->collapsed = true;
@@ -1872,7 +1872,7 @@ int WorksheetPrivate::rowPixelsSize(int row) const
         height = row_sizes[row];
     else
         height = default_row_height;
-    return static_cast<int>(4.0 / 3.0 *height);
+    return static_cast<int>(4.0 / 3.0 * height);
 }
 
 /*
@@ -1892,7 +1892,7 @@ int WorksheetPrivate::colPixelsSize(int col) const
         if (width < 1)
             pixels = static_cast<int>(width * (max_digit_width + padding) + 0.5);
         else
-            pixels = static_cast<int>(width * max_digit_width + 0.5) + padding;
+            pixels = static_cast<int>(width * max_digit_width + 0.5 + padding) ;
     } else {
         pixels = 64;
     }
@@ -1924,7 +1924,7 @@ void WorksheetPrivate::loadXmlSheetData(QXmlStreamReader &reader)
                     if (attributes.hasAttribute(QLatin1String("customHeight"))) {
                         info->customHeight = attributes.value(QLatin1String("customHeight")) == QLatin1String("1");
                         //Row height is only specified when customHeight is set
-                        if(attributes.hasAttribute(QLatin1String("ht"))) {
+                        if (attributes.hasAttribute(QLatin1String("ht"))) {
                             info->height = attributes.value(QLatin1String("ht")).toString().toDouble();
                         }
                     }
@@ -1975,7 +1975,7 @@ void WorksheetPrivate::loadXmlSheetData(QXmlStreamReader &reader)
                         cellType = Cell::NumberType;
                 }
 
-                QSharedPointer<Cell> cell(new Cell(QVariant() ,cellType, format, q));
+                QSharedPointer<Cell> cell(new Cell(QVariant(), cellType, format, q));
                 while (!reader.atEnd() && !(reader.name() == QLatin1String("c") && reader.tokenType() == QXmlStreamReader::EndElement)) {
                     if (reader.readNextStartElement()) {
                         if (reader.name() == QLatin1String("f")) {
@@ -2042,7 +2042,7 @@ void WorksheetPrivate::loadXmlColumnsInfo(QXmlStreamReader &reader)
 
                 //Flag indicating that the column width for the affected column(s) is different from the
                 // default or has been manually set
-                if(colAttrs.hasAttribute(QLatin1String("customWidth"))) {
+                if (colAttrs.hasAttribute(QLatin1String("customWidth"))) {
                     info->customWidth = colAttrs.value(QLatin1String("customWidth")) == QLatin1String("1");
                 }
                 //Note, node may have "width" without "customWidth"
@@ -2062,7 +2062,7 @@ void WorksheetPrivate::loadXmlColumnsInfo(QXmlStreamReader &reader)
                     info->outlineLevel = colAttrs.value(QLatin1String("outlineLevel")).toString().toInt();
 
                 colsInfo.insert(min, info);
-                for (int col=min; col<=max; ++col)
+                for (int col = min; col <= max; ++col)
                     colsInfoHelper[col] = info;
             }
         }
@@ -2098,7 +2098,7 @@ void WorksheetPrivate::loadXmlDataValidations(QXmlStreamReader &reader)
     int count = attributes.value(QLatin1String("count")).toString().toInt();
 
     while (!reader.atEnd() && !(reader.name() == QLatin1String("dataValidations")
-            && reader.tokenType() == QXmlStreamReader::EndElement)) {
+                                && reader.tokenType() == QXmlStreamReader::EndElement)) {
         reader.readNextStartElement();
         if (reader.tokenType() == QXmlStreamReader::StartElement
                 && reader.name() == QLatin1String("dataValidation")) {
@@ -2115,7 +2115,7 @@ void WorksheetPrivate::loadXmlSheetViews(QXmlStreamReader &reader)
     Q_ASSERT(reader.name() == QLatin1String("sheetViews"));
 
     while (!reader.atEnd() && !(reader.name() == QLatin1String("sheetViews")
-            && reader.tokenType() == QXmlStreamReader::EndElement)) {
+                                && reader.tokenType() == QXmlStreamReader::EndElement)) {
         reader.readNextStartElement();
         if (reader.tokenType() == QXmlStreamReader::StartElement && reader.name() == QLatin1String("sheetView")) {
             QXmlStreamAttributes attrs = reader.attributes();
@@ -2143,29 +2143,29 @@ void WorksheetPrivate::loadXmlSheetFormatProps(QXmlStreamReader &reader)
 
     //Retain default values
     foreach (QXmlStreamAttribute attrib, attributes) {
-        if(attrib.name() == QLatin1String("baseColWidth") ) {
+        if (attrib.name() == QLatin1String("baseColWidth")) {
             formatProps.baseColWidth = attrib.value().toString().toInt();
-        } else if(attrib.name() == QLatin1String("customHeight")) {
+        } else if (attrib.name() == QLatin1String("customHeight")) {
             formatProps.customHeight = attrib.value() == QLatin1String("1");
-        } else if(attrib.name() == QLatin1String("defaultColWidth")) {
+        } else if (attrib.name() == QLatin1String("defaultColWidth")) {
             formatProps.defaultColWidth = attrib.value().toString().toDouble();
-        } else if(attrib.name() == QLatin1String("defaultRowHeight")) {
+        } else if (attrib.name() == QLatin1String("defaultRowHeight")) {
             formatProps.defaultRowHeight = attrib.value().toString().toDouble();
-        } else if(attrib.name() == QLatin1String("outlineLevelCol")) {
-            formatProps.outlineLevelCol = attrib.value().toString().toInt();
-        } else if(attrib.name() == QLatin1String("outlineLevelRow")) {
-            formatProps.outlineLevelRow = attrib.value().toString().toInt();
-        } else if(attrib.name() == QLatin1String("thickBottom")) {
+        } else if (attrib.name() == QLatin1String("outlineLevelCol")) {
+            formatProps.outlineLevelCol = static_cast<quint8>(attrib.value().toString().toInt());
+        } else if (attrib.name() == QLatin1String("outlineLevelRow")) {
+            formatProps.outlineLevelRow = static_cast<quint8>(attrib.value().toString().toInt());
+        } else if (attrib.name() == QLatin1String("thickBottom")) {
             formatProps.thickBottom = attrib.value() == QLatin1String("1");
-        } else if(attrib.name() == QLatin1String("thickTop")) {
+        } else if (attrib.name() == QLatin1String("thickTop")) {
             formatProps.thickTop  = attrib.value() == QLatin1String("1");
-        } else if(attrib.name() == QLatin1String("zeroHeight")) {
+        } else if (attrib.name() == QLatin1String("zeroHeight")) {
             formatProps.zeroHeight = attrib.value() == QLatin1String("1");
         }
     }
 
-    if(formatProps.defaultColWidth == 0.0) { //not set
-       formatProps.defaultColWidth = WorksheetPrivate::calculateColWidth(formatProps.baseColWidth);
+    if (formatProps.defaultColWidth == 0.0) { //not set
+        formatProps.defaultColWidth = WorksheetPrivate::calculateColWidth(formatProps.baseColWidth);
     }
 
 }
@@ -2181,7 +2181,7 @@ void WorksheetPrivate::loadXmlHyperlinks(QXmlStreamReader &reader)
     Q_ASSERT(reader.name() == QLatin1String("hyperlinks"));
 
     while (!reader.atEnd() && !(reader.name() == QLatin1String("hyperlinks")
-            && reader.tokenType() == QXmlStreamReader::EndElement)) {
+                                && reader.tokenType() == QXmlStreamReader::EndElement)) {
         reader.readNextStartElement();
         if (reader.tokenType() == QXmlStreamReader::StartElement && reader.name() == QLatin1String("hyperlink")) {
             QXmlStreamAttributes attrs = reader.attributes();
@@ -2209,8 +2209,7 @@ void WorksheetPrivate::loadXmlHyperlinks(QXmlStreamReader &reader)
 QList <QSharedPointer<XlsxColumnInfo> > WorksheetPrivate::getColumnInfoList(int colFirst, int colLast)
 {
     QList <QSharedPointer<XlsxColumnInfo> > columnsInfoList;
-    if(isColumnRangeValid(colFirst,colLast))
-    {
+    if (isColumnRangeValid(colFirst, colLast)) {
         QList<int> nodes = getColumnIndexes(colFirst, colLast);
 
         for (int idx = 0; idx < nodes.size(); ++idx) {
@@ -2219,7 +2218,7 @@ QList <QSharedPointer<XlsxColumnInfo> > WorksheetPrivate::getColumnInfoList(int 
                 QSharedPointer<XlsxColumnInfo> info = colsInfo[colStart];
                 columnsInfoList.append(info);
             } else {
-                int colEnd = (idx == nodes.size() - 1) ? colLast : nodes[idx+1] - 1;
+                int colEnd = (idx == nodes.size() - 1) ? colLast : nodes[idx + 1] - 1;
                 QSharedPointer<XlsxColumnInfo> info(new XlsxColumnInfo(colStart, colEnd));
                 colsInfo.insert(colFirst, info);
                 columnsInfoList.append(info);
@@ -2238,12 +2237,12 @@ QList <QSharedPointer<XlsxRowInfo> > WorksheetPrivate::getRowInfoList(int rowFir
 
     int min_col = dimension.firstColumn() < 1 ? 1 : dimension.firstColumn();
 
-    for(int row = rowFirst; row <= rowLast; ++row) {
+    for (int row = rowFirst; row <= rowLast; ++row) {
         if (checkDimensions(row, min_col, false, true))
             continue;
 
         QSharedPointer<XlsxRowInfo> rowInfo;
-        if ((rowsInfo[row]).isNull()){
+        if ((rowsInfo[row]).isNull()) {
             rowsInfo[row] = QSharedPointer<XlsxRowInfo>(new XlsxRowInfo());
         }
         rowInfoList.append(rowsInfo[row]);
@@ -2311,19 +2310,18 @@ void WorksheetPrivate::validateDimension()
         return;
 
     int firstRow = cellTable.constBegin().key();
-    int lastRow = (cellTable.constEnd()-1).key();
+    int lastRow = (cellTable.constEnd() - 1).key();
     int firstColumn = -1;
     int lastColumn = -1;
 
-    for (QMap<int, QMap<int, QSharedPointer<Cell> > >::const_iterator it = cellTable.begin(); it != cellTable.end(); ++it)
-    {
+    for (QMap<int, QMap<int, QSharedPointer<Cell> > >::const_iterator it = cellTable.begin(); it != cellTable.end(); ++it) {
         Q_ASSERT(!it.value().isEmpty());
 
         if (firstColumn == -1 || it.value().constBegin().key() < firstColumn)
             firstColumn = it.value().constBegin().key();
 
-        if (lastColumn == -1 || (it.value().constEnd()-1).key() > lastColumn)
-            lastColumn = (it.value().constEnd()-1).key();
+        if (lastColumn == -1 || (it.value().constEnd() - 1).key() > lastColumn)
+            lastColumn = (it.value().constEnd() - 1).key();
     }
 
     CellRange cr(firstRow, firstColumn, lastRow, lastColumn);

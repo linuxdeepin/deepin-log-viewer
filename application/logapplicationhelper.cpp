@@ -116,6 +116,7 @@ void LogApplicationHelper::createLogFiles()
 void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin, bool isGeneric,
                                       bool isName)
 {
+    Q_UNUSED(isName)
     QFile fi(path);
     if (!fi.open(QIODevice::ReadOnly)) {
         return;

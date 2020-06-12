@@ -1,6 +1,7 @@
 #include "logauththread.h"
 #include "utils.h"
 #include <QDebug>
+#include <QDateTime>
 
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
@@ -8,6 +9,9 @@ std::mutex LogAuthThread::m_mutex;
 LogAuthThread::LogAuthThread(QObject *parent)
     : QThread(parent)
 {
+    qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
+    qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
+    qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
 }
 
 LogAuthThread::~LogAuthThread()
@@ -53,6 +57,12 @@ void LogAuthThread::run()
         break;
     case Kwin:
         handleKwin();
+        break;
+    case XORG:
+        handleXorg();
+        break;
+    case DPKG:
+        handleDkpg();
         break;
     default:
         break;
@@ -121,11 +131,111 @@ void LogAuthThread::handleKwin()
     emit kwinFinished(kwinList);
 }
 
+void LogAuthThread::handleXorg()
+{
+    QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
+    if (!file.exists())
+        return;
+    initProccess();
+    m_process->start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
+    m_process->waitForFinished(-1);
+    QString errorStr(m_process->readAllStandardError());
+    Utils::CommandErrorType commandErrorType = Utils::isErroCommand(errorStr);
+    if (commandErrorType != Utils::NoError) {
+        if (commandErrorType == Utils::PermissionError) {
+            emit proccessError(errorStr + "\n" + "Please use 'sudo' run this application");
+//            DMessageBox::information(nullptr, tr("information"),
+//                                     errorStr + "\n" + "Please use 'sudo' run this application");
+        } else if (commandErrorType == Utils::RetryError) {
+            emit proccessError("The password is incorrect,please try again");
+//            DMessageBox::information(nullptr, tr("information"),
+//                                     "The password is incorrect,please try again");
+        }
+        return;
+    }
+    QByteArray outByte = m_process->readAllStandardOutput();
+    QString output = Utils::replaceEmptyByteArray(outByte);
+    m_process->close();
+    QDateTime curDt = QDateTime::currentDateTime();
+    qint64 curDtSecond = curDt.toMSecsSinceEpoch();
+    QList<LOG_MSG_XORG> xList;
+    for (QString str : output.split('\n')) {
+        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+
+        if (str.startsWith("[")) {
+            QStringList list = str.split("]", QString::SkipEmptyParts);
+            if (list.count() != 2)
+                continue;
+
+            QString timeStr = list[0];
+            QString msgInfo = list[1];
+
+            // get time
+            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
+            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
+            if (realDt.toMSecsSinceEpoch() < m_xorgFilters.timeFilter)  // add by Airy
+                continue;
+
+            LOG_MSG_XORG msg;
+            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
+            msg.msg = msgInfo;
+
+            xList.insert(0, msg);
+        } else {
+            if (xList.length() > 0) {
+                xList[0].msg += str;
+            }
+        }
+    }
+    qDebug() << "xorg size" << xList.length();
+    emit xorgFinished(xList);
+}
+
+void LogAuthThread::handleDkpg()
+{
+
+    QFile file("/var/log/dpkg.log");  // if not,maybe crash
+    if (!file.exists())
+        return;
+    initProccess();
+    m_process->start("cat /var/log/dpkg.log");  // file path is fixed. so write cmd direct
+    m_process->waitForFinished(-1);
+    QByteArray outByte = m_process->readAllStandardOutput();
+    QString output = Utils::replaceEmptyByteArray(outByte);
+    m_process->close();
+    QList<LOG_MSG_DPKG> dList;
+    for (QString str : output.split('\n')) {
+        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+        QStringList strList = str.split(" ", QString::SkipEmptyParts);
+        if (strList.size() < 3)
+            continue;
+
+        QString info;
+        for (auto i = 3; i < strList.size(); i++) {
+            info = info + strList[i] + " ";
+        }
+
+        LOG_MSG_DPKG dpkgLog;
+        dpkgLog.dateTime = strList[0] + " " + strList[1];
+        QDateTime dt = QDateTime::fromString(dpkgLog.dateTime, "yyyy-MM-dd hh:mm:ss");
+        if (dt.toMSecsSinceEpoch() < m_dkpgFilters.timeFilter)
+            continue;
+        dpkgLog.action = strList[2];
+        dpkgLog.msg = info;
+
+        //        dList.append(dpkgLog);
+        dList.insert(0, dpkgLog);
+    }
+    qDebug() << "dkpg size" << dList.length();
+    emit dpkgFinished(dList);
+}
+
 void LogAuthThread::initProccess()
 {
     if (!m_process) {
         m_process = new QProcess;
-        connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
+        connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)), Qt::UniqueConnection);
 
     }
 }
@@ -134,8 +244,17 @@ void LogAuthThread::onFinished(int exitCode)
 {
     Q_UNUSED(exitCode)
 
-    QProcess *process = dynamic_cast<QProcess *>(sender());
-    QByteArray byte =   process->readAllStandardOutput();
+//    QProcess *process = dynamic_cast<QProcess *>(sender());
+//    if (!process) {
+//        return;
+//    }
+//    if (!process->isOpen()) {
+//        return;
+//    }
+    if (m_type != KERN && m_type != BOOT) {
+        return;
+    }
+    QByteArray byte =   m_process->readAllStandardOutput();
     QTextStream stream(&byte);
     QByteArray encode;
     stream.setCodec(encode);
@@ -144,9 +263,10 @@ void LogAuthThread::onFinished(int exitCode)
     qDebug() << __FUNCTION__ << "byte" << byte.length();
     qDebug() << __FUNCTION__ << "str" << str.length();
     //  qDebug() << __FUNCTION__ << "str" << str;
+
     emit cmdFinished(m_type, str);
-//    process->deleteLater();
-//    process = nullptr;
+
+
 }
 
 void LogAuthThread::onFinishedRead()
@@ -155,5 +275,4 @@ void LogAuthThread::onFinishedRead()
     QString str = QString(process->readAllStandardOutput());
     QStringList l = str.split('\n');
 
-    process->deleteLater();
 }

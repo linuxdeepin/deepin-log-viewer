@@ -44,6 +44,8 @@ OxmlElementBase::OxmlElementBase(QDomElement *x)
 
 void OxmlElementBase::insertElementBefore(QDomElement *elm, const QString &tagname)
 {
+    Q_UNUSED(elm);
+    Q_UNUSED(tagname);
 //    QDomElement child = this->firstChildElement(tagname);
 //    if (child.isElement()) {
 //        this->insertBefore(*elm, child);

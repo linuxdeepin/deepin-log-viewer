@@ -17,7 +17,8 @@ PackageWriter::PackageWriter(const QString &pkgFile)
 PackageWriter::PackageWriter(const QString &pkgFile, const Relationships *pkgRels, const QList<Part *> &parts)
     : PackageWriter(pkgFile)
 {
-
+    Q_UNUSED(pkgRels);
+    Q_UNUSED(parts);
 }
 
 void PackageWriter::writePkgRels(const Relationships *pkgRels)
@@ -30,8 +31,8 @@ void PackageWriter::writeContentTypes(const QList<Part *> &parts)
     ContentTypeMap contTypeMap;
     QListIterator<Part *> iter(parts);
     while (iter.hasNext()) {
-      Part *p = iter.next();
-      contTypeMap.addContentType(p->partName(), p->contentType());
+        Part *p = iter.next();
+        contTypeMap.addContentType(p->partName(), p->contentType());
     }
     m_writer->write(Constants::CONTENT_TYPES_URI, contTypeMap.blob());
 }

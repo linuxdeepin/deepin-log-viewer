@@ -152,6 +152,7 @@ void LogListView::setDefaultSelect()
 
 void LogListView::setCustomFont(QStandardItem *item)
 {
+    Q_UNUSED(item)
     //    QFont font = item->font();
     //    font.setPointSize(11);
     //    item->setFont(font);

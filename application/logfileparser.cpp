@@ -18,7 +18,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 #include "logfileparser.h"
 #include "journalwork.h"
 #include "utils.h"
@@ -56,6 +58,7 @@ LogFileParser::LogFileParser(QWidget *parent)
     // TODO::
     m_levelDict.insert("Warning", WARN);
     m_levelDict.insert("Debug", DEB);
+
 }
 
 LogFileParser::~LogFileParser() {}
@@ -77,117 +80,119 @@ void LogFileParser::parseByJournal(QStringList arg)
     work->start();
 }
 
-void LogFileParser::parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms)
+void LogFileParser::parseByDpkg(qint64 ms)
 {
-    if (m_isDpkgLoading) {
-        return;
-    }
-    m_isDpkgLoading = true;
-    QFile file("/var/log/dpkg.log");  // if not,maybe crash
-    if (!file.exists())
-        return;
+
+
+    m_authThread = LogAuthThread::instance();
     stopAllLoad();
-    if (!m_pDkpgDataLoader) {
-        m_pDkpgDataLoader = new QProcess(this);
-    }
-    m_pDkpgDataLoader->start("cat /var/log/dpkg.log");  // file path is fixed. so write cmd direct
-    m_pDkpgDataLoader->waitForFinished(-1);
-    QByteArray outByte = m_pDkpgDataLoader->readAllStandardOutput();
-    QString output = Utils::replaceEmptyByteArray(outByte);
-    m_pDkpgDataLoader->close();
+    disconnect(m_authThread, &LogAuthThread::proccessError, this,
+               &LogFileParser::slog_proccessError);
+    disconnect(m_authThread, &LogAuthThread::dpkgFinished, this,
+               &LogFileParser::dpkgFinished);
+    m_authThread->setType(DPKG);
+    DKPG_FILTERS dpkgfilter;
+    dpkgfilter.timeFilter = ms;
+    m_authThread->setFileterParam(dpkgfilter);
+    connect(m_authThread, &LogAuthThread::proccessError, this,
+            &LogFileParser::slog_proccessError, Qt::UniqueConnection);
+    connect(m_authThread, &LogAuthThread::dpkgFinished, this,
+            &LogFileParser::dpkgFinished, Qt::UniqueConnection);
 
-    for (QString str : output.split('\n')) {
-        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-        QStringList strList = str.split(" ", QString::SkipEmptyParts);
-        if (strList.size() < 3)
-            continue;
-
-        QString info;
-        for (auto i = 3; i < strList.size(); i++) {
-            info = info + strList[i] + " ";
-        }
-
-        LOG_MSG_DPKG dpkgLog;
-        dpkgLog.dateTime = strList[0] + " " + strList[1];
-        QDateTime dt = QDateTime::fromString(dpkgLog.dateTime, "yyyy-MM-dd hh:mm:ss");
-        if (dt.toMSecsSinceEpoch() < ms)
-            continue;
-        dpkgLog.action = strList[2];
-        dpkgLog.msg = info;
-
-        //        dList.append(dpkgLog);
-        dList.insert(0, dpkgLog);
-    }
-
-    createFile(output, dList.count());
-    m_isDpkgLoading = false;
-    emit dpkgFinished();
+    m_authThread->start();
 
 }
 
-void LogFileParser::parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms)  // modifed by Airy
+void LogFileParser::parseByXlog(qint64 ms)  // modifed by Airy
 {
-    if (m_isXlogLoading) {
-        return;
-    }
-    m_isXlogLoading = true;
-    QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
-    if (!file.exists())
-        return;
+    m_authThread = LogAuthThread::instance();
     stopAllLoad();
-    if (!m_pXlogDataLoader) {
-        m_pXlogDataLoader = new QProcess(this);
-    }
-    m_pXlogDataLoader->start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
-    m_pXlogDataLoader->waitForFinished(-1);
-    if (isErroCommand(QString(m_pXlogDataLoader->readAllStandardError())))
-        return;
-    QByteArray outByte = m_pXlogDataLoader->readAllStandardOutput();
-    QString output = Utils::replaceEmptyByteArray(outByte);
-    m_pXlogDataLoader->close();
-    QDateTime curDt = QDateTime::currentDateTime();
-    qint64 curDtSecond = curDt.toMSecsSinceEpoch();
-    for (QString str : output.split('\n')) {
-        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+    disconnect(m_authThread, &LogAuthThread::proccessError, this,
+               &LogFileParser::slog_proccessError);
+    disconnect(m_authThread, &LogAuthThread::xorgFinished, this,
+               &LogFileParser::xlogFinished);
+    m_authThread->setType(XORG);
+    XORG_FILTERS xorgfilter;
+    xorgfilter.timeFilter = ms;
+    m_authThread->setFileterParam(xorgfilter);
+    connect(m_authThread, &LogAuthThread::proccessError, this,
+            &LogFileParser::slog_proccessError, Qt::UniqueConnection);
+    connect(m_authThread, &LogAuthThread::xorgFinished, this,
+            &LogFileParser::xlogFinished, Qt::UniqueConnection);
 
-        //        if (str.startsWith("[")) {
-        //            //            xList.append(str);
-        //            xList.insert(0, str);
-        //        } else {
-        //            str += " ";
-        //            //            xList[xList.size() - 1] += str;
-        //            xList[0] += str;
-        //        }
-        if (str.startsWith("[")) {
-            QStringList list = str.split("]", QString::SkipEmptyParts);
-            if (list.count() != 2)
-                continue;
+    m_authThread->start();
+//    if (m_isXlogLoading) {
+//        return;
+//    }
+//    m_isXlogLoading = true;
+//    QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
+//    if (!file.exists())
+//        return;
+//    stopAllLoad();
+//    if (!m_pXlogDataLoader) {
+//        m_pXlogDataLoader = new QProcess(this);
+//    }
+//    m_pXlogDataLoader->start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
+//    m_pXlogDataLoader->waitForFinished(-1);
+//    QString errorStr(m_pXlogDataLoader->readAllStandardError());
+//    Utils::CommandErrorType commandErrorType = Utils::isErroCommand(errorStr);
+//    if (commandErrorType != Utils::NoError) {
+//        if (commandErrorType == Utils::PermissionError) {
+//            DMessageBox::information(nullptr, tr("information"),
+//                                     errorStr + "\n" + "Please use 'sudo' run this application");
+//        } else if (commandErrorType == Utils::RetryError) {
+//            DMessageBox::information(nullptr, tr("information"),
+//                                     "The password is incorrect,please try again");
+//        }
+//        return;
+//    }
 
-            QString timeStr = list[0];
-            QString msgInfo = list[1];
+//    QByteArray outByte = m_pXlogDataLoader->readAllStandardOutput();
+//    QString output = Utils::replaceEmptyByteArray(outByte);
+//    m_pXlogDataLoader->close();
+//    QDateTime curDt = QDateTime::currentDateTime();
+//    qint64 curDtSecond = curDt.toMSecsSinceEpoch();
+//    for (QString str : output.split('\n')) {
+//        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
 
-            // get time
-            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
-            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
-            //   qint64 realT =  qint64(tStr.toDouble() * 1000);
-            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
-            if (realDt.toMSecsSinceEpoch() < ms)  // add by Airy
-                continue;
+//        //        if (str.startsWith("[")) {
+//        //            //            xList.append(str);
+//        //            xList.insert(0, str);
+//        //        } else {
+//        //            str += " ";
+//        //            //            xList[xList.size() - 1] += str;
+//        //            xList[0] += str;
+//        //        }
+//        if (str.startsWith("[")) {
+//            QStringList list = str.split("]", QString::SkipEmptyParts);
+//            if (list.count() != 2)
+//                continue;
 
-            LOG_MSG_XORG msg;
-            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
-            msg.msg = msgInfo;
+//            QString timeStr = list[0];
+//            QString msgInfo = list[1];
 
-            xList.insert(0, msg);
-        } else {
-            if (xList.length() > 0) {
-                xList[0].msg += str;
-            }
-        }
-    }
-    createFile(output, xList.count());
-    m_isXlogLoading = false;
-    emit xlogFinished();
+//            // get time
+//            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+//            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
+//            //   qint64 realT =  qint64(tStr.toDouble() * 1000);
+//            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
+//            if (realDt.toMSecsSinceEpoch() < ms)  // add by Airy
+//                continue;
+
+//            LOG_MSG_XORG msg;
+//            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
+//            msg.msg = msgInfo;
+
+//            xList.insert(0, msg);
+//        } else {
+//            if (xList.length() > 0) {
+//                xList[0].msg += str;
+//            }
+//        }
+//    }
+//    createFile(output, xList.count());
+//    m_isXlogLoading = false;
+//    emit xlogFinished();
 
 }
 
@@ -204,14 +209,15 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
     stopAllLoad();
     m_isNormalLoading = true;
     int ret = -2;
-    struct utmp *utbufp, *wtmp_next();
-    if (wtmp_open(WTMP_FILE) == -1) {
+    struct utmp *utbufp;
+    wtmp_next();
+    if (wtmp_open(QString(WTMP_FILE).toLatin1().data()) == -1) {
         printf("open WTMP_FILE file error\n");
         return;  // exit(1) will exit this application
     }
     QList<utmp > normalList;
     QList<utmp > deadList;
-    while ((utbufp = wtmp_next()) != ((struct utmp *)NULL)) {
+    while ((utbufp = wtmp_next()) != (static_cast<struct utmp *>(nullptr))) {
         if (utbufp->ut_type != DEAD_PROCESS) {
             utmp value_ = *utbufp;
             normalList.append(value_);
@@ -255,7 +261,8 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
         else if (ret == -1 && value.ut_type == BOOT_TIME)
             end_str = "system boot";
         QString start_str = show_start_time(value.ut_time);
-        QString n_time = QDateTime::fromTime_t(value.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+
+        QString n_time = QDateTime::fromTime_t(static_cast<uint>(value.ut_time)).toString("yyyy-MM-dd hh:mm:ss");
         end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
         start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
         Nmsg.dateTime = n_time;
@@ -454,22 +461,6 @@ void LogFileParser::stopAllLoad()
 //    m_isProcess = false;
 }
 
-bool LogFileParser::isErroCommand(QString str)
-{
-    if (str.contains("权限") || str.contains("permission", Qt::CaseInsensitive)) {
-        DMessageBox::information(nullptr, tr("information"),
-                                 str + "\n" + "Please use 'sudo' run this application");
-        return true;
-    }
-    if (str.contains("请重试") || str.contains("retry", Qt::CaseInsensitive)) {
-        DMessageBox::information(nullptr, tr("information"),
-                                 "The password is incorrect,please try again");
-        m_rootPasswd = "";
-        return true;
-    }
-    return false;
-}
-
 qint64 LogFileParser::formatDateTime(QString m, QString d, QString t)
 {
     //    QDateTime::fromString("9月 24 2019 10:32:34", "MMM d yyyy hh:mm:ss");
@@ -593,6 +584,11 @@ void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
     default:
         break;
     }
+}
+
+void LogFileParser::slog_proccessError(const QString &iError)
+{
+    DMessageBox::information(nullptr, tr("information"), iError);
 }
 
 

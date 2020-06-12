@@ -37,4 +37,7 @@ LogIconButton::LogIconButton(QString text, QWidget *parent)
     this->setIconSize(QSize(32, 32));
 }
 
-void LogIconButton::mousePressEvent(QMouseEvent *e) {}
+void LogIconButton::mousePressEvent(QMouseEvent *e)
+{
+    Q_UNUSED(e)
+}

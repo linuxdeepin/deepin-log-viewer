@@ -160,7 +160,7 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
         //In normal case this should be styles.xml which in xl
         QString name = rels_styles[0].target;
         QString path = xlworkbook_Dir + QLatin1String("/") + name;
-        QSharedPointer<Styles> styles (new Styles(Styles::F_LoadFromExists));
+        QSharedPointer<Styles> styles(new Styles(Styles::F_LoadFromExists));
         styles->loadFromXmlData(zipReader.fileData(path));
         workbook->d_func()->styles = styles;
     }
@@ -184,7 +184,7 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
     }
 
     //load sheets
-    for (int i=0; i<workbook->sheetCount(); ++i) {
+    for (int i = 0; i < workbook->sheetCount(); ++i) {
         AbstractSheet *sheet = workbook->sheet(i);
         QString rel_path = getRelFilePath(sheet->filePath());
         //If the .rel file exists, load it.
@@ -194,7 +194,7 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
     }
 
     //load external links
-    for (int i=0; i<workbook->d_func()->externalLinks.count(); ++i) {
+    for (int i = 0; i < workbook->d_func()->externalLinks.count(); ++i) {
         SimpleOOXmlFile *link = workbook->d_func()->externalLinks[i].data();
         QString rel_path = getRelFilePath(link->filePath());
         //If the .rel file exists, load it.
@@ -204,7 +204,7 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
     }
 
     //load drawings
-    for (int i=0; i<workbook->drawings().size(); ++i) {
+    for (int i = 0; i < workbook->drawings().size(); ++i) {
         Drawing *drawing = workbook->drawings()[i];
         QString rel_path = getRelFilePath(drawing->filePath());
         if (zipReader.filePaths().contains(rel_path))
@@ -214,17 +214,17 @@ bool DocumentPrivate::loadPackage(QIODevice *device)
 
     //load charts
     QList<QSharedPointer<Chart> > chartFileToLoad = workbook->chartFiles();
-    for (int i=0; i<chartFileToLoad.size(); ++i) {
+    for (int i = 0; i < chartFileToLoad.size(); ++i) {
         QSharedPointer<Chart> cf = chartFileToLoad[i];
         cf->loadFromXmlData(zipReader.fileData(cf->filePath()));
     }
 
     //load media files
     QList<QSharedPointer<MediaFile> > mediaFileToLoad = workbook->mediaFiles();
-    for (int i=0; i<mediaFileToLoad.size(); ++i) {
+    for (int i = 0; i < mediaFileToLoad.size(); ++i) {
         QSharedPointer<MediaFile> mf = mediaFileToLoad[i];
         const QString path = mf->fileName();
-        const QString suffix = path.mid(path.lastIndexOf(QLatin1Char('.'))+1);
+        const QString suffix = path.mid(path.lastIndexOf(QLatin1Char('.')) + 1);
         mf->set(zipReader.fileData(path), suffix);
     }
 
@@ -247,41 +247,41 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
     QList<QSharedPointer<AbstractSheet> > worksheets = workbook->getSheetsByTypes(AbstractSheet::ST_WorkSheet);
     if (!worksheets.isEmpty())
         docPropsApp.addHeadingPair(QStringLiteral("Worksheets"), worksheets.size());
-    for (int i=0; i<worksheets.size(); ++i) {
+    for (int i = 0; i < worksheets.size(); ++i) {
         QSharedPointer<AbstractSheet> sheet = worksheets[i];
-        contentTypes->addWorksheetName(QStringLiteral("sheet%1").arg(i+1));
+        contentTypes->addWorksheetName(QStringLiteral("sheet%1").arg(i + 1));
         docPropsApp.addPartTitle(sheet->sheetName());
 
-        zipWriter.addFile(QStringLiteral("xl/worksheets/sheet%1.xml").arg(i+1), sheet->saveToXmlData());
+        zipWriter.addFile(QStringLiteral("xl/worksheets/sheet%1.xml").arg(i + 1), sheet->saveToXmlData());
         Relationships *rel = sheet->relationships();
         if (!rel->isEmpty())
-            zipWriter.addFile(QStringLiteral("xl/worksheets/_rels/sheet%1.xml.rels").arg(i+1), rel->saveToXmlData());
+            zipWriter.addFile(QStringLiteral("xl/worksheets/_rels/sheet%1.xml.rels").arg(i + 1), rel->saveToXmlData());
     }
 
     //save chartsheet xml files
     QList<QSharedPointer<AbstractSheet> > chartsheets = workbook->getSheetsByTypes(AbstractSheet::ST_ChartSheet);
     if (!chartsheets.isEmpty())
         docPropsApp.addHeadingPair(QStringLiteral("Chartsheets"), chartsheets.size());
-    for (int i=0; i<chartsheets.size(); ++i) {
+    for (int i = 0; i < chartsheets.size(); ++i) {
         QSharedPointer<AbstractSheet> sheet = chartsheets[i];
-        contentTypes->addWorksheetName(QStringLiteral("sheet%1").arg(i+1));
+        contentTypes->addWorksheetName(QStringLiteral("sheet%1").arg(i + 1));
         docPropsApp.addPartTitle(sheet->sheetName());
 
-        zipWriter.addFile(QStringLiteral("xl/chartsheets/sheet%1.xml").arg(i+1), sheet->saveToXmlData());
+        zipWriter.addFile(QStringLiteral("xl/chartsheets/sheet%1.xml").arg(i + 1), sheet->saveToXmlData());
         Relationships *rel = sheet->relationships();
         if (!rel->isEmpty())
-            zipWriter.addFile(QStringLiteral("xl/chartsheets/_rels/sheet%1.xml.rels").arg(i+1), rel->saveToXmlData());
+            zipWriter.addFile(QStringLiteral("xl/chartsheets/_rels/sheet%1.xml.rels").arg(i + 1), rel->saveToXmlData());
     }
 
     // save external links xml files
-    for (int i=0; i<workbook->d_func()->externalLinks.count(); ++i) {
+    for (int i = 0; i < workbook->d_func()->externalLinks.count(); ++i) {
         SimpleOOXmlFile *link = workbook->d_func()->externalLinks[i].data();
-        contentTypes->addExternalLinkName(QStringLiteral("externalLink%1").arg(i+1));
+        contentTypes->addExternalLinkName(QStringLiteral("externalLink%1").arg(i + 1));
 
-        zipWriter.addFile(QStringLiteral("xl/externalLinks/externalLink%1.xml").arg(i+1), link->saveToXmlData());
+        zipWriter.addFile(QStringLiteral("xl/externalLinks/externalLink%1.xml").arg(i + 1), link->saveToXmlData());
         Relationships *rel = link->relationships();
         if (!rel->isEmpty())
-            zipWriter.addFile(QStringLiteral("xl/externalLinks/_rels/externalLink%1.xml.rels").arg(i+1), rel->saveToXmlData());
+            zipWriter.addFile(QStringLiteral("xl/externalLinks/_rels/externalLink%1.xml.rels").arg(i + 1), rel->saveToXmlData());
     }
 
     // save workbook xml file
@@ -290,13 +290,13 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
     zipWriter.addFile(QStringLiteral("xl/_rels/workbook.xml.rels"), workbook->relationships()->saveToXmlData());
 
     // save drawing xml files
-    for (int i=0; i<workbook->drawings().size(); ++i) {
-        contentTypes->addDrawingName(QStringLiteral("drawing%1").arg(i+1));
+    for (int i = 0; i < workbook->drawings().size(); ++i) {
+        contentTypes->addDrawingName(QStringLiteral("drawing%1").arg(i + 1));
 
         Drawing *drawing = workbook->drawings()[i];
-        zipWriter.addFile(QStringLiteral("xl/drawings/drawing%1.xml").arg(i+1), drawing->saveToXmlData());
+        zipWriter.addFile(QStringLiteral("xl/drawings/drawing%1.xml").arg(i + 1), drawing->saveToXmlData());
         if (!drawing->relationships()->isEmpty())
-            zipWriter.addFile(QStringLiteral("xl/drawings/_rels/drawing%1.xml.rels").arg(i+1), drawing->relationships()->saveToXmlData());
+            zipWriter.addFile(QStringLiteral("xl/drawings/_rels/drawing%1.xml.rels").arg(i + 1), drawing->relationships()->saveToXmlData());
     }
 
     // save docProps app/core xml file
@@ -324,19 +324,19 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
     zipWriter.addFile(QStringLiteral("xl/theme/theme1.xml"), workbook->theme()->saveToXmlData());
 
     // save chart xml files
-    for (int i=0; i<workbook->chartFiles().size(); ++i) {
-        contentTypes->addChartName(QStringLiteral("chart%1").arg(i+1));
+    for (int i = 0; i < workbook->chartFiles().size(); ++i) {
+        contentTypes->addChartName(QStringLiteral("chart%1").arg(i + 1));
         QSharedPointer<Chart> cf = workbook->chartFiles()[i];
-        zipWriter.addFile(QStringLiteral("xl/charts/chart%1.xml").arg(i+1), cf->saveToXmlData());
+        zipWriter.addFile(QStringLiteral("xl/charts/chart%1.xml").arg(i + 1), cf->saveToXmlData());
     }
 
     // save image files
-    for (int i=0; i<workbook->mediaFiles().size(); ++i) {
+    for (int i = 0; i < workbook->mediaFiles().size(); ++i) {
         QSharedPointer<MediaFile> mf = workbook->mediaFiles()[i];
         if (!mf->mimeType().isEmpty())
             contentTypes->addDefault(mf->suffix(), mf->mimeType());
 
-        zipWriter.addFile(QStringLiteral("xl/media/image%1.%2").arg(i+1).arg(mf->suffix()), mf->contents());
+        zipWriter.addFile(QStringLiteral("xl/media/image%1.%2").arg(i + 1).arg(mf->suffix()), mf->contents());
     }
 
     // save root .rels xml file
@@ -469,7 +469,7 @@ Chart *Document::insertChart(int row, int col, const QSize &size)
 {
     if (Worksheet *sheet = currentWorksheet())
         return sheet->insertChart(row, col, size);
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -537,7 +537,7 @@ bool Document::setColumnHidden(const CellRange &range, bool hidden)
  */
 bool Document::setColumnWidth(int column, double width)
 {
-    return setColumnWidth(column,column,width);
+    return setColumnWidth(column, column, width);
 }
 
 /*!
@@ -546,7 +546,7 @@ bool Document::setColumnWidth(int column, double width)
  */
 bool Document::setColumnFormat(int column, const Format &format)
 {
-    return setColumnFormat(column,column,format);
+    return setColumnFormat(column, column, format);
 }
 
 /*!
@@ -555,7 +555,7 @@ bool Document::setColumnFormat(int column, const Format &format)
  */
 bool Document::setColumnHidden(int column, bool hidden)
 {
-    return setColumnHidden(column,column,hidden);
+    return setColumnHidden(column, column, hidden);
 }
 
 /*!
@@ -602,7 +602,7 @@ bool Document::setColumnHidden(int colFirst, int colLast, bool hidden)
 double Document::columnWidth(int column)
 {
     if (Worksheet *sheet = currentWorksheet())
-      return sheet->columnWidth(column);
+        return sheet->columnWidth(column);
     return 0.0;
 }
 
@@ -612,7 +612,7 @@ double Document::columnWidth(int column)
 Format Document::columnFormat(int column)
 {
     if (Worksheet *sheet = currentWorksheet())
-       return sheet->columnFormat(column);
+        return sheet->columnFormat(column);
     return Format();
 }
 
@@ -622,7 +622,7 @@ Format Document::columnFormat(int column)
 bool Document::isColumnHidden(int column)
 {
     if (Worksheet *sheet = currentWorksheet())
-       return sheet->isColumnHidden(column);
+        return sheet->isColumnHidden(column);
     return false;
 }
 
@@ -634,7 +634,7 @@ bool Document::isColumnHidden(int column)
 */
 bool Document::setRowFormat(int row, const Format &format)
 {
-    return setRowFormat(row,row, format);
+    return setRowFormat(row, row, format);
 }
 
 /*!
@@ -646,7 +646,7 @@ bool Document::setRowFormat(int row, const Format &format)
 bool Document::setRowFormat(int rowFirst, int rowLast, const Format &format)
 {
     if (Worksheet *sheet = currentWorksheet())
-       return sheet->setRowFormat(rowFirst, rowLast, format);
+        return sheet->setRowFormat(rowFirst, rowLast, format);
     return false;
 }
 
@@ -658,7 +658,7 @@ bool Document::setRowFormat(int rowFirst, int rowLast, const Format &format)
 */
 bool Document::setRowHidden(int row, bool hidden)
 {
-    return setRowHidden(row,row,hidden);
+    return setRowHidden(row, row, hidden);
 }
 
 /*!
@@ -670,7 +670,7 @@ bool Document::setRowHidden(int row, bool hidden)
 bool Document::setRowHidden(int rowFirst, int rowLast, bool hidden)
 {
     if (Worksheet *sheet = currentWorksheet())
-       return sheet->setRowHidden(rowFirst, rowLast, hidden);
+        return sheet->setRowHidden(rowFirst, rowLast, hidden);
     return false;
 }
 
@@ -683,7 +683,7 @@ bool Document::setRowHidden(int rowFirst, int rowLast, bool hidden)
 */
 bool Document::setRowHeight(int row, double height)
 {
-    return setRowHeight(row,row,height);
+    return setRowHeight(row, row, height);
 }
 
 /*!
@@ -696,7 +696,7 @@ bool Document::setRowHeight(int row, double height)
 bool Document::setRowHeight(int rowFirst, int rowLast, double height)
 {
     if (Worksheet *sheet = currentWorksheet())
-       return sheet->setRowHeight(rowFirst, rowLast, height);
+        return sheet->setRowHeight(rowFirst, rowLast, height);
     return false;
 }
 
@@ -705,8 +705,8 @@ bool Document::setRowHeight(int rowFirst, int rowLast, double height)
 */
 double Document::rowHeight(int row)
 {
-   if (Worksheet *sheet = currentWorksheet())
-      return sheet->rowHeight(row);
+    if (Worksheet *sheet = currentWorksheet())
+        return sheet->rowHeight(row);
     return 0.0;
 }
 
@@ -716,8 +716,8 @@ double Document::rowHeight(int row)
 Format Document::rowFormat(int row)
 {
     if (Worksheet *sheet = currentWorksheet())
-       return sheet->rowFormat(row);
-     return Format();
+        return sheet->rowFormat(row);
+    return Format();
 }
 
 /*!
@@ -726,8 +726,8 @@ Format Document::rowFormat(int row)
 bool Document::isRowHidden(int row)
 {
     if (Worksheet *sheet = currentWorksheet())
-       return sheet->isRowHidden(row);
-     return false;
+        return sheet->isRowHidden(row);
+    return false;
 }
 
 /*!
@@ -783,7 +783,7 @@ Cell *Document::cellAt(const CellReference &pos) const
 {
     if (Worksheet *sheet = currentWorksheet())
         return sheet->cellAt(pos);
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -796,7 +796,7 @@ Cell *Document::cellAt(int row, int col) const
 {
     if (Worksheet *sheet = currentWorksheet())
         return sheet->cellAt(row, col);
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -976,7 +976,7 @@ Worksheet *Document::currentWorksheet() const
     if (st && st->sheetType() == AbstractSheet::ST_WorkSheet)
         return static_cast<Worksheet *>(st);
     else
-        return 0;
+        return nullptr;
 }
 
 /*!

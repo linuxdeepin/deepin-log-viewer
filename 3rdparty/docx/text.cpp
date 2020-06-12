@@ -156,7 +156,6 @@ void Run::addBreak(WD_BREAK breakType)
     case WD_BREAK::LINE_CLEAR_LEFT: eletype = QStringLiteral("textWrapping"); eleclear = QStringLiteral("left"); break;
     case WD_BREAK::LINE_CLEAR_RIGHT: eletype = QStringLiteral("textWrapping"); eleclear = QStringLiteral("right"); break;
     case WD_BREAK::LINE_CLEAR_ALL: eletype = QStringLiteral("textWrapping"); eleclear = QStringLiteral("all"); break;
-    default: break;
     }
     m_rEle.appendChild(brele);
     if (!eletype.isEmpty())

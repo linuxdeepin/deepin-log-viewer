@@ -120,8 +120,8 @@ Columns::~Columns() {}
 
 Column::Column(const QDomElement &tlGrid, int gridIndex, Table *table)
     : m_grid(tlGrid)
-    , m_index(gridIndex)
     , m_table(table)
+    , m_index(gridIndex)
 {
 }
 

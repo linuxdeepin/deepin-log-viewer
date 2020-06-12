@@ -116,9 +116,9 @@ void journalWork::doWork()
 
         //        r = sd_journal_get_data(j, "SYSLOG_TIMESTAMP", (const void **)&d, &l);
         //        if (r < 0) {
-        r = sd_journal_get_data(j, "_SOURCE_REALTIME_TIMESTAMP", (const void **)&d, &l);
+        r = sd_journal_get_data(j, "_SOURCE_REALTIME_TIMESTAMP", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
-            r = sd_journal_get_data(j, "__REALTIME_TIMESTAMP", (const void **)&d, &l);
+            r = sd_journal_get_data(j, "__REALTIME_TIMESTAMP", reinterpret_cast<const void **>(&d), &l);
             if (r < 0) {
                 continue;
             }
@@ -130,26 +130,26 @@ void journalWork::doWork()
         // sd_journal_set_data_threshold(j, 0);
         QString dt = getReplaceColorStr(d).split("=").value(1);
         if (m_arg.size() == 2) {
-            if (t < m_arg.at(1).toLongLong())
+            if (t < static_cast<uint64_t>(m_arg.at(1).toLongLong()))
                 continue;
         }
         logMsg.dateTime = getDateTimeFromStamp(dt);
 
-        r = sd_journal_get_data(j, "_HOSTNAME", (const void **)&d, &l);
+        r = sd_journal_get_data(j, "_HOSTNAME", reinterpret_cast<const void **>(&d), &l);
         if (r < 0)
             logMsg.hostName = "";
         else {
             logMsg.hostName = getReplaceColorStr(d).split("=").value(1);
         }
 
-        r = sd_journal_get_data(j, "_PID", (const void **)&d, &l);
+        r = sd_journal_get_data(j, "_PID", reinterpret_cast<const void **>(&d), &l);
         if (r < 0)
             logMsg.daemonId = "";
         else {
             logMsg.daemonId = getReplaceColorStr(d).split("=").value(1);
         }
 
-        r = sd_journal_get_data(j, "_COMM", (const void **)&d, &l);
+        r = sd_journal_get_data(j, "_COMM", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.daemonName = "unknown";
             qDebug() << logMsg.daemonId << "error code" << r;
@@ -158,14 +158,14 @@ void journalWork::doWork()
         }
 
 
-        r = sd_journal_get_data(j, "MESSAGE", (const void **)&d, &l);
+        r = sd_journal_get_data(j, "MESSAGE", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.msg = "";
         } else {
             logMsg.msg = getReplaceColorStr(d).split("=").value(1);
         }
 
-        r = sd_journal_get_data(j, "PRIORITY", (const void **)&d, &l);
+        r = sd_journal_get_data(j, "PRIORITY", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.level = "";
         } else {

@@ -87,7 +87,7 @@ QMap<QString, QVector<SerializedRelationship> > PackageReader::partRels() const
 
     partMaps[QStringLiteral("/")] = m_srels->rels();
 
-    for (const SerializedPart p : m_sparts) {
+    for (SerializedPart p : m_sparts) {
         SerializedRelationships s = p.rels();
         if (s.count() > 0) {
             partMaps[p.partName()] = s.rels();

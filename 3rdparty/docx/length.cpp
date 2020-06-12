@@ -25,7 +25,7 @@ Length::Length(int emu) : m_value(emu)
 
 float Length::cm() const
 {
-    return (float)m_value/(float)EMUS_PER_CM;
+    return static_cast<float>(m_value) / static_cast<float>(EMUS_PER_CM);
 }
 
 int Length::emu() const
@@ -35,22 +35,22 @@ int Length::emu() const
 
 float Length::inches() const
 {
-    return (float)m_value/(float)EMUS_PER_INCH;
+    return static_cast<float>(m_value) / static_cast<float>(EMUS_PER_INCH);
 }
 
 float Length::mm() const
 {
-    return (float)m_value/(float)EMUS_PER_MM;
+    return static_cast<float>(m_value) / static_cast<float>(EMUS_PER_MM);
 }
 
 int Length::px() const
 {
-    return (int)(round((float)m_value/(float)EMUS_PER_PX) + 0.1);
+    return  static_cast<int>(round(static_cast<float>(m_value) / static_cast<float>(EMUS_PER_PX)) + static_cast<float>(0.1));
 }
 
 int Length::twips() const
 {
-    return (int)(round((float)m_value/(float)EMUS_PER_TWIP));
+    return static_cast<int>(round(static_cast<float>(m_value) / static_cast<float>(EMUS_PER_TWIP)));
 }
 
 bool Length::isEmpty() const
@@ -93,7 +93,7 @@ Length Cm::emus(float cm)
  */
 Length Emu::emus(float emu)
 {
-    return Length(emu);
+    return Length(static_cast<int>(emu));
 }
 
 /*!

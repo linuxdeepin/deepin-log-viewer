@@ -111,12 +111,14 @@ utmp list_get_ele_and_del(QList<utmp > &list, char *value, int &rs)
     utmp temp;
     for (int i = 0; i < list.length(); ++i) {
         utmp itemValue = list.value(i);
-        if (strcmp(value, itemValue.ut_line) == 0) {
+        QString a(itemValue.ut_line);
+        QString b(value);
+        int result = QString::compare(a, b);
+        if (result == 0) {
             list.removeAt(i);
             rs = 0;
             return itemValue;
         }
-
     }
     rs = -1;
     return temp;

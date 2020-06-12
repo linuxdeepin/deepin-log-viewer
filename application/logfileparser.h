@@ -38,11 +38,12 @@ public:
     ~LogFileParser();
 
     void parseByJournal(QStringList arg = QStringList());
-    void parseByDpkg(QList<LOG_MSG_DPKG> &dList, qint64 ms = 0);
+    void parseByDpkg(qint64 ms = 0);
 #if 0
     void parseByXlog(QStringList &xList);
-#endif
     void parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms = 0);  // modifed by Airy for show period
+#endif
+    void parseByXlog(qint64 ms = 0);
     void parseByBoot();
     void parseByKern(qint64 ms = 0);
     void parseByApp(QString path, int lv = 6, qint64 ms = 0);
@@ -53,8 +54,8 @@ public:
     void stopAllLoad();
 
 signals:
-    void dpkgFinished();
-    void xlogFinished();
+    void dpkgFinished(QList<LOG_MSG_DPKG>);
+    void xlogFinished(QList<LOG_MSG_XORG>);
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kernFinished(QList<LOG_MSG_JOURNAL>);
     void journalFinished();
@@ -64,7 +65,6 @@ signals:
 
 
 private:
-    bool isErroCommand(QString str);
     qint64 formatDateTime(QString m, QString d, QString t);
     void quitLogAuththread(QThread *iThread);
 signals:
@@ -73,6 +73,7 @@ public slots:
     void slot_journalFinished();
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slot_threadFinished(LOG_FLAG flag, QString output);
+    void slog_proccessError(const QString &iError);
 private:
     QString m_rootPasswd;
 

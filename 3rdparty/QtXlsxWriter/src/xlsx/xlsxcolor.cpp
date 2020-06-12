@@ -17,13 +17,13 @@ XlsxColor::XlsxColor(const QColor &color)
 }
 
 XlsxColor::XlsxColor(const QString &theme, const QString &tint)
-    :val(QStringList()<<theme<<tint)
+    : val(QStringList() << theme << tint)
 {
 
 }
 
 XlsxColor::XlsxColor(int index)
-    :val(index)
+    : val(index)
 {
 
 }
@@ -107,7 +107,7 @@ bool XlsxColor::loadFromXml(QXmlStreamReader &reader)
     } else if (attributes.hasAttribute(QLatin1String("theme"))) {
         QString theme = attributes.value(QLatin1String("theme")).toString();
         QString tint = attributes.value(QLatin1String("tint")).toString();
-        val.setValue(QStringList()<<theme<<tint);
+        val.setValue(QStringList() << theme << tint);
     }
     return true;
 }
@@ -122,10 +122,10 @@ QColor XlsxColor::fromARGBString(const QString &c)
 {
     Q_ASSERT(c.length() == 8);
     QColor color;
-    color.setAlpha(c.mid(0, 2).toInt(0, 16));
-    color.setRed(c.mid(2, 2).toInt(0, 16));
-    color.setGreen(c.mid(4, 2).toInt(0, 16));
-    color.setBlue(c.mid(6, 2).toInt(0, 16));
+    color.setAlpha(c.mid(0, 2).toInt(nullptr, 16));
+    color.setRed(c.mid(2, 2).toInt(nullptr, 16));
+    color.setGreen(c.mid(4, 2).toInt(nullptr, 16));
+    color.setBlue(c.mid(6, 2).toInt(nullptr, 16));
     return color;
 }
 
@@ -140,15 +140,15 @@ QString XlsxColor::toARGBString(const QColor &c)
 QDataStream &operator<<(QDataStream &s, const XlsxColor &color)
 {
     if (color.isInvalid())
-        s<<0;
+        s << 0;
     else if (color.isRgbColor())
-        s<<1<<color.rgbColor();
+        s << 1 << color.rgbColor();
     else if (color.isIndexedColor())
-        s<<2<<color.indexedColor();
+        s << 2 << color.indexedColor();
     else if (color.isThemeColor())
-        s<<3<<color.themeColor();
+        s << 3 << color.themeColor();
     else
-        s<<4;
+        s << 4;
 
     return s;
 }
@@ -156,20 +156,20 @@ QDataStream &operator<<(QDataStream &s, const XlsxColor &color)
 QDataStream &operator>>(QDataStream &s, XlsxColor &color)
 {
     int marker(4);
-    s>>marker;
+    s >> marker;
     if (marker == 0) {
         color = XlsxColor();
     } else if (marker == 1) {
         QColor c;
-        s>>c;
+        s >> c;
         color = XlsxColor(c);
     } else if (marker == 2) {
         int indexed;
-        s>>indexed;
+        s >> indexed;
         color = XlsxColor(indexed);
     } else if (marker == 3) {
         QStringList list;
-        s>>list;
+        s >> list;
         color = XlsxColor(list[0], list[1]);
     }
 

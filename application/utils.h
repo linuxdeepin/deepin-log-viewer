@@ -51,7 +51,11 @@ class Utils : public QObject
 public:
     Utils(QObject *parent = nullptr);
     ~Utils();
-
+    enum CommandErrorType {
+        NoError = 0x0000,
+        PermissionError = 0x0001,
+        RetryError = 0x0002
+    };
     static QHash<QString, QPixmap> m_imgCacheHash;
     static QHash<QString, QString> m_fontNameCache;
 
@@ -62,6 +66,9 @@ public:
     static QPixmap renderSVG(const QString &filePath, const QSize &size);
     static QString loadFontFamilyFromFiles(const QString &fontFileName);
     static QByteArray replaceEmptyByteArray(QByteArray &iReplaceStr);
+    static CommandErrorType isErroCommand(QString str);
+
 };
+
 
 #endif

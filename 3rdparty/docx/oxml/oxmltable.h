@@ -56,7 +56,7 @@ private:
 private:
     QDomElement m_element;
     //QDomElement m_element;
-    QDomDocument *m_dom;    
+    QDomDocument *m_dom;
     QDomElement m_tblStyle;
     QDomElement m_jcAlignment;
     QMap<WD_TABLE_ALIGNMENT, QString> m_aligns;
@@ -85,7 +85,7 @@ private:
  */
 class CT_Tc
 {
-public:    
+public:
     CT_Tc(Cell *cell, const QDomElement &ele);
     CT_Tc *merge(QSharedPointer<CT_Tc> other);
     QDomElement ele() const;
@@ -103,7 +103,7 @@ public:
     virtual ~CT_Tc();
 
 private:
-    void spanDimensions(QSharedPointer<CT_Tc> other, int &top, int &left, int &height, int &width);    
+    void spanDimensions(QSharedPointer<CT_Tc> other, int &top, int &left, int &height, int &width);
     void raise_on_inverted_L(CT_Tc *a, CT_Tc *b);
     void raise_on_tee_shaped(CT_Tc *a, CT_Tc *b);
     int width() const;
@@ -114,13 +114,13 @@ private:
     Row *trBelow() const;
     void growTo(int width, int height, CT_Tc *top_tc = nullptr);
     QString vMergeVal(int height, CT_Tc *tc);
-    void spanToWidth(int grid_width, CT_Tc *top_tc, const QString &vmerge);    
+    void spanToWidth(int grid_width, CT_Tc *top_tc, const QString &vmerge);
     void moveContentTo(CT_Tc *top_tc);
-    void removeTrailingEmptyP();    
+    void removeTrailingEmptyP();
     void swallowNextTc(int grid_width, CT_Tc *top_tc);
     void addWidthOf(CT_Tc *other_tc);
     void raise_on_invalid_swallow(int grid_width, CT_Tc *nextc);
-    Cell *nextTc() const;    
+    Cell *nextTc() const;
 
 private:
     void checktcPr();

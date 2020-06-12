@@ -21,7 +21,6 @@ public:
     QString target() const;
     QString targetPartName() const;
     bool  isExternal() const;
-    ~SerializedRelationship();
 
 private:
     QString m_baseURI;
@@ -37,7 +36,7 @@ class SerializedRelationships
 {
 public:
     SerializedRelationships();
-    static SerializedRelationships* loadFromData(const QString baseURI, const QByteArray &relsXml);
+    static SerializedRelationships *loadFromData(const QString baseURI, const QByteArray &relsXml);
     void addRelationship(const SerializedRelationship &rel);
     void addRelationships(const QVector<SerializedRelationship> &rels);
     QVector<SerializedRelationship> rels() const;

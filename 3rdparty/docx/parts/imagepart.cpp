@@ -34,7 +34,7 @@ Length ImagePart::defaultCx() const
 {
     int px_width = m_image->pxWidth();
     int horz_dpi = m_image->horzDpi();
-    float width_in_inches = (float)px_width / (float)horz_dpi;
+    float width_in_inches = static_cast<float>(px_width) / static_cast<float>(horz_dpi);
     return Inches::emus(width_in_inches);
 }
 
@@ -42,7 +42,7 @@ Length ImagePart::defaultCy() const
 {
     int px_height = m_image->pxHeight();
     int horz_dpi = m_image->horzDpi();
-    float height_in_inches = (float)(914400 * px_height) / (float)horz_dpi;
+    float height_in_inches = static_cast<float>(914400 * px_height) / static_cast<float>(horz_dpi);
     return Emu::emus(height_in_inches);
 }
 
@@ -63,7 +63,7 @@ void ImagePart::afterUnmarshal()
 }
 
 Image *ImagePart::image() const
-{    
+{
     return m_image;
 }
 

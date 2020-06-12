@@ -55,10 +55,7 @@ bool SerializedRelationship::isExternal() const
     return m_targetMode == Constants::EXTERNAL;
 }
 
-SerializedRelationship::~SerializedRelationship()
-{
 
-}
 
 // End SerializedRelationship
 

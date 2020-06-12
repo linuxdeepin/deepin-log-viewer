@@ -37,7 +37,7 @@
 QT_BEGIN_NAMESPACE_XLSX
 
 ChartsheetPrivate::ChartsheetPrivate(Chartsheet *p, Chartsheet::CreateFlag flag)
-    : AbstractSheetPrivate(p, flag), chart(0)
+    : AbstractSheetPrivate(p, flag), chart(nullptr)
 {
 
 }
@@ -56,7 +56,7 @@ ChartsheetPrivate::~ChartsheetPrivate()
  * \internal
  */
 Chartsheet::Chartsheet(const QString &name, int id, Workbook *workbook, CreateFlag flag)
-    :AbstractSheet(name, id, workbook, new ChartsheetPrivate(this, flag))
+    : AbstractSheet(name, id, workbook, new ChartsheetPrivate(this, flag))
 {
     setSheetType(ST_ChartSheet);
 
@@ -87,7 +87,7 @@ Chartsheet *Chartsheet::copy(const QString &distName, int distId) const
     //:Todo
     Q_UNUSED(distName)
     Q_UNUSED(distId)
-    return 0;
+    return nullptr;
 }
 
 /*!
@@ -126,7 +126,7 @@ void Chartsheet::saveToXmlFile(QIODevice *device) const
     writer.writeEndElement(); //sheetViews
 
     int idx = d->workbook->drawings().indexOf(d->drawing.data());
-    d->relationships->addWorksheetRelationship(QStringLiteral("/drawing"), QStringLiteral("../drawings/drawing%1.xml").arg(idx+1));
+    d->relationships->addWorksheetRelationship(QStringLiteral("/drawing"), QStringLiteral("../drawings/drawing%1.xml").arg(idx + 1));
 
     writer.writeEmptyElement(QStringLiteral("drawing"));
     writer.writeAttribute(QStringLiteral("r:id"), QStringLiteral("rId%1").arg(d->relationships->count()));
