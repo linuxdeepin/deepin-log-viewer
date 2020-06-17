@@ -26,6 +26,7 @@
 #include "logapplicationhelper.h"
 #include "logcollectormain.h"
 #include "environments.h"
+#include "accessible.h"
 #include <DLog>
 #include <QDateTime>
 
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
         qDebug() << "DGuiApplicationHelper::instance()->setSingleInstance";
         exit(0);
     }
-
+  //  QAccessible::installFactory(accessibleFactory);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     a.loadTranslator();

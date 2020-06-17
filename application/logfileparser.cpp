@@ -361,11 +361,11 @@ void LogFileParser::parseByBoot()
     m_authThread = LogAuthThread::instance();
     stopAllLoad();
 
-    disconnect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
-               SLOT(slot_threadFinished(LOG_FLAG, QString)));
+    disconnect(m_authThread, SIGNAL(bootFinished(LOG_FLAG, QString)), this,
+               SLOT(slot_bootFinished(LOG_FLAG, QString)));
     m_authThread->setType(BOOT);
-    connect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
-            SLOT(slot_threadFinished(LOG_FLAG, QString)));
+    connect(m_authThread, SIGNAL(bootFinished(LOG_FLAG, QString)), this,
+            SLOT(slot_bootFinished(LOG_FLAG, QString)));
 
     m_authThread->start();
 }
@@ -378,12 +378,12 @@ void LogFileParser::parseByKern(qint64 ms)
     m_isKernLoading = true;
     m_authThread = LogAuthThread::instance();
     stopAllLoad();
-    disconnect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
-               SLOT(slot_threadFinished(LOG_FLAG, QString)));
+    disconnect(m_authThread, SIGNAL(kernFinished(LOG_FLAG, QString)), this,
+               SLOT(slot_kernFinished(LOG_FLAG, QString)));
     m_authThread->setType(KERN);
     m_selectTime = ms;
-    connect(m_authThread, SIGNAL(cmdFinished(LOG_FLAG, QString)), this,
-            SLOT(slot_threadFinished(LOG_FLAG, QString)));
+    connect(m_authThread, SIGNAL(kernFinished(LOG_FLAG, QString)), this,
+            SLOT(slot_kernFinished(LOG_FLAG, QString)));
 
     m_authThread->start();
 }
@@ -498,94 +498,90 @@ void LogFileParser::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList
 
 #include <unistd.h>
 #include <QApplication>
-void LogFileParser::slot_threadFinished(LOG_FLAG flag, QString output)
+void LogFileParser::slot_kernFinished(LOG_FLAG flag, QString output)
 {
-    switch (flag) {
-    case BOOT: {
-        QList<LOG_MSG_BOOT> bList;
+    Q_UNUSED(flag)
+    QList<LOG_MSG_JOURNAL> kList;
+    //            qDebug() << "ms::" << m_selectTime << output;
+    QStringList a = output.split('\n');
+    for (QString str : a) {
+        LOG_MSG_JOURNAL msg;
 
-        for (QString lineStr : output.split('\n')) {
-            if (lineStr.startsWith("/dev"))
-                continue;
+        str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+        QStringList list = str.split(" ", QString::SkipEmptyParts);
+        if (list.size() < 5)
+            continue;
 
-            // remove Useless characters
-            lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+        QStringList timeList;
+        timeList.append(list[0]);
+        timeList.append(list[1]);
+        timeList.append(list[2]);
+        qint64 iTime = formatDateTime(list[0], list[1], list[2]);
+        if (iTime < m_selectTime)
+            continue;
 
-            QStringList retList;
-            LOG_MSG_BOOT bMsg;
-            retList = lineStr.split(" ", QString::SkipEmptyParts);
-            if (lineStr.startsWith("[")) {
-                bMsg.status = retList[1];
-                QStringList leftList = retList.mid(3);
-                bMsg.msg += leftList.join(" ");
-                bList.insert(0, bMsg);
-            } else {
-                if (bList.size() == 0)
-                    continue;
+        msg.dateTime = timeList.join(" ");
+        msg.hostName = list[3];
 
-                bList[0].msg += retList.join(" ");
-            }
+        QStringList tmpList = list[4].split("[");
+        if (tmpList.size() != 2) {
+            msg.daemonName = list[4].split(":")[0];
+        } else {
+            msg.daemonName = list[4].split("[")[0];
+            QString id = list[4].split("[")[1];
+            id.chop(2);
+            msg.daemonId = id;
         }
 
-        createFile(output, bList.count());
-        m_isBootLoading = false;
-        emit bootFinished(bList);
-
-    } break;
-    case KERN: {
-        QList<LOG_MSG_JOURNAL> kList;
-        //            qDebug() << "ms::" << m_selectTime << output;
-        QStringList a = output.split('\n');
-        for (QString str : a) {
-            LOG_MSG_JOURNAL msg;
-
-            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-            QStringList list = str.split(" ", QString::SkipEmptyParts);
-            if (list.size() < 5)
-                continue;
-
-            QStringList timeList;
-            timeList.append(list[0]);
-            timeList.append(list[1]);
-            timeList.append(list[2]);
-            qint64 iTime = formatDateTime(list[0], list[1], list[2]);
-            if (iTime < m_selectTime)
-                continue;
-
-            msg.dateTime = timeList.join(" ");
-            msg.hostName = list[3];
-
-            QStringList tmpList = list[4].split("[");
-            if (tmpList.size() != 2) {
-                msg.daemonName = list[4].split(":")[0];
-            } else {
-                msg.daemonName = list[4].split("[")[0];
-                QString id = list[4].split("[")[1];
-                id.chop(2);
-                msg.daemonId = id;
-            }
-
-            QString msgInfo;
-            for (auto i = 5; i < list.size(); i++) {
-                msgInfo.append(list[i] + " ");
-            }
-            msg.msg = msgInfo;
-
-            //            kList.append(msg);
-            kList.insert(0, msg);
-
-            QApplication::processEvents();  // devide UI and parser
+        QString msgInfo;
+        for (auto i = 5; i < list.size(); i++) {
+            msgInfo.append(list[i] + " ");
         }
+        msg.msg = msgInfo;
 
-        createFile(output, kList.count());
-        m_isKernLoading = false;
-        emit kernFinished(kList);
-    } break;
-    default:
-        break;
+        //            kList.append(msg);
+        kList.insert(0, msg);
+
+        QApplication::processEvents();  // devide UI and parser
     }
-}
 
+    createFile(output, kList.count());
+    m_isKernLoading = false;
+    emit kernFinished(kList);
+}
+void LogFileParser::slot_bootFinished(LOG_FLAG flag, QString output)
+{
+    Q_UNUSED(flag)
+    QList<LOG_MSG_BOOT> bList;
+
+    for (QString lineStr : output.split('\n')) {
+        if (lineStr.startsWith("/dev"))
+            continue;
+
+        // remove Useless characters
+        lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+
+        QStringList retList;
+        LOG_MSG_BOOT bMsg;
+        retList = lineStr.split(" ", QString::SkipEmptyParts);
+        if (lineStr.startsWith("[")) {
+            bMsg.status = retList[1];
+            QStringList leftList = retList.mid(3);
+            bMsg.msg += leftList.join(" ");
+            bList.insert(0, bMsg);
+        } else {
+            if (bList.size() == 0)
+                continue;
+
+            bList[0].msg += retList.join(" ");
+        }
+    }
+
+    createFile(output, bList.count());
+    m_isBootLoading = false;
+    emit bootFinished(bList);
+
+}
 void LogFileParser::slog_proccessError(const QString &iError)
 {
     DMessageBox::information(nullptr, tr("information"), iError);

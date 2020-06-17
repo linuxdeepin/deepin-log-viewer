@@ -108,7 +108,7 @@ void list_insert(QList<utmp *> plist, struct utmp *value)
 
 utmp list_get_ele_and_del(QList<utmp > &list, char *value, int &rs)
 {
-    utmp temp;
+    utmp temp={};
     for (int i = 0; i < list.length(); ++i) {
         utmp itemValue = list.value(i);
         QString a(itemValue.ut_line);

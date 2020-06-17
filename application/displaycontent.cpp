@@ -318,7 +318,7 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
     kList.clear();
-    setLoadState(DATA_LOADING_K);
+    setLoadState(DATA_LOADING);
     //    m_spinnerWgt->hide();  // modified by Airy for bug 15520
     //    m_treeView->show();
 
@@ -767,6 +767,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         generateXorgFile(m_curBtnId);
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         bList.clear();
+         setLoadState(DATA_LOADING);
         m_flag = BOOT;
         m_logFileParse.parseByBoot();
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
@@ -782,16 +783,17 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         //        m_logFileParse.parseByNormal(norList);
         generateNormalFile(m_curBtnId);
     } else if (itemData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
+         setLoadState(DATA_LOADING);
         m_kwinList.clear();
         m_currentKwinList.clear();
         m_flag = Kwin;
         m_logFileParse.parseByKwin(m_currentKwinFilter);
     }
 
-    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||   //modified by Airy for bug 19660:spinner always running
-            !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
-        setLoadState(DATA_COMPLETE);
-    }
+//    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||   //modified by Airy for bug 19660:spinner always running
+//            !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
+//        setLoadState(DATA_COMPLETE);
+//    }
 }
 
 void DisplayContent::slot_exportClicked()
@@ -1473,6 +1475,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     }
     }
     this->update();
+
 }
 
 void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel)

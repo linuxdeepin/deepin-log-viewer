@@ -48,7 +48,8 @@ protected:
 
 
 signals:
-    void cmdFinished(LOG_FLAG, QString output);
+    void kernFinished(LOG_FLAG iflag, QString output);
+    void bootFinished(LOG_FLAG iflag, QString output);
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
     void xorgFinished(QList<LOG_MSG_XORG> iKwinList);
     void dpkgFinished(QList<LOG_MSG_DPKG> iKwinList);

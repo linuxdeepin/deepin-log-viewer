@@ -212,6 +212,10 @@ set (APP_HEADERS_FILES
     model/log_sort_filter_proxy_model.h
     common/collator.h
     )
+set (TEST_ACCESSIBLE_HEADERS_FILES
+     accessible.h
+     accessibledefine.h
+    )
 #include_directories(${DtkWidget_INCLUDE_DIRS})
 #include_directories(${DtkGui_INCLUDE_DIRS})
 #include_directories(${DtkCore_INCLUDE_DIRS})
@@ -253,7 +257,7 @@ endfunction()
 find_library(ICUIL18N_LIB icui18n)
 find_library(ICUUC_LIB icuuc)
 
-add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES})
+add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES})
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/QtXlsxWriter/src/xlsx")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})

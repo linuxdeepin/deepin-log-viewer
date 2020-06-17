@@ -12,6 +12,7 @@ LogAuthThread::LogAuthThread(QObject *parent)
     qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
     qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
     qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
+    qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
 }
 
 LogAuthThread::~LogAuthThread()
@@ -74,7 +75,7 @@ void LogAuthThread::handleBoot()
 {
     QFile file("/var/log/boot.log");  // add by Airy
     if (!file.exists()) {
-        emit cmdFinished(m_type, "");
+        emit bootFinished(m_type, "");
         return;
     }
     initProccess();
@@ -82,13 +83,23 @@ void LogAuthThread::handleBoot()
     m_process->start("pkexec", QStringList() << "logViewerAuth"
                      << "/var/log/boot.log");
     m_process->waitForFinished(-1);
+    QByteArray byte =   m_process->readAllStandardOutput();
+    QTextStream stream(&byte);
+    QByteArray encode;
+    stream.setCodec(encode);
+    QString str = stream.readAll();
+    QStringList l = str.split('\n');
+    qDebug() << __FUNCTION__ << "byte" << byte.length();
+    qDebug() << __FUNCTION__ << "str" << str.length();
+    emit bootFinished(m_type, str);
+    //  qDebug() << __FUNCTION__ << "str" << str;
 }
 
 void LogAuthThread::handleKern()
 {
     QFile file("/var/log/kern.log"); // add by Airy
     if (!file.exists()) {
-        emit cmdFinished(m_type, "");
+        emit kernFinished(m_type, "");
         return;
     }
     initProccess();
@@ -99,6 +110,15 @@ void LogAuthThread::handleKern()
     //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
     // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
     m_process->waitForFinished(-1);
+    QByteArray byte =   m_process->readAllStandardOutput();
+    QTextStream stream(&byte);
+    QByteArray encode;
+    stream.setCodec(encode);
+    QString str = stream.readAll();
+    QStringList l = str.split('\n');
+    qDebug() << __FUNCTION__ << "byte" << byte.length();
+    qDebug() << __FUNCTION__ << "str" << str.length();
+    emit kernFinished(m_type, str);
 }
 
 void LogAuthThread::handleKwin()
@@ -235,7 +255,7 @@ void LogAuthThread::initProccess()
 {
     if (!m_process) {
         m_process = new QProcess;
-        connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)), Qt::UniqueConnection);
+        //connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)), Qt::UniqueConnection);
 
     }
 }
@@ -264,7 +284,7 @@ void LogAuthThread::onFinished(int exitCode)
     qDebug() << __FUNCTION__ << "str" << str.length();
     //  qDebug() << __FUNCTION__ << "str" << str;
 
-    emit cmdFinished(m_type, str);
+//    emit cmdFinished(m_type, str);
 
 
 }
