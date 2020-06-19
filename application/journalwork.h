@@ -21,15 +21,15 @@
 
 #ifndef JOURNALWORK_H
 #define JOURNALWORK_H
-
+#include <mutex>
+#include "structdef.h"
+#include <systemd/sd-journal.h>
 #include <QMap>
 #include <QObject>
 #include <QProcess>
-#include <mutex>
-#include "structdef.h"
-
 #include <QThread>
 #include <QMutexLocker>
+#include <QEventLoop>
 #include <QMutex>
 // class journalWork : public QObject
 class journalWork : public QThread
@@ -57,7 +57,7 @@ public:
     void stopWork();
 
     void setArg(QStringList arg);
-
+    void deleteSd();
     void run() override;
 
 signals:
@@ -70,7 +70,6 @@ public slots:
 public:
     QList<LOG_MSG_JOURNAL> logList;
     QMutex mutex;
-
 private:
     QString getDateTimeFromStamp(QString str);
     void initMap();
@@ -78,11 +77,11 @@ private:
 
     QStringList m_arg;
     QMap<int, QString> m_map;
-
+    // sd_journal *j {nullptr};
     QProcess *proc {nullptr};
-
     static std::atomic<journalWork *> m_instance;
     static std::mutex m_mutex;
+    QEventLoop loop;
 
 };
 

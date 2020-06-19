@@ -41,7 +41,6 @@ journalWork::journalWork(QStringList arg, QObject *parent)
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
 
     initMap();
-
     m_arg.append("-o");
     m_arg.append("json");
     if (!arg.isEmpty())
@@ -64,8 +63,10 @@ journalWork::~journalWork()
 
 void journalWork::stopWork()
 {
-    if (proc)
-        proc->kill();
+//    if (proc)
+//        proc->kill();
+    requestInterruption();
+    // deleteSd();
 }
 
 void journalWork::setArg(QStringList arg)
@@ -79,24 +80,36 @@ void journalWork::setArg(QStringList arg)
         m_arg.append(arg);
 }
 
+
+
+void journalWork::deleteSd()
+{
+
+//    qDebug() << j;
+//    if (j) {
+//        sd_journal_close(j);
+//        j = nullptr;
+//    }
+}
+
 void journalWork::run()
 {
     doWork();
+
 }
 
-#include <systemd/sd-journal.h>
+
 void journalWork::doWork()
 {
     logList.clear();
 #if 1
     int r;
-    sd_journal *j;
+    sd_journal *j ;
     r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
     if (r < 0) {
         fprintf(stderr, "Failed to open journal: %s\n", strerror(-r));
         return;
     }
-
     sd_journal_seek_tail(j);
 
     //    sd_journal_add_match(j, "PRIORITY=3", 0);
@@ -109,6 +122,10 @@ void journalWork::doWork()
 
     int cnt = 0;
     SD_JOURNAL_FOREACH_BACKWARDS(j) {
+        if (isInterruptionRequested()) {
+            deleteSd();
+            return;
+        }
         const char *d;
         size_t l;
 
@@ -181,13 +198,14 @@ void journalWork::doWork()
             mutex.lock();
             emit journalFinished();
             usleep(100);
+            mutex.unlock();
         }
         //  delete d;
     }
     emit journalFinished();
     //第一次加载时这个之后的代码都不执行?故放到最后
+    deleteSd();
     sd_journal_close(j);
-
     //    emit journalFinished(logList);
 
 #else

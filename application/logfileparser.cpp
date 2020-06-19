@@ -34,6 +34,7 @@
 #include <QJsonParseError>
 #include <QMessageBox>
 #include <QProcess>
+#include <QtConcurrent>
 
 
 DWIDGET_USE_NAMESPACE
@@ -65,19 +66,29 @@ LogFileParser::~LogFileParser() {}
 
 void LogFileParser::parseByJournal(QStringList arg)
 {
-    if (m_isJournalLoading) {
-        return;
-    }
+
     stopAllLoad();
+//    if (m_isJournalLoading) {
+//        return;
+//    }
     m_isJournalLoading = true;
+//    if (work && work->isRunning()) {
+//        work->stopWork();
+//        // quitLogAuththread(work);
+//        work->quit();
+//        work->wait();
+
+//    }
+
     work = journalWork::instance();
-    quitLogAuththread(work);
-    //    work = new journalWork();
+
+    //    work = new journalWorkd();
     disconnect(work, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()));
     work->setArg(arg);
     connect(work, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()),
             Qt::QueuedConnection);
-    work->start();
+    //work->start();
+    QtConcurrent::run(work, &journalWork::doWork);
 }
 
 void LogFileParser::parseByDpkg(qint64 ms)
@@ -428,6 +439,7 @@ void LogFileParser::createFile(QString output, int count)
 
 void LogFileParser::stopAllLoad()
 {
+    //  quitLogAuththread(work);
     if (m_authThread) {
         m_authThread->stopProccess();
         quitLogAuththread(m_authThread);

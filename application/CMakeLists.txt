@@ -16,6 +16,7 @@ set(LINK_LIBS
     Qt5::Widgets
     Qt5::Gui
     Qt5::Xml
+    Qt5::Concurrent
     ${DtkWidget_LIBRARIES}
     ${DtkCore_LIBRARIES}
     ${DtkGUI_LIBRARIES}
@@ -65,7 +66,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Xml REQUIRED)
-
+find_package(Qt5Concurrent REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(DtkGui REQUIRED)
 find_package(DtkCore REQUIRED)
