@@ -254,7 +254,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     //    va_list arg_ptr;//定义一个可变参数指针
     //    va_start(arg_ptr,needMove); //设置needMove为最后一个固定参数
     //    bool typecbx = va_arg(arg_ptr,bool); //设置第二个可变参数
-
+    setUpdatesEnabled(false);
     lvTxt->setVisible(lvCbx);
     cbx_lv->setVisible(lvCbx);
     if (cbx_lv->isVisible())
@@ -286,6 +286,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 
     }
     resizeWidth();
+    setUpdatesEnabled(true);
     //    va_end(arg_ptr);  //清除可变参数指针
 
 }
