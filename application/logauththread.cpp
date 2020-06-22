@@ -154,8 +154,27 @@ void LogAuthThread::handleKwin()
 void LogAuthThread::handleXorg()
 {
     QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
-    if (!file.exists())
+    QFile startFile("/proc/uptime");
+    QList<LOG_MSG_XORG> xList;
+    if (!file.exists() || !startFile.exists()) {
+        emit proccessError(tr("Log file is empty!"));
+        emit xorgFinished(xList);
         return;
+    }
+    QString startStr = "";
+    if (startFile.open(QFile::ReadOnly)) {
+
+        startStr = QString(startFile.readLine());
+        startFile.close();
+    }
+
+    qDebug() << "startStr" << startFile;
+    startStr = startStr.split(" ").value(0, "");
+    if (startStr.isEmpty()) {
+        emit proccessError(tr("Log file is empty!"));
+        emit xorgFinished(xList);
+        return;
+    }
     initProccess();
     m_process->start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
     m_process->waitForFinished(-1);
@@ -177,8 +196,8 @@ void LogAuthThread::handleXorg()
     QString output = Utils::replaceEmptyByteArray(outByte);
     m_process->close();
     QDateTime curDt = QDateTime::currentDateTime();
-    qint64 curDtSecond = curDt.toMSecsSinceEpoch();
-    QList<LOG_MSG_XORG> xList;
+    qint64 curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
+
     for (QString str : output.split('\n')) {
         str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
 
