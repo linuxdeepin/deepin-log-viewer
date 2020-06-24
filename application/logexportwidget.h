@@ -66,6 +66,7 @@ public:
     static bool exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels);
     static bool exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels);
     static bool exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
+
 };
 
 #endif  // LOGEXPORTWIDGET_H

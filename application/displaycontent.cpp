@@ -35,6 +35,7 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QHeaderView>
+#include <QtConcurrent>
 #include <QIcon>
 #include <QPaintEvent>
 #include <QPainter>
@@ -767,7 +768,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         generateXorgFile(m_curBtnId);
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         bList.clear();
-         setLoadState(DATA_LOADING);
+        setLoadState(DATA_LOADING);
         m_flag = BOOT;
         m_logFileParse.parseByBoot();
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
@@ -783,7 +784,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         //        m_logFileParse.parseByNormal(norList);
         generateNormalFile(m_curBtnId);
     } else if (itemData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
-         setLoadState(DATA_LOADING);
+        setLoadState(DATA_LOADING);
         m_kwinList.clear();
         m_currentKwinList.clear();
         m_flag = Kwin;
@@ -833,7 +834,7 @@ void DisplayContent::slot_exportClicked()
     for (int col = 0; col < m_pModel->columnCount(); ++col) {
         labels.append(m_pModel->horizontalHeaderItem(col)->text());
     }
-    QStandardItemModel *exportTempModel = new QStandardItemModel(this) ;
+    QStandardItemModel *exportTempModel = new QStandardItemModel(this);
     switch (m_flag) {
     case APP:
         parseListToModel(appList, exportTempModel);
@@ -861,33 +862,65 @@ void DisplayContent::slot_exportClicked()
     }
     if (selectFilter == "TEXT (*.txt)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToTxt(fileName, exportTempModel, m_flag);
+
+            QtConcurrent::run([ = ]() {
+                LogExportWidget::exportToTxt(fileName, exportTempModel, m_flag);
+                if (exportTempModel) {
+                    exportTempModel->deleteLater();
+                }
+            });
         } else {
-            LogExportWidget::exportToTxt(fileName, jList);
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToTxt(fileName, jList);
+            });
         }
     } else if (selectFilter == "Html (*.html)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToHtml(fileName, exportTempModel, m_flag);
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToHtml(fileName, exportTempModel, m_flag);
+                if (exportTempModel)
+                {
+                    exportTempModel->deleteLater();
+                }
+            });
         } else {
-            LogExportWidget::exportToHtml(fileName, jList);
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToHtml(fileName, jList);
+            });
         }
     } else if (selectFilter == "Doc (*.doc)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToDoc(fileName, exportTempModel, m_flag);
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToDoc(fileName, exportTempModel, m_flag);
+                if (exportTempModel)
+                {
+                    exportTempModel->deleteLater();
+                }
+            });
         } else {
-            LogExportWidget::exportToDoc(fileName, jList, labels, m_flag);
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToDoc(fileName, jList, labels, m_flag);
+            });
         }
     } else if (selectFilter == "Xls (*.xls)") {
         if (m_flag != JOURNAL) {
-            LogExportWidget::exportToXls(fileName, exportTempModel, m_flag);
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToXls(fileName, exportTempModel, m_flag);
+                if (exportTempModel)
+                {
+                    exportTempModel->deleteLater();
+                }
+            });
         } else {
-            LogExportWidget::exportToXls(fileName, jList, labels, m_flag);
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToXls(fileName, jList, labels, m_flag);
+            });
         }
     }
-    if (exportTempModel) {
-        exportTempModel->deleteLater();
-        exportTempModel = nullptr;
-    }
+//    if (exportTempModel) {
+//        exportTempModel->deleteLater();
+//        exportTempModel = nullptr;
+//    }
 }
 
 void DisplayContent::slot_statusChagned(QString status)

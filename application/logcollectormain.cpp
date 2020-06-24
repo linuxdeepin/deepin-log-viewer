@@ -30,7 +30,7 @@
 #include <QStandardItemModel>
 #include <QSizePolicy>
 #include <QList>
-//958+53+50
+//958+53+50 976
 #define MAINWINDOW_WIDTH 1200
 #define MAINWINDOW_HEIGHT 736
 #define LEFT_LIST_WIDTH 200

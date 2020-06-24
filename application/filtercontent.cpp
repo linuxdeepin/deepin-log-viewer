@@ -419,6 +419,10 @@ void FilterContent::slot_buttonClicked(int idx)
     case ONE_WEEK:
     case ONE_MONTH:
     case THREE_MONTHS: {
+//        foreach (QAbstractButton *, m_btnGroup->buttons()) {
+
+//        }
+//        qDebug()<<
         m_curBtnId = idx;
         emit sigButtonClicked(idx, m_curLvCbxId, m_curTreeIndex);
     } break;
