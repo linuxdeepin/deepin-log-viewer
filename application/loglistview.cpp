@@ -272,10 +272,7 @@ void LogListView::truncateFile(QString path_)
 {
     QProcess prc;
     if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA) {
-        prc.start("pkexec", QStringList() << "truncate"
-                  << "-s"
-                  << "0"
-                  << path_);
+        prc.start("pkexec", QStringList() << "logViewerTruncate" << path_);
     } else {
         prc.start("truncate", QStringList() << "-s"
                   << "0"
