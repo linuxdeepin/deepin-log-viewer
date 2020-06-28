@@ -59,6 +59,10 @@ LogFileParser::LogFileParser(QWidget *parent)
     // TODO::
     m_levelDict.insert("Warning", WARN);
     m_levelDict.insert("Debug", DEB);
+    qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
+    qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
+    qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
+    qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
 
 }
 
@@ -95,43 +99,32 @@ void LogFileParser::parseByDpkg(qint64 ms)
 {
 
 
-    m_authThread = LogAuthThread::instance();
-    stopAllLoad();
-    disconnect(m_authThread, &LogAuthThread::proccessError, this,
-               &LogFileParser::slog_proccessError);
-    disconnect(m_authThread, &LogAuthThread::dpkgFinished, this,
-               &LogFileParser::dpkgFinished);
-    m_authThread->setType(DPKG);
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(DPKG);
     DKPG_FILTERS dpkgfilter;
     dpkgfilter.timeFilter = ms;
-    m_authThread->setFileterParam(dpkgfilter);
-    connect(m_authThread, &LogAuthThread::proccessError, this,
+    authThread->setFileterParam(dpkgfilter);
+    connect(authThread, &LogAuthThread::proccessError, this,
             &LogFileParser::slog_proccessError, Qt::UniqueConnection);
-    connect(m_authThread, &LogAuthThread::dpkgFinished, this,
+    connect(authThread, &LogAuthThread::dpkgFinished, this,
             &LogFileParser::dpkgFinished, Qt::UniqueConnection);
-
-    m_authThread->start();
+    QThreadPool::globalInstance()->start(authThread);
+    //  m_authThread->start();
 
 }
 
 void LogFileParser::parseByXlog(qint64 ms)  // modifed by Airy
 {
-    m_authThread = LogAuthThread::instance();
-    stopAllLoad();
-    disconnect(m_authThread, &LogAuthThread::proccessError, this,
-               &LogFileParser::slog_proccessError);
-    disconnect(m_authThread, &LogAuthThread::xorgFinished, this,
-               &LogFileParser::xlogFinished);
-    m_authThread->setType(XORG);
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(XORG);
     XORG_FILTERS xorgfilter;
     xorgfilter.timeFilter = ms;
-    m_authThread->setFileterParam(xorgfilter);
-    connect(m_authThread, &LogAuthThread::proccessError, this,
+    authThread->setFileterParam(xorgfilter);
+    connect(authThread, &LogAuthThread::proccessError, this,
             &LogFileParser::slog_proccessError, Qt::UniqueConnection);
-    connect(m_authThread, &LogAuthThread::xorgFinished, this,
+    connect(authThread, &LogAuthThread::xorgFinished, this,
             &LogFileParser::xlogFinished, Qt::UniqueConnection);
-
-    m_authThread->start();
+    QThreadPool::globalInstance()->tryStart(authThread);
 //    if (m_isXlogLoading) {
 //        return;
 //    }
@@ -321,17 +314,12 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
 
 void LogFileParser::parseByKwin(KWIN_FILTERS iKwinfilter)
 {
-    stopAllLoad();
-    m_authThread = LogAuthThread::instance();
-    quitLogAuththread(m_authThread);
-
-    disconnect(m_authThread, &LogAuthThread::kwinFinished, this,
-               &LogFileParser::kwinFinished);
-    m_authThread->setType(Kwin);
-    m_authThread->setFileterParam(iKwinfilter);
-    connect(m_authThread, &LogAuthThread::kwinFinished, this,
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(Kwin);
+    authThread->setFileterParam(iKwinfilter);
+    connect(authThread, &LogAuthThread::kwinFinished, this,
             &LogFileParser::kwinFinished);
-    m_authThread->start();
+    QThreadPool::globalInstance()->start(authThread);
 }
 #if 0
 void LogFileParser::parseByXlog(QStringList &xList)
@@ -369,16 +357,12 @@ void LogFileParser::parseByBoot()
 //        return;
 //    }
     m_isBootLoading = true;
-    m_authThread = LogAuthThread::instance();
-    stopAllLoad();
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(BOOT);
+    connect(authThread, &LogAuthThread::bootFinished, this,
+            &LogFileParser::slot_bootFinished);
+    QThreadPool::globalInstance()->start(authThread);
 
-    disconnect(m_authThread, SIGNAL(bootFinished(LOG_FLAG, QString)), this,
-               SLOT(slot_bootFinished(LOG_FLAG, QString)));
-    m_authThread->setType(BOOT);
-    connect(m_authThread, SIGNAL(bootFinished(LOG_FLAG, QString)), this,
-            SLOT(slot_bootFinished(LOG_FLAG, QString)));
-
-    m_authThread->start();
 }
 
 void LogFileParser::parseByKern(qint64 ms)
@@ -387,16 +371,12 @@ void LogFileParser::parseByKern(qint64 ms)
 //        return;
 //    }
     m_isKernLoading = true;
-    m_authThread = LogAuthThread::instance();
-    stopAllLoad();
-    disconnect(m_authThread, SIGNAL(kernFinished(LOG_FLAG, QString)), this,
-               SLOT(slot_kernFinished(LOG_FLAG, QString)));
-    m_authThread->setType(KERN);
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(KERN);
     m_selectTime = ms;
-    connect(m_authThread, SIGNAL(kernFinished(LOG_FLAG, QString)), this,
-            SLOT(slot_kernFinished(LOG_FLAG, QString)));
-
-    m_authThread->start();
+    connect(authThread, &LogAuthThread::kernFinished, this,
+            &LogFileParser::slot_kernFinished);
+    QThreadPool::globalInstance()->start(authThread);
 }
 
 void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
@@ -440,10 +420,10 @@ void LogFileParser::createFile(QString output, int count)
 void LogFileParser::stopAllLoad()
 {
     //  quitLogAuththread(work);
-    if (m_authThread) {
-        m_authThread->stopProccess();
-        quitLogAuththread(m_authThread);
-    }
+//    if (m_authThread) {
+//        m_authThread->stopProccess();
+//        quitLogAuththread(m_authThread);
+//    }
 
     return;
 //    if (work && work->isRunning())

@@ -1,16 +1,16 @@
 #ifndef LOGAUTHTHREAD_H
 #define LOGAUTHTHREAD_H
 #include <QProcess>
-#include <QThread>
+#include <QRunnable>
 #include <mutex>
 #include "structdef.h"
 
-class LogAuthThread : public QThread
+class LogAuthThread :  public QObject, public QRunnable
 {
     Q_OBJECT
 public:
     LogAuthThread(QObject *parent = nullptr);
-    ~LogAuthThread();
+    ~LogAuthThread() override;
 
     static LogAuthThread *instance()
     {
@@ -56,7 +56,6 @@ signals:
     void proccessError(const QString &iError);
 public slots:
     void onFinished(int exitCode);
-    void onFinishedRead();
 private:
     QStringList m_list;
     QString m_output;

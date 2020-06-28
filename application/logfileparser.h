@@ -73,7 +73,7 @@ public slots:
     void slot_journalFinished();
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slot_kernFinished(LOG_FLAG flag, QString output);
-     void slot_bootFinished(LOG_FLAG flag, QString output);
+    void slot_bootFinished(LOG_FLAG flag, QString output);
 
     void slog_proccessError(const QString &iError);
 private:
@@ -82,7 +82,6 @@ private:
     QMap<QString, QString> m_dateDict;
     QMap<QString, int> m_levelDict;  // example:warning=>4
 
-    LogAuthThread *m_authThread {nullptr};
     LogApplicationParseThread *m_appThread {nullptr};
     journalWork *work {nullptr};
     QProcess *m_pDkpgDataLoader{nullptr};

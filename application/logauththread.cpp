@@ -7,12 +7,11 @@ std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
 
 LogAuthThread::LogAuthThread(QObject *parent)
-    : QThread(parent)
+    :  QObject(parent),
+       QRunnable()
+
 {
-    qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
-    qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
-    qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
-    qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
+    setAutoDelete(true);
 }
 
 LogAuthThread::~LogAuthThread()
@@ -308,10 +307,10 @@ void LogAuthThread::onFinished(int exitCode)
 
 }
 
-void LogAuthThread::onFinishedRead()
-{
-    QProcess *process = dynamic_cast<QProcess *>(sender());
-    QString str = QString(process->readAllStandardOutput());
-    QStringList l = str.split('\n');
+//void LogAuthThread::onFinishedRead()
+//{
+//    QProcess *process = dynamic_cast<QProcess *>(sender());
+//    QString str = QString(process->readAllStandardOutput());
+//    QStringList l = str.split('\n');
 
-}
+//}
