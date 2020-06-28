@@ -6,6 +6,7 @@
 #include <QString>
 #include <QStringList>
 #include <QThread>
+#include <QDir>
 #include <iostream>
 
 int main(int argc, char *argv[])
@@ -17,6 +18,11 @@ int main(int argc, char *argv[])
     //    qDebug() << fileList << "***" << fileList.count();
     if (fileList.count() < 1) {
         qDebug() << "less than 1";
+        return 0;
+    }
+    QString fileDirStr = fileList[0];
+    if (fileDirStr != "/var/log/kern.log" || fileDirStr != "/var/log/boot.log" || fileDirStr != "/var/log/dpkg.log" || fileDirStr != "/var/log/Xorg.0.log" || fileDirStr != (QDir::homePath() + "/.kwin.log")) {
+        qDebug() << "log file is not illegal";
         return 0;
     }
     QStringList arg;
