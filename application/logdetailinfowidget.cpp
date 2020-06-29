@@ -108,11 +108,9 @@ void logDetailInfoWidget::initUI()
     DApplicationHelper::instance()->setPalette(m_status, pa);
 
     m_level = new LogIconButton(this);
-    m_level->setAutoFillBackground(true);
     DFontSizeManager::instance()->bind(m_level, DFontSizeManager::T8);
     pa = DApplicationHelper::instance()->palette(m_level);
     pa.setBrush(DPalette::ButtonText, pa.color(DPalette::TextTips));
-    pa.setBrush(DPalette::Button, QColor(Qt::red));
     //    m_level->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_level, pa);
 

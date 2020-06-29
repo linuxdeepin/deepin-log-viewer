@@ -63,6 +63,10 @@ void LogTreeView::initUI()
     setItemsExpandable(false);
     setFrameStyle(QFrame::NoFrame);
     this->viewport()->setAutoFillBackground(false);
+
+    setAlternatingRowColors(false);
+    setAllColumnsShowFocus(false);
+    setFocusPolicy(Qt::TabFocus);
 }
 
 void LogTreeView::paintEvent(QPaintEvent *event)
