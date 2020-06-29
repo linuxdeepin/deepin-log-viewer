@@ -28,7 +28,7 @@ private:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-
+    // bool event(QEvent *ev) override;
 public slots:
     void slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel, QString name);
 

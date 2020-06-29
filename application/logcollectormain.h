@@ -53,7 +53,7 @@ private:
     //    LogTreeView *m_treeView;
     LogListView *m_logCatelogue;
     DisplayContent *m_midRightWgt;
-    //QHBoxLayout *m_hLayout;
+    QHBoxLayout *m_hLayout;
     QVBoxLayout *m_vLayout;
 
     Dtk::Widget::DSplitter *m_hSplitter;

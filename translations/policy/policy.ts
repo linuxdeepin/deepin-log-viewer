@@ -4,12 +4,12 @@
 	<context>
 		<name>policy</name>
 		<message>
-			<location filename="com.deepin.pkexec.logViewerAuth!message" line="0" />
-			<source>Authentication is required to view the log</source>
+			<location filename="com.deepin.pkexec.logViewerTruncate!message" line="0" />
+			<source>Authentication is required to truncate the log</source>
 			<translation type="unfinished" />
 		</message>
 		<message>
-			<location filename="com.deepin.pkexec.logViewerAuth!description" line="0" />
+			<location filename="com.deepin.pkexec.logViewerTruncate!description" line="0" />
 			<source>authentication</source>
 			<translation type="unfinished" />
 		</message>

@@ -28,6 +28,7 @@
 #include <QAbstractItemView>
 #include <QDebug>
 #include <QDir>
+#include <QSizePolicy>
 #include <QFileInfo>
 #include <QFileInfoList>
 #include <QHBoxLayout>
@@ -35,6 +36,7 @@
 #include <QPainter>
 #include <QProcess>
 #include <QVBoxLayout>
+#include <QResizeEvent>
 #include "logapplicationhelper.h"
 #include "logperiodbutton.h"
 #include "structdef.h"
@@ -42,7 +44,8 @@
 #define BUTTON_WIDTH_MIN 68
 #define BUTTON_HEIGHT_MIN 36
 #define BUTTON_EXPORT_WIDTH_MIN 142
-
+#define FONT_20_MIN_WIDTH 821
+#define FONT_18_MIN_WIDTH 100
 DWIDGET_USE_NAMESPACE
 
 FilterContent::FilterContent(QWidget *parent)
@@ -65,15 +68,22 @@ void FilterContent::initUI()
     periodLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     m_btnGroup = new QButtonGroup(this);
 
-    LogPeriodButton *m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
+    m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
     m_allBtn->setToolTip(DApplication::translate("Button", "All"));  // add by Airy for bug 16245
     m_allBtn->setObjectName("allBtn");
-    m_allBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
+    // m_allBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
+    //m_allBtn->setMaximumWidth(20);
+//    m_allBtn->setW
+//    QFont standardFont = m_allBtn->font();
+//    standardFont.setPixelSize(16);
+    //  standardFont.set
+    // QFontMetrics(standardFont).width("All") + m_allBtn->contentsMargins().left() + m_allBtn->contentsMargins().right()+m_allBtn->b;
+    // m_allBtn->setMaximumWidth();
 //    m_allBtn->setFixedSize(
 //        QSize(BUTTON_WIDTH_MIN - 4, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
     m_btnGroup->addButton(m_allBtn, 0);
 
-    LogPeriodButton *m_todayBtn =
+    m_todayBtn =
         new LogPeriodButton(DApplication::translate("Button", "Today"), this);
     m_todayBtn->setToolTip(DApplication::translate("Button", "Today"));  // add by Airy for bug
     // 16245
@@ -81,7 +91,7 @@ void FilterContent::initUI()
     //  m_todayBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_todayBtn, 1);
 
-    LogPeriodButton *m_threeDayBtn =
+    m_threeDayBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
     m_threeDayBtn->setToolTip(
         DApplication::translate("Button", "3 days"));  // add by Airy for bug 16245
@@ -90,7 +100,7 @@ void FilterContent::initUI()
     //m_threeDayBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_threeDayBtn, 2);
 
-    LogPeriodButton *m_lastWeekBtn =
+    m_lastWeekBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
     m_lastWeekBtn->setToolTip(
         DApplication::translate("Button", "1 week"));  // add by Airy for bug 16245
@@ -99,7 +109,7 @@ void FilterContent::initUI()
     //  m_lastWeekBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_lastWeekBtn, 3);
 
-    LogPeriodButton *m_lastMonthBtn =
+    m_lastMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
     m_lastMonthBtn->setToolTip(
         DApplication::translate("Button", "1 month"));  // add by Airy for bug 16245
@@ -107,14 +117,13 @@ void FilterContent::initUI()
 //        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
     //  m_lastMonthBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_lastMonthBtn, 4);
-
-    LogPeriodButton *m_threeMonthBtn =
+    m_threeMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
     m_threeMonthBtn->setToolTip(
         DApplication::translate("Button", "3 months"));  // add by Airy for bug 16245
 //    m_threeMonthBtn->setFixedSize(
 //        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //m_threeMonthBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
+    //m_threeMonthBtn->setFixdHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_threeMonthBtn, 5);
 
     setUeButtonSytle();
@@ -137,12 +146,12 @@ void FilterContent::initUI()
 
     // set level info
     hLayout_all = new QHBoxLayout;
-
-    QHBoxLayout *hLayout_lv = new QHBoxLayout;
+    QHBoxLayout *hLayout_lvl = new QHBoxLayout;
     lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
-    lvTxt->setAlignment(Qt::AlignRight | Qt::AlignCenter);
+    lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new DComboBox(this);
-    cbx_lv->setMinimumSize(QSize(208, BUTTON_HEIGHT_MIN));
+    cbx_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
+    // cbx_lv->setMaximumWidth(208);
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                      << DApplication::translate("ComboBox", "Emergency")
                      << DApplication::translate("ComboBox", "Alert")
@@ -153,11 +162,11 @@ void FilterContent::initUI()
                      << DApplication::translate("ComboBox", "Info")
                      << DApplication::translate("ComboBox", "Debug"));
     cbx_lv->setCurrentText(DApplication::translate("ComboBox", "Info"));
-    hLayout_lv->addWidget(lvTxt);
-    hLayout_lv->addWidget(cbx_lv, 1);
-    hLayout_lv->setSpacing(6);
-    hLayout_all->addLayout(hLayout_lv);
 
+    hLayout_lvl->addWidget(lvTxt);
+    hLayout_lvl->addWidget(cbx_lv, 1);
+    hLayout_lvl->setSpacing(6);
+    hLayout_all->addLayout(hLayout_lvl);
     // set all files under ~/.cache/deepin
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
@@ -195,12 +204,10 @@ void FilterContent::initUI()
     hLayout_status->addWidget(typeCbx, 1);
     hLayout_status->setSpacing(6);
     hLayout_all->addLayout(hLayout_type);  // end add
-
     hLayout_all->addStretch(1);
+    exportBtn = new DPushButton(DApplication::translate("Button", "Export"), this);
 
-    DPushButton *exportBtn = new DPushButton(DApplication::translate("Button", "Export"), this);
-
-    //exportBtn->setContentsMargins(10, 10, 20, 20);
+    //  exportBtn->setContentsMargins(102, 100, 200, 200);
     //exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
     exportBtn->setContentsMargins(0, 0, 18, 18);
     exportBtn->setFixedWidth(BUTTON_EXPORT_WIDTH_MIN);
@@ -233,6 +240,12 @@ void FilterContent::shortCutExport()
     if (!itemData.isEmpty())
         emit sigExportInfo();
 }
+
+//void FilterContent::resizeEvent(QResizeEvent *event)
+//{
+//    updateWordWrap();
+//}
+
 
 
 void FilterContent::setAppComboBoxItem()
@@ -361,6 +374,55 @@ void FilterContent::resizeWidth()
         }
     }
     emit   sigResizeWidth(periodWidth);
+}
+//根据当前宽度省略日期筛选按钮文字以适应宽度，让控件能塞下
+void FilterContent::updateWordWrap()
+{
+    int currentWidth = this->rect().width();
+//    int leftMargin = this->contentsMargins().left();
+//    int rightMargin = this->contentsMargins().right();
+//    int layoutWidth = hLayout_period->sizeHint().width();
+    qDebug() << "currentWidth" << currentWidth;
+//    qDebug() << "layoutWidth" << layoutWidth + leftMargin + rightMargin;
+//    qDebug() << "leftMargin" << leftMargin;
+//    qDebug() << "rightMargin" << rightMargin << hLayout_all->count() ;
+    setUpdatesEnabled(false);
+    //12对应系统16字号，13.5对应系统18字号,15对应系统20字号
+    qreal fontSize = m_allBtn->font().pointSizeF();
+    int minWidth = -1;
+    qDebug() << fontSize;
+    if (fontSize <= 13.5) {
+        minWidth = FONT_20_MIN_WIDTH;
+    } else {
+        minWidth = FONT_20_MIN_WIDTH;
+    }
+    //判断各字体下能塞下控件的最小宽度
+    if ((currentWidth <= minWidth) && (hLayout_period->count() > 9)) {
+        // if (m_allBtn->font().pointSizeF() > 12) {
+        //qDebug() << font().pointSizeF();
+        QFont standFont = m_allBtn->font();
+        QFont standFontBig = standFont;
+        standFont.setPointSizeF(13.5);
+        //standFontBig.setPointSize(14);
+        periodLabel->setText(QFontMetrics(periodLabel->font()).elidedText(DApplication::translate("Label", "Period:"), Qt::ElideRight, 1 + QFontMetrics(periodLabel->font()).width(DApplication::translate("Label", "Period:"))));
+        // m_allBtn->setText(QFontMetrics(m_allBtn->font()).elidedText(DApplication::translate("Button", "All"), Qt::ElideRight, 1 +  QFontMetrics(standFontBig).width(DApplication::translate("Button", "All"))));
+        m_todayBtn->setText(QFontMetrics(m_todayBtn->font()).elidedText(DApplication::translate("Button", "Today"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "Today"))));
+        m_threeDayBtn->setText(QFontMetrics(m_threeDayBtn->font()).elidedText(DApplication::translate("Button", "3 days"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "3 days"))));
+        m_lastWeekBtn->setText(QFontMetrics(m_lastWeekBtn->font()).elidedText(DApplication::translate("Button", "1 week"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "1 week"))));
+        m_lastMonthBtn->setText(QFontMetrics(m_lastMonthBtn->font()).elidedText(DApplication::translate("Button", "1 month"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "1 month"))));
+        m_threeMonthBtn->setText(QFontMetrics(m_threeMonthBtn->font()).elidedText(DApplication::translate("Button", "3 months"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "3 months"))));
+    }  else  {
+        // qDebug() << font().pointSizeF();
+        periodLabel->setText(DApplication::translate("Label", "Period:"));
+        m_allBtn->setText(DApplication::translate("Button", "All"));
+        m_todayBtn->setText(DApplication::translate("Button", "Today"));
+        m_threeDayBtn->setText(DApplication::translate("Button", "3 days"));
+        m_lastWeekBtn->setText(DApplication::translate("Button", "1 week"));
+        m_lastMonthBtn->setText(DApplication::translate("Button", "1 month"));
+        m_threeMonthBtn->setText(DApplication::translate("Button", "3 months"));
+        // cbx_lv->setMinimumWidth(208);
+    }
+    setUpdatesEnabled(true);
 }
 
 void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)

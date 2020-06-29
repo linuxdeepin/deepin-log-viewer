@@ -27,10 +27,11 @@
 #include <DLabel>
 #include <DSuggestButton>
 #include <DWidget>
+#include <DPushButton>
 #include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QWidget>
-
+class LogPeriodButton;
 class FilterContent : public Dtk::Widget::DFrame
 {
     Q_OBJECT
@@ -42,7 +43,8 @@ public:
     void initConnections();
 
     void shortCutExport();
-
+protected:
+    //  void resizeEvent(QResizeEvent *event) override;
 private:
     void setAppComboBoxItem();
 
@@ -52,6 +54,7 @@ private:
     void setUeButtonSytle();
     void paintEvent(QPaintEvent *event);
     void resizeWidth();
+    void updateWordWrap();
 
 
 signals:
@@ -85,11 +88,20 @@ private:
     Dtk::Widget::DLabel *typeTxt;     // add by Airy
     Dtk::Widget::DComboBox *typeCbx;  // add by Airy
     QModelIndex m_curTreeIndex;
+    LogPeriodButton *m_allBtn = nullptr;
+    LogPeriodButton *m_todayBtn = nullptr;
+    LogPeriodButton *m_threeDayBtn = nullptr;
+    LogPeriodButton *m_lastWeekBtn = nullptr;
+    LogPeriodButton *m_lastMonthBtn = nullptr;
+    LogPeriodButton *m_threeMonthBtn = nullptr;
+    Dtk::Widget::DPushButton *exportBtn = nullptr;
 
     int m_curBtnId, m_curLvCbxId;
 
     QHBoxLayout *hLayout_period;
     QHBoxLayout *hLayout_all;
+    //是否为按钮省略状态
+    bool m_isIndentation = false;
 };
 
 #endif  // FILTERCONTENT_H

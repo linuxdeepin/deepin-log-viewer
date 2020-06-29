@@ -24,9 +24,21 @@
 
 #include <DApplicationHelper>
 #include <DListView>
+#include <DStyledItemDelegate>
 #include <QStandardItemModel>
 #include "filtercontent.h" //add by Airy for new menu
 #include "structdef.h"
+class LogListDelegate : public Dtk::Widget::DStyledItemDelegate
+{
+public:
+    LogListDelegate(QAbstractItemView *parent = nullptr);
+protected:
+    bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)override;
+
+private:
+    void hideTooltipImmediately();
+
+};
 class LogListView : public Dtk::Widget::DListView
 {
     Q_OBJECT
@@ -51,7 +63,7 @@ protected:
     void paintEvent(QPaintEvent *event) override;
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
     void contextMenuEvent(QContextMenuEvent *event) override;   //add by Airy
-
+    void mouseMoveEvent(QMouseEvent *event) override;
 signals:
     void itemChanged();
     void sigRefresh(const QModelIndex &index);  // add refresh

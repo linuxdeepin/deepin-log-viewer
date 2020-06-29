@@ -29,8 +29,11 @@ public:
     explicit LogIconButton(QWidget *parent = nullptr);
     explicit LogIconButton(QString text, QWidget *parent = nullptr);
 
-    void mousePressEvent(QMouseEvent *e) override;
 
+protected:
+    QSize sizeHint() const override;
+    void resizeEvent(QResizeEvent *e)override;
+    void mousePressEvent(QMouseEvent *e) override;
 private:
     bool m_status;
 };

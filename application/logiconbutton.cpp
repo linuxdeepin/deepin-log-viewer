@@ -20,13 +20,13 @@
  */
 
 #include "logiconbutton.h"
-
+#define ICON_SIZE 32
 LogIconButton::LogIconButton(QWidget *parent)
     : QPushButton(parent)
 {
     this->setFlat(true);
     this->setFocusPolicy(Qt::NoFocus);
-    this->setIconSize(QSize(32, 32));
+
 }
 
 LogIconButton::LogIconButton(QString text, QWidget *parent)
@@ -34,10 +34,25 @@ LogIconButton::LogIconButton(QString text, QWidget *parent)
 {
     this->setFlat(true);
     this->setFocusPolicy(Qt::NoFocus);
-    this->setIconSize(QSize(32, 32));
+
+}
+//修复button占高过大的问题
+QSize LogIconButton::sizeHint() const
+{
+    int h = QFontMetrics(font()).height();
+    return QSize(this->width(), h);
 }
 
 void LogIconButton::mousePressEvent(QMouseEvent *e)
 {
     Q_UNUSED(e)
+}
+//修复button占高过大的问题
+void LogIconButton::resizeEvent(QResizeEvent *e)
+{
+    Q_UNUSED(e)
+    int h = QFontMetrics(font()).height();
+    resize(this->width(), h);
+    this->setIconSize(QSize(h, h));
+
 }

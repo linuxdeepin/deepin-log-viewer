@@ -4,6 +4,7 @@
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DGuiApplicationHelper>
+#include <DFontSizeManager>
 #include <DLabel>
 #include <DStyle>
 #include <DTextBrowser>
@@ -66,16 +67,16 @@ void logDetailInfoWidget::initUI()
     QFont font;
     font.setBold(true);
     m_daemonName->setFont(font);
-
+    DFontSizeManager::instance()->bind(m_daemonName, DFontSizeManager::T5);
     m_dateTime = new DLabel(this);
-    setTextCustomSize(m_dateTime);
+    DFontSizeManager::instance()->bind(m_dateTime, DFontSizeManager::T8);
     DPalette pa = DApplicationHelper::instance()->palette(m_dateTime);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     //    m_dateTime->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_dateTime, pa);
 
     m_userName = new DLabel(this);
-    setTextCustomSize(m_userName);
+    DFontSizeManager::instance()->bind(m_userName, DFontSizeManager::T8);
     m_userName->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_userName);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
@@ -83,7 +84,7 @@ void logDetailInfoWidget::initUI()
     DApplicationHelper::instance()->setPalette(m_userName, pa);
 
     m_pid = new DLabel(this);
-    setTextCustomSize(m_pid);
+    DFontSizeManager::instance()->bind(m_pid, DFontSizeManager::T8);
     m_pid->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_pid);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
@@ -91,7 +92,7 @@ void logDetailInfoWidget::initUI()
     DApplicationHelper::instance()->setPalette(m_pid, pa);
 
     m_action = new DLabel(this);
-    setTextCustomSize(m_action);
+    DFontSizeManager::instance()->bind(m_action, DFontSizeManager::T8);
     m_action->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_action);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
@@ -99,7 +100,7 @@ void logDetailInfoWidget::initUI()
     DApplicationHelper::instance()->setPalette(m_action, pa);
 
     m_status = new DLabel(this);
-    setTextCustomSize(m_status);
+    DFontSizeManager::instance()->bind(m_status, DFontSizeManager::T8);
     m_status->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_status);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
@@ -107,15 +108,17 @@ void logDetailInfoWidget::initUI()
     DApplicationHelper::instance()->setPalette(m_status, pa);
 
     m_level = new LogIconButton(this);
-    setTextCustomSize(m_level);
+    m_level->setAutoFillBackground(true);
+    DFontSizeManager::instance()->bind(m_level, DFontSizeManager::T8);
     pa = DApplicationHelper::instance()->palette(m_level);
     pa.setBrush(DPalette::ButtonText, pa.color(DPalette::TextTips));
+    pa.setBrush(DPalette::Button, QColor(Qt::red));
     //    m_level->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_level, pa);
 
     // add by Airy
     m_event = new DLabel(this);
-    setTextCustomSize(m_event);
+    DFontSizeManager::instance()->bind(m_event, DFontSizeManager::T8);
     m_event->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_event);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
@@ -123,7 +126,7 @@ void logDetailInfoWidget::initUI()
     DApplicationHelper::instance()->setPalette(m_event, pa);
 
     m_name = new DLabel(this);
-    setTextCustomSize(m_name);
+    DFontSizeManager::instance()->bind(m_name, DFontSizeManager::T8);
     m_name->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_name);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
@@ -131,17 +134,24 @@ void logDetailInfoWidget::initUI()
     DApplicationHelper::instance()->setPalette(m_name, pa);  // end
 
     m_userLabel = new DLabel(DApplication::translate("Label", "User:"), this);
+    DFontSizeManager::instance()->bind(m_userLabel, DFontSizeManager::T7);
     m_pidLabel = new DLabel(DApplication::translate("Label", "PID:"), this);
+    DFontSizeManager::instance()->bind(m_pidLabel, DFontSizeManager::T7);
     m_statusLabel = new DLabel(DApplication::translate("Label", "Status:"), this);
+    DFontSizeManager::instance()->bind(m_statusLabel, DFontSizeManager::T7);
     m_actionLabel = new DLabel(DApplication::translate("Label", "Action:"), this);
+    DFontSizeManager::instance()->bind(m_actionLabel, DFontSizeManager::T7);
     m_eventLabel =
         new DLabel(DApplication::translate("Label", "Event Type:"), this);          // add by Airy
+    DFontSizeManager::instance()->bind(m_eventLabel, DFontSizeManager::T7);
     m_nameLabel = new DLabel(DApplication::translate("Label", "Username:"), this);  // add by Airy
+    DFontSizeManager::instance()->bind(m_nameLabel, DFontSizeManager::T7);
+
 
     m_hline = new DHorizontalLine;
 
     m_textBrowser = new DTextBrowser(this);
-    setTextCustomSize(m_textBrowser);
+    DFontSizeManager::instance()->bind(m_textBrowser, DFontSizeManager::T8);
     pa = DApplicationHelper::instance()->palette(m_textBrowser);
     pa.setBrush(DPalette::Text, pa.color(DPalette::TextTips));
     //    m_textBrowser->setPalette(pa);
@@ -187,6 +197,7 @@ void logDetailInfoWidget::initUI()
     h26->addWidget(m_nameLabel);
     h26->addWidget(m_name, 1);
     h26->setSpacing(8);
+
     // end
 
     h2->addLayout(h21);
@@ -212,10 +223,11 @@ void logDetailInfoWidget::initUI()
 
 void logDetailInfoWidget::setTextCustomSize(QWidget *w)
 {
-    QFont font = w->font();
-    int size = font.pointSize();
-    font.setPointSize(size);
-    w->setFont(font);
+    DFontSizeManager::instance()->bind(w, DFontSizeManager::T8);
+//    QFont font = w->font();
+//    int size = font.pointSize();
+//    font.setPointSize(size);
+//    w->setFont(font);
 }
 
 void logDetailInfoWidget::paintEvent(QPaintEvent *event)
@@ -247,6 +259,16 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 
     DWidget::paintEvent(event);
 }
+
+//bool logDetailInfoWidget::event(QEvent *ev)
+//{
+//    if (ev->type() == QEvent::FontChange) {
+//        setTextCustomSize(m_dateTime);
+//    }
+//    return  false;
+//}
+
+
 
 void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QString pid,
                                          QString dateTime, QModelIndex level, QString msg,

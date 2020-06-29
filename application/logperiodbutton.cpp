@@ -33,6 +33,13 @@ LogPeriodButton::LogPeriodButton(const QString text, QWidget *parent)
     : DPushButton(text, parent)
 {
     this->setFocusPolicy(Qt::NoFocus);
+    QFont f = font();
+    f.setPixelSize(16);
+}
+
+void LogPeriodButton::setStandardSize(int iStahndardWidth)
+{
+    m_stahndardWidth = iStahndardWidth;
 }
 
 void LogPeriodButton::enterEvent(QEvent *e)
@@ -52,7 +59,10 @@ void LogPeriodButton::paintEvent(QPaintEvent *event)
     QPainter painter(this);
 
     QRectF rect = this->rect();
-
+//    if (m_stahndardWidth > 0) {
+//        this->setText(QFontMetrics(this->font()).elidedText(this->text(), Qt::ElideRight, m_stahndardWidth));
+//    }
+    // this->setText(QFontMetrics(this->font()).elidedText(this->text(), Qt::ElideRight, 30));
     if (isEnter) {
         this->setAutoFillBackground(true);
         this->setBackgroundRole(DPalette::Base);

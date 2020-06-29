@@ -31,7 +31,7 @@
 #include <QSizePolicy>
 #include <QList>
 //958+53+50 976
-#define MAINWINDOW_WIDTH 1200
+#define MAINWINDOW_WIDTH 1024
 #define MAINWINDOW_HEIGHT 736
 #define LEFT_LIST_WIDTH 200
 DWIDGET_USE_NAMESPACE
@@ -72,6 +72,7 @@ void LogCollectorMain::initUI()
     /** menu */
     //    titlebar()->menu()->addAction(new QAction(tr("help")));
 
+#ifdef SPLITTER_TYPE
 
     //m_hLayout = new QHBoxLayout;
     m_hSplitter = new Dtk::Widget::DSplitter(this);
@@ -79,7 +80,7 @@ void LogCollectorMain::initUI()
     /** left frame */
     m_logCatelogue = new LogListView(this);
     m_logCatelogue->setMaximumWidth(LEFT_LIST_WIDTH);
-    m_logCatelogue->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    m_logCatelogue->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_hSplitter->addWidget(m_logCatelogue);
     m_hSplitter->setStretchFactor(0, 1);
@@ -98,7 +99,7 @@ void LogCollectorMain::initUI()
     DWidget *rightWidget = new DWidget(this);
     //撑开右侧控件
     rightWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    rightWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    rightWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     rightWidget->setContentsMargins(10, 0, 0, 0);
     rightWidget->setLayout(m_vLayout);
     // rightWidget->setMinimumWidth(693);
@@ -111,6 +112,37 @@ void LogCollectorMain::initUI()
     //m_hSplitter->setSpacing(10);
     this->setCentralWidget(m_hSplitter);
     // this->centralWidget()->setLayout(m_hSplitter);
+
+#else
+
+    this->setCentralWidget(new DWidget());
+
+    m_hLayout = new QHBoxLayout;
+
+    /** left frame */
+    m_logCatelogue = new LogListView();
+    m_hLayout->addWidget(m_logCatelogue, 1);
+    m_logCatelogue->setFixedWidth(160);
+    m_vLayout = new QVBoxLayout;
+    /** topRight frame */
+    m_topRightWgt = new FilterContent();
+    m_vLayout->addWidget(m_topRightWgt);
+    /** midRight frame */
+    m_midRightWgt = new DisplayContent();
+
+    m_vLayout->addWidget(m_midRightWgt, 1);
+    m_vLayout->setContentsMargins(0, 10, 0, 10);
+    m_vLayout->setSpacing(6);
+
+    m_hLayout->addLayout(m_vLayout, 10);
+    m_hLayout->setContentsMargins(0, 0, 10, 0);
+    m_hLayout->setSpacing(10);
+
+    this->centralWidget()->setLayout(m_hLayout);
+
+
+#endif
+
     m_originFilterWidth = m_topRightWgt->geometry().width();
 }
 

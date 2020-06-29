@@ -27,6 +27,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QProcess> //add by Airy
+#include <QToolTip>
 #include <QDir>
 #include "loglistview.h"
 #include "logapplicationhelper.h"
@@ -38,6 +39,51 @@
 Q_DECLARE_METATYPE(QMargins)
 
 DWIDGET_USE_NAMESPACE
+LogListDelegate::LogListDelegate(QAbstractItemView *parent) : DStyledItemDelegate(parent)
+{
+
+}
+
+bool LogListDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
+{
+    QToolTip::hideText();
+    if (event->type() == QEvent::ToolTip) {
+        const QString tooltip = index.data(Qt::DisplayRole).toString();
+        //qDebug() << __FUNCTION__ << "__now Hover is :__" << tooltip;
+        if (tooltip.isEmpty() || tooltip == "_split_") {
+            hideTooltipImmediately();
+        } else {
+            int tooltipsize = tooltip.size();
+            const int nlong = 32;
+            int lines = tooltipsize / nlong + 1;
+            QString strtooltip;
+            for (int i = 0; i < lines; ++i) {
+                strtooltip.append(tooltip.mid(i * nlong, nlong));
+                strtooltip.append("\n");
+            }
+            strtooltip.chop(1);
+//            QTimer::singleShot(1000, [ = ]() {
+            QToolTip::showText(event->globalPos(), strtooltip, view);
+
+//            QTimer::singleShot(500, []() {
+//                QToolTip::hideText();
+//            });
+//            });
+        }
+        return false;
+    }
+    return LogListDelegate::helpEvent(event, view, option, index);
+}
+
+void LogListDelegate::hideTooltipImmediately()
+{
+    QWidgetList qwl = QApplication::topLevelWidgets();
+    for (QWidget *qw : qwl) {
+        if (QStringLiteral("QTipLabel") == qw->metaObject()->className()) {
+            qw->close();
+        }
+    }
+}
 
 LogListView::LogListView(QWidget *parent)
     : DListView(parent)
@@ -54,11 +100,10 @@ void LogListView::initUI()
 {
     this->setMinimumWidth(150);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
+    this->setItemDelegate(new LogListDelegate(this));
     this->setItemSpacing(0);
     this->setViewportMargins(10, 10, 10, 0);
-
-    const QMargins ListViweItemMargin(5, 0, 0, 0);
+    const QMargins ListViweItemMargin(5, 0, 5, 0);
     const QVariant VListViewItemMargin = QVariant::fromValue(ListViweItemMargin);
 
     m_pModel = new QStandardItemModel(this);
@@ -366,5 +411,16 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         this->setContextMenuPolicy(Qt::DefaultContextMenu);
         g_context->exec(QCursor::pos());
     }
-//    this->selectionModel()->clear();  // if Cursor is empty,clear the context Menu
+    //    this->selectionModel()->clear();  // if Cursor is empty,clear the context Menu
 }
+
+void LogListView::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+    if (QToolTip::isVisible()) {
+        qDebug() << "111111";
+        QToolTip::hideText();
+    }
+    return;
+}
+

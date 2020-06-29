@@ -21,7 +21,8 @@ int main(int argc, char *argv[])
         return 0;
     }
     QString fileDirStr = fileList[0];
-    if (fileDirStr != "/var/log/kern.log" || fileDirStr != "/var/log/boot.log" || fileDirStr != "/var/log/dpkg.log" || fileDirStr != "/var/log/Xorg.0.log" || fileDirStr != (QDir::homePath() + "/.kwin.log")) {
+    qDebug() << fileDirStr;
+    if (fileDirStr != "/var/log/kern.log" && fileDirStr != "/var/log/boot.log" && fileDirStr != "/var/log/dpkg.log" && fileDirStr != "/var/log/Xorg.0.log" && fileDirStr != (QDir::homePath() + "/.kwin.log")) {
         qDebug() << "log file is not illegal";
         return 0;
     }
