@@ -35,7 +35,7 @@ DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    //    DApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    DApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
 
@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         qDebug() << "DGuiApplicationHelper::instance()->setSingleInstance";
         exit(0);
     }
-  //  QAccessible::installFactory(accessibleFactory);
+    //  QAccessible::installFactory(accessibleFactory);
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     a.loadTranslator();

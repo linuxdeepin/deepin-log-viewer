@@ -90,6 +90,9 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     painter->setPen(forground);
 
     QRect rect = opt.rect;
+    // QRectF a;
+//    rect.setWidth(rect.width() + 2);
+//    rect.setX(rect.x() - 1);
     QFontMetrics fm(opt.font);
     QPainterPath path, clipPath;
     QRect textRect = rect;
@@ -97,25 +100,27 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     switch (opt.viewItemPosition) {
     case QStyleOptionViewItem::Beginning: {
         rect.setX(rect.x() + margin);  // left margin
-
+        //去除焦点时的蓝线，减少行高
         QPainterPath rectPath, roundedPath;
-        roundedPath.addRoundedRect(rect.x(), rect.y(), rect.width() * 2, rect.height(), radius,
+        roundedPath.addRoundedRect(rect.x(), rect.y() + 1, rect.width() * 2, rect.height() - 2, radius,
                                    radius);
-        rectPath.addRect(rect.x() + rect.width(), rect.y(), rect.width(), rect.height());
+        rectPath.addRect(rect.x() + rect.width(), rect.y() + 1, rect.width(), rect.height() - 2);
         clipPath = roundedPath.subtracted(rectPath);
         painter->setClipPath(clipPath);
         path.addRect(rect);
     } break;
     case QStyleOptionViewItem::Middle: {
-        path.addRect(rect);
+        //去除焦点时的蓝线，减少行高
+        QRectF rect2(rect.left(), rect.top() + 1, rect.width(), rect.height() - 2);
+        path.addRect(rect2);
     } break;
     case QStyleOptionViewItem::End: {
         rect.setWidth(rect.width() - margin);  // right margin
-
+        //去除焦点时的蓝线，减少行高
         QPainterPath rectPath, roundedPath;
-        roundedPath.addRoundedRect(rect.x() - rect.width(), rect.y(), rect.width() * 2,
-                                   rect.height(), radius, radius);
-        rectPath.addRect(rect.x() - rect.width(), rect.y(), rect.width(), rect.height());
+        roundedPath.addRoundedRect(rect.x() - rect.width(), rect.y() + 1, rect.width() * 2,
+                                   rect.height() - 2, radius, radius);
+        rectPath.addRect(rect.x() - rect.width(), rect.y() + 1, rect.width(), rect.height() - 2);
         clipPath = roundedPath.subtracted(rectPath);
         painter->setClipPath(clipPath);
         path.addRect(rect);
