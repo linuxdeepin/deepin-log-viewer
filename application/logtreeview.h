@@ -33,11 +33,12 @@ class LogTreeView : public Dtk::Widget::DTreeView
 public:
     LogTreeView(QWidget *parent = nullptr);
 
-private:
+protected:
     void initUI();
-    void paintEvent(QPaintEvent *event);
-
-    void keyPressEvent(QKeyEvent *event);
+    void paintEvent(QPaintEvent *event) override;
+    void drawRow(QPainter *painter, const QStyleOptionViewItem &options,
+                 const QModelIndex &index) const override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     LogViewItemDelegate *m_itemDelegate;

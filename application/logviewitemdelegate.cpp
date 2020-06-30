@@ -136,7 +136,7 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         return;
     }
     }
-    painter->fillPath(path, background);
+    //  painter->fillPath(path, background);
 
     QRect iconRect = rect;
     if (opt.viewItemPosition == QStyleOptionViewItem::Beginning &&

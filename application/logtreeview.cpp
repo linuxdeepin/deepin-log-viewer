@@ -66,7 +66,7 @@ void LogTreeView::initUI()
 
     setAlternatingRowColors(false);
     setAllColumnsShowFocus(false);
-    setFocusPolicy(Qt::TabFocus);
+    //  setFocusPolicy(Qt::TabFocus);
 }
 
 void LogTreeView::paintEvent(QPaintEvent *event)
@@ -109,6 +109,77 @@ void LogTreeView::paintEvent(QPaintEvent *event)
     painter.restore();
 
     DTreeView::paintEvent(event);
+}
+
+void LogTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const
+{
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+
+#ifdef ENABLE_INACTIVE_DISPLAY
+    QWidget *wnd = DApplication::activeWindow();
+#endif
+    DPalette::ColorGroup cg;
+    if (!(options.state & DStyle::State_Enabled)) {
+        cg = DPalette::Disabled;
+    } else {
+#ifdef ENABLE_INACTIVE_DISPLAY
+        if (!wnd) {
+            cg = DPalette::Inactive;
+        } else {
+            if (wnd->isModal()) {
+                cg = DPalette::Inactive;
+            } else {
+                cg = DPalette::Active;
+            }
+        }
+#else
+        cg = DPalette::Active;
+#endif
+    }
+
+    auto *style = dynamic_cast<DStyle *>(DApplication::style());
+
+    auto radius = style->pixelMetric(DStyle::PM_FrameRadius, &options);
+    auto margin = style->pixelMetric(DStyle::PM_ContentsMargins, &options);
+
+    auto palette = options.palette;
+    QBrush background;
+    if (!(index.row() & 1)) {
+        background = palette.color(cg, DPalette::AlternateBase);
+    } else {
+        background = palette.color(cg, DPalette::Base);
+    }
+    if (options.state & DStyle::State_Enabled) {
+        if (selectionModel()->isSelected(index)) {
+            background = palette.color(cg, DPalette::Highlight);
+        }
+    }
+
+    // draw row background
+    QPainterPath path;
+    QRect rowRect { options.rect.x() - header()->offset(),
+                    options.rect.y() + 1,
+                    header()->length() - header()->sectionPosition(0),
+                    options.rect.height() - 2 };
+    rowRect.setX(rowRect.x() + margin);
+    rowRect.setWidth(rowRect.width() - margin);
+
+    path.addRoundedRect(rowRect, radius, radius);
+    painter->fillPath(path, background);
+
+    QTreeView::drawRow(painter, options, index);
+
+    // draw focus
+//    if (hasFocus() && currentIndex().row() == index.row()) {
+//        QStyleOptionFocusRect o;
+//        o.QStyleOption::operator=(options);
+//        o.state |= QStyle::State_KeyboardFocusChange | QStyle::State_HasFocus;
+//        o.rect = style->visualRect(layoutDirection(), viewport()->rect(), rowRect);
+//        style->drawPrimitive(DStyle::PE_FrameFocusRect, &o, painter);
+//    }
+
+    painter->restore();
 }
 
 void LogTreeView::keyPressEvent(QKeyEvent *event)
