@@ -62,6 +62,8 @@ signals:
     void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
     void normalFinished();  // add by Airy
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
+    void stopKern();
+    void stopBoot();
 
 
 private:

@@ -98,7 +98,7 @@ void LogFileParser::parseByJournal(QStringList arg)
 void LogFileParser::parseByDpkg(qint64 ms)
 {
 
-
+    stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(DPKG);
     DKPG_FILTERS dpkgfilter;
@@ -115,6 +115,7 @@ void LogFileParser::parseByDpkg(qint64 ms)
 
 void LogFileParser::parseByXlog(qint64 ms)  // modifed by Airy
 {
+    stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(XORG);
     XORG_FILTERS xorgfilter;
@@ -314,6 +315,7 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
 
 void LogFileParser::parseByKwin(KWIN_FILTERS iKwinfilter)
 {
+    stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(Kwin);
     authThread->setFileterParam(iKwinfilter);
@@ -356,11 +358,14 @@ void LogFileParser::parseByBoot()
 //        qDebug() << __FUNCTION__ << m_isBootLoading;
 //        return;
 //    }
+    stopAllLoad();
     m_isBootLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(BOOT);
     connect(authThread, &LogAuthThread::bootFinished, this,
             &LogFileParser::slot_bootFinished);
+    connect(this, &LogFileParser::stopBoot, authThread,
+            &LogAuthThread::stopProccess);
     QThreadPool::globalInstance()->start(authThread);
 
 }
@@ -370,12 +375,16 @@ void LogFileParser::parseByKern(qint64 ms)
 //    if (m_isKernLoading) {
 //        return;
 //    }
+
+    stopAllLoad();
     m_isKernLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(KERN);
     m_selectTime = ms;
     connect(authThread, &LogAuthThread::kernFinished, this,
             &LogFileParser::slot_kernFinished);
+    connect(this, &LogFileParser::stopKern, authThread,
+            &LogAuthThread::stopProccess);
     QThreadPool::globalInstance()->start(authThread);
 }
 
@@ -424,7 +433,8 @@ void LogFileParser::stopAllLoad()
 //        m_authThread->stopProccess();
 //        quitLogAuththread(m_authThread);
 //    }
-
+    emit stopBoot();
+    emit stopKern();
     return;
 //    if (work && work->isRunning())
 //        work->terminate();
