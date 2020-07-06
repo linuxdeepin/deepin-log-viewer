@@ -70,7 +70,6 @@ LogFileParser::~LogFileParser() {}
 
 void LogFileParser::parseByJournal(QStringList arg)
 {
-
     stopAllLoad();
 //    if (m_isJournalLoading) {
 //        return;
