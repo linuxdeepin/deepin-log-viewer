@@ -240,7 +240,7 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
     QString a_name = "~";
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
-        if (strtmp.compare("runlevel") == 0 || value.ut_type == RUN_LVL || value.ut_type == INIT_PROCESS) { // clear the runlevel
+        if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
             continue;
         }
 
