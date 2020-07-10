@@ -35,7 +35,7 @@ public:
     void spinnerStop();
 
 private:
-    Dtk::Widget::DSpinner *m_spinner;
+    Dtk::Widget::DSpinner *m_spinner{nullptr};
 };
 
 #endif  // LOGSPINNERWIDGET_H

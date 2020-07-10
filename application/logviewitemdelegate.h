@@ -27,7 +27,9 @@
 class QModelIndex;
 class QPainter;
 class QStyleOptionViewItem;
-
+/**
+ * @brief 主数据表的委托
+ */
 class LogViewItemDelegate : public QStyledItemDelegate
 {
     Q_OBJECT

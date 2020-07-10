@@ -20,16 +20,22 @@
  */
 
 #include "logtreeview.h"
+#include "structdef.h"
+#include "logviewheaderview.h"
+#include "logviewitemdelegate.h"
+
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DStyledItemDelegate>
+#include <DStyle>
+
 #include <QDebug>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QHeaderView>
 #include <QScrollBar>
-#include "structdef.h"
+#include <QKeyEvent>
 
 DWIDGET_USE_NAMESPACE
 
@@ -39,6 +45,9 @@ LogTreeView::LogTreeView(QWidget *parent)
     initUI();
 }
 
+/**
+ * @brief LogTreeView::initU  进行一些属性的定制，初始化treeview为需要的样式
+ */
 void LogTreeView::initUI()
 {
     m_itemDelegate = new LogViewItemDelegate(this);
@@ -50,7 +59,7 @@ void LogTreeView::initUI()
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setRootIsDecorated(false);
 
-    // this is setting is necessary,because scrollperpixel is default in dtk!!
+    //这个设置默认是值是ScrollPerPixel，和我们想要的Mode不一样，我们要通过纵向滚动实现分页的
     this->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerItem);
 
     setSelectionMode(QAbstractItemView::SingleSelection);
@@ -63,12 +72,15 @@ void LogTreeView::initUI()
     setItemsExpandable(false);
     setFrameStyle(QFrame::NoFrame);
     this->viewport()->setAutoFillBackground(false);
-
+    //不需要间隔颜色的样式，因为自绘了，它默认的效果和我们想要的不一样
     setAlternatingRowColors(false);
     setAllColumnsShowFocus(false);
-    //  setFocusPolicy(Qt::TabFocus);
 }
 
+/**
+ * @brief LogTreeView::paintEvent  绘制背景
+ * @param event
+ */
 void LogTreeView::paintEvent(QPaintEvent *event)
 {
     QPainter painter(viewport());
@@ -76,7 +88,7 @@ void LogTreeView::paintEvent(QPaintEvent *event)
     painter.setRenderHints(QPainter::Antialiasing);
     painter.setOpacity(1);
     painter.setClipping(true);
-
+    //根据窗口激活状态设置颜色
     QWidget *wnd = DApplication::activeWindow();
     DPalette::ColorGroup cg;
     if (!wnd) {
@@ -84,33 +96,28 @@ void LogTreeView::paintEvent(QPaintEvent *event)
     } else {
         cg = DPalette::Active;
     }
-
-    //    auto style = dynamic_cast<DStyle *>(DApplication::style());
     auto *dAppHelper = DApplicationHelper::instance();
     auto palette = dAppHelper->applicationPalette();
-
     QBrush bgBrush(palette.color(cg, DPalette::Base));
-
+    //绘制背景
     QStyleOptionFrame option;
     initStyleOption(&option);
-    //    int radius = style->pixelMetric(DStyle::PM_FrameRadius, &option);
-
     QRect rect = viewport()->rect();
     QRectF clipRect(rect.x(), rect.y() - rect.height(), rect.width(), rect.height() * 2);
     QRectF subRect(rect.x(), rect.y() - rect.height(), rect.width(), rect.height());
     QPainterPath clipPath, subPath;
-    //    clipPath.addRoundedRect(clipRect, radius, radius);
-    //    subPath.addRect(subRect);
-    //    clipPath = clipPath.subtracted(subPath);
     clipPath.addRect(rect);
-
     painter.fillPath(clipPath, bgBrush);
-
     painter.restore();
-
     DTreeView::paintEvent(event);
 }
 
+/**
+ * @brief LogTreeView::drawRow 使用drawrow虚函数绘制灰白交替的行背景
+ * @param painter
+ * @param options
+ * @param index
+ */
 void LogTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const
 {
     painter->save();
@@ -142,7 +149,7 @@ void LogTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options
 
     auto radius = style->pixelMetric(DStyle::PM_FrameRadius, &options);
     auto margin = style->pixelMetric(DStyle::PM_ContentsMargins, &options);
-
+    //根据实际情况设置颜色，奇数行为灰色
     auto palette = options.palette;
     QBrush background;
     if (!(index.row() & 1)) {
@@ -156,7 +163,7 @@ void LogTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options
         }
     }
 
-    // draw row background
+    // 绘制整行背景，高度-2以让高分屏非整数缩放比例下无被选中的蓝色细线，防止原来通过delegate绘制单元格交替颜色背景出现的高分屏非整数缩放比例下qrect精度问题导致的横向单元格间出现白色边框
     QPainterPath path;
     QRect rowRect { options.rect.x() - header()->offset(),
                     options.rect.y() + 1,
@@ -170,18 +177,13 @@ void LogTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options
 
     QTreeView::drawRow(painter, options, index);
 
-    // draw focus
-//    if (hasFocus() && currentIndex().row() == index.row()) {
-//        QStyleOptionFocusRect o;
-//        o.QStyleOption::operator=(options);
-//        o.state |= QStyle::State_KeyboardFocusChange | QStyle::State_HasFocus;
-//        o.rect = style->visualRect(layoutDirection(), viewport()->rect(), rowRect);
-//        style->drawPrimitive(DStyle::PE_FrameFocusRect, &o, painter);
-//    }
-
     painter->restore();
 }
 
+/**
+ * @brief LogTreeView::keyPressEvent 快捷键上下移动切换表格选中行
+ * @param event
+ */
 void LogTreeView::keyPressEvent(QKeyEvent *event)
 {
     DTreeView::keyPressEvent(event);

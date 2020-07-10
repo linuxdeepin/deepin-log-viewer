@@ -23,11 +23,10 @@
 #define LOGTREEVIEW_H
 
 #include <DTreeView>
-#include <QKeyEvent>
-#include <QStandardItem>
-#include "logviewheaderview.h"
-#include "logviewitemdelegate.h"
 
+class QKeyEvent;
+class LogViewHeaderView;
+class LogViewItemDelegate;
 class LogTreeView : public Dtk::Widget::DTreeView
 {
 public:

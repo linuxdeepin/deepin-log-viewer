@@ -23,10 +23,12 @@
 #define SYSTEM_SERVICE_TABLE_HEADER_VIEW_H
 
 #include <DHeaderView>
-#include <DStyle>
 
 DWIDGET_USE_NAMESPACE
-
+/**
+ * @brief The LogViewHeaderView class
+ * 表头
+ */
 class LogViewHeaderView : public DHeaderView
 {
 public:

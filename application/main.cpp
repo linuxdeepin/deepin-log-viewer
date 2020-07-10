@@ -18,16 +18,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "logapplicationhelper.h"
+#include "logcollectormain.h"
+#include "environments.h"
+#include "accessible.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
 #include <DMainWindow>
 #include <DWidgetUtil>
-#include "logapplicationhelper.h"
-#include "logcollectormain.h"
-#include "environments.h"
-#include "accessible.h"
 #include <DLog>
+
 #include <QDateTime>
 
 DWIDGET_USE_NAMESPACE
@@ -35,23 +36,19 @@ DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    //DApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
-
     qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
     if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                               DGuiApplicationHelper::UserScope)) {
         qDebug() << "DGuiApplicationHelper::instance()->setSingleInstance";
         exit(0);
     }
-    //  QAccessible::installFactory(accessibleFactory);
+    //高分屏支持
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
-
     a.loadTranslator();
     a.setOrganizationName("deepin");
     a.setApplicationName("deepin-log-viewer");
-    //a.setApplicationVersion(DApplication::buildVersion(""));
     a.setApplicationVersion(VERSION);
     a.setProductIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setWindowIcon(QIcon::fromTheme("deepin-log-viewer"));
@@ -61,17 +58,9 @@ int main(int argc, char *argv[])
     DApplicationSettings settings;
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
-
-
-    //    if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName()))
-    //        return 0;
-
     LogApplicationHelper::instance();
-
     LogCollectorMain w;
     w.show();
-
     Dtk::Widget::moveToCenter(&w);
-
     return a.exec();
 }

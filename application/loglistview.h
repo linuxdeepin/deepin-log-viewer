@@ -22,12 +22,13 @@
 #ifndef LOGLISTVIEW_H
 #define LOGLISTVIEW_H
 
-#include <DApplicationHelper>
-#include <DListView>
-#include <DStyledItemDelegate>
-#include <QStandardItemModel>
-#include "filtercontent.h" //add by Airy for new menu
 #include "structdef.h"
+
+#include <DApplicationHelper>
+#include <DStyledItemDelegate>
+#include <DListView>
+
+class QStandardItemModel;
 class LogListDelegate : public Dtk::Widget::DStyledItemDelegate
 {
 public:
@@ -45,7 +46,6 @@ class LogListView : public Dtk::Widget::DListView
 public:
     LogListView(QWidget *parent = nullptr);
     void initUI();
-
     void setDefaultSelect();
     void truncateFile(QString path_); //add by Airy for truncate file
 
@@ -69,18 +69,14 @@ signals:
     void sigRefresh(const QModelIndex &index);  // add refresh
 
 private:
-    QStandardItemModel *m_pModel;
-
+    QStandardItemModel *m_pModel{nullptr};
     QString icon = ICONLIGHTPREFIX;
-
     // add
-    QMenu *g_context;
-    QAction *g_openForder;
-    QAction *g_clear;
-    QAction *g_refresh;  // add
-
-    QString g_path;                  // add by Airy
-    FilterContent *g_filtercontent;  // add
+    QMenu *g_context{nullptr};
+    QAction *g_openForder{nullptr};
+    QAction *g_clear{nullptr};
+    QAction *g_refresh{nullptr};  // add
+    QString g_path{""};                  // add by Airy
 };
 
 #endif  // LOGLISTVIEW_H

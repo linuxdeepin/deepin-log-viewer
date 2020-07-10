@@ -54,15 +54,15 @@ void LogPeriodButton::leaveEvent(QEvent *e)
     DPushButton::leaveEvent(e);
 }
 
+/**
+ * @brief LogPeriodButton::paintEvent  通过鼠标是否在按钮上的状态绘hover效果
+ * @param event
+ */
 void LogPeriodButton::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
 
     QRectF rect = this->rect();
-//    if (m_stahndardWidth > 0) {
-//        this->setText(QFontMetrics(this->font()).elidedText(this->text(), Qt::ElideRight, m_stahndardWidth));
-//    }
-    // this->setText(QFontMetrics(this->font()).elidedText(this->text(), Qt::ElideRight, 30));
     if (isEnter) {
         this->setAutoFillBackground(true);
         this->setBackgroundRole(DPalette::Base);

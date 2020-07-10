@@ -182,12 +182,8 @@ void LogAuthThread::handleXorg()
     if (commandErrorType != Utils::NoError) {
         if (commandErrorType == Utils::PermissionError) {
             emit proccessError(errorStr + "\n" + "Please use 'sudo' run this application");
-//            DMessageBox::information(nullptr, tr("information"),
-//                                     errorStr + "\n" + "Please use 'sudo' run this application");
         } else if (commandErrorType == Utils::RetryError) {
             emit proccessError("The password is incorrect,please try again");
-//            DMessageBox::information(nullptr, tr("information"),
-//                                     "The password is incorrect,please try again");
         }
         return;
     }
