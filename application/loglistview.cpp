@@ -133,7 +133,17 @@ void LogListView::initUI()
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
+    } else {
+        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+        item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
+        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        m_pModel->appendRow(item);
     }
+
+
+
     if (isFileExist("/var/log/dpkg.log")) {
         item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
         item->setToolTip(DApplication::translate("Tree", "dpkg Log"));  // add by Airy for bug 16245
@@ -364,7 +374,7 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         g_context->addAction(g_clear);
         g_context->addAction(g_refresh);
 
-        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA) {
+        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA) {
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }

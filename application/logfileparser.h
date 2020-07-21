@@ -22,13 +22,15 @@
 #ifndef LOGFILEPARSER_H
 #define LOGFILEPARSER_H
 
-#include <QMap>
-#include <QObject>
-#include <QThread>
 #include "journalwork.h"
+#include "journalbootwork.h"
 #include "logapplicationparsethread.h"
 #include "logauththread.h"
 #include "structdef.h"
+
+#include <QMap>
+#include <QObject>
+#include <QThread>
 
 class LogFileParser : public QObject
 {
@@ -38,6 +40,7 @@ public:
     ~LogFileParser();
 
     void parseByJournal(QStringList arg = QStringList());
+    void parseByJournalBoot(QStringList arg = QStringList());
     void parseByDpkg(qint64 ms = 0);
 #if 0
     void parseByXlog(QStringList &xList);
@@ -59,6 +62,7 @@ signals:
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kernFinished(QList<LOG_MSG_JOURNAL>);
     void journalFinished();
+    void journalBootFinished();
     void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
     void normalFinished();  // add by Airy
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
@@ -73,6 +77,7 @@ signals:
 
 public slots:
     void slot_journalFinished();
+    void slot_journalBootFinished();
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slot_kernFinished(LOG_FLAG flag, QString output);
     void slot_bootFinished(LOG_FLAG flag, QString output);
@@ -86,6 +91,7 @@ private:
 
     LogApplicationParseThread *m_appThread {nullptr};
     journalWork *work {nullptr};
+    JournalBootWork *m_bootJournalWork{nullptr};
     QProcess *m_pDkpgDataLoader{nullptr};
     QProcess *m_pXlogDataLoader{nullptr};
     QProcess *m_KwinDataLoader{nullptr};

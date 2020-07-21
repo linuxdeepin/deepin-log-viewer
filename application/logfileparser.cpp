@@ -94,6 +94,19 @@ void LogFileParser::parseByJournal(QStringList arg)
     QtConcurrent::run(work, &journalWork::doWork);
 }
 
+void LogFileParser::parseByJournalBoot(QStringList arg)
+{
+    stopAllLoad();
+    m_bootJournalWork = JournalBootWork::instance();
+
+    disconnect(m_bootJournalWork, SIGNAL(journalBootFinished()), this, SLOT(slot_journalBootFinished()));
+    m_bootJournalWork->setArg(arg);
+    connect(m_bootJournalWork, SIGNAL(journalBootFinished()), this, SLOT(slot_journalBootFinished()),
+            Qt::QueuedConnection);
+    //work->start();
+    QtConcurrent::run(m_bootJournalWork, &JournalBootWork::doWork);
+}
+
 void LogFileParser::parseByDpkg(qint64 ms)
 {
 
@@ -489,6 +502,11 @@ void LogFileParser::slot_journalFinished()
     m_isJournalLoading = false;
     emit journalFinished();
 
+}
+
+void LogFileParser::slot_journalBootFinished()
+{
+    emit journalBootFinished();
 }
 
 void LogFileParser::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList)

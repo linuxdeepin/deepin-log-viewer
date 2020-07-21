@@ -125,6 +125,7 @@ set (APP_CPP_FILES
      logauththread.cpp
      logapplicationhelper.cpp
      logapplicationparsethread.cpp
+     journalbootwork.cpp
      model/log_sort_filter_proxy_model.cpp
      common/collator.cpp
     )

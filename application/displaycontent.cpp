@@ -179,6 +179,8 @@ void DisplayContent::initConnections()
             &DisplayContent::slot_kwinFinished);
     connect(&m_logFileParse, SIGNAL(normalFinished()), this,
             SLOT(slot_NormalFinished()));  // add by Airy
+    connect(&m_logFileParse, SIGNAL(journalBootFinished()), this, SLOT(slot_journalBootFinished()));
+
     connect(m_treeView->verticalScrollBar(), &QScrollBar::valueChanged, this,
             &DisplayContent::slot_vScrollValueChanged);
 
@@ -683,6 +685,107 @@ bool DisplayContent::isAuthProcessAlive()
     return !(ret = (rslt == 0));
 }
 
+void DisplayContent::generateJournalBootFile(int lId, const QString &iSearchStr)
+{
+    Q_UNUSED(iSearchStr)
+    jBootList.clear();
+
+    setLoadState(DATA_LOADING);
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime());
+    QStringList arg;
+    if (lId != LVALL) {
+        QString prio = QString("PRIORITY=%1").arg(lId);
+        arg.append(prio);
+    } else {
+        arg.append("all");
+    }
+    m_logFileParse.parseByJournalBoot(arg);
+
+}
+
+void DisplayContent::createJournalBootTable(QList<LOG_MSG_JOURNAL> &list)
+{
+    m_limitTag = 0;
+    setLoadState(DATA_COMPLETE);
+
+    m_pModel->clear();
+
+    //m_pModel->setColumnCount(6);
+    m_pModel->setHorizontalHeaderLabels(
+        QStringList() << DApplication::translate("Table", "Level")
+        << DApplication::translate("Table", "Process")  // modified by Airy
+        << DApplication::translate("Table", "Date and Time")
+        << DApplication::translate("Table", "Info")
+        << DApplication::translate("Table", "User")
+        << DApplication::translate("Table", "PID"));
+
+
+
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertJournalBootTable(list, 0, end);
+}
+
+void DisplayContent::insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int start, int end)
+{
+    DStandardItem *item = nullptr;
+    //  m_treeView->setUpdatesEnabled(false);
+    // m_pModel->beginInsertRows(logList.size());
+    QList<QStandardItem *> items;
+    for (int i = start; i < end; i++) {
+        // int col = 0;
+        items.clear();
+        item = new DStandardItem();
+        //        qDebug() << "journal level" << logList[i].level;
+        QString iconPath = m_iconPrefix + getIconByname(logList[i].level);
+
+        if (getIconByname(logList[i].level).isEmpty())
+            item->setText(logList[i].level);
+        item->setIcon(QIcon(iconPath));
+        item->setData(BOOT_KLU_TABLE_DATA);
+        item->setData(logList[i].level, Log_Item_SPACE::levelRole);
+        //m_pModel->setItem(i, JOURNAL_SPACE::journalLevelColumn, item);
+        items << item;
+        item = new DStandardItem(logList[i].daemonName);
+        item->setData(BOOT_KLU_TABLE_DATA);
+        // m_pModel->setItem(i, JOURNAL_SPACE::journalDaemonNameColumn, item);
+        items << item;
+        item = new DStandardItem(logList[i].dateTime);
+        item->setData(BOOT_KLU_TABLE_DATA);
+        //m_pModel->setItem(i, JOURNAL_SPACE::journalDateTimeColumn, item);
+        items << item;
+        item = new DStandardItem(logList[i].msg);
+        item->setData(BOOT_KLU_TABLE_DATA);
+        //m_pModel->setItem(i, JOURNAL_SPACE::journalMsgColumn, item);
+        items << item;
+        item = new DStandardItem(logList[i].hostName);
+        item->setData(BOOT_KLU_TABLE_DATA);
+        // m_pModel->setItem(i, JOURNAL_SPACE::journalHostNameColumn, item);
+        items << item;
+        item = new DStandardItem(logList[i].daemonId);
+        item->setData(BOOT_KLU_TABLE_DATA);
+        //  m_pModel->setItem(i, JOURNAL_SPACE::journalDaemonIdColumn, item);
+        items << item;
+        m_pModel->insertRow(m_pModel->rowCount(), items);
+    }
+    //  m_pModel->endInsertRows();
+    m_treeView->hideColumn(JOURNAL_SPACE::journalHostNameColumn);
+    m_treeView->hideColumn(JOURNAL_SPACE::journalDaemonIdColumn);
+    //m_treeView->setUpdatesEnabled(true);
+    //    qDebug() << m_pModel->index(0, 0).data(Qt::DecorationRole);
+
+    //    m_treeView->setModel(m_pModel);
+
+    // default first row select
+    m_treeView->setColumnWidth(JOURNAL_SPACE::journalLevelColumn, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDaemonNameColumn, DEAMON_WIDTH);
+    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
     emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
@@ -707,7 +810,9 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 
     if (treeData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         generateJournalFile(btnId, m_curLevel);
-    } else if (treeData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
+    } else if (treeData.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
+        generateJournalBootFile(m_curLevel);
+    }  else if (treeData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
         generateDpkgFile(btnId);
     } else if (treeData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
         generateKernFile(btnId);
@@ -789,6 +894,9 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_currentKwinList.clear();
         m_flag = Kwin;
         m_logFileParse.parseByKwin(m_currentKwinFilter);
+    } else if (itemData.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = BOOT_KLU;
+        generateJournalBootFile(m_curLevel);
     }
 
 //    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||   //modified by Airy for bug 19660:spinner always running
@@ -861,21 +969,32 @@ void DisplayContent::slot_exportClicked()
         break;
     }
     if (selectFilter == "TEXT (*.txt)") {
-        if (m_flag != JOURNAL) {
-
+        if (m_flag == JOURNAL) {
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToTxt(fileName, jList);
+            });
+        } else if (m_flag == BOOT_KLU) {
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToTxt(fileName, jBootList);
+            });
+        } else {
             QtConcurrent::run([ = ]() {
                 LogExportWidget::exportToTxt(fileName, exportTempModel, m_flag);
                 if (exportTempModel) {
                     exportTempModel->deleteLater();
                 }
             });
-        } else {
-            QtConcurrent::run([ = ] {
-                LogExportWidget::exportToTxt(fileName, jList);
-            });
         }
     } else if (selectFilter == "Html (*.html)") {
-        if (m_flag != JOURNAL) {
+        if (m_flag == JOURNAL) {
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToHtml(fileName, jList);
+            });
+        } else if (m_flag == BOOT_KLU) {
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToHtml(fileName, jBootList);
+            });
+        } else {
             QtConcurrent::run([ = ] {
                 LogExportWidget::exportToHtml(fileName, exportTempModel, m_flag);
                 if (exportTempModel)
@@ -883,13 +1002,18 @@ void DisplayContent::slot_exportClicked()
                     exportTempModel->deleteLater();
                 }
             });
-        } else {
-            QtConcurrent::run([ = ] {
-                LogExportWidget::exportToHtml(fileName, jList);
-            });
         }
     } else if (selectFilter == "Doc (*.doc)") {
-        if (m_flag != JOURNAL) {
+
+        if (m_flag == JOURNAL) {
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToDoc(fileName, jList, labels, m_flag);
+            });
+        } else if (m_flag == BOOT_KLU) {
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToDoc(fileName, jBootList, labels, m_flag);
+            });
+        } else {
             QtConcurrent::run([ = ] {
                 LogExportWidget::exportToDoc(fileName, exportTempModel, m_flag);
                 if (exportTempModel)
@@ -897,23 +1021,23 @@ void DisplayContent::slot_exportClicked()
                     exportTempModel->deleteLater();
                 }
             });
-        } else {
-            QtConcurrent::run([ = ] {
-                LogExportWidget::exportToDoc(fileName, jList, labels, m_flag);
-            });
         }
     } else if (selectFilter == "Xls (*.xls)") {
-        if (m_flag != JOURNAL) {
+        if (m_flag == JOURNAL) {
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToXls(fileName, jList, labels, m_flag);
+            });
+        } else if (m_flag == BOOT_KLU) {
+            QtConcurrent::run([ = ] {
+                LogExportWidget::exportToXls(fileName, jBootList, labels, m_flag);
+            });
+        } else {
             QtConcurrent::run([ = ] {
                 LogExportWidget::exportToXls(fileName, exportTempModel, m_flag);
                 if (exportTempModel)
                 {
                     exportTempModel->deleteLater();
                 }
-            });
-        } else {
-            QtConcurrent::run([ = ] {
-                LogExportWidget::exportToXls(fileName, jList, labels, m_flag);
             });
         }
     }
@@ -1011,6 +1135,27 @@ void DisplayContent::slot_journalFinished()
     createJournalTable(jList);
 }
 
+void DisplayContent::slot_journalBootFinished()
+{
+    if (m_flag != BOOT_KLU)
+        return;
+
+    //    jList = logList;
+    //    journalWork::instance()->mutex.lock();
+    if (JournalBootWork::instance()->logList.isEmpty()) {
+        setLoadState(DATA_COMPLETE);
+        createJournalBootTable(jBootList);
+        return;
+    }
+
+    jBootList.append(JournalBootWork::instance()->logList);
+    //    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
+    JournalBootWork::instance()->logList.clear();
+    JournalBootWork::instance()->mutex.unlock();
+    setLoadState(DATA_COMPLETE);
+    createJournalBootTable(jBootList);
+}
+
 void DisplayContent::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list)
 {
     if (m_flag != APP)
@@ -1049,6 +1194,25 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             //                 * rate;
             qDebug() << "rate" << rate;
             insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+
+            m_limitTag = rate;
+        }
+        m_treeView->verticalScrollBar()->setValue(value);
+    } else  if (m_flag == BOOT_KLU) {
+        int rate = (value + 25) / SINGLE_LOAD;
+        //    qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
+
+        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
+            if (m_limitTag >= rate)
+                return;
+
+            int leftCnt = jBootList.count() - SINGLE_LOAD * rate;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            //        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
+            //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD
+            //                 * rate;
+            qDebug() << "rate" << rate;
+            insertJournalBootTable(jBootList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
             m_limitTag = rate;
         }
@@ -1117,6 +1281,23 @@ void DisplayContent::slot_searchResult(QString str)
         }
         qDebug() << "tmp" << tmp.length();
         createJournalTable(tmp);
+    } break;
+    case BOOT_KLU: {
+        QList<LOG_MSG_JOURNAL> tmp = jBootList;
+        int cnt = tmp.count();
+        for (int i = cnt - 1; i >= 0; --i) {
+            LOG_MSG_JOURNAL msg = tmp.at(i);
+            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.hostName.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.daemonName.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.daemonId.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.level.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
+                continue;
+            tmp.removeAt(i);
+        }
+        qDebug() << "tmp" << tmp.length();
+        createJournalBootTable(tmp);
     } break;
     case KERN: {
         QList<LOG_MSG_JOURNAL> tmp = kList;
@@ -1675,6 +1856,9 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         m_currentKwinList.clear();
         m_flag = Kwin;
         m_logFileParse.parseByKwin(m_currentKwinFilter);
+    } else if (itemData.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = BOOT_KLU;
+        generateJournalBootFile(m_curLevel);
     }
 
 

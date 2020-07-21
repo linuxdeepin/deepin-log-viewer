@@ -310,7 +310,7 @@ bool LogExportWidget::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
     for (int row = 0; row < jList.count(); ++row) {
         LOG_MSG_JOURNAL message = jList.at(row);
         int col = 0;
-        if (iFlag == JOURNAL) {
+        if (iFlag == JOURNAL || iFlag == BOOT_KLU) {
             tab->cell(row + 1, col++)->addText(message.level);
             tab->cell(row + 1, col++)->addText(message.daemonName);
             tab->cell(row + 1, col++)->addText(message.dateTime);
@@ -831,7 +831,7 @@ bool LogExportWidget::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
         LOG_MSG_JOURNAL message = jList.at(row);
         int col = 1;
 
-        if (iFlag == JOURNAL) {
+        if (iFlag == JOURNAL || iFlag == BOOT_KLU) {
             xlsx.write(currentXlsRow, col++, message.level);
             xlsx.write(currentXlsRow, col++, message.daemonName);
             xlsx.write(currentXlsRow, col++, message.dateTime);
