@@ -126,22 +126,27 @@ void LogListView::initUI()
         m_pModel->appendRow(item);
     }
 
-    if (isFileExist("/var/log/boot.log")) {
-        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
-        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
-        item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
-        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        m_pModel->appendRow(item);
-    } else {
-        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
-        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
-        item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
-        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        m_pModel->appendRow(item);
-    }
-
+//    if (isFileExist("/var/log/boot.log")) {
+//        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+//        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+//        item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    } else {
+//        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+//        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+//        item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    }
+    item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+    item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+    item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
+    item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
+    m_pModel->appendRow(item);
 
 
     if (isFileExist("/var/log/dpkg.log")) {
