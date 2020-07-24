@@ -61,7 +61,7 @@ public:
     void run() override;
 
 signals:
-//    void journalFinished(QList<LOG_MSG_JOURNAL> list);
+    void journalData(QList<LOG_MSG_JOURNAL> list);
     void journalFinished();
 
 public slots:

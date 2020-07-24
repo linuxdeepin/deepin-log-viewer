@@ -36,13 +36,17 @@
 #include <QHeaderView>
 #include <QScrollBar>
 #include <QKeyEvent>
-
+#include <QScroller>
 DWIDGET_USE_NAMESPACE
 
 LogTreeView::LogTreeView(QWidget *parent)
     : DTreeView(parent)
 {
     initUI();
+    QScroller *sc = QScroller::scroller(this);
+    QScroller::ScrollerGestureType gesture = QScroller::TouchGesture;
+    sc->grabGesture(this, gesture);
+
 }
 
 /**
@@ -190,4 +194,12 @@ void LogTreeView::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down) {
         emit clicked(this->currentIndex());
     }
+}
+
+bool LogTreeView::event(QEvent *e)
+{
+//    switch () {
+
+//    }
+    return  DTreeView::event(e);
 }

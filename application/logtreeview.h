@@ -38,6 +38,8 @@ protected:
     void drawRow(QPainter *painter, const QStyleOptionViewItem &options,
                  const QModelIndex &index) const override;
     void keyPressEvent(QKeyEvent *event) override;
+    bool event(QEvent *e) override;
+
 
 private:
     LogViewItemDelegate *m_itemDelegate;

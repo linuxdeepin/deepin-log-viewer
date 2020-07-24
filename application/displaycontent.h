@@ -39,7 +39,7 @@
 #include "structdef.h"
 
 
-
+class ExportProgressDlg;
 class DisplayContent : public Dtk::Widget::DWidget
 {
     Q_OBJECT
@@ -53,7 +53,6 @@ public:
     explicit DisplayContent(QWidget *parent = nullptr);
     ~DisplayContent();
 
-public:
 
 private:
     void initUI();
@@ -63,8 +62,8 @@ private:
     void initConnections();
 
     void generateJournalFile(int id, int lId, const QString &iSearchStr = "");
-    void createJournalTable(QList<LOG_MSG_JOURNAL> &list);
-
+    void createJournalTableStart(QList<LOG_MSG_JOURNAL> &list);
+    void createJournalTableForm();
     void generateDpkgFile(int id, const QString &iSearchStr = "");
     void createDpkgTable(QList<LOG_MSG_DPKG> &list);
 
@@ -119,6 +118,7 @@ public slots:
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
     void slot_kwinFinished(QList<LOG_MSG_KWIN> list);
     void slot_journalFinished();
+    void slot_journalData(QList<LOG_MSG_JOURNAL> list);
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
     void slot_NormalFinished();  // add by Airy
 
@@ -140,6 +140,10 @@ public slots:
     void parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel);
 
     void setLoadState(LOAD_STATE iState);
+    void onExportProgress(int nCur, int nTotal);
+    void onExportResult(bool isSuccess);
+    void clearAllFilter();
+    void clearAllDatalist();
 private:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
@@ -168,12 +172,12 @@ private:
     LOG_FLAG m_flag {NONE};
 
     LogFileParser m_logFileParse;
-    QList<LOG_MSG_JOURNAL> jList;  // journalctl cmd.
+    QList<LOG_MSG_JOURNAL> jList, jListOrigin; // journalctl cmd.
     QList<LOG_MSG_DPKG> dList;     // dpkg.log
     //    QStringList xList;                           // Xorg.0.log
     QList<LOG_MSG_XORG> xList;                   // Xorg.0.log
     QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
-    QList<LOG_MSG_JOURNAL> kList;                // kern.log
+    QList<LOG_MSG_JOURNAL> kList, kListOrigin;                // kern.log
     QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)
     QList<LOG_MSG_NORMAL> norList;               // add by Airy
     QList<LOG_MSG_NORMAL> nortempList;           // add by Airy
@@ -184,6 +188,9 @@ private:
     QString getIconByname(QString str);
     QString m_currentSearchStr{""};
     KWIN_FILTERS m_currentKwinFilter;
+    ExportProgressDlg *m_exportDlg{nullptr};
+    bool m_firstLoadPageData = false;
+    BOOT_FILTERS m_bootFilter = {"", ""};
 
 };
 

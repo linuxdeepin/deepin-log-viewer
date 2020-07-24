@@ -196,12 +196,14 @@ void journalWork::doWork()
 
         if (cnt % 500 == 0) {
             mutex.lock();
-            emit journalFinished();
+            emit journalData(logList);
+            logList.clear();
             usleep(100);
             mutex.unlock();
         }
         //  delete d;
     }
+    emit journalData(logList);
     emit journalFinished();
     //第一次加载时这个之后的代码都不执行?故放到最后
     deleteSd();

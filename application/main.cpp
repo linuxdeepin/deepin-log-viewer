@@ -36,8 +36,8 @@ DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
+
     qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
     if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                               DGuiApplicationHelper::UserScope)) {
@@ -62,5 +62,8 @@ int main(int argc, char *argv[])
     LogCollectorMain w;
     w.show();
     Dtk::Widget::moveToCenter(&w);
+//    for (int i = 0; i < 150000; ++i) {
+//        qDebug() << "fake log" << i;
+//    }
     return a.exec();
 }

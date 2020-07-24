@@ -87,8 +87,11 @@ void LogFileParser::parseByJournal(QStringList arg)
 
     //    work = new journalWorkd();
     disconnect(work, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()));
+    disconnect(work, &journalWork::journalData, this, &LogFileParser::journalData);
     work->setArg(arg);
-    connect(work, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()),
+    connect(work, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()),
+            Qt::QueuedConnection);
+    connect(work, &journalWork::journalData, this, &LogFileParser::journalData,
             Qt::QueuedConnection);
     //work->start();
     QtConcurrent::run(work, &journalWork::doWork);
