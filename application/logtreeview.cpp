@@ -37,16 +37,35 @@
 #include <QScrollBar>
 #include <QKeyEvent>
 #include <QScroller>
+#include <private/qflickgesture_p.h>
+#include <QEasingCurve>
+#include <private/qguiapplication_p.h>
+#include <qpa/qplatformtheme.h>
+#include <QTouchEvent>
 DWIDGET_USE_NAMESPACE
 
 LogTreeView::LogTreeView(QWidget *parent)
     : DTreeView(parent)
 {
     initUI();
-    QScroller *sc = QScroller::scroller(this);
-    QScroller::ScrollerGestureType gesture = QScroller::TouchGesture;
-    sc->grabGesture(this, gesture);
-
+//    QScroller *sc = QScroller::scroller(this);
+//    QScroller::ScrollerGestureType gesture = QScroller::TouchGesture;
+//    QScrollerProperties porpy = sc->scrollerProperties();
+//    porpy.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve::OutQuart);
+//    porpy.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
+//    porpy.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
+//    porpy.setScrollMetric(QScrollerProperties::DecelerationFactor, 1);
+//    sc->setScrollerProperties(porpy);
+//    sc->grabGesture(this->viewport(), gesture);
+    connect(this->verticalScrollBar(), &QScrollBar::sliderPressed, this, [ = ] {
+        if (QScroller::hasScroller(this))
+        {
+            // 不可使用 ungrab，会导致应用崩溃，或许是Qt的bug
+            QScroller::scroller(this)->stop();
+        }
+    });
+    this->setAttribute(Qt::WA_AcceptTouchEvents);
+    touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 }
 
 /**
@@ -198,8 +217,166 @@ void LogTreeView::keyPressEvent(QKeyEvent *event)
 
 bool LogTreeView::event(QEvent *e)
 {
-//    switch () {
+    //qDebug() << "11111" << e->type();
+    switch (e->type()) {
+    case QEvent::TouchBegin: {
+        // qDebug() << "11111";
+        QTouchEvent *touchEvent = static_cast<QTouchEvent *>(e);
+        if (!m_isPressed) {
+            touchEvent->touchPointStates();
+            QList<QTouchEvent::TouchPoint> points = touchEvent->touchPoints();
+            if (points.count() == 1) {
+                QTouchEvent::TouchPoint p = points.at(0);
+                m_lastTouchBeginPos =  p.pos();
+                m_isPressed = true;
 
+            }
+        }
+        break;
+
+    }
+//    case QEvent::TouchUpdate: {
+//        qDebug() << "22222";
+//        break;
 //    }
+//    case QEvent::TouchEnd: {
+//        qDebug() << "33333";
+//        m_isPressed = false;
+//        break;
+//    }
+//    case QEvent::TouchCancel: {
+//        qDebug() << "44444444";
+//        m_isPressed = false;
+//        break;
+//    }
+//    case QEvent::ScrollPrepare: {
+//        QScrollPrepareEvent *touchEvent = static_cast<QScrollPrepareEvent *>(e);
+//        qDebug() << "QEvent::ScrollPrepare" << touchEvent->startPos() << touchEvent->contentPos();
+//        break;
+//    }
+//    case QEvent::Scroll: {
+//        QScrollEvent *touchEvent = static_cast<QScrollEvent *>(e);
+//        qDebug() << "QEvent::Scroll" << touchEvent->contentPos() << touchEvent->scrollState();
+//        break;
+//    }
+
+    }
     return  DTreeView::event(e);
 }
+
+void LogTreeView::mousePressEvent(QMouseEvent *event)
+{
+#if 0
+    qDebug() << "mousePressEvent";
+    return DTreeView::mousePressEvent(event);
+    QScrollBar *bar = this->verticalScrollBar();
+    switch (event->button()) {
+    case Qt::LeftButton: {
+        // 当事件source为MouseEventSynthesizedByQt，认为此事件为TouchBegin转换而来
+        if (event->source() == Qt::MouseEventSynthesizedByQt) {
+
+            lastTouchBeginPos = event->pos();
+
+            // 清空触屏滚动操作，因为在鼠标按下时还不知道即将进行的是触屏滚动还是文件框选
+            if (QScroller::hasScroller(this)) {
+                // 不可使用 ungrab，会导致应用崩溃，或许是Qt的bug
+                QScroller::scroller(this)->deleteLater();
+            }
+
+        }
+        if (dragDropMode() != NoDragDrop) {
+            setDragDropMode(DragDrop);
+        }
+        const QModelIndex &index = indexAt(event->pos());
+        // 避免通过触屏拖动视图时当前选中被清除
+        if (event->source() != Qt::MouseEventSynthesizedByQt) {
+            clearSelection();
+            update();
+        }
+        mouseLastPressedIndex = QModelIndex();
+        DTreeView::mousePressEvent(event);
+        break;
+    }
+    default:
+        break;
+    }
+#endif
+
+    DTreeView::mousePressEvent(event);
+}
+
+void LogTreeView::mouseMoveEvent(QMouseEvent *event)
+{
+
+
+
+
+#if 0
+    qDebug() << "mouseMoveEvent";
+    return DTreeView::mouseMoveEvent(event);
+    // source为此类型时认为是触屏事件
+    if (event->source() == Qt::MouseEventSynthesizedByQt) {
+        if (QScroller::hasScroller(this))
+            return;
+
+
+        const QPoint difference_pos = event->pos() - lastTouchBeginPos;
+        QScrollBar *bar = this->verticalScrollBar();
+////如果当前触摸点在滚动条上则不处理，因为要用滚动条
+//        if (bar->rect().contains(event->pos())) {
+//            qDebug() << "bar";
+
+//            return DTreeView::mouseMoveEvent(event);
+//        }
+        if (qAbs(difference_pos.x()) > touchTapDistance
+                || qAbs(difference_pos.y()) > touchTapDistance) {
+            QScroller::grabGesture(this->viewport(), QScroller::TouchGesture);
+            QScroller *scroller = QScroller::scroller(this);
+            QScrollerProperties  properties = scroller->scrollerProperties();
+            QVariant overshootPolicy = QVariant::fromValue<QScrollerProperties::OvershootPolicy>(QScrollerProperties::OvershootAlwaysOff);
+            properties.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, overshootPolicy);
+            scroller->setScrollerProperties(properties);
+            scroller->handleInput(QScroller::InputPress, event->localPos(), static_cast<qint64>(event->timestamp()));
+            scroller->handleInput(QScroller::InputMove, event->localPos(), static_cast<qint64>(event->timestamp()));
+        }
+
+        return;
+
+    }
+#endif
+    if (m_isPressed) {
+        double horiDelta = event->pos().x() - m_lastTouchBeginPos.x();
+        double vertDelta = event->pos().y() - m_lastTouchBeginPos.y();
+//        horizontalScrollBar()->setValue(horizontalScrollBar()->value() - horiDelta);
+        verticalScrollBar()->setValue(verticalScrollBar()->value() - vertDelta * 3);
+
+        m_lastTouchBeginPos = event->pos();
+        return;
+    }
+
+    return DTreeView::mouseMoveEvent(event);
+}
+
+void LogTreeView::mouseReleaseEvent(QMouseEvent *event)
+{
+#if 0
+    qDebug() << "mouseReleaseEvent";
+    return DTreeView::mouseReleaseEvent(event);
+//    if (mouseLastPressedIndex.isValid()) {
+//        if (d->mouseLastPressedIndex == indexAt(event->pos()))
+//            selectionModel()->select(d->mouseLastPressedIndex, QItemSelectionModel::Deselect);
+//    }
+
+    // 避免滚动视图导致文件选中状态被取消
+    if (!QScroller::hasScroller(this))
+        return DTreeView::mouseReleaseEvent(event);
+#endif
+    if (m_isPressed) {
+        m_isPressed = false;
+        return;
+    }
+    return DTreeView::mouseReleaseEvent(event);
+}
+
+
+

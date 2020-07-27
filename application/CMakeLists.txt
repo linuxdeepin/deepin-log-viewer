@@ -126,6 +126,7 @@ set (APP_CPP_FILES
      logapplicationhelper.cpp
      logapplicationparsethread.cpp
      exportprogressdlg.cpp
+     logscrollbar.cpp
      model/log_sort_filter_proxy_model.cpp
      common/collator.cpp
     )
@@ -278,6 +279,7 @@ include_directories(${DtkWidget_INCLUDE_DIRS})
 include_directories(${DtkCore_INCLUDE_DIRS})
 include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
+include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc)
 
 #include_directories(${Qt5Widgets_LIBRARIES}

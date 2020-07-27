@@ -53,6 +53,8 @@ int main(int argc, char *argv[])
     a.setProductIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setWindowIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setProductName(DApplication::translate("Main", "Log Viewer"));
+    //  a.setAttribute(Qt::AA_SynthesizeTouchForUnhandledMouseEvents, 0);
+    //a.setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents, 0);
     a.setApplicationDescription(
         DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
     DApplicationSettings settings;

@@ -255,5 +255,37 @@ void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
     }
 }
 
+bool LogCollectorMain::eventFilter(QObject *obj, QEvent *evt)
+{
+    switch (evt->type()) {
+    case QEvent::TouchBegin: {
+        qDebug() << "11111";
+
+        break;
+    }
+    case QEvent::TouchUpdate: {
+        qDebug() << "2222";
+        break;
+    }
+    case QEvent::TouchEnd: {
+        qDebug() << "33333333";
+
+        break;
+    }
+//    case QEvent::ScrollPrepare: {
+//        QScrollPrepareEvent *touchEvent = static_cast<QScrollPrepareEvent *>(e);
+//        qDebug() << "QEvent::ScrollPrepare" << touchEvent->startPos() << touchEvent->contentPos();
+//        break;
+//    }
+//    case QEvent::Scroll: {
+//        QScrollEvent *touchEvent = static_cast<QScrollEvent *>(e);
+//        qDebug() << "QEvent::Scroll" << touchEvent->contentPos() << touchEvent->scrollState();
+//        break;
+//    }
+
+    }
+    return  DMainWindow::eventFilter(obj, evt);
+}
+
 
 

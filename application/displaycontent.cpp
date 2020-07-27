@@ -1131,10 +1131,10 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             //                 * rate;
             qDebug() << "rate" << rate;
             insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
-
             m_limitTag = rate;
         }
         m_treeView->verticalScrollBar()->setValue(value);
+        update();
     } else if (m_flag == APP) {
         int rate = (value + 25) / SINGLE_LOAD;
         //        qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;

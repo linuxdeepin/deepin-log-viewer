@@ -47,6 +47,7 @@ public:
     void initShortCut();
 public slots:
     void resizeWidthByFilterContentWidth(int iWidth);
+    bool eventFilter(QObject *obj, QEvent *evt);
 private:
     Dtk::Widget::DSearchEdit *m_searchEdt;
     FilterContent *m_topRightWgt;
