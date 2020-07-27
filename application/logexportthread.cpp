@@ -40,6 +40,7 @@ LogExportThread::LogExportThread(QObject *parent)
        QRunnable()
 {
     setAutoDelete(true);
+    initMap();
 }
 
 void LogExportThread::exportToTxtPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
@@ -343,6 +344,11 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_canRunning = true;
 }
 
+bool LogExportThread::isProcessing()
+{
+    return m_canRunning;
+}
+
 void LogExportThread::stopImmediately()
 {
     m_canRunning = false;
@@ -485,7 +491,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             }
             int col = 0;
             LOG_MSG_APPLICATOIN jMsg = jList.at(i);
-            out << labels.value(col++, "") << ":" << jMsg.level << " ";
+            out << labels.value(col++, "") << ":" << strTranslate(jMsg.level)  << " ";
             out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
             out << labels.value(col++, "") << ":" << iAppName << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
@@ -785,7 +791,13 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
 #if 1
     try {
         Docx::Document doc(DOCTEMPLATE);
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 6);
+        Docx::Table *tab;
+        if (iFlag == JOURNAL) {
+            tab = doc.addTable(jList.count() + 1, 6);
+        } else if (iFlag == KERN) {
+            tab = doc.addTable(jList.count() + 1, 4);
+        }
+
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
         for (int col = 0; col < labels.count(); ++col) {
@@ -863,7 +875,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
 {
     try {
         Docx::Document doc(DOCTEMPLATE);
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 6);
+        Docx::Table *tab = doc.addTable(jList.count() + 1, 4);
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
         for (int col = 0; col < labels.count(); ++col) {
@@ -877,12 +889,14 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             }
             LOG_MSG_APPLICATOIN message = jList.at(row);
             int col = 0;
-            tab->cell(row + 1, col++)->addText(message.level);
+            tab->cell(row + 1, col++)->addText(strTranslate(message.level));
             tab->cell(row + 1, col++)->addText(message.dateTime);
             tab->cell(row + 1, col++)->addText(iAppName);
             tab->cell(row + 1, col++)->addText(message.msg);
             sigProgress(row + 1, jList.count());
         }
+        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
+        emit sigResult(true);
         doc.save(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
@@ -892,7 +906,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         }
         return false;
     }
-    emit sigResult(true);
+    //  emit sigResult(true);
     return true;
 }
 
@@ -900,7 +914,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
 {
     try {
         Docx::Document doc(DOCTEMPLATE);
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 6);
+        Docx::Table *tab = doc.addTable(jList.count() + 1, 3);
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
         for (int col = 0; col < labels.count(); ++col) {
@@ -919,6 +933,8 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
             tab->cell(row + 1, col++)->addText(message.action);
             sigProgress(row + 1, jList.count());
         }
+        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
+        emit sigResult(true);
         doc.save(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
@@ -928,7 +944,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         }
         return false;
     }
-    emit sigResult(true);
+    //  emit sigResult(true);
     return true;
 }
 
@@ -936,7 +952,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
 {
     try {
         Docx::Document doc(DOCTEMPLATE);
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 6);
+        Docx::Table *tab = doc.addTable(jList.count() + 1, 2);
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
         for (int col = 0; col < labels.count(); ++col) {
@@ -954,6 +970,8 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
             tab->cell(row + 1, col++)->addText(message.msg);
             sigProgress(row + 1, jList.count());
         }
+        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
+        emit sigResult(true);
         doc.save(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
@@ -963,7 +981,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         }
         return false;
     }
-    emit sigResult(true);
+    //  emit sigResult(true);
     return true;
 }
 
@@ -971,7 +989,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
 {
     try {
         Docx::Document doc(DOCTEMPLATE);
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 6);
+        Docx::Table *tab = doc.addTable(jList.count() + 1, 2);
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
         for (int col = 0; col < labels.count(); ++col) {
@@ -989,6 +1007,8 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
             tab->cell(row + 1, col++)->addText(message.msg);
             sigProgress(row + 1, jList.count());
         }
+        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
+        emit sigResult(true);
         doc.save(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
@@ -998,7 +1018,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
         }
         return false;
     }
-    emit sigResult(true);
+    // emit sigResult(true);
     return true;
 }
 
@@ -1006,7 +1026,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
 {
     try {
         Docx::Document doc(DOCTEMPLATE);
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 6);
+        Docx::Table *tab = doc.addTable(jList.count() + 1, 4);
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
         for (int col = 0; col < labels.count(); ++col) {
@@ -1026,6 +1046,8 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
             tab->cell(row + 1, col++)->addText(message.msg);
             sigProgress(row + 1, jList.count());
         }
+        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
+        emit sigResult(true);
         doc.save(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
@@ -1035,7 +1057,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
         }
         return false;
     }
-    emit sigResult(true);
+    // emit sigResult(true);
     return true;
 }
 
@@ -1043,7 +1065,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
 {
     try {
         Docx::Document doc(DOCTEMPLATE);
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 6);
+        Docx::Table *tab = doc.addTable(jList.count() + 1, 1);
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
         for (int col = 0; col < labels.count(); ++col) {
@@ -1060,6 +1082,8 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
             tab->cell(row + 1, col++)->addText(message.msg);
             sigProgress(row + 1, jList.count());
         }
+        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
+        emit sigResult(true);
         doc.save(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
@@ -1069,7 +1093,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         }
         return false;
     }
-    emit sigResult(true);
+    //emit sigResult(true);
     return true;
 }
 
@@ -1277,7 +1301,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> 
             }
             LOG_MSG_APPLICATOIN jMsg = jList.at(row);
             html.write("<tr>");
-            QString info = QString("<td>%1</td>").arg(jMsg.level);
+            QString info = QString("<td>%1</td>").arg(strTranslate(jMsg.level));
             html.write(info.toUtf8().data());
             info = QString("<td>%1</td>").arg(jMsg.dateTime);
             html.write(info.toUtf8().data());
@@ -1693,7 +1717,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             }
             LOG_MSG_APPLICATOIN message = jList.at(row);
             int col = 1;
-            xlsx.write(currentXlsRow, col++, message.level);
+            xlsx.write(currentXlsRow, col++, strTranslate(message.level));
             xlsx.write(currentXlsRow, col++, message.dateTime);
             xlsx.write(currentXlsRow, col++, iAppName);
             xlsx.write(currentXlsRow, col++, message.msg);
@@ -1894,6 +1918,24 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
     }
     emit sigResult(true);
     return true;
+}
+
+void LogExportThread::initMap()
+{
+    m_levelStrMap.clear();
+    m_levelStrMap.insert("Emergency", DApplication::translate("Level", "Emergency"));
+    m_levelStrMap.insert("Alert", DApplication::translate("Level", "Alert"));
+    m_levelStrMap.insert("Critical", DApplication::translate("Level", "Critical"));
+    m_levelStrMap.insert("Error", DApplication::translate("Level", "Error"));
+    m_levelStrMap.insert("Warning", DApplication::translate("Level", "Warning"));
+    m_levelStrMap.insert("Notice", DApplication::translate("Level", "Notice"));
+    m_levelStrMap.insert("Info", DApplication::translate("Level", "Info"));
+    m_levelStrMap.insert("Debug", DApplication::translate("Level", "Debug"));
+}
+
+QString LogExportThread::strTranslate(QString &iLevelStr)
+{
+    return m_levelStrMap.value(iLevelStr, iLevelStr);
 }
 
 

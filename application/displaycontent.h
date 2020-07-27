@@ -138,12 +138,14 @@ public slots:
     void parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel);
-
+    QString getIconByname(QString str);
     void setLoadState(LOAD_STATE iState);
     void onExportProgress(int nCur, int nTotal);
     void onExportResult(bool isSuccess);
     void clearAllFilter();
     void clearAllDatalist();
+    void filterBoot(BOOT_FILTERS ibootFilter);
+    void filterNomal(NORMAL_FILTERS inormalFilter);
 private:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
@@ -173,24 +175,24 @@ private:
 
     LogFileParser m_logFileParse;
     QList<LOG_MSG_JOURNAL> jList, jListOrigin; // journalctl cmd.
-    QList<LOG_MSG_DPKG> dList;     // dpkg.log
+    QList<LOG_MSG_DPKG> dList, dListOrigin;    // dpkg.log
     //    QStringList xList;                           // Xorg.0.log
-    QList<LOG_MSG_XORG> xList;                   // Xorg.0.log
+    QList<LOG_MSG_XORG> xList, xListOrigin;                  // Xorg.0.log
     QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
     QList<LOG_MSG_JOURNAL> kList, kListOrigin;                // kern.log
-    QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)
+    QList<LOG_MSG_APPLICATOIN> appList, appListOrigin;         //~/.cache/deepin/xxx.log(.xxx)
     QList<LOG_MSG_NORMAL> norList;               // add by Airy
     QList<LOG_MSG_NORMAL> nortempList;           // add by Airy
     QList<LOG_MSG_KWIN> m_currentKwinList;
     QList<LOG_MSG_KWIN> m_kwinList;                   //$HOME/.kwin.log
     QString m_iconPrefix = ICONPREFIX;
     QMap<QString, QString> m_icon_name_map;
-    QString getIconByname(QString str);
     QString m_currentSearchStr{""};
     KWIN_FILTERS m_currentKwinFilter;
     ExportProgressDlg *m_exportDlg{nullptr};
     bool m_firstLoadPageData = false;
     BOOT_FILTERS m_bootFilter = {"", ""};
+    NORMAL_FILTERS m_normalFilter = {"", -1};
 
 };
 

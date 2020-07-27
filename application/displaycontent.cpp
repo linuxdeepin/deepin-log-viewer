@@ -197,6 +197,8 @@ void DisplayContent::initConnections()
 void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
+    clearAllFilter();
+    clearAllDatalist();
     m_firstLoadPageData = true;
     jList.clear();
     jListOrigin.clear();
@@ -275,7 +277,9 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
     dList.clear();
-
+    dListOrigin.clear();
+    clearAllFilter();
+    clearAllDatalist();
     setLoadState(DATA_LOADING);
 
     QDateTime dt = QDateTime::currentDateTime();
@@ -329,6 +333,8 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     Q_UNUSED(iSearchStr)
     kList.clear();
     kListOrigin.clear();
+    clearAllFilter();
+    clearAllDatalist();
     setLoadState(DATA_LOADING);
     //    m_spinnerWgt->hide();  // modified by Airy for bug 15520
     //    m_treeView->show();
@@ -423,6 +429,9 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
 {
     Q_UNUSED(iSearchStr)
     appList.clear();
+    appListOrigin.clear();
+    clearAllFilter();
+    clearAllDatalist();
     setLoadState(DATA_LOADING);
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
@@ -499,7 +508,10 @@ void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
 
 void DisplayContent::generateXorgFile(int id)
 {
+    clearAllFilter();
     xList.clear();
+    clearAllDatalist();
+    xListOrigin.clear();
     setLoadState(DATA_LOADING);
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
@@ -541,6 +553,8 @@ void DisplayContent::creatKwinTable(QList<LOG_MSG_KWIN> &list)
 
 void DisplayContent::generateKwinFile(KWIN_FILTERS iFilters)
 {
+    clearAllFilter();
+    clearAllDatalist();
     m_kwinList.clear();
     m_currentKwinList.clear();
     setLoadState(DATA_LOADING);
@@ -570,6 +584,8 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 // add by Airy
 void DisplayContent::generateNormalFile(int id)
 {
+    clearAllFilter();
+    clearAllDatalist();
     norList.clear();
     nortempList.clear();
     setLoadState(DATA_LOADING);
@@ -757,8 +773,8 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     m_currentKwinFilter = {""};
     m_curListIdx = index;
 
-    void clearAllFilter();
-    void clearAllDatalist();
+
+    clearAllDatalist();
 
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty())
@@ -871,7 +887,7 @@ void DisplayContent::slot_exportClicked()
             exportThread->exportToTxtPublic(fileName, nortempList, labels);
             break;
         case KERN:
-            exportThread->exportToTxtPublic(fileName, jList, labels, m_flag);
+            exportThread->exportToTxtPublic(fileName, kList, labels, m_flag);
             break;
         case Kwin:
             exportThread->exportToTxtPublic(fileName, m_currentKwinList, labels);
@@ -907,7 +923,7 @@ void DisplayContent::slot_exportClicked()
             exportThread->exportToHtmlPublic(fileName, nortempList, labels);
             break;
         case KERN:
-            exportThread->exportToHtmlPublic(fileName, jList, labels, m_flag);
+            exportThread->exportToHtmlPublic(fileName, kList, labels, m_flag);
             break;
         case Kwin:
             exportThread->exportToHtmlPublic(fileName, m_currentKwinList, labels);
@@ -943,7 +959,7 @@ void DisplayContent::slot_exportClicked()
             exportThread->exportToDocPublic(fileName, nortempList, labels);
             break;
         case KERN:
-            exportThread->exportToDocPublic(fileName, jList, labels, m_flag);
+            exportThread->exportToDocPublic(fileName, kList, labels, m_flag);
             break;
         case Kwin:
             exportThread->exportToDocPublic(fileName, m_currentKwinList, labels);
@@ -979,7 +995,7 @@ void DisplayContent::slot_exportClicked()
             exportThread->exportToXlsPublic(fileName, nortempList, labels);
             break;
         case KERN:
-            exportThread->exportToXlsPublic(fileName, jList, labels, m_flag);
+            exportThread->exportToXlsPublic(fileName, kList, labels, m_flag);
             break;
         case Kwin:
             exportThread->exportToXlsPublic(fileName, m_currentKwinList, labels);
@@ -998,20 +1014,8 @@ void DisplayContent::slot_exportClicked()
 void DisplayContent::slot_statusChagned(QString status)
 {
     m_bootFilter.statusFilter = status;
-    currentBootList.clear();
+    filterBoot(m_bootFilter);
 
-    if (status.isEmpty()) {
-        currentBootList = bList;
-    } else {
-        for (int i = 0; i < bList.size(); i++) {
-            QString _statusStr = bList[i].status;
-            if (_statusStr.compare(status, Qt::CaseInsensitive) != 0)
-                continue;
-            currentBootList.append(bList[i]);
-        }
-    }
-
-    createBootTable(currentBootList);
 }
 
 void DisplayContent::slot_dpkgFinished(QList<LOG_MSG_DPKG> list)
@@ -1019,6 +1023,7 @@ void DisplayContent::slot_dpkgFinished(QList<LOG_MSG_DPKG> list)
     if (m_flag != DPKG)
         return;
     dList = list;
+    dListOrigin = list;
     createDpkgTable(dList);
 }
 
@@ -1026,6 +1031,7 @@ void DisplayContent::slot_XorgFinished(QList<LOG_MSG_XORG> list)
 {
     if (m_flag != XORG)
         return;
+    xListOrigin = list;
     xList = list;
     createXorgTable(xList);
 }
@@ -1034,7 +1040,6 @@ void DisplayContent::slot_bootFinished(QList<LOG_MSG_BOOT> list)
 {
     if (m_flag != BOOT)
         return;
-
     bList.clear();
     bList = list;
     currentBootList.clear();
@@ -1095,6 +1100,7 @@ void DisplayContent::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list)
     appList.clear();
     setLoadState(DATA_COMPLETE);
     appList = list;
+    appListOrigin = list;
     createApplicationTable(appList);
 }
 
@@ -1210,68 +1216,51 @@ void DisplayContent::slot_searchResult(QString str)
         createKernTable(kList);
     } break;
     case BOOT: {
-        QList<LOG_MSG_BOOT> tmp = currentBootList;
-        int cnt = tmp.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_BOOT msg = tmp.at(i);
-            if (msg.status.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
-                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
-                continue;
-            tmp.removeAt(i);
-        }
-        createBootTable(tmp);
+        m_bootFilter.searchstr = m_currentSearchStr;
+        filterBoot(m_bootFilter);
+
     } break;
     case XORG: {
-        QList<LOG_MSG_XORG> tmp = xList;
-        int cnt = tmp.count();
+        xList = xListOrigin ;
+        int cnt = xList.count();
         for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_XORG msg = tmp.at(i);
+            LOG_MSG_XORG msg = xList.at(i);
             if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
                     msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
-            tmp.removeAt(i);
+            xList.removeAt(i);
         }
-        createXorgTable(tmp);
+        createXorgTable(xList);
     } break;
     case DPKG: {
-        QList<LOG_MSG_DPKG> tmp = dList;
-        int cnt = tmp.count();
+        dList = dListOrigin;
+        int cnt = dList.count();
         for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_DPKG msg = tmp.at(i);
+            LOG_MSG_DPKG msg = dList.at(i);
             if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
                     msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
-            tmp.removeAt(i);
+            dList.removeAt(i);
         }
-        createDpkgTable(tmp);
+        createDpkgTable(dList);
     } break;
     case APP: {
-        QList<LOG_MSG_APPLICATOIN> tmp = appList;
-        int cnt = tmp.count();
+        appList = appListOrigin;
+        int cnt = appList.count();
         for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_APPLICATOIN msg = tmp.at(i);
+            LOG_MSG_APPLICATOIN msg = appList.at(i);
             if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
                     msg.level.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
                     msg.src.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
                     msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
                 continue;
-            tmp.removeAt(i);
+            appList.removeAt(i);
         }
-        createAppTable(tmp);
+        createAppTable(appList);
     } break;
     case Normal: {
-        QList<LOG_MSG_NORMAL> tmp = norList;
-        int cnt = tmp.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_NORMAL msg = tmp.at(i);
-            if (msg.eventType.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
-                    msg.userName.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
-                    msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
-                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
-                continue;
-            tmp.removeAt(i);
-        }
-        createNormalTable(tmp);
+        m_normalFilter.searchstr = m_currentSearchStr;
+        filterNomal(m_normalFilter);
     } break;  // add by Airy
     case Kwin: {
         m_currentKwinList = m_kwinList;
@@ -1316,33 +1305,9 @@ void DisplayContent::slot_themeChanged(DGuiApplicationHelper::ColorType colorTyp
 // add by Airy
 void DisplayContent::slot_getLogtype(int tcbx)
 {
-    if (0 == tcbx) {
-        nortempList.clear();
-        for (auto i = 0; i < norList.size(); i++) {
-            nortempList.append(norList[i]);
-        }
-    } else if (1 == tcbx) {
-        nortempList.clear();
-        for (auto i = 0; i < norList.size(); i++) {
-            if (norList[i].eventType.compare("Boot", Qt::CaseInsensitive) != 0 &&
-                    norList[i].eventType.compare("shutdown", Qt::CaseInsensitive) != 0 &&
-                    norList[i].eventType.compare("runlevel", Qt::CaseInsensitive) != 0)
-                nortempList.append(norList[i]);
-        }
-    } else if (2 == tcbx) {
-        nortempList.clear();
-        for (auto i = 0; i < norList.size(); i++) {
-            if (norList[i].eventType.compare("Boot", Qt::CaseInsensitive) == 0)
-                nortempList.append(norList[i]);
-        }
-    } else if (3 == tcbx) {
-        nortempList.clear();
-        for (auto i = 0; i < norList.size(); i++) {
-            if (norList[i].eventType.compare("shutdown", Qt::CaseInsensitive) == 0)
-                nortempList.append(norList[i]);
-        }
-    }
-    createNormalTable(nortempList);
+    m_normalFilter.eventTypeFilter = tcbx;
+    filterNomal(m_normalFilter);
+
 }
 
 void DisplayContent::parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel)
@@ -1605,6 +1570,7 @@ void DisplayContent::clearAllFilter()
 
     m_currentSearchStr.clear();
     m_currentKwinFilter = {""};
+    m_normalFilter = {"", -1};
 }
 
 void DisplayContent::clearAllDatalist()
@@ -1614,21 +1580,110 @@ void DisplayContent::clearAllDatalist()
     jList.clear();
     jListOrigin.clear();
     dList.clear();
+    dListOrigin.clear();
     xList.clear();
+    xListOrigin.clear();
     bList.clear();
     currentBootList.clear();
     kList.clear();
     kListOrigin.clear();
     appList.clear();
+    appListOrigin.clear();
     norList.clear();
     nortempList.clear();
     m_currentKwinList.clear();
     m_kwinList.clear();
+
+}
+
+void DisplayContent::filterBoot(BOOT_FILTERS ibootFilter)
+{
+    currentBootList.clear();
+    bool isStatusFilterEmpty = ibootFilter.statusFilter.isEmpty();
+    if (ibootFilter.statusFilter.isEmpty() && ibootFilter.searchstr.isEmpty()) {
+        currentBootList = bList;
+    } else {
+        currentBootList.clear();
+        for (int i = 0; i < bList.size(); i++) {
+            LOG_MSG_BOOT msg = bList.at(i);
+            QString _statusStr = msg.status;
+            qDebug() << "xxx" << msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive) << "--" << msg.msg;
+            if ((_statusStr.compare(ibootFilter.statusFilter, Qt::CaseInsensitive) != 0) && !isStatusFilterEmpty)
+                continue;
+            if ((msg.status.contains(ibootFilter.searchstr, Qt::CaseInsensitive)) ||
+                    (msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive))) {
+                currentBootList.append(bList[i]);
+            }
+        }
+    }
+    qDebug() << "bList.count filter" << bList.count();
+    createBootTable(currentBootList);
+}
+
+void DisplayContent::filterNomal(NORMAL_FILTERS inormalFilter)
+{
+
+    nortempList.clear();
+    if (inormalFilter.searchstr.isEmpty() && inormalFilter.eventTypeFilter < 0) {
+        nortempList = norList ;
+    }
+    int tcbx = inormalFilter.eventTypeFilter;
+    if (0 == tcbx) {
+        for (auto i = 0; i < norList.size(); i++) {
+            LOG_MSG_NORMAL msg = norList.at(i);
+            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
+                nortempList.append(msg);
+            }
+        }
+    } else if (1 == tcbx) {
+        for (auto i = 0; i < norList.size(); i++) {
+            LOG_MSG_NORMAL msg = norList.at(i);
+            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
+                if (msg.eventType.compare("Boot", Qt::CaseInsensitive) != 0 &&
+                        msg.eventType.compare("shutdown", Qt::CaseInsensitive) != 0 &&
+                        msg.eventType.compare("runlevel", Qt::CaseInsensitive) != 0)
+                    nortempList.append(msg);
+            }
+        }
+    } else if (2 == tcbx) {
+        for (auto i = 0; i < norList.size(); i++) {
+            LOG_MSG_NORMAL msg = norList.at(i);
+            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
+                if (norList[i].eventType.compare("Boot", Qt::CaseInsensitive) == 0)
+                    nortempList.append(norList[i]);
+            }
+        }
+    } else if (3 == tcbx) {
+        for (auto i = 0; i < norList.size(); i++) {
+            LOG_MSG_NORMAL msg = norList.at(i);
+            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
+                if (norList[i].eventType.compare("shutdown", Qt::CaseInsensitive) == 0)
+                    nortempList.append(norList[i]);
+            }
+        }
+    }
+    createNormalTable(nortempList);
 }
 
 void DisplayContent::onExportProgress(int nCur, int nTotal)
 {
-    if (!m_exportDlg) {
+    LogExportThread *exportThread = nullptr;
+    if (sender()) {
+        exportThread = qobject_cast<LogExportThread *>(sender());
+    }
+    if (!m_exportDlg || !exportThread->isProcessing()) {
         return;
     }
     //弹窗
@@ -1718,7 +1773,7 @@ void DisplayContent::resizeEvent(QResizeEvent *event)
 QString DisplayContent::getIconByname(QString str)
 {
     //    qDebug() << str << m_icon_name_map.value(str);
-    return m_icon_name_map.value(str);
+    return m_icon_name_map      .value(str);
 }
 
 void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
@@ -1761,8 +1816,8 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     }
 
     m_curListIdx = index;
-    void clearAllFilter();
-    void clearAllDatalist();
+
+    clearAllDatalist();
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty())
         return;

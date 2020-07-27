@@ -34,7 +34,7 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     addContent(pWidget);
 
     addButton(DApplication::translate("ExportDlg", "Cancel"), false, DDialog::ButtonNormal);
-
+    // setOnButtonClickedClose(true);
     setModal(true);
 }
 

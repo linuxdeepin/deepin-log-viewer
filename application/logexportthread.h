@@ -105,6 +105,7 @@ public:
     void exportToXlsPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     void exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
 
+    bool isProcessing();
 public slots:
     // 停止线程
     void stopImmediately();
@@ -150,7 +151,8 @@ private:
     bool exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels);
     bool exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     bool exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
-
+    void initMap();
+    QString strTranslate(QString &iLevelStr);
 private:
     QString m_fileName = "";
     QStandardItemModel *m_pModel = nullptr;
@@ -168,6 +170,7 @@ private:
     QString openErroStr = "export open file error";
     QString stopStr = "stop export";
     QString m_appName = "";
+    QMap<QString, QString> m_levelStrMap;
 
 
 };
