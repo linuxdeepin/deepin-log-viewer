@@ -69,6 +69,7 @@ DisplayContent::DisplayContent(QWidget *parent)
     initMap();
     initConnections();
 
+
 }
 
 DisplayContent::~DisplayContent()
@@ -1560,8 +1561,10 @@ void DisplayContent::onExportResult(bool isSuccess)
         if (m_exportDlg) {
             m_exportDlg->hide();
         }
-        DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export Success"));
+        DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export successful"));
     }
+    //  this->setFocus();
+    DApplication::setActiveWindow(this);
 }
 
 void DisplayContent::clearAllFilter()
@@ -1683,7 +1686,7 @@ void DisplayContent::onExportProgress(int nCur, int nTotal)
     if (sender()) {
         exportThread = qobject_cast<LogExportThread *>(sender());
     }
-    if (!m_exportDlg || !exportThread->isProcessing()) {
+    if (!m_exportDlg || !exportThread || !exportThread->isProcessing()) {
         return;
     }
     //弹窗

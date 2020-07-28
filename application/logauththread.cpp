@@ -156,7 +156,7 @@ void LogAuthThread::handleXorg()
     QFile startFile("/proc/uptime");
     QList<LOG_MSG_XORG> xList;
     if (!file.exists() || !startFile.exists()) {
-        emit proccessError(tr("Log file is empty!"));
+        emit proccessError(tr("Log file is empty"));
         emit xorgFinished(xList);
         return;
     }
@@ -170,7 +170,7 @@ void LogAuthThread::handleXorg()
     qDebug() << "startStr" << startFile;
     startStr = startStr.split(" ").value(0, "");
     if (startStr.isEmpty()) {
-        emit proccessError(tr("Log file is empty!"));
+        emit proccessError(tr("Log file is empty"));
         emit xorgFinished(xList);
         return;
     }

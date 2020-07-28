@@ -17,7 +17,7 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     DWidget *pWidget = new DWidget(this);
     QVBoxLayout *pVLayout = new QVBoxLayout();
 
-    DLabel *txtLabel = new DLabel(DApplication::translate("ExportDlg", "Exporting")); //提示信息
+    DLabel *txtLabel = new DLabel(DApplication::translate("ExportDlg", "Exporting...")); //提示信息
     txtLabel->setAlignment(Qt::AlignCenter);
     QVBoxLayout *pVLayouttxt = new QVBoxLayout();
     pVLayouttxt->addSpacing(10);

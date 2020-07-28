@@ -8,7 +8,7 @@
   <action id="com.deepin.pkexec.logViewerTruncate">
     <description>authentication</description>
     <description xml:lang="zh_CN">认证</description>
-    <message>Authentication is required to truncate the log</message>
+    <message>Authentication is required to clear the log</message>
     <message xml:lang="zh_CN">清除此日志需要授权</message>
     <icon_name></icon_name>
     <defaults>
