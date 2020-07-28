@@ -220,12 +220,16 @@ bool LogTreeView::event(QEvent *e)
 {
     //qDebug() << "11111" << e->type();
     switch (e->type()) {
+
+#if 1
     case QEvent::TouchBegin: {
-        // qDebug() << "11111";
+
         QTouchEvent *touchEvent = static_cast<QTouchEvent *>(e);
         if (!m_isPressed && touchEvent->device()->type() == QTouchDevice::TouchScreen && touchEvent->touchPointStates() == Qt::TouchPointPressed) {
 
             QList<QTouchEvent::TouchPoint> points = touchEvent->touchPoints();
+            //dell触摸屏幕只有一个touchpoint 但却能捕获到pinchevent缩放手势?
+            //  qDebug() << "11111" << points.count();
             if (points.count() == 1) {
                 QTouchEvent::TouchPoint p = points.at(0);
                 m_lastTouchBeginPos =  p.pos();
@@ -237,6 +241,7 @@ bool LogTreeView::event(QEvent *e)
         break;
 
     }
+#endif
 //    case QEvent::TouchUpdate: {
 //        qDebug() << "22222";
 //        break;
@@ -350,23 +355,26 @@ void LogTreeView::mouseMoveEvent(QMouseEvent *event)
     if (m_isPressed) {
 
 
-        qDebug() <<  m_lastTouchTime.msecsTo(QTime::currentTime());
-        if (m_lastTouchTime.msecsTo(QTime::currentTime()) < 500) {
-            return DTreeView::mouseMoveEvent(event);
-        }
+        //  qDebug() <<  m_lastTouchTime.msecsTo(QTime::currentTime());
+//        if (m_lastTouchTime.msecsTo(QTime::currentTime()) < 100) {
+//            return ;
+//        }
+        //最小距离为防误触和双向滑动时,只触发横向或者纵向的
         int touchmindistance = 5;
-
+        //最大步进距离是因为原地点按马上放开,则会出现-35~-38的不合理位移,加上每次步进距离没有那么大,所以设置为30
+        int touchMaxDistance = 30;
+        event->accept();
         double horiDelta = event->pos().x() - m_lastTouchBeginPos.x();
         double vertDelta = event->pos().y() - m_lastTouchBeginPos.y();
-        qDebug() << "horiDelta" << horiDelta << "vertDelta" << vertDelta << "event->pos()" << event->pos() << "m_lastTouchBeginPos" << m_lastTouchBeginPos;
-        if (qAbs(horiDelta) > touchmindistance) {
+        //  qDebug() << "horiDelta" << horiDelta << "vertDelta" << vertDelta << "event->pos()" << event->pos() << "m_lastTouchBeginPos" << m_lastTouchBeginPos;
+        if (qAbs(horiDelta) > touchmindistance && qAbs(horiDelta) < touchMaxDistance) {
             horizontalScrollBar()->setValue(static_cast<int>(horizontalScrollBar()->value() - horiDelta)) ;
         }
-        if (qAbs(vertDelta) > touchmindistance) {
+        if (qAbs(vertDelta) > touchmindistance && qAbs(vertDelta) < touchMaxDistance) {
             verticalScrollBar()->setValue(static_cast<int>(verticalScrollBar()->value() - vertDelta));
         }
 
-        event->accept();
+
         m_lastTouchBeginPos = event->pos();
         return;
     }
@@ -389,7 +397,7 @@ void LogTreeView::mouseReleaseEvent(QMouseEvent *event)
         return DTreeView::mouseReleaseEvent(event);
 #endif
     if (m_isPressed) {
-        qDebug() << "mouseReleaseEvent";
+        //  qDebug() << "mouseReleaseEvent";
         m_isPressed = false;
         return;
     }

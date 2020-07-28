@@ -24,6 +24,7 @@
 
 #include <DTreeView>
 #include <QTime>
+
 class QKeyEvent;
 class LogViewHeaderView;
 class LogViewItemDelegate;
