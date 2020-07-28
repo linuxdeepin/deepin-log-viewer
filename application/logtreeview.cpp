@@ -42,6 +42,7 @@
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
 #include <QTouchEvent>
+
 DWIDGET_USE_NAMESPACE
 
 LogTreeView::LogTreeView(QWidget *parent)
@@ -222,12 +223,13 @@ bool LogTreeView::event(QEvent *e)
     case QEvent::TouchBegin: {
         // qDebug() << "11111";
         QTouchEvent *touchEvent = static_cast<QTouchEvent *>(e);
-        if (!m_isPressed) {
-            touchEvent->touchPointStates();
+        if (!m_isPressed && touchEvent->device()->type() == QTouchDevice::TouchScreen && touchEvent->touchPointStates() == Qt::TouchPointPressed) {
+
             QList<QTouchEvent::TouchPoint> points = touchEvent->touchPoints();
             if (points.count() == 1) {
                 QTouchEvent::TouchPoint p = points.at(0);
                 m_lastTouchBeginPos =  p.pos();
+                m_lastTouchTime = QTime::currentTime();
                 m_isPressed = true;
 
             }
@@ -344,12 +346,27 @@ void LogTreeView::mouseMoveEvent(QMouseEvent *event)
 
     }
 #endif
+
     if (m_isPressed) {
+
+
+        qDebug() <<  m_lastTouchTime.msecsTo(QTime::currentTime());
+        if (m_lastTouchTime.msecsTo(QTime::currentTime()) < 500) {
+            return DTreeView::mouseMoveEvent(event);
+        }
+        int touchmindistance = 5;
+
         double horiDelta = event->pos().x() - m_lastTouchBeginPos.x();
         double vertDelta = event->pos().y() - m_lastTouchBeginPos.y();
-//        horizontalScrollBar()->setValue(horizontalScrollBar()->value() - horiDelta);
-        verticalScrollBar()->setValue(verticalScrollBar()->value() - vertDelta * 3);
+        qDebug() << "horiDelta" << horiDelta << "vertDelta" << vertDelta << "event->pos()" << event->pos() << "m_lastTouchBeginPos" << m_lastTouchBeginPos;
+        if (qAbs(horiDelta) > touchmindistance) {
+            horizontalScrollBar()->setValue(static_cast<int>(horizontalScrollBar()->value() - horiDelta)) ;
+        }
+        if (qAbs(vertDelta) > touchmindistance) {
+            verticalScrollBar()->setValue(static_cast<int>(verticalScrollBar()->value() - vertDelta));
+        }
 
+        event->accept();
         m_lastTouchBeginPos = event->pos();
         return;
     }
@@ -372,6 +389,7 @@ void LogTreeView::mouseReleaseEvent(QMouseEvent *event)
         return DTreeView::mouseReleaseEvent(event);
 #endif
     if (m_isPressed) {
+        qDebug() << "mouseReleaseEvent";
         m_isPressed = false;
         return;
     }

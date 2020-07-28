@@ -23,10 +23,11 @@
 #define LOGTREEVIEW_H
 
 #include <DTreeView>
-
+#include <QTime>
 class QKeyEvent;
 class LogViewHeaderView;
 class LogViewItemDelegate;
+class QTime;
 class LogTreeView : public Dtk::Widget::DTreeView
 {
 public:
@@ -54,6 +55,7 @@ private:
     int touchTapDistance = -1;
     bool m_isPressed = false;
     QPointF m_lastTouchBeginPos;
+    QTime m_lastTouchTime;
 };
 
 #endif  // LOGTREEVIEW_H
