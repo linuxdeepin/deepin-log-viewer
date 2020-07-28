@@ -66,6 +66,7 @@ LogTreeView::LogTreeView(QWidget *parent)
         }
     });
     this->setAttribute(Qt::WA_AcceptTouchEvents);
+    //QScroller::grabGesture(this->viewport(), QScroller::TouchGesture);
     touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 }
 

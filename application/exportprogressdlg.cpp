@@ -3,6 +3,8 @@
 
 #include <DLabel>
 #include <DApplication>
+#include <DFontSizeManager>
+#include <DApplicationHelper>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -19,8 +21,13 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
 
     DLabel *txtLabel = new DLabel(DApplication::translate("ExportDlg", "Exporting...")); //提示信息
     txtLabel->setAlignment(Qt::AlignCenter);
+    DFontSizeManager::instance()->bind(txtLabel, DFontSizeManager::T6);
+    DPalette pa = DApplicationHelper::instance()->palette(txtLabel);
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::BrightText));
+    DApplicationHelper::instance()->setPalette(txtLabel, pa);
     QVBoxLayout *pVLayouttxt = new QVBoxLayout();
-    pVLayouttxt->addSpacing(10);
+    pVLayouttxt->setContentsMargins(0, 0, 0, 10);
+    //pVLayouttxt->addSpacing(10);
     pVLayouttxt->addWidget(txtLabel, Qt::AlignHCenter);
     pVLayout->addLayout(pVLayouttxt);
 
@@ -29,13 +36,16 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     m_pExportProgressBar->setMaximumHeight(8);
     m_pExportProgressBar->setRange(0, 100);
     pVLayout->addWidget(m_pExportProgressBar);
-
+    pVLayout->setContentsMargins(0, 0, 0, 5);
     pWidget->setLayout(pVLayout);
+
     addContent(pWidget);
 
     addButton(DApplication::translate("ExportDlg", "Cancel"), false, DDialog::ButtonNormal);
     // setOnButtonClickedClose(true);
     setModal(true);
+    qDebug() << "this->height()" << this->geometry().height();
+    //  setFixedHeight(120);
 }
 
 void ExportProgressDlg::setProgressBarRange(int minValue, int maxValue)
