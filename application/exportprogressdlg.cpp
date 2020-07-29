@@ -13,7 +13,7 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     : DDialog(parent)
 {
     QString titleIcon = ICONPREFIX ;
-    setIcon(QIcon(titleIcon + "uospm_warning_32px.svg"));
+    setIcon(QIcon::fromTheme("deepin-log-viewer"));
     //setWindowFlags(windowFlags());
 
     DWidget *pWidget = new DWidget(this);
