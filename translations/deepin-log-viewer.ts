@@ -166,12 +166,12 @@
 <context>
     <name>ExportDlg</name>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="20"/>
+        <location filename="../application/exportprogressdlg.cpp" line="22"/>
         <source>Exporting...</source>
         <translation>Exporting...</translation>
     </message>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="36"/>
+        <location filename="../application/exportprogressdlg.cpp" line="44"/>
         <source>Cancel</source>
         <translation>Cancel</translation>
     </message>

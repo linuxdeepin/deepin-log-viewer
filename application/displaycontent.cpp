@@ -833,7 +833,7 @@ void DisplayContent::slot_exportClicked()
         logName = QString("/%1").arg(("New File"));
     }
     QString selectFilter;
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/logtemp/" + logName + ".txt";
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
     QString fileName = DFileDialog::getSaveFileName(
                            this, DApplication::translate("File", "Export File"),
                            path,

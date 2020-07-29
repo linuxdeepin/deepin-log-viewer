@@ -64,8 +64,5 @@ int main(int argc, char *argv[])
     LogCollectorMain w;
     w.show();
     Dtk::Widget::moveToCenter(&w);
-//    for (int i = 0; i < 150000; ++i) {
-//        qDebug() << "fake log" << i;
-//    }
     return a.exec();
 }
