@@ -10,6 +10,11 @@ LogCombox::LogCombox(QWidget *parent):
 {
 
 }
+
+void LogCombox::setFocusReason(Qt::FocusReason iReson)
+{
+    m_reson = iReson;
+}
 /**
  * @brief LogCombox::paintEvent
  * 绘制焦点边框,屏蔽默认绘制事件,只在tabfoucus时绘制边框
@@ -45,6 +50,7 @@ void LogCombox::paintEvent(QPaintEvent *e)
         //.adjusted(1, 1, -1, -1)
 
         //painter.drawRoundedRect(borderRect, frame_radius, frame_radius);
+        qDebug() << "tabcombox-------";
         style->drawPrimitive(DStyle::PE_FrameFocusRect, opt1, & painter, this);
     }
 }
@@ -68,6 +74,7 @@ void LogCombox::keyPressEvent(QKeyEvent *event)
 void LogCombox::focusInEvent(QFocusEvent *event)
 {
     if (event->reason() != Qt::PopupFocusReason) {
+        qDebug() << __FUNCTION__ << event->reason();
         m_reson = event->reason();
     }
     DComboBox::focusInEvent(event);
