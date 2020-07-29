@@ -555,6 +555,10 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         this->setSelectorVisible(true, false, false, false, false);
         cbx_lv->setCurrentIndex(INF + 1);  // index+1
     }
+    cbx_lv->setFocusReason(Qt::NoFocusReason);
+    cbx_app->setFocusReason(Qt::NoFocusReason);
+    cbx_status->setFocusReason(Qt::NoFocusReason);
+    typeCbx->setFocusReason(Qt::NoFocusReason);
 }
 
 void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)

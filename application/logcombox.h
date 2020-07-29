@@ -6,6 +6,7 @@ class LogCombox: public DComboBox
 {
 public:
     explicit LogCombox(QWidget *parent = nullptr);
+    void setFocusReason(Qt::FocusReason iReson);
 protected:
     void paintEvent(QPaintEvent *e) override;
     void keyPressEvent(QKeyEvent *event) override;
