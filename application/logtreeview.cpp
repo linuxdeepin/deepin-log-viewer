@@ -361,17 +361,19 @@ void LogTreeView::mouseMoveEvent(QMouseEvent *event)
 //            return ;
 //        }
         //最小距离为防误触和双向滑动时,只触发横向或者纵向的
-        int touchmindistance = 5;
+        int touchmindistance = 2;
         //最大步进距离是因为原地点按马上放开,则会出现-35~-38的不合理位移,加上每次步进距离没有那么大,所以设置为30
         int touchMaxDistance = 30;
         event->accept();
         double horiDelta = event->pos().x() - m_lastTouchBeginPos.x();
         double vertDelta = event->pos().y() - m_lastTouchBeginPos.y();
-        //  qDebug() << "horiDelta" << horiDelta << "vertDelta" << vertDelta << "event->pos()" << event->pos() << "m_lastTouchBeginPos" << m_lastTouchBeginPos;
+        //  qDebug()  << "horiDelta" << horiDelta << "vertDelta" << vertDelta << "event->pos()" << event->pos() << "m_lastTouchBeginPos" << m_lastTouchBeginPos;
         if (qAbs(horiDelta) > touchmindistance && qAbs(horiDelta) < touchMaxDistance) {
+            //    qDebug()  << "horizontalScrollBar()->value()" << horizontalScrollBar()->value();
             horizontalScrollBar()->setValue(static_cast<int>(horizontalScrollBar()->value() - horiDelta)) ;
         }
         if (qAbs(vertDelta) > touchmindistance && qAbs(vertDelta) < touchMaxDistance) {
+            qDebug()  << "verticalScrollBar()->value()" << verticalScrollBar()->value() << "vertDelta" << vertDelta;
             verticalScrollBar()->setValue(static_cast<int>(verticalScrollBar()->value() - vertDelta));
         }
 

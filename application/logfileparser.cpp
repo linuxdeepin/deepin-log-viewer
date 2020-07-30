@@ -394,9 +394,9 @@ void LogFileParser::parseByKern(qint64 ms)
 
 void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 {
-    if (m_isAppLoading) {
-        return;
-    }
+//    if (m_isAppLoading) {
+//        return;
+//    }
     stopAllLoad();
     m_isAppLoading = true;
 
@@ -405,12 +405,14 @@ void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 
     disconnect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
                SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
-
+    disconnect(this, &LogFileParser::stopApp, m_appThread,
+               &LogApplicationParseThread::stopProccess);
     m_appThread->setParam(path, lv, ms);
 
     connect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
             SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
-
+    connect(this, &LogFileParser::stopApp, m_appThread,
+            &LogApplicationParseThread::stopProccess);
     m_appThread->start();
 }
 
@@ -439,6 +441,7 @@ void LogFileParser::stopAllLoad()
 //    }
     emit stopBoot();
     emit stopKern();
+    emit stopApp();
     return;
 //    if (work && work->isRunning())
 //        work->terminate();

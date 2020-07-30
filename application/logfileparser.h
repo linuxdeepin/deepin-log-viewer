@@ -65,6 +65,7 @@ signals:
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
     void stopKern();
     void stopBoot();
+    void stopApp();
 
 
 private:

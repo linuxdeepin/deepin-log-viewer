@@ -342,7 +342,7 @@
 <context>
     <name>LogFileParser</name>
     <message>
-        <location filename="../application/logfileparser.cpp" line="594"/>
+        <location filename="../application/logfileparser.cpp" line="597"/>
         <source>information</source>
         <translation>information</translation>
     </message>
