@@ -114,6 +114,7 @@ protected:
 signals:
     void sigProgress(int nCur, int nTotal);
     void sigResult(bool isSuccess);
+    void sigProcessFull();
     void sigError(QString iError);
 private:
     bool exportToTxt(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);

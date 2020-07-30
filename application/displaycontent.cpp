@@ -938,6 +938,8 @@ void DisplayContent::slot_exportClicked()
         connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
         connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
         connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
+        connect(exportThread, &LogExportThread::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
+
         switch (m_flag) {
         case JOURNAL:
             exportThread->exportToDocPublic(fileName, jList, labels, m_flag);
@@ -974,6 +976,7 @@ void DisplayContent::slot_exportClicked()
         connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
         connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
         connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
+        connect(exportThread, &LogExportThread::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
         switch (m_flag) {
         case JOURNAL:
             exportThread->exportToXlsPublic(fileName, jList, labels, m_flag);
@@ -1530,15 +1533,18 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     }
     switch (iState) {
     case DATA_LOADING: {
+        emit  setExportEnable(false);
         m_spinnerWgt->show();
         m_spinnerWgt->spinnerStart();
         break;
     }
     case DATA_COMPLETE: {
         m_treeView->show();
+        emit  setExportEnable(true);
         break;
     }
     case DATA_LOADING_K: {
+        emit  setExportEnable(false);
         m_spinnerWgt_K->show();
         m_spinnerWgt_K->spinnerStart();
         break;
@@ -1547,6 +1553,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         m_treeView->show();
         noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noResultLabel->show();
+        emit  setExportEnable(true);
         break;
     }
     }
@@ -1558,13 +1565,23 @@ void DisplayContent::onExportResult(bool isSuccess)
 {
     QString titleIcon = ICONPREFIX ;
     if (isSuccess) {
-        if (m_exportDlg) {
+        if (m_exportDlg && !m_exportDlg->isHidden()) {
             m_exportDlg->hide();
         }
         DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export successful"));
     }
     //  this->setFocus();
     DApplication::setActiveWindow(this);
+}
+/**
+ * @brief DisplayContent::onExportFakeCloseDlg
+ * doc和xls格式导出最后save之前无进度变化先关闭窗口,后续再在导出逻辑里加进度信号
+ */
+void DisplayContent::onExportFakeCloseDlg()
+{
+    if (m_exportDlg && !m_exportDlg->isHidden()) {
+        m_exportDlg->hide();
+    }
 }
 
 void DisplayContent::clearAllFilter()

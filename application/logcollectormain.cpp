@@ -170,6 +170,8 @@ void LogCollectorMain::initConnection()
 
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_logCatelogue,
             &LogListView::slot_getAppPath);  // add by Airy for getting app path
+    connect(m_midRightWgt, &DisplayContent::setExportEnable, m_topRightWgt,
+            &FilterContent::setExportButtonEnable, Qt::DirectConnection);
     //自适应宽度
 //    connect(m_topRightWgt, &FilterContent::sigResizeWidth, this,
 //            &LogCollectorMain::resizeWidthByFilterContentWidth);

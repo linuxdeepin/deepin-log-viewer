@@ -45,6 +45,7 @@ public:
     void shortCutExport();
 protected:
     //  void resizeEvent(QResizeEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 private:
     void setAppComboBoxItem();
 
@@ -52,7 +53,7 @@ private:
                             bool typecbx = false);  // modified by Airy
 
     void setUeButtonSytle();
-    void paintEvent(QPaintEvent *event);
+
     void resizeWidth();
     void updateWordWrap();
 
@@ -75,6 +76,7 @@ public slots:
     void slot_cbxAppIdxChanged(int idx);
     void slot_cbxStatusChanged(int idx);
     void slot_cbxLogTypeChanged(int idx);  // add  by Airy
+    void setExportButtonEnable(bool iEnable);
 
 private:
     QButtonGroup *m_btnGroup;

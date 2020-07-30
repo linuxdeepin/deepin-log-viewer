@@ -101,6 +101,7 @@ private:
 signals:
     void loadMoreInfo();
     void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name);
+    void setExportEnable(bool iEnable);
 
 public slots:
     void slot_tableItemClicked(const QModelIndex &index);
@@ -142,6 +143,7 @@ public slots:
     void setLoadState(LOAD_STATE iState);
     void onExportProgress(int nCur, int nTotal);
     void onExportResult(bool isSuccess);
+    void onExportFakeCloseDlg();
     void clearAllFilter();
     void clearAllDatalist();
     void filterBoot(BOOT_FILTERS ibootFilter);

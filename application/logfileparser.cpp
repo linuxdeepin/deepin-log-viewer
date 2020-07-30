@@ -484,6 +484,7 @@ void LogFileParser::quitLogAuththread(QThread *iThread)
 {
     if (iThread && iThread->isRunning()) {
         //  iThread->terminate();
+        qDebug() << __FUNCTION__;
         iThread->quit();
         iThread->wait();
     }
