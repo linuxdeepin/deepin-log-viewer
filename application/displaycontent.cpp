@@ -676,6 +676,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
+
 }
 
 QString DisplayContent::getAppName(QString filePath)
@@ -1120,10 +1121,17 @@ void DisplayContent::slot_NormalFinished()
 
 void DisplayContent::slot_vScrollValueChanged(int value)
 {
-    if (m_flag == JOURNAL) {
-        int rate = (value + 25) / SINGLE_LOAD;
-        //    qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
 
+//    int value = valuePixel / m_treeView->singleRowHeight();
+//    if (m_treeViewLastScrollValue == value) {
+//        return;
+//    }
+//    m_treeViewLastScrollValue = value;
+    if (m_flag == JOURNAL) {
+
+        int rate = (value + 25) / SINGLE_LOAD;
+        //  qDebug() << "valuePixel:" << valuePixel << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
+        //    qDebug() << m_treeView->verticalScrollBar()->height();
         if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
             if (m_limitTag >= rate)
                 return;
@@ -1136,8 +1144,9 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             qDebug() << "rate" << rate;
             insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
             m_limitTag = rate;
+            m_treeView->verticalScrollBar()->setValue(value);
         }
-        m_treeView->verticalScrollBar()->setValue(value);
+
         update();
     } else if (m_flag == APP) {
         int rate = (value + 25) / SINGLE_LOAD;
@@ -1157,8 +1166,9 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             insertApplicationTable(appList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
             m_limitTag = rate;
+            m_treeView->verticalScrollBar()->setValue(value);
         }
-        m_treeView->verticalScrollBar()->setValue(value);
+
     } else if (m_flag == KERN) {  // modified by Airy for bug 12263
         int rate = (value + 25) / SINGLE_LOAD;
 
@@ -1172,8 +1182,9 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             insertKernTable(kList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
             m_limitTag = rate;
+            m_treeView->verticalScrollBar()->setValue(value);
         }
-        m_treeView->verticalScrollBar()->setValue(value);
+
     }
 }
 
@@ -1569,6 +1580,7 @@ void DisplayContent::onExportResult(bool isSuccess)
             m_exportDlg->hide();
         }
         DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export successful"));
+        qDebug() << "sendMessage"  ;
     }
     //  this->setFocus();
     DApplication::setActiveWindow(this);

@@ -33,7 +33,7 @@ class LogTreeView : public Dtk::Widget::DTreeView
 {
 public:
     LogTreeView(QWidget *parent = nullptr);
-
+    int singleRowHeight();
 protected:
     void initUI();
     void paintEvent(QPaintEvent *event) override;

@@ -251,7 +251,7 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
         QSharedPointer<AbstractSheet> sheet = worksheets[i];
         contentTypes->addWorksheetName(QStringLiteral("sheet%1").arg(i + 1));
         docPropsApp.addPartTitle(sheet->sheetName());
-
+        q->connect(sheet.data(), &AbstractSheet::sigProccess, q, &Document::sigProcessAbstractSheet);
         zipWriter.addFile(QStringLiteral("xl/worksheets/sheet%1.xml").arg(i + 1), sheet->saveToXmlData());
         Relationships *rel = sheet->relationships();
         if (!rel->isEmpty())
@@ -312,6 +312,8 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
     // save sharedStrings xml file
     if (!workbook->sharedStrings()->isEmpty()) {
         contentTypes->addSharedString();
+        q->connect(workbook->sharedStrings(), &SharedStrings::sigProccess, q, &Document::sigProcessharedStrings);
+
         zipWriter.addFile(QStringLiteral("xl/sharedStrings.xml"), workbook->sharedStrings()->saveToXmlData());
     }
 

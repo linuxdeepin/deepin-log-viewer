@@ -1242,6 +1242,7 @@ void Worksheet::saveToXmlFile(QIODevice *device) const
 
 void WorksheetPrivate::saveXmlSheetData(QXmlStreamWriter &writer) const
 {
+    Q_Q(const Worksheet);
     calculateSpans();
     for (int row_num = dimension.firstRow(); row_num <= dimension.lastRow(); row_num++) {
         if (!(cellTable.contains(row_num) || comments.contains(row_num) || rowsInfo.contains(row_num))) {
@@ -1292,6 +1293,8 @@ void WorksheetPrivate::saveXmlSheetData(QXmlStreamWriter &writer) const
             }
         }
         writer.writeEndElement(); //row
+        emit q->sigProccess(row_num - dimension.firstRow(),  dimension.lastRow() - dimension.firstRow());
+
     }
 }
 

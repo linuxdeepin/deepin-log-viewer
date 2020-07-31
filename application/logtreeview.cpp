@@ -70,6 +70,11 @@ LogTreeView::LogTreeView(QWidget *parent)
     touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 }
 
+int LogTreeView::singleRowHeight()
+{
+    return  this->rowHeight(this->model()->index(0, 0));
+}
+
 /**
  * @brief LogTreeView::initU  进行一些属性的定制，初始化treeview为需要的样式
  */
@@ -226,6 +231,7 @@ bool LogTreeView::event(QEvent *e)
     case QEvent::TouchBegin: {
 
         QTouchEvent *touchEvent = static_cast<QTouchEvent *>(e);
+
         if (!m_isPressed && touchEvent->device()->type() == QTouchDevice::TouchScreen && touchEvent->touchPointStates() == Qt::TouchPointPressed) {
 
             QList<QTouchEvent::TouchPoint> points = touchEvent->touchPoints();
@@ -356,7 +362,7 @@ void LogTreeView::mouseMoveEvent(QMouseEvent *event)
     if (m_isPressed) {
 
 
-        //  qDebug() <<  m_lastTouchTime.msecsTo(QTime::currentTime());
+//      /  qDebug() <<  m_lastTouchTime.msecsTo(QTime::currentTime());
 //        if (m_lastTouchTime.msecsTo(QTime::currentTime()) < 100) {
 //            return ;
 //        }
@@ -372,16 +378,22 @@ void LogTreeView::mouseMoveEvent(QMouseEvent *event)
             //    qDebug()  << "horizontalScrollBar()->value()" << horizontalScrollBar()->value();
             horizontalScrollBar()->setValue(static_cast<int>(horizontalScrollBar()->value() - horiDelta)) ;
         }
-        if (qAbs(vertDelta) > touchmindistance && qAbs(vertDelta) < touchMaxDistance) {
-            qDebug()  << "verticalScrollBar()->value()" << verticalScrollBar()->value() << "vertDelta" << vertDelta;
+
+        if (qAbs(vertDelta) > touchmindistance && !(qAbs(vertDelta) < 40 && qAbs(vertDelta) > 35 && m_lastTouchTime.msecsTo(QTime::currentTime()) < 100)) {
+            //       qDebug()  << "verticalScrollBar()->value()" << verticalScrollBar()->value() << "vertDelta" << vertDelta;
+            double svalue = 1;
+            if (vertDelta > 0) {
+                //svalue = svalue;
+            } else if (vertDelta < 0) {
+                svalue = -svalue;
+            } else {
+                svalue = 0;
+            }
             verticalScrollBar()->setValue(static_cast<int>(verticalScrollBar()->value() - vertDelta));
         }
-
-
         m_lastTouchBeginPos = event->pos();
         return;
     }
-
     return DTreeView::mouseMoveEvent(event);
 }
 

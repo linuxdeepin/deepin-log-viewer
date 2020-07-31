@@ -123,7 +123,7 @@ public slots:
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
     void slot_NormalFinished();  // add by Airy
 
-    void slot_vScrollValueChanged(int value);
+    void slot_vScrollValueChanged(int valuePixel);
 
     void slot_searchResult(QString str);
 
@@ -195,6 +195,7 @@ private:
     bool m_firstLoadPageData = false;
     BOOT_FILTERS m_bootFilter = {"", ""};
     NORMAL_FILTERS m_normalFilter = {"", -1};
+    int m_treeViewLastScrollValue = -1;
 
 };
 

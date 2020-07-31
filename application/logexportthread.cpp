@@ -32,7 +32,7 @@
 #include <QTextStream>
 #include <QTextDocument>
 #include <QTextDocumentWriter>
-
+#include <QElapsedTimer>
 DWIDGET_USE_NAMESPACE
 
 LogExportThread::LogExportThread(QObject *parent)
@@ -1708,9 +1708,20 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
+    QElapsedTimer timer;
+    timer.start();
     try {
         auto currentXlsRow = 1;
+
         QXlsx::Document xlsx;
+        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
+        });
+        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
+        });
         for (int col = 0; col < labels.count(); ++col) {
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
@@ -1728,10 +1739,10 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             xlsx.write(currentXlsRow, col++, iAppName);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
-            sigProgress(row + 1, jList.count());
+            int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+            sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
-        emit sigProcessFull();
         xlsx.saveAs(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
@@ -1742,6 +1753,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         return false;
     }
     emit sigResult(true);
+    qDebug() << timer.elapsed();
     return true;
 }
 
@@ -1788,6 +1800,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
     try {
         auto currentXlsRow = 1;
         QXlsx::Document xlsx;
+//        connect(&xlsx, &QXlsx::Document::saveProcess, this, [ = ](int iCurrent, int iTotal) {
+//            sigProgress(iCurrent + iTotal, iTotal * 2);
+//        });
         for (int col = 0; col < labels.count(); ++col) {
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
@@ -1803,10 +1818,10 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
             xlsx.write(currentXlsRow, col++, message.status);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() * 2);
         }
         ++currentXlsRow;
-        emit sigProcessFull();
+        // emit sigProcessFull();
         xlsx.saveAs(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;

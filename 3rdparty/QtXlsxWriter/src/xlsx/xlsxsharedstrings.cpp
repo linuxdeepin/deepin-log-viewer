@@ -45,7 +45,7 @@ namespace QXlsx {
  */
 
 SharedStrings::SharedStrings(CreateFlag flag)
-    :AbstractOOXmlFile(flag)
+    : AbstractOOXmlFile(flag)
 {
     m_stringCount = 0;
 }
@@ -83,7 +83,7 @@ int SharedStrings::addSharedString(const RichString &string)
 
 void SharedStrings::incRefByStringIndex(int idx)
 {
-    if (idx <0 || idx >= m_stringList.size()) {
+    if (idx < 0 || idx >= m_stringList.size()) {
         qDebug("SharedStrings: invlid index");
         return;
     }
@@ -113,7 +113,7 @@ void SharedStrings::removeSharedString(const RichString &string)
     item.count -= 1;
 
     if (item.count <= 0) {
-        for (int i=item.index+1; i<m_stringList.size(); ++i)
+        for (int i = item.index + 1; i < m_stringList.size(); ++i)
             m_stringTable[m_stringList[i]].index -= 1;
 
         m_stringList.removeAt(item.index);
@@ -164,7 +164,7 @@ void SharedStrings::writeRichStringPart_rPr(QXmlStreamWriter &writer, const Form
         Format::FontUnderline u = format.fontUnderline();
         if (u != Format::FontUnderlineNone) {
             writer.writeEmptyElement(QStringLiteral("u"));
-            if (u== Format::FontUnderlineDouble)
+            if (u == Format::FontUnderlineDouble)
                 writer.writeAttribute(QStringLiteral("val"), QStringLiteral("double"));
             else if (u == Format::FontUnderlineSingleAccounting)
                 writer.writeAttribute(QStringLiteral("val"), QStringLiteral("singleAccounting"));
@@ -223,12 +223,12 @@ void SharedStrings::saveToXmlFile(QIODevice *device) const
     writer.writeAttribute(QStringLiteral("xmlns"), QStringLiteral("http://schemas.openxmlformats.org/spreadsheetml/2006/main"));
     writer.writeAttribute(QStringLiteral("count"), QString::number(m_stringCount));
     writer.writeAttribute(QStringLiteral("uniqueCount"), QString::number(m_stringList.size()));
-
+    int index = 0;
     foreach (RichString string, m_stringList) {
         writer.writeStartElement(QStringLiteral("si"));
         if (string.isRichString()) {
             //Rich text string
-            for (int i=0; i<string.fragmentCount(); ++i) {
+            for (int i = 0; i < string.fragmentCount(); ++i) {
                 writer.writeStartElement(QStringLiteral("r"));
                 if (string.fragmentFormat(i).hasFontData()) {
                     writer.writeStartElement(QStringLiteral("rPr"));
@@ -252,6 +252,7 @@ void SharedStrings::saveToXmlFile(QIODevice *device) const
             writer.writeEndElement();//t
         }
         writer.writeEndElement();//si
+        emit sigProccess(index++, m_stringList.count());
     }
 
     writer.writeEndElement(); //sst
@@ -370,18 +371,18 @@ bool SharedStrings::loadFromXmlFile(QIODevice *device)
 {
     QXmlStreamReader reader(device);
     int count = 0;
-    bool hasUniqueCountAttr=true;
+    bool hasUniqueCountAttr = true;
     while (!reader.atEnd()) {
-         QXmlStreamReader::TokenType token = reader.readNext();
-         if (token == QXmlStreamReader::StartElement) {
-             if (reader.name() == QLatin1String("sst")) {
-                 QXmlStreamAttributes attributes = reader.attributes();
-                 if ((hasUniqueCountAttr = attributes.hasAttribute(QLatin1String("uniqueCount"))))
-                     count = attributes.value(QLatin1String("uniqueCount")).toString().toInt();
-             } else if (reader.name() == QLatin1String("si")) {
-                 readString(reader);
-             }
-         }
+        QXmlStreamReader::TokenType token = reader.readNext();
+        if (token == QXmlStreamReader::StartElement) {
+            if (reader.name() == QLatin1String("sst")) {
+                QXmlStreamAttributes attributes = reader.attributes();
+                if ((hasUniqueCountAttr = attributes.hasAttribute(QLatin1String("uniqueCount"))))
+                    count = attributes.value(QLatin1String("uniqueCount")).toString().toInt();
+            } else if (reader.name() == QLatin1String("si")) {
+                readString(reader);
+            }
+        }
     }
 
     if (hasUniqueCountAttr && m_stringList.size() != count) {
