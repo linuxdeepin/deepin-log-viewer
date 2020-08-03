@@ -51,9 +51,9 @@ class Q_XLSX_EXPORT Document : public QObject
     Q_DECLARE_PRIVATE(Document)
 
 public:
-    explicit Document(QObject *parent = 0);
-    Document(const QString &xlsxName, QObject *parent = 0);
-    Document(QIODevice *device, QObject *parent = 0);
+    explicit Document(bool *iCanExport, QObject *parent = nullptr);
+    Document(bool *iCanExport, const QString &xlsxName, QObject *parent = nullptr);
+    Document(bool *iCanExport, QIODevice *device, QObject *parent = nullptr);
     ~Document();
 
     bool write(const CellReference &cell, const QVariant &value, const Format &format = Format());
@@ -122,12 +122,14 @@ public:
     bool save() const;
     bool saveAs(const QString &xlsXname) const;
     bool saveAs(QIODevice *device) const;
+    void setExportCanRun(bool *iCanRun);
 signals:
     void sigProcessAbstractSheet(int iCurrent, int iTotal);
     void sigProcessharedStrings(int iCurrent, int iTotal);
 private:
     Q_DISABLE_COPY(Document)
     DocumentPrivate *const d_ptr;
+    bool *m_canRunning_p{nullptr};
 };
 
 QT_END_NAMESPACE_XLSX

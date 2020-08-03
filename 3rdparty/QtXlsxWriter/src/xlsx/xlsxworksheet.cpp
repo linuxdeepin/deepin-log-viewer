@@ -1243,8 +1243,12 @@ void Worksheet::saveToXmlFile(QIODevice *device) const
 void WorksheetPrivate::saveXmlSheetData(QXmlStreamWriter &writer) const
 {
     Q_Q(const Worksheet);
+
     calculateSpans();
     for (int row_num = dimension.firstRow(); row_num <= dimension.lastRow(); row_num++) {
+        if (!q->m_canRunning || !(*q->m_canRunning)) {
+            return;
+        }
         if (!(cellTable.contains(row_num) || comments.contains(row_num) || rowsInfo.contains(row_num))) {
             //Only process rows with cell data / comments / formatting
             continue;

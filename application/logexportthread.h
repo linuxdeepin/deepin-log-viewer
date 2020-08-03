@@ -32,6 +32,7 @@ class LogExportThread : public QObject, public QRunnable
     Q_OBJECT
 public:
     LogExportThread(QObject *parent = nullptr);
+    ~LogExportThread();
     enum RUN_MODE {
         HtmlModel,
         HtmlJOURNAL,
@@ -109,6 +110,8 @@ public:
 public slots:
     // 停止线程
     void stopImmediately();
+public:
+    bool m_canRunning = false;
 protected:
     void run() override;
 signals:
@@ -167,7 +170,7 @@ private:
     QList<LOG_MSG_NORMAL> m_normalList;
     QList<LOG_MSG_KWIN> m_kwinList;
     RUN_MODE m_runMode = NoneExportType;
-    bool m_canRunning = false;
+
     QString openErroStr = "export open file error";
     QString stopStr = "stop export";
     QString m_appName = "";

@@ -265,7 +265,7 @@
         <location filename="../application/displaycontent.cpp" line="141"/>
         <location filename="../application/displaycontent.cpp" line="152"/>
         <location filename="../application/journalwork.cpp" line="290"/>
-        <location filename="../application/logexportthread.cpp" line="1957"/>
+        <location filename="../application/logexportthread.cpp" line="2024"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
         <source>Warning</source>
         <translation>Warning</translation>
@@ -274,7 +274,7 @@
         <location filename="../application/displaycontent.cpp" line="142"/>
         <location filename="../application/displaycontent.cpp" line="155"/>
         <location filename="../application/journalwork.cpp" line="293"/>
-        <location filename="../application/logexportthread.cpp" line="1960"/>
+        <location filename="../application/logexportthread.cpp" line="2027"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
         <source>Debug</source>
         <translation>Debug</translation>
@@ -283,7 +283,7 @@
         <location filename="../application/displaycontent.cpp" line="143"/>
         <location filename="../application/displaycontent.cpp" line="154"/>
         <location filename="../application/journalwork.cpp" line="292"/>
-        <location filename="../application/logexportthread.cpp" line="1959"/>
+        <location filename="../application/logexportthread.cpp" line="2026"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
         <source>Info</source>
         <translation>Info</translation>
@@ -292,7 +292,7 @@
         <location filename="../application/displaycontent.cpp" line="144"/>
         <location filename="../application/displaycontent.cpp" line="151"/>
         <location filename="../application/journalwork.cpp" line="289"/>
-        <location filename="../application/logexportthread.cpp" line="1956"/>
+        <location filename="../application/logexportthread.cpp" line="2023"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
         <source>Error</source>
         <translation>Error</translation>
@@ -300,7 +300,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="148"/>
         <location filename="../application/journalwork.cpp" line="286"/>
-        <location filename="../application/logexportthread.cpp" line="1953"/>
+        <location filename="../application/logexportthread.cpp" line="2020"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
         <source>Emergency</source>
         <translation>Emergency</translation>
@@ -308,7 +308,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="149"/>
         <location filename="../application/journalwork.cpp" line="287"/>
-        <location filename="../application/logexportthread.cpp" line="1954"/>
+        <location filename="../application/logexportthread.cpp" line="2021"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
         <source>Alert</source>
         <translation>Alert</translation>
@@ -316,7 +316,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="150"/>
         <location filename="../application/journalwork.cpp" line="288"/>
-        <location filename="../application/logexportthread.cpp" line="1955"/>
+        <location filename="../application/logexportthread.cpp" line="2022"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
         <source>Critical</source>
         <translation>Critical</translation>
@@ -324,7 +324,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="153"/>
         <location filename="../application/journalwork.cpp" line="291"/>
-        <location filename="../application/logexportthread.cpp" line="1958"/>
+        <location filename="../application/logexportthread.cpp" line="2025"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
         <source>Notice</source>
         <translation>Notice</translation>

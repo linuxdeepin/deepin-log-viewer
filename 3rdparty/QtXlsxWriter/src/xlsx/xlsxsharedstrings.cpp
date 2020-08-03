@@ -225,6 +225,9 @@ void SharedStrings::saveToXmlFile(QIODevice *device) const
     writer.writeAttribute(QStringLiteral("uniqueCount"), QString::number(m_stringList.size()));
     int index = 0;
     foreach (RichString string, m_stringList) {
+        if (!m_canRunning || !(*m_canRunning)) {
+            return;
+        }
         writer.writeStartElement(QStringLiteral("si"));
         if (string.isRichString()) {
             //Rich text string

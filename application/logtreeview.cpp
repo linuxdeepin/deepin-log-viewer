@@ -72,7 +72,13 @@ LogTreeView::LogTreeView(QWidget *parent)
 
 int LogTreeView::singleRowHeight()
 {
-    return  this->rowHeight(this->model()->index(0, 0));
+    QModelIndex firstIndex = this->model()->index(0, 0);
+    if (firstIndex.isValid()) {
+        return  this->rowHeight(firstIndex);
+    } else {
+        return -1;
+    }
+
 }
 
 /**
@@ -90,7 +96,7 @@ void LogTreeView::initUI()
     this->setRootIsDecorated(false);
 
     //这个设置默认是值是ScrollPerPixel，和我们想要的Mode不一样，我们要通过纵向滚动实现分页的
-    this->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerItem);
+    this->setVerticalScrollMode(QAbstractItemView::ScrollMode::ScrollPerPixel);
 
     setSelectionMode(QAbstractItemView::SingleSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);

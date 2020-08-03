@@ -23,6 +23,7 @@
 #include "document.h"
 #include "table.h"
 #include "xlsxdocument.h"
+#include "utils.h"
 
 #include <DApplication>
 
@@ -33,6 +34,8 @@
 #include <QTextDocument>
 #include <QTextDocumentWriter>
 #include <QElapsedTimer>
+
+#include <malloc.h>
 DWIDGET_USE_NAMESPACE
 
 LogExportThread::LogExportThread(QObject *parent)
@@ -41,6 +44,11 @@ LogExportThread::LogExportThread(QObject *parent)
 {
     setAutoDelete(true);
     initMap();
+}
+
+LogExportThread::~LogExportThread()
+{
+    malloc_trim(0);
 }
 
 void LogExportThread::exportToTxtPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
@@ -401,8 +409,8 @@ bool LogExportThread::exportToTxt(QString fileName, QStandardItemModel *pModel, 
         return false;
     }
     fi.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag)
@@ -470,8 +478,8 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
         return false;
     }
     fi.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
@@ -508,8 +516,8 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         return false;
     }
     fi.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
@@ -545,8 +553,8 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         return false;
     }
     fi.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
@@ -581,8 +589,8 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         return false;
     }
     fi.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
@@ -617,8 +625,8 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_XORG> jList, Q
         return false;
     }
     fi.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
@@ -655,8 +663,8 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList,
         return false;
     }
     fi.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
@@ -690,8 +698,8 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         return false;
     }
     fi.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 
@@ -710,6 +718,8 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
                 cel->addText(pModel->horizontalHeaderItem(col)->text());
             }
         }
+        int end = static_cast<int>(pModel->rowCount() * 0.1 > 5 ? pModel->rowCount() * 0.1 : 5);
+
         if (flag == APP) {
             for (int row = 0; row < pModel->rowCount(); ++row) {
                 if (!m_canRunning) {
@@ -724,7 +734,7 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
                     auto cel = tab->cell(row + 1, col);
                     cel->addText(pModel->item(row, col)->text());
                 }
-                sigProgress(row + 1, pModel->rowCount());
+                sigProgress(row + 1, pModel->rowCount() + end);
             }
         } else {
             for (int row = 0; row < pModel->rowCount(); ++row) {
@@ -738,13 +748,16 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
                     auto cel = tab->cell(row + 1, col);
                     cel->addText(pModel->item(row, col)->text());
                 }
-                sigProgress(row + 1, pModel->rowCount());
+                sigProgress(row + 1, pModel->rowCount() + end);
             }
         }
-        emit sigProcessFull();
+
         doc.save(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -782,8 +795,12 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
     doc->setHtml(html);
     writer.write(doc);
 #endif
-    emit sigResult(true);
-    return true;
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    sigProgress(100, 100);
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList,
@@ -805,6 +822,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
@@ -825,12 +843,16 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
                 tab->cell(row + 1, col++)->addText(message.daemonName);
                 tab->cell(row + 1, col++)->addText(message.msg);
             }
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() + end);
         }
-        emit sigProcessFull();
+
         doc.save(fileName);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -869,12 +891,17 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
     doc->setHtml(html);
     writer.write(doc);
 #endif
-    emit sigResult(true);
-    return true;
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    sigProgress(100, 100);
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
+
     try {
         Docx::Document doc(DOCTEMPLATE);
         Docx::Table *tab = doc.addTable(jList.count() + 1, 4);
@@ -884,7 +911,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
-
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -895,22 +922,33 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             tab->cell(row + 1, col++)->addText(message.dateTime);
             tab->cell(row + 1, col++)->addText(iAppName);
             tab->cell(row + 1, col++)->addText(message.msg);
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() + end);
         }
-        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
-        emit sigProcessFull();
+
+
         doc.save(fileName);
+
     } catch (QString ErrorStr) {
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
         }
+
         return false;
     }
-    //  emit sigResult(true);
-    emit sigResult(true);
-    return true;
+
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+
+    sigProgress(100, 100);
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
@@ -924,6 +962,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
@@ -934,22 +973,30 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
             tab->cell(row + 1, col++)->addText(message.dateTime);
             tab->cell(row + 1, col++)->addText(message.msg);
             tab->cell(row + 1, col++)->addText(message.action);
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() + end);
         }
-        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
-        emit sigProcessFull();
+
+
         doc.save(fileName);
+
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
         }
         return false;
     }
-    //  emit sigResult(true);
-    emit sigResult(true);
-    return true;
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    sigProgress(100, 100);
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
@@ -958,6 +1005,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         Docx::Document doc(DOCTEMPLATE);
         Docx::Table *tab = doc.addTable(jList.count() + 1, 2);
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
         for (int col = 0; col < labels.count(); ++col) {
             auto cel = tab->cell(0, col);
@@ -972,22 +1020,28 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
             int col = 0;
             tab->cell(row + 1, col++)->addText(message.status);
             tab->cell(row + 1, col++)->addText(message.msg);
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() + end);
         }
-        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
-        emit sigProcessFull();
         doc.save(fileName);
+
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
         }
         return false;
     }
-    //  emit sigResult(true);
-    emit sigResult(true);
-    return true;
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    sigProgress(100, 100);
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
@@ -1001,7 +1055,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
-
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1010,21 +1064,31 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
             int col = 0;
             tab->cell(row + 1, col++)->addText(message.dateTime);
             tab->cell(row + 1, col++)->addText(message.msg);
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() + end);
         }
-        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
-        emit sigProcessFull();
+
+
         doc.save(fileName);
+
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    sigProgress(100, 100);
+    emit sigResult(m_canRunning);
+
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
@@ -1038,7 +1102,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
-
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1049,21 +1113,30 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
             tab->cell(row + 1, col++)->addText(message.userName);
             tab->cell(row + 1, col++)->addText(message.dateTime);
             tab->cell(row + 1, col++)->addText(message.msg);
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() + end);
         }
-        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
-        emit sigProcessFull();
+
+
         doc.save(fileName);
+
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    sigProgress(100, 100);
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
@@ -1077,7 +1150,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
-
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1085,21 +1158,30 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
             LOG_MSG_KWIN message = jList.at(row);
             int col = 0;
             tab->cell(row + 1, col++)->addText(message.msg);
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() + end);
         }
-        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
-        emit sigProcessFull();
+
+
         doc.save(fileName);
+
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    sigProgress(100, 100);
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 
@@ -1172,8 +1254,8 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
         return false;
     }
     html.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag)
@@ -1277,8 +1359,8 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
         return false;
     }
     html.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
@@ -1331,8 +1413,8 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> 
         return false;
     }
     html.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
@@ -1383,8 +1465,8 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, 
         return false;
     }
     html.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
@@ -1433,8 +1515,8 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, 
         return false;
     }
     html.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
@@ -1483,8 +1565,8 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, 
         return false;
     }
     html.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
@@ -1537,8 +1619,8 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList
         return false;
     }
     html.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
@@ -1585,8 +1667,8 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
         return false;
     }
     html.close();
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 
@@ -1595,8 +1677,15 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
 {
     try {
         auto currentXlsRow = 1;
-        QXlsx::Document xlsx;
-
+        QXlsx::Document xlsx(&m_canRunning);
+        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
+        });
+        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
+        });
         for (int col = 0; col < pModel->columnCount(); ++col) {
             auto item = pModel->horizontalHeaderItem(col);
             if (item) {
@@ -1606,6 +1695,7 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
             }
         }
         ++currentXlsRow;
+        int end = static_cast<int>(pModel->rowCount() * 0.1 > 5 ? pModel->rowCount() * 0.1 : 5);
 
         if (flag == APP) {
             for (int row = 0; row < pModel->rowCount(); ++row) {
@@ -1621,7 +1711,8 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
                     xlsx.write(currentXlsRow, col + 1, pModel->item(row, col)->text());
                 }
                 ++currentXlsRow;
-                sigProgress(row + 1, pModel->rowCount());
+
+                sigProgress(row + 1, pModel->rowCount() * 3 + end);
             }
         } else {
             for (int row = 0; row < pModel->rowCount(); ++row) {
@@ -1635,14 +1726,17 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
                     xlsx.write(currentXlsRow, col + 1, pModel->item(row, col)->text());
                 }
                 ++currentXlsRow;
-                sigProgress(row + 1, pModel->rowCount());
+
+                sigProgress(row + 1, pModel->rowCount() * 3 + end);
 
             }
         }
 
         ++currentXlsRow;
-        emit sigProcessFull();
-        xlsx.saveAs(fileName);
+        if (!xlsx.saveAs(fileName)) {
+            throw  QString(stopStr);
+        }
+        sigProgress(100, 100);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
@@ -1651,8 +1745,8 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList,
@@ -1660,13 +1754,23 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
 {
     try {
         auto currentXlsRow = 1;
-        QXlsx::Document xlsx;
+        QXlsx::Document xlsx(&m_canRunning);
+        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
+        });
+        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
+        });
         for (int col = 0; col < labels.count(); ++col) {
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
         }
         ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1689,11 +1793,13 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
             }
 
             ++currentXlsRow;
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
-        emit sigProcessFull();
-        xlsx.saveAs(fileName);
+        if (!xlsx.saveAs(fileName)) {
+            throw  QString(stopStr);
+        }
+        sigProgress(100, 100);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
@@ -1702,8 +1808,8 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
@@ -1713,7 +1819,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
     try {
         auto currentXlsRow = 1;
 
-        QXlsx::Document xlsx;
+        QXlsx::Document xlsx(&m_canRunning);
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
@@ -1728,6 +1834,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
         }
         ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1739,11 +1846,13 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             xlsx.write(currentXlsRow, col++, iAppName);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
-            int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
             sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
-        xlsx.saveAs(fileName);
+        if (!xlsx.saveAs(fileName)) {
+            throw  QString(stopStr);
+        }
+        sigProgress(100, 100);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
@@ -1752,22 +1861,30 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         }
         return false;
     }
-    emit sigResult(true);
-    qDebug() << timer.elapsed();
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
-        QXlsx::Document xlsx;
+        QXlsx::Document xlsx(&m_canRunning);
+        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
+        });
+        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
+        });
         for (int col = 0; col < labels.count(); ++col) {
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
         }
         ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1778,11 +1895,13 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
             xlsx.write(currentXlsRow, col++, message.msg);
             xlsx.write(currentXlsRow, col++, message.action);
             ++currentXlsRow;
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
-        emit sigProcessFull();
-        xlsx.saveAs(fileName);
+        if (!xlsx.saveAs(fileName)) {
+            throw  QString(stopStr);
+        }
+        sigProgress(100, 100);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
@@ -1791,24 +1910,33 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
-        QXlsx::Document xlsx;
+        QXlsx::Document xlsx(&m_canRunning);
 //        connect(&xlsx, &QXlsx::Document::saveProcess, this, [ = ](int iCurrent, int iTotal) {
 //            sigProgress(iCurrent + iTotal, iTotal * 2);
 //        });
+        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
+        });
+        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
+        });
         for (int col = 0; col < labels.count(); ++col) {
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
         }
         ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1818,11 +1946,13 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
             xlsx.write(currentXlsRow, col++, message.status);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
-            sigProgress(row + 1, jList.count() * 2);
+            sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
-        // emit sigProcessFull();
-        xlsx.saveAs(fileName);
+        if (!xlsx.saveAs(fileName)) {
+            throw  QString(stopStr);
+        }
+        sigProgress(100, 100);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
@@ -1831,21 +1961,30 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
-        QXlsx::Document xlsx;
+        QXlsx::Document xlsx(&m_canRunning);
+        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
+        });
+        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
+        });
         for (int col = 0; col < labels.count(); ++col) {
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
         }
         ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1855,11 +1994,13 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
             xlsx.write(currentXlsRow, col++, message.dateTime);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
-        emit sigProcessFull();
-        xlsx.saveAs(fileName);
+        if (!xlsx.saveAs(fileName)) {
+            throw  QString(stopStr);
+        }
+        sigProgress(100, 100);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
@@ -1868,21 +2009,30 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
-        QXlsx::Document xlsx;
+        QXlsx::Document xlsx(&m_canRunning);
+        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
+        });
+        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
+        });
         for (int col = 0; col < labels.count(); ++col) {
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
         }
         ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1894,11 +2044,13 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
             xlsx.write(currentXlsRow, col++, message.dateTime);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
-        emit sigProcessFull();
-        xlsx.saveAs(fileName);
+        if (!xlsx.saveAs(fileName)) {
+            throw  QString(stopStr);
+        }
+        sigProgress(100, 100);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
@@ -1907,21 +2059,31 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
-        QXlsx::Document xlsx;
+        QXlsx::Document xlsx(&m_canRunning);
+        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
+        });
+        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
+            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
+        });
         for (int col = 0; col < labels.count(); ++col) {
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
         }
         ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
@@ -1930,11 +2092,14 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
             int col = 1;
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
-            sigProgress(row + 1, jList.count());
+            sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
-        emit sigProcessFull();
-        xlsx.saveAs(fileName);
+
+        if (!xlsx.saveAs(fileName)) {
+            throw  QString(stopStr);
+        }
+        sigProgress(100, 100);
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
@@ -1943,8 +2108,8 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         }
         return false;
     }
-    emit sigResult(true);
-    return true;
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
 }
 
 void LogExportThread::initMap()
@@ -2103,5 +2268,9 @@ void LogExportThread::run()
     default:
         break;
     }
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+
     m_canRunning = false;
 }

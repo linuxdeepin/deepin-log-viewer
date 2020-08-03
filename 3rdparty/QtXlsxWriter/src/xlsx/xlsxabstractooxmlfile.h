@@ -28,6 +28,7 @@
 
 #include "xlsxglobal.h"
 #include <QObject>
+#include "logexportthread.h"
 class QIODevice;
 class QByteArray;
 
@@ -57,6 +58,7 @@ public:
 
     void setFilePath(const QString path);
     QString filePath() const;
+    void setExportCanRunning(bool *iCanRun);
 signals:
     void sigProccess(int iCurrent, int iTotal) const;
 protected:
@@ -64,6 +66,8 @@ protected:
     AbstractOOXmlFile(AbstractOOXmlFilePrivate *d);
 
     AbstractOOXmlFilePrivate *d_ptr;
+    bool *m_canRunning{nullptr};
+
 };
 
 QT_END_NAMESPACE_XLSX

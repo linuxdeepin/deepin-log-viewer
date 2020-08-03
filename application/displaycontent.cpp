@@ -51,7 +51,7 @@
 #include <QElapsedTimer>
 
 #include <sys/utsname.h>
-
+#include "malloc.h"
 DWIDGET_USE_NAMESPACE
 
 #define SINGLE_LOAD 200
@@ -82,6 +82,7 @@ DisplayContent::~DisplayContent()
         delete m_pModel;
         m_pModel = nullptr;
     }
+    malloc_trim(0);
 }
 
 
@@ -834,7 +835,7 @@ void DisplayContent::slot_exportClicked()
         logName = QString("/%1").arg(("New File"));
     }
     QString selectFilter;
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/logtemp" + logName + ".txt";
     QString fileName = DFileDialog::getSaveFileName(
                            this, DApplication::translate("File", "Export File"),
                            path,
@@ -1119,18 +1120,24 @@ void DisplayContent::slot_NormalFinished()
     createNormalTable(nortempList);
 }
 
-void DisplayContent::slot_vScrollValueChanged(int value)
+void DisplayContent::slot_vScrollValueChanged(int valuePixel)
 {
-
-//    int value = valuePixel / m_treeView->singleRowHeight();
-//    if (m_treeViewLastScrollValue == value) {
-//        return;
-//    }
-//    m_treeViewLastScrollValue = value;
+    if (!m_treeView) {
+        return;
+    }
+    qDebug() << "m_treeView->singleRowHeight()" << m_treeView->singleRowHeight();
+    if (m_treeView->singleRowHeight() < 0) {
+        return;
+    }
+    int value = valuePixel / m_treeView->singleRowHeight(); // m_treeView->singleRowHeight();
+    if (m_treeViewLastScrollValue == value) {
+        return;
+    }
+    m_treeViewLastScrollValue = value;
     if (m_flag == JOURNAL) {
 
         int rate = (value + 25) / SINGLE_LOAD;
-        //  qDebug() << "valuePixel:" << valuePixel << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
+        qDebug() << "valuePixel:" << valuePixel << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
         //    qDebug() << m_treeView->verticalScrollBar()->height();
         if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
             if (m_limitTag >= rate)
@@ -1144,7 +1151,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             qDebug() << "rate" << rate;
             insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
             m_limitTag = rate;
-            m_treeView->verticalScrollBar()->setValue(value);
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
 
         update();
@@ -1166,7 +1173,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             insertApplicationTable(appList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
             m_limitTag = rate;
-            m_treeView->verticalScrollBar()->setValue(value);
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
 
     } else if (m_flag == KERN) {  // modified by Airy for bug 12263
@@ -1182,7 +1189,7 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             insertKernTable(kList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
             m_limitTag = rate;
-            m_treeView->verticalScrollBar()->setValue(value);
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
 
     }
@@ -1625,6 +1632,7 @@ void DisplayContent::clearAllDatalist()
     nortempList.clear();
     m_currentKwinList.clear();
     m_kwinList.clear();
+    malloc_trim(0);
 
 }
 

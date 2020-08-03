@@ -31,8 +31,8 @@
 
 QT_BEGIN_NAMESPACE_XLSX
 
-AbstractOOXmlFilePrivate::AbstractOOXmlFilePrivate(AbstractOOXmlFile *q, AbstractOOXmlFile::CreateFlag flag=AbstractOOXmlFile::F_NewFromScratch)
-    :relationships(new Relationships), flag(flag), q_ptr(q)
+AbstractOOXmlFilePrivate::AbstractOOXmlFilePrivate(AbstractOOXmlFile *q, AbstractOOXmlFile::CreateFlag flag = AbstractOOXmlFile::F_NewFromScratch)
+    : relationships(new Relationships), flag(flag), q_ptr(q)
 {
 
 }
@@ -51,12 +51,12 @@ AbstractOOXmlFilePrivate::~AbstractOOXmlFilePrivate()
  */
 
 AbstractOOXmlFile::AbstractOOXmlFile(CreateFlag flag)
-    :d_ptr(new AbstractOOXmlFilePrivate(this, flag))
+    : d_ptr(new AbstractOOXmlFilePrivate(this, flag))
 {
 }
 
 AbstractOOXmlFile::AbstractOOXmlFile(AbstractOOXmlFilePrivate *d)
-    :d_ptr(d)
+    : d_ptr(d)
 {
 
 }
@@ -104,6 +104,12 @@ QString AbstractOOXmlFile::filePath() const
     Q_D(const AbstractOOXmlFile);
     return d->filePathInPackage;
 }
+
+void AbstractOOXmlFile::setExportCanRunning(bool *iCanRun)
+{
+    m_canRunning = iCanRun;
+}
+
 
 
 /*!

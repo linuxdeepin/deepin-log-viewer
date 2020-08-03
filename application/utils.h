@@ -73,6 +73,8 @@ public:
     static QString loadFontFamilyFromFiles(const QString &fontFileName);
     static QByteArray replaceEmptyByteArray(QByteArray &iReplaceStr);
     static CommandErrorType isErroCommand(QString str);
+    static bool checkAndDeleteDir(const QString &iFilePath);
+    static bool deleteDir(const QString &iFilePath);
 
 };
 
