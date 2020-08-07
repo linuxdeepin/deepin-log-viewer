@@ -44,7 +44,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-
+    void focusInEvent(QFocusEvent *event)override;
 
 private:
     LogViewItemDelegate *m_itemDelegate;
@@ -57,6 +57,7 @@ private:
     bool m_isPressed = false;
     QPointF m_lastTouchBeginPos;
     QTime m_lastTouchTime;
+    Qt::FocusReason m_reson;
 };
 
 #endif  // LOGTREEVIEW_H

@@ -35,11 +35,12 @@ std::atomic<journalWork *> journalWork::m_instance;
 std::mutex journalWork::m_mutex;
 
 journalWork::journalWork(QStringList arg, QObject *parent)
-//    : QObject(parent)
-    : QThread(parent)
+    :  QObject(parent),
+       QRunnable()
+
 {
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
-
+    setAutoDelete(true);
     initMap();
     m_arg.append("-o");
     m_arg.append("json");
@@ -48,11 +49,13 @@ journalWork::journalWork(QStringList arg, QObject *parent)
 }
 
 journalWork::journalWork(QObject *parent)
-    : QThread(parent)
+    :  QObject(parent),
+       QRunnable()
+
 {
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
-
     initMap();
+    setAutoDelete(true);
 }
 
 journalWork::~journalWork()
@@ -65,7 +68,8 @@ void journalWork::stopWork()
 {
 //    if (proc)
 //        proc->kill();
-    requestInterruption();
+    //requestInterruption();
+    m_canRun = false;
     // deleteSd();
 }
 
@@ -85,7 +89,7 @@ void journalWork::setArg(QStringList arg)
 void journalWork::deleteSd()
 {
 
-//    qDebug() << j;
+    qDebug() << "deleteSd";
 //    if (j) {
 //        sd_journal_close(j);
 //        j = nullptr;
@@ -101,17 +105,39 @@ void journalWork::run()
 
 void journalWork::doWork()
 {
+    m_canRun = true;
+    mutex.lock();
     logList.clear();
+    mutex.unlock();
+    if ((!m_canRun)) {
+        mutex.unlock();
+        deleteSd();
+        return;
+    }
 #if 1
     int r;
     sd_journal *j ;
+    if ((!m_canRun)) {
+        mutex.unlock();
+        deleteSd();
+        return;
+    }
     r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
+    if ((!m_canRun)) {
+        mutex.unlock();
+        deleteSd();
+        return;
+    }
     if (r < 0) {
         fprintf(stderr, "Failed to open journal: %s\n", strerror(-r));
         return;
     }
     sd_journal_seek_tail(j);
-
+    if ((!m_canRun)) {
+        mutex.unlock();
+        deleteSd();
+        return;
+    }
     //    sd_journal_add_match(j, "PRIORITY=3", 0);
 
     if (!m_arg.isEmpty()) {
@@ -119,10 +145,16 @@ void journalWork::doWork()
         if (_priority != "all")
             sd_journal_add_match(j, m_arg.at(0).toStdString().c_str(), 0);
     }
-
+    if ((!m_canRun)) {
+        mutex.unlock();
+        deleteSd();
+        return;
+    }
     int cnt = 0;
     SD_JOURNAL_FOREACH_BACKWARDS(j) {
-        if (isInterruptionRequested()) {
+        // if (isInterruptionRequested() || (!m_canRun)) {
+        if ((!m_canRun)) {
+            mutex.unlock();
             deleteSd();
             return;
         }
@@ -198,17 +230,35 @@ void journalWork::doWork()
             mutex.lock();
             emit journalData(logList);
             logList.clear();
-            usleep(100);
+            //sleep(100);
             mutex.unlock();
         }
-        //  delete d;
+//        cnt++;
+//        mutex.lock();
+//        logList.append(logMsg);
+//        mutex.unlock();
+
+//        if (cnt % 500 == 0) {
+//            mutex.lock();
+//            emit journalFinished();
+//            usleep(100);
+//        }
+//        if (isInterruptionRequested() || (!m_canRun)) {
+//            mutex.unlock();
+//            deleteSd();
+//            return;
+//        }
     }
-    emit journalData(logList);
+    if (logList.count() >= 0)
+        emit journalData(logList);
     emit journalFinished();
-    //第一次加载时这个之后的代码都不执行?故放到最后
+//第一次加载时这个之后的代码都不执行?故放到最后
     deleteSd();
     sd_journal_close(j);
-    //    emit journalFinished(logList);
+//    if (logList.count() >= 0)
+//        emit journalFinished();
+
+//    emit journalFinished(logList);
 
 #else
     proc = new QProcess;

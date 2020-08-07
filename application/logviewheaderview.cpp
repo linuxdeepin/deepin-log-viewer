@@ -36,6 +36,11 @@ LogViewHeaderView::LogViewHeaderView(Qt::Orientation orientation, QWidget *paren
     : DHeaderView(orientation, parent)
 {
     viewport()->setAutoFillBackground(false);
+    setStretchLastSection(true);
+    setSectionResizeMode(QHeaderView::Interactive);
+    setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    setFixedHeight(37);
+    setFocusPolicy(Qt::StrongFocus);
 }
 /**
  * @brief LogViewHeaderView::paintSection 绘制表头
@@ -131,6 +136,13 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     }
     painter->restore();
 }
+
+void LogViewHeaderView::focusInEvent(QFocusEvent *event)
+{
+    qDebug() << "LogViewHeaderView::focusInEvent";
+    m_reson = event->reason();
+    DHeaderView::focusInEvent(event);
+}
 /**
  * @brief LogViewHeaderView::paintEvent 在paintEvent里绘制背景
  * @param event
@@ -174,8 +186,18 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
 
     painter.fillPath(clipPath, bgBrush);
 
-    painter.restore();
+
     DHeaderView::paintEvent(event);
+    painter.restore();
+    // draw focus
+    if (hasFocus() && m_reson == Qt::TabFocusReason) {
+        QStyleOptionFocusRect o;
+        o.QStyleOption::operator=(option);
+        QRect focusRect {rect.x() - offset(), rect.y(), length() - sectionPosition(0), rect.height()};
+        o.rect = style->visualRect(layoutDirection(), rect, focusRect);
+        style->drawPrimitive(DStyle::PE_FrameFocusRect, &o, &painter);
+    }
+
 }
 
 QSize LogViewHeaderView::sizeHint() const

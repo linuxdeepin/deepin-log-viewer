@@ -100,10 +100,7 @@ void LogTreeView::initUI()
 
     setSelectionMode(QAbstractItemView::SingleSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
-    this->header()->setStretchLastSection(true);
 
-    this->header()->setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    this->header()->setFixedHeight(37);
     setRootIsDecorated(false);
     setItemsExpandable(false);
     setFrameStyle(QFrame::NoFrame);
@@ -111,6 +108,7 @@ void LogTreeView::initUI()
     //不需要间隔颜色的样式，因为自绘了，它默认的效果和我们想要的不一样
     setAlternatingRowColors(false);
     setAllColumnsShowFocus(false);
+    setTabOrder(this->header(), this);
 }
 
 /**
@@ -212,6 +210,14 @@ void LogTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options
     painter->fillPath(path, background);
 
     QTreeView::drawRow(painter, options, index);
+    // draw focus
+    if (hasFocus() && currentIndex().row() == index.row() && m_reson == Qt::TabFocusReason) {
+        QStyleOptionFocusRect o;
+        o.QStyleOption::operator=(options);
+        o.state |= QStyle::State_KeyboardFocusChange | QStyle::State_HasFocus;
+        o.rect = style->visualRect(layoutDirection(), viewport()->rect(), rowRect);
+        style->drawPrimitive(DStyle::PE_FrameFocusRect, &o, painter);
+    }
 
     painter->restore();
 }
@@ -423,6 +429,12 @@ void LogTreeView::mouseReleaseEvent(QMouseEvent *event)
         return;
     }
     return DTreeView::mouseReleaseEvent(event);
+}
+
+void LogTreeView::focusInEvent(QFocusEvent *event)
+{
+    m_reson = event->reason();
+    DTreeView::focusInEvent(event);
 }
 
 

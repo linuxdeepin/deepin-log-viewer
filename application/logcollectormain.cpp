@@ -46,6 +46,7 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
 
     m_logCatelogue->setDefaultSelect();
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
+    initKeyBoardSwitchOrder();
 }
 
 LogCollectorMain::~LogCollectorMain()
@@ -61,9 +62,11 @@ void LogCollectorMain::initUI()
 {
     /** add searchEdit */
     m_searchEdt = new DSearchEdit;
+    m_searchEdt->setFocusPolicy(Qt::TabFocus);
     m_searchEdt->setPlaceHolder(DApplication::translate("SearchBar", "Search"));
     m_searchEdt->setMaximumWidth(400);
     titlebar()->setCustomWidget(m_searchEdt, true);
+
 
     /** add titleBar */
     titlebar()->setIcon(QIcon::fromTheme("deepin-log-viewer"));
@@ -179,10 +182,10 @@ void LogCollectorMain::initConnection()
             SLOT(slot_refreshClicked(const QModelIndex &)));  // add by Airy for adding refresh
     connect(m_logCatelogue, &LogListView::sigRefresh, this, [ = ]() { m_searchEdt->clear(); });
     //! treeView widget
-    connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_midRightWgt,
+    connect(m_logCatelogue, SIGNAL(itemChanged(const QModelIndex &)), m_midRightWgt,
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));
     //! set tree <==> combobox visible
-    connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_topRightWgt,
+    connect(m_logCatelogue, SIGNAL(itemChanged(const QModelIndex &)), m_topRightWgt,
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));
 
     // when item changed clear search text
@@ -244,6 +247,54 @@ void LogCollectorMain::initShortCut()
     }
 }
 
+void LogCollectorMain::initKeyBoardSwitchOrder()
+{
+    //setTabOrder(m_searchEdt,  titlebar());
+    setTabOrder(m_midRightWgt, titlebar());
+//    QList<QWidget *>pwList =  this->titlebar()->findChildren<QWidget *>(QString(), Qt::FindChildrenRecursively);
+//    QWidget *baseArea = nullptr;
+//    QWidget    *minButton = nullptr;
+//    QWidget    *maxButton = nullptr;
+//    QWidget  *closeButton = nullptr;
+//    QWidget *optionButton = nullptr;
+//    QWidget        *quitFullButton = nullptr;
+//    foreach (QWidget *item, pwList) {
+//        qDebug() << "obj" << item->objectName();
+//        if (item->objectName() == "DTitlebarDWindowOptionButton") {
+//            optionButton = item;
+//        } else if (item->objectName() == "DTitlebarDWindowMinButton") {
+//            minButton = item;
+//        } else if (item->objectName() == "DTitlebarDWindowMaxButton") {
+//            maxButton = item;
+//        } else if (item->objectName() == "DTitlebarDWindowQuitFullscreenButton") {
+//            quitFullButton = item;
+//        } else if (item->objectName() == "DTitlebarDWindowCloseButton") {
+//            closeButton = item;
+//        }
+////        QList<DIconButton *>pwChildList =  item->findChildren<DIconButton *>(QString(), Qt::FindDirectChildrenOnly);
+////        foreach (DIconButton *childItem, pwChildList) {
+////            if (childItem->objectName() == "DTitlebarDWindowMinButton") {
+////                baseArea = item;
+////                break;
+////            }
+////            if (baseArea) {
+////                break;
+////            }
+////        }
+
+//    }
+//    setTabOrder(m_searchEdt, optionButton);
+//    //    setTabOrder(optionButton, minButton);
+//    //    setTabOrder(minButton, maxButton);
+//    //    setTabOrder(maxButton, closeButton);
+////    setTabOrder(m_searchEdt, optionButton);
+//    if (baseArea) {
+//        qDebug() << "1111111111";
+//        setTabOrder(m_searchEdt, baseArea);
+//    }
+
+}
+
 void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
 {
     int otherWidth = MAINWINDOW_WIDTH - m_originFilterWidth;
@@ -259,6 +310,7 @@ void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
 
 bool LogCollectorMain::eventFilter(QObject *obj, QEvent *evt)
 {
+    this->titlebar();
     switch (evt->type()) {
     case QEvent::TouchBegin: {
         qDebug() << "11111";

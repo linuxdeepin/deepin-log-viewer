@@ -27,13 +27,18 @@
 #include <DApplicationHelper>
 #include <DStyledItemDelegate>
 #include <DListView>
-
+class QShortcut;
 class QStandardItemModel;
+class LogListView ;
 class LogListDelegate : public Dtk::Widget::DStyledItemDelegate
 {
 public:
-    LogListDelegate(QAbstractItemView *parent = nullptr);
+    LogListDelegate(LogListView *parent = nullptr);
 protected:
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override;
+
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)override;
 
 private:
@@ -48,7 +53,7 @@ public:
     void initUI();
     void setDefaultSelect();
     void truncateFile(QString path_); //add by Airy for truncate file
-
+    bool IsTabFocus() const;
 private:
     void setCustomFont(QStandardItem *item);
     bool isFileExist(const QString &iFile);
@@ -64,8 +69,13 @@ protected:
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
     void contextMenuEvent(QContextMenuEvent *event) override;   //add by Airy
     void mouseMoveEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void focusInEvent(QFocusEvent *event)override;
+    void focusOutEvent(QFocusEvent *event)override;
+    void setTabFocus(bool iFocus);
 signals:
-    void itemChanged();
+    void itemChanged(const QModelIndex &index);
     void sigRefresh(const QModelIndex &index);  // add refresh
 
 private:
@@ -77,6 +87,9 @@ private:
     QAction *g_clear{nullptr};
     QAction *g_refresh{nullptr};  // add
     QString g_path{""};                  // add by Airy
+    QShortcut *m_rightClickTriggerShortCut {nullptr};
+    //判断是否通过tab获取的焦点
+    bool m_IsTabFocus = false;
 };
 
 #endif  // LOGLISTVIEW_H

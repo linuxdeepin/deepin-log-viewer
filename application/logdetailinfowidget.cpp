@@ -284,6 +284,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     } else {
         QIcon icon =  level.siblingAtColumn(0).data(Qt::DecorationRole).value<QIcon>();
         m_level->setIcon(icon);
+
         m_level->setText(level.siblingAtColumn(0).data(Qt::UserRole + 6).toString());
         m_level->show();
     }
@@ -379,7 +380,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     index.row();
     if (dataStr.contains(DPKG_TABLE_DATA)) {
 
-        fillDetailInfo("Dpkg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
+        fillDetailInfo("dpkg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
                        index.siblingAtColumn(1).data().toString(), "",
                        index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {

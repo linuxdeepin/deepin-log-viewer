@@ -31,7 +31,9 @@
 #include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QWidget>
+class LogCombox;
 class LogPeriodButton;
+class LogNormalButton;
 class FilterContent : public Dtk::Widget::DFrame
 {
     Q_OBJECT
@@ -46,6 +48,7 @@ public:
 protected:
     //  void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event);
 private:
     void setAppComboBoxItem();
 
@@ -72,6 +75,7 @@ signals:
 public slots:
     void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_buttonClicked(int idx);
+    void slot_exportButtonClicked();
     void slot_cbxLvIdxChanged(int idx);
     void slot_cbxAppIdxChanged(int idx);
     void slot_cbxStatusChanged(int idx);
@@ -82,13 +86,13 @@ private:
     QButtonGroup *m_btnGroup;
     Dtk::Widget::DLabel *lvTxt;
     Dtk::Widget::DLabel *periodLabel;
-    Dtk::Widget::DComboBox *cbx_lv;
+    LogCombox *cbx_lv;
     Dtk::Widget::DLabel *appTxt;
-    Dtk::Widget::DComboBox *cbx_app;
+    LogCombox *cbx_app;
     Dtk::Widget::DLabel *statusTxt;
-    Dtk::Widget::DComboBox *cbx_status;
+    LogCombox *cbx_status;
     Dtk::Widget::DLabel *typeTxt;     // add by Airy
-    Dtk::Widget::DComboBox *typeCbx;  // add by Airy
+    LogCombox *typeCbx;  // add by Airy
     QModelIndex m_curTreeIndex;
     LogPeriodButton *m_allBtn = nullptr;
     LogPeriodButton *m_todayBtn = nullptr;
@@ -96,7 +100,7 @@ private:
     LogPeriodButton *m_lastWeekBtn = nullptr;
     LogPeriodButton *m_lastMonthBtn = nullptr;
     LogPeriodButton *m_threeMonthBtn = nullptr;
-    Dtk::Widget::DPushButton *exportBtn = nullptr;
+    LogNormalButton *exportBtn = nullptr;
 
     int m_curBtnId, m_curLvCbxId;
 

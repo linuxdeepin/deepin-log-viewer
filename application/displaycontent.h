@@ -68,9 +68,11 @@ private:
     void createDpkgTable(QList<LOG_MSG_DPKG> &list);
 
     void generateKernFile(int id, const QString &iSearchStr = "");
+    void createKernTableForm();
     void createKernTable(QList<LOG_MSG_JOURNAL> &list);
 
     void generateAppFile(QString path, int id, int lId, const QString &iSearchStr = "");
+    void createAppTableForm();
     void createAppTable(QList<LOG_MSG_APPLICATOIN> &list);
     void createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list);
 
@@ -196,6 +198,7 @@ private:
     BOOT_FILTERS m_bootFilter = {"", ""};
     NORMAL_FILTERS m_normalFilter = {"", -1};
     int m_treeViewLastScrollValue = -1;
+    DisplayContent::LOAD_STATE m_state;
 
 };
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2019 ~ 2019 Deepin Technology Co., Ltd.
  *
  * Author:     LZ <zhou.lu@archermind.com>
@@ -20,11 +20,17 @@
  */
 
 #include "filtercontent.h"
+#include "logcombox.h"
+#include "lognormalbutton.h"
+#include "logapplicationhelper.h"
+#include "logperiodbutton.h"
+
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DComboBox>
 #include <DCommandLinkButton>
 #include <DFileDialog>
+
 #include <QAbstractItemView>
 #include <QDebug>
 #include <QDir>
@@ -37,8 +43,7 @@
 #include <QProcess>
 #include <QVBoxLayout>
 #include <QResizeEvent>
-#include "logapplicationhelper.h"
-#include "logperiodbutton.h"
+
 #include "structdef.h"
 
 #define BUTTON_WIDTH_MIN 68
@@ -149,7 +154,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_lvl = new QHBoxLayout;
     lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    cbx_lv = new DComboBox(this);
+    cbx_lv = new LogCombox(this);
     cbx_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
     // cbx_lv->setMaximumWidth(208);
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
@@ -170,7 +175,7 @@ void FilterContent::initUI()
     // set all files under ~/.cache/deepin
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
-    cbx_app = new DComboBox(this);
+    cbx_app = new LogCombox(this);
     cbx_app->setMinimumSize(QSize(180, BUTTON_HEIGHT_MIN));
     hLayout_app->addWidget(appTxt);
     hLayout_app->addWidget(cbx_app, 1);
@@ -180,7 +185,7 @@ void FilterContent::initUI()
     // add status item
     QHBoxLayout *hLayout_status = new QHBoxLayout;
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
-    cbx_status = new DComboBox(this);
+    cbx_status = new LogCombox(this);
     cbx_status->setMinimumWidth(120);
     cbx_status->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
@@ -193,7 +198,7 @@ void FilterContent::initUI()
     // add by Airy for adding type item
     QHBoxLayout *hLayout_type = new QHBoxLayout;
     typeTxt = new DLabel(DApplication::translate("Label", "Event Type:"), this);
-    typeCbx = new DComboBox(this);
+    typeCbx = new LogCombox(this);
     typeCbx->setMinimumWidth(120);
     typeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
@@ -205,14 +210,12 @@ void FilterContent::initUI()
     hLayout_status->setSpacing(6);
     hLayout_all->addLayout(hLayout_type);  // end add
     hLayout_all->addStretch(1);
-    exportBtn = new DPushButton(DApplication::translate("Button", "Export"), this);
-
+    exportBtn = new LogNormalButton(DApplication::translate("Button", "Export"), this);
     //  exportBtn->setContentsMargins(102, 100, 200, 200);
     //exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
     exportBtn->setContentsMargins(0, 0, 18, 18);
     exportBtn->setFixedWidth(BUTTON_EXPORT_WIDTH_MIN);
-    exportBtn->setFocusPolicy(Qt::NoFocus);
-    m_btnGroup->addButton(exportBtn, 7);
+//    exportBtn->setFocusPolicy(Qt::TabFocus);
     hLayout_all->addWidget(exportBtn);
     // set layout
     vLayout->addLayout(hLayout_period);
@@ -220,13 +223,25 @@ void FilterContent::initUI()
     vLayout->setSpacing(16);
 
     this->setLayout(vLayout);
+//    cbx_lv->setFocusPolicy(Qt::TabFocus);
+//    cbx_app->setFocusPolicy(Qt::TabFocus);
+//    cbx_status->setFocusPolicy(Qt::TabFocus);
+//    typeCbx->setFocusPolicy(Qt::TabFocus);
     // default application list is not visible
     setSelectorVisible(true, false, false, true, false);
+    m_allBtn->installEventFilter(this);
+    m_todayBtn->installEventFilter(this);
+    m_threeDayBtn->installEventFilter(this);
+    m_lastWeekBtn->installEventFilter(this);
+    m_lastMonthBtn->installEventFilter(this);
+    m_threeMonthBtn->installEventFilter(this);
 }
 
 void FilterContent::initConnections()
 {
     connect(m_btnGroup, SIGNAL(buttonClicked(int)), this, SLOT(slot_buttonClicked(int)));
+    connect(exportBtn, &DPushButton::clicked, this, &FilterContent::slot_exportButtonClicked);
+
     connect(cbx_lv, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxLvIdxChanged(int)));
     connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
     connect(cbx_status, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxStatusChanged(int)));
@@ -274,8 +289,11 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     setUpdatesEnabled(false);
     lvTxt->setVisible(lvCbx);
     cbx_lv->setVisible(lvCbx);
-    if (cbx_lv->isVisible())
+    if (cbx_lv->isVisible()) {
         cbx_lv->setCurrentIndex(INF + 1);
+
+    }
+
     appTxt->setVisible(appListCbx);
     cbx_app->setVisible(appListCbx);
     if (cbx_app->isVisible())
@@ -295,11 +313,11 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     }
 
     if (needMove) {
-        hLayout_period->addWidget(m_btnGroup->button(EXPORT));
-        hLayout_all->removeWidget(m_btnGroup->button(EXPORT));
+        hLayout_period->addWidget(exportBtn);
+        hLayout_all->removeWidget(exportBtn);
     } else {
-        hLayout_period->removeWidget(m_btnGroup->button(EXPORT));
-        hLayout_all->addWidget(m_btnGroup->button(EXPORT));
+        hLayout_period->removeWidget(exportBtn);
+        hLayout_all->addWidget(exportBtn);
 
     }
     resizeWidth();
@@ -312,12 +330,11 @@ void FilterContent::setUeButtonSytle()
 {
     for (QAbstractButton *abtn : m_btnGroup->buttons()) {
         LogPeriodButton *btn = static_cast<LogPeriodButton *>(abtn);
-        btn->setFlat(true);
-        btn->setCheckable(true);
-        btn->setContentsMargins(18, 18, btn->contentsMargins().top(), btn->contentsMargins().bottom());
+
         if (btn->objectName() == "allBtn")
             btn->setChecked(true);
     }
+
 }
 
 void FilterContent::paintEvent(QPaintEvent *event)
@@ -362,6 +379,75 @@ void FilterContent::paintEvent(QPaintEvent *event)
 //    exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
 
     DFrame::paintEvent(event);
+}
+
+bool FilterContent::eventFilter(QObject *obj, QEvent *event)
+{
+
+//    LogPeriodButton *m_allBtn = nullptr;
+//    LogPeriodButton *m_todayBtn = nullptr;
+//    LogPeriodButton *m_threeDayBtn = nullptr;
+//    LogPeriodButton *m_lastWeekBtn = nullptr;
+//    LogPeriodButton *m_lastMonthBtn = nullptr;
+//    LogPeriodButton *m_threeMonthBtn = nullptr;
+    if (event->type() == QEvent::KeyPress) {
+        if (obj == m_allBtn) {
+            auto *kev = dynamic_cast<QKeyEvent *>(event);
+            if (kev->key() == Qt::Key_Right) {
+                m_todayBtn->click();
+                m_todayBtn->setFocus(Qt::TabFocusReason);
+            } else if (kev->key() == Qt::Key_Left) {
+                m_threeMonthBtn->click();
+                m_threeMonthBtn->setFocus(Qt::TabFocusReason);
+            }
+        } else if (obj == m_todayBtn) {
+            auto *kev = dynamic_cast<QKeyEvent *>(event);
+            if (kev->key() == Qt::Key_Right) {
+                m_threeDayBtn->click();
+                m_threeDayBtn->setFocus(Qt::TabFocusReason);
+            } else if (kev->key() == Qt::Key_Left) {
+                m_allBtn->click();
+                m_allBtn->setFocus(Qt::TabFocusReason);
+            }
+        } else if (obj == m_threeDayBtn) {
+            auto *kev = dynamic_cast<QKeyEvent *>(event);
+            if (kev->key() == Qt::Key_Right) {
+                m_lastWeekBtn->click();
+                m_lastWeekBtn->setFocus(Qt::TabFocusReason);
+            } else if (kev->key() == Qt::Key_Left) {
+                m_todayBtn->click();
+                m_todayBtn->setFocus(Qt::TabFocusReason);
+            }
+        } else if (obj == m_lastWeekBtn) {
+            auto *kev = dynamic_cast<QKeyEvent *>(event);
+            if (kev->key() == Qt::Key_Right) {
+                m_lastMonthBtn->click();
+                m_lastMonthBtn->setFocus(Qt::TabFocusReason);
+            } else if (kev->key() == Qt::Key_Left) {
+                m_threeDayBtn->click();
+                m_threeDayBtn->setFocus(Qt::TabFocusReason);
+            }
+        } else if (obj == m_lastMonthBtn) {
+            auto *kev = dynamic_cast<QKeyEvent *>(event);
+            if (kev->key() == Qt::Key_Right) {
+                m_threeMonthBtn->click();
+                m_threeMonthBtn->setFocus(Qt::TabFocusReason);
+            } else if (kev->key() == Qt::Key_Left) {
+                m_lastWeekBtn->click();
+                m_lastWeekBtn->setFocus(Qt::TabFocusReason);
+            }
+        }  else if (obj == m_threeMonthBtn) {
+            auto *kev = dynamic_cast<QKeyEvent *>(event);
+            if (kev->key() == Qt::Key_Right) {
+                m_allBtn->click();
+                m_allBtn->setFocus(Qt::TabFocusReason);
+            } else if (kev->key() == Qt::Key_Left) {
+                m_lastMonthBtn->click();
+                m_lastMonthBtn->setFocus(Qt::TabFocusReason);
+            }
+        }
+    }
+    return DFrame::eventFilter(obj, event);
 }
 //自适应宽度
 void FilterContent::resizeWidth()
@@ -474,10 +560,10 @@ void FilterContent::slot_buttonClicked(int idx)
      */
     //    if (!m_curTreeIndex.isValid())
     //        return;
-
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
     // because button has no focus,so focus on label;
-    lvTxt->setFocus();
+    //有这行,按tab时切不了焦点
+    // lvTxt->setFocus();
     switch (idx) {
     case ALL:
     case ONE_DAY:
@@ -503,13 +589,16 @@ void FilterContent::slot_buttonClicked(int idx)
             emit sigButtonClicked(m_curBtnId, INVALID, m_curTreeIndex);
         }
     } break;
-    case EXPORT:
-        if (!itemData.isEmpty())
-            emit sigExportInfo();
-        break;
     default:
         break;
     }
+}
+
+void FilterContent::slot_exportButtonClicked()
+{
+    QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
+    if (!itemData.isEmpty())
+        emit sigExportInfo();
 }
 
 void FilterContent::slot_cbxLvIdxChanged(int idx)

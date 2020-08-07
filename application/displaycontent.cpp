@@ -252,6 +252,10 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     default:
         break;
     }
+    m_treeView->setColumnWidth(JOURNAL_SPACE::journalLevelColumn, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDaemonNameColumn, DEAMON_WIDTH);
+    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
+
 }
 
 void DisplayContent::createJournalTableStart(QList<LOG_MSG_JOURNAL> &list)
@@ -338,9 +342,12 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     clearAllFilter();
     clearAllDatalist();
     setLoadState(DATA_LOADING);
+    createKernTableForm();
     //    m_spinnerWgt->hide();  // modified by Airy for bug 15520
     //    m_treeView->show();
-
+    m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
+    m_treeView->setColumnWidth(1, DEAMON_WIDTH);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
@@ -365,6 +372,17 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     default:
         break;
     }
+
+}
+
+void DisplayContent::createKernTableForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "User")
+                                        << DApplication::translate("Table", "Process")
+                                        << DApplication::translate("Table", "Info"));
 }
 
 // modified by Airy for bug  12263
@@ -372,7 +390,7 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
 {
     //    m_treeView->show();
     setLoadState(DATA_COMPLETE);
-    m_pModel->clear();
+    //  m_pModel->clear();
 
     m_limitTag = 0;
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
@@ -417,14 +435,12 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
 
     // default first row select
     //    m_treeView->selectRow(0);
-    //排序插入后可能列宽会改变，故把调整列宽放到insert中 by zyc
-    m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
-    m_treeView->setColumnWidth(1, DEAMON_WIDTH);
-    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
+
 }
 
 void DisplayContent::generateAppFile(QString path, int id, int lId, const QString &iSearchStr)
@@ -437,6 +453,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
     setLoadState(DATA_LOADING);
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
+    createAppTableForm();
     switch (id) {
     case ALL:
         m_logFileParse.parseByApp(path, lId);
@@ -459,6 +476,19 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
     default:
         break;
     }
+    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+}
+
+void DisplayContent::createAppTableForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Level")
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Source")
+                                        << DApplication::translate("Table", "Info"));
 }
 
 void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
@@ -466,7 +496,7 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
     //    m_treeView->show();
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
-    m_pModel->clear();
+    // m_pModel->clear();
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertApplicationTable(list, 0, end);
 }
@@ -669,15 +699,15 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
 
     //    m_treeView->setModel(m_pModel);
 
-    // default first row select
-    m_treeView->setColumnWidth(JOURNAL_SPACE::journalLevelColumn, LEVEL_WIDTH);
-    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDaemonNameColumn, DEAMON_WIDTH);
-    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
+
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
-
+    // default first row select
+//    m_treeView->setColumnWidth(JOURNAL_SPACE::journalLevelColumn, LEVEL_WIDTH);
+//    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDaemonNameColumn, DEAMON_WIDTH);
+//    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
 }
 
 QString DisplayContent::getAppName(QString filePath)
@@ -835,7 +865,7 @@ void DisplayContent::slot_exportClicked()
         logName = QString("/%1").arg(("New File"));
     }
     QString selectFilter;
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "/logtemp" + logName + ".txt";
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) +  logName + ".txt";
     QString fileName = DFileDialog::getSaveFileName(
                            this, DApplication::translate("File", "Export File"),
                            path,
@@ -1076,14 +1106,32 @@ void DisplayContent::slot_kwinFinished(QList<LOG_MSG_KWIN> list)
 
 void DisplayContent::slot_journalFinished()
 {
-
+    if (m_flag != JOURNAL) {
+        journalWork::instance()->mutex.unlock();
+        return;
+    }
+    if (journalWork::instance()->logList.isEmpty()) {
+        setLoadState(DATA_COMPLETE);
+        createJournalTableStart(jList);
+        journalWork::instance()->mutex.unlock();
+        return;
+    }
+    jList.append(journalWork::instance()->logList);
+    jListOrigin.append(journalWork::instance()->logList);
+    //    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
+    journalWork::instance()->logList.clear();
+    journalWork::instance()->mutex.unlock();
+    if (m_firstLoadPageData) {
+        createJournalTableStart(jList);
+        m_firstLoadPageData = false;
+    }
+    // qDebug() << "jList" << jList.count();
 }
 
 void DisplayContent::slot_journalData(QList<LOG_MSG_JOURNAL> list)
 {
     if (m_flag != JOURNAL)
         return;
-
     if (list.isEmpty()) {
         setLoadState(DATA_COMPLETE);
         createJournalTableStart(jList);
@@ -1107,6 +1155,7 @@ void DisplayContent::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list)
     setLoadState(DATA_COMPLETE);
     appList = list;
     appListOrigin = list;
+
     createApplicationTable(appList);
 }
 
@@ -1125,7 +1174,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
     if (!m_treeView) {
         return;
     }
-    qDebug() << "m_treeView->singleRowHeight()" << m_treeView->singleRowHeight();
     if (m_treeView->singleRowHeight() < 0) {
         return;
     }
@@ -1137,7 +1185,7 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
     if (m_flag == JOURNAL) {
 
         int rate = (value + 25) / SINGLE_LOAD;
-        qDebug() << "valuePixel:" << valuePixel << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
+        //  qDebug() << "valuePixel:" << valuePixel << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
         //    qDebug() << m_treeView->verticalScrollBar()->height();
         if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
             if (m_limitTag >= rate)
@@ -1401,12 +1449,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
         qWarning() << "parse model is  Empty" << __LINE__;
         return;
     }
-    oPModel->setColumnCount(4);
-    oPModel->setHorizontalHeaderLabels(QStringList()
-                                       << DApplication::translate("Table", "Level")
-                                       << DApplication::translate("Table", "Date and Time")
-                                       << DApplication::translate("Table", "Source")
-                                       << DApplication::translate("Table", "Info"));
+
     if (iList.isEmpty()) {
         qWarning() << "parse model is  Empty" << __LINE__;
         return;
@@ -1740,12 +1783,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardIte
         qWarning() << "parse model is  Empty" << __LINE__;
         return;
     }
-    //oPModel->setColumnCount(4);
-    oPModel->setHorizontalHeaderLabels(QStringList()
-                                       << DApplication::translate("Table", "Date and Time")
-                                       << DApplication::translate("Table", "User")
-                                       << DApplication::translate("Table", "Process")
-                                       << DApplication::translate("Table", "Info"));
+
     if (iList.isEmpty()) {
         qWarning() << "parse model is  Empty" << __LINE__;
         return;
@@ -1821,7 +1859,7 @@ void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
     //    m_treeView->show();
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
-    m_pModel->clear();
+    //m_pModel->clear();
 
 
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
@@ -1836,9 +1874,7 @@ void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int
     }
     parseListToModel(midList, m_pModel);
     QItemSelectionModel *p = m_treeView->selectionModel();
-    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
-    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
-    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));

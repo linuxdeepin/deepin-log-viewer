@@ -26,6 +26,8 @@
 #include <DDialogButtonBox>
 #include <DInputDialog>
 #include <DApplication>
+#include <DStyle>
+#include <DApplication>
 
 #include <QItemSelectionModel>
 #include <QMargins>
@@ -39,6 +41,7 @@
 #include <QDir>
 #include <QDir>
 #include <QMenu>
+#include <QShortcut>
 #define ITEM_HEIGHT 40
 #define ITEM_WIDTH 108
 
@@ -47,8 +50,37 @@
 Q_DECLARE_METATYPE(QMargins)
 
 DWIDGET_USE_NAMESPACE
-LogListDelegate::LogListDelegate(QAbstractItemView *parent) : DStyledItemDelegate(parent)
+LogListDelegate::LogListDelegate(LogListView *parent) : DStyledItemDelegate(parent)
 {
+
+}
+
+void LogListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+
+    DStyledItemDelegate::paint(painter, option, index);
+    // if (option.state & QStyle::State_HasFocus) {
+    LogListView *parentView = qobject_cast<LogListView *>(this->parent());
+    if ((option.state & QStyle::State_HasFocus) && parentView && parentView->IsTabFocus()) {
+        // draw focus
+        auto *style = dynamic_cast<DStyle *>(DApplication::style());
+        QRect rect;
+        rect.setX(option.rect.x());
+        rect.setY(option.rect.y());
+        rect.setWidth(option.rect.width());
+        rect.setHeight(option.rect.height());
+
+        //    QRect backgroundRect = QRect(rect.left() + 10, rect.top(), rect.width() - 20, rect.height());
+        if (index.isValid()) {
+            QStyleOptionFocusRect o;
+            o.QStyleOption::operator=(option);
+            o.state |= QStyle::State_KeyboardFocusChange | QStyle::State_HasFocus;
+            o.rect = style->visualRect(Qt::LeftToRight, option.rect, option.rect);
+            style->drawPrimitive(DStyle::PE_FrameFocusRect, &o, painter);
+        }
+    }
+
+
 
 }
 
@@ -86,6 +118,7 @@ bool LogListDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, cons
     return LogListDelegate::helpEvent(event, view, option, index);
 }
 
+
 /**
  * @brief LogListDelegate::hideTooltipImmediately 隐藏所有tooltip
  */
@@ -108,7 +141,21 @@ LogListView::LogListView(QWidget *parent)
             &LogListView::onChangedTheme);
     DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
     onChangedTheme(ct);
+//    setFocusPolicy(Qt::TabFocus);
+
+    m_rightClickTriggerShortCut = new QShortcut(this);
+    m_rightClickTriggerShortCut->setKey(Qt::ALT + Qt::Key_M);
+    m_rightClickTriggerShortCut->setContext(Qt::WidgetShortcut);
+    m_rightClickTriggerShortCut->setAutoRepeat(false);
+    connect(m_rightClickTriggerShortCut, &QShortcut::activated, this, [this] {
+        //     qDebug() << "111111111" << visualRect(this->currentIndex())   ;
+        QRect r = rectForIndex(this->currentIndex());
+        QContextMenuEvent *eve = new QContextMenuEvent(QContextMenuEvent::Reason::Keyboard, QPoint(r.x() + r.width() / 2, r.y() + r.height() / 2));
+        DApplication::sendEvent(this, eve);
+    });
 }
+
+
 /**
  * @brief LogListView::initUI 设置基本属性，且本listview为固定的种类，所以在此初始化函数中根据日志文件是否存在动态显示日志种类
  */
@@ -205,7 +252,8 @@ void LogListView::initUI()
 
 void LogListView::setDefaultSelect()
 {
-    emit clicked(currentIndex());
+    setCurrentIndex(currentIndex());
+    itemChanged(currentIndex());
 }
 
 /**
@@ -303,6 +351,9 @@ void LogListView::paintEvent(QPaintEvent *event)
  */
 void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+    if (current.row() < 0) {
+        return;
+    }
     QStandardItem *currentItem = m_pModel->itemFromIndex(current);
     if (currentItem) {
         QString icon = currentItem->data(ICON_DATA).toString();
@@ -323,7 +374,7 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
         }
     }
 
-    emit itemChanged();
+    emit itemChanged(current);
     DListView::currentChanged(current, previous);
 }
 
@@ -344,6 +395,11 @@ void LogListView::truncateFile(QString path_)
     }
 
     prc.waitForFinished();
+}
+
+bool LogListView::IsTabFocus() const
+{
+    return  m_IsTabFocus;
 }
 
 /**
@@ -422,7 +478,7 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         });
 
         this->setContextMenuPolicy(Qt::DefaultContextMenu);
-        g_context->exec(QCursor::pos());
+        g_context->exec(mapToGlobal(event->pos()));
     }
 }
 
@@ -433,5 +489,58 @@ void LogListView::mouseMoveEvent(QMouseEvent *event)
         QToolTip::hideText();
     }
     return;
+}
+
+void LogListView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Up) {
+        if (currentIndex().row() == 0) {
+            QModelIndex modelIndex = model()->index(model()->rowCount() - 1, 0);
+            setCurrentIndex(modelIndex);
+        } else {
+            DListView::keyPressEvent(event);
+        }
+    } else if (event->key() == Qt::Key_Down) {
+        if (currentIndex().row() == model()->rowCount() - 1) {
+            QModelIndex modelIndex =  model()->index(0, 0);
+            setCurrentIndex(modelIndex);
+        } else {
+            DListView::keyPressEvent(event);
+        }
+    } else {
+        DListView::keyPressEvent(event);
+    }
+
+}
+
+void LogListView::mousePressEvent(QMouseEvent *event)
+{
+
+    if (event->button() == Qt::RightButton) {
+        emit clicked(indexAt(event->pos()));
+    }
+    DListView::mousePressEvent(event);
+}
+
+void LogListView::focusInEvent(QFocusEvent *event)
+{
+    qDebug() << "1";
+    if (event->reason() == Qt::TabFocusReason) {
+        setTabFocus(true);
+    } else {
+        setTabFocus(false);
+    }
+    DListView::focusInEvent(event);
+}
+
+void LogListView::focusOutEvent(QFocusEvent *event)
+{
+    setTabFocus(false);
+    DListView::focusOutEvent(event);
+}
+
+void LogListView::setTabFocus(bool iFocus)
+{
+    m_IsTabFocus = iFocus;
 }
 

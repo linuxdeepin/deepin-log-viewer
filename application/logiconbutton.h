@@ -35,6 +35,7 @@ protected:
     QSize sizeHint() const override;
     void resizeEvent(QResizeEvent *e)override;
     void mousePressEvent(QMouseEvent *e) override;
+    bool event(QEvent *e) override;
 };
 
 #endif  // MYICONBUTTON_H
