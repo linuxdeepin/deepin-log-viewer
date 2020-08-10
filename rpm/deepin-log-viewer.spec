@@ -36,7 +36,7 @@ BuildRequires:  qt5-qtbase-devel
 BuildRequires:  qt5-linguist
 BuildRequires:  dtkcore-devel
 BuildRequires:  qt5-qtsvg-devel
-BuildRequires: icu-devel
+BuildRequires: libicu-devel
 
 
 %description
