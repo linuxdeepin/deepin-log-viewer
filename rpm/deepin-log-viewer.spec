@@ -17,7 +17,7 @@ Release:        1
 Summary:        Log Viewer is a useful tool for viewing system logs.
 License:        GPLv3+
 URL:            https://uos-packages.deepin.com/uos/pool/main/d/deepin-log-viewer/
-Source0:        %{name}-%{version}.orig.tar.xz
+Source0:        %{name}_%{version}.orig.tar.xz
 
 
 BuildRequires: qt5-qtbase-devel
