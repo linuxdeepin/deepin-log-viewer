@@ -27,12 +27,12 @@
 #include <QMap>
 #include <QObject>
 #include <QProcess>
-#include <QThread>
+#include <QRunnable>
 #include <QMutexLocker>
 #include <QEventLoop>
 #include <QMutex>
 // class journalWork : public QObject
-class journalWork : public QThread
+class journalWork :  public QObject, public QRunnable
 {
     Q_OBJECT
 public:
@@ -54,19 +54,20 @@ public:
         return sin;
     }
 
-    void stopWork();
+
 
     void setArg(QStringList arg);
     void deleteSd();
     void run() override;
 
 signals:
-//    void journalFinished(QList<LOG_MSG_JOURNAL> list);
+    void journalData(QList<LOG_MSG_JOURNAL> list);
     void journalFinished();
 
 public slots:
     void doWork();
     QString getReplaceColorStr(const char *d);
+    void stopWork();
 public:
     QList<LOG_MSG_JOURNAL> logList;
     QMutex mutex;
@@ -82,6 +83,7 @@ private:
     static std::atomic<journalWork *> m_instance;
     static std::mutex m_mutex;
     QEventLoop loop;
+    bool m_canRun = false;
 
 };
 

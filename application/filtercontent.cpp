@@ -237,7 +237,11 @@ void FilterContent::initConnections()
 void FilterContent::shortCutExport()
 {
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
-    if (!itemData.isEmpty())
+    bool canExport = true;
+    if (exportBtn) {
+        canExport = exportBtn->isEnabled();
+    }
+    if (!itemData.isEmpty() && canExport)
         emit sigExportInfo();
 }
 
@@ -536,4 +540,12 @@ void FilterContent::slot_cbxLogTypeChanged(int idx)
 {
     emit sigLogtypeChanged(idx);
     qDebug() << "emit signal " + QString::number(idx);
+}
+
+void FilterContent::setExportButtonEnable(bool iEnable)
+{
+    if (exportBtn) {
+        exportBtn->setEnabled(iEnable);
+    }
+
 }

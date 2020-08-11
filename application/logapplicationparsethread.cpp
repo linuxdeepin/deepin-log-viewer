@@ -18,30 +18,60 @@ LogApplicationParseThread::LogApplicationParseThread(QObject *parent)
     initMap();
 }
 
+LogApplicationParseThread::~LogApplicationParseThread()
+{
+    if (m_process) {
+        m_process->kill();
+        m_process->close();
+        delete  m_process;
+        m_process = nullptr;
+    }
+
+}
+
 void LogApplicationParseThread::setParam(QString path, int lv, qint64 ms)
 {
     m_logPath = path;
     m_level = lv;
     m_periorTime = ms;
 }
+void LogApplicationParseThread::stopProccess()
+{
+    m_canRun = false;
+    if (m_process && m_process->isOpen()) {
+        m_process->readAll();
+        m_process->kill();
+    }
+}
 
 void LogApplicationParseThread::doWork()
 {
+    m_canRun = true;
     m_appList.clear();
+    initProccess();
 
-    QProcess *proc = new QProcess;
-    connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+
+
     if (m_logPath.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
         emit appCmdFinished(m_appList);
     } else {
         QStringList arg;
         arg << "-c" << QString("cat %1").arg(m_logPath);
 
-        proc->start("/bin/bash", arg);
-        proc->waitForFinished(-1);
-        QByteArray byteOutput = proc->readAllStandardOutput();
+        m_process->start("/bin/bash", arg);
+        m_process->waitForFinished(-1);
+        QByteArray byteOutput = m_process->readAllStandardOutput();
+        m_process->close();
+        if (!m_canRun) {
+            return;
+        }
+
         QString output(Utils::replaceEmptyByteArray(byteOutput));
         for (QString str : output.split('\n')) {
+            if (!m_canRun) {
+                return;
+            }
+
             LOG_MSG_APPLICATOIN msg;
 
             str.replace(QRegExp("\\s{2,}"), "");
@@ -89,12 +119,13 @@ void LogApplicationParseThread::doWork()
 
             m_appList.insert(0, msg);
         }
+        if (!m_canRun) {
+            return;
+        }
 
         emit appCmdFinished(m_appList);
     }
-    if (proc) {
-        delete  proc;
-    }
+
 
 }
 
@@ -154,6 +185,14 @@ void LogApplicationParseThread::initMap()
     m_levelDict.insert("Debug", DEB);
     m_levelDict.insert("Info", INF);
     m_levelDict.insert("Error", ERR);
+}
+
+void LogApplicationParseThread::initProccess()
+{
+    if (!m_process) {
+        m_process = new QProcess;
+    }
+
 }
 
 void LogApplicationParseThread::run()

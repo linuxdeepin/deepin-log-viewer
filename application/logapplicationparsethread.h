@@ -6,13 +6,13 @@
 #include <QThread>
 #include <mutex>
 #include "structdef.h"
-
+class QProcess;
 class LogApplicationParseThread : public QThread
 {
     Q_OBJECT
 public:
     explicit LogApplicationParseThread(QObject *parent = nullptr);
-
+    ~LogApplicationParseThread() override;
     static LogApplicationParseThread *instance()
     {
         LogApplicationParseThread *sin = m_instance.load();
@@ -36,10 +36,10 @@ public slots:
     void doWork();
 
     void onProcFinished(int ret);
-
+    void stopProccess();
 protected:
     void initMap();
-
+    void initProccess();
     void run() override;
 
 private:
@@ -50,7 +50,8 @@ private:
     int padding {0};
 
     QMap<QString, int> m_levelDict;  // example:warning=>4
-
+    QProcess *m_process = nullptr;
+    bool m_canRun = false;
     QList<LOG_MSG_APPLICATOIN> m_appList;
 
     static std::atomic<LogApplicationParseThread *> m_instance;

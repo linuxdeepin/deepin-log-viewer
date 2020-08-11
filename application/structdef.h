@@ -76,6 +76,16 @@ struct XORG_FILTERS {
 struct DKPG_FILTERS {
     qint64 timeFilter ;
 };
+struct BOOT_FILTERS {
+    QString searchstr;
+    QString statusFilter;
+
+};
+struct NORMAL_FILTERS {
+    QString searchstr;
+    int eventTypeFilter;
+
+};
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 
 enum BUTTONID {
