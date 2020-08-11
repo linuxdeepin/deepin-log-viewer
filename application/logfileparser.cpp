@@ -75,23 +75,54 @@ void LogFileParser::parseByJournal(QStringList arg)
 //        return;
 //    }
     m_isJournalLoading = true;
-//    if (work && work->isRunning()) {
-//        work->stopWork();
-//        // quitLogAuththread(work);
-//        work->quit();
-//        work->wait();
+//    if (m_currentJournalWork && m_currentJournalWork->isRunning()) {
+//        m_currentJournalWork->stopWork();
+//        m_currentJournalWork->mutex.unlock();
+//        m_currentJournalWork->quit();
+//        m_currentJournalWork->wait();
 
 //    }
+#if 0
+    m_currentJournalWork = journalWork::instance();
 
-    work = journalWork::instance();
-
-    //    work = new journalWorkd();
-    disconnect(work, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()));
-    work->setArg(arg);
-    connect(work, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()),
+    m_currentJournalWork->stopWork();
+//    journalWork   *work = new journalWork();
+//    m_currentJournalWork = work;
+    disconnect(m_currentJournalWork, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()));
+    disconnect(m_currentJournalWork, &journalWork::journalData, this, &LogFileParser::journalData);
+    m_currentJournalWork->setArg(arg);
+    connect(m_currentJournalWork, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()),
             Qt::QueuedConnection);
-    //work->start();
-    QtConcurrent::run(work, &journalWork::doWork);
+    connect(m_currentJournalWork, &journalWork::journalData, this, &LogFileParser::slot_journalData,
+            Qt::QueuedConnection);
+    connect(this, &LogFileParser::stopJournal, this, [ = ] {
+        if (m_currentJournalWork)
+        {
+            disconnect(m_currentJournalWork, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()));
+            disconnect(m_currentJournalWork, &journalWork::journalData, this, &LogFileParser::slot_journalData);
+        }
+    });
+    m_currentJournalWork->start();
+    //QtConcurrent::run(work, &journalWork::doWork);
+    // QThreadPool::globalInstance()->start(work);
+
+#endif
+#if 1
+    emit stopJournal();
+    journalWork *work = new journalWork();
+    m_currentJournalWork = work;
+
+    work->setArg(arg);
+    auto a = connect(work, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()),
+                     Qt::QueuedConnection);
+    auto b = connect(work, &journalWork::journalData, this, &LogFileParser::slot_journalData,
+                     Qt::QueuedConnection);
+
+    connect(this, &LogFileParser::stopJournal, work, &journalWork::stopWork);
+
+    //QtConcurrent::run(work, &journalWork::doWork);
+    QThreadPool::globalInstance()->start(work);
+#endif
 }
 
 void LogFileParser::parseByDpkg(qint64 ms)
@@ -240,7 +271,9 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
     QString a_name = "~";
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
+        qDebug() << value.ut_name << value.ut_type;
         if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
+            //   if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
             continue;
         }
 
@@ -389,9 +422,9 @@ void LogFileParser::parseByKern(qint64 ms)
 
 void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 {
-    if (m_isAppLoading) {
-        return;
-    }
+//    if (m_isAppLoading) {
+//        return;
+//    }
     stopAllLoad();
     m_isAppLoading = true;
 
@@ -400,12 +433,14 @@ void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 
     disconnect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
                SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
-
+    disconnect(this, &LogFileParser::stopApp, m_appThread,
+               &LogApplicationParseThread::stopProccess);
     m_appThread->setParam(path, lv, ms);
 
     connect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
             SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
-
+    connect(this, &LogFileParser::stopApp, m_appThread,
+            &LogApplicationParseThread::stopProccess);
     m_appThread->start();
 }
 
@@ -434,6 +469,7 @@ void LogFileParser::stopAllLoad()
 //    }
     emit stopBoot();
     emit stopKern();
+    emit stopApp();
     return;
 //    if (work && work->isRunning())
 //        work->terminate();
@@ -479,6 +515,7 @@ void LogFileParser::quitLogAuththread(QThread *iThread)
 {
     if (iThread && iThread->isRunning()) {
         //  iThread->terminate();
+        qDebug() << __FUNCTION__;
         iThread->quit();
         iThread->wait();
     }
@@ -491,10 +528,21 @@ void LogFileParser::slot_journalFinished()
 
 }
 
+void LogFileParser::slot_journalData(QList<LOG_MSG_JOURNAL> iJournalList)
+{
+    if (sender() == m_currentJournalWork) {
+        emit journalData(iJournalList);
+    }
+
+}
+
 void LogFileParser::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList)
 {
     m_isAppLoading = false;
+
     emit applicationFinished(iAppList);
+
+
 }
 
 #include <unistd.h>

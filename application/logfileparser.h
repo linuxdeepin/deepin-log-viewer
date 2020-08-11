@@ -59,12 +59,14 @@ signals:
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kernFinished(QList<LOG_MSG_JOURNAL>);
     void journalFinished();
+    void journalData(QList<LOG_MSG_JOURNAL>);
     void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
     void normalFinished();  // add by Airy
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
     void stopKern();
     void stopBoot();
-
+    void stopApp();
+    void stopJournal();
 
 private:
     qint64 formatDateTime(QString m, QString d, QString t);
@@ -73,6 +75,7 @@ signals:
 
 public slots:
     void slot_journalFinished();
+    void slot_journalData(QList<LOG_MSG_JOURNAL> iJournalList);
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slot_kernFinished(LOG_FLAG flag, QString output);
     void slot_bootFinished(LOG_FLAG flag, QString output);
@@ -85,7 +88,7 @@ private:
     QMap<QString, int> m_levelDict;  // example:warning=>4
 
     LogApplicationParseThread *m_appThread {nullptr};
-    journalWork *work {nullptr};
+    journalWork *m_currentJournalWork {nullptr};
     QProcess *m_pDkpgDataLoader{nullptr};
     QProcess *m_pXlogDataLoader{nullptr};
     QProcess *m_KwinDataLoader{nullptr};

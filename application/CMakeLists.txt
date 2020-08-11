@@ -113,7 +113,6 @@ set (APP_CPP_FILES
      logfileparser.cpp
      logtreeview.cpp
      journalwork.cpp
-     logexportwidget.cpp
      utils.cpp
      loglistview.cpp
      logperiodbutton.cpp
@@ -125,6 +124,7 @@ set (APP_CPP_FILES
      logauththread.cpp
      logapplicationhelper.cpp
      logapplicationparsethread.cpp
+     logexportthread.cpp
      model/log_sort_filter_proxy_model.cpp
      common/collator.cpp
     )
@@ -208,7 +208,6 @@ set (APP_HEADERS_FILES
     structdef.h
     logtreeview.h
     journalwork.h
-    logexportwidget.h
     utils.h
     loglistview.h
     logperiodbutton.h

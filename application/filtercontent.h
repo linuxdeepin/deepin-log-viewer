@@ -75,7 +75,7 @@ public slots:
     void slot_cbxAppIdxChanged(int idx);
     void slot_cbxStatusChanged(int idx);
     void slot_cbxLogTypeChanged(int idx);  // add  by Airy
-
+    void setExportButtonEnable(bool iEnable);
 private:
     QButtonGroup *m_btnGroup;
     Dtk::Widget::DLabel *lvTxt;
