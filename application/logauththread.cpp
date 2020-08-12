@@ -12,6 +12,7 @@ LogAuthThread::LogAuthThread(QObject *parent)
 
 {
     setAutoDelete(true);
+
 }
 
 LogAuthThread::~LogAuthThread()

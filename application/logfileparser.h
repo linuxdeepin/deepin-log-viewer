@@ -75,7 +75,7 @@ signals:
 
 public slots:
     void slot_journalFinished();
-    void slot_journalData(QList<LOG_MSG_JOURNAL> iJournalList);
+    void slot_journalData(int index, QList<LOG_MSG_JOURNAL> iJournalList);
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slot_kernFinished(LOG_FLAG flag, QString output);
     void slot_bootFinished(LOG_FLAG flag, QString output);
@@ -88,7 +88,7 @@ private:
     QMap<QString, int> m_levelDict;  // example:warning=>4
 
     LogApplicationParseThread *m_appThread {nullptr};
-    journalWork *m_currentJournalWork {nullptr};
+    journalWork *m_currentJournalWork {nullptr}, *m_tempJournalWork {nullptr};
     QProcess *m_pDkpgDataLoader{nullptr};
     QProcess *m_pXlogDataLoader{nullptr};
     QProcess *m_KwinDataLoader{nullptr};

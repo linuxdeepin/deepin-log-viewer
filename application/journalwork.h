@@ -35,6 +35,7 @@
 class journalWork :  public QObject, public QRunnable
 {
     Q_OBJECT
+
 public:
     explicit journalWork(QStringList arg, QObject *parent = nullptr);
     explicit journalWork(QObject *parent = nullptr);
@@ -61,16 +62,19 @@ public:
     void run() override;
 
 signals:
-    void journalData(QList<LOG_MSG_JOURNAL> list);
+    void journalData(int aaaindex, QList<LOG_MSG_JOURNAL> list);
     void journalFinished();
 
 public slots:
     void doWork();
     QString getReplaceColorStr(const char *d);
     void stopWork();
+    int getIndex();
+    void setIndex(int iIndex);
 public:
     QList<LOG_MSG_JOURNAL> logList;
     QMutex mutex;
+    static int thread_index ;
 private:
     QString getDateTimeFromStamp(QString str);
     void initMap();
@@ -84,6 +88,7 @@ private:
     static std::mutex m_mutex;
     QEventLoop loop;
     bool m_canRun = false;
+
 
 };
 
