@@ -29,14 +29,12 @@ BuildRequires: qt5-qtmultimedia-devel
 BuildRequires: qt5-qtx11extras-devel
 BuildRequires: systemd-devel
 BuildRequires: cmake
-BuildRequires: pkg-config
-BuildRequires: qt5-default
 BuildRequires:  qt5-qtbase-private-devel
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  qt5-linguist
 BuildRequires:  dtkcore-devel
 BuildRequires:  qt5-qtsvg-devel
-BuildRequires: libicu-devel
+
 
 
 %description
