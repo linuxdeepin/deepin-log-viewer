@@ -46,6 +46,7 @@ journalWork::journalWork(QStringList arg, QObject *parent)
     m_arg.append("json");
     if (!arg.isEmpty())
         m_arg.append(arg);
+    thread_index++;
 }
 
 journalWork::journalWork(QObject *parent)
@@ -56,6 +57,7 @@ journalWork::journalWork(QObject *parent)
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     initMap();
     setAutoDelete(true);
+    thread_index++;
 }
 
 journalWork::~journalWork()
@@ -71,6 +73,16 @@ void journalWork::stopWork()
     //requestInterruption();
     m_canRun = false;
     // deleteSd();
+}
+
+int journalWork::getIndex()
+{
+    return thread_index;
+}
+
+void journalWork::setIndex(int iIndex)
+{
+    thread_index = iIndex;
 }
 
 void journalWork::setArg(QStringList arg)
@@ -228,7 +240,8 @@ void journalWork::doWork()
 
         if (cnt % 500 == 0) {
             mutex.lock();
-            emit journalData(logList);
+            int current_index = thread_index;
+            emit journalData(current_index, logList);
             logList.clear();
             //sleep(100);
             mutex.unlock();
@@ -249,8 +262,11 @@ void journalWork::doWork()
 //            return;
 //        }
     }
-    if (logList.count() >= 0)
-        emit journalData(logList);
+    if (logList.count() >= 0) {
+        int current_index = thread_index;
+        emit journalData(current_index, logList);
+    }
+
     emit journalFinished();
 //第一次加载时这个之后的代码都不执行?故放到最后
     deleteSd();

@@ -1089,25 +1089,25 @@ void DisplayContent::slot_kwinFinished(QList<LOG_MSG_KWIN> list)
 
 void DisplayContent::slot_journalFinished()
 {
-    if (m_flag != JOURNAL) {
-        journalWork::instance()->mutex.unlock();
-        return;
-    }
-    if (journalWork::instance()->logList.isEmpty()) {
-        setLoadState(DATA_COMPLETE);
-        createJournalTableStart(jList);
-        journalWork::instance()->mutex.unlock();
-        return;
-    }
-    jList.append(journalWork::instance()->logList);
-    jListOrigin.append(journalWork::instance()->logList);
-    //    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
-    journalWork::instance()->logList.clear();
-    journalWork::instance()->mutex.unlock();
-    if (m_firstLoadPageData) {
-        createJournalTableStart(jList);
-        m_firstLoadPageData = false;
-    }
+//    if (m_flag != JOURNAL) {
+//        journalWork::instance()->mutex.unlock();
+//        return;
+//    }
+//    if (journalWork::instance()->logList.isEmpty()) {
+//        setLoadState(DATA_COMPLETE);
+//        createJournalTableStart(jList);
+//        journalWork::instance()->mutex.unlock();
+//        return;
+//    }
+//    jList.append(journalWork::instance()->logList);
+//    jListOrigin.append(journalWork::instance()->logList);
+//    //    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
+//    journalWork::instance()->logList.clear();
+//    journalWork::instance()->mutex.unlock();
+//    if (m_firstLoadPageData) {
+//        createJournalTableStart(jList);
+//        m_firstLoadPageData = false;
+//    }
     // qDebug() << "jList" << jList.count();
 
 

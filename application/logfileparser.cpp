@@ -38,7 +38,7 @@
 
 
 DWIDGET_USE_NAMESPACE
-
+int journalWork::thread_index = 0;
 LogFileParser::LogFileParser(QWidget *parent)
     : QObject(parent)
 {
@@ -63,6 +63,9 @@ LogFileParser::LogFileParser(QWidget *parent)
     qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
     qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
     qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
+    m_tempJournalWork = new journalWork(this);
+
+
 
 }
 
@@ -524,17 +527,20 @@ void LogFileParser::quitLogAuththread(QThread *iThread)
 void LogFileParser::slot_journalFinished()
 {
     m_isJournalLoading = false;
+    //sender()->deleteLater();
     emit journalFinished();
 
 }
 
-void LogFileParser::slot_journalData(QList<LOG_MSG_JOURNAL> iJournalList)
+void LogFileParser::slot_journalData(int index, QList<LOG_MSG_JOURNAL> iJournalList)
 {
-    if (sender() == m_currentJournalWork) {
+
+    if (index == m_tempJournalWork->getIndex()) {
+        qDebug() << "LogFileParser data sig";
         emit journalData(iJournalList);
     }
-
 }
+
 
 void LogFileParser::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList)
 {
