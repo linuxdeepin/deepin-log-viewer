@@ -20,19 +20,24 @@ URL:            https://uos-packages.deepin.com/uos/pool/main/d/deepin-log-viewe
 Source0:        %{name}_%{version}.orig.tar.xz
 
 
-BuildRequires: qt5-qtbase-devel
 BuildRequires: dtkwidget-devel
 BuildRequires: dtkgui-devel
+BuildRequires: dtkcore-devel
+BuildRequires: deepin-gettext-tools
 BuildRequires: qt5-linguist
 BuildRequires: qt5-qtmultimedia-devel
 BuildRequires: qt5-qtx11extras-devel
 BuildRequires: systemd-devel
 BuildRequires: cmake
+##BuildRequires: pkg-config
+##BuildRequires: qt5-default
+BuildRequires:  qt5
 BuildRequires:  qt5-qtbase-private-devel
 BuildRequires:  qt5-qtbase-devel
-BuildRequires:  qt5-linguist
-BuildRequires:  dtkcore-devel
 BuildRequires:  qt5-qtsvg-devel
+BuildRequires: libicu-devel
+
+
 
 
 
