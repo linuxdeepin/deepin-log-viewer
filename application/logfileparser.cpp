@@ -536,7 +536,6 @@ void LogFileParser::slot_journalData(int index, QList<LOG_MSG_JOURNAL> iJournalL
 {
 
     if (index == m_tempJournalWork->getIndex()) {
-        qDebug() << "LogFileParser data sig";
         emit journalData(iJournalList);
     }
 }
