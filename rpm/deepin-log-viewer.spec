@@ -23,7 +23,6 @@ Source0:        %{name}_%{version}.orig.tar.xz
 BuildRequires: qt5-qtbase-devel
 BuildRequires: dtkwidget-devel
 BuildRequires: dtkgui-devel
-BuildRequires: deepin-gettext-tools
 BuildRequires: qt5-linguist
 BuildRequires: qt5-qtmultimedia-devel
 BuildRequires: qt5-qtx11extras-devel
