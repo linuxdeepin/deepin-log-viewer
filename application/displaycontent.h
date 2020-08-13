@@ -21,15 +21,6 @@
 
 #ifndef DISPLAYCONTENT_H
 #define DISPLAYCONTENT_H
-
-#include <DApplicationHelper>
-#include <DIconButton>
-#include <DLabel>
-#include <DSpinner>
-#include <DTableView>
-#include <DTextBrowser>
-#include <QStandardItemModel>
-#include <QWidget>
 #include "filtercontent.h"  //add by Airy
 #include "logdetailinfowidget.h"
 #include "logfileparser.h"
@@ -37,6 +28,17 @@
 #include "logspinnerwidget.h"
 #include "logtreeview.h"
 #include "structdef.h"
+
+#include <DApplicationHelper>
+#include <DIconButton>
+#include <DLabel>
+#include <DSpinner>
+#include <DTableView>
+#include <DTextBrowser>
+
+#include <QStandardItemModel>
+#include <QWidget>
+#include <QDateTime>
 
 
 class ExportProgressDlg;
@@ -52,7 +54,7 @@ class DisplayContent : public Dtk::Widget::DWidget
 public:
     explicit DisplayContent(QWidget *parent = nullptr);
     ~DisplayContent();
-
+    QList<QWidget *> tabOrderWidgets();
 
 private:
     void initUI();
@@ -121,7 +123,7 @@ public slots:
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
     void slot_kwinFinished(QList<LOG_MSG_KWIN> list);
     void slot_journalFinished();
-    void slot_journalData(QList<LOG_MSG_JOURNAL> list);
+    void slot_journalData(int index, QList<LOG_MSG_JOURNAL> list);
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
     void slot_NormalFinished();  // add by Airy
 
@@ -199,7 +201,9 @@ private:
     NORMAL_FILTERS m_normalFilter = {"", -1};
     int m_treeViewLastScrollValue = -1;
     DisplayContent::LOAD_STATE m_state;
-
+    QDateTime m_lastJournalGetTime{QDateTime::fromTime_t(0)};
+    JOURNAL_FILTERS m_journalFilter{-99, -99};
+    int m_journalCurrentIndex{-1};
 };
 
 #endif  // DISPLAYCONTENT_H

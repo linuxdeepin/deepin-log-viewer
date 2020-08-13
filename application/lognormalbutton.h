@@ -12,6 +12,7 @@ public:
     LogNormalButton(const QIcon &icon, const QString &text, QWidget *parent = nullptr);
 protected:
     void keyPressEvent(QKeyEvent *event) override;
+    void  keyReleaseEvent(QKeyEvent *event)override;
     void paintEvent(QPaintEvent *e) override;
     void focusInEvent(QFocusEvent *event)override;
 private:

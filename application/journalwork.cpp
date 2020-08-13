@@ -46,6 +46,8 @@ journalWork::journalWork(QStringList arg, QObject *parent)
     m_arg.append("json");
     if (!arg.isEmpty())
         m_arg.append(arg);
+    thread_index++;
+    m_threadIndex = thread_index;
 }
 
 journalWork::journalWork(QObject *parent)
@@ -56,6 +58,8 @@ journalWork::journalWork(QObject *parent)
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     initMap();
     setAutoDelete(true);
+    thread_index++;
+    m_threadIndex = thread_index;
 }
 
 journalWork::~journalWork()
@@ -72,6 +76,17 @@ void journalWork::stopWork()
     m_canRun = false;
     // deleteSd();
 }
+
+int journalWork::getIndex()
+{
+    return m_threadIndex;
+}
+
+int journalWork::getPublicIndex()
+{
+    return thread_index;
+}
+
 
 void journalWork::setArg(QStringList arg)
 {
@@ -90,6 +105,7 @@ void journalWork::deleteSd()
 {
 
     qDebug() << "deleteSd";
+
 //    if (j) {
 //        sd_journal_close(j);
 //        j = nullptr;
@@ -125,6 +141,7 @@ void journalWork::doWork()
     r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
     if ((!m_canRun)) {
         mutex.unlock();
+        sd_journal_close(j);
         deleteSd();
         return;
     }
@@ -135,6 +152,7 @@ void journalWork::doWork()
     sd_journal_seek_tail(j);
     if ((!m_canRun)) {
         mutex.unlock();
+        sd_journal_close(j);
         deleteSd();
         return;
     }
@@ -147,6 +165,7 @@ void journalWork::doWork()
     }
     if ((!m_canRun)) {
         mutex.unlock();
+        sd_journal_close(j);
         deleteSd();
         return;
     }
@@ -155,6 +174,7 @@ void journalWork::doWork()
         // if (isInterruptionRequested() || (!m_canRun)) {
         if ((!m_canRun)) {
             mutex.unlock();
+            sd_journal_close(j);
             deleteSd();
             return;
         }
@@ -228,7 +248,7 @@ void journalWork::doWork()
 
         if (cnt % 500 == 0) {
             mutex.lock();
-            emit journalData(logList);
+            emit journalData(m_threadIndex, logList);
             logList.clear();
             //sleep(100);
             mutex.unlock();
@@ -249,8 +269,10 @@ void journalWork::doWork()
 //            return;
 //        }
     }
-    if (logList.count() >= 0)
-        emit journalData(logList);
+    if (logList.count() >= 0) {
+        emit journalData(m_threadIndex, logList);
+    }
+
     emit journalFinished();
 //第一次加载时这个之后的代码都不执行?故放到最后
     deleteSd();

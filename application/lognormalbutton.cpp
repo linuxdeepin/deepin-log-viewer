@@ -2,6 +2,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QStylePainter>
+#include <QEvent>
 
 #include <DStyle>
 #include <DApplication>
@@ -26,15 +27,28 @@ LogNormalButton::LogNormalButton(const QIcon &icon, const QString &text, QWidget
 
 void LogNormalButton::keyPressEvent(QKeyEvent *event)
 {
-
     if ((event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)) {
-        this->clicked();
+        QKeyEvent spaceEvent(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier, 65, 32, 16, " ", event->isAutoRepeat(), static_cast<ushort>(event->count()));
+        DApplication::sendEvent(this, &spaceEvent);
+        return;
     }
     DPushButton::keyPressEvent(event);
 }
 
+void LogNormalButton::keyReleaseEvent(QKeyEvent *event)
+{
+    if ((event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)) {
+        QKeyEvent spaceEvent(QEvent::KeyRelease, Qt::Key_Space, Qt::NoModifier, 65, 32, 16, " ", event->isAutoRepeat(), static_cast<ushort>(event->count()));
+        DApplication::sendEvent(this, &spaceEvent);
+        return;
+
+    }
+    DPushButton::keyReleaseEvent(event);
+}
+
 void LogNormalButton::paintEvent(QPaintEvent *e)
 {
+    Q_UNUSED(e)
     DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
     QStyleOptionButton btn;
     initStyleOption(&btn);

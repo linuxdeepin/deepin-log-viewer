@@ -449,6 +449,8 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
     }
     return DFrame::eventFilter(obj, event);
 }
+
+
 //自适应宽度
 void FilterContent::resizeWidth()
 {

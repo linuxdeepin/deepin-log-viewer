@@ -37,7 +37,6 @@
 #include <DMessageManager>
 
 #include <QAbstractItemView>
-#include <QDateTime>
 #include <QDebug>
 #include <QHeaderView>
 #include <QtConcurrent>
@@ -49,6 +48,7 @@
 #include <QThread>
 #include <QVBoxLayout>
 #include <QElapsedTimer>
+#include <QDateTime>
 
 #include <sys/utsname.h>
 #include "malloc.h"
@@ -199,6 +199,18 @@ void DisplayContent::initConnections()
 void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
+    if (m_lastJournalGetTime.msecsTo(QDateTime::currentDateTime()) < 500 && m_journalFilter.timeFilter == id && m_journalFilter.eventTypeFilter == lId) {
+        qDebug() << "repeat refrsh journal too fast!";
+        QItemSelectionModel *p = m_treeView->selectionModel();
+        if (p)
+            p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+        slot_tableItemClicked(m_pModel->index(0, 0));
+        return;
+    }
+    m_lastJournalGetTime = QDateTime::currentDateTime();
+    m_journalFilter.timeFilter = id;
+    m_journalFilter.eventTypeFilter = lId;
+    m_firstLoadPageData = true;
     clearAllFilter();
     clearAllDatalist();
     m_firstLoadPageData = true;
@@ -217,37 +229,37 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     }
     switch (id) {
     case ALL: {
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_DAY: {
         //        arg << "--since" << dt.toString("yyyy-MM-dd");
         arg << QString::number(dt.toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_DAYS: {
         //        QString t = dt.addDays(-2).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
         arg << QString::number(dt.addDays(-2).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_WEEK: {
         //        QString t = dt.addDays(-6).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
 
         arg << QString::number(dt.addDays(-6).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =   m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_MONTH: {
         //        QString t = dt.addDays(-29).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
         arg << QString::number(dt.addDays(-29).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =    m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_MONTHS: {
         //        QString t = dt.addDays(-89).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
         arg << QString::number(dt.addDays(-89).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     default:
         break;
@@ -742,6 +754,11 @@ bool DisplayContent::isAuthProcessAlive()
     return !(ret = (rslt == 0));
 }
 
+QList<QWidget *> DisplayContent::tabOrderWidgets()
+{
+    return  QList<QWidget *>() << m_treeView;
+}
+
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
     emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
@@ -1106,31 +1123,31 @@ void DisplayContent::slot_kwinFinished(QList<LOG_MSG_KWIN> list)
 
 void DisplayContent::slot_journalFinished()
 {
-    if (m_flag != JOURNAL) {
-        journalWork::instance()->mutex.unlock();
-        return;
-    }
-    if (journalWork::instance()->logList.isEmpty()) {
-        setLoadState(DATA_COMPLETE);
-        createJournalTableStart(jList);
-        journalWork::instance()->mutex.unlock();
-        return;
-    }
-    jList.append(journalWork::instance()->logList);
-    jListOrigin.append(journalWork::instance()->logList);
-    //    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
-    journalWork::instance()->logList.clear();
-    journalWork::instance()->mutex.unlock();
-    if (m_firstLoadPageData) {
-        createJournalTableStart(jList);
-        m_firstLoadPageData = false;
-    }
-    // qDebug() << "jList" << jList.count();
+//    if (m_flag != JOURNAL) {
+//        journalWork::instance()->mutex.unlock();
+//        return;
+//    }
+//    if (journalWork::instance()->logList.isEmpty()) {
+//        setLoadState(DATA_COMPLETE);
+//        createJournalTableStart(jList);
+//        journalWork::instance()->mutex.unlock();
+//        return;
+//    }
+//    jList.append(journalWork::instance()->logList);
+//    jListOrigin.append(journalWork::instance()->logList);
+//    //    qDebug() << "&&&&&&&&&&&&&&&" << journalWork::instance()->logList.count();
+//    journalWork::instance()->logList.clear();
+//    journalWork::instance()->mutex.unlock();
+//    if (m_firstLoadPageData) {
+//        createJournalTableStart(jList);
+//        m_firstLoadPageData = false;
+//    }
+//    // qDebug() << "jList" << jList.count();
 }
 
-void DisplayContent::slot_journalData(QList<LOG_MSG_JOURNAL> list)
+void DisplayContent::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
 {
-    if (m_flag != JOURNAL)
+    if (m_flag != JOURNAL || index != m_journalCurrentIndex)
         return;
     if (list.isEmpty()) {
         setLoadState(DATA_COMPLETE);

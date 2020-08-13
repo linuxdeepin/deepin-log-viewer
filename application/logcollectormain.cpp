@@ -30,6 +30,7 @@
 #include <QStandardItemModel>
 #include <QSizePolicy>
 #include <QList>
+#include <QKeyEvent>
 //958+53+50 976
 #define MAINWINDOW_WIDTH 1024
 #define MAINWINDOW_HEIGHT 736
@@ -47,6 +48,7 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
     m_logCatelogue->setDefaultSelect();
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
     initKeyBoardSwitchOrder();
+
 }
 
 LogCollectorMain::~LogCollectorMain()
@@ -62,7 +64,7 @@ void LogCollectorMain::initUI()
 {
     /** add searchEdit */
     m_searchEdt = new DSearchEdit;
-    m_searchEdt->setFocusPolicy(Qt::TabFocus);
+    // m_searchEdt->setFocusPolicy(Qt::TabFocus);
     m_searchEdt->setPlaceHolder(DApplication::translate("SearchBar", "Search"));
     m_searchEdt->setMaximumWidth(400);
     titlebar()->setCustomWidget(m_searchEdt, true);
@@ -249,50 +251,22 @@ void LogCollectorMain::initShortCut()
 
 void LogCollectorMain::initKeyBoardSwitchOrder()
 {
-    //setTabOrder(m_searchEdt,  titlebar());
-    setTabOrder(m_midRightWgt, titlebar());
-//    QList<QWidget *>pwList =  this->titlebar()->findChildren<QWidget *>(QString(), Qt::FindChildrenRecursively);
-//    QWidget *baseArea = nullptr;
-//    QWidget    *minButton = nullptr;
-//    QWidget    *maxButton = nullptr;
-//    QWidget  *closeButton = nullptr;
-//    QWidget *optionButton = nullptr;
-//    QWidget        *quitFullButton = nullptr;
-//    foreach (QWidget *item, pwList) {
-//        qDebug() << "obj" << item->objectName();
-//        if (item->objectName() == "DTitlebarDWindowOptionButton") {
-//            optionButton = item;
-//        } else if (item->objectName() == "DTitlebarDWindowMinButton") {
-//            minButton = item;
-//        } else if (item->objectName() == "DTitlebarDWindowMaxButton") {
-//            maxButton = item;
-//        } else if (item->objectName() == "DTitlebarDWindowQuitFullscreenButton") {
-//            quitFullButton = item;
-//        } else if (item->objectName() == "DTitlebarDWindowCloseButton") {
-//            closeButton = item;
-//        }
-////        QList<DIconButton *>pwChildList =  item->findChildren<DIconButton *>(QString(), Qt::FindDirectChildrenOnly);
-////        foreach (DIconButton *childItem, pwChildList) {
-////            if (childItem->objectName() == "DTitlebarDWindowMinButton") {
-////                baseArea = item;
-////                break;
-////            }
-////            if (baseArea) {
-////                break;
-////            }
-////        }
 
-//    }
-//    setTabOrder(m_searchEdt, optionButton);
-//    //    setTabOrder(optionButton, minButton);
-//    //    setTabOrder(minButton, maxButton);
-//    //    setTabOrder(maxButton, closeButton);
-////    setTabOrder(m_searchEdt, optionButton);
-//    if (baseArea) {
-//        qDebug() << "1111111111";
-//        setTabOrder(m_searchEdt, baseArea);
-//    }
-
+    m_searchEdt->installEventFilter(this);
+    m_searchEdt->setObjectName("m_searchEdt");
+    m_topRightWgt->installEventFilter(this);
+    m_topRightWgt->setObjectName("FilterContent");
+    m_logCatelogue->installEventFilter(this);
+    m_logCatelogue->setObjectName("LogListView");
+    m_midRightWgt->installEventFilter(this);
+    m_midRightWgt->setObjectName("DisplayContent");
+    titlebar()->installEventFilter(this);
+    titlebar()->setObjectName("titlebar");
+    m_focusWidgetOrder << m_searchEdt << titlebar() << m_logCatelogue << m_topRightWgt << m_midRightWgt->tabOrderWidgets();
+    qDebug() << "m_searchEdt->focusProxy()" << m_searchEdt->focusProxy();
+    setTabOrder(0, m_searchEdt->focusProxy());
+    setTabOrder(m_searchEdt->focusProxy(), titlebar()->focusProxy());
+    setTabOrder(m_midRightWgt->tabOrderWidgets().first()->focusProxy(), m_searchEdt->focusProxy());
 }
 
 void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
@@ -310,21 +284,31 @@ void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
 
 bool LogCollectorMain::eventFilter(QObject *obj, QEvent *evt)
 {
-    this->titlebar();
     switch (evt->type()) {
-    case QEvent::TouchBegin: {
-        qDebug() << "11111";
+    case QEvent::KeyPress: {
 
-        break;
-    }
-    case QEvent::TouchUpdate: {
-        qDebug() << "2222";
-        break;
-    }
-    case QEvent::TouchEnd: {
-        qDebug() << "33333333";
+//        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(evt);
+//        if (keyEvent->key() == Qt::Key_Tab) {
+//            qDebug() << "Key_Tab";
+//            if (keyEvent->modifiers() == Qt::ShiftModifier) {
+//                setNextTabFocus(obj, false);
+//                return true;
+//            } else if (keyEvent->modifiers() == Qt::NoModifier) {
+//                setNextTabFocus(obj, true);
+//                return true;
+//            }
+//        }
+//        qDebug() << "KeyPress---" << obj->objectName() << Qt::Key(keyEvent->key());
 
-        break;
+//        break;
+    }
+    case QEvent::FocusIn: {
+
+//        if (obj == m_searchEdt) {
+//            m_searchEdt->setFocus();
+//        }
+        // QFocusEvent *focusEvent = static_cast<QFocusEvent *>(evt);
+
     }
 //    case QEvent::ScrollPrepare: {
 //        QScrollPrepareEvent *touchEvent = static_cast<QScrollPrepareEvent *>(e);
@@ -339,6 +323,47 @@ bool LogCollectorMain::eventFilter(QObject *obj, QEvent *evt)
 
     }
     return  DMainWindow::eventFilter(obj, evt);
+}
+
+void LogCollectorMain::setNextTabFocus(QObject *obj, bool isNext)
+{
+    if (m_focusWidgetOrder.count() < 2) {
+        return;
+    }
+    int focusIndex = -1;
+    qDebug() << obj->objectName();
+    for (int i = 0; i < m_focusWidgetOrder.length(); ++i) {
+        if (obj == m_focusWidgetOrder.value(i)) {
+            if (isNext) {
+                int nextIndex = 0;
+                if (i + 1 > m_focusWidgetOrder.count() - 1) {
+                    nextIndex = 0;
+                } else {
+                    nextIndex = i + 1;
+                }
+                focusIndex = nextIndex;
+            } else {
+                int preIndex = 0;
+                if (i - 1 < 0) {
+                    preIndex = m_focusWidgetOrder.count() - 1;
+                } else {
+                    preIndex = i - 1;
+                }
+                focusIndex = preIndex;
+
+            }
+            break;
+        }
+
+    }
+
+    if (focusIndex >= 0) {
+        m_focusWidgetOrder.value(focusIndex)->setFocus(Qt::TabFocusReason);
+    } else {
+        qDebug() << "first---------" << m_focusWidgetOrder.first()->objectName();
+        m_focusWidgetOrder.first()->setFocus(Qt::TabFocusReason);
+    }
+
 }
 
 

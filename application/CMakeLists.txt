@@ -131,6 +131,7 @@ set (APP_CPP_FILES
      model/log_sort_filter_proxy_model.cpp
      logcombox.cpp
      lognormalbutton.cpp
+     logsearchedit.cpp
      common/collator.cpp
     )
 set (APP_QRC_FILES
