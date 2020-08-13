@@ -37,7 +37,7 @@ public:
     explicit LogFileParser(QWidget *parent = nullptr);
     ~LogFileParser();
 
-    void parseByJournal(QStringList arg = QStringList());
+    int parseByJournal(QStringList arg = QStringList());
     void parseByDpkg(qint64 ms = 0);
 #if 0
     void parseByXlog(QStringList &xList);
@@ -59,7 +59,7 @@ signals:
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kernFinished(QList<LOG_MSG_JOURNAL>);
     void journalFinished();
-    void journalData(QList<LOG_MSG_JOURNAL>);
+    void journalData(int index, QList<LOG_MSG_JOURNAL>);
     void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
     void normalFinished();  // add by Airy
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
@@ -75,7 +75,6 @@ signals:
 
 public slots:
     void slot_journalFinished();
-    void slot_journalData(int index, QList<LOG_MSG_JOURNAL> iJournalList);
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slot_kernFinished(LOG_FLAG flag, QString output);
     void slot_bootFinished(LOG_FLAG flag, QString output);

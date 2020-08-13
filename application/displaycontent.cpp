@@ -37,7 +37,6 @@
 #include <DMessageManager>
 
 #include <QAbstractItemView>
-#include <QDateTime>
 #include <QDebug>
 #include <QHeaderView>
 #include <QtConcurrent>
@@ -64,11 +63,11 @@ DWIDGET_USE_NAMESPACE
 DisplayContent::DisplayContent(QWidget *parent)
     : DWidget(parent)
 
+
 {
     initUI();
     initMap();
     initConnections();
-
 }
 
 DisplayContent::~DisplayContent()
@@ -197,10 +196,22 @@ void DisplayContent::initConnections()
 
 void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearchStr)
 {
+    if (m_lastJournalGetTime.msecsTo(QDateTime::currentDateTime()) < 500 && m_journalFilter.timeFilter == id && m_journalFilter.eventTypeFilter == lId) {
+        qDebug() << "repeat refrsh journal too fast!";
+        QItemSelectionModel *p = m_treeView->selectionModel();
+        if (p)
+            p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+        slot_tableItemClicked(m_pModel->index(0, 0));
+        return;
+    }
+    m_lastJournalGetTime = QDateTime::currentDateTime();
+    m_journalFilter.timeFilter = id;
+    m_journalFilter.eventTypeFilter = lId;
+    m_firstLoadPageData = true;
     Q_UNUSED(iSearchStr)
     clearAllFilter();
     clearAllDatalist();
-    m_firstLoadPageData = true;
+
     jList.clear();
     jListOrigin.clear();
     createJournalTableForm();
@@ -216,37 +227,37 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     }
     switch (id) {
     case ALL: {
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_DAY: {
         //        arg << "--since" << dt.toString("yyyy-MM-dd");
         arg << QString::number(dt.toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =   m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_DAYS: {
         //        QString t = dt.addDays(-2).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
         arg << QString::number(dt.addDays(-2).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_WEEK: {
         //        QString t = dt.addDays(-6).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
 
         arg << QString::number(dt.addDays(-6).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_MONTH: {
         //        QString t = dt.addDays(-29).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
         arg << QString::number(dt.addDays(-29).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_MONTHS: {
         //        QString t = dt.addDays(-89).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
         arg << QString::number(dt.addDays(-89).toMSecsSinceEpoch() * 1000);
-        m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex =   m_logFileParse.parseByJournal(arg);
     } break;
     default:
         break;
@@ -1113,9 +1124,9 @@ void DisplayContent::slot_journalFinished()
 
 }
 
-void DisplayContent::slot_journalData(QList<LOG_MSG_JOURNAL> list)
+void DisplayContent::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
 {
-    if (m_flag != JOURNAL)
+    if (m_flag != JOURNAL || index != m_journalCurrentIndex)
         return;
     if (list.isEmpty()) {
         setLoadState(DATA_COMPLETE);
