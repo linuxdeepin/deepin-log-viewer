@@ -47,6 +47,7 @@ journalWork::journalWork(QStringList arg, QObject *parent)
     if (!arg.isEmpty())
         m_arg.append(arg);
     thread_index++;
+    m_threadIndex = thread_index;
 }
 
 journalWork::journalWork(QObject *parent)
@@ -58,6 +59,7 @@ journalWork::journalWork(QObject *parent)
     initMap();
     setAutoDelete(true);
     thread_index++;
+    m_threadIndex = thread_index;
 }
 
 journalWork::~journalWork()
@@ -77,13 +79,14 @@ void journalWork::stopWork()
 
 int journalWork::getIndex()
 {
+    return m_threadIndex;
+}
+
+int journalWork::getPublicIndex()
+{
     return thread_index;
 }
 
-void journalWork::setIndex(int iIndex)
-{
-    thread_index = iIndex;
-}
 
 void journalWork::setArg(QStringList arg)
 {
@@ -137,6 +140,7 @@ void journalWork::doWork()
     r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
     if ((!m_canRun)) {
         mutex.unlock();
+        sd_journal_close(j);
         deleteSd();
         return;
     }
@@ -147,6 +151,7 @@ void journalWork::doWork()
     sd_journal_seek_tail(j);
     if ((!m_canRun)) {
         mutex.unlock();
+        sd_journal_close(j);
         deleteSd();
         return;
     }
@@ -159,6 +164,7 @@ void journalWork::doWork()
     }
     if ((!m_canRun)) {
         mutex.unlock();
+        sd_journal_close(j);
         deleteSd();
         return;
     }
@@ -167,6 +173,7 @@ void journalWork::doWork()
         // if (isInterruptionRequested() || (!m_canRun)) {
         if ((!m_canRun)) {
             mutex.unlock();
+            sd_journal_close(j);
             deleteSd();
             return;
         }
@@ -240,8 +247,7 @@ void journalWork::doWork()
 
         if (cnt % 500 == 0) {
             mutex.lock();
-            int current_index = thread_index;
-            emit journalData(current_index, logList);
+            emit journalData(m_threadIndex, logList);
             logList.clear();
             //sleep(100);
             mutex.unlock();
@@ -263,8 +269,7 @@ void journalWork::doWork()
 //        }
     }
     if (logList.count() >= 0) {
-        int current_index = thread_index;
-        emit journalData(current_index, logList);
+        emit journalData(m_threadIndex, logList);
     }
 
     emit journalFinished();

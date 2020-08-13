@@ -71,7 +71,7 @@ LogFileParser::LogFileParser(QWidget *parent)
 
 LogFileParser::~LogFileParser() {}
 
-void LogFileParser::parseByJournal(QStringList arg)
+int LogFileParser::parseByJournal(QStringList arg)
 {
     stopAllLoad();
 //    if (m_isJournalLoading) {
@@ -118,13 +118,14 @@ void LogFileParser::parseByJournal(QStringList arg)
     work->setArg(arg);
     auto a = connect(work, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()),
                      Qt::QueuedConnection);
-    auto b = connect(work, &journalWork::journalData, this, &LogFileParser::slot_journalData,
+    auto b = connect(work, &journalWork::journalData, this, &LogFileParser::journalData,
                      Qt::QueuedConnection);
 
     connect(this, &LogFileParser::stopJournal, work, &journalWork::stopWork);
 
     //QtConcurrent::run(work, &journalWork::doWork);
     QThreadPool::globalInstance()->start(work);
+    return  work->getIndex();
 #endif
 }
 
@@ -532,13 +533,7 @@ void LogFileParser::slot_journalFinished()
 
 }
 
-void LogFileParser::slot_journalData(int index, QList<LOG_MSG_JOURNAL> iJournalList)
-{
 
-    if (index == m_tempJournalWork->getIndex()) {
-        emit journalData(iJournalList);
-    }
-}
 
 
 void LogFileParser::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList)

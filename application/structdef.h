@@ -86,6 +86,11 @@ struct NORMAL_FILTERS {
     int eventTypeFilter;
 
 };
+struct JOURNAL_FILTERS {
+    int timeFilter;
+    int eventTypeFilter;
+
+};
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 
 enum BUTTONID {

@@ -70,7 +70,7 @@ public slots:
     QString getReplaceColorStr(const char *d);
     void stopWork();
     int getIndex();
-    void setIndex(int iIndex);
+    static int getPublicIndex();
 public:
     QList<LOG_MSG_JOURNAL> logList;
     QMutex mutex;
@@ -88,6 +88,7 @@ private:
     static std::mutex m_mutex;
     QEventLoop loop;
     bool m_canRun = false;
+    int m_threadIndex;
 
 
 };
