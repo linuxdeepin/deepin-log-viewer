@@ -357,9 +357,7 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     createKernTableForm();
     //    m_spinnerWgt->hide();  // modified by Airy for bug 15520
     //    m_treeView->show();
-    m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
-    m_treeView->setColumnWidth(1, DEAMON_WIDTH);
-    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     switch (id) {
@@ -395,6 +393,9 @@ void DisplayContent::createKernTableForm()
                                         << DApplication::translate("Table", "User")
                                         << DApplication::translate("Table", "Process")
                                         << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
+    m_treeView->setColumnWidth(1, DEAMON_WIDTH);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
 }
 
 // modified by Airy for bug  12263
@@ -488,9 +489,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
     default:
         break;
     }
-    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
-    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
-    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
 }
 
 void DisplayContent::createAppTableForm()
@@ -501,6 +500,9 @@ void DisplayContent::createAppTableForm()
                                         << DApplication::translate("Table", "Date and Time")
                                         << DApplication::translate("Table", "Source")
                                         << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
 }
 
 void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
@@ -1300,6 +1302,7 @@ void DisplayContent::slot_searchResult(QString str)
                 continue;
             kList.removeAt(i);
         }
+        createKernTableForm();
         createKernTable(kList);
     } break;
     case BOOT: {
@@ -1343,6 +1346,7 @@ void DisplayContent::slot_searchResult(QString str)
                 continue;
             appList.removeAt(i);
         }
+        createAppTableForm();
         createAppTable(appList);
     } break;
     case Normal: {
@@ -1669,7 +1673,7 @@ void DisplayContent::clearAllFilter()
 
     m_currentSearchStr.clear();
     m_currentKwinFilter = {""};
-    m_normalFilter = {"", -1};
+    m_normalFilter = {"", 0};
 }
 
 void DisplayContent::clearAllDatalist()
