@@ -484,9 +484,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
     default:
         break;
     }
-    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
-    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
-    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+
 
 }
 void DisplayContent::createAppTableForm()
@@ -497,6 +495,9 @@ void DisplayContent::createAppTableForm()
                                         << DApplication::translate("Table", "Date and Time")
                                         << DApplication::translate("Table", "Source")
                                         << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(0, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
 }
 
 void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
@@ -1309,6 +1310,7 @@ void DisplayContent::slot_searchResult(QString str)
                 continue;
             appList.removeAt(i);
         }
+        createAppTableForm();
         createAppTable(appList);
     } break;
     case Normal: {
