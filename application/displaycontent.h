@@ -191,7 +191,7 @@ private:
     KWIN_FILTERS m_currentKwinFilter;
     bool m_firstLoadPageData = false;
     BOOT_FILTERS m_bootFilter = {"", ""};
-    NORMAL_FILTERS m_normalFilter = {"", -1};
+    NORMAL_FILTERS m_normalFilter = {"", 0};
     DisplayContent::LOAD_STATE m_state;
     QDateTime m_lastJournalGetTime{QDateTime::fromTime_t(0)};
     JOURNAL_FILTERS m_journalFilter{-99, -99};
