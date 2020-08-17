@@ -181,7 +181,7 @@ enum NORMAL_DISPLAY_COLUMN {
 #define KWIN_TABLE_DATA "kwinItemData"
 
 #define JOUR_TREE_DATA "journalctl"
-#define DPKG_TREE_DATA "/var/log/dpkg.log"
+#define DPKG_TREE_DATA "/var/log/dnf.log"
 #define XORG_TREE_DATA "/var/log/Xorg.0.log"
 #define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"
 #define BOOT_TREE_DATA "/var/log/boot.log"

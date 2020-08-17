@@ -379,7 +379,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     index.row();
     if (dataStr.contains(DPKG_TABLE_DATA)) {
 
-        fillDetailInfo("dpkg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
+        fillDetailInfo("dnf", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
                        index.siblingAtColumn(1).data().toString(), "",
                        index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {

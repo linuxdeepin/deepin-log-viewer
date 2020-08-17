@@ -234,11 +234,11 @@ void LogAuthThread::handleXorg()
 void LogAuthThread::handleDkpg()
 {
 
-    QFile file("/var/log/dpkg.log");  // if not,maybe crash
+    QFile file("/var/log/dnf.log");  // if not,maybe crash
     if (!file.exists())
         return;
     initProccess();
-    m_process->start("cat /var/log/dpkg.log");  // file path is fixed. so write cmd direct
+    m_process->start("cat /var/log/dnf.log");  // file path is fixed. so write cmd direct
     m_process->waitForFinished(-1);
     QByteArray outByte = m_process->readAllStandardOutput();
     QString output = Utils::replaceEmptyByteArray(outByte);

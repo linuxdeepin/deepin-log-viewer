@@ -134,14 +134,14 @@ void LogListView::initUI()
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
     }
-    if (isFileExist("/var/log/dpkg.log")) {
-        item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
-        item->setToolTip(DApplication::translate("Tree", "dpkg Log"));  // add by Airy for bug 16245
-        item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
-        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        m_pModel->appendRow(item);
-    }
+    //if (isFileExist("/var/log/dpkg.log")) {
+    item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
+    item->setToolTip(DApplication::translate("Tree", "dnf Log"));  // add by Airy for bug 16245
+    item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
+    item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
+    m_pModel->appendRow(item);
+    // }
     if (isFileExist("/var/log/Xorg.0.log")) {
         item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
         item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
