@@ -21,6 +21,7 @@
 
 #include "logiconbutton.h"
 #include <QEvent>
+#include <QResizeEvent>
 #define ICON_SIZE 32
 LogIconButton::LogIconButton(QWidget *parent)
     : QPushButton(parent)
@@ -41,7 +42,7 @@ LogIconButton::LogIconButton(QString text, QWidget *parent)
 QSize LogIconButton::sizeHint() const
 {
     int h = QFontMetrics(font()).height();
-    return QSize(this->width(), h);
+    return QSize(QPushButton::sizeHint().width(), h);
 }
 
 void LogIconButton::mousePressEvent(QMouseEvent *e)
@@ -61,7 +62,6 @@ void LogIconButton::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     int h = QFontMetrics(font()).height();
-    resize(this->width(), h);
-    // this->setIconSize(QSize(h, h));
+    resize(this->sizeHint().width(), h);
 
 }
