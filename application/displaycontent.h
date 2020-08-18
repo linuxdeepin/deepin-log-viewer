@@ -54,7 +54,7 @@ class DisplayContent : public Dtk::Widget::DWidget
 public:
     explicit DisplayContent(QWidget *parent = nullptr);
     ~DisplayContent();
-    QList<QWidget *> tabOrderWidgets();
+    LogTreeView *mainLogTableView();
 
 private:
     void initUI();

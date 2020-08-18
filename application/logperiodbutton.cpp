@@ -95,7 +95,7 @@ void LogPeriodButton::paintEvent(QPaintEvent *event)
     QStyleOptionButton subopt = btn;
     subopt.rect = style->proxy()->subElementRect(DStyle::SE_PushButtonContents, &btn, this);
     style->proxy()->drawControl(DStyle::CE_PushButtonLabel, &subopt,  &painter2, this);
-    if (hasFocus() && (m_reson == Qt::TabFocusReason)) {
+    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
 
         QStyleOptionFocusRect fropt;
         fropt.QStyleOption::operator=(btn);

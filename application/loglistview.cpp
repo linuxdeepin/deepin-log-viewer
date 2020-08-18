@@ -61,7 +61,7 @@ void LogListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     DStyledItemDelegate::paint(painter, option, index);
     // if (option.state & QStyle::State_HasFocus) {
     LogListView *parentView = qobject_cast<LogListView *>(this->parent());
-    if ((option.state & QStyle::State_HasFocus) && parentView && parentView->IsTabFocus()) {
+    if ((option.state & QStyle::State_HasFocus) && parentView && (parentView->focusReson() == Qt::TabFocusReason || parentView->focusReson() == Qt::BacktabFocusReason) && (parentView->hasFocus())) {
         // draw focus
         auto *style = dynamic_cast<DStyle *>(DApplication::style());
         QRect rect;
@@ -397,10 +397,6 @@ void LogListView::truncateFile(QString path_)
     prc.waitForFinished();
 }
 
-bool LogListView::IsTabFocus() const
-{
-    return  m_IsTabFocus;
-}
 
 /**
  * @author Airy
@@ -410,6 +406,11 @@ bool LogListView::IsTabFocus() const
 void LogListView::slot_getAppPath(QString path)
 {
     g_path = path;
+}
+
+Qt::FocusReason LogListView::focusReson()
+{
+    return  m_reson;
 }
 
 
@@ -524,23 +525,17 @@ void LogListView::mousePressEvent(QMouseEvent *event)
 
 void LogListView::focusInEvent(QFocusEvent *event)
 {
-    qDebug() << "1";
-    if (event->reason() == Qt::TabFocusReason) {
-        setTabFocus(true);
-    } else {
-        setTabFocus(false);
+
+    if ((event->reason() != Qt::PopupFocusReason) && (event->reason() != Qt::ActiveWindowFocusReason)) {
+        m_reson = event->reason();
     }
     DListView::focusInEvent(event);
 }
 
 void LogListView::focusOutEvent(QFocusEvent *event)
 {
-    setTabFocus(false);
     DListView::focusOutEvent(event);
 }
 
-void LogListView::setTabFocus(bool iFocus)
-{
-    m_IsTabFocus = iFocus;
-}
+
 

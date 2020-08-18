@@ -211,7 +211,7 @@ void LogTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options
 
     QTreeView::drawRow(painter, options, index);
     // draw focus
-    if (hasFocus() && currentIndex().row() == index.row() && m_reson == Qt::TabFocusReason) {
+    if (hasFocus() && currentIndex().row() == index.row() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
         QStyleOptionFocusRect o;
         o.QStyleOption::operator=(options);
         o.state |= QStyle::State_KeyboardFocusChange | QStyle::State_HasFocus;

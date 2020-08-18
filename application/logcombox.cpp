@@ -14,7 +14,7 @@ LogCombox::LogCombox(QWidget *parent):
 void LogCombox::paintEvent(QPaintEvent *e)
 {
     DComboBox::paintEvent(e);
-    if (hasFocus() && (m_reson & Qt::TabFocusReason)) {
+    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
         DStylePainter painter(this);
 //    painter.setPen(palette().color(QPalette::Text));
         DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
@@ -55,7 +55,9 @@ void LogCombox::keyPressEvent(QKeyEvent *event)
 
 void LogCombox::focusInEvent(QFocusEvent *event)
 {
-    m_reson = event->reason();
+    if (event->reason() != Qt::PopupFocusReason) {
+        m_reson = event->reason();
+    }
     DComboBox::focusInEvent(event);
 }
 

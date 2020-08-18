@@ -23,6 +23,9 @@
 
 #include <DApplication>
 #include <DTitlebar>
+#include <DWindowOptionButton>
+#include <DWindowCloseButton>
+
 #include <QDateTime>
 #include <QDebug>
 #include <QHeaderView>
@@ -47,7 +50,6 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
 
     m_logCatelogue->setDefaultSelect();
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
-    initKeyBoardSwitchOrder();
 
 }
 
@@ -63,17 +65,15 @@ LogCollectorMain::~LogCollectorMain()
 void LogCollectorMain::initUI()
 {
     /** add searchEdit */
-    m_searchEdt = new DSearchEdit;
+    m_searchEdt = new DSearchEdit(this);
     // m_searchEdt->setFocusPolicy(Qt::TabFocus);
     m_searchEdt->setPlaceHolder(DApplication::translate("SearchBar", "Search"));
     m_searchEdt->setMaximumWidth(400);
+    // m_searchEdt->setFocusPolicy(Qt::StrongFocus);
     titlebar()->setCustomWidget(m_searchEdt, true);
-
-
     /** add titleBar */
     titlebar()->setIcon(QIcon::fromTheme("deepin-log-viewer"));
     titlebar()->setTitle("");
-
     /** menu */
     //    titlebar()->menu()->addAction(new QAction(tr("help")));
 
@@ -126,6 +126,7 @@ void LogCollectorMain::initUI()
 
     /** left frame */
     m_logCatelogue = new LogListView();
+    m_logCatelogue->setObjectName("logTypeSelectList");
     m_hLayout->addWidget(m_logCatelogue, 1);
     m_logCatelogue->setFixedWidth(160);
     m_vLayout = new QVBoxLayout;
@@ -144,7 +145,11 @@ void LogCollectorMain::initUI()
     m_hLayout->setSpacing(10);
 
     this->centralWidget()->setLayout(m_hLayout);
-
+    m_searchEdt->setObjectName("searchEdt");
+    m_searchEdt->lineEdit()->setObjectName("searchChildEdt");
+    m_topRightWgt->setObjectName("FilterContent");
+    m_midRightWgt->setObjectName("DisplayContent");
+    titlebar()->setObjectName("titlebar");
 
 #endif
 
@@ -249,25 +254,6 @@ void LogCollectorMain::initShortCut()
     }
 }
 
-void LogCollectorMain::initKeyBoardSwitchOrder()
-{
-
-    m_searchEdt->installEventFilter(this);
-    m_searchEdt->setObjectName("m_searchEdt");
-    m_topRightWgt->installEventFilter(this);
-    m_topRightWgt->setObjectName("FilterContent");
-    m_logCatelogue->installEventFilter(this);
-    m_logCatelogue->setObjectName("LogListView");
-    m_midRightWgt->installEventFilter(this);
-    m_midRightWgt->setObjectName("DisplayContent");
-    titlebar()->installEventFilter(this);
-    titlebar()->setObjectName("titlebar");
-    m_focusWidgetOrder << m_searchEdt << titlebar() << m_logCatelogue << m_topRightWgt << m_midRightWgt->tabOrderWidgets();
-    qDebug() << "m_searchEdt->focusProxy()" << m_searchEdt->focusProxy();
-    setTabOrder(0, m_searchEdt->focusProxy());
-    setTabOrder(m_searchEdt->focusProxy(), titlebar()->focusProxy());
-    setTabOrder(m_midRightWgt->tabOrderWidgets().first()->focusProxy(), m_searchEdt->focusProxy());
-}
 
 void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
 {
@@ -282,88 +268,47 @@ void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
     }
 }
 
-bool LogCollectorMain::eventFilter(QObject *obj, QEvent *evt)
+/**
+ * @brief LogCollectorMain::handleApplicationTabEventNotify
+ * 处理application中notify的tab keyevent ,直接在dapplication中调用
+ * 只调整我们需要调整的顺序,其他的默认
+ * @param obj 接收事件的对象
+ * @param evt 对象接收的键盘事件
+ * @return true处理并屏蔽事件 false交给application的notify处理
+ */
+bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt)
 {
-    switch (evt->type()) {
-    case QEvent::KeyPress: {
-
-//        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(evt);
-//        if (keyEvent->key() == Qt::Key_Tab) {
-//            qDebug() << "Key_Tab";
-//            if (keyEvent->modifiers() == Qt::ShiftModifier) {
-//                setNextTabFocus(obj, false);
-//                return true;
-//            } else if (keyEvent->modifiers() == Qt::NoModifier) {
-//                setNextTabFocus(obj, true);
-//                return true;
-//            }
-//        }
-//        qDebug() << "KeyPress---" << obj->objectName() << Qt::Key(keyEvent->key());
-
-//        break;
-    }
-    case QEvent::FocusIn: {
-
-//        if (obj == m_searchEdt) {
-//            m_searchEdt->setFocus();
-//        }
-        // QFocusEvent *focusEvent = static_cast<QFocusEvent *>(evt);
-
-    }
-//    case QEvent::ScrollPrepare: {
-//        QScrollPrepareEvent *touchEvent = static_cast<QScrollPrepareEvent *>(e);
-//        qDebug() << "QEvent::ScrollPrepare" << touchEvent->startPos() << touchEvent->contentPos();
-//        break;
-//    }
-//    case QEvent::Scroll: {
-//        QScrollEvent *touchEvent = static_cast<QScrollEvent *>(e);
-//        qDebug() << "QEvent::Scroll" << touchEvent->contentPos() << touchEvent->scrollState();
-//        break;
-//    }
-
-    }
-    return  DMainWindow::eventFilter(obj, evt);
-}
-
-void LogCollectorMain::setNextTabFocus(QObject *obj, bool isNext)
-{
-    if (m_focusWidgetOrder.count() < 2) {
-        return;
-    }
-    int focusIndex = -1;
-    qDebug() << obj->objectName();
-    for (int i = 0; i < m_focusWidgetOrder.length(); ++i) {
-        if (obj == m_focusWidgetOrder.value(i)) {
-            if (isNext) {
-                int nextIndex = 0;
-                if (i + 1 > m_focusWidgetOrder.count() - 1) {
-                    nextIndex = 0;
-                } else {
-                    nextIndex = i + 1;
-                }
-                focusIndex = nextIndex;
-            } else {
-                int preIndex = 0;
-                if (i - 1 < 0) {
-                    preIndex = m_focusWidgetOrder.count() - 1;
-                } else {
-                    preIndex = i - 1;
-                }
-                focusIndex = preIndex;
-
-            }
-            break;
+    if (evt->key() == Qt::Key_Tab) {
+        if (obj->metaObject()->className() == QStringLiteral("Dtk::Widget::DTitlebar")) {
+            m_searchEdt->lineEdit()->setFocus(Qt::TabFocusReason);
+            return  true;
+        } else if (obj->objectName() == "searchChildEdt") {
+            titlebar()->setFocus(Qt::TabFocusReason);
+            //titlebar不截获屏蔽掉,因为让他继续往下一menubutton发送tab
+            //  return  true;
+        } else if (obj->objectName() == "DTitlebarDWindowCloseButton") {
+            m_logCatelogue->setFocus(Qt::TabFocusReason);
+            return  true;
+        } else if (obj->objectName() == "mainLogTable") {
+            m_searchEdt->lineEdit()->setFocus(Qt::TabFocusReason);
+            return  true;
         }
-
+    } else if (evt->key() == Qt::Key_Backtab) {
+        if (obj->objectName() == "logTypeSelectList") {
+            DWindowCloseButton   *closeButton = titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
+            if (closeButton) {
+                closeButton->setFocus(Qt::BacktabFocusReason);
+            }
+            return  true;
+        } else if (obj->objectName() == "DTitlebarDWindowOptionButton") {
+            m_searchEdt->lineEdit()->setFocus(Qt::BacktabFocusReason);
+            return  true;
+        } else if (obj->objectName() == "searchChildEdt") {
+            m_midRightWgt->mainLogTableView()->setFocus(Qt::BacktabFocusReason);
+            return  true;
+        }
     }
-
-    if (focusIndex >= 0) {
-        m_focusWidgetOrder.value(focusIndex)->setFocus(Qt::TabFocusReason);
-    } else {
-        qDebug() << "first---------" << m_focusWidgetOrder.first()->objectName();
-        m_focusWidgetOrder.first()->setFocus(Qt::TabFocusReason);
-    }
-
+    return  false;
 }
 
 

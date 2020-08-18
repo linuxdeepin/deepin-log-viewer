@@ -20,6 +20,7 @@
  */
 #include "logapplicationhelper.h"
 #include "logcollectormain.h"
+#include "logapplication.h"
 #include "environments.h"
 #include "accessible.h"
 
@@ -36,7 +37,7 @@ DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    DApplication a(argc, argv);
+    LogApplication a(argc, argv);
 
     qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
     if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
@@ -62,6 +63,7 @@ int main(int argc, char *argv[])
     DLogManager::registerFileAppender();
     LogApplicationHelper::instance();
     LogCollectorMain w;
+    a.setMainWindow(&w);
     w.show();
     Dtk::Widget::moveToCenter(&w);
 //    for (int i = 0; i < 120000; ++i) {

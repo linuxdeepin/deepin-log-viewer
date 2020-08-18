@@ -4,32 +4,32 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="429"/>
+        <location filename="../application/loglistview.cpp" line="430"/>
         <source>Display in file manager</source>
         <translation>Display in file manager</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="430"/>
+        <location filename="../application/loglistview.cpp" line="431"/>
         <source>Clear log</source>
         <translation>Clear log</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="431"/>
+        <location filename="../application/loglistview.cpp" line="432"/>
         <source>Refresh</source>
         <translation>Refresh</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="469"/>
+        <location filename="../application/loglistview.cpp" line="470"/>
         <source>Are you sure you want to clear the log?</source>
         <translation>Are you sure you want to clear the log?</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="470"/>
+        <location filename="../application/loglistview.cpp" line="471"/>
         <source>Cancel</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="471"/>
+        <location filename="../application/loglistview.cpp" line="472"/>
         <source>Confirm</source>
         <translation>Confirm</translation>
     </message>
@@ -213,48 +213,48 @@
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="187"/>
-        <location filename="../application/logdetailinfowidget.cpp" line="138"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="139"/>
         <source>Status:</source>
         <translation>Status:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="200"/>
-        <location filename="../application/logdetailinfowidget.cpp" line="143"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="144"/>
         <source>Event Type:</source>
         <translation>Event Type:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="134"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="135"/>
         <source>User:</source>
         <translation>User:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="136"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="137"/>
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="140"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="141"/>
         <source>Action:</source>
         <translation>Action:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="145"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="146"/>
         <source>Username:</source>
         <translation>Username:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="415"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="417"/>
         <source>Boot record</source>
         <translation>Boot record</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="417"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="419"/>
         <source>Shutdown record</source>
         <translation>Shutdown record</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="420"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="422"/>
         <source>Login record</source>
         <translation>Login record</translation>
     </message>
@@ -368,7 +368,7 @@
         <translation>No search results</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="68"/>
+        <location filename="../application/logcollectormain.cpp" line="70"/>
         <source>Search</source>
         <translation>Search</translation>
     </message>

@@ -22,6 +22,7 @@
 #include "logiconbutton.h"
 #include <QEvent>
 #include <QResizeEvent>
+#include <QDebug>
 #define ICON_SIZE 32
 LogIconButton::LogIconButton(QWidget *parent)
     : QPushButton(parent)
@@ -56,6 +57,8 @@ bool LogIconButton::event(QEvent *e)
     }
     return  false;
 }
+
+
 
 //修复button占高过大的问题
 void LogIconButton::resizeEvent(QResizeEvent *e)

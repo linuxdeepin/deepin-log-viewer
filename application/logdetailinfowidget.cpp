@@ -24,6 +24,7 @@ logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
     : DWidget(parent)
 {
     initUI();
+    setFocusPolicy(Qt::NoFocus);
 }
 
 void logDetailInfoWidget::cleanText()
@@ -149,6 +150,8 @@ void logDetailInfoWidget::initUI()
     m_hline = new DHorizontalLine;
 
     m_textBrowser = new DTextBrowser(this);
+    //不设置nofocus焦点会上到这上面来,可是我们不需要它可以有焦点
+    m_textBrowser->setFocusPolicy(Qt::NoFocus);
     DFontSizeManager::instance()->bind(m_textBrowser, DFontSizeManager::T8);
     pa = DApplicationHelper::instance()->palette(m_textBrowser);
     pa.setBrush(DPalette::Text, pa.color(DPalette::TextTips));
@@ -257,6 +260,7 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 
     DWidget::paintEvent(event);
 }
+
 
 //bool logDetailInfoWidget::event(QEvent *ev)
 //{

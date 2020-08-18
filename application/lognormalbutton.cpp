@@ -57,7 +57,7 @@ void LogNormalButton::paintEvent(QPaintEvent *e)
     QStyleOptionButton subopt = btn;
     subopt.rect = style->proxy()->subElementRect(DStyle::SE_PushButtonContents, &btn, this);
     style->proxy()->drawControl(DStyle::CE_PushButtonLabel, &subopt,  &painter, this);
-    if (hasFocus() && (m_reson == Qt::TabFocusReason)) {
+    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
 
         QStyleOptionFocusRect fropt;
         fropt.QStyleOption::operator=(btn);
@@ -69,7 +69,9 @@ void LogNormalButton::paintEvent(QPaintEvent *e)
 
 void LogNormalButton::focusInEvent(QFocusEvent *event)
 {
-    m_reson = event->reason();
+    if (event->reason() != Qt::ActiveWindowFocusReason) {
+        m_reson = event->reason();
+    }
     DPushButton::focusInEvent(event);
 }
 

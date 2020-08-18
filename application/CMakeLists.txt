@@ -132,6 +132,7 @@ set (APP_CPP_FILES
      logcombox.cpp
      lognormalbutton.cpp
      logsearchedit.cpp
+     logapplication.cpp
      common/collator.cpp
     )
 set (APP_QRC_FILES

@@ -85,6 +85,11 @@ DisplayContent::~DisplayContent()
     malloc_trim(0);
 }
 
+LogTreeView *DisplayContent::mainLogTableView()
+{
+    return  m_treeView;
+}
+
 
 
 void DisplayContent::initUI()
@@ -162,6 +167,7 @@ void DisplayContent::initMap()
 void DisplayContent::initTableView()
 {
     m_treeView = new LogTreeView(this);
+    m_treeView->setObjectName("mainLogTable");
     m_pModel = new QStandardItemModel(this);
     m_treeView->setModel(m_pModel);
 }
@@ -756,10 +762,6 @@ bool DisplayContent::isAuthProcessAlive()
     return !(ret = (rslt == 0));
 }
 
-QList<QWidget *> DisplayContent::tabOrderWidgets()
-{
-    return  QList<QWidget *>() << m_treeView;
-}
 
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
