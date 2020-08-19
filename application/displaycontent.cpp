@@ -1611,10 +1611,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
 
 void DisplayContent::onExportResult(bool isSuccess)
 {
-    QString titleIcon = ICONPREFIX ;
-    if (isSuccess) {
-        DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export Success"));
-    }
+    Q_UNUSED(isSuccess)
 }
 
 void DisplayContent::clearAllFilter()
