@@ -23,6 +23,9 @@
 #define STRUCTDEF_H
 #include <QString>
 #include <QDir>
+enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
+enum DNFPRIORITY { DNFLVALL = -1, TRACE, SUBDEBUG, DDEBUG, DEBUG, INFO, WARNING, ERROR, CRITICAL, SUPERCRITICAL };
+
 struct LOG_MSG_JOURNAL {
     // include dateTime level type detailInfo...
     QString dateTime;
@@ -36,6 +39,11 @@ struct LOG_MSG_JOURNAL {
 struct LOG_MSG_DPKG {
     QString dateTime;
     QString action;
+    QString msg;
+};
+struct LOG_MSG_DNF {
+    QString dateTime;
+    QString level;
     QString msg;
 };
 
@@ -73,6 +81,10 @@ struct KWIN_FILTERS {
 struct XORG_FILTERS {
     qint64 timeFilter ;
 };
+struct DNF_FILTERS {
+    qint64 timeFilter ;
+    DNFPRIORITY levelfilter;
+};
 struct DKPG_FILTERS {
     qint64 timeFilter ;
 };
@@ -91,7 +103,6 @@ struct JOURNAL_FILTERS {
     int eventTypeFilter;
 
 };
-enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 
 enum BUTTONID {
     ALL = 0,
@@ -114,12 +125,13 @@ enum LOG_FLAG {
     APP,
     Normal,
     Kwin,
+    Dnf,
     NONE = 9999
 };  // modified by
 // Airy
 namespace Log_Item_SPACE {
 enum LogItemDataRole {
-    levelRole = Qt::UserRole + 6
+    levelRole = Qt::UserRole + 6,
 };
 }
 namespace JOURNAL_SPACE {
@@ -144,6 +156,13 @@ namespace DKPG_SPACE {
 enum DKPG_DISPLAY_COLUMN {
     dkpgDateTimeColumn = 0,
     dkpgMsgColumn
+};
+}
+namespace DNF_SPACE {
+enum DNF_DISPLAY_COLUMN {
+    dnfLvlColumn = 0,
+    dnfDateTimeColumn,
+    dnfMsgColumn
 };
 }
 namespace XORG_SPACE {
@@ -172,6 +191,7 @@ enum NORMAL_DISPLAY_COLUMN {
 
 
 #define DPKG_TABLE_DATA "dpkgItemData"
+#define DNF_TABLE_DATA "dnfItemData"
 #define XORG_TABLE_DATA "XorgItemData"
 #define BOOT_TABLE_DATA "bootItemData"
 #define KERN_TABLE_DATA "kernItemData"
@@ -181,7 +201,8 @@ enum NORMAL_DISPLAY_COLUMN {
 #define KWIN_TABLE_DATA "kwinItemData"
 
 #define JOUR_TREE_DATA "journalctl"
-#define DPKG_TREE_DATA "/var/log/dnf.log"
+#define DPKG_TREE_DATA "/var/log/dpkg.log"
+#define DNF_TREE_DATA "/var/log/dnf.log"
 #define XORG_TREE_DATA "/var/log/Xorg.0.log"
 #define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"
 #define BOOT_TREE_DATA "/var/log/boot.log"

@@ -1,5 +1,8 @@
 #include "logauththread.h"
 #include "utils.h"
+
+#include <DApplication>
+
 #include <QDebug>
 #include <QDateTime>
 
@@ -12,6 +15,7 @@ LogAuthThread::LogAuthThread(QObject *parent)
 
 {
     setAutoDelete(true);
+    initDnfLevelMap();
 
 }
 
@@ -24,6 +28,32 @@ LogAuthThread::~LogAuthThread()
         m_process = nullptr;
     }
 }
+
+void LogAuthThread::initDnfLevelMap()
+{
+    m_dnfLevelDict.insert("TRACE", TRACE);
+    m_dnfLevelDict.insert("SUBDEBUG", DEBUG);
+    m_dnfLevelDict.insert("DDEBUG", DEBUG);
+    m_dnfLevelDict.insert("DEBUG", DEBUG);
+    m_dnfLevelDict.insert("INFO", INFO);
+    m_dnfLevelDict.insert("WARNING", WARNING);
+    m_dnfLevelDict.insert("ERROR", ERROR);
+    m_dnfLevelDict.insert("CRITICAL", CRITICAL);
+    m_dnfLevelDict.insert("SUPERCRITICAL", SUPERCRITICAL);
+
+
+    m_transDnfDict.insert("TRACE", Dtk::Widget::DApplication::translate("Level", "Trace"));
+    m_transDnfDict.insert("SUBDEBUG", Dtk::Widget::DApplication::translate("Level", "Debug"));
+    m_transDnfDict.insert("DDEBUG", Dtk::Widget::DApplication::translate("Level", "Debug"));
+    m_transDnfDict.insert("DEBUG", Dtk::Widget::DApplication::translate("Level", "Debug"));
+    m_transDnfDict.insert("INFO", Dtk::Widget::DApplication::translate("Level", "Info"));
+    m_transDnfDict.insert("WARNING", Dtk::Widget::DApplication::translate("Level", "Warning"));
+    m_transDnfDict.insert("ERROR", Dtk::Widget::DApplication::translate("Level", "Error"));
+    m_transDnfDict.insert("CRITICAL", Dtk::Widget::DApplication::translate("Level", "Critical"));
+    m_transDnfDict.insert("SUPERCRITICAL", Dtk::Widget::DApplication::translate("Level", "SuperCirtical"));
+
+}
+
 
 QString LogAuthThread::getStandardOutput()
 {
@@ -64,6 +94,9 @@ void LogAuthThread::run()
         break;
     case DPKG:
         handleDkpg();
+        break;
+    case Dnf:
+        handleDnf();
         break;
     default:
         break;
@@ -270,6 +303,75 @@ void LogAuthThread::handleDkpg()
     emit dpkgFinished(dList);
 }
 
+void LogAuthThread::handleDnf()
+{
+
+    QFile file("/var/log/dnf.log");  // if not,maybe crash
+    if (!file.exists())
+        return;
+    initProccess();
+    m_process->start("cat /var/log/dnf.log");
+    m_process->waitForFinished(-1);
+    QByteArray outByte = m_process->readAllStandardOutput();
+    QString output = Utils::replaceEmptyByteArray(outByte);
+    m_process->close();
+    QList<LOG_MSG_DNF> dList;
+    //上一次成功筛选出的日志
+    int lastLogAddRow = -99;
+    //上一次增加的换行的日志信息体的行数
+    int lastMsgAddRow = -99;
+    QStringList allLog = output.split('\n');
+    QRegExp ipRegExp = QRegExp("[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([0-9][0-9])\\:([0-5][0-9])\\:([0-5][0-9])Z");
+    // for (QString str : output.split('\n')) {
+    for (int i = 0; i <  allLog.count(); ++i) {
+        QString str = allLog.value(i);
+
+        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+        QStringList strList = str.split(" ", QString::SkipEmptyParts);
+        if (ipRegExp.exactMatch(strList.value(0, "")) && strList.size() >= 2) {
+
+        } else {
+            //如果当前行数等于上次筛选插入进结果的日志行数加1(在下一行)或者在上次增加过的为纯信息体的行数的下一行,则认为这一行为上一个日志的信息体
+            if (dList.length() > 0  && ((lastMsgAddRow == i - 1) || (lastLogAddRow == i - 1))) {
+                if (!str.isEmpty()) {
+                    //上一个日志的信息体如果是空行,不换行并把空行清空
+                    if (dList.first().msg.trimmed().isEmpty()) {
+                        dList.first().msg = "";
+                    } else {
+                        dList.first().msg +=  "\n";
+                    }
+
+                    dList.first().msg += str ;
+                }
+                //此行为信息体行
+                lastMsgAddRow = i;
+            }
+            continue;
+        }
+        QString info;
+        for (auto i = 2; i < strList.size(); i++) {
+            info = info + strList[i] + " ";
+        }
+
+        LOG_MSG_DNF dnfLog;
+
+        QDateTime dt = QDateTime::fromString(strList[0], "yyyy-MM-ddThh:mm:ssZ");
+        if (dt.toMSecsSinceEpoch() < m_dnfFilters.timeFilter)
+            continue;
+        if (m_dnfFilters.levelfilter != DNFLVALL) {
+            if (m_dnfLevelDict.value(strList[1]) != m_dnfFilters.levelfilter)
+                continue;
+        }
+        dnfLog.dateTime = dt.toString("yyyy-MM-dd hh:mm:ss");
+        dnfLog.level = m_transDnfDict.value(strList[1]);
+        dnfLog.msg = info;
+        dList.insert(0, dnfLog);
+        //此行为日志行
+        lastLogAddRow = i;
+    }
+    qDebug() << "dnf size" << dList.length();
+    emit dnfFinished(dList);
+}
 void LogAuthThread::initProccess()
 {
     if (!m_process) {

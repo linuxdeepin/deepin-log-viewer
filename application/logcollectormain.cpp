@@ -35,10 +35,12 @@
 #define MAINWINDOW_HEIGHT 736
 #define LEFT_LIST_WIDTH 200
 DWIDGET_USE_NAMESPACE
-
+Q_DECLARE_METATYPE(DNFPRIORITY)
 LogCollectorMain::LogCollectorMain(QWidget *parent)
     : DMainWindow(parent)
 {
+    qRegisterMetaType<DNFPRIORITY>("DNFPRIORITY");
+
     initUI();
     initConnection();
 
@@ -46,6 +48,7 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
 
     m_logCatelogue->setDefaultSelect();
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
+
 }
 
 LogCollectorMain::~LogCollectorMain()
@@ -156,6 +159,9 @@ void LogCollectorMain::initConnection()
     connect(m_topRightWgt, SIGNAL(sigButtonClicked(int, int, QModelIndex)), m_midRightWgt,
             SLOT(slot_BtnSelected(int, int, QModelIndex)));
 
+
+    connect(m_topRightWgt, &FilterContent::sigDnfLvlChanged, m_midRightWgt,
+            &DisplayContent::slot_dnfLevel);
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_midRightWgt,
             &DisplayContent::slot_appLogs);
 
@@ -189,6 +195,7 @@ void LogCollectorMain::initConnection()
     // when item changed clear search text
     connect(m_logCatelogue, &LogListView::itemChanged, this, [ = ]() { m_searchEdt->clear(); });
     connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [ = ]() { m_searchEdt->clear(); });
+    connect(m_topRightWgt, &FilterContent::sigDnfLvlChanged, this, [ = ]() { m_searchEdt->clear(); });
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this,
     [ = ]() { m_searchEdt->clear(); });
 

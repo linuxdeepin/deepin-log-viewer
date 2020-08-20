@@ -47,14 +47,16 @@
 #define FONT_20_MIN_WIDTH 821
 #define FONT_18_MIN_WIDTH 100
 DWIDGET_USE_NAMESPACE
-
+Q_DECLARE_METATYPE(DNFPRIORITY)
 FilterContent::FilterContent(QWidget *parent)
     : DFrame(parent)
     , m_curBtnId(ALL)
     , m_curLvCbxId(INF)
 {
+
     initUI();
     initConnections();
+
 }
 
 FilterContent::~FilterContent() {}
@@ -167,6 +169,29 @@ void FilterContent::initUI()
     hLayout_lvl->addWidget(cbx_lv, 1);
     hLayout_lvl->setSpacing(6);
     hLayout_all->addLayout(hLayout_lvl);
+
+    QHBoxLayout *hLayout_dnf_lvl = new QHBoxLayout;
+    dnflvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
+    dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    cbx_dnf_lv = new DComboBox(this);
+    cbx_dnf_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
+    // cbx_lv->setMaximumWidth(208);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "SuperCirtical"), SUPERCRITICAL);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Critical"), CRITICAL);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Error"), ERROR);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Warning"), WARNING);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Info"), INFO);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Debug"), DEBUG);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Trace"), TRACE);
+    cbx_dnf_lv->setCurrentIndex(5);
+    hLayout_dnf_lvl->addWidget(dnflvTxt);
+    hLayout_dnf_lvl->addWidget(cbx_dnf_lv, 1);
+    hLayout_dnf_lvl->setSpacing(6);
+    hLayout_all->addLayout(hLayout_dnf_lvl);
+
+
+
     // set all files under ~/.cache/deepin
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
@@ -228,6 +253,7 @@ void FilterContent::initConnections()
 {
     connect(m_btnGroup, SIGNAL(buttonClicked(int)), this, SLOT(slot_buttonClicked(int)));
     connect(cbx_lv, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxLvIdxChanged(int)));
+    connect(cbx_dnf_lv, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxDnfLvIdxChanged(int)));
     connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
     connect(cbx_status, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxStatusChanged(int)));
     connect(typeCbx, SIGNAL(currentIndexChanged(int)), this,
@@ -266,7 +292,7 @@ void FilterContent::setAppComboBoxItem()
 }
 
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
-                                       bool needMove, bool typecbx)
+                                       bool needMove, bool typecbx, bool dnfCbx)
 {
     //    va_list arg_ptr;//定义一个可变参数指针
     //    va_start(arg_ptr,needMove); //设置needMove为最后一个固定参数
@@ -276,6 +302,12 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     cbx_lv->setVisible(lvCbx);
     if (cbx_lv->isVisible())
         cbx_lv->setCurrentIndex(INF + 1);
+
+    dnflvTxt->setVisible(dnfCbx);
+    cbx_dnf_lv->setVisible(dnfCbx);
+    if (cbx_dnf_lv->isVisible()) {
+        cbx_dnf_lv->setCurrentIndex(5);
+    }
     appTxt->setVisible(appListCbx);
     cbx_app->setVisible(appListCbx);
     if (cbx_app->isVisible())
@@ -463,6 +495,9 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
                                  true);  // modifed by Airy for showing peroid
     } else if (itemData.contains(KWIN_TREE_DATA)) {
         this->setSelectorVisible(false, false, false, false, false);
+    } else if (itemData.contains(DNF_TREE_DATA)) {
+        this->setSelectorVisible(false, false, false, true, false, false, true);
+        cbx_dnf_lv->setCurrentIndex(5);
     }
 }
 
@@ -499,6 +534,7 @@ void FilterContent::slot_buttonClicked(int idx)
         if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
                 itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
             cbx_lv->setCurrentIndex(INF + 1);
+            cbx_dnf_lv->setCurrentIndex(5);
         } else {
             emit sigButtonClicked(m_curBtnId, INVALID, m_curTreeIndex);
         }
@@ -516,6 +552,12 @@ void FilterContent::slot_cbxLvIdxChanged(int idx)
 {
     m_curLvCbxId = idx - 1;
     emit sigButtonClicked(m_curBtnId, m_curLvCbxId, m_curTreeIndex);
+}
+
+void FilterContent::slot_cbxDnfLvIdxChanged(int idx)
+{
+    Q_UNUSED(idx)
+    emit sigDnfLvlChanged(cbx_dnf_lv->currentData().value<DNFPRIORITY>());
 }
 
 void FilterContent::slot_cbxAppIdxChanged(int idx)

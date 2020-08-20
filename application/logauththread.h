@@ -2,6 +2,7 @@
 #define LOGAUTHTHREAD_H
 #include <QProcess>
 #include <QRunnable>
+#include <QMap>
 #include <mutex>
 #include "structdef.h"
 
@@ -25,7 +26,7 @@ public:
         }
         return sin;
     }
-
+    void initDnfLevelMap();
     QString getStandardOutput();
     QString getStandardError();
 
@@ -33,6 +34,7 @@ public:
     void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
     void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
     void setFileterParam(DKPG_FILTERS iFIlters) { m_dkpgFilters = iFIlters; }
+    void setFileterParam(DNF_FILTERS iFIlters) { m_dnfFilters = iFIlters; }
     void stopProccess();
 
 protected:
@@ -43,6 +45,7 @@ protected:
     void handleKwin();
     void handleXorg();
     void handleDkpg();
+    void handleDnf();
     void initProccess();
 
 
@@ -53,6 +56,7 @@ signals:
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
     void xorgFinished(QList<LOG_MSG_XORG> iKwinList);
     void dpkgFinished(QList<LOG_MSG_DPKG> iKwinList);
+    void dnfFinished(QList<LOG_MSG_DNF> iKwinList);
     void proccessError(const QString &iError);
 public slots:
     void onFinished(int exitCode);
@@ -64,6 +68,9 @@ private:
     KWIN_FILTERS m_kwinFilters;
     XORG_FILTERS m_xorgFilters;
     DKPG_FILTERS m_dkpgFilters;
+    DNF_FILTERS m_dnfFilters;
+    QMap<QString, int> m_dnfLevelDict;
+    QMap<QString, QString> m_transDnfDict;
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
     QProcess *m_process = nullptr;

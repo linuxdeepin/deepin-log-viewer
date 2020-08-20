@@ -68,6 +68,7 @@ DisplayContent::DisplayContent(QWidget *parent)
     initUI();
     initMap();
     initConnections();
+
 }
 
 DisplayContent::~DisplayContent()
@@ -151,9 +152,24 @@ void DisplayContent::initMap()
     m_icon_name_map.insert(DApplication::translate("Level", "Notice"), "warning.svg");
     m_icon_name_map.insert(DApplication::translate("Level", "Info"), "");
     m_icon_name_map.insert(DApplication::translate("Level", "Debug"), "");
+
+
+
+    m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Trace"), "");
+    m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Debug"), "");
+    m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Info"), "");
+    m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Warning"), "warning.svg");
+    m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Error"), "wrong.svg");
+    m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Critical"), "warning2.svg");
+    m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "SuperCirtical"), "warning3.svg");
+
+
     m_icon_name_map.insert("Warning", "warning.svg");
     m_icon_name_map.insert("Debug", "");
     m_icon_name_map.insert("Error", "wrong.svg");
+
+
+
 }
 
 void DisplayContent::initTableView()
@@ -171,6 +187,7 @@ void DisplayContent::initConnections()
     connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString)),
             m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, QStandardItemModel *, QString)));
     connect(&m_logFileParse, SIGNAL(dpkgFinished(QList<LOG_MSG_DPKG>)), this, SLOT(slot_dpkgFinished(QList<LOG_MSG_DPKG>)));
+    connect(&m_logFileParse, SIGNAL(dnfFinished(QList<LOG_MSG_DNF>)), this, SLOT(slot_dnfFinished(QList<LOG_MSG_DNF>)));
     connect(&m_logFileParse, SIGNAL(xlogFinished(QList<LOG_MSG_XORG>)), this, SLOT(slot_XorgFinished(QList<LOG_MSG_XORG>)));
     connect(&m_logFileParse, SIGNAL(bootFinished(QList<LOG_MSG_BOOT>)), this,
             SLOT(slot_bootFinished(QList<LOG_MSG_BOOT>)));
@@ -344,6 +361,56 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
+void DisplayContent::generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel)
+{
+
+//    if (iDate == BUTTONID(m_curBtnId) && iLevel == m_curDnfLevel) {
+//        return;
+//    }
+    dnfList.clear();
+    dnfListOrigin.clear();
+    clearAllFilter();
+    clearAllDatalist();
+    setLoadState(DATA_LOADING);
+    createDnfForm();
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime());  // get zero time
+    DNF_FILTERS dnffilter;
+    dnffilter.levelfilter = iLevel;
+    switch (iDate) {
+    case ALL:
+        dnffilter.timeFilter = 0;
+        break;
+    case ONE_DAY: {
+        dnffilter.timeFilter = dt.toMSecsSinceEpoch();
+    } break;
+    case THREE_DAYS: {
+        dnffilter.timeFilter = dt.addDays(-2).toMSecsSinceEpoch();
+    } break;
+    case ONE_WEEK: {
+        dnffilter.timeFilter = dt.addDays(-6).toMSecsSinceEpoch();
+    } break;
+    case ONE_MONTH: {
+        dnffilter.timeFilter = dt.addDays(-29).toMSecsSinceEpoch();
+    } break;
+    case THREE_MONTHS: {
+        dnffilter.timeFilter = dt.addDays(-89).toMSecsSinceEpoch();
+    } break;
+    default:
+        break;
+    }
+    m_logFileParse.parseByDnf(dnffilter);
+
+}
+
+void DisplayContent::createDnfTable(QList<LOG_MSG_DNF> &list)
+{
+    m_limitTag = 0;
+    setLoadState(DATA_COMPLETE);
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertDnfTable(list, 0, end);
+}
+
 void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
@@ -499,6 +566,30 @@ void DisplayContent::createAppTableForm()
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
     m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+}
+
+void DisplayContent::createDpkgForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Level")
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(DNF_SPACE::dnfLvlColumn, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(DNF_SPACE::dnfDateTimeColumn, DATETIME_WIDTH);
+    m_treeView->hideColumn(3);
+}
+
+void DisplayContent::createDnfForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Level")
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(DNF_SPACE::dnfLvlColumn, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(DNF_SPACE::dnfDateTimeColumn, DATETIME_WIDTH);
+    m_treeView->hideColumn(3);
 }
 
 void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
@@ -788,7 +879,10 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         generateXorgFile(btnId);
     } else if (treeData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
         generateNormalFile(btnId);
+    } else if (treeData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
+        generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
     }
+
 }
 
 void DisplayContent::slot_appLogs(QString path)
@@ -799,6 +893,12 @@ void DisplayContent::slot_appLogs(QString path)
     m_curAppLog = path;
     //    m_logFileParse.parseByApp(path, appList);
     generateAppFile(path, m_curBtnId, m_curLevel);
+}
+
+void DisplayContent::slot_dnfLevel(DNFPRIORITY iLevel)
+{
+    m_curDnfLevel = iLevel;
+    generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
 }
 
 void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
@@ -856,6 +956,9 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_currentKwinList.clear();
         m_flag = Kwin;
         m_logFileParse.parseByKwin(m_currentKwinFilter);
+    } else if (itemData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Dnf;
+        generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
     }
 
 //    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||   //modified by Airy for bug 19660:spinner always running
@@ -930,6 +1033,9 @@ void DisplayContent::slot_exportClicked()
         case Kwin:
             exportThread->exportToTxtPublic(fileName, m_currentKwinList, labels);
             break;
+        case Dnf:
+            exportThread->exportToTxtPublic(fileName, dnfList, labels);
+            break;
         default:
             break;
         }
@@ -963,6 +1069,9 @@ void DisplayContent::slot_exportClicked()
             break;
         case Kwin:
             exportThread->exportToHtmlPublic(fileName, m_currentKwinList, labels);
+            break;
+        case Dnf:
+            exportThread->exportToHtmlPublic(fileName, dnfList, labels);
             break;
         default:
             break;
@@ -998,6 +1107,9 @@ void DisplayContent::slot_exportClicked()
         case Kwin:
             exportThread->exportToDocPublic(fileName, m_currentKwinList, labels);
             break;
+        case Dnf:
+            exportThread->exportToDocPublic(fileName, dnfList, labels);
+            break;
         default:
             break;
         }
@@ -1032,6 +1144,9 @@ void DisplayContent::slot_exportClicked()
         case Kwin:
             exportThread->exportToXlsPublic(fileName, m_currentKwinList, labels);
             break;
+        case Dnf:
+            exportThread->exportToXlsPublic(fileName, dnfList, labels);
+            break;
         default:
             break;
         }
@@ -1057,6 +1172,15 @@ void DisplayContent::slot_dpkgFinished(QList<LOG_MSG_DPKG> list)
     dList = list;
     dListOrigin = list;
     createDpkgTable(dList);
+}
+
+void DisplayContent::slot_dnfFinished(QList<LOG_MSG_DNF> list)
+{
+    if (m_flag != Dnf)
+        return;
+    dnfList = list;
+    dnfListOrigin = list;
+    createDnfTable(dnfList);
 }
 
 void DisplayContent::slot_XorgFinished(QList<LOG_MSG_XORG> list)
@@ -1225,6 +1349,21 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             m_limitTag = rate;
         }
         m_treeView->verticalScrollBar()->setValue(value);
+    } else if (m_flag == Dnf) {  // modified by Airy for bug 12263
+        int rate = (value + 25) / SINGLE_LOAD;
+
+        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
+            if (m_limitTag >= rate)
+                return;
+
+            int leftCnt = kList.count() - SINGLE_LOAD * rate;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertDnfTable(dnfList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+
+            m_limitTag = rate;
+        }
+        m_treeView->verticalScrollBar()->setValue(value);
     }
 }
 
@@ -1330,6 +1469,20 @@ void DisplayContent::slot_searchResult(QString str)
             m_currentKwinList.removeAt(i);
         }
         creatKwinTable(m_currentKwinList);
+    } break;
+    case Dnf: {
+        dnfList = dnfListOrigin;
+        int cnt = dnfList.count();
+        for (int i = cnt - 1; i >= 0; --i) {
+            LOG_MSG_DNF msg = dnfList.at(i);
+            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.level.contains(m_currentSearchStr, Qt::CaseInsensitive))
+                continue;
+            dnfList.removeAt(i);
+        }
+        createDnfForm();
+        createDnfTable(dnfList);
     } break;
     default:
         break;
@@ -1563,6 +1716,44 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemMo
     }
 }
 
+void DisplayContent::parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<LOG_MSG_DNF> list = iList;
+    QList<QStandardItem *> items;
+    DStandardItem *item = nullptr;
+    for (int i = 0; i < list.size(); i++) {
+        items.clear();
+        //int col = 0;
+        QString CH_str = m_transDict.value(list[i].level);
+        QString lvStr = CH_str.isEmpty() ? list[i].level : CH_str;
+        //        item = new DStandardItem(lvStr);
+        item = new DStandardItem();
+        QString iconPath = m_iconPrefix + m_dnfIconNameMap.value(list[i].level);
+        if (m_dnfIconNameMap.value(list[i].level).isEmpty())
+            item->setText(list[i].level);
+        item->setIcon(QIcon(iconPath));
+        item->setData(DNF_TABLE_DATA);
+        item->setData(lvStr, Log_Item_SPACE::levelRole);
+        items << item;
+        item = new DStandardItem(list[i].dateTime);
+        item->setData(DNF_TABLE_DATA);
+        items << item;
+        item = new DStandardItem(list[i].msg);
+        item->setData(DNF_TABLE_DATA);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
 void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
 {
     if (!m_spinnerWgt->isHidden()) {
@@ -1611,10 +1802,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
 
 void DisplayContent::onExportResult(bool isSuccess)
 {
-    QString titleIcon = ICONPREFIX ;
-    if (isSuccess) {
-        DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export Success"));
-    }
+    Q_UNUSED(isSuccess)
 }
 
 void DisplayContent::clearAllFilter()
@@ -1624,6 +1812,7 @@ void DisplayContent::clearAllFilter()
     m_currentSearchStr.clear();
     m_currentKwinFilter = {""};
     m_normalFilter = {"", 0};
+    m_currentDnfFilter = {0, DNFLVALL};
 }
 
 void DisplayContent::clearAllDatalist()
@@ -1646,6 +1835,8 @@ void DisplayContent::clearAllDatalist()
     nortempList.clear();
     m_currentKwinList.clear();
     m_kwinList.clear();
+    dnfList.clear();
+    dnfListOrigin.clear();
     malloc_trim(0);
 }
 
@@ -1806,7 +1997,7 @@ void DisplayContent::resizeEvent(QResizeEvent *event)
 QString DisplayContent::getIconByname(QString str)
 {
     //    qDebug() << str << m_icon_name_map.value(str);
-    return m_icon_name_map      .value(str);
+    return m_icon_name_map.value(str);
 }
 
 void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
@@ -1823,6 +2014,19 @@ void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
 void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end)
 {
     QList<LOG_MSG_APPLICATOIN> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
+    }
+    parseListToModel(midList, m_pModel);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
+void DisplayContent::insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end)
+{
+    QList<LOG_MSG_DNF> midList = list;
     if (end >= start) {
         midList = midList.mid(start, end - start);
     }
@@ -1885,6 +2089,9 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         m_currentKwinList.clear();
         m_flag = Kwin;
         m_logFileParse.parseByKwin(m_currentKwinFilter);
+    } else if (itemData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Dnf;
+        generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
     }
 
 

@@ -426,5 +426,8 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     } else if (dataStr.contains(KWIN_TABLE_DATA)) {
         fillDetailInfo("Kwin", hostname, "", "", QModelIndex(),
                        index.siblingAtColumn(0).data().toString());
+    } else if (dataStr.contains(DNF_TABLE_DATA)) {
+        fillDetailInfo("dnf", hostname, "", "", index,
+                       index.siblingAtColumn(2).data().toString());
     }
 }

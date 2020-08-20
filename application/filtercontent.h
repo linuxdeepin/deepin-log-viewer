@@ -21,7 +21,7 @@
 
 #ifndef FILTERCONTENT_H
 #define FILTERCONTENT_H
-
+#include "structdef.h"
 #include <DComboBox>
 #include <DFrame>
 #include <DLabel>
@@ -49,7 +49,7 @@ private:
     void setAppComboBoxItem();
 
     void setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period, bool needMove,
-                            bool typecbx = false);  // modified by Airy
+                            bool typecbx = false, bool dnfCbx = false); // modified by Airy
 
     void setUeButtonSytle();
     void paintEvent(QPaintEvent *event);
@@ -62,7 +62,7 @@ signals:
     //    void sigCbxLvIdxChanged(int idx);
     void sigCbxAppIdxChanged(QString path);
     void sigExportInfo();
-
+    void sigDnfLvlChanged(DNFPRIORITY iDnf);
     void sigStatusChanged(QString str);
 
     void sigLogtypeChanged(int tId);  // add by Airy
@@ -72,6 +72,7 @@ public slots:
     void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_buttonClicked(int idx);
     void slot_cbxLvIdxChanged(int idx);
+    void slot_cbxDnfLvIdxChanged(int idx);
     void slot_cbxAppIdxChanged(int idx);
     void slot_cbxStatusChanged(int idx);
     void slot_cbxLogTypeChanged(int idx);  // add  by Airy
@@ -79,8 +80,10 @@ public slots:
 private:
     QButtonGroup *m_btnGroup;
     Dtk::Widget::DLabel *lvTxt;
+    Dtk::Widget::DLabel *dnflvTxt;
     Dtk::Widget::DLabel *periodLabel;
     Dtk::Widget::DComboBox *cbx_lv;
+    Dtk::Widget::DComboBox *cbx_dnf_lv;
     Dtk::Widget::DLabel *appTxt;
     Dtk::Widget::DComboBox *cbx_app;
     Dtk::Widget::DLabel *statusTxt;

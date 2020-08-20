@@ -39,6 +39,7 @@ public:
 
     int parseByJournal(QStringList arg = QStringList());
     void parseByDpkg(qint64 ms = 0);
+    void parseByDnf(DNF_FILTERS iDnfFilter);
 #if 0
     void parseByXlog(QStringList &xList);
     void parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms = 0);  // modifed by Airy for show period
@@ -55,6 +56,7 @@ public:
 
 signals:
     void dpkgFinished(QList<LOG_MSG_DPKG>);
+    void dnfFinished(QList<LOG_MSG_DNF>);
     void xlogFinished(QList<LOG_MSG_XORG>);
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kernFinished(QList<LOG_MSG_JOURNAL>);
@@ -64,6 +66,7 @@ signals:
     void normalFinished();  // add by Airy
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
     void stopKern();
+    void stopDnf();
     void stopBoot();
     void stopApp();
     void stopJournal();

@@ -118,6 +118,16 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_canRunning = true;
 }
 
+void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+{
+    m_fileName = fileName;
+    m_dnfList = jList;
+    m_labels = labels;
+    m_runMode = TxtDNF;
+    m_canRunning = true;
+
+}
+
 void LogExportThread::exportToHtmlPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
@@ -191,6 +201,15 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_KWIN> j
     m_kwinList = jList;
     m_labels = labels;
     m_runMode = HtmlKWIN;
+    m_canRunning = true;
+}
+
+void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+{
+    m_fileName = fileName;
+    m_dnfList = jList;
+    m_labels = labels;
+    m_runMode = HtmlDNF;
     m_canRunning = true;
 }
 
@@ -270,6 +289,15 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_canRunning = true;
 }
 
+void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+{
+    m_fileName = fileName;
+    m_dnfList = jList;
+    m_labels = labels;
+    m_runMode = DocDNF;
+    m_canRunning = true;
+}
+
 void LogExportThread::exportToXlsPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
@@ -341,6 +369,15 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_kwinList = jList;
     m_labels = labels;
     m_runMode = XlsKWIN;
+    m_canRunning = true;
+}
+
+void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+{
+    m_fileName = fileName;
+    m_dnfList = jList;
+    m_labels = labels;
+    m_runMode = XlsDNF;
     m_canRunning = true;
 }
 
@@ -667,6 +704,42 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, Q
             }
             LOG_MSG_KWIN jMsg = jList.at(i);
             int col = 0;
+            out << labels.value(col++, "") << ":" << jMsg.msg << " ";
+            out << "\n";
+        }
+    } catch (QString ErrorStr) {
+        qDebug() << "Export Stop" << ErrorStr;
+        fi.close();
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    fi.close();
+    emit sigResult(true);
+    return true;
+}
+
+bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+{
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
+    try {
+        QTextStream out(&fi);
+        out.setCodec(QTextCodec::codecForName("utf-8"));
+        for (int i = 0; i < jList.count(); i++) {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            int col = 0;
+            LOG_MSG_DNF jMsg = jList.at(i);
+            out << labels.value(col++, "") << ":" << jMsg.level << " ";
+            out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
         }
@@ -1075,6 +1148,44 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         return false;
     }
     //emit sigResult(true);
+    return true;
+}
+
+bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+{
+    try {
+        Docx::Document doc(DOCTEMPLATE);
+        Docx::Table *tab = doc.addTable(jList.count() + 1, 3);
+        tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
+
+        for (int col = 0; col < labels.count(); ++col) {
+            auto cel = tab->cell(0, col);
+            cel->addText(labels.at(col));
+        }
+
+        for (int row = 0; row < jList.count(); ++row) {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_DNF message = jList.at(row);
+            int col = 0;
+            tab->cell(row + 1, col++)->addText(message.level);
+            tab->cell(row + 1, col++)->addText(message.dateTime);
+            tab->cell(row + 1, col++)->addText(message.msg);
+
+        }
+        //暂时如此，最后的真正写文件之前就发出成功信号关闭弹框，因为如果最后写的时候无法取消
+        emit sigResult(true);
+        doc.save(fileName);
+    } catch (QString ErrorStr) {
+        qDebug() << "Export Stop" << ErrorStr;
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    //  emit sigResult(true);
     return true;
 }
 
@@ -1555,6 +1666,58 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
     return true;
 }
 
+bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+{
+    QFile html(fileName);
+    if (!html.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
+    try {
+        html.write("<!DOCTYPE html>\n");
+        html.write("<html>\n");
+        html.write("<body>\n");
+        html.write("<table border=\"1\">\n");
+        html.write("<tr>");
+        for (int i = 0; i < labels.count(); ++i) {
+            QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
+            html.write(labelInfo.toUtf8().data());
+        }
+        html.write("</tr>");
+        for (int row = 0; row < jList.count(); ++row) {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_DNF jMsg = jList.at(row);
+            html.write("<tr>");
+            QString info = QString("<td>%1</td>").arg(jMsg.level);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.dateTime);
+            html.write(info.toUtf8().data());
+            //此style为使元素内\n换行符起效
+            info = QString("<td style='white-space: pre-line;'>%1</td>").arg(jMsg.msg);
+            html.write(info.toUtf8().data());
+            html.write("</tr>");
+        }
+
+        html.write("</table>\n");
+        html.write("</body>\n");
+        html.write("</html>\n");
+    } catch (QString ErrorStr) {
+        qDebug() << "Export Stop" << ErrorStr;
+        html.close();
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    html.close();
+    emit sigResult(true);
+    return true;
+}
+
 
 
 bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
@@ -1882,6 +2045,42 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
     return true;
 }
 
+bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+{
+    try {
+        auto currentXlsRow = 1;
+        QXlsx::Document xlsx;
+        for (int col = 0; col < labels.count(); ++col) {
+            QXlsx::Format boldFont;
+            boldFont.setFontBold(true);
+            xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
+        }
+        ++currentXlsRow;
+        for (int row = 0; row < jList.count(); ++row) {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_DNF message = jList.at(row);
+            int col = 1;
+            xlsx.write(currentXlsRow, col++, message.level);
+            xlsx.write(currentXlsRow, col++, message.dateTime);
+            xlsx.write(currentXlsRow, col++, message.msg);
+            ++currentXlsRow;
+        }
+        ++currentXlsRow;
+        xlsx.saveAs(fileName);
+    } catch (QString ErrorStr) {
+        qDebug() << "Export Stop" << ErrorStr;
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    emit sigResult(true);
+    return true;
+}
+
 void LogExportThread::initMap()
 {
     m_levelStrMap.clear();
@@ -1939,6 +2138,10 @@ void LogExportThread::run()
         exportToTxt(m_fileName, m_kwinList, m_labels);
         break;
     }
+    case TxtDNF: {
+        exportToTxt(m_fileName, m_dnfList, m_labels);
+        break;
+    }
     case HtmlModel: {
         exportToHtml(m_fileName, m_pModel, m_flag);
         break;
@@ -1969,6 +2172,10 @@ void LogExportThread::run()
     }
     case HtmlKWIN: {
         exportToHtml(m_fileName, m_kwinList, m_labels);
+        break;
+    }
+    case HtmlDNF: {
+        exportToHtml(m_fileName, m_dnfList, m_labels);
         break;
     }
     case DocModel: {
@@ -2003,6 +2210,10 @@ void LogExportThread::run()
         exportToDoc(m_fileName, m_kwinList, m_labels);
         break;
     }
+    case DocDNF: {
+        exportToDoc(m_fileName, m_dnfList, m_labels);
+        break;
+    }
     case XlsModel: {
         exportToXls(m_fileName, m_pModel, m_flag);
         break;
@@ -2033,6 +2244,10 @@ void LogExportThread::run()
     }
     case XlsKWIN: {
         exportToXls(m_fileName, m_kwinList, m_labels);
+        break;
+    }
+    case XlsDNF: {
+        exportToXls(m_fileName, m_dnfList, m_labels);
         break;
     }
     default:

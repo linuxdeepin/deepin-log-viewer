@@ -67,6 +67,9 @@ private:
     void generateDpkgFile(int id, const QString &iSearchStr = "");
     void createDpkgTable(QList<LOG_MSG_DPKG> &list);
 
+    void generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel);
+    void createDnfTable(QList<LOG_MSG_DNF> &list);
+
     void generateKernFile(int id, const QString &iSearchStr = "");
     void createKernTable(QList<LOG_MSG_JOURNAL> &list);
 
@@ -87,10 +90,13 @@ private:
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
+    void insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end);
     void insertKernTable(QList<LOG_MSG_JOURNAL> list, int start,
                          int end);  // add by Airy for bug 12263
     void createKernTableForm();
     void createAppTableForm();
+    void createDpkgForm();
+    void createDnfForm();
     QString getAppName(QString filePath);
 
     bool isAuthProcessAlive();
@@ -107,13 +113,14 @@ public slots:
     void slot_tableItemClicked(const QModelIndex &index);
     void slot_BtnSelected(int btnId, int lId, QModelIndex idx);
     void slot_appLogs(QString path);
-
+    void slot_dnfLevel(DNFPRIORITY iLevel);
     void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_exportClicked();
 
     void slot_statusChagned(QString status);
 
     void slot_dpkgFinished(QList<LOG_MSG_DPKG> list);
+    void slot_dnfFinished(QList<LOG_MSG_DNF> list);
     void slot_XorgFinished(QList<LOG_MSG_XORG> list);
     void slot_bootFinished(QList<LOG_MSG_BOOT> list);
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
@@ -139,6 +146,8 @@ public slots:
     void parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel);
+
     QString getIconByname(QString str);
     void setLoadState(LOAD_STATE iState);
     void onExportResult(bool isSuccess);
@@ -170,7 +179,7 @@ private:
 
     int m_curBtnId {ALL};
     int m_curLevel {INF};
-
+    DNFPRIORITY m_curDnfLevel {INFO};
     LOG_FLAG m_flag {NONE};
 
     LogFileParser m_logFileParse;
@@ -180,6 +189,7 @@ private:
     QList<LOG_MSG_XORG> xList, xListOrigin;                  // Xorg.0.log
     QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
     QList<LOG_MSG_JOURNAL> kList, kListOrigin;                // kern.log
+    QList<LOG_MSG_DNF> dnfList, dnfListOrigin; //dnf.log
     QList<LOG_MSG_APPLICATOIN> appList, appListOrigin;         //~/.cache/deepin/xxx.log(.xxx)
     QList<LOG_MSG_NORMAL> norList;               // add by Airy
     QList<LOG_MSG_NORMAL> nortempList;           // add by Airy
@@ -187,8 +197,10 @@ private:
     QList<LOG_MSG_KWIN> m_kwinList;                   //$HOME/.kwin.log
     QString m_iconPrefix = ICONPREFIX;
     QMap<QString, QString> m_icon_name_map;
+    QMap<QString, QString> m_dnfIconNameMap;
     QString m_currentSearchStr{""};
     KWIN_FILTERS m_currentKwinFilter;
+    DNF_FILTERS m_currentDnfFilter;
     bool m_firstLoadPageData = false;
     BOOT_FILTERS m_bootFilter = {"", ""};
     NORMAL_FILTERS m_normalFilter = {"", 0};

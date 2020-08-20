@@ -134,14 +134,20 @@ void LogListView::initUI()
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
     }
-    //if (isFileExist("/var/log/dpkg.log")) {
-    item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
+//    if (isFileExist("/var/log/dpkg.log")) {
+//        item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
+//        item->setToolTip(DApplication::translate("Tree", "dpkg Log"));  // add by Airy for bug 16245
+//        item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    }
+    item = new QStandardItem(DApplication::translate("Tree", "dnf Log"));
     item->setToolTip(DApplication::translate("Tree", "dnf Log"));  // add by Airy for bug 16245
-    item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
+    item->setData(DNF_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
     item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
-    // }
     if (isFileExist("/var/log/Xorg.0.log")) {
         item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
         item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
@@ -316,7 +322,7 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
 void LogListView::truncateFile(QString path_)
 {
     QProcess prc;
-    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA) {
+    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA || path_ == DNF_TREE_DATA) {
         prc.start("pkexec", QStringList() << "logViewerTruncate" << path_);
     } else {
         prc.start("truncate", QStringList() << "-s"
@@ -373,8 +379,7 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         QString _path_ = g_path;      //get app path
         QString path = "";
 
-
-        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA) {
+        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA || pathData == DNF_TREE_DATA) {
             path = pathData;
         } else if (pathData == APP_TREE_DATA) {
             //                    path = dirPath + QString("/.cache/deepin/.");

@@ -62,6 +62,7 @@ LogFileParser::LogFileParser(QWidget *parent)
     qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
     qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
     qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
+    qRegisterMetaType<QList<LOG_MSG_DNF> > ("QList<LOG_MSG_DNF>");
     qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
     m_tempJournalWork = new journalWork(this);
 
@@ -145,6 +146,22 @@ void LogFileParser::parseByDpkg(qint64 ms)
     QThreadPool::globalInstance()->start(authThread);
     //  m_authThread->start();
 
+}
+
+void LogFileParser::parseByDnf(DNF_FILTERS iDnfFilter)
+{
+    stopAllLoad();
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(Dnf);
+
+    authThread->setFileterParam(iDnfFilter);
+    connect(authThread, &LogAuthThread::proccessError, this,
+            &LogFileParser::slog_proccessError, Qt::UniqueConnection);
+    connect(authThread, &LogAuthThread::dnfFinished, this,
+            &LogFileParser::dnfFinished, Qt::UniqueConnection);
+    connect(this, &LogFileParser::stopDnf, authThread,
+            &LogAuthThread::stopProccess);
+    QThreadPool::globalInstance()->start(authThread);
 }
 
 void LogFileParser::parseByXlog(qint64 ms)  // modifed by Airy
@@ -474,6 +491,7 @@ void LogFileParser::stopAllLoad()
     emit stopBoot();
     emit stopKern();
     emit stopApp();
+    emit stopDnf();
     return;
 //    if (work && work->isRunning())
 //        work->terminate();

@@ -37,6 +37,7 @@
 class DSplitter;
 class LogCollectorMain : public Dtk::Widget::DMainWindow
 {
+    Q_OBJECT
 public:
     LogCollectorMain(QWidget *parent = nullptr);
     ~LogCollectorMain();
