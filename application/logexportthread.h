@@ -42,6 +42,7 @@ public:
         HtmlNORMAL,
         HtmlKWIN,
         HtmlDNF,
+        HtmlDMESG,
         TxtModel,
         TxtJOURNAL,
         TxtAPP,
@@ -51,6 +52,7 @@ public:
         TxtNORMAL,
         TxtKWIN,
         TxtDNF,
+        TxtDMESG,
         DocModel,
         DocJOURNAL,
         DocAPP,
@@ -60,6 +62,7 @@ public:
         DocNORMAL,
         DocKWIN,
         DocDNF,
+        DocDMESG,
         XlsModel,
         XlsJOURNAL,
         XlsAPP,
@@ -69,6 +72,7 @@ public:
         XlsNORMAL,
         XlsKWIN,
         XlsDNF,
+        XlsDMESG,
         NoneExportType = 9999
     };
 
@@ -81,6 +85,7 @@ public:
     void exportToTxtPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     void exportToTxtPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
     void exportToTxtPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels);
+    void exportToTxtPublic(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels);
 
     void exportToHtmlPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
     void exportToHtmlPublic(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag);
@@ -91,6 +96,7 @@ public:
     void exportToHtmlPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     void exportToHtmlPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
     void exportToHtmlPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels);
+    void exportToHtmlPublic(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels);
 
 
     void exportToDocPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
@@ -102,6 +108,7 @@ public:
     void exportToDocPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     void exportToDocPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
     void exportToDocPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels);
+    void exportToDocPublic(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels);
 
 
     void exportToXlsPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
@@ -113,6 +120,7 @@ public:
     void exportToXlsPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     void exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
     void exportToXlsPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels);
+    void exportToXlsPublic(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels);
 
     bool isProcessing();
 public slots:
@@ -134,6 +142,7 @@ private:
     bool exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     bool exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
     bool exportToTxt(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels);
+    bool exportToTxt(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels);
 
     bool exportToDoc(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
     bool exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag);
@@ -144,6 +153,7 @@ private:
     bool exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     bool exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
     bool exportToDoc(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels);
+    bool exportToDoc(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels);
 
     bool exportToHtml(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
     bool exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag);
@@ -154,6 +164,8 @@ private:
     bool exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     bool exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
     bool exportToHtml(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels);
+    bool exportToHtml(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels);
+
 
     bool exportToXls(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
     bool exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag);
@@ -164,6 +176,8 @@ private:
     bool exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     bool exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
     bool exportToXls(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels);
+    bool exportToXls(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels);
+
     void initMap();
     QString strTranslate(QString &iLevelStr);
 private:
@@ -178,6 +192,7 @@ private:
     QList<LOG_MSG_XORG> m_xorgList;
     QList<LOG_MSG_NORMAL> m_normalList;
     QList<LOG_MSG_DNF> m_dnfList;
+    QList<LOG_MSG_DMESG> m_dmesgList;
     QList<LOG_MSG_KWIN> m_kwinList;
     RUN_MODE m_runMode = NoneExportType;
     bool m_canRunning = false;

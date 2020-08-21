@@ -117,10 +117,17 @@ void LogListView::initUI()
         m_pModel->appendRow(item);
     }
 
-    if (isFileExist("/var/log/kern.log")) {
+    if (!isFileExist("/var/log/kern.log")) {
         item = new QStandardItem(DApplication::translate("Tree", "Kernel Log"));
         item->setToolTip(DApplication::translate("Tree", "Kernel Log"));  // add by Airy for bug 16245
         item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
+        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        m_pModel->appendRow(item);
+    } else {
+        item = new QStandardItem(DApplication::translate("Tree", "Kernel Log"));
+        item->setToolTip(DApplication::translate("Tree", "Kernel Log"));  // add by Airy for bug 16245
+        item->setData(DMESG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
@@ -239,13 +246,19 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
             } else if (item->data(ITEM_DATE_ROLE).toString() == KERN_TREE_DATA) {
                 _itemIcon = icon + "core.svg";
 
+            } else if (item->data(ITEM_DATE_ROLE).toString() == DMESG_TREE_DATA) {
+                _itemIcon = icon + "core.svg";
+
             } else if (item->data(ITEM_DATE_ROLE).toString() == BOOT_TREE_DATA) {
                 _itemIcon = icon + "start.svg";
 
             } else if (item->data(ITEM_DATE_ROLE).toString() == DPKG_TREE_DATA) {
                 _itemIcon = icon + "d.svg";
 
-            } else if (item->data(ITEM_DATE_ROLE).toString() == XORG_TREE_DATA) {
+            } else if (item->data(ITEM_DATE_ROLE).toString() == DNF_TREE_DATA) {
+                _itemIcon = icon + "d.svg";
+
+            }  else if (item->data(ITEM_DATE_ROLE).toString() == XORG_TREE_DATA) {
                 _itemIcon = icon + "x.svg";
 
             } else if (item->data(ITEM_DATE_ROLE).toString() == APP_TREE_DATA) {
@@ -322,7 +335,7 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
 void LogListView::truncateFile(QString path_)
 {
     QProcess prc;
-    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA || path_ == DNF_TREE_DATA) {
+    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA || path_ == DNF_TREE_DATA || path_ == DMESG_TREE_DATA) {
         prc.start("pkexec", QStringList() << "logViewerTruncate" << path_);
     } else {
         prc.start("truncate", QStringList() << "-s"
@@ -374,12 +387,14 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
-
+        if (pathData == DMESG_TREE_DATA) {
+            g_openForder->setEnabled(false);
+        }
         QString dirPath = QDir::homePath();
         QString _path_ = g_path;      //get app path
         QString path = "";
 
-        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA || pathData == DNF_TREE_DATA) {
+        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA || pathData == DNF_TREE_DATA || pathData == DMESG_TREE_DATA) {
             path = pathData;
         } else if (pathData == APP_TREE_DATA) {
             //                    path = dirPath + QString("/.cache/deepin/.");

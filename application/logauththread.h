@@ -27,6 +27,7 @@ public:
         return sin;
     }
     void initDnfLevelMap();
+    void initLevelMap();
     QString getStandardOutput();
     QString getStandardError();
 
@@ -35,6 +36,7 @@ public:
     void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
     void setFileterParam(DKPG_FILTERS iFIlters) { m_dkpgFilters = iFIlters; }
     void setFileterParam(DNF_FILTERS iFIlters) { m_dnfFilters = iFIlters; }
+    void setFileterParam(DMESG_FILTERS iFIlters) { m_dmesgFilters = iFIlters; }
     void stopProccess();
 
 protected:
@@ -46,8 +48,9 @@ protected:
     void handleXorg();
     void handleDkpg();
     void handleDnf();
+    void handleDmesg();
     void initProccess();
-
+    QString startTime();
 
 
 signals:
@@ -55,6 +58,7 @@ signals:
     void bootFinished(LOG_FLAG iflag, QString output);
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
     void xorgFinished(QList<LOG_MSG_XORG> iKwinList);
+    void dmesgFinished(QList<LOG_MSG_DMESG> iKwinList);
     void dpkgFinished(QList<LOG_MSG_DPKG> iKwinList);
     void dnfFinished(QList<LOG_MSG_DNF> iKwinList);
     void proccessError(const QString &iError);
@@ -69,6 +73,8 @@ private:
     XORG_FILTERS m_xorgFilters;
     DKPG_FILTERS m_dkpgFilters;
     DNF_FILTERS m_dnfFilters;
+    DMESG_FILTERS m_dmesgFilters;
+    QMap<int, QString> m_levelMap;
     QMap<QString, int> m_dnfLevelDict;
     QMap<QString, QString> m_transDnfDict;
     static std::atomic<LogAuthThread *> m_instance;

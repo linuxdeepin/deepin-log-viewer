@@ -63,7 +63,11 @@ struct LOG_MSG_XORG {
     QString dateTime;
     QString msg;
 };
-
+struct LOG_MSG_DMESG {
+    QString level;
+    QString dateTime;
+    QString msg;
+};
 // add by Airy
 struct LOG_MSG_NORMAL {
     QString eventType;
@@ -87,6 +91,10 @@ struct DNF_FILTERS {
 };
 struct DKPG_FILTERS {
     qint64 timeFilter ;
+};
+struct DMESG_FILTERS {
+    qint64 timeFilter ;
+    PRIORITY levelFilter;
 };
 struct BOOT_FILTERS {
     QString searchstr;
@@ -126,6 +134,7 @@ enum LOG_FLAG {
     Normal,
     Kwin,
     Dnf,
+    Dmesg,
     NONE = 9999
 };  // modified by
 // Airy
@@ -165,6 +174,13 @@ enum DNF_DISPLAY_COLUMN {
     dnfMsgColumn
 };
 }
+namespace DMESG_SPACE {
+enum DMESG_DISPLAY_COLUMN {
+    dmesgLevelColumn = 0,
+    dmesgDateTimeColumn,
+    dmesgMsgColumn
+};
+}
 namespace XORG_SPACE {
 enum XORG_DISPLAY_COLUMN {
     xorgDateTimeColumn = 0,
@@ -199,6 +215,7 @@ enum NORMAL_DISPLAY_COLUMN {
 #define APP_TABLE_DATA "applicationItemData"
 #define LAST_TABLE_DATA "lastItemData"  // add by Airy
 #define KWIN_TABLE_DATA "kwinItemData"
+#define DMESG_TABLE_DATA "dmesgItemData"
 
 #define JOUR_TREE_DATA "journalctl"
 #define DPKG_TREE_DATA "/var/log/dpkg.log"
@@ -207,6 +224,7 @@ enum NORMAL_DISPLAY_COLUMN {
 #define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"
 #define BOOT_TREE_DATA "/var/log/boot.log"
 #define KERN_TREE_DATA "/var/log/kern.log"
+#define DMESG_TREE_DATA "dmesg"
 #define APP_TREE_DATA "application"
 #define LAST_TREE_DATA "last"  // add by Airy
 #define ITEM_DATE_ROLE (Qt::UserRole + 66)

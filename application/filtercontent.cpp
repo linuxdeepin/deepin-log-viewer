@@ -498,6 +498,9 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(DNF_TREE_DATA)) {
         this->setSelectorVisible(false, false, false, true, false, false, true);
         cbx_dnf_lv->setCurrentIndex(5);
+    } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
+        this->setSelectorVisible(true, false, false, true,
+                                 false);  // modified by Airy for showing  peroid
     }
 }
 

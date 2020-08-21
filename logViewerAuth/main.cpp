@@ -21,7 +21,13 @@ int main(int argc, char *argv[])
     }
     QStringList arg;
     //    "/var/log/boot.log";//开机的时候系统核心去侦测与启动，接下来开始各种核心支援的功能启动等；
-    arg << "-c" << QString("cat %1").arg(fileList[0]);
+    if (fileList[0] == "dmesg") {
+        arg << "-c" << "dmesg -r";
+    } else {
+        arg << "-c" << QString("cat %1").arg(fileList[0]);
+    }
+
+
     QProcess proc;
     proc.start("/bin/bash", arg);
     proc.waitForFinished(-1);

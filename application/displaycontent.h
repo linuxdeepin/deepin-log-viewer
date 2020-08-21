@@ -70,6 +70,9 @@ private:
     void generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel);
     void createDnfTable(QList<LOG_MSG_DNF> &list);
 
+    void generateDmesgFile(BUTTONID iDate, PRIORITY iLevel);
+    void createDmesgTable(QList<LOG_MSG_DMESG> &list);
+
     void generateKernFile(int id, const QString &iSearchStr = "");
     void createKernTable(QList<LOG_MSG_JOURNAL> &list);
 
@@ -90,6 +93,7 @@ private:
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
+    void insertDmesgTable(QList<LOG_MSG_DMESG> list, int start, int end);
     void insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end);
     void insertKernTable(QList<LOG_MSG_JOURNAL> list, int start,
                          int end);  // add by Airy for bug 12263
@@ -97,6 +101,7 @@ private:
     void createAppTableForm();
     void createDpkgForm();
     void createDnfForm();
+    void createDmesgForm();
     QString getAppName(QString filePath);
 
     bool isAuthProcessAlive();
@@ -121,6 +126,7 @@ public slots:
 
     void slot_dpkgFinished(QList<LOG_MSG_DPKG> list);
     void slot_dnfFinished(QList<LOG_MSG_DNF> list);
+    void slot_dmesgFinished(QList<LOG_MSG_DMESG> list);
     void slot_XorgFinished(QList<LOG_MSG_XORG> list);
     void slot_bootFinished(QList<LOG_MSG_BOOT> list);
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
@@ -147,6 +153,7 @@ public slots:
     void parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel);
 
     QString getIconByname(QString str);
     void setLoadState(LOAD_STATE iState);
@@ -195,6 +202,8 @@ private:
     QList<LOG_MSG_NORMAL> nortempList;           // add by Airy
     QList<LOG_MSG_KWIN> m_currentKwinList;
     QList<LOG_MSG_KWIN> m_kwinList;                   //$HOME/.kwin.log
+    QList<LOG_MSG_DMESG> dmesgList, dmesgListOrigin;//dmesg cmd
+
     QString m_iconPrefix = ICONPREFIX;
     QMap<QString, QString> m_icon_name_map;
     QMap<QString, QString> m_dnfIconNameMap;

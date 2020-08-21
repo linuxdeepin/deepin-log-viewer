@@ -63,6 +63,8 @@ LogFileParser::LogFileParser(QWidget *parent)
     qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
     qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
     qRegisterMetaType<QList<LOG_MSG_DNF> > ("QList<LOG_MSG_DNF>");
+    qRegisterMetaType<QList<LOG_MSG_DMESG>> ("QList<LOG_MSG_DMESG>");
+
     qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
     m_tempJournalWork = new journalWork(this);
 
@@ -160,6 +162,21 @@ void LogFileParser::parseByDnf(DNF_FILTERS iDnfFilter)
     connect(authThread, &LogAuthThread::dnfFinished, this,
             &LogFileParser::dnfFinished, Qt::UniqueConnection);
     connect(this, &LogFileParser::stopDnf, authThread,
+            &LogAuthThread::stopProccess);
+    QThreadPool::globalInstance()->start(authThread);
+}
+
+void LogFileParser::parseByDmesg(DMESG_FILTERS iDmesgFilter)
+{
+    stopAllLoad();
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(Dmesg);
+    authThread->setFileterParam(iDmesgFilter);
+    connect(authThread, &LogAuthThread::proccessError, this,
+            &LogFileParser::slog_proccessError, Qt::UniqueConnection);
+    connect(authThread, &LogAuthThread::dmesgFinished, this,
+            &LogFileParser::dmesgFinished, Qt::UniqueConnection);
+    connect(this, &LogFileParser::stopDmesg, authThread,
             &LogAuthThread::stopProccess);
     QThreadPool::globalInstance()->start(authThread);
 }
@@ -492,6 +509,7 @@ void LogFileParser::stopAllLoad()
     emit stopKern();
     emit stopApp();
     emit stopDnf();
+    emit stopDmesg();
     return;
 //    if (work && work->isRunning())
 //        work->terminate();

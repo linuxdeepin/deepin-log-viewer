@@ -16,6 +16,7 @@ LogAuthThread::LogAuthThread(QObject *parent)
 {
     setAutoDelete(true);
     initDnfLevelMap();
+    initLevelMap();
 
 }
 
@@ -52,6 +53,19 @@ void LogAuthThread::initDnfLevelMap()
     m_transDnfDict.insert("CRITICAL", Dtk::Widget::DApplication::translate("Level", "Critical"));
     m_transDnfDict.insert("SUPERCRITICAL", Dtk::Widget::DApplication::translate("Level", "SuperCirtical"));
 
+}
+
+void LogAuthThread::initLevelMap()
+{
+    m_levelMap.clear();
+    m_levelMap.insert(0, Dtk::Widget::DApplication::translate("Level", "Emergency"));
+    m_levelMap.insert(1, Dtk::Widget::DApplication::translate("Level", "Alert"));
+    m_levelMap.insert(2, Dtk::Widget::DApplication::translate("Level", "Critical"));
+    m_levelMap.insert(3, Dtk::Widget::DApplication::translate("Level", "Error"));
+    m_levelMap.insert(4, Dtk::Widget::DApplication::translate("Level", "Warning"));
+    m_levelMap.insert(5, Dtk::Widget::DApplication::translate("Level", "Notice"));
+    m_levelMap.insert(6, Dtk::Widget::DApplication::translate("Level", "Info"));
+    m_levelMap.insert(7, Dtk::Widget::DApplication::translate("Level", "Debug"));
 }
 
 
@@ -97,6 +111,9 @@ void LogAuthThread::run()
         break;
     case Dnf:
         handleDnf();
+        break;
+    case Dmesg:
+        handleDmesg();
         break;
     default:
         break;
@@ -372,6 +389,100 @@ void LogAuthThread::handleDnf()
     qDebug() << "dnf size" << dList.length();
     emit dnfFinished(dList);
 }
+
+void LogAuthThread::handleDmesg()
+{
+    QString startStr = startTime();
+    QDateTime curDt = QDateTime::currentDateTime();
+    QList<LOG_MSG_DMESG> dmesgList;
+    if (startStr.isEmpty()) {
+        emit dmesgFinished(dmesgList);
+        return;
+    }
+
+
+    initProccess();
+
+    // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
+    m_process->setProcessChannelMode(QProcess::MergedChannels);
+    m_process->start("pkexec", QStringList() << "logViewerAuth"
+                     << "dmesg");
+    //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
+    // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
+    m_process->waitForFinished(-1);
+    QString errorStr(m_process->readAllStandardError());
+    Utils::CommandErrorType commandErrorType = Utils::isErroCommand(errorStr);
+
+    if (commandErrorType != Utils::NoError) {
+        if (commandErrorType == Utils::PermissionError) {
+            emit proccessError(errorStr + "\n" + "Please use 'sudo' run this application");
+//            DMessageBox::information(nullptr, tr("information"),
+//                                     errorStr + "\n" + "Please use 'sudo' run this application");
+        } else if (commandErrorType == Utils::RetryError) {
+            emit proccessError("The password is incorrect,please try again");
+//            DMessageBox::information(nullptr, tr("information"),
+//                                     "The password is incorrect,please try again");
+        }
+        m_process->close();
+        return;
+    }
+    QByteArray outByte =   m_process->readAllStandardOutput();
+    QByteArray byte = Utils::replaceEmptyByteArray(outByte);
+    QTextStream stream(&byte);
+    QByteArray encode;
+    stream.setCodec(encode);
+    QString output = stream.readAll();
+    QStringList l = QString(byte).split('\n');
+    qDebug() << __FUNCTION__ << "byte" << byte.length();
+//    qDebug() << __FUNCTION__ << "str" << outByte;
+    m_process->close();
+    qint64 curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
+    for (QString str : l) {
+        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+        QRegExp dmesgExp("^\\<([0-7])\\>\\[\\s*[+-]?(0|([1-9]\\d*))(\\.\\d+)?\\](.*)");
+        //启用贪婪匹配
+        dmesgExp.setMinimal(false);
+        int pos = dmesgExp.indexIn(str);
+        // qDebug()  << pos <<  dmesgExp.capturedTexts();    qDebug() << str;
+        if (pos >= 0) {
+
+            QStringList list = dmesgExp.capturedTexts();
+            if (list.count() < 6)
+                continue;
+//            if (list.count() > 4) {
+//                qDebug() << "match wrong" << list;
+//            }
+
+            QString timeStr = list[3]  + list[4];
+            QString msgInfo = list[5].simplified();
+            int levelOrigin = list[1].toInt();
+            qDebug() << "match wrong" << timeStr << levelOrigin << list;
+            // get time
+            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
+            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
+            if (realDt.toMSecsSinceEpoch() < m_dmesgFilters.timeFilter)  // add by Airy
+                continue;
+            if (m_dmesgFilters.levelFilter != LVALL) {
+                if (levelOrigin != m_dmesgFilters.levelFilter)
+                    continue;
+            }
+            LOG_MSG_DMESG msg;
+            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
+            msg.msg = msgInfo;
+            msg.level = m_levelMap.value(levelOrigin);
+            dmesgList.insert(0, msg);
+        } else {
+            if (dmesgList.length() > 0) {
+                dmesgList[0].msg += str;
+            }
+        }
+    }
+    qDebug() << "dmesg size" << dmesgList.length();
+    emit dmesgFinished(dmesgList);
+
+
+}
 void LogAuthThread::initProccess()
 {
     if (!m_process) {
@@ -379,6 +490,27 @@ void LogAuthThread::initProccess()
         //connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)), Qt::UniqueConnection);
 
     }
+}
+
+QString LogAuthThread::startTime()
+{
+    QString startStr = "";
+    QFile startFile("/proc/uptime");
+    if (!startFile.exists()) {
+        return "";
+    }
+    if (startFile.open(QFile::ReadOnly)) {
+
+        startStr = QString(startFile.readLine());
+        startFile.close();
+    }
+
+    qDebug() << "startStr" << startFile;
+    startStr = startStr.split(" ").value(0, "");
+    if (startStr.isEmpty()) {
+        return  "";
+    }
+    return startStr;
 }
 
 void LogAuthThread::onFinished(int exitCode)

@@ -204,6 +204,8 @@ void DisplayContent::initConnections()
             &DisplayContent::slot_kwinFinished);
     connect(&m_logFileParse, SIGNAL(normalFinished()), this,
             SLOT(slot_NormalFinished()));  // add by Airy
+    connect(&m_logFileParse, &LogFileParser::dmesgFinished, this, &DisplayContent::slot_dmesgFinished,
+            Qt::QueuedConnection);
     connect(m_treeView->verticalScrollBar(), &QScrollBar::valueChanged, this,
             &DisplayContent::slot_vScrollValueChanged);
 
@@ -411,6 +413,51 @@ void DisplayContent::createDnfTable(QList<LOG_MSG_DNF> &list)
     insertDnfTable(list, 0, end);
 }
 
+void DisplayContent::generateDmesgFile(BUTTONID iDate, PRIORITY iLevel)
+{
+
+    clearAllFilter();
+    clearAllDatalist();
+    setLoadState(DATA_LOADING);
+    createDmesgForm();
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime());  // get zero time
+    DMESG_FILTERS dmesgfilter;
+    dmesgfilter.levelFilter = iLevel;
+    switch (iDate) {
+    case ALL:
+        dmesgfilter.timeFilter = 0;
+        break;
+    case ONE_DAY: {
+        dmesgfilter.timeFilter = dt.toMSecsSinceEpoch();
+    } break;
+    case THREE_DAYS: {
+        dmesgfilter.timeFilter = dt.addDays(-2).toMSecsSinceEpoch();
+    } break;
+    case ONE_WEEK: {
+        dmesgfilter.timeFilter = dt.addDays(-6).toMSecsSinceEpoch();
+    } break;
+    case ONE_MONTH: {
+        dmesgfilter.timeFilter = dt.addDays(-29).toMSecsSinceEpoch();
+    } break;
+    case THREE_MONTHS: {
+        dmesgfilter.timeFilter = dt.addDays(-89).toMSecsSinceEpoch();
+    } break;
+    default:
+        break;
+    }
+    m_logFileParse.parseByDmesg(dmesgfilter);
+
+}
+
+void DisplayContent::createDmesgTable(QList<LOG_MSG_DMESG> &list)
+{
+    m_limitTag = 0;
+    setLoadState(DATA_COMPLETE);
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertDmesgTable(list, 0, end);
+}
+
 void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
@@ -577,6 +624,18 @@ void DisplayContent::createDpkgForm()
                                         << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(DNF_SPACE::dnfLvlColumn, LEVEL_WIDTH);
     m_treeView->setColumnWidth(DNF_SPACE::dnfDateTimeColumn, DATETIME_WIDTH);
+    m_treeView->hideColumn(3);
+}
+
+void DisplayContent::createDmesgForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Level")
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(DMESG_SPACE::dmesgLevelColumn, LEVEL_WIDTH);
+    m_treeView->setColumnWidth(DMESG_SPACE::dmesgDateTimeColumn, DATETIME_WIDTH);
     m_treeView->hideColumn(3);
 }
 
@@ -881,6 +940,8 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         generateNormalFile(btnId);
     } else if (treeData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
         generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
+    } else if (treeData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
+        generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     }
 
 }
@@ -959,7 +1020,11 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dnf;
         generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
+    } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Dmesg;
+        generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     }
+
 
 //    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||   //modified by Airy for bug 19660:spinner always running
 //            !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
@@ -1036,6 +1101,9 @@ void DisplayContent::slot_exportClicked()
         case Dnf:
             exportThread->exportToTxtPublic(fileName, dnfList, labels);
             break;
+        case Dmesg:
+            exportThread->exportToTxtPublic(fileName, dmesgList, labels);
+            break;
         default:
             break;
         }
@@ -1072,6 +1140,9 @@ void DisplayContent::slot_exportClicked()
             break;
         case Dnf:
             exportThread->exportToHtmlPublic(fileName, dnfList, labels);
+            break;
+        case Dmesg:
+            exportThread->exportToHtmlPublic(fileName, dmesgList, labels);
             break;
         default:
             break;
@@ -1110,6 +1181,9 @@ void DisplayContent::slot_exportClicked()
         case Dnf:
             exportThread->exportToDocPublic(fileName, dnfList, labels);
             break;
+        case Dmesg:
+            exportThread->exportToDocPublic(fileName, dmesgList, labels);
+            break;
         default:
             break;
         }
@@ -1147,6 +1221,9 @@ void DisplayContent::slot_exportClicked()
         case Dnf:
             exportThread->exportToXlsPublic(fileName, dnfList, labels);
             break;
+        case Dmesg:
+            exportThread->exportToXlsPublic(fileName, dmesgList, labels);
+            break;
         default:
             break;
         }
@@ -1181,6 +1258,15 @@ void DisplayContent::slot_dnfFinished(QList<LOG_MSG_DNF> list)
     dnfList = list;
     dnfListOrigin = list;
     createDnfTable(dnfList);
+}
+
+void DisplayContent::slot_dmesgFinished(QList<LOG_MSG_DMESG> list)
+{
+    if (m_flag != Dmesg)
+        return;
+    dmesgList = list;
+    dmesgListOrigin = list;
+    createDmesgTable(dmesgList);
 }
 
 void DisplayContent::slot_XorgFinished(QList<LOG_MSG_XORG> list)
@@ -1356,11 +1442,26 @@ void DisplayContent::slot_vScrollValueChanged(int value)
             if (m_limitTag >= rate)
                 return;
 
-            int leftCnt = kList.count() - SINGLE_LOAD * rate;
+            int leftCnt = dnfList.count() - SINGLE_LOAD * rate;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
             insertDnfTable(dnfList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
+            m_limitTag = rate;
+        }
+        m_treeView->verticalScrollBar()->setValue(value);
+    } else if (m_flag == Dmesg) {  // modified by Airy for bug 12263
+        int rate = (value + 25) / SINGLE_LOAD;
+
+        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
+            if (m_limitTag >= rate)
+                return;
+
+            int leftCnt = dmesgList.count() - SINGLE_LOAD * rate;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertDmesgTable(dmesgList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+            qDebug() << "rate" << rate << value;
             m_limitTag = rate;
         }
         m_treeView->verticalScrollBar()->setValue(value);
@@ -1483,6 +1584,19 @@ void DisplayContent::slot_searchResult(QString str)
         }
         createDnfForm();
         createDnfTable(dnfList);
+    } break;
+    case Dmesg: {
+        dmesgList = dmesgListOrigin;
+        int cnt = dmesgList.count();
+        for (int i = cnt - 1; i >= 0; --i) {
+            LOG_MSG_DMESG msg = dmesgList.at(i);
+            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
+                continue;
+            dmesgList.removeAt(i);
+        }
+        createDmesgForm();
+        createDmesgTable(dmesgList);
     } break;
     default:
         break;
@@ -1754,6 +1868,42 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemMod
     }
 }
 
+void DisplayContent::parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<LOG_MSG_DMESG> list = iList;
+    QList<QStandardItem *> items;
+    DStandardItem *item = nullptr;
+    for (int i = 0; i < list.size(); i++) {
+        items.clear();
+        item = new DStandardItem();
+        //        qDebug() << "journal level" << logList[i].level;
+        QString iconPath = m_iconPrefix + getIconByname(list[i].level);
+
+        if (getIconByname(list[i].level).isEmpty())
+            item->setText(list[i].level);
+        item->setIcon(QIcon(iconPath));
+        item->setData(DMESG_TABLE_DATA);
+        item->setData(list[i].level, Log_Item_SPACE::levelRole);
+        items << item;
+        item = new DStandardItem(list[i].dateTime);
+        item->setData(DMESG_TABLE_DATA);
+        items << item;
+        item = new DStandardItem(list[i].msg);
+        item->setData(DMESG_TABLE_DATA);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
 void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
 {
     if (!m_spinnerWgt->isHidden()) {
@@ -1837,6 +1987,8 @@ void DisplayContent::clearAllDatalist()
     m_kwinList.clear();
     dnfList.clear();
     dnfListOrigin.clear();
+    dmesgList.clear();
+    dmesgListOrigin.clear();
     malloc_trim(0);
 }
 
@@ -2024,6 +2176,19 @@ void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
+void DisplayContent::insertDmesgTable(QList<LOG_MSG_DMESG> list, int start, int end)
+{
+    QList<LOG_MSG_DMESG> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
+    }
+    parseListToModel(midList, m_pModel);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
 void DisplayContent::insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end)
 {
     QList<LOG_MSG_DNF> midList = list;
@@ -2092,6 +2257,9 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     } else if (itemData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dnf;
         generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
+    } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Dmesg;
+        generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     }
 
 
