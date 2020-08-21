@@ -350,12 +350,12 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../application/main.cpp" line="56"/>
+        <location filename="../application/main.cpp" line="60"/>
         <source>Log Viewer</source>
         <translation>Log Viewer</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="60"/>
+        <location filename="../application/main.cpp" line="64"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translation>Log Viewer is a useful tool for viewing system logs.</translation>
     </message>
