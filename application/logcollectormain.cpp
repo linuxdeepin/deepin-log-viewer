@@ -34,6 +34,7 @@
 #include <QSizePolicy>
 #include <QList>
 #include <QKeyEvent>
+#include <DAboutDialog>
 //958+53+50 976
 #define MAINWINDOW_WIDTH 1024
 #define MAINWINDOW_HEIGHT 736
@@ -278,29 +279,41 @@ void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
  */
 bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt)
 {
+
+//    qDebug() << "handleApplicationTabEventNotify" << obj->objectName() << obj->metaObject()->className() << obj << this->titlebar();
+
     if (evt->key() == Qt::Key_Tab) {
-        if (obj->metaObject()->className() == QStringLiteral("Dtk::Widget::DTitlebar")) {
+        DWindowCloseButton *closebtn = this->titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
+        if (obj == this->titlebar()) {
             m_searchEdt->lineEdit()->setFocus(Qt::TabFocusReason);
             return  true;
         } else if (obj->objectName() == "searchChildEdt") {
             titlebar()->setFocus(Qt::TabFocusReason);
             //titlebar不截获屏蔽掉,因为让他继续往下一menubutton发送tab
             //  return  true;
-        } else if (obj->objectName() == "DTitlebarDWindowCloseButton") {
+        } else if (obj == closebtn) {
             m_logCatelogue->setFocus(Qt::TabFocusReason);
             return  true;
         } else if (obj->objectName() == "mainLogTable") {
             m_searchEdt->lineEdit()->setFocus(Qt::TabFocusReason);
             return  true;
-        }
+        } /*else if (obj->objectName() == "Dtk::Widget::DAbstractDialogClassWindow") {
+            Dtk::Widget::DAboutDialog *w = qobject_cast<Dtk::Widget::DAboutDialog *>(obj);
+            if (w) {
+                w->setFocus(Qt::TabFocusReason);
+            }
+
+            return  true;
+        }*/
     } else if (evt->key() == Qt::Key_Backtab) {
+        DWindowOptionButton *optionbtn = this->titlebar()->findChild<DWindowOptionButton *>("DTitlebarDWindowOptionButton");
         if (obj->objectName() == "logTypeSelectList") {
             DWindowCloseButton   *closeButton = titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
             if (closeButton) {
                 closeButton->setFocus(Qt::BacktabFocusReason);
             }
             return  true;
-        } else if (obj->objectName() == "DTitlebarDWindowOptionButton") {
+        } else if (obj == optionbtn) {
             m_searchEdt->lineEdit()->setFocus(Qt::BacktabFocusReason);
             return  true;
         } else if (obj->objectName() == "searchChildEdt") {

@@ -368,7 +368,7 @@
         <translation>No search results</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="70"/>
+        <location filename="../application/logcollectormain.cpp" line="71"/>
         <source>Search</source>
         <translation>Search</translation>
     </message>

@@ -46,7 +46,7 @@ void LogApplicationHelper::createDesktopFiles()
 
     for (QString var : m_desktop_files) {
         QString filePath = path + "/" + var;
-        qDebug() << "m_desktop_files filePath" << filePath;
+        //  qDebug() << "m_desktop_files filePath" << filePath;
         QFile fi(filePath);
         if (!fi.open(QIODevice::ReadOnly))
             continue;
@@ -100,8 +100,8 @@ void LogApplicationHelper::createLogFiles()
     }
 
     m_log_files = appDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
-    qDebug() << "m_desktop_files" << m_desktop_files;
-    qDebug() << "m_log_files" << m_log_files;
+//    qDebug() << "m_desktop_files" << m_desktop_files;
+//    qDebug() << "m_log_files" << m_log_files;
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
         QString _name = m_desktop_files[i].section(".", 0, 0);
 
@@ -123,7 +123,7 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
     if (!fi.open(QIODevice::ReadOnly)) {
         return;
     }
-    qDebug() << "parseField" << "path" << path << "name" << name << "isDeepin" << isDeepin << "isGeneric" << isGeneric << "isName" << isName;
+//   qDebug() << "parseField" << "path" << path << "name" << name << "isDeepin" << isDeepin << "isGeneric" << isGeneric << "isName" << isName;
     // insert map at first, en-en, then repalce transName if has name,
     m_en_trans_map.insert(name.section(".", 0, 0), name.section(".", 0, 0));  // desktop name
 
@@ -155,21 +155,21 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
 
         QString leftStr = gNameList[0];
         QString genericName = gNameList[1];
-        qDebug() << "leftStr" << leftStr;
+        //  qDebug() << "leftStr" << leftStr;
         if (leftStr.split("_").count() == 2) {
-            qDebug() << "  if (leftStr.split(_).count() == 2) {" << leftStr << m_current_system_language;
+            // qDebug() << "  if (leftStr.split(_).count() == 2) {" << leftStr << m_current_system_language;
             if (leftStr.contains(m_current_system_language)) {
-                qDebug() << " if (leftStr.contains(m_current_system_language)) {";
+                //    qDebug() << " if (leftStr.contains(m_current_system_language)) {";
                 m_en_trans_map.insert(name.section(".", 0, 0), genericName);
                 break;
             }
         } else if (leftStr.contains(m_current_system_language.split("_")[0])) {
-            qDebug() << " if (leftStr.contains(m_current_system_language.split(_)[0])) {";
+            // qDebug() << " if (leftStr.contains(m_current_system_language.split(_)[0])) {";
             m_en_trans_map.insert(name.section(".", 0, 0), genericName);
             break;
         } else if (0 == leftStr.compare("GenericName", Qt::CaseInsensitive) ||
                    0 == leftStr.compare("Name", Qt::CaseInsensitive)) {
-            qDebug() << " if (0 == leftStr.compare(\"GenericName\", Qt::CaseInsensitive) || 0 == leftStr.compare(\"Name\", Qt::CaseInsensitive)) {";
+            //   qDebug() << " if (0 == leftStr.compare(\"GenericName\", Qt::CaseInsensitive) || 0 == leftStr.compare(\"Name\", Qt::CaseInsensitive)) {";
             // could not find GenericName[...], use GenericName=
             m_en_trans_map.insert(name.section(".", 0, 0), genericName);  // GenericName=xxxx
         }
@@ -197,8 +197,8 @@ QString LogApplicationHelper::getLogFile(QString path)
 
 QMap<QString, QString> LogApplicationHelper::getMap()
 {
-    qDebug() << "m_en_log_map" << m_en_log_map;
-    qDebug() << "m_en_trans_map" << m_en_trans_map;
+//    qDebug() << "m_en_log_map" << m_en_log_map;
+//    qDebug() << "m_en_trans_map" << m_en_trans_map;
     init();
     QMap<QString, QString>::const_iterator iter = m_en_log_map.constBegin();
     while (iter != m_en_log_map.constEnd()) {
