@@ -1,35 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="tr">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="tr" version="2.1">
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="316"/>
+        <location filename="../application/loglistview.cpp" line="378"/>
         <source>Display in file manager</source>
         <translation>Dosya yöneticisinde görüntüle</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="317"/>
+        <location filename="../application/loglistview.cpp" line="379"/>
         <source>Clear log</source>
         <translation>Günlüğü temizle</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="318"/>
+        <location filename="../application/loglistview.cpp" line="380"/>
         <source>Refresh</source>
         <translation>Yenile</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="355"/>
+        <location filename="../application/loglistview.cpp" line="418"/>
         <source>Are you sure you want to clear the log?</source>
         <translation>Günlüğü silmek istediğinizden emin misiniz?</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="356"/>
+        <location filename="../application/loglistview.cpp" line="419"/>
         <source>Cancel</source>
         <translation>İptal</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="357"/>
+        <location filename="../application/loglistview.cpp" line="420"/>
         <source>Confirm</source>
         <translation>Onayla</translation>
     </message>
@@ -37,313 +35,331 @@
 <context>
     <name>Button</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="68"/>
-        <location filename="../application/filtercontent.cpp" line="69"/>
+        <location filename="../application/filtercontent.cpp" line="73"/>
+        <location filename="../application/filtercontent.cpp" line="74"/>
+        <location filename="../application/filtercontent.cpp" line="453"/>
         <source>All</source>
-        <translatorcomment>All</translatorcomment>
         <translation>Tümü</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="77"/>
-        <location filename="../application/filtercontent.cpp" line="78"/>
+        <location filename="../application/filtercontent.cpp" line="89"/>
+        <location filename="../application/filtercontent.cpp" line="90"/>
+        <location filename="../application/filtercontent.cpp" line="445"/>
+        <location filename="../application/filtercontent.cpp" line="454"/>
         <source>Today</source>
-        <translatorcomment>Today</translatorcomment>
         <translation>Bugün</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="85"/>
-        <location filename="../application/filtercontent.cpp" line="87"/>
+        <location filename="../application/filtercontent.cpp" line="97"/>
+        <location filename="../application/filtercontent.cpp" line="99"/>
+        <location filename="../application/filtercontent.cpp" line="446"/>
+        <location filename="../application/filtercontent.cpp" line="455"/>
         <source>3 days</source>
-        <translatorcomment>3 days</translatorcomment>
         <translation>3 gün</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="94"/>
-        <location filename="../application/filtercontent.cpp" line="96"/>
+        <location filename="../application/filtercontent.cpp" line="106"/>
+        <location filename="../application/filtercontent.cpp" line="108"/>
+        <location filename="../application/filtercontent.cpp" line="447"/>
+        <location filename="../application/filtercontent.cpp" line="456"/>
         <source>1 week</source>
         <translation>1 hafta</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="103"/>
-        <location filename="../application/filtercontent.cpp" line="105"/>
+        <location filename="../application/filtercontent.cpp" line="115"/>
+        <location filename="../application/filtercontent.cpp" line="117"/>
+        <location filename="../application/filtercontent.cpp" line="448"/>
+        <location filename="../application/filtercontent.cpp" line="457"/>
         <source>1 month</source>
         <translation>1 ay</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="112"/>
-        <location filename="../application/filtercontent.cpp" line="114"/>
+        <location filename="../application/filtercontent.cpp" line="123"/>
+        <location filename="../application/filtercontent.cpp" line="125"/>
+        <location filename="../application/filtercontent.cpp" line="449"/>
+        <location filename="../application/filtercontent.cpp" line="458"/>
         <source>3 months</source>
         <translation>3 ay</translation>
     </message>
     <message>
-        <source>Reset</source>
-        <translatorcomment>Reset</translatorcomment>
-        <translation type="vanished">Sıfırla</translation>
-    </message>
-    <message>
-        <location filename="../application/filtercontent.cpp" line="201"/>
+        <location filename="../application/filtercontent.cpp" line="233"/>
         <source>Export</source>
-        <translatorcomment>Export</translatorcomment>
         <translation>Dışa aktar</translation>
     </message>
 </context>
 <context>
     <name>ComboBox</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="147"/>
+        <location filename="../application/filtercontent.cpp" line="157"/>
+        <location filename="../application/filtercontent.cpp" line="179"/>
+        <location filename="../application/filtercontent.cpp" line="211"/>
+        <location filename="../application/filtercontent.cpp" line="224"/>
+        <source>All</source>
+        <translation>Tümü</translation>
+    </message>
+    <message>
+        <location filename="../application/filtercontent.cpp" line="158"/>
         <source>Emergency</source>
-        <translatorcomment>Emergency</translatorcomment>
         <translation>Acil durum</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="148"/>
+        <location filename="../application/filtercontent.cpp" line="159"/>
         <source>Alert</source>
-        <translatorcomment>Alert</translatorcomment>
         <translation>İkaz</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="149"/>
+        <location filename="../application/filtercontent.cpp" line="160"/>
+        <location filename="../application/filtercontent.cpp" line="181"/>
         <source>Critical</source>
-        <translatorcomment>Critical</translatorcomment>
         <translation>Kritik</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="150"/>
+        <location filename="../application/filtercontent.cpp" line="161"/>
+        <location filename="../application/filtercontent.cpp" line="182"/>
         <source>Error</source>
-        <translatorcomment>Error</translatorcomment>
         <translation>Hata</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="151"/>
+        <location filename="../application/filtercontent.cpp" line="162"/>
+        <location filename="../application/filtercontent.cpp" line="183"/>
         <source>Warning</source>
-        <translatorcomment>Warning</translatorcomment>
         <translation>Uyarı</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="152"/>
+        <location filename="../application/filtercontent.cpp" line="163"/>
         <source>Notice</source>
-        <translatorcomment>Notice</translatorcomment>
         <translation>Dikkat</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="153"/>
-        <location filename="../application/filtercontent.cpp" line="155"/>
+        <location filename="../application/filtercontent.cpp" line="164"/>
+        <location filename="../application/filtercontent.cpp" line="166"/>
+        <location filename="../application/filtercontent.cpp" line="184"/>
         <source>Info</source>
-        <translatorcomment>Info</translatorcomment>
         <translation>Bilgi</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="154"/>
+        <location filename="../application/filtercontent.cpp" line="165"/>
+        <location filename="../application/filtercontent.cpp" line="185"/>
         <source>Debug</source>
-        <translatorcomment>Debug</translatorcomment>
         <translation>Hata ayıklama</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="191"/>
+        <location filename="../application/filtercontent.cpp" line="180"/>
+        <source>Super critical</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../application/filtercontent.cpp" line="186"/>
+        <source>Trace</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../application/filtercontent.cpp" line="225"/>
         <source>Login</source>
-        <translatorcomment>Login</translatorcomment>
         <translation>Giriş</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="192"/>
+        <location filename="../application/filtercontent.cpp" line="226"/>
         <source>Boot</source>
-        <translatorcomment>Boot</translatorcomment>
         <translation>Açılış</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="193"/>
+        <location filename="../application/filtercontent.cpp" line="227"/>
         <source>Shutdown</source>
-        <translatorcomment>Shutdown</translatorcomment>
         <translation>Kapat</translation>
-    </message>
-    <message>
-        <location filename="../application/filtercontent.cpp" line="146"/>
-        <location filename="../application/filtercontent.cpp" line="177"/>
-        <location filename="../application/filtercontent.cpp" line="190"/>
-        <source>All</source>
-        <translatorcomment>All</translatorcomment>
-        <translation>Tümü</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="802"/>
+        <location filename="../application/displaycontent.cpp" line="1048"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>METİN (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>Metin (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
     <name>File</name>
     <message>
-        <source>New File</source>
-        <translatorcomment>New File</translatorcomment>
-        <translation type="vanished">Yeni Dosya</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="800"/>
+        <location filename="../application/displaycontent.cpp" line="1046"/>
         <source>Export File</source>
-        <translatorcomment>Export File</translatorcomment>
         <translation>Dosyaya Aktar</translation>
     </message>
 </context>
 <context>
     <name>Label</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="64"/>
+        <location filename="../application/filtercontent.cpp" line="69"/>
+        <location filename="../application/filtercontent.cpp" line="443"/>
+        <location filename="../application/filtercontent.cpp" line="452"/>
         <source>Period:</source>
-        <translatorcomment>Period:</translatorcomment>
         <translation>Dönem:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="142"/>
+        <location filename="../application/filtercontent.cpp" line="152"/>
+        <location filename="../application/filtercontent.cpp" line="174"/>
         <source>Level:  </source>
-        <translation>Seviye:</translation>
+        <translation>Seviye:  </translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="163"/>
+        <location filename="../application/filtercontent.cpp" line="197"/>
         <source>Application list:</source>
-        <translatorcomment>Application list:</translatorcomment>
         <translation>Uygulama listesi:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="186"/>
+        <location filename="../application/filtercontent.cpp" line="207"/>
         <location filename="../application/logdetailinfowidget.cpp" line="138"/>
+        <source>Status:</source>
+        <translation>Durum:</translation>
+    </message>
+    <message>
+        <location filename="../application/filtercontent.cpp" line="220"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="143"/>
         <source>Event Type:</source>
-        <translatorcomment>Event Type:</translatorcomment>
         <translation>Etkinlik Türü:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="133"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="134"/>
         <source>User:</source>
         <translation>Kullanıcı:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="134"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="136"/>
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="136"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="140"/>
         <source>Action:</source>
         <translation>Eylem:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="139"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="145"/>
         <source>Username:</source>
-        <translatorcomment>Username:</translatorcomment>
         <translation>Kullanıcı adı:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="393"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="414"/>
         <source>Boot record</source>
-        <translatorcomment>Boot record</translatorcomment>
         <translation>Açılış kaydı</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="395"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="416"/>
         <source>Shutdown record</source>
         <translation>Kapatma kaydı</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="398"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="419"/>
         <source>Login record</source>
         <translation>Giriş kaydı</translation>
-    </message>
-    <message>
-        <location filename="../application/filtercontent.cpp" line="173"/>
-        <location filename="../application/logdetailinfowidget.cpp" line="135"/>
-        <source>Status:</source>
-        <translatorcomment>Status:</translatorcomment>
-        <translation>Durum:</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
-        <source>warning</source>
-        <translatorcomment>warning</translatorcomment>
-        <translation type="vanished">uyarı</translation>
-    </message>
-    <message>
-        <source>debug</source>
-        <translatorcomment>debug</translatorcomment>
-        <translation type="vanished">hata ayıklama</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="136"/>
-        <location filename="../application/journalwork.cpp" line="267"/>
-        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
-        <source>Alert</source>
-        <translatorcomment>Alert</translatorcomment>
-        <translation>İkaz</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="137"/>
-        <location filename="../application/journalwork.cpp" line="268"/>
-        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
-        <source>Critical</source>
-        <translatorcomment>Critical</translatorcomment>
-        <translation>Kritik</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="131"/>
-        <location filename="../application/displaycontent.cpp" line="138"/>
-        <location filename="../application/journalwork.cpp" line="269"/>
-        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
-        <source>Error</source>
-        <translatorcomment>Error</translatorcomment>
-        <translation>Hata</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="135"/>
-        <location filename="../application/journalwork.cpp" line="266"/>
-        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
-        <source>Emergency</source>
-        <translatorcomment>Emergency</translatorcomment>
-        <translation>Acil durum</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="128"/>
-        <location filename="../application/displaycontent.cpp" line="139"/>
-        <location filename="../application/journalwork.cpp" line="270"/>
+        <location filename="../application/displaycontent.cpp" line="140"/>
+        <location filename="../application/displaycontent.cpp" line="151"/>
+        <location filename="../application/displaycontent.cpp" line="161"/>
+        <location filename="../application/journalwork.cpp" line="361"/>
+        <location filename="../application/logauththread.cpp" line="51"/>
+        <location filename="../application/logauththread.cpp" line="65"/>
+        <location filename="../application/logexportthread.cpp" line="2289"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
         <source>Warning</source>
-        <translatorcomment>Warning</translatorcomment>
         <translation>Uyarı</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="140"/>
-        <location filename="../application/journalwork.cpp" line="271"/>
-        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
-        <source>Notice</source>
-        <translatorcomment>Notice</translatorcomment>
-        <translation>Dikkat</translation>
+        <location filename="../application/displaycontent.cpp" line="141"/>
+        <location filename="../application/displaycontent.cpp" line="154"/>
+        <location filename="../application/displaycontent.cpp" line="159"/>
+        <location filename="../application/journalwork.cpp" line="364"/>
+        <location filename="../application/logauththread.cpp" line="47"/>
+        <location filename="../application/logauththread.cpp" line="48"/>
+        <location filename="../application/logauththread.cpp" line="49"/>
+        <location filename="../application/logauththread.cpp" line="68"/>
+        <location filename="../application/logexportthread.cpp" line="2292"/>
+        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
+        <source>Debug</source>
+        <translation>Hata ayıklama</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="130"/>
-        <location filename="../application/displaycontent.cpp" line="141"/>
-        <location filename="../application/journalwork.cpp" line="272"/>
+        <location filename="../application/displaycontent.cpp" line="142"/>
+        <location filename="../application/displaycontent.cpp" line="153"/>
+        <location filename="../application/displaycontent.cpp" line="160"/>
+        <location filename="../application/journalwork.cpp" line="363"/>
+        <location filename="../application/logauththread.cpp" line="50"/>
+        <location filename="../application/logauththread.cpp" line="67"/>
+        <location filename="../application/logexportthread.cpp" line="2291"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
         <source>Info</source>
-        <translatorcomment>Info</translatorcomment>
         <translation>Bilgi</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="129"/>
-        <location filename="../application/displaycontent.cpp" line="142"/>
-        <location filename="../application/journalwork.cpp" line="273"/>
-        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
-        <source>Debug</source>
-        <translatorcomment>Debug</translatorcomment>
-        <translation>Hata ayıklama</translation>
+        <location filename="../application/displaycontent.cpp" line="143"/>
+        <location filename="../application/displaycontent.cpp" line="150"/>
+        <location filename="../application/displaycontent.cpp" line="162"/>
+        <location filename="../application/journalwork.cpp" line="360"/>
+        <location filename="../application/logauththread.cpp" line="52"/>
+        <location filename="../application/logauththread.cpp" line="64"/>
+        <location filename="../application/logexportthread.cpp" line="2288"/>
+        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
+        <source>Error</source>
+        <translation>Hata</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="147"/>
+        <location filename="../application/journalwork.cpp" line="357"/>
+        <location filename="../application/logauththread.cpp" line="61"/>
+        <location filename="../application/logexportthread.cpp" line="2285"/>
+        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
+        <source>Emergency</source>
+        <translation>Acil durum</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="148"/>
+        <location filename="../application/journalwork.cpp" line="358"/>
+        <location filename="../application/logauththread.cpp" line="62"/>
+        <location filename="../application/logexportthread.cpp" line="2286"/>
+        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
+        <source>Alert</source>
+        <translation>İkaz</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="149"/>
+        <location filename="../application/displaycontent.cpp" line="163"/>
+        <location filename="../application/journalwork.cpp" line="359"/>
+        <location filename="../application/logauththread.cpp" line="53"/>
+        <location filename="../application/logauththread.cpp" line="63"/>
+        <location filename="../application/logexportthread.cpp" line="2287"/>
+        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
+        <source>Critical</source>
+        <translation>Kritik</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="152"/>
+        <location filename="../application/journalwork.cpp" line="362"/>
+        <location filename="../application/logauththread.cpp" line="66"/>
+        <location filename="../application/logexportthread.cpp" line="2290"/>
+        <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
+        <source>Notice</source>
+        <translation>Dikkat</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="158"/>
+        <location filename="../application/logauththread.cpp" line="46"/>
+        <source>Trace</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="164"/>
+        <location filename="../application/logauththread.cpp" line="54"/>
+        <source>Super critical</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>LogFileParser</name>
     <message>
-        <location filename="../application/logfileparser.cpp" line="457"/>
-        <location filename="../application/logfileparser.cpp" line="462"/>
+        <location filename="../application/logfileparser.cpp" line="672"/>
         <source>information</source>
         <translation>bilgiler</translation>
     </message>
@@ -351,168 +367,156 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../application/main.cpp" line="56"/>
+        <location filename="../application/main.cpp" line="57"/>
         <source>Log Viewer</source>
-        <translatorcomment>Log Viewer</translatorcomment>
         <translation>Günlük Görüntüleyici</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="58"/>
+        <location filename="../application/main.cpp" line="59"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translatorcomment>Log Viewer is a useful tool for viewing system logs.</translatorcomment>
         <translation>Günlük Görüntüleyici, sistem günlüklerini görüntülemek için kullanışlı bir araçtır.</translation>
     </message>
 </context>
 <context>
     <name>SearchBar</name>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="64"/>
-        <source>Search</source>
-        <translatorcomment>Search</translatorcomment>
-        <translation>Ara</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="92"/>
+        <location filename="../application/displaycontent.cpp" line="103"/>
         <source>No search results</source>
         <translation>Arama sonucu bulunamadı</translation>
+    </message>
+    <message>
+        <location filename="../application/logcollectormain.cpp" line="67"/>
+        <source>Search</source>
+        <translation>Ara</translation>
     </message>
 </context>
 <context>
     <name>Table</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="251"/>
-        <location filename="../application/displaycontent.cpp" line="1460"/>
-        <location filename="../application/logexportwidget.cpp" line="548"/>
-        <source>User</source>
-        <translatorcomment>User</translatorcomment>
-        <translation>Kullanıcı</translation>
+        <location filename="../application/displaycontent.cpp" line="303"/>
+        <location filename="../application/displaycontent.cpp" line="609"/>
+        <location filename="../application/displaycontent.cpp" line="622"/>
+        <location filename="../application/displaycontent.cpp" line="634"/>
+        <location filename="../application/displaycontent.cpp" line="646"/>
+        <location filename="../application/logexportthread.cpp" line="1401"/>
+        <source>Level</source>
+        <translation>Seviye</translation>
     </message>
     <message>
-        <source>Daemon</source>
-        <translatorcomment>Daemon</translatorcomment>
-        <translation type="vanished">Süreç</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="249"/>
-        <location filename="../application/displaycontent.cpp" line="1216"/>
-        <location filename="../application/displaycontent.cpp" line="1279"/>
-        <location filename="../application/displaycontent.cpp" line="1325"/>
-        <location filename="../application/displaycontent.cpp" line="1459"/>
-        <location filename="../application/logexportwidget.cpp" line="546"/>
-        <source>Date and Time</source>
-        <translatorcomment>Date and Time</translatorcomment>
-        <translation>Tarih ve Saat</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="248"/>
-        <location filename="../application/displaycontent.cpp" line="1461"/>
-        <location filename="../application/logexportwidget.cpp" line="544"/>
+        <location filename="../application/displaycontent.cpp" line="304"/>
+        <location filename="../application/displaycontent.cpp" line="507"/>
+        <location filename="../application/logexportthread.cpp" line="1402"/>
         <source>Process</source>
-        <translatorcomment>Process</translatorcomment>
         <translation>İşlem</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="250"/>
-        <location filename="../application/displaycontent.cpp" line="1217"/>
-        <location filename="../application/displaycontent.cpp" line="1250"/>
-        <location filename="../application/displaycontent.cpp" line="1281"/>
-        <location filename="../application/displaycontent.cpp" line="1326"/>
-        <location filename="../application/displaycontent.cpp" line="1357"/>
-        <location filename="../application/displaycontent.cpp" line="1391"/>
-        <location filename="../application/displaycontent.cpp" line="1462"/>
-        <location filename="../application/logexportwidget.cpp" line="547"/>
+        <location filename="../application/displaycontent.cpp" line="305"/>
+        <location filename="../application/displaycontent.cpp" line="505"/>
+        <location filename="../application/displaycontent.cpp" line="610"/>
+        <location filename="../application/displaycontent.cpp" line="623"/>
+        <location filename="../application/displaycontent.cpp" line="635"/>
+        <location filename="../application/displaycontent.cpp" line="647"/>
+        <location filename="../application/displaycontent.cpp" line="1646"/>
+        <location filename="../application/displaycontent.cpp" line="1750"/>
+        <location filename="../application/logexportthread.cpp" line="1404"/>
+        <source>Date and Time</source>
+        <translation>Tarih ve Saat</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="306"/>
+        <location filename="../application/displaycontent.cpp" line="508"/>
+        <location filename="../application/displaycontent.cpp" line="612"/>
+        <location filename="../application/displaycontent.cpp" line="624"/>
+        <location filename="../application/displaycontent.cpp" line="636"/>
+        <location filename="../application/displaycontent.cpp" line="648"/>
+        <location filename="../application/displaycontent.cpp" line="1647"/>
+        <location filename="../application/displaycontent.cpp" line="1680"/>
+        <location filename="../application/displaycontent.cpp" line="1751"/>
+        <location filename="../application/displaycontent.cpp" line="1782"/>
+        <location filename="../application/displaycontent.cpp" line="1816"/>
+        <location filename="../application/logexportthread.cpp" line="1405"/>
         <source>Info</source>
         <translation>Bilgi</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="252"/>
-        <location filename="../application/logexportwidget.cpp" line="549"/>
+        <location filename="../application/displaycontent.cpp" line="307"/>
+        <location filename="../application/displaycontent.cpp" line="506"/>
+        <location filename="../application/logexportthread.cpp" line="1406"/>
+        <source>User</source>
+        <translation>Kullanıcı</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="308"/>
+        <location filename="../application/logexportthread.cpp" line="1407"/>
         <source>PID</source>
-        <translatorcomment>PID</translatorcomment>
         <translation>PID</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1218"/>
+        <location filename="../application/displaycontent.cpp" line="611"/>
+        <source>Source</source>
+        <translation>Kaynak</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="1648"/>
         <source>Action</source>
         <translation>Eylem</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1354"/>
-        <source>Event Type</source>
-        <translatorcomment>Event Type</translatorcomment>
-        <translation>Etkinlik Türü</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="1355"/>
-        <source>Username</source>
-        <translatorcomment>Username</translatorcomment>
-        <translation>Kullanıcı adı</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="247"/>
-        <location filename="../application/displaycontent.cpp" line="1278"/>
-        <location filename="../application/logexportwidget.cpp" line="543"/>
-        <source>Level</source>
-        <translatorcomment>Level</translatorcomment>
-        <translation>Seviye</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="1280"/>
-        <source>Source</source>
-        <translatorcomment>Source</translatorcomment>
-        <translation>Kaynak</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="1249"/>
+        <location filename="../application/displaycontent.cpp" line="1679"/>
         <source>Status</source>
-        <translatorcomment>Status</translatorcomment>
         <translation>Durum</translation>
     </message>
     <message>
-        <location filename="../application/logexportwidget.cpp" line="92"/>
-        <source>Date and Time:</source>
-        <translation>Tarih ve Saat:</translation>
+        <location filename="../application/displaycontent.cpp" line="1779"/>
+        <source>Event Type</source>
+        <translation>Etkinlik Türü</translation>
     </message>
     <message>
-        <location filename="../application/logexportwidget.cpp" line="95"/>
-        <source>Null</source>
-        <translation>Boş</translation>
+        <location filename="../application/displaycontent.cpp" line="1780"/>
+        <source>Username</source>
+        <translation>Kullanıcı adı</translation>
     </message>
     <message>
-        <location filename="../application/logexportwidget.cpp" line="99"/>
-        <source>User:</source>
-        <translation>Kullanıcı:</translation>
-    </message>
-    <message>
-        <source>Daemon:</source>
-        <translation type="vanished">Süreç:</translation>
-    </message>
-    <message>
-        <location filename="../application/logexportwidget.cpp" line="100"/>
-        <source>PID:</source>
-        <translation>PID:</translation>
-    </message>
-    <message>
-        <location filename="../application/logexportwidget.cpp" line="90"/>
+        <location filename="../application/logexportthread.cpp" line="503"/>
         <source>Level:</source>
         <translation>Seviye:</translation>
     </message>
     <message>
-        <location filename="../application/logexportwidget.cpp" line="91"/>
+        <location filename="../application/logexportthread.cpp" line="504"/>
         <source>Process:</source>
         <translation>İşlem:</translation>
     </message>
     <message>
-        <location filename="../application/logexportwidget.cpp" line="94"/>
-        <location filename="../application/logexportwidget.cpp" line="97"/>
+        <location filename="../application/logexportthread.cpp" line="505"/>
+        <source>Date and Time:</source>
+        <translation>Tarih ve Saat:</translation>
+    </message>
+    <message>
+        <location filename="../application/logexportthread.cpp" line="507"/>
+        <location filename="../application/logexportthread.cpp" line="510"/>
         <source>Info:</source>
         <translation>Bilgi:</translation>
+    </message>
+    <message>
+        <location filename="../application/logexportthread.cpp" line="508"/>
+        <source>Null</source>
+        <translation>Boş</translation>
+    </message>
+    <message>
+        <location filename="../application/logexportthread.cpp" line="512"/>
+        <source>User:</source>
+        <translation>Kullanıcı:</translation>
+    </message>
+    <message>
+        <location filename="../application/logexportthread.cpp" line="513"/>
+        <source>PID:</source>
+        <translation>PID:</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1356"/>
+        <location filename="../application/displaycontent.cpp" line="1781"/>
         <source>Date and Time</source>
         <translation>Tarih ve Saat</translation>
     </message>
@@ -520,53 +524,53 @@
 <context>
     <name>Tree</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="67"/>
-        <location filename="../application/loglistview.cpp" line="68"/>
+        <location filename="../application/loglistview.cpp" line="112"/>
+        <location filename="../application/loglistview.cpp" line="113"/>
         <source>System Log</source>
         <translation>Sistem Günlüğü</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="76"/>
-        <location filename="../application/loglistview.cpp" line="77"/>
+        <location filename="../application/loglistview.cpp" line="121"/>
+        <location filename="../application/loglistview.cpp" line="122"/>
+        <location filename="../application/loglistview.cpp" line="128"/>
+        <location filename="../application/loglistview.cpp" line="129"/>
         <source>Kernel Log</source>
         <translation>Çekirdek Günlüğü</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="85"/>
-        <location filename="../application/loglistview.cpp" line="86"/>
+        <location filename="../application/loglistview.cpp" line="137"/>
+        <location filename="../application/loglistview.cpp" line="138"/>
         <source>Boot Log</source>
         <translation>Açılış Günlüğü</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="93"/>
-        <location filename="../application/loglistview.cpp" line="94"/>
-        <source>dpkg Log</source>
-        <translation>Dpkg Günlüğü</translation>
+        <location filename="../application/loglistview.cpp" line="152"/>
+        <location filename="../application/loglistview.cpp" line="153"/>
+        <source>dnf Log</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="101"/>
-        <location filename="../application/loglistview.cpp" line="102"/>
+        <location filename="../application/loglistview.cpp" line="159"/>
+        <location filename="../application/loglistview.cpp" line="160"/>
         <source>Xorg Log</source>
         <translation>Xorg Günlüğü</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="109"/>
-        <location filename="../application/loglistview.cpp" line="110"/>
+        <location filename="../application/loglistview.cpp" line="167"/>
+        <location filename="../application/loglistview.cpp" line="168"/>
         <source>Kwin Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Kwin Günlüğü</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="119"/>
-        <location filename="../application/loglistview.cpp" line="121"/>
+        <location filename="../application/loglistview.cpp" line="177"/>
+        <location filename="../application/loglistview.cpp" line="179"/>
         <source>Application Log</source>
-        <translatorcomment>Application Log</translatorcomment>
         <translation>Uygulama Günlüğü</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="133"/>
-        <location filename="../application/loglistview.cpp" line="136"/>
+        <location filename="../application/loglistview.cpp" line="191"/>
+        <location filename="../application/loglistview.cpp" line="194"/>
         <source>Boot-Shutdown Event</source>
-        <translatorcomment>Boot-Shutdown Event</translatorcomment>
         <translation>Açılış-Kapanış Etkinliği</translation>
     </message>
 </context>

@@ -267,6 +267,19 @@ endfunction()
 
 find_library(ICUIL18N_LIB icui18n)
 find_library(ICUUC_LIB icuuc)
+#lupdate start
+set(TS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../translations")
+set(TS_FILES
+    "${TS_DIR}/${EXE_NAME}.ts"
+)
+find_program(LUPDATE_EXECUTABLE lupdate)
+foreach(_ts_file ${TS_FILES})
+    execute_process(
+        COMMAND ${LUPDATE_EXECUTABLE} -recursive ${CMAKE_SOURCE_DIR} -ts ${_ts_file})
+endforeach()
+#lupdate end
+
+
 
 add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES})
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")

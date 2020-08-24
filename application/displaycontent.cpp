@@ -161,7 +161,7 @@ void DisplayContent::initMap()
     m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Warning"), "warning.svg");
     m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Error"), "wrong.svg");
     m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Critical"), "warning2.svg");
-    m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "SuperCirtical"), "warning3.svg");
+    m_dnfIconNameMap.insert(Dtk::Widget::DApplication::translate("Level", "Super critical"), "warning3.svg");
 
 
     m_icon_name_map.insert("Warning", "warning.svg");

@@ -177,7 +177,7 @@ void FilterContent::initUI()
     cbx_dnf_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
     // cbx_lv->setMaximumWidth(208);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
-    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "SuperCirtical"), SUPERCRITICAL);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Super critical"), SUPERCRITICAL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Critical"), CRITICAL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Error"), ERROR);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Warning"), WARNING);

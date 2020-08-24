@@ -2,12 +2,12 @@
 	<context>
 		<name>policy</name>
 		<message>
-			<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
-			<source>Authentication is required to view the log</source>
-			<translation>Günlüğü görüntülemek için kimlik doğrulaması gerekli</translation>
+			<location filename="com.deepin.pkexec.logViewerTruncate!message" line="0"/>
+			<source>Authentication is required to clear the log</source>
+			<translation>Günlüğü temizlemek için kimlik doğrulaması gerekli</translation>
 		</message>
 		<message>
-			<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
+			<location filename="com.deepin.pkexec.logViewerTruncate!description" line="0"/>
 			<source>authentication</source>
 			<translation>kimlik doğrulama</translation>
 		</message>

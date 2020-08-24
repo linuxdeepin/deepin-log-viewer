@@ -51,7 +51,7 @@ void LogAuthThread::initDnfLevelMap()
     m_transDnfDict.insert("WARNING", Dtk::Widget::DApplication::translate("Level", "Warning"));
     m_transDnfDict.insert("ERROR", Dtk::Widget::DApplication::translate("Level", "Error"));
     m_transDnfDict.insert("CRITICAL", Dtk::Widget::DApplication::translate("Level", "Critical"));
-    m_transDnfDict.insert("SUPERCRITICAL", Dtk::Widget::DApplication::translate("Level", "SuperCirtical"));
+    m_transDnfDict.insert("SUPERCRITICAL", Dtk::Widget::DApplication::translate("Level", "Super critical"));
 
 }
 
@@ -207,7 +207,7 @@ void LogAuthThread::handleXorg()
     QFile startFile("/proc/uptime");
     QList<LOG_MSG_XORG> xList;
     if (!file.exists() || !startFile.exists()) {
-        emit proccessError(tr("Log file is empty!"));
+        emit proccessError("Log file is empty!");
         emit xorgFinished(xList);
         return;
     }
@@ -221,7 +221,7 @@ void LogAuthThread::handleXorg()
     qDebug() << "startStr" << startFile;
     startStr = startStr.split(" ").value(0, "");
     if (startStr.isEmpty()) {
-        emit proccessError(tr("Log file is empty!"));
+        emit proccessError("Log file is empty!");
         emit xorgFinished(xList);
         return;
     }

@@ -147,7 +147,7 @@
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="180"/>
-        <source>SuperCirtical</source>
+        <source>Super critical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -354,16 +354,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="164"/>
         <location filename="../application/logauththread.cpp" line="54"/>
-        <source>SuperCirtical</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>LogAuthThread</name>
-    <message>
-        <location filename="../application/logauththread.cpp" line="210"/>
-        <location filename="../application/logauththread.cpp" line="224"/>
-        <source>Log file is empty!</source>
+        <source>Super critical</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
