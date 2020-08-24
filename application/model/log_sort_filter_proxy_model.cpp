@@ -72,7 +72,7 @@ bool LogSortFilterProxyModel::journalLessThan(const QModelIndex &left, const QMo
     case JOURNAL_SPACE::journalDaemonNameColumn: {
         QString leftStr = left.data(Qt::DisplayRole).toString();
         QString rightStr = right.data(Qt::DisplayRole).toString();
-        int compareResult = Collator::instance()->compare(leftStr, rightStr);
+        int compareResult = utils::Collator::instance()->compare(leftStr, rightStr);
         if (compareResult == 0) {
             return dateTimeSiblingLessThan(left, right, JOURNAL_SPACE::journalDateTimeColumn);
         } else {
@@ -87,7 +87,7 @@ bool LogSortFilterProxyModel::journalLessThan(const QModelIndex &left, const QMo
     case JOURNAL_SPACE::journalDaemonIdColumn: {
         QString leftStr = left.data(Qt::DisplayRole).toString();
         QString rightStr = right.data(Qt::DisplayRole).toString();
-        int compareResult = Collator::instance()->compare(leftStr, rightStr);
+        int compareResult = utils::Collator::instance()->compare(leftStr, rightStr);
         if (compareResult == 0) {
             return dateTimeSiblingLessThan(left, right, JOURNAL_SPACE::journalDateTimeColumn);
         } else {
@@ -112,7 +112,7 @@ bool LogSortFilterProxyModel::kernLessThan(const QModelIndex &left, const QModel
     case KERN_SPACE::kernMsgColumn: {
         QString leftStr = left.data(Qt::DisplayRole).toString();
         QString rightStr = right.data(Qt::DisplayRole).toString();
-        int compareResult = Collator::instance()->compare(leftStr, rightStr);
+        int compareResult = utils::Collator::instance()->compare(leftStr, rightStr);
         if (compareResult == 0) {
             return dateTimeSiblingLessThan(left, right, KERN_SPACE::kernDateTimeColumn);
         } else {
@@ -139,7 +139,7 @@ bool LogSortFilterProxyModel::xorgLessThan(const QModelIndex &left, const QModel
     case XORG_SPACE::xorgMsgColumn: {
         QString leftStr = left.data(Qt::DisplayRole).toString();
         QString rightStr = right.data(Qt::DisplayRole).toString();
-        int compareResult = Collator::instance()->compare(leftStr, rightStr);
+        int compareResult = utils::Collator::instance()->compare(leftStr, rightStr);
         if (compareResult == 0) {
             return dateTimeSiblingLessThan(left, right, XORG_SPACE::xorgDateTimeColumn);
         } else {
@@ -161,7 +161,7 @@ bool LogSortFilterProxyModel::dpkgLessThan(const QModelIndex &left, const QModel
     case DKPG_SPACE::dkpgMsgColumn: {
         QString leftStr = left.data(Qt::DisplayRole).toString();
         QString rightStr = right.data(Qt::DisplayRole).toString();
-        int compareResult = Collator::instance()->compare(leftStr, rightStr);
+        int compareResult = utils::Collator::instance()->compare(leftStr, rightStr);
         if (compareResult == 0) {
             return dateTimeSiblingLessThan(left, right, DKPG_SPACE::dkpgDateTimeColumn);
         } else {
@@ -195,7 +195,7 @@ bool LogSortFilterProxyModel::appLessThan(const QModelIndex &left, const QModelI
     case APP_SPACE::appMsgColumn: {
         QString leftStr = left.data(Qt::DisplayRole).toString();
         QString rightStr = right.data(Qt::DisplayRole).toString();
-        int compareResult = Collator::instance()->compare(leftStr, rightStr);
+        int compareResult = utils::Collator::instance()->compare(leftStr, rightStr);
         if (compareResult == 0) {
             return dateTimeSiblingLessThan(left, right, APP_SPACE::appDateTimeColumn);
         } else {
@@ -231,7 +231,7 @@ bool LogSortFilterProxyModel::normalLessThan(const QModelIndex &left, const QMod
     case NORMAL_SPACE::normalUserNameColumn: {
         QString leftStr = left.data(Qt::DisplayRole).toString();
         QString rightStr = right.data(Qt::DisplayRole).toString();
-        int compareResult = Collator::instance()->compare(leftStr, rightStr);
+        int compareResult = utils::Collator::instance()->compare(leftStr, rightStr);
         if (compareResult == 0) {
             return dateTimeSiblingLessThan(left, right, NORMAL_SPACE::normalDateTimeColumn);
         } else {
@@ -241,7 +241,7 @@ bool LogSortFilterProxyModel::normalLessThan(const QModelIndex &left, const QMod
     case NORMAL_SPACE::normalMsgColumn: {
         QString leftStr = left.data(Qt::DisplayRole).toString();
         QString rightStr = right.data(Qt::DisplayRole).toString();
-        int compareResult = Collator::instance()->compare(leftStr, rightStr);
+        int compareResult = utils::Collator::instance()->compare(leftStr, rightStr);
         if (compareResult == 0) {
             return dateTimeSiblingLessThan(left, right, NORMAL_SPACE::normalDateTimeColumn);
         } else {

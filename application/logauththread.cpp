@@ -456,7 +456,7 @@ void LogAuthThread::handleDmesg()
             QString timeStr = list[3]  + list[4];
             QString msgInfo = list[5].simplified();
             int levelOrigin = list[1].toInt();
-            qDebug() << "match wrong" << timeStr << levelOrigin << list;
+            // qDebug() << "match wrong" << timeStr << levelOrigin << list;
             // get time
             QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
             qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
