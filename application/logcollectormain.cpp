@@ -178,6 +178,8 @@ void LogCollectorMain::initConnection()
 //            &LogCollectorMain::resizeWidthByFilterContentWidth);
     connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_midRightWgt,
             SLOT(slot_refreshClicked(const QModelIndex &)));  // add by Airy for adding refresh
+    connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_topRightWgt,
+            SLOT(slot_logCatelogueRefresh(const QModelIndex &)));
     connect(m_logCatelogue, &LogListView::sigRefresh, this, [ = ]() { m_searchEdt->clear(); });
     //! treeView widget
     connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_midRightWgt,

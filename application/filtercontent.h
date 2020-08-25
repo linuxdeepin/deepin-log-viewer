@@ -50,6 +50,7 @@ private:
 
     void setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period, bool needMove,
                             bool typecbx = false);  // modified by Airy
+    void setSelection(int iLevelCbx, int iAppListCbx, int iStatusCbx, int iDateBtn, int itTypeCbx);
 
     void setUeButtonSytle();
     void paintEvent(QPaintEvent *event);
@@ -70,6 +71,7 @@ signals:
 
 public slots:
     void slot_logCatelogueClicked(const QModelIndex &index);
+    void slot_logCatelogueRefresh(const QModelIndex &index);
     void slot_buttonClicked(int idx);
     void slot_cbxLvIdxChanged(int idx);
     void slot_cbxAppIdxChanged(int idx);

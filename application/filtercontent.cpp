@@ -228,7 +228,7 @@ void FilterContent::initConnections()
 {
     connect(m_btnGroup, SIGNAL(buttonClicked(int)), this, SLOT(slot_buttonClicked(int)));
     connect(cbx_lv, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxLvIdxChanged(int)));
-    connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
+    connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
     connect(cbx_status, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxStatusChanged(int)));
     connect(typeCbx, SIGNAL(currentIndexChanged(int)), this,
             SLOT(slot_cbxLogTypeChanged(int)));  // add by Airy
@@ -466,6 +466,40 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     }
 }
 
+void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
+{
+    if (!index.isValid())
+        return;
+
+    QString itemData = index.data(ITEM_DATE_ROLE).toString();
+    if (itemData.isEmpty()) {
+        return;
+    }
+
+    if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
+        //记录当前选择项目以便改变combox内容后可以选择原来的选项刷新
+        QString cuurentText = cbx_app->currentText();
+        //先disconnect防止改变combox内容时发出currentIndexChanged让主表获取
+        disconnect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
+        this->setAppComboBoxItem();
+        int appCount =  cbx_app->count();
+        int rsIndex = 0;
+        //找原来选的选项的index,如果这个应用日志没了,就选第一个
+        for (int i = 0; i < appCount; ++i) {
+            if (cbx_app->itemText(i) == cuurentText) {
+                rsIndex = i;
+                break;
+            }
+        }
+        //不能直接connect再setCurrentIndex,而是要手动发出改变app的信号让其刷新,让combox自己发的话,如果原来的index是0他不发currentindexChanged信号
+        cbx_app->setCurrentIndex(rsIndex);
+        emit sigCbxAppIdxChanged(cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString());
+        connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
+        // cbx_app->setCurrentText(cuurentText);
+        //  qDebug() << "cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString()" << cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString();
+    }
+}
+
 void FilterContent::slot_buttonClicked(int idx)
 {
     /** note: In order to adapt to the new scene, select time-period first,
@@ -521,7 +555,6 @@ void FilterContent::slot_cbxLvIdxChanged(int idx)
 void FilterContent::slot_cbxAppIdxChanged(int idx)
 {
     QString path = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
-
     emit sigCbxAppIdxChanged(path);
 }
 

@@ -1870,8 +1870,9 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     } else if (itemData.contains(".cache")) {
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
 //        m_pModel->clear();  // clicked parent node application, clear table contents
-        m_flag = APP;
-        generateAppFile(m_curAppLog, m_curBtnId, m_curLevel);
+        //应用日志不使用直接刷新,而是刷新筛选器中的选项造成刷新
+//        m_flag = APP;
+//        generateAppFile(m_curAppLog, m_curBtnId, m_curLevel);
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
         norList.clear();
         m_flag = Normal;
