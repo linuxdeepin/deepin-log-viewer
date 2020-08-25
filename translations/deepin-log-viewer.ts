@@ -158,7 +158,7 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="891"/>
+        <location filename="../application/displaycontent.cpp" line="893"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
@@ -179,7 +179,7 @@
 <context>
     <name>ExportMessage</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1653"/>
+        <location filename="../application/displaycontent.cpp" line="1655"/>
         <source>Export successful</source>
         <translation>Export successful</translation>
     </message>
@@ -187,7 +187,7 @@
 <context>
     <name>File</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="889"/>
+        <location filename="../application/displaycontent.cpp" line="891"/>
         <source>Export File</source>
         <translation>Export File</translation>
     </message>
@@ -244,17 +244,17 @@
         <translation>Username:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="417"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="419"/>
         <source>Boot record</source>
         <translation>Boot record</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="419"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="421"/>
         <source>Shutdown record</source>
         <translation>Shutdown record</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="422"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="424"/>
         <source>Login record</source>
         <translation>Login record</translation>
     </message>
@@ -262,8 +262,8 @@
 <context>
     <name>Level</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="142"/>
-        <location filename="../application/displaycontent.cpp" line="153"/>
+        <location filename="../application/displaycontent.cpp" line="147"/>
+        <location filename="../application/displaycontent.cpp" line="158"/>
         <location filename="../application/journalwork.cpp" line="362"/>
         <location filename="../application/logexportthread.cpp" line="2122"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
@@ -271,8 +271,8 @@
         <translation>Warning</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="143"/>
-        <location filename="../application/displaycontent.cpp" line="156"/>
+        <location filename="../application/displaycontent.cpp" line="148"/>
+        <location filename="../application/displaycontent.cpp" line="161"/>
         <location filename="../application/journalwork.cpp" line="365"/>
         <location filename="../application/logexportthread.cpp" line="2125"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
@@ -280,8 +280,8 @@
         <translation>Debug</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="144"/>
-        <location filename="../application/displaycontent.cpp" line="155"/>
+        <location filename="../application/displaycontent.cpp" line="149"/>
+        <location filename="../application/displaycontent.cpp" line="160"/>
         <location filename="../application/journalwork.cpp" line="364"/>
         <location filename="../application/logexportthread.cpp" line="2124"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
@@ -289,8 +289,8 @@
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="145"/>
-        <location filename="../application/displaycontent.cpp" line="152"/>
+        <location filename="../application/displaycontent.cpp" line="150"/>
+        <location filename="../application/displaycontent.cpp" line="157"/>
         <location filename="../application/journalwork.cpp" line="361"/>
         <location filename="../application/logexportthread.cpp" line="2121"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
@@ -298,7 +298,7 @@
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="149"/>
+        <location filename="../application/displaycontent.cpp" line="154"/>
         <location filename="../application/journalwork.cpp" line="358"/>
         <location filename="../application/logexportthread.cpp" line="2118"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
@@ -306,7 +306,7 @@
         <translation>Emergency</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="150"/>
+        <location filename="../application/displaycontent.cpp" line="155"/>
         <location filename="../application/journalwork.cpp" line="359"/>
         <location filename="../application/logexportthread.cpp" line="2119"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
@@ -314,7 +314,7 @@
         <translation>Alert</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="151"/>
+        <location filename="../application/displaycontent.cpp" line="156"/>
         <location filename="../application/journalwork.cpp" line="360"/>
         <location filename="../application/logexportthread.cpp" line="2120"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
@@ -322,7 +322,7 @@
         <translation>Critical</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="154"/>
+        <location filename="../application/displaycontent.cpp" line="159"/>
         <location filename="../application/journalwork.cpp" line="363"/>
         <location filename="../application/logexportthread.cpp" line="2123"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
@@ -333,8 +333,8 @@
 <context>
     <name>LogAuthThread</name>
     <message>
-        <location filename="../application/logauththread.cpp" line="159"/>
-        <location filename="../application/logauththread.cpp" line="173"/>
+        <location filename="../application/logauththread.cpp" line="231"/>
+        <location filename="../application/logauththread.cpp" line="245"/>
         <source>Log file is empty</source>
         <translation>Log file is empty</translation>
     </message>
@@ -342,7 +342,7 @@
 <context>
     <name>LogFileParser</name>
     <message>
-        <location filename="../application/logfileparser.cpp" line="630"/>
+        <location filename="../application/logfileparser.cpp" line="546"/>
         <source>information</source>
         <translation>information</translation>
     </message>
@@ -350,12 +350,12 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../application/main.cpp" line="55"/>
+        <location filename="../application/main.cpp" line="56"/>
         <source>Log Viewer</source>
         <translation>Log Viewer</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="59"/>
+        <location filename="../application/main.cpp" line="60"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translation>Log Viewer is a useful tool for viewing system logs.</translation>
     </message>
@@ -363,7 +363,7 @@
 <context>
     <name>SearchBar</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="104"/>
+        <location filename="../application/displaycontent.cpp" line="109"/>
         <source>No search results</source>
         <translation>No search results</translation>
     </message>
@@ -376,77 +376,77 @@
 <context>
     <name>Table</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="286"/>
-        <location filename="../application/displaycontent.cpp" line="499"/>
+        <location filename="../application/displaycontent.cpp" line="292"/>
+        <location filename="../application/displaycontent.cpp" line="505"/>
         <location filename="../application/logexportthread.cpp" line="1288"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="287"/>
-        <location filename="../application/displaycontent.cpp" line="394"/>
+        <location filename="../application/displaycontent.cpp" line="293"/>
+        <location filename="../application/displaycontent.cpp" line="400"/>
         <location filename="../application/logexportthread.cpp" line="1289"/>
         <source>Process</source>
         <translation>Process</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="288"/>
-        <location filename="../application/displaycontent.cpp" line="392"/>
-        <location filename="../application/displaycontent.cpp" line="500"/>
-        <location filename="../application/displaycontent.cpp" line="1413"/>
-        <location filename="../application/displaycontent.cpp" line="1517"/>
+        <location filename="../application/displaycontent.cpp" line="294"/>
+        <location filename="../application/displaycontent.cpp" line="398"/>
+        <location filename="../application/displaycontent.cpp" line="506"/>
+        <location filename="../application/displaycontent.cpp" line="1415"/>
+        <location filename="../application/displaycontent.cpp" line="1519"/>
         <location filename="../application/logexportthread.cpp" line="1291"/>
         <source>Date and Time</source>
         <translation>Date and Time</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="289"/>
-        <location filename="../application/displaycontent.cpp" line="395"/>
-        <location filename="../application/displaycontent.cpp" line="502"/>
-        <location filename="../application/displaycontent.cpp" line="1414"/>
-        <location filename="../application/displaycontent.cpp" line="1447"/>
-        <location filename="../application/displaycontent.cpp" line="1518"/>
-        <location filename="../application/displaycontent.cpp" line="1549"/>
-        <location filename="../application/displaycontent.cpp" line="1583"/>
+        <location filename="../application/displaycontent.cpp" line="295"/>
+        <location filename="../application/displaycontent.cpp" line="401"/>
+        <location filename="../application/displaycontent.cpp" line="508"/>
+        <location filename="../application/displaycontent.cpp" line="1416"/>
+        <location filename="../application/displaycontent.cpp" line="1449"/>
+        <location filename="../application/displaycontent.cpp" line="1520"/>
+        <location filename="../application/displaycontent.cpp" line="1551"/>
+        <location filename="../application/displaycontent.cpp" line="1585"/>
         <location filename="../application/logexportthread.cpp" line="1292"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="290"/>
-        <location filename="../application/displaycontent.cpp" line="393"/>
+        <location filename="../application/displaycontent.cpp" line="296"/>
+        <location filename="../application/displaycontent.cpp" line="399"/>
         <location filename="../application/logexportthread.cpp" line="1293"/>
         <source>User</source>
         <translation>User</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="291"/>
+        <location filename="../application/displaycontent.cpp" line="297"/>
         <location filename="../application/logexportthread.cpp" line="1294"/>
         <source>PID</source>
         <translation>PID</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1415"/>
+        <location filename="../application/displaycontent.cpp" line="1417"/>
         <source>Action</source>
         <translation>Action</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1446"/>
+        <location filename="../application/displaycontent.cpp" line="1448"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="501"/>
+        <location filename="../application/displaycontent.cpp" line="507"/>
         <source>Source</source>
         <translation>Source</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1546"/>
+        <location filename="../application/displaycontent.cpp" line="1548"/>
         <source>Event Type</source>
         <translation>Event Type</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1547"/>
+        <location filename="../application/displaycontent.cpp" line="1549"/>
         <source>Username</source>
         <translation>Username</translation>
     </message>
@@ -490,7 +490,7 @@
 <context>
     <name>Tbble</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1548"/>
+        <location filename="../application/displaycontent.cpp" line="1550"/>
         <source>Date and Time</source>
         <translation>Date and Time</translation>
     </message>

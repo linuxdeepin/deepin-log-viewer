@@ -76,6 +76,9 @@ struct XORG_FILTERS {
 struct DKPG_FILTERS {
     qint64 timeFilter ;
 };
+struct KERN_FILTERS {
+    qint64 timeFilter ;
+};
 struct BOOT_FILTERS {
     QString searchstr;
     QString statusFilter;

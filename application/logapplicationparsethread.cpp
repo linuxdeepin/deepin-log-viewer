@@ -39,7 +39,7 @@ void LogApplicationParseThread::stopProccess()
 {
     m_canRun = false;
     if (m_process && m_process->isOpen()) {
-        m_process->readAll();
+        // m_process->readAll();
         m_process->kill();
     }
 }

@@ -65,20 +65,19 @@ signals:
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
     void stopKern();
     void stopBoot();
+    void stopDpkg();
+    void stopXlog();
+    void stopKwin();
     void stopApp();
     void stopJournal();
 
 private:
-    qint64 formatDateTime(QString m, QString d, QString t);
     void quitLogAuththread(QThread *iThread);
 signals:
 
 public slots:
     void slot_journalFinished();
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
-    void slot_kernFinished(LOG_FLAG flag, QString output);
-    void slot_bootFinished(LOG_FLAG flag, QString output);
-
     void slog_proccessError(const QString &iError);
 private:
     QString m_rootPasswd;
