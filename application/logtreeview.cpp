@@ -108,7 +108,6 @@ void LogTreeView::initUI()
     //不需要间隔颜色的样式，因为自绘了，它默认的效果和我们想要的不一样
     setAlternatingRowColors(false);
     setAllColumnsShowFocus(false);
-    setTabOrder(this->header(), this);
 }
 
 /**

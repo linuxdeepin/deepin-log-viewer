@@ -39,47 +39,47 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="76"/>
         <location filename="../application/filtercontent.cpp" line="77"/>
-        <location filename="../application/filtercontent.cpp" line="509"/>
+        <location filename="../application/filtercontent.cpp" line="511"/>
         <source>All</source>
         <translation>All</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="92"/>
         <location filename="../application/filtercontent.cpp" line="93"/>
-        <location filename="../application/filtercontent.cpp" line="501"/>
-        <location filename="../application/filtercontent.cpp" line="510"/>
+        <location filename="../application/filtercontent.cpp" line="503"/>
+        <location filename="../application/filtercontent.cpp" line="512"/>
         <source>Today</source>
         <translation>Today</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="100"/>
         <location filename="../application/filtercontent.cpp" line="102"/>
-        <location filename="../application/filtercontent.cpp" line="502"/>
-        <location filename="../application/filtercontent.cpp" line="511"/>
+        <location filename="../application/filtercontent.cpp" line="504"/>
+        <location filename="../application/filtercontent.cpp" line="513"/>
         <source>3 days</source>
         <translation>3 days</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="109"/>
         <location filename="../application/filtercontent.cpp" line="111"/>
-        <location filename="../application/filtercontent.cpp" line="503"/>
-        <location filename="../application/filtercontent.cpp" line="512"/>
+        <location filename="../application/filtercontent.cpp" line="505"/>
+        <location filename="../application/filtercontent.cpp" line="514"/>
         <source>1 week</source>
         <translation>1 week</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="118"/>
         <location filename="../application/filtercontent.cpp" line="120"/>
-        <location filename="../application/filtercontent.cpp" line="504"/>
-        <location filename="../application/filtercontent.cpp" line="513"/>
+        <location filename="../application/filtercontent.cpp" line="506"/>
+        <location filename="../application/filtercontent.cpp" line="515"/>
         <source>1 month</source>
         <translation>1 month</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="126"/>
         <location filename="../application/filtercontent.cpp" line="128"/>
-        <location filename="../application/filtercontent.cpp" line="505"/>
-        <location filename="../application/filtercontent.cpp" line="514"/>
+        <location filename="../application/filtercontent.cpp" line="507"/>
+        <location filename="../application/filtercontent.cpp" line="516"/>
         <source>3 months</source>
         <translation>3 months</translation>
     </message>
@@ -158,7 +158,11 @@
 <context>
     <name>DisplayContent</name>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="893"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="894"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
@@ -179,7 +183,11 @@
 <context>
     <name>ExportMessage</name>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1655"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="1656"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>Export successful</source>
         <translation>Export successful</translation>
     </message>
@@ -187,7 +195,11 @@
 <context>
     <name>File</name>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="891"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="892"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>Export File</source>
         <translation>Export File</translation>
     </message>
@@ -196,8 +208,8 @@
     <name>Label</name>
     <message>
         <location filename="../application/filtercontent.cpp" line="72"/>
-        <location filename="../application/filtercontent.cpp" line="499"/>
-        <location filename="../application/filtercontent.cpp" line="508"/>
+        <location filename="../application/filtercontent.cpp" line="501"/>
+        <location filename="../application/filtercontent.cpp" line="510"/>
         <source>Period:</source>
         <translation>Period:</translation>
     </message>
@@ -350,12 +362,20 @@
 <context>
     <name>Main</name>
     <message>
+<<<<<<< HEAD
         <location filename="../application/main.cpp" line="56"/>
+=======
+        <location filename="../application/main.cpp" line="60"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>Log Viewer</source>
         <translation>Log Viewer</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/main.cpp" line="60"/>
+=======
+        <location filename="../application/main.cpp" line="64"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translation>Log Viewer is a useful tool for viewing system logs.</translation>
     </message>
@@ -368,7 +388,7 @@
         <translation>No search results</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="70"/>
+        <location filename="../application/logcollectormain.cpp" line="71"/>
         <source>Search</source>
         <translation>Search</translation>
     </message>
@@ -393,8 +413,13 @@
         <location filename="../application/displaycontent.cpp" line="294"/>
         <location filename="../application/displaycontent.cpp" line="398"/>
         <location filename="../application/displaycontent.cpp" line="506"/>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1415"/>
         <location filename="../application/displaycontent.cpp" line="1519"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="1416"/>
+        <location filename="../application/displaycontent.cpp" line="1520"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <location filename="../application/logexportthread.cpp" line="1291"/>
         <source>Date and Time</source>
         <translation>Date and Time</translation>
@@ -403,11 +428,19 @@
         <location filename="../application/displaycontent.cpp" line="295"/>
         <location filename="../application/displaycontent.cpp" line="401"/>
         <location filename="../application/displaycontent.cpp" line="508"/>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1416"/>
         <location filename="../application/displaycontent.cpp" line="1449"/>
         <location filename="../application/displaycontent.cpp" line="1520"/>
         <location filename="../application/displaycontent.cpp" line="1551"/>
         <location filename="../application/displaycontent.cpp" line="1585"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="1417"/>
+        <location filename="../application/displaycontent.cpp" line="1450"/>
+        <location filename="../application/displaycontent.cpp" line="1521"/>
+        <location filename="../application/displaycontent.cpp" line="1552"/>
+        <location filename="../application/displaycontent.cpp" line="1586"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <location filename="../application/logexportthread.cpp" line="1292"/>
         <source>Info</source>
         <translation>Info</translation>
@@ -426,12 +459,20 @@
         <translation>PID</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1417"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="1418"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>Action</source>
         <translation>Action</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1448"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="1449"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>Status</source>
         <translation>Status</translation>
     </message>
@@ -441,12 +482,20 @@
         <translation>Source</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1548"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="1549"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>Event Type</source>
         <translation>Event Type</translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1549"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="1550"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>Username</source>
         <translation>Username</translation>
     </message>
@@ -490,7 +539,11 @@
 <context>
     <name>Tbble</name>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1550"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="1551"/>
+>>>>>>> f5c6ad59fb08dae4052a222a21ff0f68ec09268d
         <source>Date and Time</source>
         <translation>Date and Time</translation>
     </message>
