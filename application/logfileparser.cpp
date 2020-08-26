@@ -37,6 +37,7 @@
 #include <QtConcurrent>
 
 int journalWork::thread_index = 0;
+int JournalBootWork::thread_index = 0;
 DWIDGET_USE_NAMESPACE
 
 LogFileParser::LogFileParser(QWidget *parent)
@@ -128,6 +129,24 @@ int LogFileParser::parseByJournal(QStringList arg)
     QThreadPool::globalInstance()->start(work);
     return work->getIndex();
 #endif
+}
+
+int LogFileParser::parseByJournalBoot(QStringList arg)
+{
+    stopAllLoad();
+    JournalBootWork *work = new JournalBootWork();
+
+    work->setArg(arg);
+    auto a = connect(work, SIGNAL(journalBootFinished()), this,  SLOT(slot_journalBootFinished()),
+                     Qt::QueuedConnection);
+    auto b = connect(work, &JournalBootWork::journaBootlData, this, &LogFileParser::journaBootlData,
+                     Qt::QueuedConnection);
+
+    connect(this, &LogFileParser::stopJournalBoot, work, &JournalBootWork::stopWork);
+
+    //QtConcurrent::run(work, &journalWork::doWork);
+    QThreadPool::globalInstance()->start(work);
+    return work->getIndex();
 }
 
 void LogFileParser::parseByDpkg(qint64 ms)
@@ -485,7 +504,7 @@ void LogFileParser::stopAllLoad()
     emit stopKwin();
     emit stopApp();
     emit stopJournal();
-
+    emit stopJournalBoot();
     //  QThreadPool::globalInstance()->waitForDone(-1);
     return;
 //    if (work && work->isRunning())
@@ -532,6 +551,12 @@ void LogFileParser::slot_journalFinished()
     m_isJournalLoading = false;
     emit journalFinished();
 
+}
+
+
+void LogFileParser::slot_journalBootFinished()
+{
+    emit journalBootFinished();
 }
 
 

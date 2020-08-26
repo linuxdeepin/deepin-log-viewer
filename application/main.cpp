@@ -37,6 +37,7 @@ DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+
     LogApplication a(argc, argv);
     //  wayland环境判断
     auto systemEnv = QProcessEnvironment::systemEnvironment();

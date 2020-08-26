@@ -551,6 +551,9 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
                                  true);  // modifed by Airy for showing peroid
     } else if (itemData.contains(KWIN_TREE_DATA)) {
         this->setSelectorVisible(false, false, false, false, false);
+    } else if (itemData.contains(BOOT_KLU_TREE_DATA)) {
+        this->setSelectorVisible(true, false, false, false, false);
+        cbx_lv->setCurrentIndex(INF + 1);  // index+1
     }
 }
 

@@ -98,6 +98,10 @@ private:
 
     bool isAuthProcessAlive();
 
+    void generateJournalBootFile(int lId, const QString &iSearchStr = "");
+    void createJournalBootTableStart(QList<LOG_MSG_JOURNAL> &list);
+    void createJournalBootTableForm();
+    void insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
 
 
     //
@@ -123,6 +127,8 @@ public slots:
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
     void slot_kwinFinished(QList<LOG_MSG_KWIN> list);
     void slot_journalFinished();
+    void slot_journalBootFinished();
+    void slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list);
     void slot_journalData(int index, QList<LOG_MSG_JOURNAL> list);
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
     void slot_NormalFinished();  // add by Airy
@@ -135,7 +141,7 @@ public slots:
 
     void slot_getLogtype(int tcbx);  // add by Airy
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
-//导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
+    //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
     void parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandardItemModel *oPModel);
@@ -180,6 +186,9 @@ private:
     LOG_FLAG m_flag {NONE};
 
     LogFileParser m_logFileParse;
+
+    QList<LOG_MSG_JOURNAL> jBootList, jBootListOrigin;// journalctl --boot cmd.
+
     QList<LOG_MSG_JOURNAL> jList, jListOrigin; // journalctl cmd.
     QList<LOG_MSG_DPKG> dList, dListOrigin;    // dpkg.log
     //    QStringList xList;                           // Xorg.0.log
@@ -204,6 +213,7 @@ private:
     QDateTime m_lastJournalGetTime{QDateTime::fromTime_t(0)};
     JOURNAL_FILTERS m_journalFilter{-99, -99};
     int m_journalCurrentIndex{-1};
+    int m_journalBootCurrentIndex{-1};
 };
 
 #endif  // DISPLAYCONTENT_H

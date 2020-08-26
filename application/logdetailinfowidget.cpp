@@ -431,5 +431,11 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     } else if (dataStr.contains(KWIN_TABLE_DATA)) {
         fillDetailInfo("Kwin", hostname, "", "", QModelIndex(),
                        index.siblingAtColumn(0).data().toString());
+    } else if (dataStr.contains(BOOT_KLU_TABLE_DATA)) {
+        fillDetailInfo(index.siblingAtColumn(1).data().toString(),
+                       /*m_pModel->item(index.row(), 4)->text()*/ hostname,
+                       index.siblingAtColumn(5).data().toString(),
+                       index.siblingAtColumn(2).data().toString(), index,
+                       index.siblingAtColumn(3).data().toString());
     }
 }

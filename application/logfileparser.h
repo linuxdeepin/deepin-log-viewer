@@ -22,13 +22,15 @@
 #ifndef LOGFILEPARSER_H
 #define LOGFILEPARSER_H
 
-#include <QMap>
-#include <QObject>
-#include <QThread>
 #include "journalwork.h"
+#include "journalbootwork.h"
 #include "logapplicationparsethread.h"
 #include "logauththread.h"
 #include "structdef.h"
+
+#include <QMap>
+#include <QObject>
+#include <QThread>
 
 class LogFileParser : public QObject
 {
@@ -37,7 +39,10 @@ public:
     explicit LogFileParser(QWidget *parent = nullptr);
     ~LogFileParser();
 
+
     int parseByJournal(QStringList arg = QStringList());
+    int parseByJournalBoot(QStringList arg = QStringList());
+
     void parseByDpkg(qint64 ms = 0);
 #if 0
     void parseByXlog(QStringList &xList);
@@ -59,7 +64,12 @@ signals:
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kernFinished(QList<LOG_MSG_JOURNAL>);
     void journalFinished();
+
+    void journalBootFinished();
+
     void journalData(int index, QList<LOG_MSG_JOURNAL>);
+    void journaBootlData(int index, QList<LOG_MSG_JOURNAL>);
+
     void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
     void normalFinished();  // add by Airy
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
@@ -70,6 +80,7 @@ signals:
     void stopKwin();
     void stopApp();
     void stopJournal();
+    void stopJournalBoot();
 
 private:
     void quitLogAuththread(QThread *iThread);
@@ -77,6 +88,7 @@ signals:
 
 public slots:
     void slot_journalFinished();
+    void slot_journalBootFinished();
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slog_proccessError(const QString &iError);
 private:
@@ -86,6 +98,8 @@ private:
     QMap<QString, int> m_levelDict;  // example:warning=>4
 
     LogApplicationParseThread *m_appThread {nullptr};
+    journalWork *work {nullptr};
+    JournalBootWork *m_bootJournalWork{nullptr};
     QProcess *m_pDkpgDataLoader{nullptr};
     QProcess *m_pXlogDataLoader{nullptr};
     QProcess *m_KwinDataLoader{nullptr};

@@ -66,7 +66,7 @@ LogCollectorMain::~LogCollectorMain()
 void LogCollectorMain::initUI()
 {
     /** add searchEdit */
-    m_searchEdt = new DSearchEdit(this);
+    m_searchEdt = new DSearchEdit();
     // m_searchEdt->setFocusPolicy(Qt::TabFocus);
     m_searchEdt->setPlaceHolder(DApplication::translate("SearchBar", "Search"));
     m_searchEdt->setMaximumWidth(400);

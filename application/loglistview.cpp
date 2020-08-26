@@ -20,6 +20,7 @@
  */
 #include "loglistview.h"
 #include "logapplicationhelper.h"
+#include "dbusmanager.h"
 
 #include <DDesktopServices>
 #include <DDialog>
@@ -171,6 +172,8 @@ void LogListView::initUI()
 
     m_pModel = new QStandardItemModel(this);
     QStandardItem *item = nullptr;
+    QString  systemName =   DBusManager::getSystemInfo();
+    qDebug() << "systemName" << systemName;
     if (isFileExist("/var/log/journal")) {
         item = new QStandardItem(DApplication::translate("Tree", "System Log"));
         item->setToolTip(DApplication::translate("Tree", "System Log"));  // add by Airy for bug 16245
@@ -189,7 +192,30 @@ void LogListView::initUI()
         m_pModel->appendRow(item);
     }
 
-    if (isFileExist("/var/log/boot.log")) {
+//    if (isFileExist("/var/log/boot.log")) {
+//        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+//        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+//        item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    } else {
+//        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+//        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+//        item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    }
+    if (systemName == "klu" || systemName == "panguV") {
+
+        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+        item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
+        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        m_pModel->appendRow(item);
+    } else {
         item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
         item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
         item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
@@ -197,6 +223,10 @@ void LogListView::initUI()
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
     }
+
+
+
+
     if (isFileExist("/var/log/dpkg.log")) {
         item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
         item->setToolTip(DApplication::translate("Tree", "dpkg Log"));  // add by Airy for bug 16245
@@ -205,18 +235,26 @@ void LogListView::initUI()
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
     }
-    if (isFileExist("/var/log/Xorg.0.log")) {
-        item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
-        item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
-        item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
-        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        m_pModel->appendRow(item);
-    }
-    if (isFileExist(QDir::homePath() + "/.kwin.log")) {
+//    if (isFileExist("/var/log/Xorg.0.log")) {
+//        item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
+//        item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
+//        item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    }
+    // if (isFileExist(QDir::homePath() + "/.kwin.log")) {
+    if (systemName == "klu" || systemName == "panguV" || systemName == "pangu") {
         item = new QStandardItem(DApplication::translate("Tree", "Kwin Log"));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
         item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);
+        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        m_pModel->appendRow(item);
+    } else {
+        item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
+        item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
+        item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
@@ -435,7 +473,7 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         g_context->addAction(g_clear);
         g_context->addAction(g_refresh);
 
-        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA) {
+        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA) {
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }

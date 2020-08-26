@@ -117,6 +117,7 @@ enum LOG_FLAG {
     APP,
     Normal,
     Kwin,
+    BOOT_KLU,
     NONE = 9999
 };  // modified by
 // Airy
@@ -179,11 +180,13 @@ enum NORMAL_DISPLAY_COLUMN {
 #define BOOT_TABLE_DATA "bootItemData"
 #define KERN_TABLE_DATA "kernItemData"
 #define JOUR_TABLE_DATA "journalItemData"
+#define BOOT_KLU_TABLE_DATA "bootKluItemData"
 #define APP_TABLE_DATA "applicationItemData"
 #define LAST_TABLE_DATA "lastItemData"  // add by Airy
 #define KWIN_TABLE_DATA "kwinItemData"
 
 #define JOUR_TREE_DATA "journalctl"
+#define BOOT_KLU_TREE_DATA "bootklu"
 #define DPKG_TREE_DATA "/var/log/dpkg.log"
 #define XORG_TREE_DATA "/var/log/Xorg.0.log"
 #define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"

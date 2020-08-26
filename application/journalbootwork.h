@@ -19,8 +19,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef JOURNALWORK_H
-#define JOURNALWORK_H
+#ifndef JOURNALBOOTWORK_H
+#define JOURNALBOOTWORK_H
 #include <mutex>
 #include "structdef.h"
 #include <systemd/sd-journal.h>
@@ -32,23 +32,22 @@
 #include <QEventLoop>
 #include <QMutex>
 // class journalWork : public QObject
-class journalWork :  public QObject, public QRunnable
+class JournalBootWork :  public QObject, public QRunnable
 {
     Q_OBJECT
-
 public:
-    explicit journalWork(QStringList arg, QObject *parent = nullptr);
-    explicit journalWork(QObject *parent = nullptr);
-    ~journalWork();
+    explicit JournalBootWork(QStringList arg, QObject *parent = nullptr);
+    explicit JournalBootWork(QObject *parent = nullptr);
+    ~JournalBootWork();
 
-    static journalWork *instance()
+    static JournalBootWork *instance()
     {
-        journalWork *sin = m_instance.load();
+        JournalBootWork *sin = m_instance.load();
         if (!sin) {
             std::lock_guard<std::mutex> lock(m_mutex);
             sin = m_instance.load();
             if (!sin) {
-                sin = new journalWork();
+                sin = new JournalBootWork();
                 m_instance.store(sin);
             }
         }
@@ -56,14 +55,15 @@ public:
     }
 
 
-
     void setArg(QStringList arg);
     void deleteSd();
     void run() override;
 
 signals:
-    void journalData(int index, QList<LOG_MSG_JOURNAL> list);
-    void journalFinished();
+//    void journalFinished(QList<LOG_MSG_JOURNAL> list);
+    void journalBootFinished();
+    void journaBootlData(int index, QList<LOG_MSG_JOURNAL> list);
+    void journalBootError(QString &iError);
 
 public slots:
     void doWork();
@@ -84,13 +84,12 @@ private:
     QMap<int, QString> m_map;
     // sd_journal *j {nullptr};
     QProcess *proc {nullptr};
-    static std::atomic<journalWork *> m_instance;
+    static std::atomic<JournalBootWork *> m_instance;
     static std::mutex m_mutex;
     QEventLoop loop;
     bool m_canRun = false;
     int m_threadIndex;
 
-
 };
 
-#endif  // JOURNALWORK_H
+#endif  // JOURNALBOOTWORK_H
