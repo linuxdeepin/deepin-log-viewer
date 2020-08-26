@@ -18,19 +18,30 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "loglistview.h"
+#include "logapplicationhelper.h"
 
+#include <DDesktopServices>
+#include <DDialog>
+#include <DDialogButtonBox>
+#include <DInputDialog>
 #include <DApplication>
-#include <QDebug>
-#include <QHeaderView>
+#include <DStyle>
+#include <DApplication>
+
 #include <QItemSelectionModel>
 #include <QMargins>
 #include <QPaintEvent>
+#include <QStandardItemModel>
 #include <QPainter>
 #include <QProcess> //add by Airy
+#include <QDebug>
+#include <QHeaderView>
 #include <QToolTip>
 #include <QDir>
-#include "loglistview.h"
-#include "logapplicationhelper.h"
+#include <QDir>
+#include <QMenu>
+#include <QShortcut>
 #define ITEM_HEIGHT 40
 #define ITEM_WIDTH 108
 
@@ -39,17 +50,55 @@
 Q_DECLARE_METATYPE(QMargins)
 
 DWIDGET_USE_NAMESPACE
-LogListDelegate::LogListDelegate(QAbstractItemView *parent) : DStyledItemDelegate(parent)
+LogListDelegate::LogListDelegate(LogListView *parent) : DStyledItemDelegate(parent)
 {
 
 }
 
+void LogListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+
+    DStyledItemDelegate::paint(painter, option, index);
+    // if (option.state & QStyle::State_HasFocus) {
+    LogListView *parentView = qobject_cast<LogListView *>(this->parent());
+    if ((option.state & QStyle::State_HasFocus) && parentView && (parentView->focusReson() == Qt::TabFocusReason || parentView->focusReson() == Qt::BacktabFocusReason) && (parentView->hasFocus())) {
+        // draw focus
+        auto *style = dynamic_cast<DStyle *>(DApplication::style());
+        QRect rect;
+        rect.setX(option.rect.x());
+        rect.setY(option.rect.y());
+        rect.setWidth(option.rect.width());
+        rect.setHeight(option.rect.height());
+
+        //    QRect backgroundRect = QRect(rect.left() + 10, rect.top(), rect.width() - 20, rect.height());
+        if (index.isValid()) {
+            QStyleOptionFocusRect o;
+            o.QStyleOption::operator=(option);
+            o.state |= QStyle::State_KeyboardFocusChange | QStyle::State_HasFocus;
+            o.rect = style->visualRect(Qt::LeftToRight, option.rect, option.rect);
+            style->drawPrimitive(DStyle::PE_FrameFocusRect, &o, painter);
+        }
+    }
+
+
+
+}
+
+/**
+ * @brief LogListDelegate::helpEvent 重写helpEvent以让tooltip能在鼠标移出item项目后正确消失
+ * @param event
+ * @param view
+ * @param option
+ * @param index
+ * @return
+ */
 bool LogListDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
     QToolTip::hideText();
     if (event->type() == QEvent::ToolTip) {
         const QString tooltip = index.data(Qt::DisplayRole).toString();
         //qDebug() << __FUNCTION__ << "__now Hover is :__" << tooltip;
+        //如果tooltip不为空且合法则显示，否则直接关闭所有tooltip
         if (tooltip.isEmpty() || tooltip == "_split_") {
             hideTooltipImmediately();
         } else {
@@ -62,19 +111,17 @@ bool LogListDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, cons
                 strtooltip.append("\n");
             }
             strtooltip.chop(1);
-//            QTimer::singleShot(1000, [ = ]() {
             QToolTip::showText(event->globalPos(), strtooltip, view);
-
-//            QTimer::singleShot(500, []() {
-//                QToolTip::hideText();
-//            });
-//            });
         }
         return false;
     }
     return LogListDelegate::helpEvent(event, view, option, index);
 }
 
+
+/**
+ * @brief LogListDelegate::hideTooltipImmediately 隐藏所有tooltip
+ */
 void LogListDelegate::hideTooltipImmediately()
 {
     QWidgetList qwl = QApplication::topLevelWidgets();
@@ -94,8 +141,24 @@ LogListView::LogListView(QWidget *parent)
             &LogListView::onChangedTheme);
     DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
     onChangedTheme(ct);
+//    setFocusPolicy(Qt::TabFocus);
+
+    m_rightClickTriggerShortCut = new QShortcut(this);
+    m_rightClickTriggerShortCut->setKey(Qt::ALT + Qt::Key_M);
+    m_rightClickTriggerShortCut->setContext(Qt::WidgetShortcut);
+    m_rightClickTriggerShortCut->setAutoRepeat(false);
+    connect(m_rightClickTriggerShortCut, &QShortcut::activated, this, [this] {
+        //     qDebug() << "111111111" << visualRect(this->currentIndex())   ;
+        QRect r = rectForIndex(this->currentIndex());
+        QContextMenuEvent *eve = new QContextMenuEvent(QContextMenuEvent::Reason::Keyboard, QPoint(r.x() + r.width() / 2, r.y() + r.height() / 2));
+        DApplication::sendEvent(this, eve);
+    });
 }
 
+
+/**
+ * @brief LogListView::initUI 设置基本属性，且本listview为固定的种类，所以在此初始化函数中根据日志文件是否存在动态显示日志种类
+ */
 void LogListView::initUI()
 {
     this->setMinimumWidth(150);
@@ -185,10 +248,7 @@ void LogListView::initUI()
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
     }
-
-
 // add by Airy
-
     if (isFileExist("/var/log/wtmp")) {
         item = new QStandardItem(DApplication::translate("Tree", "Boot-Shutdown Event"));
         item->setData(LAST_TREE_DATA, ITEM_DATE_ROLE);
@@ -207,26 +267,35 @@ void LogListView::initUI()
 
 void LogListView::setDefaultSelect()
 {
-    emit clicked(currentIndex());
+    setCurrentIndex(currentIndex());
+    itemChanged(currentIndex());
 }
 
+/**
+ * @brief LogListView::setCustomFont 设置listview中的图标大小
+ * @param item 要设置图标大小的QStandardItem指针
+ */
 void LogListView::setCustomFont(QStandardItem *item)
 {
     Q_UNUSED(item)
-    //    QFont font = item->font();
-    //    font.setPointSize(11);
-    //    item->setFont(font);
     this->setIconSize(QSize(16, 16));
-
-    //    item->setTextAlignment(Qt::AlignCenter);
 }
 
+/**
+ * @brief LogListView::isFileExist 判断文件路径是否存在
+ * @param iFile 要判断的文件路径字符串
+ * @return
+ */
 bool LogListView::isFileExist(const QString &iFile)
 {
     QFile file(iFile);
     return file.exists();
 }
 
+/**
+ * @brief LogListView::onChangedTheme 主题变化时左侧图标的变化的曹
+ * @param themeType 变化的主题
+ */
 void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
 {
 
@@ -271,24 +340,17 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
             item->setData(_itemIcon, ICON_DATA);
         }
     }
-
-    // set itembackground color
-    //    DPalette pa = DApplicationHelper::instance()->palette(this);
-    //    pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
-    //    pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
-
-    //    this->setPalette(pa);
-    //    DApplicationHelper::instance()->setPalette(this, pa);
-
-    //    this->setAutoFillBackground(true);
 }
 
+/**
+ * @brief LogListView::paintEvent 绘制背景颜色为全是base角色
+ * @param event
+ */
 void LogListView::paintEvent(QPaintEvent *event)
 {
     DPalette pa = DApplicationHelper::instance()->palette(this);
     pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
     pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
-
     this->setPalette(pa);
     DApplicationHelper::instance()->setPalette(this, pa);
 
@@ -297,8 +359,16 @@ void LogListView::paintEvent(QPaintEvent *event)
     DListView::paintEvent(event);
 }
 
+/**
+ * @brief LogListView::currentChanged 虚函数中变换图标的选中状态
+ * @param current
+ * @param previous
+ */
 void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+    if (current.row() < 0) {
+        return;
+    }
     QStandardItem *currentItem = m_pModel->itemFromIndex(current);
     if (currentItem) {
         QString icon = currentItem->data(ICON_DATA).toString();
@@ -319,13 +389,13 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
         }
     }
 
-    emit itemChanged();
+    emit itemChanged(current);
     DListView::currentChanged(current, previous);
 }
 
 /**
  * @author Airy
- * @brief LogListView::truncateFile for truncating file
+ * @brief LogListView::truncateFile 清空日志文件内容
  * @param path_
  */
 void LogListView::truncateFile(QString path_)
@@ -342,25 +412,26 @@ void LogListView::truncateFile(QString path_)
     prc.waitForFinished();
 }
 
+
 /**
  * @author Airy
- * @brief LogListView::slot_getAppPath for get app path
- * @param path
+ * @brief LogListView::slot_getAppPath  清空应用日志时，当前显示应用日志的目录由外部提供并赋予成员变量
+ * @param path 要设置的当前应用路径
  */
 void LogListView::slot_getAppPath(QString path)
 {
     g_path = path;
 }
 
-#include <DDesktopServices>
-#include <DDialog>
-#include <DDialogButtonBox>
-#include <DInputDialog>
-#include <QDir>
-#include <QMenu>
+Qt::FocusReason LogListView::focusReson()
+{
+    return  m_reson;
+}
+
+
 /**
  * @author Airy
- * @brief LogListView::contextMenuEvent for adding context Menu
+ * @brief LogListView::contextMenuEvent 显示右键菜单
  * @param event
  */
 void LogListView::contextMenuEvent(QContextMenuEvent *event)
@@ -392,19 +463,20 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA) {
             path = pathData;
         } else if (pathData == APP_TREE_DATA) {
-            //                    path = dirPath + QString("/.cache/deepin/.");
             path = _path_;
         }
-
+        //显示当前日志目录
         connect(g_openForder, &QAction::triggered, this, [ = ] {
             DDesktopServices::showFileItem(path);
         });
 
         QModelIndex index = idx;
+        //刷新逻辑
         connect(g_refresh, &QAction::triggered, this, [ = ]() {
             emit sigRefresh(index);
         });
 
+        //清除日志逻辑
         connect(g_clear, &QAction::triggered, this, [ = ]() {
 
             DDialog *dialog = new DDialog(this);
@@ -413,8 +485,6 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
             dialog->setMessage(/*"清除日志内容"*/DApplication::translate("Action", "Are you sure you want to clear the log?"));
             dialog->addButton(QString(/*tr("取消")*/DApplication::translate("Action", "Cancel")), false, DDialog::ButtonNormal);
             dialog->addButton(QString(/*tr("确定")*/DApplication::translate("Action", "Confirm")), true, DDialog::ButtonRecommend);
-//            dialog->setModal(true);
-//            dialog->show(); //modal
 
             int Ok = dialog->exec();
             if (Ok == DDialog::Accepted) {
@@ -424,18 +494,63 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         });
 
         this->setContextMenuPolicy(Qt::DefaultContextMenu);
-        g_context->exec(QCursor::pos());
+        g_context->exec(mapToGlobal(event->pos()));
     }
-    //    this->selectionModel()->clear();  // if Cursor is empty,clear the context Menu
 }
 
 void LogListView::mouseMoveEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
     if (QToolTip::isVisible()) {
-        qDebug() << "111111";
         QToolTip::hideText();
     }
     return;
 }
+
+void LogListView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Up) {
+        if (currentIndex().row() == 0) {
+            QModelIndex modelIndex = model()->index(model()->rowCount() - 1, 0);
+            setCurrentIndex(modelIndex);
+        } else {
+            DListView::keyPressEvent(event);
+        }
+    } else if (event->key() == Qt::Key_Down) {
+        if (currentIndex().row() == model()->rowCount() - 1) {
+            QModelIndex modelIndex =  model()->index(0, 0);
+            setCurrentIndex(modelIndex);
+        } else {
+            DListView::keyPressEvent(event);
+        }
+    } else {
+        DListView::keyPressEvent(event);
+    }
+
+}
+
+void LogListView::mousePressEvent(QMouseEvent *event)
+{
+
+    if (event->button() == Qt::RightButton) {
+        emit clicked(indexAt(event->pos()));
+    }
+    DListView::mousePressEvent(event);
+}
+
+void LogListView::focusInEvent(QFocusEvent *event)
+{
+
+    if ((event->reason() != Qt::PopupFocusReason) && (event->reason() != Qt::ActiveWindowFocusReason)) {
+        m_reson = event->reason();
+    }
+    DListView::focusInEvent(event);
+}
+
+void LogListView::focusOutEvent(QFocusEvent *event)
+{
+    DListView::focusOutEvent(event);
+}
+
+
 

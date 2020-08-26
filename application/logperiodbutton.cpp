@@ -22,19 +22,27 @@
 #include "logperiodbutton.h"
 #include <DApplicationHelper>
 #include <DPalette>
+#include <DStyle>
+#include <DApplication>
 #include <QBrush>
 #include <QPaintEvent>
 #include <QPainter>
 #include <QPen>
+#include <QDebug>
+#include <QStylePainter>
+
 
 DWIDGET_USE_NAMESPACE
 
 LogPeriodButton::LogPeriodButton(const QString text, QWidget *parent)
     : DPushButton(text, parent)
 {
-    this->setFocusPolicy(Qt::NoFocus);
+    this->setFocusPolicy(Qt::StrongFocus);
     QFont f = font();
     f.setPixelSize(16);
+    setFlat(true);
+    setCheckable(true);
+    setContentsMargins(18, 18, contentsMargins().top(), contentsMargins().bottom());
 }
 
 void LogPeriodButton::setStandardSize(int iStahndardWidth)
@@ -54,15 +62,15 @@ void LogPeriodButton::leaveEvent(QEvent *e)
     DPushButton::leaveEvent(e);
 }
 
+/**
+ * @brief LogPeriodButton::paintEvent  通过鼠标是否在按钮上的状态绘hover效果
+ * @param event
+ */
 void LogPeriodButton::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
 
     QRectF rect = this->rect();
-//    if (m_stahndardWidth > 0) {
-//        this->setText(QFontMetrics(this->font()).elidedText(this->text(), Qt::ElideRight, m_stahndardWidth));
-//    }
-    // this->setText(QFontMetrics(this->font()).elidedText(this->text(), Qt::ElideRight, 30));
     if (isEnter) {
         this->setAutoFillBackground(true);
         this->setBackgroundRole(DPalette::Base);
@@ -79,5 +87,32 @@ void LogPeriodButton::paintEvent(QPaintEvent *event)
     } else {
         this->setAutoFillBackground(false);
     }
-    DPushButton::paintEvent(event);
+    DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
+    QStyleOptionButton btn;
+    initStyleOption(&btn);
+    QStylePainter painter2(this);
+    style->proxy()->drawControl(DStyle::CE_PushButtonBevel, &btn, &painter2, this);
+    QStyleOptionButton subopt = btn;
+    subopt.rect = style->proxy()->subElementRect(DStyle::SE_PushButtonContents, &btn, this);
+    style->proxy()->drawControl(DStyle::CE_PushButtonLabel, &subopt,  &painter2, this);
+    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
+
+        QStyleOptionFocusRect fropt;
+        fropt.QStyleOption::operator=(btn);
+        fropt.rect = style->proxy()->subElementRect(DStyle::SE_PushButtonFocusRect, & btn, this);
+        style->proxy()->drawPrimitive(DStyle::PE_FrameFocusRect, &fropt, &painter2, this);
+    }
 }
+
+void LogPeriodButton::focusInEvent(QFocusEvent *event)
+{
+    Q_UNUSED(event)
+    m_reson = event->reason();
+    if (event->reason() != Qt::MouseFocusReason && !this->isChecked()) {
+        this->click();
+    }
+
+    DPushButton::focusInEvent(event);
+
+}
+

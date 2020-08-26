@@ -20,16 +20,21 @@
  */
 
 #include "logspinnerwidget.h"
+
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
 DWIDGET_USE_NAMESPACE
 
-LogSpinnerWidget::LogSpinnerWidget(QWidget *parent): Dtk::Widget::DWidget(parent)
+LogSpinnerWidget::LogSpinnerWidget(QWidget *parent)
+    : Dtk::Widget::DWidget(parent)
 {
     initUI();
 }
-
+/**
+ * @brief LogSpinnerWidget::initUI  主表加载数据时的spinner
+ * 把DSpinner通过弹簧放在布局中间
+ */
 void LogSpinnerWidget::initUI()
 {
     m_spinner = new DSpinner(this);

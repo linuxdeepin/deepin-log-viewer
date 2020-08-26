@@ -21,19 +21,22 @@
 
 #ifndef LOGCOLLECTORMAIN_H
 #define LOGCOLLECTORMAIN_H
+#include "displaycontent.h"
+#include "filtercontent.h"
+#include "loglistview.h"
+#include "logtreeview.h"
+#include "logsearchedit.h"
 
 #include <DMainWindow>
 #include <DSearchEdit>
 #include <DSplitter>
 #include <DTreeView>
+
 #include <QHBoxLayout>
 #include <QShortcut>
 #include <QSplitter>
 #include <QVBoxLayout>
-#include "displaycontent.h"
-#include "filtercontent.h"
-#include "loglistview.h"
-#include "logtreeview.h"
+
 class DSplitter;
 class LogCollectorMain : public Dtk::Widget::DMainWindow
 {
@@ -47,6 +50,7 @@ public:
     void initShortCut();
 public slots:
     void resizeWidthByFilterContentWidth(int iWidth);
+    bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
 private:
     Dtk::Widget::DSearchEdit *m_searchEdt;
     FilterContent *m_topRightWgt;
@@ -62,6 +66,7 @@ private:
     QShortcut *m_scFindFont {nullptr};  // Find font          --> Ctrl+F
     QShortcut *m_scExport {nullptr};    // export file          --> Ctrl+E
     int m_originFilterWidth = 0;
+    QList<QWidget * > m_focusWidgetOrder;
 };
 
 #endif  // LOGCOLLECTORMAIN_H

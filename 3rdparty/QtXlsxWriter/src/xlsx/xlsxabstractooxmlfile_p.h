@@ -53,7 +53,7 @@ public:
     virtual ~AbstractOOXmlFilePrivate();
 
     QString filePathInPackage;//such as "xl/worksheets/sheet1.xml"
-                              //used when load the .xlsx file
+    //used when load the .xlsx file
     Relationships *relationships;
     AbstractOOXmlFile::CreateFlag flag;
     AbstractOOXmlFile *q_ptr;

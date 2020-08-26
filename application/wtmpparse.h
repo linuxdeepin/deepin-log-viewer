@@ -108,7 +108,7 @@ void list_insert(QList<utmp *> plist, struct utmp *value)
 
 utmp list_get_ele_and_del(QList<utmp > &list, char *value, int &rs)
 {
-    utmp temp={};
+    utmp temp = {};
     for (int i = 0; i < list.length(); ++i) {
         utmp itemValue = list.value(i);
         QString a(itemValue.ut_line);
@@ -131,7 +131,7 @@ char *show_end_time(long timeval)
 
     t = localtime(&timeval);
     strftime(tt, 100, "%R", t);
-    printf("%s", tt);
+    //printf("%s", tt);
     return asctime(t);
 }
 
@@ -142,8 +142,8 @@ char *show_start_time(long timeval)
 
     t = localtime(&timeval);
     strftime(tt, 100, "%a %b %e %R", t);
-    printf("%s", tt);
-    printf(" - ");
+//    printf("%s", tt);
+//    printf(" - ");
 
     return asctime(t);
 }

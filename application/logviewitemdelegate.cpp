@@ -37,7 +37,12 @@ LogViewItemDelegate::LogViewItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {
 }
-
+/**
+ * @brief LogViewItemDelegate::paint 绘制内容数据和文字虚函数
+ * @param painter
+ * @param option
+ * @param index
+ */
 void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                                 const QModelIndex &index) const
 {
@@ -64,71 +69,39 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
             cg = DPalette::Active;
         }
     }
-
     DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
-
-    int radius = style->pixelMetric(DStyle::PM_FrameRadius, &option);
     int margin = style->pixelMetric(DStyle::PM_ContentsMargins, &option);
-
+    //设置高亮文字色
     DApplicationHelper *dAppHelper = DApplicationHelper::instance();
     DPalette palette = dAppHelper->applicationPalette();
-    QBrush background;
     QPen forground;
-    if (opt.features & QStyleOptionViewItem::Alternate) {
-        background = palette.color(cg, DPalette::AlternateBase);
-    } else {
-        background = palette.color(cg, DPalette::Base);
-    }
-
     forground.setColor(palette.color(cg, DPalette::Text));
     if (opt.state & DStyle::State_Enabled) {
         if (opt.state & DStyle::State_Selected) {
-            background = palette.color(cg, DPalette::Highlight);
             forground.setColor(palette.color(cg, DPalette::HighlightedText));
         }
     }
     painter->setPen(forground);
-
     QRect rect = opt.rect;
-    // QRectF a;
-//    rect.setWidth(rect.width() + 2);
-//    rect.setX(rect.x() - 1);
     QFontMetrics fm(opt.font);
     QPainterPath path, clipPath;
     QRect textRect = rect;
-
     switch (opt.viewItemPosition) {
     case QStyleOptionViewItem::Beginning: {
-        rect.setX(rect.x() + margin);  // left margin
-        //去除焦点时的蓝线，减少行高
-        QPainterPath rectPath, roundedPath;
-        roundedPath.addRoundedRect(rect.x(), rect.y() + 1, rect.width() * 2, rect.height() - 2, radius,
-                                   radius);
-        rectPath.addRect(rect.x() + rect.width(), rect.y() + 1, rect.width(), rect.height() - 2);
-        clipPath = roundedPath.subtracted(rectPath);
-        painter->setClipPath(clipPath);
-        path.addRect(rect);
+        // 左间距
+        rect.setX(rect.x() + margin);
     } break;
     case QStyleOptionViewItem::Middle: {
-        //去除焦点时的蓝线，减少行高
-        QRectF rect2(rect.left(), rect.top() + 1, rect.width(), rect.height() - 2);
-        path.addRect(rect2);
     } break;
     case QStyleOptionViewItem::End: {
-        rect.setWidth(rect.width() - margin);  // right margin
-        //去除焦点时的蓝线，减少行高
-        QPainterPath rectPath, roundedPath;
-        roundedPath.addRoundedRect(rect.x() - rect.width(), rect.y() + 1, rect.width() * 2,
-                                   rect.height() - 2, radius, radius);
-        rectPath.addRect(rect.x() - rect.width(), rect.y() + 1, rect.width(), rect.height() - 2);
-        clipPath = roundedPath.subtracted(rectPath);
-        painter->setClipPath(clipPath);
-        path.addRect(rect);
+        // 右间距
+        rect.setWidth(rect.width() - margin);
     } break;
     case QStyleOptionViewItem::OnlyOne: {
-        rect.setX(rect.x() + margin);          // left margin
-        rect.setWidth(rect.width() - margin);  // right margin
-        path.addRoundedRect(rect, radius, radius);
+        // 左间距
+        rect.setX(rect.x() + margin);
+        // 右间距
+        rect.setWidth(rect.width() - margin);
     } break;
     default: {
         painter->restore();
@@ -136,8 +109,7 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         return;
     }
     }
-    //  painter->fillPath(path, background);
-
+    //绘制图标
     QRect iconRect = rect;
     if (opt.viewItemPosition == QStyleOptionViewItem::Beginning &&
             index.data(Qt::DecorationRole).isValid()) {
@@ -146,13 +118,11 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
         QIcon ic = index.data(Qt::DecorationRole).value<QIcon>();
         ic.paint(painter, iconRect);
     }
+    //绘制文字
     textRect = rect;
     textRect.setX(textRect.x() + margin - 2);
-    //    textRect.setWidth(textRect.width() - margin * 2);
     QString text = fm.elidedText(opt.text, opt.textElideMode, textRect.width());
-
     painter->drawText(textRect, Qt::TextSingleLine | static_cast<int>(opt.displayAlignment), text);
-
     painter->restore();
 }
 
@@ -169,7 +139,11 @@ QSize LogViewItemDelegate::sizeHint(const QStyleOptionViewItem &option,
     size.setHeight(std::max(36, size.height()));
     return size;
 }
-
+/**
+ * @brief LogViewItemDelegate::initStyleOption 初始化样式，文字省略模式，内容居中居左等等
+ * @param option
+ * @param index
+ */
 void LogViewItemDelegate::initStyleOption(QStyleOptionViewItem *option,
                                           const QModelIndex &index) const
 {

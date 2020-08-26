@@ -23,6 +23,9 @@
 
 #include <DApplication>
 #include <DTitlebar>
+#include <DWindowOptionButton>
+#include <DWindowCloseButton>
+
 #include <QDateTime>
 #include <QDebug>
 #include <QHeaderView>
@@ -30,6 +33,8 @@
 #include <QStandardItemModel>
 #include <QSizePolicy>
 #include <QList>
+#include <QKeyEvent>
+#include <DAboutDialog>
 //958+53+50 976
 #define MAINWINDOW_WIDTH 1024
 #define MAINWINDOW_HEIGHT 736
@@ -46,6 +51,7 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
 
     m_logCatelogue->setDefaultSelect();
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
+
 }
 
 LogCollectorMain::~LogCollectorMain()
@@ -60,15 +66,15 @@ LogCollectorMain::~LogCollectorMain()
 void LogCollectorMain::initUI()
 {
     /** add searchEdit */
-    m_searchEdt = new DSearchEdit;
+    m_searchEdt = new DSearchEdit(this);
+    // m_searchEdt->setFocusPolicy(Qt::TabFocus);
     m_searchEdt->setPlaceHolder(DApplication::translate("SearchBar", "Search"));
     m_searchEdt->setMaximumWidth(400);
+    // m_searchEdt->setFocusPolicy(Qt::StrongFocus);
     titlebar()->setCustomWidget(m_searchEdt, true);
-
     /** add titleBar */
     titlebar()->setIcon(QIcon::fromTheme("deepin-log-viewer"));
     titlebar()->setTitle("");
-
     /** menu */
     //    titlebar()->menu()->addAction(new QAction(tr("help")));
 
@@ -121,6 +127,7 @@ void LogCollectorMain::initUI()
 
     /** left frame */
     m_logCatelogue = new LogListView();
+    m_logCatelogue->setObjectName("logTypeSelectList");
     m_hLayout->addWidget(m_logCatelogue, 1);
     m_logCatelogue->setFixedWidth(160);
     m_vLayout = new QVBoxLayout;
@@ -139,7 +146,11 @@ void LogCollectorMain::initUI()
     m_hLayout->setSpacing(10);
 
     this->centralWidget()->setLayout(m_hLayout);
-
+    m_searchEdt->setObjectName("searchEdt");
+    m_searchEdt->lineEdit()->setObjectName("searchChildEdt");
+    m_topRightWgt->setObjectName("FilterContent");
+    m_midRightWgt->setObjectName("DisplayContent");
+    titlebar()->setObjectName("titlebar");
 
 #endif
 
@@ -170,17 +181,21 @@ void LogCollectorMain::initConnection()
 
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_logCatelogue,
             &LogListView::slot_getAppPath);  // add by Airy for getting app path
+    connect(m_midRightWgt, &DisplayContent::setExportEnable, m_topRightWgt,
+            &FilterContent::setExportButtonEnable, Qt::DirectConnection);
     //自适应宽度
 //    connect(m_topRightWgt, &FilterContent::sigResizeWidth, this,
 //            &LogCollectorMain::resizeWidthByFilterContentWidth);
     connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_midRightWgt,
             SLOT(slot_refreshClicked(const QModelIndex &)));  // add by Airy for adding refresh
+    connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_topRightWgt,
+            SLOT(slot_logCatelogueRefresh(const QModelIndex &)));
     connect(m_logCatelogue, &LogListView::sigRefresh, this, [ = ]() { m_searchEdt->clear(); });
     //! treeView widget
-    connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_midRightWgt,
+    connect(m_logCatelogue, SIGNAL(itemChanged(const QModelIndex &)), m_midRightWgt,
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));
     //! set tree <==> combobox visible
-    connect(m_logCatelogue, SIGNAL(clicked(const QModelIndex &)), m_topRightWgt,
+    connect(m_logCatelogue, SIGNAL(itemChanged(const QModelIndex &)), m_topRightWgt,
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));
 
     // when item changed clear search text
@@ -242,6 +257,7 @@ void LogCollectorMain::initShortCut()
     }
 }
 
+
 void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
 {
     int otherWidth = MAINWINDOW_WIDTH - m_originFilterWidth;
@@ -253,6 +269,61 @@ void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
         // setM
         //setWidth(setWidth);
     }
+}
+
+/**
+ * @brief LogCollectorMain::handleApplicationTabEventNotify
+ * 处理application中notify的tab keyevent ,直接在dapplication中调用
+ * 只调整我们需要调整的顺序,其他的默认
+ * @param obj 接收事件的对象
+ * @param evt 对象接收的键盘事件
+ * @return true处理并屏蔽事件 false交给application的notify处理
+ */
+bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt)
+{
+
+//    qDebug() << "handleApplicationTabEventNotify" << obj->objectName() << obj->metaObject()->className() << obj << this->titlebar();
+
+    if (evt->key() == Qt::Key_Tab) {
+        DWindowCloseButton *closebtn = this->titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
+        if (obj == this->titlebar()) {
+            m_searchEdt->lineEdit()->setFocus(Qt::TabFocusReason);
+            return  true;
+        } else if (obj->objectName() == "searchChildEdt") {
+            titlebar()->setFocus(Qt::TabFocusReason);
+            //titlebar不截获屏蔽掉,因为让他继续往下一menubutton发送tab
+            //  return  true;
+        } else if (obj == closebtn) {
+            m_logCatelogue->setFocus(Qt::TabFocusReason);
+            return  true;
+        } else if (obj->objectName() == "mainLogTable") {
+            m_searchEdt->lineEdit()->setFocus(Qt::TabFocusReason);
+            return  true;
+        } /*else if (obj->objectName() == "Dtk::Widget::DAbstractDialogClassWindow") {
+            Dtk::Widget::DAboutDialog *w = qobject_cast<Dtk::Widget::DAboutDialog *>(obj);
+            if (w) {
+                w->setFocus(Qt::TabFocusReason);
+            }
+
+            return  true;
+        }*/
+    } else if (evt->key() == Qt::Key_Backtab) {
+        DWindowOptionButton *optionbtn = this->titlebar()->findChild<DWindowOptionButton *>("DTitlebarDWindowOptionButton");
+        if (obj->objectName() == "logTypeSelectList") {
+            DWindowCloseButton   *closeButton = titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
+            if (closeButton) {
+                closeButton->setFocus(Qt::BacktabFocusReason);
+            }
+            return  true;
+        } else if (obj == optionbtn) {
+            m_searchEdt->lineEdit()->setFocus(Qt::BacktabFocusReason);
+            return  true;
+        } else if (obj->objectName() == "searchChildEdt") {
+            m_midRightWgt->mainLogTableView()->setFocus(Qt::BacktabFocusReason);
+            return  true;
+        }
+    }
+    return  false;
 }
 
 

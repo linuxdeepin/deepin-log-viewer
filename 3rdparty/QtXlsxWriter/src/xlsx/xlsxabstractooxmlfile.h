@@ -27,7 +27,8 @@
 #define QXLSX_XLSXABSTRACTOOXMLFILE_H
 
 #include "xlsxglobal.h"
-
+#include <QObject>
+#include "logexportthread.h"
 class QIODevice;
 class QByteArray;
 
@@ -35,12 +36,12 @@ QT_BEGIN_NAMESPACE_XLSX
 class Relationships;
 class AbstractOOXmlFilePrivate;
 
-class Q_XLSX_EXPORT AbstractOOXmlFile
+class Q_XLSX_EXPORT AbstractOOXmlFile: public QObject
 {
+    Q_OBJECT
     Q_DECLARE_PRIVATE(AbstractOOXmlFile)
 public:
-    enum CreateFlag
-    {
+    enum CreateFlag {
         F_NewFromScratch,
         F_LoadFromExists
     };
@@ -57,12 +58,16 @@ public:
 
     void setFilePath(const QString path);
     QString filePath() const;
-
+    void setExportCanRunning(bool *iCanRun);
+signals:
+    void sigProccess(int iCurrent, int iTotal) const;
 protected:
     AbstractOOXmlFile(CreateFlag flag);
     AbstractOOXmlFile(AbstractOOXmlFilePrivate *d);
 
     AbstractOOXmlFilePrivate *d_ptr;
+    bool *m_canRunning{nullptr};
+
 };
 
 QT_END_NAMESPACE_XLSX

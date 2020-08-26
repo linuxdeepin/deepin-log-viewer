@@ -154,27 +154,84 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
     m_fontNameCache.insert(fontFileName, fontFamilyName);
     return fontFamilyName;
 }
-//必须要replace \u0000,不然QByteArray会忽略这以后的内容
+
+
+/**
+ * @brief Utils::replaceEmptyByteArray 替换从qproccess获取的日志信息的字符中的空字符串 替换 \u0000,不然QByteArray会忽略这以后的内容
+ * @param iReplaceStr要替换的字符串
+ * @return 替换过的字符串
+ */
 QByteArray Utils::replaceEmptyByteArray(QByteArray &iReplaceStr)
 {
     QByteArray byteOutput = iReplaceStr;
     //\u0000是空字符，\x01是标题开始，出现于系统日志部分进程进程名称最后一个字符，不替换英文情况下显示错误
     return byteOutput.replace('\u0000', "").replace("\x01", "");
 }
-
+/**
+ * @brief Utils::isErroCommand 判断qproccess获取日志的返回值是否为报错
+ * @param str 要判断的字符串结果
+ * @return 见头文件中CommandErrorType的定义
+ */
 Utils::CommandErrorType Utils::isErroCommand(QString str)
 {
     if (str.contains("权限") || str.contains("permission", Qt::CaseInsensitive)) {
-//        DMessageBox::information(nullptr, tr("information"),
-//                                 str + "\n" + "Please use 'sudo' run this application");
         return PermissionError;
     }
     if (str.contains("请重试") || str.contains("retry", Qt::CaseInsensitive)) {
-//        DMessageBox::information(nullptr, tr("information"),
-//                                 "The password is incorrect,please try again");
         return RetryError;
     }
     return NoError;
+}
+
+bool Utils::checkAndDeleteDir(const QString &iFilePath)
+{
+    QFileInfo tempFileInfo(iFilePath);
+
+    if (tempFileInfo.isDir()) {
+        deleteDir(iFilePath);
+        return true;
+    } else if (tempFileInfo.isFile()) {
+        QFile deleteFile(iFilePath);
+        return  deleteFile.remove();
+    }
+    return false;
+}
+
+bool Utils::deleteDir(const QString &iFilePath)
+{
+    QDir directory(iFilePath);
+    if (!directory.exists()) {
+        return true;
+    }
+
+    QString srcPath = QDir::toNativeSeparators(iFilePath);
+    if (!srcPath.endsWith(QDir::separator()))
+        srcPath += QDir::separator();
+
+    QStringList fileNames = directory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+    bool error = false;
+    for (QStringList::size_type i = 0; i != fileNames.size(); ++i) {
+        QString filePath = srcPath + fileNames.at(i);
+        QFileInfo fileInfo(filePath);
+        if (fileInfo.isFile() || fileInfo.isSymLink()) {
+            QFile::setPermissions(filePath, QFile::WriteOwner);
+            if (!QFile::remove(filePath)) {
+                qDebug() << "remove file" << filePath << " faild!";
+                error = true;
+            }
+        } else if (fileInfo.isDir()) {
+            if (!deleteDir(filePath)) {
+                error = true;
+            }
+        }
+    }
+
+    if (!directory.rmdir(QDir::toNativeSeparators(directory.path()))) {
+        qDebug() << "remove dir" << directory.path() << " faild!";
+        error = true;
+    }
+
+    return !error;
 }
 
 

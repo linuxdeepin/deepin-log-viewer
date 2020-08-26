@@ -51,18 +51,18 @@ class Q_XLSX_EXPORT Document : public QObject
     Q_DECLARE_PRIVATE(Document)
 
 public:
-    explicit Document(QObject *parent = 0);
-    Document(const QString &xlsxName, QObject *parent=0);
-    Document(QIODevice *device, QObject *parent=0);
+    explicit Document(bool *iCanExport, QObject *parent = nullptr);
+    Document(bool *iCanExport, const QString &xlsxName, QObject *parent = nullptr);
+    Document(bool *iCanExport, QIODevice *device, QObject *parent = nullptr);
     ~Document();
 
-    bool write(const CellReference &cell, const QVariant &value, const Format &format=Format());
-    bool write(int row, int col, const QVariant &value, const Format &format=Format());
+    bool write(const CellReference &cell, const QVariant &value, const Format &format = Format());
+    bool write(int row, int col, const QVariant &value, const Format &format = Format());
     QVariant read(const CellReference &cell) const;
     QVariant read(int row, int col) const;
     bool insertImage(int row, int col, const QImage &image);
     Chart *insertChart(int row, int col, const QSize &size);
-    bool mergeCells(const CellRange &range, const Format &format=Format());
+    bool mergeCells(const CellRange &range, const Format &format = Format());
     bool unmergeCells(const CellRange &range);
 
     bool setColumnWidth(const CellRange &range, double width);
@@ -97,7 +97,7 @@ public:
     Cell *cellAt(const CellReference &cell) const;
     Cell *cellAt(int row, int col) const;
 
-    bool defineName(const QString &name, const QString &formula, const QString &comment=QString(), const QString &scope=QString());
+    bool defineName(const QString &name, const QString &formula, const QString &comment = QString(), const QString &scope = QString());
 
     CellRange dimension() const;
 
@@ -122,10 +122,14 @@ public:
     bool save() const;
     bool saveAs(const QString &xlsXname) const;
     bool saveAs(QIODevice *device) const;
-
+    void setExportCanRun(bool *iCanRun);
+signals:
+    void sigProcessAbstractSheet(int iCurrent, int iTotal);
+    void sigProcessharedStrings(int iCurrent, int iTotal);
 private:
     Q_DISABLE_COPY(Document)
-    DocumentPrivate * const d_ptr;
+    DocumentPrivate *const d_ptr;
+    bool *m_canRunning_p{nullptr};
 };
 
 QT_END_NAMESPACE_XLSX

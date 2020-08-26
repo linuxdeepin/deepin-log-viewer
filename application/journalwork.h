@@ -27,14 +27,15 @@
 #include <QMap>
 #include <QObject>
 #include <QProcess>
-#include <QThread>
+#include <QRunnable>
 #include <QMutexLocker>
 #include <QEventLoop>
 #include <QMutex>
 // class journalWork : public QObject
-class journalWork : public QThread
+class journalWork :  public QObject, public QRunnable
 {
     Q_OBJECT
+
 public:
     explicit journalWork(QStringList arg, QObject *parent = nullptr);
     explicit journalWork(QObject *parent = nullptr);
@@ -54,22 +55,26 @@ public:
         return sin;
     }
 
-    void stopWork();
+
 
     void setArg(QStringList arg);
     void deleteSd();
     void run() override;
 
 signals:
-//    void journalFinished(QList<LOG_MSG_JOURNAL> list);
+    void journalData(int index, QList<LOG_MSG_JOURNAL> list);
     void journalFinished();
 
 public slots:
     void doWork();
     QString getReplaceColorStr(const char *d);
+    void stopWork();
+    int getIndex();
+    static int getPublicIndex();
 public:
     QList<LOG_MSG_JOURNAL> logList;
     QMutex mutex;
+    static int thread_index ;
 private:
     QString getDateTimeFromStamp(QString str);
     void initMap();
@@ -82,6 +87,9 @@ private:
     static std::atomic<journalWork *> m_instance;
     static std::mutex m_mutex;
     QEventLoop loop;
+    bool m_canRun = false;
+    int m_threadIndex;
+
 
 };
 

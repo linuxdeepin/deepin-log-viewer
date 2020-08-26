@@ -34,5 +34,7 @@
         <file>images/dark/kwin.svg</file>
         <file>images/light/kwin_checked.svg</file>
         <file>images/light/kwin.svg</file>
+        <file>images/uospm_warning_32px.svg</file>
+        <file>images/ok.svg</file>
     </qresource>
 </RCC>

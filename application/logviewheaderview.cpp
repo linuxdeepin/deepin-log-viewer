@@ -18,16 +18,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "logviewheaderview.h"
+
+#include <QDebug>
+#include <QPaintEvent>
+#include <QPainter>
 
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DPalette>
 #include <DStyleHelper>
-#include <QDebug>
-#include <QPaintEvent>
-#include <QPainter>
-
-#include "logviewheaderview.h"
+#include <DStyle>
 
 static const int kSpacingMargin = 4;
 
@@ -35,7 +36,18 @@ LogViewHeaderView::LogViewHeaderView(Qt::Orientation orientation, QWidget *paren
     : DHeaderView(orientation, parent)
 {
     viewport()->setAutoFillBackground(false);
+    setStretchLastSection(true);
+    setSectionResizeMode(QHeaderView::Interactive);
+    setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    setFixedHeight(37);
+    setFocusPolicy(Qt::StrongFocus);
 }
+/**
+ * @brief LogViewHeaderView::paintSection 绘制表头
+ * @param painter
+ * @param rect
+ * @param logicalIndex
+ */
 void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
 {
     painter->save();
@@ -87,18 +99,18 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
 
     QPen forground;
     forground.setColor(palette.color(cg, DPalette::Text));
-    // TODO: dropdown icon (8x5)
+    // 绘制文字
     QRect textRect;
     if (sortIndicatorSection() == logicalIndex) {
         textRect = {contentRect.x() + margin, contentRect.y(), contentRect.width() - margin * 3 - 8,
-                    contentRect.height()};
+                    contentRect.height()
+                   };
     } else {
         textRect = {contentRect.x() + margin, contentRect.y(), contentRect.width() - margin,
-                    contentRect.height()};
+                    contentRect.height()
+                   };
     }
     QString title = model()->headerData(logicalIndex, orientation(), Qt::DisplayRole).toString();
-    //    int align = model()->headerData(logicalIndex, orientation(),
-    //    Qt::TextAlignmentRole).toInt();
     int align = Qt::AlignLeft | Qt::AlignVCenter;
 
     painter->setPen(forground);
@@ -111,9 +123,8 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
         painter->drawText(textRect, static_cast<int>(align), title);
     }
 
-    // sort indicator
     if (isSortIndicatorShown() && logicalIndex == sortIndicatorSection()) {
-        // TODO: arrow size (8x5)
+        // 绘制排序的箭头图标（8×5）
         QRect sortIndicator(textRect.x() + textRect.width() + margin,
                             textRect.y() + (textRect.height() - 5) / 2, 8, 5);
         option.rect = sortIndicator;
@@ -123,16 +134,25 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
             style->drawPrimitive(DStyle::PE_IndicatorArrowUp, &option, painter, this);
         }
     }
-
     painter->restore();
 }
 
+void LogViewHeaderView::focusInEvent(QFocusEvent *event)
+{
+    m_reson = event->reason();
+    DHeaderView::focusInEvent(event);
+}
+/**
+ * @brief LogViewHeaderView::paintEvent 在paintEvent里绘制背景
+ * @param event
+ */
 void LogViewHeaderView::paintEvent(QPaintEvent *event)
 {
     QPainter painter(viewport());
     painter.save();
 
     DPalette::ColorGroup cg;
+    //是否有为激活窗口状态
 #ifdef ENABLE_INACTIVE_DISPLAY
     QWidget *wnd = DApplication::activeWindow();
     if (!wnd) {
@@ -165,15 +185,29 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
 
     painter.fillPath(clipPath, bgBrush);
 
-    painter.restore();
+
     DHeaderView::paintEvent(event);
+    painter.restore();
+    // draw focus
+    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
+        QStyleOptionFocusRect o;
+        o.QStyleOption::operator=(option);
+        QRect focusRect {rect.x() - offset(), rect.y(), length() - sectionPosition(0), rect.height()};
+        o.rect = style->visualRect(layoutDirection(), rect, focusRect);
+        style->drawPrimitive(DStyle::PE_FrameFocusRect, &o, &painter);
+    }
+
 }
 
 QSize LogViewHeaderView::sizeHint() const
 {
     return QSize(width(), 36 + m_spacing);
 }
-
+/**
+ * @brief LogViewHeaderView::sectionSizeHint 根据是否有排序箭头返回逻辑字段合适的尺寸
+ * @param logicalIndex
+ * @return
+ */
 int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
 {
     QStyleOptionHeader option;

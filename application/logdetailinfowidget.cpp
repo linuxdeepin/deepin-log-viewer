@@ -24,6 +24,7 @@ logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
     : DWidget(parent)
 {
     initUI();
+    setFocusPolicy(Qt::NoFocus);
 }
 
 void logDetailInfoWidget::cleanText()
@@ -149,6 +150,8 @@ void logDetailInfoWidget::initUI()
     m_hline = new DHorizontalLine;
 
     m_textBrowser = new DTextBrowser(this);
+    //不设置nofocus焦点会上到这上面来,可是我们不需要它可以有焦点
+    m_textBrowser->setFocusPolicy(Qt::NoFocus);
     DFontSizeManager::instance()->bind(m_textBrowser, DFontSizeManager::T8);
     pa = DApplicationHelper::instance()->palette(m_textBrowser);
     pa.setBrush(DPalette::Text, pa.color(DPalette::TextTips));
@@ -258,6 +261,7 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
     DWidget::paintEvent(event);
 }
 
+
 //bool logDetailInfoWidget::event(QEvent *ev)
 //{
 //    if (ev->type() == QEvent::FontChange) {
@@ -284,6 +288,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     } else {
         QIcon icon =  level.siblingAtColumn(0).data(Qt::DecorationRole).value<QIcon>();
         m_level->setIcon(icon);
+
         m_level->setText(level.siblingAtColumn(0).data(Qt::UserRole + 6).toString());
         m_level->show();
     }
@@ -379,7 +384,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     index.row();
     if (dataStr.contains(DPKG_TABLE_DATA)) {
 
-        fillDetailInfo("Dpkg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
+        fillDetailInfo("dpkg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
                        index.siblingAtColumn(1).data().toString(), "",
                        index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {

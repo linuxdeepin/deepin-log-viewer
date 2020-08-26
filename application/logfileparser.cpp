@@ -36,7 +36,8 @@
 #include <QProcess>
 #include <QtConcurrent>
 
-
+int journalWork::thread_index = 0;
+int JournalBootWork::thread_index = 0;
 DWIDGET_USE_NAMESPACE
 
 LogFileParser::LogFileParser(QWidget *parent)
@@ -62,49 +63,90 @@ LogFileParser::LogFileParser(QWidget *parent)
     qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
     qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
     qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
+    qRegisterMetaType<QList<LOG_MSG_BOOT> > ("QList<LOG_MSG_BOOT>");
     qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
 
 }
 
-LogFileParser::~LogFileParser() {}
+LogFileParser::~LogFileParser()
+{
+    stopAllLoad();
 
-void LogFileParser::parseByJournal(QStringList arg)
+}
+
+int LogFileParser::parseByJournal(QStringList arg)
 {
     stopAllLoad();
 //    if (m_isJournalLoading) {
 //        return;
 //    }
     m_isJournalLoading = true;
-//    if (work && work->isRunning()) {
-//        work->stopWork();
-//        // quitLogAuththread(work);
-//        work->quit();
-//        work->wait();
+//    if (m_currentJournalWork && m_currentJournalWork->isRunning()) {
+//        m_currentJournalWork->stopWork();
+//        m_currentJournalWork->mutex.unlock();
+//        m_currentJournalWork->quit();
+//        m_currentJournalWork->wait();
 
 //    }
+#if 0
+    m_currentJournalWork = journalWork::instance();
 
-    work = journalWork::instance();
-
-    //    work = new journalWorkd();
-    disconnect(work, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()));
-    work->setArg(arg);
-    connect(work, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()),
+    m_currentJournalWork->stopWork();
+//    journalWork   *work = new journalWork();
+//    m_currentJournalWork = work;
+    disconnect(m_currentJournalWork, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()));
+    disconnect(m_currentJournalWork, &journalWork::journalData, this, &LogFileParser::journalData);
+    m_currentJournalWork->setArg(arg);
+    connect(m_currentJournalWork, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()),
             Qt::QueuedConnection);
-    //work->start();
-    QtConcurrent::run(work, &journalWork::doWork);
+    connect(m_currentJournalWork, &journalWork::journalData, this, &LogFileParser::slot_journalData,
+            Qt::QueuedConnection);
+    connect(this, &LogFileParser::stopJournal, this, [ = ] {
+        if (m_currentJournalWork)
+        {
+            disconnect(m_currentJournalWork, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()));
+            disconnect(m_currentJournalWork, &journalWork::journalData, this, &LogFileParser::slot_journalData);
+        }
+    });
+    m_currentJournalWork->start();
+    //QtConcurrent::run(work, &journalWork::doWork);
+    // QThreadPool::globalInstance()->start(work);
+
+#endif
+#if 1
+    emit stopJournal();
+    journalWork *work = new journalWork();
+
+    work->setArg(arg);
+    auto a = connect(work, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()),
+                     Qt::QueuedConnection);
+    auto b = connect(work, &journalWork::journalData, this, &LogFileParser::journalData,
+                     Qt::QueuedConnection);
+
+    connect(this, &LogFileParser::stopJournal, work, &journalWork::stopWork);
+
+    //QtConcurrent::run(work, &journalWork::doWork);
+    QThreadPool::globalInstance()->start(work);
+    return work->getIndex();
+#endif
 }
 
-void LogFileParser::parseByJournalBoot(QStringList arg)
+int LogFileParser::parseByJournalBoot(QStringList arg)
 {
     stopAllLoad();
-    m_bootJournalWork = JournalBootWork::instance();
+    JournalBootWork *work = new JournalBootWork();
 
-    disconnect(m_bootJournalWork, SIGNAL(journalBootFinished()), this, SLOT(slot_journalBootFinished()));
-    m_bootJournalWork->setArg(arg);
-    connect(m_bootJournalWork, SIGNAL(journalBootFinished()), this, SLOT(slot_journalBootFinished()),
-            Qt::QueuedConnection);
-    //work->start();
-    QtConcurrent::run(m_bootJournalWork, &JournalBootWork::doWork);
+    work->setArg(arg);
+    auto a = connect(work, SIGNAL(journalBootFinished()), this,  SLOT(slot_journalBootFinished()),
+                     Qt::QueuedConnection);
+    auto b = connect(work, &JournalBootWork::journaBootlData, this, &LogFileParser::journaBootlData,
+                     Qt::QueuedConnection);
+
+    connect(this, &LogFileParser::stopJournalBoot, work, &JournalBootWork::stopWork);
+
+    //QtConcurrent::run(work, &journalWork::doWork);
+    QThreadPool::globalInstance()->start(work);
+    return work->getIndex();
 }
 
 void LogFileParser::parseByDpkg(qint64 ms)
@@ -120,6 +162,7 @@ void LogFileParser::parseByDpkg(qint64 ms)
             &LogFileParser::slog_proccessError, Qt::UniqueConnection);
     connect(authThread, &LogAuthThread::dpkgFinished, this,
             &LogFileParser::dpkgFinished, Qt::UniqueConnection);
+    connect(this, &LogFileParser::stopDpkg, authThread, &LogAuthThread::stopProccess);
     QThreadPool::globalInstance()->start(authThread);
     //  m_authThread->start();
 
@@ -137,6 +180,7 @@ void LogFileParser::parseByXlog(qint64 ms)  // modifed by Airy
             &LogFileParser::slog_proccessError, Qt::UniqueConnection);
     connect(authThread, &LogAuthThread::xorgFinished, this,
             &LogFileParser::xlogFinished, Qt::UniqueConnection);
+    connect(this, &LogFileParser::stopXlog, authThread, &LogAuthThread::stopProccess);
     QThreadPool::globalInstance()->tryStart(authThread);
 //    if (m_isXlogLoading) {
 //        return;
@@ -253,7 +297,9 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
     QString a_name = "~";
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
+        //    qDebug() << value.ut_name << value.ut_type;
         if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
+            //   if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
             continue;
         }
 
@@ -333,6 +379,8 @@ void LogFileParser::parseByKwin(KWIN_FILTERS iKwinfilter)
     authThread->setFileterParam(iKwinfilter);
     connect(authThread, &LogAuthThread::kwinFinished, this,
             &LogFileParser::kwinFinished);
+    connect(this, &LogFileParser::stopKwin, authThread, &LogAuthThread::stopProccess);
+
     QThreadPool::globalInstance()->start(authThread);
 }
 #if 0
@@ -375,7 +423,7 @@ void LogFileParser::parseByBoot()
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(BOOT);
     connect(authThread, &LogAuthThread::bootFinished, this,
-            &LogFileParser::slot_bootFinished);
+            &LogFileParser::bootFinished);
     connect(this, &LogFileParser::stopBoot, authThread,
             &LogAuthThread::stopProccess);
     QThreadPool::globalInstance()->start(authThread);
@@ -392,9 +440,11 @@ void LogFileParser::parseByKern(qint64 ms)
     m_isKernLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(KERN);
-    m_selectTime = ms;
+    KERN_FILTERS kernfilter;
+    kernfilter.timeFilter = ms;
+    authThread->setFileterParam(kernfilter);
     connect(authThread, &LogAuthThread::kernFinished, this,
-            &LogFileParser::slot_kernFinished);
+            &LogFileParser::kernFinished);
     connect(this, &LogFileParser::stopKern, authThread,
             &LogAuthThread::stopProccess);
     QThreadPool::globalInstance()->start(authThread);
@@ -402,9 +452,9 @@ void LogFileParser::parseByKern(qint64 ms)
 
 void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 {
-    if (m_isAppLoading) {
-        return;
-    }
+//    if (m_isAppLoading) {
+//        return;
+//    }
     stopAllLoad();
     m_isAppLoading = true;
 
@@ -413,12 +463,14 @@ void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
 
     disconnect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
                SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
-
+    disconnect(this, &LogFileParser::stopApp, m_appThread,
+               &LogApplicationParseThread::stopProccess);
     m_appThread->setParam(path, lv, ms);
 
     connect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
             SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
-
+    connect(this, &LogFileParser::stopApp, m_appThread,
+            &LogApplicationParseThread::stopProccess);
     m_appThread->start();
 }
 
@@ -445,8 +497,15 @@ void LogFileParser::stopAllLoad()
 //        m_authThread->stopProccess();
 //        quitLogAuththread(m_authThread);
 //    }
-    emit stopBoot();
     emit stopKern();
+    emit stopBoot();
+    emit stopDpkg();
+    emit stopXlog();
+    emit stopKwin();
+    emit stopApp();
+    emit stopJournal();
+    emit stopJournalBoot();
+    //  QThreadPool::globalInstance()->waitForDone(-1);
     return;
 //    if (work && work->isRunning())
 //        work->terminate();
@@ -475,23 +534,13 @@ void LogFileParser::stopAllLoad()
 //    m_isProcess = false;
 }
 
-qint64 LogFileParser::formatDateTime(QString m, QString d, QString t)
-{
-    //    QDateTime::fromString("9月 24 2019 10:32:34", "MMM d yyyy hh:mm:ss");
-    // default year =2019
-    QLocale local(QLocale::English, QLocale::UnitedStates);
 
-    QDate curdt = QDate::currentDate();
-
-    QString tStr = QString("%1 %2 %3 %4").arg(m).arg(d).arg(curdt.year()).arg(t);
-    QDateTime dt = local.toDateTime(tStr, "MMM d yyyy hh:mm:ss");
-    return dt.toMSecsSinceEpoch();
-}
 
 void LogFileParser::quitLogAuththread(QThread *iThread)
 {
     if (iThread && iThread->isRunning()) {
         //  iThread->terminate();
+        qDebug() << __FUNCTION__;
         iThread->quit();
         iThread->wait();
     }
@@ -504,103 +553,27 @@ void LogFileParser::slot_journalFinished()
 
 }
 
+
 void LogFileParser::slot_journalBootFinished()
 {
     emit journalBootFinished();
 }
 
+
+
 void LogFileParser::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList)
 {
     m_isAppLoading = false;
+
     emit applicationFinished(iAppList);
+
+
 }
 
 #include <unistd.h>
 #include <QApplication>
-void LogFileParser::slot_kernFinished(LOG_FLAG flag, QString output)
-{
-    Q_UNUSED(flag)
-    QList<LOG_MSG_JOURNAL> kList;
-    //            qDebug() << "ms::" << m_selectTime << output;
-    QStringList a = output.split('\n');
-    for (QString str : a) {
-        LOG_MSG_JOURNAL msg;
 
-        str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-        QStringList list = str.split(" ", QString::SkipEmptyParts);
-        if (list.size() < 5)
-            continue;
 
-        QStringList timeList;
-        timeList.append(list[0]);
-        timeList.append(list[1]);
-        timeList.append(list[2]);
-        qint64 iTime = formatDateTime(list[0], list[1], list[2]);
-        if (iTime < m_selectTime)
-            continue;
-
-        msg.dateTime = timeList.join(" ");
-        msg.hostName = list[3];
-
-        QStringList tmpList = list[4].split("[");
-        if (tmpList.size() != 2) {
-            msg.daemonName = list[4].split(":")[0];
-        } else {
-            msg.daemonName = list[4].split("[")[0];
-            QString id = list[4].split("[")[1];
-            id.chop(2);
-            msg.daemonId = id;
-        }
-
-        QString msgInfo;
-        for (auto i = 5; i < list.size(); i++) {
-            msgInfo.append(list[i] + " ");
-        }
-        msg.msg = msgInfo;
-
-        //            kList.append(msg);
-        kList.insert(0, msg);
-
-        QApplication::processEvents();  // devide UI and parser
-    }
-
-    createFile(output, kList.count());
-    m_isKernLoading = false;
-    emit kernFinished(kList);
-}
-void LogFileParser::slot_bootFinished(LOG_FLAG flag, QString output)
-{
-    Q_UNUSED(flag)
-    QList<LOG_MSG_BOOT> bList;
-
-    for (QString lineStr : output.split('\n')) {
-        if (lineStr.startsWith("/dev"))
-            continue;
-
-        // remove Useless characters
-        lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-
-        QStringList retList;
-        LOG_MSG_BOOT bMsg;
-        retList = lineStr.split(" ", QString::SkipEmptyParts);
-        if (lineStr.startsWith("[")) {
-            bMsg.status = retList[1];
-            QStringList leftList = retList.mid(3);
-            bMsg.msg += leftList.join(" ");
-            bList.insert(0, bMsg);
-        } else {
-            if (bList.size() == 0)
-                continue;
-
-            bList[0].msg += retList.join(" ");
-        }
-    }
-
-    createFile(output, bList.count());
-    m_isBootLoading = false;
-    emit bootFinished(bList);
-
-}
 void LogFileParser::slog_proccessError(const QString &iError)
 {
     DMessageBox::information(nullptr, tr("information"), iError);

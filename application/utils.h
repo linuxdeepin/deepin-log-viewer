@@ -43,7 +43,9 @@
 
 #include <QObject>
 #include <QHash>
-
+/**
+ * @brief 公用工具静态函数类
+ */
 class Utils : public QObject
 {
     Q_OBJECT
@@ -51,10 +53,14 @@ class Utils : public QObject
 public:
     Utils(QObject *parent = nullptr);
     ~Utils();
+    /**
+     * @brief The CommandErrorType enum
+     * QProccess命令返回日志的过程中如果发生报错的类型
+     */
     enum CommandErrorType {
-        NoError = 0x0000,
-        PermissionError = 0x0001,
-        RetryError = 0x0002
+        NoError = 0x0000,//无错误，预备，一般不用
+        PermissionError = 0x0001,//权限问题
+        RetryError = 0x0002//返回请重试的情况
     };
     static QHash<QString, QPixmap> m_imgCacheHash;
     static QHash<QString, QString> m_fontNameCache;
@@ -67,6 +73,8 @@ public:
     static QString loadFontFamilyFromFiles(const QString &fontFileName);
     static QByteArray replaceEmptyByteArray(QByteArray &iReplaceStr);
     static CommandErrorType isErroCommand(QString str);
+    static bool checkAndDeleteDir(const QString &iFilePath);
+    static bool deleteDir(const QString &iFilePath);
 
 };
 

@@ -5,7 +5,7 @@
 		<name>policy</name>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerTruncate!message" line="0" />
-			<source>Authentication is required to truncate the log</source>
+			<source>Authentication is required to clear the log</source>
 			<translation type="unfinished" />
 		</message>
 		<message>

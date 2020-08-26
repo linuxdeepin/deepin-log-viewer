@@ -81,6 +81,7 @@ find_package(Qt5Concurrent REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(DtkGui REQUIRED)
 find_package(DtkCore REQUIRED)
+find_package(Qt5LinguistTools REQUIRED)
 #pkg_search_module(DtkWidget REQUIRED dtkwidget)
 #pkg_search_module(DtkGui REQUIRED dtkgui)
 #pkg_search_module(DtkCore REQUIRED dtkcore)
@@ -113,7 +114,7 @@ set (APP_CPP_FILES
      logfileparser.cpp
      logtreeview.cpp
      journalwork.cpp
-     logexportwidget.cpp
+     logexportthread.cpp
      utils.cpp
      loglistview.cpp
      logperiodbutton.cpp
@@ -126,7 +127,13 @@ set (APP_CPP_FILES
      logapplicationhelper.cpp
      logapplicationparsethread.cpp
      journalbootwork.cpp
+     exportprogressdlg.cpp
+     logscrollbar.cpp
      model/log_sort_filter_proxy_model.cpp
+     logcombox.cpp
+     lognormalbutton.cpp
+     logsearchedit.cpp
+     logapplication.cpp
      common/collator.cpp
     )
 set (APP_QRC_FILES
@@ -269,8 +276,22 @@ endfunction()
 
 find_library(ICUIL18N_LIB icui18n)
 find_library(ICUUC_LIB icuuc)
+#lupdate start
+set(TS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../translations")
+set(TS_FILES
+    "${TS_DIR}/${EXE_NAME}.ts"
+)
+find_program(LUPDATE_EXECUTABLE lupdate)
+foreach(_ts_file ${TS_FILES})
+    execute_process(
+        COMMAND ${LUPDATE_EXECUTABLE} -recursive ${CMAKE_SOURCE_DIR} -ts ${_ts_file})
+endforeach()
+#lupdate end
 
-add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES})
+file (GLOB APP_TS_FILES translations/*.ts)
+qt5_create_translation(APP_QM_FILES ${APP_TS_FILES} ${APP_QM_FILES})
+
+add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES})
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/QtXlsxWriter/src/xlsx")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
@@ -278,6 +299,7 @@ include_directories(${DtkWidget_INCLUDE_DIRS})
 include_directories(${DtkCore_INCLUDE_DIRS})
 include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
+include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc)
 
 #include_directories(${Qt5Widgets_LIBRARIES}

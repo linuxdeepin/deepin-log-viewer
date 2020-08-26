@@ -23,10 +23,12 @@
 #define SYSTEM_SERVICE_TABLE_HEADER_VIEW_H
 
 #include <DHeaderView>
-#include <DStyle>
 
 DWIDGET_USE_NAMESPACE
-
+/**
+ * @brief The LogViewHeaderView class
+ * 表头
+ */
 class LogViewHeaderView : public DHeaderView
 {
 public:
@@ -42,9 +44,11 @@ protected:
     void paintEvent(QPaintEvent *e) override;
     virtual void paintSection(QPainter *painter, const QRect &rect,
                               int logicalIndex) const override;
+    void focusInEvent(QFocusEvent *event)override;
 
 private:
     int m_spacing {1};
+    Qt::FocusReason m_reson;
 };
 
 #endif  // SYSTEM_SERVICE_TABLE_HEADER_VIEW_H

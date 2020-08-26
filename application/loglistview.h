@@ -22,17 +22,23 @@
 #ifndef LOGLISTVIEW_H
 #define LOGLISTVIEW_H
 
-#include <DApplicationHelper>
-#include <DListView>
-#include <DStyledItemDelegate>
-#include <QStandardItemModel>
-#include "filtercontent.h" //add by Airy for new menu
 #include "structdef.h"
+
+#include <DApplicationHelper>
+#include <DStyledItemDelegate>
+#include <DListView>
+class QShortcut;
+class QStandardItemModel;
+class LogListView ;
 class LogListDelegate : public Dtk::Widget::DStyledItemDelegate
 {
 public:
-    LogListDelegate(QAbstractItemView *parent = nullptr);
+    LogListDelegate(LogListView *parent = nullptr);
 protected:
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const override;
+
     bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)override;
 
 private:
@@ -45,10 +51,8 @@ class LogListView : public Dtk::Widget::DListView
 public:
     LogListView(QWidget *parent = nullptr);
     void initUI();
-
     void setDefaultSelect();
     void truncateFile(QString path_); //add by Airy for truncate file
-
 private:
     void setCustomFont(QStandardItem *item);
     bool isFileExist(const QString &iFile);
@@ -58,29 +62,32 @@ protected slots:
 
 public slots:
     void slot_getAppPath(QString path);  // add by Airy
-
+    Qt::FocusReason focusReson();
 protected:
     void paintEvent(QPaintEvent *event) override;
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
     void contextMenuEvent(QContextMenuEvent *event) override;   //add by Airy
     void mouseMoveEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void focusInEvent(QFocusEvent *event)override;
+    void focusOutEvent(QFocusEvent *event)override;
 signals:
-    void itemChanged();
+    void itemChanged(const QModelIndex &index);
     void sigRefresh(const QModelIndex &index);  // add refresh
 
 private:
-    QStandardItemModel *m_pModel;
-
+    QStandardItemModel *m_pModel{nullptr};
     QString icon = ICONLIGHTPREFIX;
-
     // add
-    QMenu *g_context;
-    QAction *g_openForder;
-    QAction *g_clear;
-    QAction *g_refresh;  // add
-
-    QString g_path;                  // add by Airy
-    FilterContent *g_filtercontent;  // add
+    QMenu *g_context{nullptr};
+    QAction *g_openForder{nullptr};
+    QAction *g_clear{nullptr};
+    QAction *g_refresh{nullptr};  // add
+    QString g_path{""};                  // add by Airy
+    QShortcut *m_rightClickTriggerShortCut {nullptr};
+    //判断是否通过tab获取的焦点
+    Qt::FocusReason m_reson;
 };
 
 #endif  // LOGLISTVIEW_H

@@ -242,27 +242,44 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
 
     DocPropsApp docPropsApp(DocPropsApp::F_NewFromScratch);
     DocPropsCore docPropsCore(DocPropsCore::F_NewFromScratch);
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     // save worksheet xml files
     QList<QSharedPointer<AbstractSheet> > worksheets = workbook->getSheetsByTypes(AbstractSheet::ST_WorkSheet);
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     if (!worksheets.isEmpty())
         docPropsApp.addHeadingPair(QStringLiteral("Worksheets"), worksheets.size());
     for (int i = 0; i < worksheets.size(); ++i) {
+        if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+            return  false;
+        }
         QSharedPointer<AbstractSheet> sheet = worksheets[i];
         contentTypes->addWorksheetName(QStringLiteral("sheet%1").arg(i + 1));
         docPropsApp.addPartTitle(sheet->sheetName());
-
+        sheet->setExportCanRunning(q->m_canRunning_p);
+        q->connect(sheet.data(), &AbstractSheet::sigProccess, q, &Document::sigProcessAbstractSheet);
         zipWriter.addFile(QStringLiteral("xl/worksheets/sheet%1.xml").arg(i + 1), sheet->saveToXmlData());
         Relationships *rel = sheet->relationships();
         if (!rel->isEmpty())
             zipWriter.addFile(QStringLiteral("xl/worksheets/_rels/sheet%1.xml.rels").arg(i + 1), rel->saveToXmlData());
     }
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     //save chartsheet xml files
     QList<QSharedPointer<AbstractSheet> > chartsheets = workbook->getSheetsByTypes(AbstractSheet::ST_ChartSheet);
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     if (!chartsheets.isEmpty())
         docPropsApp.addHeadingPair(QStringLiteral("Chartsheets"), chartsheets.size());
     for (int i = 0; i < chartsheets.size(); ++i) {
+        if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+            return  false;
+        }
         QSharedPointer<AbstractSheet> sheet = chartsheets[i];
         contentTypes->addWorksheetName(QStringLiteral("sheet%1").arg(i + 1));
         docPropsApp.addPartTitle(sheet->sheetName());
@@ -275,6 +292,9 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
 
     // save external links xml files
     for (int i = 0; i < workbook->d_func()->externalLinks.count(); ++i) {
+        if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+            return  false;
+        }
         SimpleOOXmlFile *link = workbook->d_func()->externalLinks[i].data();
         contentTypes->addExternalLinkName(QStringLiteral("externalLink%1").arg(i + 1));
 
@@ -283,14 +303,21 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
         if (!rel->isEmpty())
             zipWriter.addFile(QStringLiteral("xl/externalLinks/_rels/externalLink%1.xml.rels").arg(i + 1), rel->saveToXmlData());
     }
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     // save workbook xml file
     contentTypes->addWorkbook();
     zipWriter.addFile(QStringLiteral("xl/workbook.xml"), workbook->saveToXmlData());
     zipWriter.addFile(QStringLiteral("xl/_rels/workbook.xml.rels"), workbook->relationships()->saveToXmlData());
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     // save drawing xml files
     for (int i = 0; i < workbook->drawings().size(); ++i) {
+        if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+            return  false;
+        }
         contentTypes->addDrawingName(QStringLiteral("drawing%1").arg(i + 1));
 
         Drawing *drawing = workbook->drawings()[i];
@@ -301,30 +328,52 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
 
     // save docProps app/core xml file
     foreach (QString name, q->documentPropertyNames()) {
+        if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+            return  false;
+        }
         docPropsApp.setProperty(name, q->documentProperty(name));
         docPropsCore.setProperty(name, q->documentProperty(name));
     }
     contentTypes->addDocPropApp();
     contentTypes->addDocPropCore();
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     zipWriter.addFile(QStringLiteral("docProps/app.xml"), docPropsApp.saveToXmlData());
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     zipWriter.addFile(QStringLiteral("docProps/core.xml"), docPropsCore.saveToXmlData());
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     // save sharedStrings xml file
     if (!workbook->sharedStrings()->isEmpty()) {
         contentTypes->addSharedString();
+        q->connect(workbook->sharedStrings(), &SharedStrings::sigProccess, q, &Document::sigProcessharedStrings);
+        workbook->sharedStrings()->setExportCanRunning(q->m_canRunning_p);
         zipWriter.addFile(QStringLiteral("xl/sharedStrings.xml"), workbook->sharedStrings()->saveToXmlData());
     }
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     // save styles xml file
     contentTypes->addStyles();
     zipWriter.addFile(QStringLiteral("xl/styles.xml"), workbook->styles()->saveToXmlData());
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     // save theme xml file
     contentTypes->addTheme();
     zipWriter.addFile(QStringLiteral("xl/theme/theme1.xml"), workbook->theme()->saveToXmlData());
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     // save chart xml files
     for (int i = 0; i < workbook->chartFiles().size(); ++i) {
+        if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+            return  false;
+        }
         contentTypes->addChartName(QStringLiteral("chart%1").arg(i + 1));
         QSharedPointer<Chart> cf = workbook->chartFiles()[i];
         zipWriter.addFile(QStringLiteral("xl/charts/chart%1.xml").arg(i + 1), cf->saveToXmlData());
@@ -332,6 +381,9 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
 
     // save image files
     for (int i = 0; i < workbook->mediaFiles().size(); ++i) {
+        if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+            return  false;
+        }
         QSharedPointer<MediaFile> mf = workbook->mediaFiles()[i];
         if (!mf->mimeType().isEmpty())
             contentTypes->addDefault(mf->suffix(), mf->mimeType());
@@ -345,10 +397,14 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
     rootrels.addPackageRelationship(QStringLiteral("/metadata/core-properties"), QStringLiteral("docProps/core.xml"));
     rootrels.addDocumentRelationship(QStringLiteral("/extended-properties"), QStringLiteral("docProps/app.xml"));
     zipWriter.addFile(QStringLiteral("_rels/.rels"), rootrels.saveToXmlData());
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     // save content types xml file
     zipWriter.addFile(QStringLiteral("[Content_Types].xml"), contentTypes->saveToXmlData());
-
+    if (!q->m_canRunning_p || !(*q->m_canRunning_p)) {
+        return  false;
+    }
     zipWriter.close();
     return true;
 }
@@ -365,10 +421,11 @@ bool DocumentPrivate::savePackage(QIODevice *device) const
  * Creates a new empty xlsx document.
  * The \a parent argument is passed to QObject's constructor.
  */
-Document::Document(QObject *parent) :
+Document::Document(bool *iCanExport, QObject *parent) :
     QObject(parent), d_ptr(new DocumentPrivate(this))
 {
     d_ptr->init();
+    setExportCanRun(iCanExport);
 }
 
 /*!
@@ -376,7 +433,7 @@ Document::Document(QObject *parent) :
  * Try to open an existing xlsx document named \a name.
  * The \a parent argument is passed to QObject's constructor.
  */
-Document::Document(const QString &name, QObject *parent) :
+Document::Document(bool *iCanExport, const QString &name, QObject *parent) :
     QObject(parent), d_ptr(new DocumentPrivate(this))
 {
     d_ptr->packageName = name;
@@ -386,6 +443,7 @@ Document::Document(const QString &name, QObject *parent) :
             d_ptr->loadPackage(&xlsx);
     }
     d_ptr->init();
+    setExportCanRun(iCanExport);
 }
 
 /*!
@@ -393,12 +451,13 @@ Document::Document(const QString &name, QObject *parent) :
  * Try to open an existing xlsx document from \a device.
  * The \a parent argument is passed to QObject's constructor.
  */
-Document::Document(QIODevice *device, QObject *parent) :
+Document::Document(bool *iCanExport, QIODevice *device, QObject *parent) :
     QObject(parent), d_ptr(new DocumentPrivate(this))
 {
     if (device && device->isReadable())
         d_ptr->loadPackage(device);
     d_ptr->init();
+    setExportCanRun(iCanExport);
 }
 
 /*!
@@ -1034,6 +1093,14 @@ bool Document::saveAs(QIODevice *device) const
     Q_D(const Document);
     return d->savePackage(device);
 }
+
+void Document::setExportCanRun(bool *iCanRun)
+{
+    m_canRunning_p = iCanRun;
+}
+
+
+
 
 /*!
  * Destroys the document and cleans up.

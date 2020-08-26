@@ -21,15 +21,6 @@
 
 #ifndef DISPLAYCONTENT_H
 #define DISPLAYCONTENT_H
-
-#include <DApplicationHelper>
-#include <DIconButton>
-#include <DLabel>
-#include <DSpinner>
-#include <DTableView>
-#include <DTextBrowser>
-#include <QStandardItemModel>
-#include <QWidget>
 #include "filtercontent.h"  //add by Airy
 #include "logdetailinfowidget.h"
 #include "logfileparser.h"
@@ -38,8 +29,19 @@
 #include "logtreeview.h"
 #include "structdef.h"
 
+#include <DApplicationHelper>
+#include <DIconButton>
+#include <DLabel>
+#include <DSpinner>
+#include <DTableView>
+#include <DTextBrowser>
+
+#include <QStandardItemModel>
+#include <QWidget>
+#include <QDateTime>
 
 
+class ExportProgressDlg;
 class DisplayContent : public Dtk::Widget::DWidget
 {
     Q_OBJECT
@@ -52,8 +54,7 @@ class DisplayContent : public Dtk::Widget::DWidget
 public:
     explicit DisplayContent(QWidget *parent = nullptr);
     ~DisplayContent();
-
-public:
+    LogTreeView *mainLogTableView();
 
 private:
     void initUI();
@@ -63,15 +64,17 @@ private:
     void initConnections();
 
     void generateJournalFile(int id, int lId, const QString &iSearchStr = "");
-    void createJournalTable(QList<LOG_MSG_JOURNAL> &list);
-
+    void createJournalTableStart(QList<LOG_MSG_JOURNAL> &list);
+    void createJournalTableForm();
     void generateDpkgFile(int id, const QString &iSearchStr = "");
     void createDpkgTable(QList<LOG_MSG_DPKG> &list);
 
     void generateKernFile(int id, const QString &iSearchStr = "");
+    void createKernTableForm();
     void createKernTable(QList<LOG_MSG_JOURNAL> &list);
 
     void generateAppFile(QString path, int id, int lId, const QString &iSearchStr = "");
+    void createAppTableForm();
     void createAppTable(QList<LOG_MSG_APPLICATOIN> &list);
     void createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list);
 
@@ -96,7 +99,8 @@ private:
     bool isAuthProcessAlive();
 
     void generateJournalBootFile(int lId, const QString &iSearchStr = "");
-    void createJournalBootTable(QList<LOG_MSG_JOURNAL> &list);
+    void createJournalBootTableStart(QList<LOG_MSG_JOURNAL> &list);
+    void createJournalBootTableForm();
     void insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
 
 
@@ -105,6 +109,7 @@ private:
 signals:
     void loadMoreInfo();
     void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name);
+    void setExportEnable(bool iEnable);
 
 public slots:
     void slot_tableItemClicked(const QModelIndex &index);
@@ -123,10 +128,12 @@ public slots:
     void slot_kwinFinished(QList<LOG_MSG_KWIN> list);
     void slot_journalFinished();
     void slot_journalBootFinished();
+    void slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list);
+    void slot_journalData(int index, QList<LOG_MSG_JOURNAL> list);
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
     void slot_NormalFinished();  // add by Airy
 
-    void slot_vScrollValueChanged(int value);
+    void slot_vScrollValueChanged(int valuePixel);
 
     void slot_searchResult(QString str);
 
@@ -142,8 +149,15 @@ public slots:
     void parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel);
-
+    QString getIconByname(QString str);
     void setLoadState(LOAD_STATE iState);
+    void onExportProgress(int nCur, int nTotal);
+    void onExportResult(bool isSuccess);
+    void onExportFakeCloseDlg();
+    void clearAllFilter();
+    void clearAllDatalist();
+    void filterBoot(BOOT_FILTERS ibootFilter);
+    void filterNomal(NORMAL_FILTERS inormalFilter);
 private:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
@@ -172,24 +186,34 @@ private:
     LOG_FLAG m_flag {NONE};
 
     LogFileParser m_logFileParse;
-    QList<LOG_MSG_JOURNAL> jList;  // journalctl cmd.
-    QList<LOG_MSG_DPKG> dList;     // dpkg.log
-    QList<LOG_MSG_JOURNAL> jBootList;// journalctl --boot cmd.
+
+    QList<LOG_MSG_JOURNAL> jBootList, jBootListOrigin;// journalctl --boot cmd.
+
+    QList<LOG_MSG_JOURNAL> jList, jListOrigin; // journalctl cmd.
+    QList<LOG_MSG_DPKG> dList, dListOrigin;    // dpkg.log
     //    QStringList xList;                           // Xorg.0.log
-    QList<LOG_MSG_XORG> xList;                   // Xorg.0.log
+    QList<LOG_MSG_XORG> xList, xListOrigin;                  // Xorg.0.log
     QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
-    QList<LOG_MSG_JOURNAL> kList;                // kern.log
-    QList<LOG_MSG_APPLICATOIN> appList;          //~/.cache/deepin/xxx.log(.xxx)
+    QList<LOG_MSG_JOURNAL> kList, kListOrigin;                // kern.log
+    QList<LOG_MSG_APPLICATOIN> appList, appListOrigin;         //~/.cache/deepin/xxx.log(.xxx)
     QList<LOG_MSG_NORMAL> norList;               // add by Airy
     QList<LOG_MSG_NORMAL> nortempList;           // add by Airy
     QList<LOG_MSG_KWIN> m_currentKwinList;
     QList<LOG_MSG_KWIN> m_kwinList;                   //$HOME/.kwin.log
     QString m_iconPrefix = ICONPREFIX;
     QMap<QString, QString> m_icon_name_map;
-    QString getIconByname(QString str);
     QString m_currentSearchStr{""};
     KWIN_FILTERS m_currentKwinFilter;
-
+    ExportProgressDlg *m_exportDlg{nullptr};
+    bool m_firstLoadPageData = false;
+    BOOT_FILTERS m_bootFilter = {"", ""};
+    NORMAL_FILTERS m_normalFilter = {"", 0};
+    int m_treeViewLastScrollValue = -1;
+    DisplayContent::LOAD_STATE m_state;
+    QDateTime m_lastJournalGetTime{QDateTime::fromTime_t(0)};
+    JOURNAL_FILTERS m_journalFilter{-99, -99};
+    int m_journalCurrentIndex{-1};
+    int m_journalBootCurrentIndex{-1};
 };
 
 #endif  // DISPLAYCONTENT_H

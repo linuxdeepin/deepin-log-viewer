@@ -35,24 +35,30 @@ std::atomic<JournalBootWork *> JournalBootWork::m_instance;
 std::mutex JournalBootWork::m_mutex;
 
 JournalBootWork::JournalBootWork(QStringList arg, QObject *parent)
-//    : QObject(parent)
-    : QThread(parent)
+    :  QObject(parent),
+       QRunnable()
 {
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
 
     initMap();
+    setAutoDelete(true);
     m_arg.append("-o");
     m_arg.append("json");
     if (!arg.isEmpty())
         m_arg.append(arg);
+    thread_index++;
+    m_threadIndex = thread_index;
 }
 
 JournalBootWork::JournalBootWork(QObject *parent)
-    : QThread(parent)
+    :  QObject(parent),
+       QRunnable()
 {
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
-
     initMap();
+    setAutoDelete(true);
+    thread_index++;
+    m_threadIndex = thread_index;
 }
 
 JournalBootWork::~JournalBootWork()
@@ -65,8 +71,19 @@ void JournalBootWork::stopWork()
 {
 //    if (proc)
 //        proc->kill();
-    requestInterruption();
+    m_canRun = false;
+    qDebug() << "stopWorkb";
     // deleteSd();
+}
+
+int JournalBootWork::getIndex()
+{
+    return m_threadIndex;
+}
+
+int JournalBootWork::getPublicIndex()
+{
+    return thread_index;
 }
 
 void JournalBootWork::setArg(QStringList arg)
@@ -102,11 +119,30 @@ void JournalBootWork::run()
 
 void JournalBootWork::doWork()
 {
+    m_canRun = true;
+    mutex.lock();
     logList.clear();
+    mutex.unlock();
+    if ((!m_canRun)) {
+        mutex.unlock();
+        deleteSd();
+        return;
+    }
 #if 1
     int r;
     sd_journal *j ;
+    if ((!m_canRun)) {
+        mutex.unlock();
+        deleteSd();
+        return;
+    }
     r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
+    if ((!m_canRun)) {
+        mutex.unlock();
+        sd_journal_close(j);
+        deleteSd();
+        return;
+    }
     if (r < 0) {
         QString errostr = QString("Failed to open journal: %1").arg(r);
         qDebug() << errostr;
@@ -114,10 +150,17 @@ void JournalBootWork::doWork()
         return;
     }
     r = sd_journal_seek_tail(j);
+
     if (r < 0) {
         QString errostr = QString("Failed to seek tail journal: %1").arg(r);
         qDebug() << errostr;
         emit  journalBootError(errostr);
+        return;
+    }
+    if ((!m_canRun)) {
+        mutex.unlock();
+        sd_journal_close(j);
+        deleteSd();
         return;
     }
     //    sd_journal_add_match(j, "PRIORITY=3", 0);
@@ -133,14 +176,38 @@ void JournalBootWork::doWork()
             return;
         }
     }
+    if ((!m_canRun)) {
+        mutex.unlock();
+        sd_journal_close(j);
+        deleteSd();
+        return;
+    }
     //sd_id128_t boot_id = SD_ID128_NULL;
 
     char match[9 + 32 + 1] = "_BOOT_ID=";
+    if ((!m_canRun)) {
+        mutex.unlock();
+        sd_journal_close(j);
+        deleteSd();
+        return;
+    }
     sd_id128_t current_id;
     //获取当前最新的正在运行的bootid
     sd_id128_get_boot(&current_id);
+    if ((!m_canRun)) {
+        mutex.unlock();
+        sd_journal_close(j);
+        deleteSd();
+        return;
+    }
     //拼接和把id转成字符串
     sd_id128_to_string(current_id, match + 9);
+    if ((!m_canRun)) {
+        mutex.unlock();
+        sd_journal_close(j);
+        deleteSd();
+        return;
+    }
     qDebug() << "match" << match;
     // r = sd_journal_add_match(j, "_BOOT_ID=56896a70f6164e7bb858f52ef72fce30", 0);
     //增加筛选条件
@@ -151,6 +218,12 @@ void JournalBootWork::doWork()
         emit  journalBootError(errostr);
         return;
     }
+    if ((!m_canRun)) {
+        mutex.unlock();
+        sd_journal_close(j);
+        deleteSd();
+        return;
+    }
     //合并以上两个筛选条件 (等级和bootid)
     r =   sd_journal_add_conjunction(j);
     if (r < 0) {
@@ -159,9 +232,17 @@ void JournalBootWork::doWork()
         emit  journalBootError(errostr);
         return;
     }
+    if ((!m_canRun)) {
+        mutex.unlock();
+        sd_journal_close(j);
+        deleteSd();
+        return;
+    }
     int cnt = 0;
     SD_JOURNAL_FOREACH_BACKWARDS(j) {
-        if (isInterruptionRequested()) {
+        if ((!m_canRun)) {
+            mutex.unlock();
+            sd_journal_close(j);
             deleteSd();
             return;
         }
@@ -235,12 +316,17 @@ void JournalBootWork::doWork()
 
         if (cnt % 500 == 0) {
             mutex.lock();
-            emit journalBootFinished();
-            usleep(100);
-            mutex.unlock();
+            emit journaBootlData(m_threadIndex, logList);
+            logList.clear();
+            //sleep(100);
+            mutex.unlock();;
         }
         //  delete d;
     }
+    if (logList.count() >= 0) {
+        emit journaBootlData(m_threadIndex, logList);
+    }
+
     emit journalBootFinished();
     //第一次加载时这个之后的代码都不执行?故放到最后
     deleteSd();
@@ -302,6 +388,7 @@ QString JournalBootWork::getReplaceColorStr(const char *d)
     byteChar = Utils::replaceEmptyByteArray(byteChar);
     QString d_str = QString(byteChar);
     d_str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+    d_str.replace(QRegExp("\\002"), "");
     return  d_str;
 }
 

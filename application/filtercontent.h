@@ -31,7 +31,9 @@
 #include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QWidget>
+class LogCombox;
 class LogPeriodButton;
+class LogNormalButton;
 class FilterContent : public Dtk::Widget::DFrame
 {
     Q_OBJECT
@@ -45,14 +47,18 @@ public:
     void shortCutExport();
 protected:
     //  void resizeEvent(QResizeEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event);
+    QList<QWidget *> tabWidgetOrder();
 private:
     void setAppComboBoxItem();
 
     void setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period, bool needMove,
                             bool typecbx = false);  // modified by Airy
+    void setSelection(int iLevelCbx, int iAppListCbx, int iStatusCbx, int iDateBtn, int itTypeCbx);
 
     void setUeButtonSytle();
-    void paintEvent(QPaintEvent *event);
+
     void resizeWidth();
     void updateWordWrap();
 
@@ -70,23 +76,26 @@ signals:
 
 public slots:
     void slot_logCatelogueClicked(const QModelIndex &index);
+    void slot_logCatelogueRefresh(const QModelIndex &index);
     void slot_buttonClicked(int idx);
+    void slot_exportButtonClicked();
     void slot_cbxLvIdxChanged(int idx);
     void slot_cbxAppIdxChanged(int idx);
     void slot_cbxStatusChanged(int idx);
     void slot_cbxLogTypeChanged(int idx);  // add  by Airy
+    void setExportButtonEnable(bool iEnable);
 
 private:
     QButtonGroup *m_btnGroup;
     Dtk::Widget::DLabel *lvTxt;
     Dtk::Widget::DLabel *periodLabel;
-    Dtk::Widget::DComboBox *cbx_lv;
+    LogCombox *cbx_lv;
     Dtk::Widget::DLabel *appTxt;
-    Dtk::Widget::DComboBox *cbx_app;
+    LogCombox *cbx_app;
     Dtk::Widget::DLabel *statusTxt;
-    Dtk::Widget::DComboBox *cbx_status;
+    LogCombox *cbx_status;
     Dtk::Widget::DLabel *typeTxt;     // add by Airy
-    Dtk::Widget::DComboBox *typeCbx;  // add by Airy
+    LogCombox *typeCbx;  // add by Airy
     QModelIndex m_curTreeIndex;
     LogPeriodButton *m_allBtn = nullptr;
     LogPeriodButton *m_todayBtn = nullptr;
@@ -94,7 +103,7 @@ private:
     LogPeriodButton *m_lastWeekBtn = nullptr;
     LogPeriodButton *m_lastMonthBtn = nullptr;
     LogPeriodButton *m_threeMonthBtn = nullptr;
-    Dtk::Widget::DPushButton *exportBtn = nullptr;
+    LogNormalButton *exportBtn = nullptr;
 
     int m_curBtnId, m_curLvCbxId;
 
