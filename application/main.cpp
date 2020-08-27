@@ -38,7 +38,7 @@ DCORE_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
 
-    LogApplication a(argc, argv);
+    DApplication a(argc, argv);
     //  wayland环境判断
     auto systemEnv = QProcessEnvironment::systemEnvironment();
     QString XDG_SESSION_TYPE = systemEnv.value(QStringLiteral("XDG_SESSION_TYPE"));
@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     DLogManager::registerFileAppender();
     LogApplicationHelper::instance();
     LogCollectorMain w;
-    a.setMainWindow(&w);
+    // a.setMainWindow(&w);
     w.show();
     Dtk::Widget::moveToCenter(&w);
 //    for (int i = 0; i < 120000; ++i) {

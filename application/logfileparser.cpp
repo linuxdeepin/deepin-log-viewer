@@ -71,7 +71,6 @@ LogFileParser::LogFileParser(QWidget *parent)
 LogFileParser::~LogFileParser()
 {
     stopAllLoad();
-
 }
 
 int LogFileParser::parseByJournal(QStringList arg)
@@ -168,7 +167,7 @@ void LogFileParser::parseByDpkg(qint64 ms)
 
 }
 
-void LogFileParser::parseByXlog(qint64 ms)  // modifed by Airy
+void LogFileParser::parseByXlog(qint64 ms)   // modifed by Airy
 {
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
