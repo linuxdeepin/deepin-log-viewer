@@ -2,7 +2,8 @@
 #include "utils.h"
 #include <QDebug>
 #include <QDateTime>
-
+#include <QSharedMemory>
+#include<signal.h>
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
 
@@ -36,11 +37,20 @@ QString LogAuthThread::getStandardError()
 
 void LogAuthThread::stopProccess()
 {
-    qDebug() << "LogAuthThread::stopProccess";
+
     m_canRun = false;
-    if (m_process && m_process->isOpen()) {
+    if (m_process) {
+        qDebug() << "LogAuthThread::stopProccess" << m_type << m_process->pid();
         // m_process->readAll();
-        m_process->kill();
+
+        //    m_process->kill();
+//        kill(qvariant_cast<pid_t>(m_process->pid()), SIGKILL);
+//        kill(qvariant_cast<pid_t>(m_process->pid()), SIGTERM);
+        kill(qvariant_cast<pid_t>(m_process->pid()), SIGKILL);
+        // m_process->kill();
+        // m_process->close();
+//        delete  m_process;
+//        m_process = nullptr;
         //m_process->terminate();
 
         //  m_process->close();
@@ -50,6 +60,7 @@ void LogAuthThread::stopProccess()
 
 void LogAuthThread::run()
 {
+    qDebug() << " LogAuthThread::run" << m_type;
     m_canRun = true;
     switch (m_type) {
     case KERN:
@@ -70,6 +81,7 @@ void LogAuthThread::run()
     default:
         break;
     }
+
     m_canRun = false;
 }
 
@@ -145,92 +157,110 @@ void LogAuthThread::handleKern()
     if (!m_canRun) {
         return;
     }
+
+    QSharedMemory  *m_commondM = new QSharedMemory(this);
+    m_commondM->setKey("AAAA");
+    if (sharememory->isAttached())      //检测程序当前是否关联共享内存
+        sharememory->detach();
+    if (!sharememory->create(size)) { //创建共享内存，大小为size
+        qDebug() << sharememory->errorString();
+    } else {
+
+    }
     m_process->start("pkexec", QStringList() << "logViewerAuth"
-                     << "/var/log/kern.log");
+                     << "/home/zyc/Documents/tech/同方内核日志没有/kern.log");
+    //   << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log");
+    //  << "/var/log/kern.log");
     //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
     // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
     m_process->waitForFinished(-1);
-    if (!m_canRun) {
-        return;
-    }
-    QByteArray byte =   m_process->readAllStandardOutput();
-    if (!m_canRun) {
-        return;
-    }
-    QTextStream stream(&byte);
-    if (!m_canRun) {
-        return;
-    }
-    QByteArray encode;
-    if (!m_canRun) {
-        return;
-    }
-    stream.setCodec(encode);
-    if (!m_canRun) {
-        return;
-    }
-    QString str = stream.readAll();
-    if (!m_canRun) {
-        return;
-    }
-    QStringList l = str.split('\n');
-    if (!m_canRun) {
-        return;
-    }
-    qDebug() << __FUNCTION__ << "byte" << byte.length();
-    qDebug() << __FUNCTION__ << "str" << str.length();
 
-
-    //            qDebug() << "ms::" << m_selectTime << output;
-    QStringList a = str.split('\n');
-    for (QString str : a) {
+    if (!m_canRun) {
+        return;
+    }
+    QByteArray byte =   m_process->readLine();
+    while (!byte.isNull()) {
+        //   qDebug() << "111111";
         if (!m_canRun) {
             return;
         }
-        LOG_MSG_JOURNAL msg;
-
-        str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-        QStringList list = str.split(" ", QString::SkipEmptyParts);
-        if (list.size() < 5)
-            continue;
-
-        QStringList timeList;
-        timeList.append(list[0]);
-        timeList.append(list[1]);
-        timeList.append(list[2]);
-        qint64 iTime = formatDateTime(list[0], list[1], list[2]);
-        if (iTime < m_kernFilters.timeFilter)
-            continue;
-
-        msg.dateTime = timeList.join(" ");
-        msg.hostName = list[3];
-
-        QStringList tmpList = list[4].split("[");
-        if (tmpList.size() != 2) {
-            msg.daemonName = list[4].split(":")[0];
-        } else {
-            msg.daemonName = list[4].split("[")[0];
-            QString id = list[4].split("[")[1];
-            id.chop(2);
-            msg.daemonId = id;
-        }
-
-        QString msgInfo;
-        for (auto i = 5; i < list.size(); i++) {
-            msgInfo.append(list[i] + " ");
-        }
-        msg.msg = msgInfo;
-
-        //            kList.append(msg);
-        kList.insert(0, msg);
+        QTextStream stream(&byte);
         if (!m_canRun) {
             return;
         }
+        QByteArray encode;
+        if (!m_canRun) {
+            return;
+        }
+        stream.setCodec(encode);
+        if (!m_canRun) {
+            return;
+        }
+        QString str = stream.readAll();
+        if (!m_canRun) {
+            return;
+        }
+        QStringList l = str.split('\n');
+        if (!m_canRun) {
+            return;
+        }
+        //   qDebug() << __FUNCTION__ << "byte" << byte.length();
+        //  qDebug() << __FUNCTION__ << "str" << str.length();
 
+
+        //            qDebug() << "ms::" << m_selectTime << output;
+        QStringList a = str.split('\n');
+        for (QString str : a) {
+            if (!m_canRun) {
+                return;
+            }
+            LOG_MSG_JOURNAL msg;
+
+            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            if (list.size() < 5)
+                continue;
+
+            QStringList timeList;
+            timeList.append(list[0]);
+            timeList.append(list[1]);
+            timeList.append(list[2]);
+            qint64 iTime = formatDateTime(list[0], list[1], list[2]);
+            if (iTime < m_kernFilters.timeFilter)
+                continue;
+
+            msg.dateTime = timeList.join(" ");
+            msg.hostName = list[3];
+
+            QStringList tmpList = list[4].split("[");
+            if (tmpList.size() != 2) {
+                msg.daemonName = list[4].split(":")[0];
+            } else {
+                msg.daemonName = list[4].split("[")[0];
+                QString id = list[4].split("[")[1];
+                id.chop(2);
+                msg.daemonId = id;
+            }
+
+            QString msgInfo;
+            for (auto i = 5; i < list.size(); i++) {
+                msgInfo.append(list[i] + " ");
+            }
+            msg.msg = msgInfo;
+
+            //            kList.append(msg);
+            kList.insert(0, msg);
+            if (!m_canRun) {
+                return;
+            }
+
+        }
+        if (!m_canRun) {
+            return;
+        }
+        byte =   m_process->readLine();
     }
-    if (!m_canRun) {
-        return;
-    }
+
     emit kernFinished(kList);
 
 }
@@ -485,6 +515,8 @@ qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
     return dt.toMSecsSinceEpoch();
 }
 
+
+
 void LogAuthThread::onFinished(int exitCode)
 {
     Q_UNUSED(exitCode)
@@ -511,6 +543,11 @@ void LogAuthThread::onFinished(int exitCode)
 
 //    emit cmdFinished(m_type, str);
 
+
+}
+
+void LogAuthThread::kernDataRecived()
+{
 
 }
 

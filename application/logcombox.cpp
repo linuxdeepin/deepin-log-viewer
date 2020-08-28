@@ -10,7 +10,11 @@ LogCombox::LogCombox(QWidget *parent):
 {
 
 }
-
+/**
+ * @brief LogCombox::paintEvent
+ * 绘制焦点边框,屏蔽默认绘制事件,只在tabfoucus时绘制边框
+ * @param e
+ */
 void LogCombox::paintEvent(QPaintEvent *e)
 {
     DComboBox::paintEvent(e);
@@ -44,7 +48,11 @@ void LogCombox::paintEvent(QPaintEvent *e)
         style->drawPrimitive(DStyle::PE_FrameFocusRect, opt1, & painter, this);
     }
 }
-
+/**
+ * @brief LogCombox::keyPressEvent
+ * 增加回车触发按钮功能,捕获回车键盘事件发送空格键盘事件
+ * @param event
+ */
 void LogCombox::keyPressEvent(QKeyEvent *event)
 {
     if ((event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)) {
@@ -52,7 +60,11 @@ void LogCombox::keyPressEvent(QKeyEvent *event)
     }
     DComboBox::keyPressEvent(event);
 }
-
+/**
+ * @brief LogCombox::focusInEvent
+ * 捕获最近一次获得焦点的reason以区分是否为tabfoucs,以供绘制焦点效果时判断
+ * @param event
+ */
 void LogCombox::focusInEvent(QFocusEvent *event)
 {
     if (event->reason() != Qt::PopupFocusReason) {

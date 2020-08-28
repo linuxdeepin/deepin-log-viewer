@@ -48,7 +48,6 @@ protected:
     qint64 formatDateTime(QString m, QString d, QString t);
 
 
-
 signals:
     void kernFinished(QList<LOG_MSG_JOURNAL>);
     void bootFinished(QList<LOG_MSG_BOOT>);
@@ -58,6 +57,7 @@ signals:
     void proccessError(const QString &iError);
 public slots:
     void onFinished(int exitCode);
+    void kernDataRecived();
 private:
     QStringList m_list;
     QString m_output;

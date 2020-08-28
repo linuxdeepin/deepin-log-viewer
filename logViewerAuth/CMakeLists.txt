@@ -16,6 +16,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set (AUTH_CPP_FILES
         main.cpp
+       viewapplication.cpp
+       viewapplication.h
     )
 add_executable (${EXE_NAME}
     ${AUTH_CPP_FILES}

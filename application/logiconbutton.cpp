@@ -40,6 +40,11 @@ LogIconButton::LogIconButton(QString text, QWidget *parent)
     this->setIconSize(QSize(32, 32));
 }
 //修复button占高过大的问题
+/**
+ * @brief LogIconButton::sizeHint
+ *  修复iconbutton因为图表过大把按钮撑大的问题,根据自体计算按钮高度
+ * @return
+ */
 QSize LogIconButton::sizeHint() const
 {
     int h = QFontMetrics(font()).height();
@@ -50,6 +55,7 @@ void LogIconButton::mousePressEvent(QMouseEvent *e)
 {
     Q_UNUSED(e)
 }
+
 bool LogIconButton::event(QEvent *e)
 {
     if (e->type() != QEvent::HoverEnter) {
@@ -60,7 +66,12 @@ bool LogIconButton::event(QEvent *e)
 
 
 
-//修复button占高过大的问题
+
+/**
+ * @brief LogIconButton::resizeEvent
+ * 修复iconbutton因为图表过大把按钮撑大的问题,根据自体计算按钮高度
+ * @param e
+ */
 void LogIconButton::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
