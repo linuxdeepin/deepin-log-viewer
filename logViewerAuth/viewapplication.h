@@ -7,10 +7,12 @@ class ViewApplication : public QCoreApplication
 {
 public:
     ViewApplication(int &argc, char **argv);
+    ~ViewApplication();
     QProcess *m_proc;
     QSharedMemory *m_commondM;
 public slots:
     void dataRecived();
+    void releaseMemery();
 };
 
 #endif // VIEWAPPLICATION_H

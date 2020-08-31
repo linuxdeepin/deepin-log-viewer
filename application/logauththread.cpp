@@ -2,10 +2,12 @@
 #include "utils.h"
 #include <QDebug>
 #include <QDateTime>
-#include <QSharedMemory>
-#include<signal.h>
+
+
+#include "sharedmemorymanager.h"
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
+int LogAuthThread::thread_count = 0;
 
 LogAuthThread::LogAuthThread(QObject *parent)
     :  QObject(parent),
@@ -13,16 +15,23 @@ LogAuthThread::LogAuthThread(QObject *parent)
 
 {
     setAutoDelete(true);
+    thread_count++;
+    m_threadCount = thread_count;
+
+
 }
 
 LogAuthThread::~LogAuthThread()
 {
+    stopProccess();
     if (m_process) {
-        m_process->kill();
+        //   m_process->kill();
         m_process->close();
-        delete  m_process;
+        m_process->deleteLater();
         m_process = nullptr;
     }
+
+
 }
 
 QString LogAuthThread::getStandardOutput()
@@ -38,24 +47,30 @@ QString LogAuthThread::getStandardError()
 void LogAuthThread::stopProccess()
 {
 
+    if (m_isStopProccess) {
+        return;
+    }
+    m_isStopProccess = true;
     m_canRun = false;
+    ShareMemoryInfo   shareInfo ;
+    shareInfo.isStart = false;
+    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
     if (m_process) {
-        qDebug() << "LogAuthThread::stopProccess" << m_type << m_process->pid();
-        // m_process->readAll();
+        m_process->kill();
 
-        //    m_process->kill();
-//        kill(qvariant_cast<pid_t>(m_process->pid()), SIGKILL);
-//        kill(qvariant_cast<pid_t>(m_process->pid()), SIGTERM);
-        kill(qvariant_cast<pid_t>(m_process->pid()), SIGKILL);
-        // m_process->kill();
-        // m_process->close();
+    }
+
+    // kill(qvariant_cast<pid_t>(m_process->pid()), SIGKILL);
+
+
+    // m_process->close();
 //        delete  m_process;
 //        m_process = nullptr;
-        //m_process->terminate();
+    //m_process->terminate();
 
-        //  m_process->close();
-        //m_process->waitForFinished(-1);
-    }
+    //  m_process->close();
+    //m_process->waitForFinished(-1);
+
 }
 
 void LogAuthThread::run()
@@ -99,9 +114,13 @@ void LogAuthThread::handleBoot()
     }
     initProccess();
     m_process->setProcessChannelMode(QProcess::MergedChannels);
+    ShareMemoryInfo   shareInfo ;
+    shareInfo.isStart = true;
+    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
     m_process->start("pkexec", QStringList() << "logViewerAuth"
-                     << "/var/log/boot.log");
+                     << "/var/log/boot.log" << SharedMemoryManager::instance()->getRunnableKey());
     m_process->waitForFinished(-1);
+
     QByteArray byte =   m_process->readAllStandardOutput();
     QTextStream stream(&byte);
     QByteArray encode;
@@ -157,20 +176,16 @@ void LogAuthThread::handleKern()
     if (!m_canRun) {
         return;
     }
-
-    QSharedMemory  *m_commondM = new QSharedMemory(this);
-    m_commondM->setKey("AAAA");
-    if (sharememory->isAttached())      //检测程序当前是否关联共享内存
-        sharememory->detach();
-    if (!sharememory->create(size)) { //创建共享内存，大小为size
-        qDebug() << sharememory->errorString();
-    } else {
-
+    if (!SharedMemoryManager::instance()->isAttached()) {
+        return;
     }
+    ShareMemoryInfo   shareInfo ;
+    shareInfo.isStart = true;
+    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
     m_process->start("pkexec", QStringList() << "logViewerAuth"
-                     << "/home/zyc/Documents/tech/同方内核日志没有/kern.log");
-    //   << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log");
-    //  << "/var/log/kern.log");
+                     //         << "/home/zyc/Documents/tech/同方内核日志没有/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
+                     //   << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
+                     << "/var/log/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
     //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
     // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
     m_process->waitForFinished(-1);

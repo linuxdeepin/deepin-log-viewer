@@ -137,6 +137,7 @@ set (APP_CPP_FILES
      lognormalbutton.cpp
      logsearchedit.cpp
      logapplication.cpp
+     sharedmemorymanager.cpp
      common/collator.cpp
     )
 set (APP_QRC_FILES

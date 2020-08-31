@@ -5,6 +5,7 @@
 #include <mutex>
 #include "structdef.h"
 
+
 class LogAuthThread :  public QObject, public QRunnable
 {
     Q_OBJECT
@@ -28,7 +29,7 @@ public:
 
     QString getStandardOutput();
     QString getStandardError();
-
+    static int thread_count;
     void setType(LOG_FLAG flag) { m_type = flag; }
     void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
     void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
@@ -71,6 +72,9 @@ private:
     static std::mutex m_mutex;
     QProcess *m_process = nullptr;
     bool m_canRun = false;
+    int m_threadCount;
+
+    bool m_isStopProccess = false;
 };
 
 #endif  // LOGAUTHTHREAD_H

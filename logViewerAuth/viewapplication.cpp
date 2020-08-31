@@ -13,6 +13,10 @@
 
 #include <iostream>
 #include<signal.h>
+
+struct ShareMemoryInfo {
+    bool isStart = true ;
+};
 namespace {
 std::function<void(int)> shutdown_handler;
 void signal_handler(int signal) { shutdown_handler(signal); }
@@ -23,8 +27,8 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     parser.process(*this);
     const QStringList fileList = parser.positionalArguments();
     //    qDebug() << fileList << "***" << fileList.count();
-    if (fileList.count() < 1) {
-        qDebug() << "less than 1";
+    if (fileList.count() < 2) {
+        qDebug() << "less than 2";
         return ;
     }
     QStringList arg;
@@ -39,7 +43,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     };
 
     m_commondM = new QSharedMemory();
-    m_commondM->setKey("AAAA");
+    m_commondM->setKey(fileList[1]);
     if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
         m_commondM->detach();          //解除关联
     m_commondM->attach(QSharedMemory::ReadOnly);
@@ -47,25 +51,21 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
 
 
 
+    ShareMemoryInfo   *m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
 
     connect(m_proc, &QProcess::readyReadStandardOutput, this, [ = ] {
 //        signal(SIGKILL, [](int x)
 //        {
 //            exit(0);
 //        });
-        QBuffer buffer;                //构建缓冲区
-        QDataStream out(&buffer);      //建立数据流对象，并和缓冲区关联
-        m_commondM->lock();           //锁定共享内存
-        //初始化缓冲区中的数据，setData函数用来初始化缓冲区。
-        //该函数如果在open()函数之后被调用，则不起任何作用。
-        //buffer.open(QBuffer::ReadOnly);  //解除注释，则setData函数不起作用，无法加载内存中数据
-        QString test;
-        buffer.setData((char *)m_commondM->constData(), m_commondM->size());
-        buffer.open(QBuffer::ReadOnly);    //只读方式打开缓冲区
-        out >> test; //将缓冲区的数据写入QImage对象
-        m_commondM->unlock();         //释放共享内存
-        if (test == "KILL") {}
-        m_proc->start();
+
+        if (!m_pShareMemoryInfo->isStart)
+        {
+            // qDebug() << "stop-----------";
+            m_proc->kill();
+            releaseMemery();
+            exit(0);
+        }
         QByteArray byte =   m_proc->readAll();
         std::cout << byte.replace('\u0000', "").data();
     });
@@ -79,14 +79,28 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
 //    stream.setCodec(encode);
 //    QString str = stream.readAll();
     //必须要replace \u0000,不然QByteArray会忽略这以后的内容
-    m_commondM->detach();
-    m_commondM->deleteLater();
+
     m_proc->close();
+}
+
+ViewApplication::~ViewApplication()
+{
+    releaseMemery();
 }
 
 void ViewApplication::dataRecived()
 {
+    m_commondM->detach();
+    m_commondM->deleteLater();
+}
 
+void ViewApplication::releaseMemery()
+{
+    if (m_commondM) {
+        if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
+            m_commondM->detach();          //解除关联
+        m_commondM->deleteLater();
+    }
 }
 
 
