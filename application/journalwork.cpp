@@ -133,6 +133,7 @@ void journalWork::doWork()
     }
 #if 1
     int r;
+
     sd_journal *j ;
     if ((!m_canRun)) {
         mutex.unlock();
@@ -171,6 +172,7 @@ void journalWork::doWork()
         return;
     }
     int cnt = 0;
+    qDebug() << "m_arg" << m_arg;
     SD_JOURNAL_FOREACH_BACKWARDS(j) {
         // if (isInterruptionRequested() || (!m_canRun)) {
         if ((!m_canRun)) {
@@ -199,8 +201,8 @@ void journalWork::doWork()
         //解锁返回字符串长度上限，默认是64k，写0为无限
         // sd_journal_set_data_threshold(j, 0);
         QString dt = getReplaceColorStr(d).split("=").value(1);
-        if (m_arg.size() == 2) {
-            if (t < static_cast<uint64_t>(m_arg.at(1).toLongLong()))
+        if (m_arg.size() == 3) {
+            if (t < static_cast<uint64_t>(m_arg.at(1).toLongLong()) || t > static_cast<uint64_t>(m_arg.at(2).toLongLong()))
                 continue;
         }
         logMsg.dateTime = getDateTimeFromStamp(dt);

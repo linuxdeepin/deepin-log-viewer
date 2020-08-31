@@ -43,17 +43,17 @@ public:
     int parseByJournal(QStringList arg = QStringList());
     int parseByJournalBoot(QStringList arg = QStringList());
 
-    void parseByDpkg(qint64 ms = 0);
+    void parseByDpkg(DKPG_FILTERS &iDpkgFilter);
 #if 0
     void parseByXlog(QStringList &xList);
     void parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms = 0);  // modifed by Airy for show period
 #endif
-    void parseByXlog(qint64 ms = 0);
+    void parseByXlog(XORG_FILTERS &iXorgFilter);
     void parseByBoot();
-    void parseByKern(qint64 ms = 0);
-    void parseByApp(QString path, int lv = 6, qint64 ms = 0);
+    void parseByKern(KERN_FILTERS &iKernFilter);
+    void parseByApp(APP_FILTERS &iAPPFilter);
 
-    void parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms = 0);  // add by Airy
+    void parseByNormal(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler);  // add by Airy
     void parseByKwin(KWIN_FILTERS iKwinfilter);
     void createFile(QString output, int count);
     void stopAllLoad();

@@ -28,11 +28,9 @@ LogApplicationParseThread::~LogApplicationParseThread()
     }
 }
 
-void LogApplicationParseThread::setParam(QString path, int lv, qint64 ms)
+void LogApplicationParseThread::setParam(APP_FILTERS &iFilter)
 {
-    m_logPath = path;
-    m_level = lv;
-    m_periorTime = ms;
+    m_AppFiler = iFilter;
 }
 
 void LogApplicationParseThread::stopProccess()
@@ -51,11 +49,11 @@ void LogApplicationParseThread::doWork()
     initProccess();
 
     //connect(m_process, SIGNAL(finished(int)), m_process, SLOT(deleteLater()));
-    if (m_logPath.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
+    if (m_AppFiler.path.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
         emit appCmdFinished(m_appList);
     } else {
         QStringList arg;
-        arg << "-c" << QString("cat %1").arg(m_logPath);
+        arg << "-c" << QString("cat %1").arg(m_AppFiler.path);
 
         m_process->start("/bin/bash", arg);
         m_process->waitForFinished(-1);
@@ -96,13 +94,16 @@ void LogApplicationParseThread::doWork()
             }  // add
 
             qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
-            if (dt < m_periorTime)
-                continue;
+            if (m_AppFiler.timeFilterBegin > 0 && m_AppFiler.timeFilterEnd > 0) {
+                if (dt < m_AppFiler.timeFilterBegin || dt > m_AppFiler.timeFilterEnd)
+                    continue;
+            }
+
             msg.dateTime = dateTime;
             msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
 
-            if (m_level != LVALL) {
-                if (m_levelDict.value(msg.level) != m_level)
+            if (m_AppFiler.lvlFilter != LVALL) {
+                if (m_levelDict.value(msg.level) != m_AppFiler.lvlFilter)
                     continue;
             }
 

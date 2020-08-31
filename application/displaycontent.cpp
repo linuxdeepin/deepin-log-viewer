@@ -249,32 +249,47 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     } break;
     case ONE_DAY: {
         //        arg << "--since" << dt.toString("yyyy-MM-dd");
-        arg << QString::number(dt.toMSecsSinceEpoch() * 1000);
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        arg << QString::number(dtStart.toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_DAYS: {
         //        QString t = dt.addDays(-2).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
-        arg << QString::number(dt.addDays(-2).toMSecsSinceEpoch() * 1000);
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        arg << QString::number(dtStart.addDays(-2).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_WEEK: {
         //        QString t = dt.addDays(-6).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
 
-        arg << QString::number(dt.addDays(-6).toMSecsSinceEpoch() * 1000);
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        arg << QString::number(dtStart.addDays(-6).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex =   m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_MONTH: {
         //        QString t = dt.addDays(-29).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
-        arg << QString::number(dt.addDays(-29).toMSecsSinceEpoch() * 1000);
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        arg << QString::number(dtStart.addMonths(-1).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex =    m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_MONTHS: {
         //        QString t = dt.addDays(-89).toString("yyyy-MM-dd");
         //        arg << "--since" << t;
-        arg << QString::number(dt.addDays(-89).toMSecsSinceEpoch() * 1000);
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        arg << QString::number(dtStart.addMonths(-3).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     default:
@@ -318,24 +333,51 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
+    DKPG_FILTERS  dpkgFilter;
+
     switch (id) {
     case ALL:
-        m_logFileParse.parseByDpkg();
+        m_logFileParse.parseByDpkg(dpkgFilter);
         break;
     case ONE_DAY: {
-        m_logFileParse.parseByDpkg(dt.toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        dpkgFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByDpkg(dpkgFilter);
     } break;
     case THREE_DAYS: {
-        m_logFileParse.parseByDpkg(dt.addDays(-2).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        dpkgFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByDpkg(dpkgFilter);
     } break;
     case ONE_WEEK: {
-        m_logFileParse.parseByDpkg(dt.addDays(-6).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        dpkgFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByDpkg(dpkgFilter);
     } break;
     case ONE_MONTH: {
-        m_logFileParse.parseByDpkg(dt.addDays(-29).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        dpkgFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByDpkg(dpkgFilter);
     } break;
     case THREE_MONTHS: {
-        m_logFileParse.parseByDpkg(dt.addDays(-89).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        dpkgFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByDpkg(dpkgFilter);
     } break;
     default:
         break;
@@ -376,24 +418,50 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
+    KERN_FILTERS kernFilter;
     switch (id) {
     case ALL:
-        m_logFileParse.parseByKern(0);
+        m_logFileParse.parseByKern(kernFilter);
         break;
     case ONE_DAY: {
-        m_logFileParse.parseByKern(dt.toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        kernFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByKern(kernFilter);
     } break;
     case THREE_DAYS: {
-        m_logFileParse.parseByKern(dt.addDays(-2).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        kernFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByKern(kernFilter);
     } break;
     case ONE_WEEK: {
-        m_logFileParse.parseByKern(dt.addDays(-6).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        kernFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByKern(kernFilter);
     } break;
     case ONE_MONTH: {
-        m_logFileParse.parseByKern(dt.addDays(-29).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        kernFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByKern(kernFilter);
     } break;
     case THREE_MONTHS: {
-        m_logFileParse.parseByKern(dt.addDays(-89).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        kernFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByKern(kernFilter);
     } break;
     default:
         break;
@@ -483,24 +551,53 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     createAppTableForm();
+    APP_FILTERS  appFilter;
+    appFilter.path = path;
+    appFilter.lvlFilter = lId;
     switch (id) {
     case ALL:
-        m_logFileParse.parseByApp(path, lId);
+        m_logFileParse.parseByApp(appFilter);
         break;
     case ONE_DAY: {
-        m_logFileParse.parseByApp(path, lId, dt.toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        appFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByApp(appFilter);
     } break;
     case THREE_DAYS: {
-        m_logFileParse.parseByApp(path, lId, dt.addDays(-2).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        appFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByApp(appFilter);
+
     } break;
     case ONE_WEEK: {
-        m_logFileParse.parseByApp(path, lId, dt.addDays(-6).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        appFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByApp(appFilter);
     } break;
     case ONE_MONTH: {
-        m_logFileParse.parseByApp(path, lId, dt.addDays(-29).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        appFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByApp(appFilter);
     } break;
     case THREE_MONTHS: {
-        m_logFileParse.parseByApp(path, lId, dt.addDays(-89).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        appFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByApp(appFilter);
     } break;
     default:
         break;
@@ -577,24 +674,50 @@ void DisplayContent::generateXorgFile(int id)
     setLoadState(DATA_LOADING);
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
+    XORG_FILTERS xorgFilter;
     switch (id) {
     case ALL:
-        m_logFileParse.parseByXlog();
+        m_logFileParse.parseByXlog(xorgFilter);
         break;
     case ONE_DAY: {
-        m_logFileParse.parseByXlog(dt.toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        xorgFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByXlog(xorgFilter);
     } break;
     case THREE_DAYS: {
-        m_logFileParse.parseByXlog(dt.addDays(-2).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        xorgFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByXlog(xorgFilter);
     } break;
     case ONE_WEEK: {
-        m_logFileParse.parseByXlog(dt.addDays(-6).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        xorgFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByXlog(xorgFilter);
     } break;
     case ONE_MONTH: {
-        m_logFileParse.parseByXlog(dt.addDays(-29).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        xorgFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByXlog(xorgFilter);
     } break;
     case THREE_MONTHS: {
-        m_logFileParse.parseByXlog(dt.addDays(-89).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        xorgFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByXlog(xorgFilter);
     } break;
     default:
         break;
@@ -654,24 +777,50 @@ void DisplayContent::generateNormalFile(int id)
 
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
+
     switch (id) {
     case ALL:
-        m_logFileParse.parseByNormal(norList);
+        m_logFileParse.parseByNormal(norList, m_normalFilter);
         break;
     case ONE_DAY: {
-        m_logFileParse.parseByNormal(norList, dt.toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        m_normalFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByNormal(norList, m_normalFilter);
     } break;
     case THREE_DAYS: {
-        m_logFileParse.parseByNormal(norList, dt.addDays(-2).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        m_normalFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByNormal(norList, m_normalFilter);
     } break;
     case ONE_WEEK: {
-        m_logFileParse.parseByNormal(norList, dt.addDays(-6).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        m_normalFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByNormal(norList, m_normalFilter);
     } break;
     case ONE_MONTH: {
-        m_logFileParse.parseByNormal(norList, dt.addDays(-29).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        m_normalFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByNormal(norList, m_normalFilter);
     } break;
     case THREE_MONTHS: {
-        m_logFileParse.parseByNormal(norList, dt.addDays(-89).toMSecsSinceEpoch());
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        m_normalFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_logFileParse.parseByNormal(norList, m_normalFilter);
     } break;
     default:
         break;
@@ -1911,7 +2060,10 @@ void DisplayContent::clearAllFilter()
 
     m_currentSearchStr.clear();
     m_currentKwinFilter = {""};
-    m_normalFilter = {"", 0};
+    m_normalFilter.searchstr = "";
+    m_normalFilter.timeFilterEnd = -1;
+    m_normalFilter.timeFilterBegin = -1;
+    m_normalFilter.eventTypeFilter = 0;
 }
 
 void DisplayContent::clearAllDatalist()

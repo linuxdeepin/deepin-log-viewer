@@ -244,8 +244,10 @@ void LogAuthThread::handleKern()
             timeList.append(list[1]);
             timeList.append(list[2]);
             qint64 iTime = formatDateTime(list[0], list[1], list[2]);
-            if (iTime < m_kernFilters.timeFilter)
-                continue;
+            if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
+                if (iTime < m_kernFilters.timeFilterBegin || iTime > m_kernFilters.timeFilterEnd)
+                    continue;
+            }
 
             msg.dateTime = timeList.join(" ");
             msg.hostName = list[3];
@@ -424,9 +426,10 @@ void LogAuthThread::handleXorg()
             QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
             qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
             QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
-            if (realDt.toMSecsSinceEpoch() < m_xorgFilters.timeFilter)  // add by Airy
-                continue;
-
+            if (m_xorgFilters.timeFilterBegin > 0 && m_xorgFilters.timeFilterEnd > 0) {
+                if (realDt.toMSecsSinceEpoch() < m_xorgFilters.timeFilterBegin || realDt.toMSecsSinceEpoch() > m_xorgFilters.timeFilterEnd)
+                    continue;
+            }
             LOG_MSG_XORG msg;
             msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
             msg.msg = msgInfo;
@@ -494,8 +497,10 @@ void LogAuthThread::handleDkpg()
         LOG_MSG_DPKG dpkgLog;
         dpkgLog.dateTime = strList[0] + " " + strList[1];
         QDateTime dt = QDateTime::fromString(dpkgLog.dateTime, "yyyy-MM-dd hh:mm:ss");
-        if (dt.toMSecsSinceEpoch() < m_dkpgFilters.timeFilter)
-            continue;
+        if (m_dkpgFilters.timeFilterBegin > 0 && m_dkpgFilters.timeFilterEnd > 0) {
+            if (dt.toMSecsSinceEpoch() < m_dkpgFilters.timeFilterBegin || dt.toMSecsSinceEpoch() > m_dkpgFilters.timeFilterEnd)
+                continue;
+        }
         dpkgLog.action = strList[2];
         dpkgLog.msg = info;
 

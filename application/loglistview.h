@@ -63,10 +63,11 @@ protected slots:
 public slots:
     void slot_getAppPath(QString path);  // add by Airy
     Qt::FocusReason focusReson();
+    void showRightMenu(const QPoint &pos);
 protected:
     void paintEvent(QPaintEvent *event) override;
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
-    void contextMenuEvent(QContextMenuEvent *event) override;   //add by Airy
+    // void contextMenuEvent(QContextMenuEvent *event) override;   //add by Airy
     void mouseMoveEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
