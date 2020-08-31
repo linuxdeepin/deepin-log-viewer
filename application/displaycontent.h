@@ -207,11 +207,11 @@ private:
     ExportProgressDlg *m_exportDlg{nullptr};
     bool m_firstLoadPageData = false;
     BOOT_FILTERS m_bootFilter = {"", ""};
-    NORMAL_FILTERS m_normalFilter = {"", 0};
+    NORMAL_FILTERS m_normalFilter ;
     int m_treeViewLastScrollValue = -1;
     DisplayContent::LOAD_STATE m_state;
     QDateTime m_lastJournalGetTime{QDateTime::fromTime_t(0)};
-    JOURNAL_FILTERS m_journalFilter{-99, -99};
+    JOURNAL_FILTERS m_journalFilter;
     int m_journalCurrentIndex{-1};
     int m_journalBootCurrentIndex{-1};
 };

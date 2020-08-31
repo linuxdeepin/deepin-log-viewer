@@ -27,7 +27,7 @@ public:
         return sin;
     }
     ~LogApplicationParseThread() override;
-    void setParam(QString path, int lv, qint64 ms);
+    void setParam(APP_FILTERS &iFilter);
 
 signals:
     void appCmdFinished(QList<LOG_MSG_APPLICATOIN>);
@@ -44,10 +44,7 @@ protected:
     void run() override;
 
 private:
-    QString m_logPath;
-    qint64 m_periorTime;
-
-    int m_level;
+    APP_FILTERS m_AppFiler;
     int padding {0};
     QProcess *m_process = nullptr;
     QMap<QString, int> m_levelDict;  // example:warning=>4

@@ -137,7 +137,8 @@ LogListView::LogListView(QWidget *parent)
     : DListView(parent)
 {
     initUI();
-
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &LogListView::customContextMenuRequested, this, &LogListView::showRightMenu);
     connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
             &LogListView::onChangedTheme);
     DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
@@ -451,15 +452,9 @@ Qt::FocusReason LogListView::focusReson()
     return  m_reson;
 }
 
-
-/**
- * @author Airy
- * @brief LogListView::contextMenuEvent 显示右键菜单
- * @param event
- */
-void LogListView::contextMenuEvent(QContextMenuEvent *event)
+void LogListView::showRightMenu(const QPoint &pos)
 {
-    Q_UNUSED(event);
+    qDebug() << __FUNCTION__;
     QModelIndex idx = this->currentIndex();
     QString pathData = idx.data(ITEM_DATE_ROLE).toString();
     if (!this->selectionModel()->selectedIndexes().empty()) {
@@ -516,10 +511,82 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
             }
         });
 
-        this->setContextMenuPolicy(Qt::DefaultContextMenu);
-        g_context->exec(mapToGlobal(event->pos()));
+        this->setContextMenuPolicy(Qt::CustomContextMenu);
+        g_context->exec(mapToGlobal(pos));
+
     }
 }
+
+
+/**
+ * @author Airy
+ * @brief LogListView::contextMenuEvent 显示右键菜单
+ * @param event
+ */
+//void LogListView::contextMenuEvent(QContextMenuEvent *event)
+//{
+//    Q_UNUSED(event);
+//    QModelIndex idx = this->currentIndex();
+//    QString pathData = idx.data(ITEM_DATE_ROLE).toString();
+//    if (!this->selectionModel()->selectedIndexes().empty()) {
+
+//        g_context = new QMenu(this);
+//        g_openForder = new QAction(/*tr("在文件管理器中显示")*/DApplication::translate("Action", "Display in file manager"), this);
+//        g_clear = new QAction(/*tr("清除日志内容")*/DApplication::translate("Action", "Clear log"), this);
+//        g_refresh = new QAction(/*tr("刷新")*/DApplication::translate("Action", "Refresh"), this);
+
+//        g_context->addAction(g_openForder);
+//        g_context->addAction(g_clear);
+//        g_context->addAction(g_refresh);
+
+//        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA) {
+//            g_clear->setEnabled(false);
+//            g_openForder->setEnabled(false);
+//        }
+
+//        QString dirPath = QDir::homePath();
+//        QString _path_ = g_path;      //get app path
+//        QString path = "";
+
+
+//        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA) {
+//            path = pathData;
+//        } else if (pathData == APP_TREE_DATA) {
+//            path = _path_;
+//        }
+//        //显示当前日志目录
+//        connect(g_openForder, &QAction::triggered, this, [ = ] {
+//            DDesktopServices::showFileItem(path);
+//        });
+
+//        QModelIndex index = idx;
+//        //刷新逻辑
+//        connect(g_refresh, &QAction::triggered, this, [ = ]() {
+//            emit sigRefresh(index);
+//        });
+
+//        //清除日志逻辑
+//        connect(g_clear, &QAction::triggered, this, [ = ]() {
+
+//            DDialog *dialog = new DDialog(this);
+//            dialog->setWindowFlags(dialog->windowFlags() | Qt::WindowStaysOnTopHint);
+//            dialog->setIcon(QIcon::fromTheme("dialog-warning"));
+//            dialog->setMessage(/*"清除日志内容"*/DApplication::translate("Action", "Are you sure you want to clear the log?"));
+//            dialog->addButton(QString(/*tr("取消")*/DApplication::translate("Action", "Cancel")), false, DDialog::ButtonNormal);
+//            dialog->addButton(QString(/*tr("确定")*/DApplication::translate("Action", "Confirm")), true, DDialog::ButtonRecommend);
+
+//            int Ok = dialog->exec();
+//            if (Ok == DDialog::Accepted) {
+//                truncateFile(path);
+//                emit sigRefresh(index);
+//            }
+//        });
+
+//        this->setContextMenuPolicy(Qt::DefaultContextMenu);
+//        g_context->exec(mapToGlobal(event->pos()));
+
+//    }
+//}
 
 void LogListView::mouseMoveEvent(QMouseEvent *event)
 {

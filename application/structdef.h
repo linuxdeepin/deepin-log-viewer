@@ -71,29 +71,42 @@ struct KWIN_FILTERS {
     QString msg;
 };
 struct XORG_FILTERS {
-    qint64 timeFilter ;
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
 };
 struct DKPG_FILTERS {
-    qint64 timeFilter ;
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
 };
+struct APP_FILTERS {
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
+    int lvlFilter;
+    QString path;
+};
+struct JOURNAL_FILTERS {
+    int eventTypeFilter = -99;
+    int timeFilter = -99;
+
+};
+
+struct NORMAL_FILTERS {
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
+    int eventTypeFilter = 0;
+    QString searchstr = "";
+};
+
 struct KERN_FILTERS {
-    qint64 timeFilter ;
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
 };
 struct BOOT_FILTERS {
     QString searchstr;
     QString statusFilter;
 
 };
-struct NORMAL_FILTERS {
-    QString searchstr;
-    int eventTypeFilter;
 
-};
-struct JOURNAL_FILTERS {
-    int timeFilter;
-    int eventTypeFilter;
-
-};
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 
 enum BUTTONID {

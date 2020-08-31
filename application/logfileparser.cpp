@@ -148,15 +148,14 @@ int LogFileParser::parseByJournalBoot(QStringList arg)
     return work->getIndex();
 }
 
-void LogFileParser::parseByDpkg(qint64 ms)
+void LogFileParser::parseByDpkg(DKPG_FILTERS &iDpkgFilter)
 {
 
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(DPKG);
-    DKPG_FILTERS dpkgfilter;
-    dpkgfilter.timeFilter = ms;
-    authThread->setFileterParam(dpkgfilter);
+
+    authThread->setFileterParam(iDpkgFilter);
     connect(authThread, &LogAuthThread::proccessError, this,
             &LogFileParser::slog_proccessError, Qt::UniqueConnection);
     connect(authThread, &LogAuthThread::dpkgFinished, this,
@@ -167,14 +166,12 @@ void LogFileParser::parseByDpkg(qint64 ms)
 
 }
 
-void LogFileParser::parseByXlog(qint64 ms)   // modifed by Airy
+void LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
 {
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(XORG);
-    XORG_FILTERS xorgfilter;
-    xorgfilter.timeFilter = ms;
-    authThread->setFileterParam(xorgfilter);
+    authThread->setFileterParam(iXorgFilter);
     connect(authThread, &LogAuthThread::proccessError, this,
             &LogFileParser::slog_proccessError, Qt::UniqueConnection);
     connect(authThread, &LogAuthThread::xorgFinished, this,
@@ -261,7 +258,7 @@ void LogFileParser::parseByXlog(qint64 ms)   // modifed by Airy
 #include <utmp.h>
 #include <utmpx.h>
 #include <wtmpparse.h>
-void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
+void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler)
 {
     if (m_isNormalLoading) {
         return;
@@ -329,9 +326,12 @@ void LogFileParser::parseByNormal(QList<LOG_MSG_NORMAL> &nList, qint64 ms)
         start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
         Nmsg.dateTime = n_time;
         QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
-        if (nn_time.toMSecsSinceEpoch() < ms) { // add by Airy
-            continue;
+        if (iNormalFiler.timeFilterEnd > 0 && iNormalFiler.timeFilterBegin > 0) {
+            if (nn_time.toMSecsSinceEpoch() < iNormalFiler.timeFilterBegin || nn_time.toMSecsSinceEpoch() > iNormalFiler.timeFilterEnd) { // add by Airy
+                continue;
+            }
         }
+
         Nmsg.msg = start_str + "  ~  " + end_str;
         printf("\n");
         nList.insert(0, Nmsg);
@@ -429,7 +429,7 @@ void LogFileParser::parseByBoot()
 
 }
 
-void LogFileParser::parseByKern(qint64 ms)
+void LogFileParser::parseByKern(KERN_FILTERS &iKernFilter)
 {
 //    if (m_isKernLoading) {
 //        return;
@@ -439,9 +439,7 @@ void LogFileParser::parseByKern(qint64 ms)
     m_isKernLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(KERN);
-    KERN_FILTERS kernfilter;
-    kernfilter.timeFilter = ms;
-    authThread->setFileterParam(kernfilter);
+    authThread->setFileterParam(iKernFilter);
     connect(authThread, &LogAuthThread::kernFinished, this,
             &LogFileParser::kernFinished);
     connect(this, &LogFileParser::stopKern, authThread,
@@ -449,7 +447,7 @@ void LogFileParser::parseByKern(qint64 ms)
     QThreadPool::globalInstance()->start(authThread);
 }
 
-void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
+void LogFileParser::parseByApp(APP_FILTERS &iAPPFilter)
 {
 //    if (m_isAppLoading) {
 //        return;
@@ -464,7 +462,7 @@ void LogFileParser::parseByApp(QString path, int lv, qint64 ms)
                SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
     disconnect(this, &LogFileParser::stopApp, m_appThread,
                &LogApplicationParseThread::stopProccess);
-    m_appThread->setParam(path, lv, ms);
+    m_appThread->setParam(iAPPFilter);
 
     connect(m_appThread, SIGNAL(appCmdFinished(QList<LOG_MSG_APPLICATOIN>)), this,
             SLOT(slot_applicationFinished(QList<LOG_MSG_APPLICATOIN>)));
