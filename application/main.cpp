@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
     QSurfaceFormat format;
     format.setRenderableType(QSurfaceFormat::OpenGLES);
     format.setDefaultFormat(format);
+
     LogApplication a(argc, argv);
     //  wayland环境判断
     auto systemEnv = QProcessEnvironment::systemEnvironment();
