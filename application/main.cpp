@@ -31,7 +31,7 @@
 #include <DLog>
 
 #include <QDateTime>
-
+#include <QSurfaceFormat>
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
@@ -39,6 +39,14 @@ int main(int argc, char *argv[])
 {
     //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了
     QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
+    //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了,这个真正有效
+    qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
+    qputenv("_d_disableDBusFileDialog", "true");
+    setenv("PULSE_PROP_media.role", "video", 1);
+    QSurfaceFormat format;
+    format.setRenderableType(QSurfaceFormat::OpenGLES);
+    format.setDefaultFormat(format);
+
     LogApplication a(argc, argv);
     //  wayland环境判断
     auto systemEnv = QProcessEnvironment::systemEnvironment();
