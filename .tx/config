@@ -15,9 +15,15 @@ source_file = translations/desktop/desktop.ts
 source_lang = en
 type = QT
 
-[deepin-log-viewer.deepin-log-viewer-policy-ts]
-file_filter = translations/policy/policy_<lang>.ts
-source_file = translations/policy/policy.ts
+[deepin-log-viewer.deepin-log-viewer-policy-auth-ts]
+file_filter = translations/policy/auth/policy_<lang>.ts
+source_file = translations/policy/auth/policy.ts
 source_lang = en
 type = QT
 
+
+[deepin-log-viewer.deepin-log-viewer-policy-truncate-ts]
+file_filter = translations/policy/truncate/policy_<lang>.ts
+source_file = translations/policy/truncate/policy.ts
+source_lang = en
+type = QT
