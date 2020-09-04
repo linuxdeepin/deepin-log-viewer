@@ -45,30 +45,44 @@ endif ()
 
 if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
+
+
+
+     execute_process(COMMAND deepin-desktop-ts-convert "init" "assets/deepin-log-viewer.desktop.tmp" "../translations/desktop"
+                                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE desktop_transinit_var OUTPUT_VARIABLE desktop_transinit_out ERROR_VARIABLE desktop_transinit_error)
+     execute_process(COMMAND deepin-desktop-ts-convert "desktop2ts" "assets/deepin-log-viewer.desktop.tmp" "../translations/desktop"
+                                                                       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE desktop_trans_desktop2ts_var OUTPUT_VARIABLE desktop_trans_desktop2ts_out ERROR_VARIABLE desktop_trans_desktop2ts_error)
+     execute_process(COMMAND deepin-desktop-ts-convert "ts2desktop" "assets/deepin-log-viewer.desktop.tmp" "../translations/desktop" "assets/deepin-log-viewer.desktop"
+           WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE desktop_trans_desktop2ts_var OUTPUT_VARIABLE desktop_trans_desktop2ts_out ERROR_VARIABLE desktop_trans_desktop2ts_error)
+
     # generate qm files
     execute_process(COMMAND bash "assets/translate_generation.sh"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE trans_var OUTPUT_VARIABLE trans_out ERROR_VARIABLE trans_error)
                 message("trans_var ${trans_var} ")#trans_out ${trans_out} trans_error ${trans_error}
-    execute_process(COMMAND deepin-policy-ts-convert "policy2ts" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy"
+ execute_process(COMMAND deepin-policy-ts-convert "init" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy/auth"
+                                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE policy2ts_init_var OUTPUT_VARIABLE policy2ts_init_out ERROR_VARIABLE policy2ts_init_error)
+
+    execute_process(COMMAND deepin-policy-ts-convert "policy2ts" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy/auth"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE policy2ts_var OUTPUT_VARIABLE policy2ts_out ERROR_VARIABLE policy2ts_error)
                  message("policy2ts_var ${policy2ts_var} policy2ts_out ${policy2ts_out} policy2ts_error ${policy2ts_error}")
-    execute_process(COMMAND deepin-policy-ts-convert "ts2policy" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "policy-install-translation" "assets/com.deepin.pkexec.logViewerAuth.policy"
+    execute_process(COMMAND deepin-policy-ts-convert "ts2policy" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy/auth" "assets/com.deepin.pkexec.logViewerAuth.policy"
                     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE ts2policy_var OUTPUT_VARIABLE ts2policy_out ERROR_VARIABLE ts2policy_error)
                  message("ts2policy_var ${ts2policy_var} ts2policy_out ${ts2policy_out} ts2policy_error ${ts2policy_error}")
-    execute_process(COMMAND cp "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "assets/com.deepin.pkexec.logViewerAuth.policy"
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE cp_var OUTPUT_VARIABLE cp_out ERROR_VARIABLE cp_error)
-                   message("cp_var ${cp_var} cp_out ${cp_out} cp_error ${cp_error}")
+#    execute_process(COMMAND cp "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "assets/com.deepin.pkexec.logViewerAuth.policy"
+#                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE cp_var OUTPUT_VARIABLE cp_out ERROR_VARIABLE cp_error)
+#                   message("cp_var ${cp_var} cp_out ${cp_out} cp_error ${cp_error}")
 
-
-execute_process(COMMAND deepin-policy-ts-convert "policy2ts" "assets/com.deepin.pkexec.logViewerTruncate.policy.tmp" "../translations/policy"
+ execute_process(COMMAND deepin-policy-ts-convert "init" "assets/com.deepin.pkexec.logViewerTruncate.policy.tmp" "../translations/policy/truncate"
+                                                      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE policy2ts_var OUTPUT_VARIABLE policy2ts_out ERROR_VARIABLE policy2ts_error)
+execute_process(COMMAND deepin-policy-ts-convert "policy2ts" "assets/com.deepin.pkexec.logViewerTruncate.policy.tmp" "../translations/policy/truncate"
                                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE policy2ts_var OUTPUT_VARIABLE policy2ts_out ERROR_VARIABLE policy2ts_error)
                                 message("policy2ts_var ${policy2ts_var} policy2ts_out ${policy2ts_out} policy2ts_error ${policy2ts_error}")
- execute_process(COMMAND deepin-policy-ts-convert "ts2policy" "assets/com.deepin.pkexec.logViewerTruncate.policy.tmp" "policy-install-translation" "assets/com.deepin.pkexec.logViewerTruncate.policy"
+ execute_process(COMMAND deepin-policy-ts-convert "ts2policy" "assets/com.deepin.pkexec.logViewerTruncate.policy.tmp" "../translations/policy/truncate" "assets/com.deepin.pkexec.logViewerTruncate.policy"
                                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE ts2policy_var OUTPUT_VARIABLE ts2policy_out ERROR_VARIABLE ts2policy_error)
                                 message("ts2policy_var ${ts2policy_var} ts2policy_out ${ts2policy_out} ts2policy_error ${ts2policy_error}")
-execute_process(COMMAND cp "assets/com.deepin.pkexec.logViewerTruncate.policy.tmp" "assets/com.deepin.pkexec.logViewerTruncate.policy"
-                                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE cp_var OUTPUT_VARIABLE cp_out ERROR_VARIABLE cp_error)
-  message("cp_var ${cp_var} cp_out ${cp_out} cp_error ${cp_error}")
+#execute_process(COMMAND cp "assets/com.deepin.pkexec.logViewerTruncate.policy.tmp" "assets/com.deepin.pkexec.logViewerTruncate.policy"
+#                                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE cp_var OUTPUT_VARIABLE cp_out ERROR_VARIABLE cp_error)
+#  message("cp_var ${cp_var} cp_out ${cp_out} cp_error ${cp_error}")
 endif ()
 
 add_definitions(-DUSE_POLKIT -DENABLE_INACTIVE_DISPLAY)
