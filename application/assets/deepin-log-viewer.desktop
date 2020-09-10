@@ -7,7 +7,7 @@ Name=Deepin Log Viewer
 StartupNotify=false
 TryExec=deepin-log-viewer
 Type=Application
-X-Deepin-Vendor=user-custom
+X-Deepin-Vendor=deepin
 
 # Translations:
 # Do not manually modify!
