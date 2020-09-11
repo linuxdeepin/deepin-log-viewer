@@ -324,15 +324,19 @@ void LogAuthThread::handleDnf()
 {
 
     QFile file("/var/log/dnf.log");  // if not,maybe crash
-    if (!file.exists())
+    QList<LOG_MSG_DNF> dList;
+    if (!file.exists()) {
+        emit dnfFinished(dList);
         return;
+    }
+
     initProccess();
     m_process->start("cat /var/log/dnf.log");
     m_process->waitForFinished(-1);
     QByteArray outByte = m_process->readAllStandardOutput();
     QString output = Utils::replaceEmptyByteArray(outByte);
     m_process->close();
-    QList<LOG_MSG_DNF> dList;
+
     //上一次成功筛选出的日志
     int lastLogAddRow = -99;
     //上一次增加的换行的日志信息体的行数

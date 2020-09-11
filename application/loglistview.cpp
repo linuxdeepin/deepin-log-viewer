@@ -108,30 +108,30 @@ void LogListView::initUI()
 
     m_pModel = new QStandardItemModel(this);
     QStandardItem *item = nullptr;
-    if (isFileExist("/var/log/journal")) {
-        item = new QStandardItem(DApplication::translate("Tree", "System Log"));
-        item->setToolTip(DApplication::translate("Tree", "System Log"));  // add by Airy for bug 16245
-        item->setData(JOUR_TREE_DATA, ITEM_DATE_ROLE);
-        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        m_pModel->appendRow(item);
-    }
+//   if (isFileExist("/var/log/journal")) {
+    item = new QStandardItem(DApplication::translate("Tree", "System Log"));
+    item->setToolTip(DApplication::translate("Tree", "System Log"));  // add by Airy for bug 16245
+    item->setData(JOUR_TREE_DATA, ITEM_DATE_ROLE);
+    item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
+    m_pModel->appendRow(item);
+    // }
 
-    if (!isFileExist("/var/log/kern.log")) {
-        item = new QStandardItem(DApplication::translate("Tree", "Kernel Log"));
-        item->setToolTip(DApplication::translate("Tree", "Kernel Log"));  // add by Airy for bug 16245
-        item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
-        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        m_pModel->appendRow(item);
-    } else {
-        item = new QStandardItem(DApplication::translate("Tree", "Kernel Log"));
-        item->setToolTip(DApplication::translate("Tree", "Kernel Log"));  // add by Airy for bug 16245
-        item->setData(DMESG_TREE_DATA, ITEM_DATE_ROLE);
-        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        m_pModel->appendRow(item);
-    }
+//    if (!isFileExist("/var/log/kern.log")) {
+//        item = new QStandardItem(DApplication::translate("Tree", "Kernel Log"));
+//        item->setToolTip(DApplication::translate("Tree", "Kernel Log"));  // add by Airy for bug 16245
+//        item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    } else {
+    item = new QStandardItem(DApplication::translate("Tree", "Kernel Log"));
+    item->setToolTip(DApplication::translate("Tree", "Kernel Log"));  // add by Airy for bug 16245
+    item->setData(DMESG_TREE_DATA, ITEM_DATE_ROLE);
+    item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
+    m_pModel->appendRow(item);
+//    }
 
     if (isFileExist("/var/log/boot.log")) {
         item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
