@@ -67,7 +67,7 @@ public:
     static QString loadFontFamilyFromFiles(const QString &fontFileName);
     static QByteArray replaceEmptyByteArray(QByteArray &iReplaceStr);
     static CommandErrorType isErroCommand(QString str);
-
+    static void replaceColorfulFont(QString *iStr);
 };
 
 

@@ -177,4 +177,9 @@ Utils::CommandErrorType Utils::isErroCommand(QString str)
     return NoError;
 }
 
+void Utils::replaceColorfulFont(QString *iStr)
+{
+    iStr->replace(QRegExp("[[0-9]{1,2}m"), "");
+}
+
 
