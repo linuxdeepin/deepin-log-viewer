@@ -137,7 +137,7 @@ void LogAuthThread::handleBoot()
 
         // remove Useless characters
         lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-
+        Utils::replaceColorfulFont(&lineStr);
         QStringList retList;
         LOG_MSG_BOOT bMsg;
         retList = lineStr.split(" ", QString::SkipEmptyParts);

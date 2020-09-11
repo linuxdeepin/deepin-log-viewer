@@ -234,4 +234,9 @@ bool Utils::deleteDir(const QString &iFilePath)
     return !error;
 }
 
+void Utils::replaceColorfulFont(QString *iStr)
+{
+    iStr->replace(QRegExp("[[0-9]{1,2}m"), "");
+}
+
 
