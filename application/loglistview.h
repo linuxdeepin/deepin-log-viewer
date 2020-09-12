@@ -63,7 +63,8 @@ protected slots:
 public slots:
     void slot_getAppPath(QString path);  // add by Airy
     Qt::FocusReason focusReson();
-    void showRightMenu(const QPoint &pos);
+    void showRightMenu(const QPoint &pos, bool isUsePoint);
+    void requestshowRightMenu(const QPoint &pos);
 protected:
     void paintEvent(QPaintEvent *event) override;
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;

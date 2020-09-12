@@ -138,7 +138,7 @@ LogListView::LogListView(QWidget *parent)
 {
     initUI();
     setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this, &LogListView::customContextMenuRequested, this, &LogListView::showRightMenu);
+    connect(this, &LogListView::customContextMenuRequested, this, &LogListView::requestshowRightMenu);
     connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
             &LogListView::onChangedTheme);
     DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
@@ -150,10 +150,8 @@ LogListView::LogListView(QWidget *parent)
     m_rightClickTriggerShortCut->setContext(Qt::WidgetShortcut);
     m_rightClickTriggerShortCut->setAutoRepeat(false);
     connect(m_rightClickTriggerShortCut, &QShortcut::activated, this, [this] {
-        //     qDebug() << "111111111" << visualRect(this->currentIndex())   ;
         QRect r = rectForIndex(this->currentIndex());
-        QContextMenuEvent *eve = new QContextMenuEvent(QContextMenuEvent::Reason::Keyboard, QPoint(r.x() + r.width() / 2, r.y() + r.height() / 2));
-        DApplication::sendEvent(this, eve);
+        showRightMenu(QPoint(r.x() + r.width() / 2, r.y() + r.height() / 2), true);
     });
 }
 
@@ -452,7 +450,7 @@ Qt::FocusReason LogListView::focusReson()
     return  m_reson;
 }
 
-void LogListView::showRightMenu(const QPoint &pos)
+void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
 {
     qDebug() << __FUNCTION__;
     QModelIndex idx = this->currentIndex();
@@ -512,9 +510,20 @@ void LogListView::showRightMenu(const QPoint &pos)
         });
 
         this->setContextMenuPolicy(Qt::CustomContextMenu);
-        g_context->exec(mapToGlobal(pos));
+        QPoint p;
+        if (isUsePoint) {
+            p = mapToGlobal(pos);
+        } else {
+            p = QCursor::pos();
+        }
+        g_context->exec(p);
 
     }
+}
+
+void LogListView::requestshowRightMenu(const QPoint &pos)
+{
+    showRightMenu(pos, false);
 }
 
 
