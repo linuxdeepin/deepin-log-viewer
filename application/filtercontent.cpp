@@ -229,6 +229,8 @@ void FilterContent::initUI()
 //    typeCbx->setFocusPolicy(Qt::TabFocus);
     // default application list is not visible
     setSelectorVisible(true, false, false, true, false);
+    m_currentType = JOUR_TREE_DATA;
+    updateDataState();
     m_allBtn->installEventFilter(this);
     m_todayBtn->installEventFilter(this);
     m_threeDayBtn->installEventFilter(this);
@@ -269,6 +271,8 @@ void FilterContent::shortCutExport()
 
 void FilterContent::setAppComboBoxItem()
 {
+    disconnect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
+
     cbx_app->clear();
     auto *appHelper = LogApplicationHelper::instance();
     QMap<QString, QString> _map = appHelper->getMap();
@@ -278,6 +282,8 @@ void FilterContent::setAppComboBoxItem()
         cbx_app->setItemData(cbx_app->count() - 1, iter.value(), Qt::UserRole + 1);
         ++iter;
     }
+    connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
+
 }
 
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
@@ -289,23 +295,17 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     setUpdatesEnabled(false);
     lvTxt->setVisible(lvCbx);
     cbx_lv->setVisible(lvCbx);
-    if (cbx_lv->isVisible()) {
-        cbx_lv->setCurrentIndex(INF + 1);
 
-    }
 
     appTxt->setVisible(appListCbx);
     cbx_app->setVisible(appListCbx);
-    if (cbx_app->isVisible())
-        cbx_app->setCurrentIndex(0);
+
     statusTxt->setVisible(statusCbx);
     cbx_status->setVisible(statusCbx);
-    if (cbx_status->isVisible())
-        cbx_status->setCurrentIndex(0);
+
     typeTxt->setVisible(typecbx);  // add by Airy
     typeCbx->setVisible(typecbx);  // add by Airy
-    if (typeCbx->isVisible())
-        typeCbx->setCurrentIndex(0);
+
     periodLabel->setVisible(period);
     for (int i = 0; i < 6; i++) {
         LogPeriodButton *pushBtn = static_cast<LogPeriodButton *>(m_btnGroup->button(i));
@@ -323,6 +323,36 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     resizeWidth();
     setUpdatesEnabled(true);
     //    va_end(arg_ptr);  //清除可变参数指针
+
+}
+
+void FilterContent::setSelection(FILTER_CONFIG iConifg)
+{
+    if (cbx_lv->isVisible())
+        cbx_lv->setCurrentIndex(iConifg.levelCbx);
+    if (cbx_app->isVisible()) {
+        QString path = iConifg.appListCbx;
+        int appCount =  cbx_app->count();
+        int rsIndex = 0;
+
+        if (!path.isEmpty()) {
+            //找原来选的选项的index,如果这个应用日志没了,就选第一个
+            for (int i = 0; i < appCount; ++i) {
+                if (cbx_app->itemData(i, Qt::UserRole + 1).toString() == path) {
+                    rsIndex = i;
+                    break;
+                }
+            }
+            //不能直接connect再setCurrentIndex,而是要手动发出改变app的信号让其刷新,让combox自己发的话,如果原来的index是0他不发currentindexChanged信号
+        }
+        cbx_app->setCurrentIndex(rsIndex);
+    }
+
+    if (cbx_status->isVisible())
+        cbx_status->setCurrentIndex(iConifg.statusCbx);
+    if (typeCbx->isVisible())
+        typeCbx->setCurrentIndex(iConifg.typeCbx);
+    m_btnGroup->button(iConifg.dateBtn)->setChecked(true); //add by Airy for bug 19660:period button default setting
 
 }
 
@@ -517,6 +547,20 @@ void FilterContent::updateWordWrap()
     setUpdatesEnabled(true);
 }
 
+void FilterContent::updateDataState()
+{
+    if (!m_config.contains(m_currentType)) {
+        FILTER_CONFIG newConfig;
+        m_config.insert(m_currentType, newConfig);
+    }
+    setSelection(m_config.value(m_currentType));
+}
+
+void FilterContent::setCurrentConfig(FILTER_CONFIG iConifg)
+{
+    m_config.insert(m_currentType, iConifg);
+}
+
 void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
 {
     if (!index.isValid())
@@ -528,37 +572,45 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     }
 
     m_curTreeIndex = index;
-    m_btnGroup->button(0)->setChecked(true); //add by Airy for bug 19660:period button default setting
 
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
+        m_currentType = APP_TREE_DATA;
         this->setAppComboBoxItem();
         this->setSelectorVisible(true, true, false, true, false);
-        cbx_app->setCurrentIndex(0);
-        cbx_lv->setCurrentIndex(INF + 1); //add by Airy for bug 19660:period button default setting
         emit sigCbxAppIdxChanged(cbx_app->itemData(0, Qt::UserRole + 1).toString());
     } else if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
+        m_currentType = JOUR_TREE_DATA;
         this->setSelectorVisible(true, false, false, true, false);
-        cbx_lv->setCurrentIndex(INF + 1);  // index+1
     } else if (itemData.contains(BOOT_TREE_DATA)) {
+        m_currentType = BOOT_TREE_DATA;
         this->setSelectorVisible(false, false, true, false, false);
-    } else if (itemData.contains(KERN_TREE_DATA) || itemData.contains(DPKG_TREE_DATA)) {
+    } else if (itemData.contains(KERN_TREE_DATA)) {
+        m_currentType = KERN_TREE_DATA;
+        this->setSelectorVisible(false, false, false, true, true);
+    } else if (itemData.contains(DPKG_TREE_DATA)) {
+        m_currentType = DPKG_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, true);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
+        m_currentType = XORG_TREE_DATA;
         this->setSelectorVisible(false, false, false, true,
                                  true);  // modified by Airy for showing  peroid
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
+        m_currentType = LAST_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, false,
                                  true);  // modifed by Airy for showing peroid
     } else if (itemData.contains(KWIN_TREE_DATA)) {
+        m_currentType = KWIN_TREE_DATA;
         this->setSelectorVisible(false, false, false, false, false);
     } else if (itemData.contains(BOOT_KLU_TREE_DATA)) {
+        m_currentType = BOOT_KLU_TREE_DATA;
         this->setSelectorVisible(true, false, false, false, false);
-        cbx_lv->setCurrentIndex(INF + 1);  // index+1
     }
     cbx_lv->setFocusReason(Qt::NoFocusReason);
     cbx_app->setFocusReason(Qt::NoFocusReason);
     cbx_status->setFocusReason(Qt::NoFocusReason);
     typeCbx->setFocusReason(Qt::NoFocusReason);
+    updateDataState();
+
 }
 
 void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
@@ -573,21 +625,12 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
 
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         //记录当前选择项目以便改变combox内容后可以选择原来的选项刷新
-        QString cuurentText = cbx_app->currentText();
+        //  QString cuurentText = cbx_app->currentText();
         //先disconnect防止改变combox内容时发出currentIndexChanged让主表获取
         disconnect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
         this->setAppComboBoxItem();
-        int appCount =  cbx_app->count();
-        int rsIndex = 0;
-        //找原来选的选项的index,如果这个应用日志没了,就选第一个
-        for (int i = 0; i < appCount; ++i) {
-            if (cbx_app->itemText(i) == cuurentText) {
-                rsIndex = i;
-                break;
-            }
-        }
-        //不能直接connect再setCurrentIndex,而是要手动发出改变app的信号让其刷新,让combox自己发的话,如果原来的index是0他不发currentindexChanged信号
-        cbx_app->setCurrentIndex(rsIndex);
+
+        updateDataState();
         emit sigCbxAppIdxChanged(cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString());
         connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
         // cbx_app->setCurrentText(cuurentText);
@@ -604,6 +647,9 @@ void FilterContent::slot_buttonClicked(int idx)
     //    if (!m_curTreeIndex.isValid())
     //        return;
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
+    FILTER_CONFIG curConfig = m_config.value(m_currentType);
+    curConfig.dateBtn = idx;
+    setCurrentConfig(curConfig);
     // because button has no focus,so focus on label;
     //有这行,按tab时切不了焦点
     // lvTxt->setFocus();
@@ -647,17 +693,28 @@ void FilterContent::slot_exportButtonClicked()
 void FilterContent::slot_cbxLvIdxChanged(int idx)
 {
     m_curLvCbxId = idx - 1;
+    FILTER_CONFIG curConfig = m_config.value(m_currentType);
+    curConfig.levelCbx = idx;
+    setCurrentConfig(curConfig);
     emit sigButtonClicked(m_curBtnId, m_curLvCbxId, m_curTreeIndex);
 }
 
 void FilterContent::slot_cbxAppIdxChanged(int idx)
 {
     QString path = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
+    FILTER_CONFIG curConfig = m_config.value(m_currentType);
+    qDebug() << "apppath" << path;
+    curConfig.appListCbx = path;
+    setCurrentConfig(curConfig);
+
     emit sigCbxAppIdxChanged(path);
 }
 
 void FilterContent::slot_cbxStatusChanged(int idx)
 {
+    FILTER_CONFIG curConfig = m_config.value(m_currentType);
+    curConfig.statusCbx = idx;
+    setCurrentConfig(curConfig);
     QString str;
     if (idx == 1)
         str = "OK";
@@ -669,6 +726,9 @@ void FilterContent::slot_cbxStatusChanged(int idx)
 // add by Airy
 void FilterContent::slot_cbxLogTypeChanged(int idx)
 {
+    FILTER_CONFIG curConfig = m_config.value(m_currentType);
+    curConfig.typeCbx = idx;
+    setCurrentConfig(curConfig);
     emit sigLogtypeChanged(idx);
     qDebug() << "emit signal " + QString::number(idx);
 }
