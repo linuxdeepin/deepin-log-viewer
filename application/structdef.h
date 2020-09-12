@@ -108,7 +108,13 @@ struct BOOT_FILTERS {
 };
 
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
-
+struct FILTER_CONFIG {
+    int levelCbx = INF + 1;
+    QString appListCbx = "";
+    int statusCbx = 0;
+    int dateBtn = 0;
+    int typeCbx = 0;
+};
 enum BUTTONID {
     ALL = 0,
     ONE_DAY,
