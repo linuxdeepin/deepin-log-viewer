@@ -238,8 +238,9 @@ void journalWork::doWork()
             logMsg.level = "";
         } else {
             logMsg.level = i2str(getReplaceColorStr(d).split("=").value(1).toInt());
-        }
 
+        }
+        qDebug() << "logMsg.level" << getReplaceColorStr(d).split("=").value(1).toInt();
         cnt++;
         mutex.lock();
         logList.append(logMsg);

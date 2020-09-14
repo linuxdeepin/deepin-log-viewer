@@ -532,8 +532,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="121"/>
-        <location filename="../application/loglistview.cpp" line="122"/>
         <location filename="../application/loglistview.cpp" line="128"/>
         <location filename="../application/loglistview.cpp" line="129"/>
         <source>Kernel Log</source>
