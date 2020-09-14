@@ -23,6 +23,7 @@
 #include "logapplication.h"
 #include "environments.h"
 #include "accessible.h"
+#include "dbusmanager.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
@@ -41,7 +42,12 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
     //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了,这个真正有效
     qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
-    qputenv("_d_disableDBusFileDialog", "true");
+    QString  systemName =   DBusManager::getSystemInfo();
+    qDebug() << "systemName" << systemName;
+    if (systemName == "klu" || systemName == "panguV") {
+        qputenv("_d_disableDBusFileDialog", "true");
+    }
+
     setenv("PULSE_PROP_media.role", "video", 1);
     QSurfaceFormat format;
     format.setRenderableType(QSurfaceFormat::OpenGLES);

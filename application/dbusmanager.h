@@ -9,6 +9,9 @@ class DBusManager : public QObject
 public:
     explicit DBusManager(QObject *parent = nullptr);
     static QString getSystemInfo();
+    static bool isGetedKlu ;
+    static QString isklusystemName ;
+
 signals:
 
 public slots:
