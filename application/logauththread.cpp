@@ -189,7 +189,11 @@ void LogAuthThread::handleKern()
     //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
     // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
     m_process->waitForFinished(-1);
-
+    qDebug() << " m_process->exitCode() " << m_process->exitCode();
+    if (m_process->exitCode() != 0) {
+        emit kernFinished(kList);
+        return;
+    }
     if (!m_canRun) {
         return;
     }
@@ -220,7 +224,7 @@ void LogAuthThread::handleKern()
             return;
         }
         //   qDebug() << __FUNCTION__ << "byte" << byte.length();
-        //  qDebug() << __FUNCTION__ << "str" << str.length();
+        //  qDebug() << __FUNCTION__ << "str" << str;
 
 
         //            qDebug() << "ms::" << m_selectTime << output;
