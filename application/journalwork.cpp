@@ -237,10 +237,12 @@ void journalWork::doWork()
         if (r < 0) {
             logMsg.level = "";
         } else {
+            //    logMsg.level = i2str(8);
             logMsg.level = i2str(getReplaceColorStr(d).split("=").value(1).toInt());
 
         }
-        qWarning() << "logMsg.level" << getReplaceColorStr(d).split("=").value(1).toInt();
+
+        qWarning() << "logMsg.level" << d << getReplaceColorStr(d) << logMsg.level << logMsg.msg;
         cnt++;
         mutex.lock();
         logList.append(logMsg);
