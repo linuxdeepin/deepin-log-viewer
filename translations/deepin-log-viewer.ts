@@ -4,32 +4,32 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="463"/>
+        <location filename="../application/loglistview.cpp" line="461"/>
         <source>Display in file manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="464"/>
+        <location filename="../application/loglistview.cpp" line="462"/>
         <source>Clear log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="465"/>
+        <location filename="../application/loglistview.cpp" line="463"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="503"/>
+        <location filename="../application/loglistview.cpp" line="501"/>
         <source>Are you sure you want to clear the log?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="504"/>
+        <location filename="../application/loglistview.cpp" line="502"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="505"/>
+        <location filename="../application/loglistview.cpp" line="503"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
@@ -415,12 +415,12 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../application/main.cpp" line="70"/>
+        <location filename="../application/main.cpp" line="76"/>
         <source>Log Viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="74"/>
+        <location filename="../application/main.cpp" line="80"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -661,52 +661,52 @@
 <context>
     <name>Tree</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="179"/>
-        <location filename="../application/loglistview.cpp" line="180"/>
+        <location filename="../application/loglistview.cpp" line="177"/>
+        <location filename="../application/loglistview.cpp" line="178"/>
         <source>System Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="188"/>
-        <location filename="../application/loglistview.cpp" line="189"/>
+        <location filename="../application/loglistview.cpp" line="186"/>
+        <location filename="../application/loglistview.cpp" line="187"/>
         <source>Kernel Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="213"/>
-        <location filename="../application/loglistview.cpp" line="214"/>
-        <location filename="../application/loglistview.cpp" line="220"/>
-        <location filename="../application/loglistview.cpp" line="221"/>
+        <location filename="../application/loglistview.cpp" line="211"/>
+        <location filename="../application/loglistview.cpp" line="212"/>
+        <location filename="../application/loglistview.cpp" line="218"/>
+        <location filename="../application/loglistview.cpp" line="219"/>
         <source>Boot Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="232"/>
-        <location filename="../application/loglistview.cpp" line="233"/>
+        <location filename="../application/loglistview.cpp" line="230"/>
+        <location filename="../application/loglistview.cpp" line="231"/>
         <source>dpkg Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="249"/>
-        <location filename="../application/loglistview.cpp" line="250"/>
+        <location filename="../application/loglistview.cpp" line="247"/>
+        <location filename="../application/loglistview.cpp" line="248"/>
         <source>Kwin Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="256"/>
-        <location filename="../application/loglistview.cpp" line="257"/>
+        <location filename="../application/loglistview.cpp" line="254"/>
+        <location filename="../application/loglistview.cpp" line="255"/>
         <source>Xorg Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="264"/>
         <location filename="../application/loglistview.cpp" line="266"/>
-        <location filename="../application/loglistview.cpp" line="268"/>
         <source>Application Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="277"/>
-        <location filename="../application/loglistview.cpp" line="280"/>
+        <location filename="../application/loglistview.cpp" line="275"/>
+        <location filename="../application/loglistview.cpp" line="278"/>
         <source>Boot-Shutdown Event</source>
         <translation type="unfinished"></translation>
     </message>
