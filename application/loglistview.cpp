@@ -179,6 +179,7 @@ void LogListView::initUI()
         item->setData(JOUR_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleDescription("System Log");
         m_pModel->appendRow(item);
     }
 
@@ -188,6 +189,7 @@ void LogListView::initUI()
         item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Kernel Log");
         m_pModel->appendRow(item);
     }
 
@@ -213,6 +215,7 @@ void LogListView::initUI()
         item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Boot Klu Log");
         m_pModel->appendRow(item);
     } else {
         item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
@@ -220,6 +223,7 @@ void LogListView::initUI()
         item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Boot Log");
         m_pModel->appendRow(item);
     }
 
@@ -232,6 +236,7 @@ void LogListView::initUI()
         item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("dpkg Log");
         m_pModel->appendRow(item);
     }
 //    if (isFileExist("/var/log/Xorg.0.log")) {
@@ -249,6 +254,7 @@ void LogListView::initUI()
         item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("dpkg Log");
         m_pModel->appendRow(item);
     } else {
         item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
@@ -256,6 +262,7 @@ void LogListView::initUI()
         item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Xorg Log");
         m_pModel->appendRow(item);
     }
     auto *appHelper = LogApplicationHelper::instance();
@@ -267,6 +274,7 @@ void LogListView::initUI()
         item->setData(APP_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Application Log");
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
     }
@@ -278,6 +286,7 @@ void LogListView::initUI()
             DApplication::translate("Tree", "Boot-Shutdown Event"));  // add by Airy for bug 16245
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Boot-Shutdown Event");
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
     }
