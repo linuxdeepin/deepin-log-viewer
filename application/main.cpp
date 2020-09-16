@@ -23,6 +23,7 @@
 #include "logapplication.h"
 #include "environments.h"
 #include "accessible.h"
+#include "utils.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
@@ -46,6 +47,10 @@ int main(int argc, char *argv[])
     QString WAYLAND_DISPLAY = systemEnv.value(QStringLiteral("WAYLAND_DISPLAY"));
     qDebug() << "XDG_SESSION_TYPE:" << XDG_SESSION_TYPE << "---WAYLAND_DISPLAY:" << WAYLAND_DISPLAY;
     qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
+    if (Utils::isWayland()) {
+        qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
+    }
+
     if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                               DGuiApplicationHelper::UserScope)) {
         qDebug() << "DGuiApplicationHelper::instance()->setSingleInstance";

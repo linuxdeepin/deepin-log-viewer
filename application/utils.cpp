@@ -55,7 +55,7 @@
 #include <QPixmap>
 #include <QFile>
 #include <QFontDatabase>
-
+#include <QProcessEnvironment>
 QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
 
@@ -232,6 +232,19 @@ bool Utils::deleteDir(const QString &iFilePath)
     }
 
     return !error;
+}
+
+bool Utils::isWayland()
+{
+    auto e = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
+
+    if (XDG_SESSION_TYPE == QLatin1String("wayland") || WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
