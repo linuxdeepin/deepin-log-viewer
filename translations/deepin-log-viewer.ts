@@ -4,32 +4,32 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="461"/>
+        <location filename="../application/loglistview.cpp" line="470"/>
         <source>Display in file manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="462"/>
+        <location filename="../application/loglistview.cpp" line="471"/>
         <source>Clear log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="463"/>
+        <location filename="../application/loglistview.cpp" line="472"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="501"/>
+        <location filename="../application/loglistview.cpp" line="510"/>
         <source>Are you sure you want to clear the log?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="502"/>
+        <location filename="../application/loglistview.cpp" line="511"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="503"/>
+        <location filename="../application/loglistview.cpp" line="512"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
@@ -39,52 +39,52 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="76"/>
         <location filename="../application/filtercontent.cpp" line="77"/>
-        <location filename="../application/filtercontent.cpp" line="539"/>
+        <location filename="../application/filtercontent.cpp" line="544"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="92"/>
         <location filename="../application/filtercontent.cpp" line="93"/>
-        <location filename="../application/filtercontent.cpp" line="531"/>
-        <location filename="../application/filtercontent.cpp" line="540"/>
+        <location filename="../application/filtercontent.cpp" line="536"/>
+        <location filename="../application/filtercontent.cpp" line="545"/>
         <source>Today</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="100"/>
         <location filename="../application/filtercontent.cpp" line="102"/>
-        <location filename="../application/filtercontent.cpp" line="532"/>
-        <location filename="../application/filtercontent.cpp" line="541"/>
+        <location filename="../application/filtercontent.cpp" line="537"/>
+        <location filename="../application/filtercontent.cpp" line="546"/>
         <source>3 days</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="109"/>
         <location filename="../application/filtercontent.cpp" line="111"/>
-        <location filename="../application/filtercontent.cpp" line="533"/>
-        <location filename="../application/filtercontent.cpp" line="542"/>
+        <location filename="../application/filtercontent.cpp" line="538"/>
+        <location filename="../application/filtercontent.cpp" line="547"/>
         <source>1 week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="118"/>
         <location filename="../application/filtercontent.cpp" line="120"/>
-        <location filename="../application/filtercontent.cpp" line="534"/>
-        <location filename="../application/filtercontent.cpp" line="543"/>
+        <location filename="../application/filtercontent.cpp" line="539"/>
+        <location filename="../application/filtercontent.cpp" line="548"/>
         <source>1 month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="126"/>
         <location filename="../application/filtercontent.cpp" line="128"/>
-        <location filename="../application/filtercontent.cpp" line="535"/>
-        <location filename="../application/filtercontent.cpp" line="544"/>
+        <location filename="../application/filtercontent.cpp" line="540"/>
+        <location filename="../application/filtercontent.cpp" line="549"/>
         <source>3 months</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="213"/>
+        <location filename="../application/filtercontent.cpp" line="218"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
@@ -92,65 +92,65 @@
 <context>
     <name>ComboBox</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="160"/>
-        <location filename="../application/filtercontent.cpp" line="191"/>
-        <location filename="../application/filtercontent.cpp" line="204"/>
+        <location filename="../application/filtercontent.cpp" line="162"/>
+        <location filename="../application/filtercontent.cpp" line="195"/>
+        <location filename="../application/filtercontent.cpp" line="209"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="161"/>
+        <location filename="../application/filtercontent.cpp" line="163"/>
         <source>Emergency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="162"/>
+        <location filename="../application/filtercontent.cpp" line="164"/>
         <source>Alert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="163"/>
+        <location filename="../application/filtercontent.cpp" line="165"/>
         <source>Critical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="164"/>
+        <location filename="../application/filtercontent.cpp" line="166"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="165"/>
+        <location filename="../application/filtercontent.cpp" line="167"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="166"/>
+        <location filename="../application/filtercontent.cpp" line="168"/>
         <source>Notice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="167"/>
         <location filename="../application/filtercontent.cpp" line="169"/>
+        <location filename="../application/filtercontent.cpp" line="171"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="168"/>
+        <location filename="../application/filtercontent.cpp" line="170"/>
         <source>Debug</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="205"/>
+        <location filename="../application/filtercontent.cpp" line="210"/>
         <source>Login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="206"/>
+        <location filename="../application/filtercontent.cpp" line="211"/>
         <source>Boot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="207"/>
+        <location filename="../application/filtercontent.cpp" line="212"/>
         <source>Shutdown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -159,10 +159,14 @@
     <name>DisplayContent</name>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1015"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1155"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="1167"/>
+>>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -184,10 +188,14 @@
     <name>ExportMessage</name>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1891"/>
 =======
         <location filename="../application/displaycontent.cpp" line="2008"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="2036"/>
+>>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
         <source>Export successful</source>
         <translation type="unfinished"></translation>
     </message>
@@ -196,10 +204,14 @@
     <name>File</name>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1013"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1153"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="1165"/>
+>>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
         <source>Export File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -208,8 +220,8 @@
     <name>Label</name>
     <message>
         <location filename="../application/filtercontent.cpp" line="72"/>
-        <location filename="../application/filtercontent.cpp" line="529"/>
-        <location filename="../application/filtercontent.cpp" line="538"/>
+        <location filename="../application/filtercontent.cpp" line="534"/>
+        <location filename="../application/filtercontent.cpp" line="543"/>
         <source>Period:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -219,18 +231,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="177"/>
+        <location filename="../application/filtercontent.cpp" line="179"/>
         <source>Application list:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="187"/>
+        <location filename="../application/filtercontent.cpp" line="190"/>
         <location filename="../application/logdetailinfowidget.cpp" line="139"/>
         <source>Status:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="200"/>
+        <location filename="../application/filtercontent.cpp" line="204"/>
         <location filename="../application/logdetailinfowidget.cpp" line="144"/>
         <source>Event Type:</source>
         <translation type="unfinished"></translation>
@@ -394,12 +406,17 @@
     <name>LogAuthThread</name>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/logauththread.cpp" line="344"/>
         <location filename="../application/logauththread.cpp" line="363"/>
 =======
         <location filename="../application/logauththread.cpp" line="342"/>
         <location filename="../application/logauththread.cpp" line="361"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/logauththread.cpp" line="346"/>
+        <location filename="../application/logauththread.cpp" line="365"/>
+>>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
         <source>Log file is empty</source>
         <translation type="unfinished"></translation>
     </message>
@@ -449,7 +466,7 @@
 =======
         <location filename="../application/displaycontent.cpp" line="311"/>
         <location filename="../application/displaycontent.cpp" line="606"/>
-        <location filename="../application/displaycontent.cpp" line="958"/>
+        <location filename="../application/displaycontent.cpp" line="964"/>
         <location filename="../application/logexportthread.cpp" line="1288"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="543"/>
@@ -465,7 +482,7 @@
 =======
         <location filename="../application/displaycontent.cpp" line="312"/>
         <location filename="../application/displaycontent.cpp" line="472"/>
-        <location filename="../application/displaycontent.cpp" line="959"/>
+        <location filename="../application/displaycontent.cpp" line="965"/>
         <location filename="../application/logexportthread.cpp" line="1289"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="544"/>
@@ -486,9 +503,9 @@
         <location filename="../application/displaycontent.cpp" line="313"/>
         <location filename="../application/displaycontent.cpp" line="470"/>
         <location filename="../application/displaycontent.cpp" line="607"/>
-        <location filename="../application/displaycontent.cpp" line="960"/>
-        <location filename="../application/displaycontent.cpp" line="1768"/>
-        <location filename="../application/displaycontent.cpp" line="1872"/>
+        <location filename="../application/displaycontent.cpp" line="966"/>
+        <location filename="../application/displaycontent.cpp" line="1780"/>
+        <location filename="../application/displaycontent.cpp" line="1893"/>
         <location filename="../application/logexportthread.cpp" line="1291"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="546"/>
@@ -512,12 +529,12 @@
         <location filename="../application/displaycontent.cpp" line="314"/>
         <location filename="../application/displaycontent.cpp" line="473"/>
         <location filename="../application/displaycontent.cpp" line="609"/>
-        <location filename="../application/displaycontent.cpp" line="961"/>
-        <location filename="../application/displaycontent.cpp" line="1769"/>
-        <location filename="../application/displaycontent.cpp" line="1802"/>
-        <location filename="../application/displaycontent.cpp" line="1873"/>
-        <location filename="../application/displaycontent.cpp" line="1904"/>
-        <location filename="../application/displaycontent.cpp" line="1938"/>
+        <location filename="../application/displaycontent.cpp" line="967"/>
+        <location filename="../application/displaycontent.cpp" line="1781"/>
+        <location filename="../application/displaycontent.cpp" line="1817"/>
+        <location filename="../application/displaycontent.cpp" line="1894"/>
+        <location filename="../application/displaycontent.cpp" line="1927"/>
+        <location filename="../application/displaycontent.cpp" line="1965"/>
         <location filename="../application/logexportthread.cpp" line="1292"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="547"/>
@@ -534,7 +551,7 @@
 =======
         <location filename="../application/displaycontent.cpp" line="315"/>
         <location filename="../application/displaycontent.cpp" line="471"/>
-        <location filename="../application/displaycontent.cpp" line="962"/>
+        <location filename="../application/displaycontent.cpp" line="968"/>
         <location filename="../application/logexportthread.cpp" line="1293"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="548"/>
@@ -549,7 +566,7 @@
         <location filename="../application/logexportthread.cpp" line="1457"/>
 =======
         <location filename="../application/displaycontent.cpp" line="316"/>
-        <location filename="../application/displaycontent.cpp" line="963"/>
+        <location filename="../application/displaycontent.cpp" line="969"/>
         <location filename="../application/logexportthread.cpp" line="1294"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="549"/>
@@ -567,37 +584,53 @@
     </message>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1653"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1770"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="1782"/>
+>>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
         <source>Action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1684"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1801"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="1816"/>
+>>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1784"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1901"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="1924"/>
+>>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
         <source>Event Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1785"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1902"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="1925"/>
+>>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
         <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
@@ -650,10 +683,14 @@
     <name>Tbble</name>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1786"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1903"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="1926"/>
+>>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
         <source>Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -667,46 +704,46 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="186"/>
         <location filename="../application/loglistview.cpp" line="187"/>
+        <location filename="../application/loglistview.cpp" line="188"/>
         <source>Kernel Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="211"/>
-        <location filename="../application/loglistview.cpp" line="212"/>
-        <location filename="../application/loglistview.cpp" line="218"/>
-        <location filename="../application/loglistview.cpp" line="219"/>
+        <location filename="../application/loglistview.cpp" line="213"/>
+        <location filename="../application/loglistview.cpp" line="214"/>
+        <location filename="../application/loglistview.cpp" line="221"/>
+        <location filename="../application/loglistview.cpp" line="222"/>
         <source>Boot Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="230"/>
-        <location filename="../application/loglistview.cpp" line="231"/>
+        <location filename="../application/loglistview.cpp" line="234"/>
+        <location filename="../application/loglistview.cpp" line="235"/>
         <source>dpkg Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="247"/>
-        <location filename="../application/loglistview.cpp" line="248"/>
+        <location filename="../application/loglistview.cpp" line="252"/>
+        <location filename="../application/loglistview.cpp" line="253"/>
         <source>Kwin Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="254"/>
-        <location filename="../application/loglistview.cpp" line="255"/>
+        <location filename="../application/loglistview.cpp" line="260"/>
+        <location filename="../application/loglistview.cpp" line="261"/>
         <source>Xorg Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="264"/>
-        <location filename="../application/loglistview.cpp" line="266"/>
+        <location filename="../application/loglistview.cpp" line="271"/>
+        <location filename="../application/loglistview.cpp" line="273"/>
         <source>Application Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="275"/>
-        <location filename="../application/loglistview.cpp" line="278"/>
+        <location filename="../application/loglistview.cpp" line="283"/>
+        <location filename="../application/loglistview.cpp" line="286"/>
         <source>Boot-Shutdown Event</source>
         <translation type="unfinished"></translation>
     </message>

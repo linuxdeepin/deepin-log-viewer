@@ -155,6 +155,8 @@ void FilterContent::initUI()
     lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
+    cbx_lv->setObjectName("level_combox");
+
     cbx_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
     // cbx_lv->setMaximumWidth(208);
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
@@ -176,6 +178,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
     cbx_app = new LogCombox(this);
+    cbx_app->setObjectName("app_combox");
     cbx_app->setMinimumSize(QSize(180, BUTTON_HEIGHT_MIN));
     hLayout_app->addWidget(appTxt);
     hLayout_app->addWidget(cbx_app, 1);
@@ -186,6 +189,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_status = new QHBoxLayout;
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
     cbx_status = new LogCombox(this);
+    cbx_status->setObjectName("status_combox");
     cbx_status->setMinimumWidth(120);
     cbx_status->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
@@ -199,6 +203,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_type = new QHBoxLayout;
     typeTxt = new DLabel(DApplication::translate("Label", "Event Type:"), this);
     typeCbx = new LogCombox(this);
+    cbx_status->setObjectName("event_type_combox");
     typeCbx->setMinimumWidth(120);
     typeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
@@ -237,6 +242,7 @@ void FilterContent::initUI()
     m_lastWeekBtn->installEventFilter(this);
     m_lastMonthBtn->installEventFilter(this);
     m_threeMonthBtn->installEventFilter(this);
+    cbx_lv->setAccessibleName("level_combox");
 }
 
 void FilterContent::initConnections()
