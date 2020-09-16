@@ -15,7 +15,7 @@
 #include <QTreeView>
 #include <QVBoxLayout>
 #include "structdef.h"
-
+#include <QPainterPath>
 DWIDGET_USE_NAMESPACE
 
 #define LABEL_MIN_WIDTH 120

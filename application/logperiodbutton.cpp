@@ -30,7 +30,7 @@
 #include <QPen>
 #include <QDebug>
 #include <QStylePainter>
-
+#include <QPainterPath>
 
 DWIDGET_USE_NAMESPACE
 
