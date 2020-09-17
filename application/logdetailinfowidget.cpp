@@ -14,6 +14,8 @@
 #include <QPainter>
 #include <QTreeView>
 #include <QVBoxLayout>
+#include <QPainterPath>
+
 #include "structdef.h"
 
 DWIDGET_USE_NAMESPACE
@@ -220,6 +222,16 @@ void logDetailInfoWidget::initUI()
     v->setSpacing(4);
 
     this->setLayout(v);
+    m_daemonName->setAccessibleName("daemon_label");
+    m_level->setAccessibleName("level_label");
+    m_dateTime->setAccessibleName("dateTime_label");
+    m_userName->setAccessibleName("user_label");
+    m_pid->setAccessibleName("pid_label");
+    m_status->setAccessibleName("status_label");
+    m_action->setAccessibleName("action_label");
+    m_name->setAccessibleName("uname_label");
+    m_event->setAccessibleName("event_label");
+    m_textBrowser->setAccessibleName("msg_textBrowser");
 }
 
 void logDetailInfoWidget::setTextCustomSize(QWidget *w)

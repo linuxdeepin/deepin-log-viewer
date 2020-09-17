@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPainterPath>
 
 #include <DApplication>
 #include <DApplicationHelper>

@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDebug>
+#include <QAbstractButton>
 ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     : DDialog(parent)
 {
@@ -32,6 +33,7 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     pVLayout->addLayout(pVLayouttxt);
 
     m_pExportProgressBar = new DProgressBar(this);
+    m_pExportProgressBar->setAccessibleName("export_progressbar");
     m_pExportProgressBar->setTextVisible(false);
     m_pExportProgressBar->setMaximumHeight(8);
     m_pExportProgressBar->setRange(0, 100);
@@ -42,6 +44,7 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     addContent(pWidget);
 
     addButton(DApplication::translate("ExportDlg", "Cancel"), false, DDialog::ButtonNormal);
+    getButton(0)->setAccessibleName("export_cancel_btn");
     // setOnButtonClickedClose(true);
     setModal(true);
     qDebug() << "this->height()" << this->geometry().height();
