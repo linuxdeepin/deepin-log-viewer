@@ -37,19 +37,19 @@
 DWIDGET_USE_NAMESPACE
 //using namespace DCC_NAMESPACE;
 
-SET_FORM_ACCESSIBLE(DisplayContent, "DisplayContent")
-SET_FORM_ACCESSIBLE(ExportProgressDlg, "ExportProgressDlg")
-SET_FORM_ACCESSIBLE(FilterContent, "FilterContent")
-SET_FORM_ACCESSIBLE(LogCollectorMain, "LogCollectorMain")
-SET_FORM_ACCESSIBLE(LogCombox, m_w->objectName())
-SET_FORM_ACCESSIBLE(logDetailInfoWidget, "logDetailInfoWidget")
-SET_BUTTON_ACCESSIBLE(LogIconButton, "LogIconButton")
-SET_FORM_ACCESSIBLE(LogListView, "LogListView")
-SET_BUTTON_ACCESSIBLE(LogNormalButton, "LogNormalButton")
-SET_BUTTON_ACCESSIBLE(LogPeriodButton, "LogPeriodButton")
-SET_FORM_ACCESSIBLE(LogSpinnerWidget, "LogSpinnerWidget")
-SET_FORM_ACCESSIBLE(LogTreeView, "LogTreeView")
-SET_FORM_ACCESSIBLE(LogViewHeaderView, "LogViewHeaderView")
+//SET_FORM_ACCESSIBLE(DisplayContent, "DisplayContent")
+//SET_FORM_ACCESSIBLE(ExportProgressDlg, "ExportProgressDlg")
+//SET_FORM_ACCESSIBLE(FilterContent, "FilterContent")
+//SET_FORM_ACCESSIBLE(LogCollectorMain, "LogCollectorMain")
+//SET_FORM_ACCESSIBLE(LogCombox, m_w->objectName())
+//SET_FORM_ACCESSIBLE(logDetailInfoWidget, "logDetailInfoWidget")
+//SET_BUTTON_ACCESSIBLE(LogIconButton, "LogIconButton")
+//SET_FORM_ACCESSIBLE(LogListView, "LogListView")
+//SET_BUTTON_ACCESSIBLE(LogNormalButton, "LogNormalButton")
+//SET_BUTTON_ACCESSIBLE(LogPeriodButton, "LogPeriodButton")
+//SET_FORM_ACCESSIBLE(LogSpinnerWidget, "LogSpinnerWidget")
+//SET_FORM_ACCESSIBLE(LogTreeView, "LogTreeView")
+//SET_FORM_ACCESSIBLE(LogViewHeaderView, "LogViewHeaderView")
 
 // Qt控件
 SET_FORM_ACCESSIBLE(QFrame, m_w->objectName().isEmpty() ? "frame" : m_w->objectName())
@@ -61,6 +61,7 @@ SET_FORM_ACCESSIBLE(QMenu, "qmenu")
 
 // Dtk控件
 SET_FORM_ACCESSIBLE(DFrame, m_w->objectName().isEmpty() ? "frame" : m_w->objectName())
+SET_FORM_ACCESSIBLE(DComboBox, m_w->objectName().isEmpty() ? "combox" : m_w->objectName())
 SET_FORM_ACCESSIBLE(DWidget, m_w->objectName().isEmpty() ? "widget" : m_w->objectName())
 SET_FORM_ACCESSIBLE(DBackgroundGroup, m_w->objectName().isEmpty() ? "dbackgroundgroup" : m_w->objectName())
 SET_BUTTON_ACCESSIBLE(DSwitchButton, m_w->text().isEmpty() ? "switchbutton" : m_w->text())
@@ -80,19 +81,19 @@ QAccessibleInterface *accessibleFactory(const QString &classname, QObject *objec
 {
     QAccessibleInterface *interface = nullptr;
     // 应用主窗口
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), DisplayContent);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), ExportProgressDlg);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), FilterContent);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogCollectorMain);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogCombox);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), logDetailInfoWidget);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogListView);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogIconButton);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogPeriodButton);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogSpinnerWidget);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogTreeView);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogViewHeaderView);
-    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogNormalButton);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), DisplayContent);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), ExportProgressDlg);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), FilterContent);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogCollectorMain);
+    //  USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogCombox);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), logDetailInfoWidget);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogListView);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogIconButton);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogPeriodButton);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogSpinnerWidget);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogTreeView);
+//   USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogViewHeaderView);
+//    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogNormalButton);
 
     //  Qt 控件
     USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), QFrame);
@@ -105,6 +106,8 @@ QAccessibleInterface *accessibleFactory(const QString &classname, QObject *objec
     //  dtk 控件
     USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), DFrame);
     USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), DWidget);
+    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), DComboBox);
+
     USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), DBackgroundGroup);
     USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), DSwitchButton);
     USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), DFloatingButton);

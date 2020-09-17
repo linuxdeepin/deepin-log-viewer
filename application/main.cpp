@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
     LogApplicationHelper::instance();
-    // QAccessible::installFactory(accessibleFactory);
+    QAccessible::installFactory(accessibleFactory);
 
     LogCollectorMain w;
     a.setMainWindow(&w);

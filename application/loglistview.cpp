@@ -43,6 +43,7 @@
 #include <QDir>
 #include <QMenu>
 #include <QShortcut>
+#include <QAbstractButton>
 #define ITEM_HEIGHT 40
 #define ITEM_WIDTH 108
 
@@ -179,7 +180,7 @@ void LogListView::initUI()
         item->setData(JOUR_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleDescription("System Log");
+        item->setAccessibleText("System Log");
         m_pModel->appendRow(item);
     }
 
@@ -510,7 +511,9 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             dialog->setMessage(/*"清除日志内容"*/DApplication::translate("Action", "Are you sure you want to clear the log?"));
             dialog->addButton(QString(/*tr("取消")*/DApplication::translate("Action", "Cancel")), false, DDialog::ButtonNormal);
             dialog->addButton(QString(/*tr("确定")*/DApplication::translate("Action", "Confirm")), true, DDialog::ButtonRecommend);
-
+            dialog->getButton(0)->setAccessibleName("clear_confirm_btn");
+            dialog->getButton(1)->setAccessibleName("clear_cancel_btn");
+            dialog->setAccessibleName("clear_log_dialog");
             int Ok = dialog->exec();
             if (Ok == DDialog::Accepted) {
                 truncateFile(path);

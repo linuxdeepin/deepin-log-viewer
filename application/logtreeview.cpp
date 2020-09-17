@@ -42,7 +42,7 @@
 #include <private/qguiapplication_p.h>
 #include <qpa/qplatformtheme.h>
 #include <QTouchEvent>
-
+#include <QPainterPath>
 DWIDGET_USE_NAMESPACE
 
 LogTreeView::LogTreeView(QWidget *parent)
