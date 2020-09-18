@@ -276,14 +276,20 @@ void JournalBootWork::doWork()
         if (r < 0)
             logMsg.hostName = "";
         else {
-            logMsg.hostName = getReplaceColorStr(d).split("=").value(1);
+            QStringList strList =    getReplaceColorStr(d).split("=");
+            strList.removeFirst();
+            strList.join("=");
+            logMsg.hostName = strList.join("=");
         }
 
         r = sd_journal_get_data(j, "_PID", reinterpret_cast<const void **>(&d), &l);
         if (r < 0)
             logMsg.daemonId = "";
         else {
-            logMsg.daemonId = getReplaceColorStr(d).split("=").value(1);
+            QStringList strList =    getReplaceColorStr(d).split("=");
+            strList.removeFirst();
+            strList.join("=");
+            logMsg.daemonId = strList.join("=");
         }
 
         r = sd_journal_get_data(j, "_COMM", reinterpret_cast<const void **>(&d), &l);
@@ -291,7 +297,10 @@ void JournalBootWork::doWork()
             logMsg.daemonName = "unknown";
             qDebug() << logMsg.daemonId << "error code" << r;
         } else {
-            logMsg.daemonName = getReplaceColorStr(d).split("=").value(1);
+            QStringList strList =    getReplaceColorStr(d).split("=");
+            strList.removeFirst();
+            strList.join("=");
+            logMsg.daemonName = strList.join("=");
         }
 
 
@@ -299,7 +308,10 @@ void JournalBootWork::doWork()
         if (r < 0) {
             logMsg.msg = "";
         } else {
-            logMsg.msg = getReplaceColorStr(d).split("=").value(1);
+            QStringList strList =    getReplaceColorStr(d).split("=");
+            strList.removeFirst();
+            strList.join("=");
+            logMsg.msg = strList.join("=");
         }
 
         r = sd_journal_get_data(j, "PRIORITY", reinterpret_cast<const void **>(&d), &l);

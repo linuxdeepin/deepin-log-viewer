@@ -390,7 +390,7 @@ void LogTreeView::mouseMoveEvent(QMouseEvent *event)
             horizontalScrollBar()->setValue(static_cast<int>(horizontalScrollBar()->value() - horiDelta)) ;
         }
 
-        if (qAbs(vertDelta) > touchmindistance && !(qAbs(vertDelta) < 40 && qAbs(vertDelta) > 35 && m_lastTouchTime.msecsTo(QTime::currentTime()) < 100)) {
+        if (qAbs(vertDelta) > touchmindistance && !(qAbs(vertDelta) < header()->height() + 2 && qAbs(vertDelta) > header()->height() - 2 && m_lastTouchTime.msecsTo(QTime::currentTime()) < 100)) {
             //       qDebug()  << "verticalScrollBar()->value()" << verticalScrollBar()->value() << "vertDelta" << vertDelta;
             double svalue = 1;
             if (vertDelta > 0) {
