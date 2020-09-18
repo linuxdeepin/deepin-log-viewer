@@ -261,7 +261,7 @@
         <location filename="../application/displaycontent.cpp" line="140"/>
         <location filename="../application/displaycontent.cpp" line="151"/>
         <location filename="../application/displaycontent.cpp" line="161"/>
-        <location filename="../application/journalwork.cpp" line="362"/>
+        <location filename="../application/journalwork.cpp" line="375"/>
         <location filename="../application/logauththread.cpp" line="51"/>
         <location filename="../application/logauththread.cpp" line="65"/>
         <location filename="../application/logexportthread.cpp" line="2289"/>
@@ -273,7 +273,7 @@
         <location filename="../application/displaycontent.cpp" line="141"/>
         <location filename="../application/displaycontent.cpp" line="154"/>
         <location filename="../application/displaycontent.cpp" line="159"/>
-        <location filename="../application/journalwork.cpp" line="365"/>
+        <location filename="../application/journalwork.cpp" line="378"/>
         <location filename="../application/logauththread.cpp" line="47"/>
         <location filename="../application/logauththread.cpp" line="48"/>
         <location filename="../application/logauththread.cpp" line="49"/>
@@ -287,7 +287,7 @@
         <location filename="../application/displaycontent.cpp" line="142"/>
         <location filename="../application/displaycontent.cpp" line="153"/>
         <location filename="../application/displaycontent.cpp" line="160"/>
-        <location filename="../application/journalwork.cpp" line="364"/>
+        <location filename="../application/journalwork.cpp" line="377"/>
         <location filename="../application/logauththread.cpp" line="50"/>
         <location filename="../application/logauththread.cpp" line="67"/>
         <location filename="../application/logexportthread.cpp" line="2291"/>
@@ -299,7 +299,7 @@
         <location filename="../application/displaycontent.cpp" line="143"/>
         <location filename="../application/displaycontent.cpp" line="150"/>
         <location filename="../application/displaycontent.cpp" line="162"/>
-        <location filename="../application/journalwork.cpp" line="361"/>
+        <location filename="../application/journalwork.cpp" line="374"/>
         <location filename="../application/logauththread.cpp" line="52"/>
         <location filename="../application/logauththread.cpp" line="64"/>
         <location filename="../application/logexportthread.cpp" line="2288"/>
@@ -309,7 +309,7 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="147"/>
-        <location filename="../application/journalwork.cpp" line="358"/>
+        <location filename="../application/journalwork.cpp" line="371"/>
         <location filename="../application/logauththread.cpp" line="61"/>
         <location filename="../application/logexportthread.cpp" line="2285"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
@@ -318,7 +318,7 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="148"/>
-        <location filename="../application/journalwork.cpp" line="359"/>
+        <location filename="../application/journalwork.cpp" line="372"/>
         <location filename="../application/logauththread.cpp" line="62"/>
         <location filename="../application/logexportthread.cpp" line="2286"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
@@ -328,7 +328,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="149"/>
         <location filename="../application/displaycontent.cpp" line="163"/>
-        <location filename="../application/journalwork.cpp" line="360"/>
+        <location filename="../application/journalwork.cpp" line="373"/>
         <location filename="../application/logauththread.cpp" line="53"/>
         <location filename="../application/logauththread.cpp" line="63"/>
         <location filename="../application/logexportthread.cpp" line="2287"/>
@@ -338,7 +338,7 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="152"/>
-        <location filename="../application/journalwork.cpp" line="363"/>
+        <location filename="../application/journalwork.cpp" line="376"/>
         <location filename="../application/logauththread.cpp" line="66"/>
         <location filename="../application/logexportthread.cpp" line="2290"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>

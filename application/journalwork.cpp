@@ -220,7 +220,7 @@ void journalWork::doWork()
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
             strList.join("=");
-            logMsg.hostName = strList.join("=");
+            logMsg.daemonId = strList.join("=");
         }
 
         r = sd_journal_get_data(j, "_COMM", reinterpret_cast<const void **>(&d), &l);
@@ -231,7 +231,7 @@ void journalWork::doWork()
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
             strList.join("=");
-            logMsg.hostName = strList.join("=");
+            logMsg.daemonName = strList.join("=");
         }
 
 
@@ -242,7 +242,7 @@ void journalWork::doWork()
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
             strList.join("=");
-            logMsg.hostName = strList.join("=");
+            logMsg.msg = strList.join("=");
         }
 
         r = sd_journal_get_data(j, "PRIORITY", reinterpret_cast<const void **>(&d), &l);
