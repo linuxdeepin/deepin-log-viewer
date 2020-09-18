@@ -41,7 +41,7 @@ DWIDGET_USE_NAMESPACE
 //SET_FORM_ACCESSIBLE(ExportProgressDlg, "ExportProgressDlg")
 //SET_FORM_ACCESSIBLE(FilterContent, "FilterContent")
 //SET_FORM_ACCESSIBLE(LogCollectorMain, "LogCollectorMain")
-//SET_FORM_ACCESSIBLE(LogCombox, m_w->objectName())
+//SET_BUTTON_ACCESSIBLE(LogCombox, "LogCombox")
 //SET_FORM_ACCESSIBLE(logDetailInfoWidget, "logDetailInfoWidget")
 //SET_BUTTON_ACCESSIBLE(LogIconButton, "LogIconButton")
 //SET_FORM_ACCESSIBLE(LogListView, "LogListView")
@@ -85,7 +85,7 @@ QAccessibleInterface *accessibleFactory(const QString &classname, QObject *objec
 //    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), ExportProgressDlg);
 //    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), FilterContent);
 //    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogCollectorMain);
-    //  USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogCombox);
+    // USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogCombox);
 //    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), logDetailInfoWidget);
 //    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogListView);
 //    USE_ACCESSIBLE(QString(classname).replace("dccV20::", ""), LogIconButton);

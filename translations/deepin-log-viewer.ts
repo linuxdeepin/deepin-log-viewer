@@ -4,32 +4,32 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="470"/>
+        <location filename="../application/loglistview.cpp" line="471"/>
         <source>Display in file manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="471"/>
+        <location filename="../application/loglistview.cpp" line="472"/>
         <source>Clear log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="472"/>
+        <location filename="../application/loglistview.cpp" line="473"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="510"/>
+        <location filename="../application/loglistview.cpp" line="511"/>
         <source>Are you sure you want to clear the log?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="511"/>
+        <location filename="../application/loglistview.cpp" line="512"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="512"/>
+        <location filename="../application/loglistview.cpp" line="513"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
@@ -39,52 +39,52 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="77"/>
         <location filename="../application/filtercontent.cpp" line="78"/>
-        <location filename="../application/filtercontent.cpp" line="546"/>
+        <location filename="../application/filtercontent.cpp" line="549"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="92"/>
         <location filename="../application/filtercontent.cpp" line="93"/>
-        <location filename="../application/filtercontent.cpp" line="94"/>
-        <location filename="../application/filtercontent.cpp" line="538"/>
-        <location filename="../application/filtercontent.cpp" line="547"/>
+        <location filename="../application/filtercontent.cpp" line="541"/>
+        <location filename="../application/filtercontent.cpp" line="550"/>
         <source>Today</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="101"/>
-        <location filename="../application/filtercontent.cpp" line="103"/>
-        <location filename="../application/filtercontent.cpp" line="539"/>
-        <location filename="../application/filtercontent.cpp" line="548"/>
+        <location filename="../application/filtercontent.cpp" line="100"/>
+        <location filename="../application/filtercontent.cpp" line="102"/>
+        <location filename="../application/filtercontent.cpp" line="542"/>
+        <location filename="../application/filtercontent.cpp" line="551"/>
         <source>3 days</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="110"/>
-        <location filename="../application/filtercontent.cpp" line="112"/>
-        <location filename="../application/filtercontent.cpp" line="540"/>
-        <location filename="../application/filtercontent.cpp" line="549"/>
+        <location filename="../application/filtercontent.cpp" line="109"/>
+        <location filename="../application/filtercontent.cpp" line="111"/>
+        <location filename="../application/filtercontent.cpp" line="543"/>
+        <location filename="../application/filtercontent.cpp" line="552"/>
         <source>1 week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="119"/>
-        <location filename="../application/filtercontent.cpp" line="121"/>
-        <location filename="../application/filtercontent.cpp" line="541"/>
-        <location filename="../application/filtercontent.cpp" line="550"/>
+        <location filename="../application/filtercontent.cpp" line="118"/>
+        <location filename="../application/filtercontent.cpp" line="120"/>
+        <location filename="../application/filtercontent.cpp" line="544"/>
+        <location filename="../application/filtercontent.cpp" line="553"/>
         <source>1 month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="127"/>
-        <location filename="../application/filtercontent.cpp" line="129"/>
-        <location filename="../application/filtercontent.cpp" line="542"/>
-        <location filename="../application/filtercontent.cpp" line="551"/>
+        <location filename="../application/filtercontent.cpp" line="126"/>
+        <location filename="../application/filtercontent.cpp" line="128"/>
+        <location filename="../application/filtercontent.cpp" line="545"/>
+        <location filename="../application/filtercontent.cpp" line="554"/>
         <source>3 months</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="219"/>
+        <location filename="../application/filtercontent.cpp" line="214"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
@@ -92,65 +92,65 @@
 <context>
     <name>ComboBox</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="163"/>
-        <location filename="../application/filtercontent.cpp" line="196"/>
-        <location filename="../application/filtercontent.cpp" line="210"/>
+        <location filename="../application/filtercontent.cpp" line="160"/>
+        <location filename="../application/filtercontent.cpp" line="192"/>
+        <location filename="../application/filtercontent.cpp" line="205"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="164"/>
+        <location filename="../application/filtercontent.cpp" line="161"/>
         <source>Emergency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="165"/>
+        <location filename="../application/filtercontent.cpp" line="162"/>
         <source>Alert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="166"/>
+        <location filename="../application/filtercontent.cpp" line="163"/>
         <source>Critical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="167"/>
+        <location filename="../application/filtercontent.cpp" line="164"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="168"/>
+        <location filename="../application/filtercontent.cpp" line="165"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="169"/>
+        <location filename="../application/filtercontent.cpp" line="166"/>
         <source>Notice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="170"/>
-        <location filename="../application/filtercontent.cpp" line="172"/>
+        <location filename="../application/filtercontent.cpp" line="167"/>
+        <location filename="../application/filtercontent.cpp" line="169"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="171"/>
+        <location filename="../application/filtercontent.cpp" line="168"/>
         <source>Debug</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="211"/>
+        <location filename="../application/filtercontent.cpp" line="206"/>
         <source>Login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="212"/>
+        <location filename="../application/filtercontent.cpp" line="207"/>
         <source>Boot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="213"/>
+        <location filename="../application/filtercontent.cpp" line="208"/>
         <source>Shutdown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -160,6 +160,7 @@
     <message>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1015"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1155"/>
@@ -167,6 +168,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1167"/>
 >>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
+=======
+        <location filename="../application/displaycontent.cpp" line="1169"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -174,12 +178,12 @@
 <context>
     <name>ExportDlg</name>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="22"/>
+        <location filename="../application/exportprogressdlg.cpp" line="23"/>
         <source>Exporting...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="44"/>
+        <location filename="../application/exportprogressdlg.cpp" line="46"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -189,6 +193,7 @@
     <message>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1891"/>
 =======
         <location filename="../application/displaycontent.cpp" line="2008"/>
@@ -196,6 +201,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2036"/>
 >>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
+=======
+        <location filename="../application/displaycontent.cpp" line="2038"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <source>Export successful</source>
         <translation type="unfinished"></translation>
     </message>
@@ -205,6 +213,7 @@
     <message>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1013"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1153"/>
@@ -212,6 +221,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1165"/>
 >>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
+=======
+        <location filename="../application/displaycontent.cpp" line="1167"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <source>Export File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -220,29 +232,29 @@
     <name>Label</name>
     <message>
         <location filename="../application/filtercontent.cpp" line="73"/>
-        <location filename="../application/filtercontent.cpp" line="536"/>
-        <location filename="../application/filtercontent.cpp" line="545"/>
+        <location filename="../application/filtercontent.cpp" line="539"/>
+        <location filename="../application/filtercontent.cpp" line="548"/>
         <source>Period:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="156"/>
+        <location filename="../application/filtercontent.cpp" line="155"/>
         <source>Level:  </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="180"/>
+        <location filename="../application/filtercontent.cpp" line="177"/>
         <source>Application list:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="191"/>
+        <location filename="../application/filtercontent.cpp" line="188"/>
         <location filename="../application/logdetailinfowidget.cpp" line="141"/>
         <source>Status:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="205"/>
+        <location filename="../application/filtercontent.cpp" line="201"/>
         <location filename="../application/logdetailinfowidget.cpp" line="146"/>
         <source>Event Type:</source>
         <translation type="unfinished"></translation>
@@ -268,17 +280,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="421"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="431"/>
         <source>Boot record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="423"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="433"/>
         <source>Shutdown record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="426"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="436"/>
         <source>Login record</source>
         <translation type="unfinished"></translation>
     </message>
@@ -286,8 +298,8 @@
 <context>
     <name>Level</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="147"/>
-        <location filename="../application/displaycontent.cpp" line="158"/>
+        <location filename="../application/displaycontent.cpp" line="148"/>
+        <location filename="../application/displaycontent.cpp" line="159"/>
         <location filename="../application/journalbootwork.cpp" line="414"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="364"/>
@@ -301,8 +313,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="148"/>
-        <location filename="../application/displaycontent.cpp" line="161"/>
+        <location filename="../application/displaycontent.cpp" line="149"/>
+        <location filename="../application/displaycontent.cpp" line="162"/>
         <location filename="../application/journalbootwork.cpp" line="417"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="367"/>
@@ -316,8 +328,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="149"/>
-        <location filename="../application/displaycontent.cpp" line="160"/>
+        <location filename="../application/displaycontent.cpp" line="150"/>
+        <location filename="../application/displaycontent.cpp" line="161"/>
         <location filename="../application/journalbootwork.cpp" line="416"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="366"/>
@@ -331,8 +343,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="150"/>
-        <location filename="../application/displaycontent.cpp" line="157"/>
+        <location filename="../application/displaycontent.cpp" line="151"/>
+        <location filename="../application/displaycontent.cpp" line="158"/>
         <location filename="../application/journalbootwork.cpp" line="413"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="363"/>
@@ -346,7 +358,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="154"/>
+        <location filename="../application/displaycontent.cpp" line="155"/>
         <location filename="../application/journalbootwork.cpp" line="410"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="360"/>
@@ -360,7 +372,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="155"/>
+        <location filename="../application/displaycontent.cpp" line="156"/>
         <location filename="../application/journalbootwork.cpp" line="411"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="361"/>
@@ -374,7 +386,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="156"/>
+        <location filename="../application/displaycontent.cpp" line="157"/>
         <location filename="../application/journalbootwork.cpp" line="412"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="362"/>
@@ -388,7 +400,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="159"/>
+        <location filename="../application/displaycontent.cpp" line="160"/>
         <location filename="../application/journalbootwork.cpp" line="415"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="365"/>
@@ -459,6 +471,7 @@
     <name>Table</name>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="302"/>
         <location filename="../application/displaycontent.cpp" line="515"/>
         <location filename="../application/displaycontent.cpp" line="815"/>
@@ -467,6 +480,11 @@
         <location filename="../application/displaycontent.cpp" line="311"/>
         <location filename="../application/displaycontent.cpp" line="606"/>
         <location filename="../application/displaycontent.cpp" line="964"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="313"/>
+        <location filename="../application/displaycontent.cpp" line="608"/>
+        <location filename="../application/displaycontent.cpp" line="966"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1288"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="543"/>
@@ -474,6 +492,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="303"/>
         <location filename="../application/displaycontent.cpp" line="410"/>
@@ -483,6 +502,11 @@
         <location filename="../application/displaycontent.cpp" line="312"/>
         <location filename="../application/displaycontent.cpp" line="472"/>
         <location filename="../application/displaycontent.cpp" line="965"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="314"/>
+        <location filename="../application/displaycontent.cpp" line="474"/>
+        <location filename="../application/displaycontent.cpp" line="967"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1289"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="544"/>
@@ -491,6 +515,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="304"/>
         <location filename="../application/displaycontent.cpp" line="408"/>
@@ -506,6 +531,14 @@
         <location filename="../application/displaycontent.cpp" line="966"/>
         <location filename="../application/displaycontent.cpp" line="1780"/>
         <location filename="../application/displaycontent.cpp" line="1893"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="315"/>
+        <location filename="../application/displaycontent.cpp" line="472"/>
+        <location filename="../application/displaycontent.cpp" line="609"/>
+        <location filename="../application/displaycontent.cpp" line="968"/>
+        <location filename="../application/displaycontent.cpp" line="1782"/>
+        <location filename="../application/displaycontent.cpp" line="1895"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1291"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="546"/>
@@ -514,6 +547,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="305"/>
         <location filename="../application/displaycontent.cpp" line="411"/>
@@ -535,6 +569,17 @@
         <location filename="../application/displaycontent.cpp" line="1894"/>
         <location filename="../application/displaycontent.cpp" line="1927"/>
         <location filename="../application/displaycontent.cpp" line="1965"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="316"/>
+        <location filename="../application/displaycontent.cpp" line="475"/>
+        <location filename="../application/displaycontent.cpp" line="611"/>
+        <location filename="../application/displaycontent.cpp" line="969"/>
+        <location filename="../application/displaycontent.cpp" line="1783"/>
+        <location filename="../application/displaycontent.cpp" line="1819"/>
+        <location filename="../application/displaycontent.cpp" line="1896"/>
+        <location filename="../application/displaycontent.cpp" line="1929"/>
+        <location filename="../application/displaycontent.cpp" line="1967"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1292"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="547"/>
@@ -544,6 +589,7 @@
     </message>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="306"/>
         <location filename="../application/displaycontent.cpp" line="409"/>
         <location filename="../application/displaycontent.cpp" line="819"/>
@@ -552,6 +598,11 @@
         <location filename="../application/displaycontent.cpp" line="315"/>
         <location filename="../application/displaycontent.cpp" line="471"/>
         <location filename="../application/displaycontent.cpp" line="968"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="317"/>
+        <location filename="../application/displaycontent.cpp" line="473"/>
+        <location filename="../application/displaycontent.cpp" line="970"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1293"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="548"/>
@@ -561,12 +612,17 @@
     </message>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="307"/>
         <location filename="../application/displaycontent.cpp" line="820"/>
         <location filename="../application/logexportthread.cpp" line="1457"/>
 =======
         <location filename="../application/displaycontent.cpp" line="316"/>
         <location filename="../application/displaycontent.cpp" line="969"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="318"/>
+        <location filename="../application/displaycontent.cpp" line="971"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1294"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="549"/>
@@ -575,14 +631,19 @@
     </message>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="517"/>
 =======
         <location filename="../application/displaycontent.cpp" line="608"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="610"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1653"/>
@@ -592,10 +653,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1782"/>
 >>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
+=======
+        <location filename="../application/displaycontent.cpp" line="1784"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <source>Action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1684"/>
@@ -605,10 +670,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1816"/>
 >>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
+=======
+        <location filename="../application/displaycontent.cpp" line="1818"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1784"/>
@@ -618,10 +687,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1924"/>
 >>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
+=======
+        <location filename="../application/displaycontent.cpp" line="1926"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <source>Event Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1785"/>
@@ -631,6 +704,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1925"/>
 >>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
+=======
+        <location filename="../application/displaycontent.cpp" line="1927"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
@@ -684,6 +760,7 @@
     <message>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1786"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1903"/>
@@ -691,6 +768,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1926"/>
 >>>>>>> 142ecfc... chore: 增加部分accessiblename,增加klu下环境变量
+=======
+        <location filename="../application/displaycontent.cpp" line="1928"/>
+>>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <source>Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -698,52 +778,52 @@
 <context>
     <name>Tree</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="177"/>
         <location filename="../application/loglistview.cpp" line="178"/>
+        <location filename="../application/loglistview.cpp" line="179"/>
         <source>System Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="187"/>
         <location filename="../application/loglistview.cpp" line="188"/>
+        <location filename="../application/loglistview.cpp" line="189"/>
         <source>Kernel Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="213"/>
         <location filename="../application/loglistview.cpp" line="214"/>
-        <location filename="../application/loglistview.cpp" line="221"/>
+        <location filename="../application/loglistview.cpp" line="215"/>
         <location filename="../application/loglistview.cpp" line="222"/>
+        <location filename="../application/loglistview.cpp" line="223"/>
         <source>Boot Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="234"/>
         <location filename="../application/loglistview.cpp" line="235"/>
+        <location filename="../application/loglistview.cpp" line="236"/>
         <source>dpkg Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="252"/>
         <location filename="../application/loglistview.cpp" line="253"/>
+        <location filename="../application/loglistview.cpp" line="254"/>
         <source>Kwin Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="260"/>
         <location filename="../application/loglistview.cpp" line="261"/>
+        <location filename="../application/loglistview.cpp" line="262"/>
         <source>Xorg Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="271"/>
-        <location filename="../application/loglistview.cpp" line="273"/>
+        <location filename="../application/loglistview.cpp" line="272"/>
+        <location filename="../application/loglistview.cpp" line="274"/>
         <source>Application Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="283"/>
-        <location filename="../application/loglistview.cpp" line="286"/>
+        <location filename="../application/loglistview.cpp" line="284"/>
+        <location filename="../application/loglistview.cpp" line="287"/>
         <source>Boot-Shutdown Event</source>
         <translation type="unfinished"></translation>
     </message>
