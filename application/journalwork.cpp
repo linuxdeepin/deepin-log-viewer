@@ -253,7 +253,7 @@ void journalWork::doWork()
 
         }
 
-        qWarning() << "logMsg.level" << "r:" << r << "d:" << d << "--------getReplaceColorStr(d):" << getReplaceColorStr(d) << "-----------logMsg.level:" << logMsg.level << "-------------logMsg.msg:" << logMsg.msg;
+        //     qWarning() << "logMsg.level" << "r:" << r << "d:" << d << "--------getReplaceColorStr(d):" << getReplaceColorStr(d) << "-----------logMsg.level:" << logMsg.level << "-------------logMsg.msg:" << logMsg.msg;
         cnt++;
         mutex.lock();
         logList.append(logMsg);
