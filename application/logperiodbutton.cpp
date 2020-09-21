@@ -50,6 +50,11 @@ void LogPeriodButton::setStandardSize(int iStahndardWidth)
     m_stahndardWidth = iStahndardWidth;
 }
 
+Qt::FocusReason LogPeriodButton::getFocusReason()
+{
+    return m_reson;
+}
+
 void LogPeriodButton::enterEvent(QEvent *e)
 {
     isEnter = true;
