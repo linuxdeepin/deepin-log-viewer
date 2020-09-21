@@ -24,6 +24,7 @@
 #include "lognormalbutton.h"
 #include "logapplicationhelper.h"
 #include "logperiodbutton.h"
+#include "loglistview.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -295,6 +296,12 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     //    va_list arg_ptr;//定义一个可变参数指针
     //    va_start(arg_ptr,needMove); //设置needMove为最后一个固定参数
     //    bool typecbx = va_arg(arg_ptr,bool); //设置第二个可变参数
+//    bool statushasFoucs = false;
+//    Qt::FocusReason statusComboxFocusReason;
+//    if (cbx_status->hasFocus()) {
+//        statusComboxFocusReason =   cbx_status->getFocusReason();
+//        statushasFoucs = true;
+//    }
     setUpdatesEnabled(false);
     lvTxt->setVisible(lvCbx);
     cbx_lv->setVisible(lvCbx);
@@ -303,18 +310,19 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     appTxt->setVisible(appListCbx);
     cbx_app->setVisible(appListCbx);
 
-    statusTxt->setVisible(statusCbx);
-    cbx_status->setVisible(statusCbx);
+
 
     typeTxt->setVisible(typecbx);  // add by Airy
     typeCbx->setVisible(typecbx);  // add by Airy
 
     periodLabel->setVisible(period);
+    //button的setVisible false会触发taborder到下一个可视控件,比如cbx_status,所以先设置button,再设置cbx_status可防止点击后时间筛选button后再切启动日志导致cbx_status自动进入tabfocus状态,但是这样会引起本窗口焦点重置,所以设置完后需要对loglist setfoucs
     for (int i = 0; i < 6; i++) {
         LogPeriodButton *pushBtn = static_cast<LogPeriodButton *>(m_btnGroup->button(i));
         pushBtn->setVisible(period);
     }
-
+    statusTxt->setVisible(statusCbx);
+    cbx_status->setVisible(statusCbx);
     if (needMove) {
         hLayout_period->addWidget(exportBtn);
         hLayout_all->removeWidget(exportBtn);
@@ -325,6 +333,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     }
     resizeWidth();
     setUpdatesEnabled(true);
+
     //    va_end(arg_ptr);  //清除可变参数指针
     cbx_lv->setObjectName("level_combox");
     cbx_lv->setAccessibleName("level_combox");
@@ -334,6 +343,10 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     cbx_status->setAccessibleName("status_combox");
     typeCbx->setObjectName("event_type_combox");
     typeCbx->setAccessibleName("event_type_combox");
+    // exportBtn->setFocus(Qt::MouseFocusReason);
+
+
+
 }
 
 void FilterContent::setSelection(FILTER_CONFIG iConifg)
@@ -615,11 +628,17 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_currentType = BOOT_KLU_TREE_DATA;
         this->setSelectorVisible(true, false, false, false, false);
     }
-    cbx_lv->setFocusReason(Qt::NoFocusReason);
-    cbx_app->setFocusReason(Qt::NoFocusReason);
-    cbx_status->setFocusReason(Qt::NoFocusReason);
-    typeCbx->setFocusReason(Qt::NoFocusReason);
+//    cbx_lv->setFocusReason(Qt::NoFocusReason);
+//    cbx_app->setFocusReason(Qt::NoFocusReason);
+//    cbx_status->setFocusReason(Qt::NoFocusReason);
+//    typeCbx->setFocusReason(Qt::NoFocusReason);
+    //  cbx_lv->setFocus(Qt::MouseFocusReason);
     updateDataState();
+    //必须需要,因为会丢失当前焦点顺序
+    LogListView *logList =  qobject_cast<LogListView *>(sender());
+    if (logList) {
+        logList->setFocus();
+    }
 
 }
 

@@ -39,47 +39,47 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="77"/>
         <location filename="../application/filtercontent.cpp" line="78"/>
-        <location filename="../application/filtercontent.cpp" line="549"/>
+        <location filename="../application/filtercontent.cpp" line="551"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="92"/>
         <location filename="../application/filtercontent.cpp" line="93"/>
-        <location filename="../application/filtercontent.cpp" line="541"/>
-        <location filename="../application/filtercontent.cpp" line="550"/>
+        <location filename="../application/filtercontent.cpp" line="543"/>
+        <location filename="../application/filtercontent.cpp" line="552"/>
         <source>Today</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="100"/>
         <location filename="../application/filtercontent.cpp" line="102"/>
-        <location filename="../application/filtercontent.cpp" line="542"/>
-        <location filename="../application/filtercontent.cpp" line="551"/>
+        <location filename="../application/filtercontent.cpp" line="544"/>
+        <location filename="../application/filtercontent.cpp" line="553"/>
         <source>3 days</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="109"/>
         <location filename="../application/filtercontent.cpp" line="111"/>
-        <location filename="../application/filtercontent.cpp" line="543"/>
-        <location filename="../application/filtercontent.cpp" line="552"/>
+        <location filename="../application/filtercontent.cpp" line="545"/>
+        <location filename="../application/filtercontent.cpp" line="554"/>
         <source>1 week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="118"/>
         <location filename="../application/filtercontent.cpp" line="120"/>
-        <location filename="../application/filtercontent.cpp" line="544"/>
-        <location filename="../application/filtercontent.cpp" line="553"/>
+        <location filename="../application/filtercontent.cpp" line="546"/>
+        <location filename="../application/filtercontent.cpp" line="555"/>
         <source>1 month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="126"/>
         <location filename="../application/filtercontent.cpp" line="128"/>
-        <location filename="../application/filtercontent.cpp" line="545"/>
-        <location filename="../application/filtercontent.cpp" line="554"/>
+        <location filename="../application/filtercontent.cpp" line="547"/>
+        <location filename="../application/filtercontent.cpp" line="556"/>
         <source>3 months</source>
         <translation type="unfinished"></translation>
     </message>
@@ -232,8 +232,8 @@
     <name>Label</name>
     <message>
         <location filename="../application/filtercontent.cpp" line="73"/>
-        <location filename="../application/filtercontent.cpp" line="539"/>
-        <location filename="../application/filtercontent.cpp" line="548"/>
+        <location filename="../application/filtercontent.cpp" line="541"/>
+        <location filename="../application/filtercontent.cpp" line="550"/>
         <source>Period:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -300,12 +300,17 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="148"/>
         <location filename="../application/displaycontent.cpp" line="159"/>
+<<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="414"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="364"/>
         <location filename="../application/logexportthread.cpp" line="2342"/>
 =======
         <location filename="../application/journalwork.cpp" line="366"/>
+=======
+        <location filename="../application/journalbootwork.cpp" line="426"/>
+        <location filename="../application/journalwork.cpp" line="378"/>
+>>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2122"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
@@ -315,12 +320,17 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="149"/>
         <location filename="../application/displaycontent.cpp" line="162"/>
+<<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="417"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="367"/>
         <location filename="../application/logexportthread.cpp" line="2345"/>
 =======
         <location filename="../application/journalwork.cpp" line="369"/>
+=======
+        <location filename="../application/journalbootwork.cpp" line="429"/>
+        <location filename="../application/journalwork.cpp" line="381"/>
+>>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2125"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
@@ -330,12 +340,17 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="150"/>
         <location filename="../application/displaycontent.cpp" line="161"/>
+<<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="416"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="366"/>
         <location filename="../application/logexportthread.cpp" line="2344"/>
 =======
         <location filename="../application/journalwork.cpp" line="368"/>
+=======
+        <location filename="../application/journalbootwork.cpp" line="428"/>
+        <location filename="../application/journalwork.cpp" line="380"/>
+>>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2124"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
@@ -345,12 +360,17 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="151"/>
         <location filename="../application/displaycontent.cpp" line="158"/>
+<<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="413"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="363"/>
         <location filename="../application/logexportthread.cpp" line="2341"/>
 =======
         <location filename="../application/journalwork.cpp" line="365"/>
+=======
+        <location filename="../application/journalbootwork.cpp" line="425"/>
+        <location filename="../application/journalwork.cpp" line="377"/>
+>>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2121"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
@@ -359,12 +379,17 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="155"/>
+<<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="410"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="360"/>
         <location filename="../application/logexportthread.cpp" line="2338"/>
 =======
         <location filename="../application/journalwork.cpp" line="362"/>
+=======
+        <location filename="../application/journalbootwork.cpp" line="422"/>
+        <location filename="../application/journalwork.cpp" line="374"/>
+>>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2118"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
@@ -373,12 +398,17 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="156"/>
+<<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="411"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="361"/>
         <location filename="../application/logexportthread.cpp" line="2339"/>
 =======
         <location filename="../application/journalwork.cpp" line="363"/>
+=======
+        <location filename="../application/journalbootwork.cpp" line="423"/>
+        <location filename="../application/journalwork.cpp" line="375"/>
+>>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2119"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
@@ -387,12 +417,17 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="157"/>
+<<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="412"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="362"/>
         <location filename="../application/logexportthread.cpp" line="2340"/>
 =======
         <location filename="../application/journalwork.cpp" line="364"/>
+=======
+        <location filename="../application/journalbootwork.cpp" line="424"/>
+        <location filename="../application/journalwork.cpp" line="376"/>
+>>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2120"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
@@ -401,12 +436,17 @@
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="160"/>
+<<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="415"/>
 <<<<<<< HEAD
         <location filename="../application/journalwork.cpp" line="365"/>
         <location filename="../application/logexportthread.cpp" line="2343"/>
 =======
         <location filename="../application/journalwork.cpp" line="367"/>
+=======
+        <location filename="../application/journalbootwork.cpp" line="427"/>
+        <location filename="../application/journalwork.cpp" line="379"/>
+>>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2123"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
