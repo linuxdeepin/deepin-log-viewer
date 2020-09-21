@@ -8,12 +8,17 @@
 LogCombox::LogCombox(QWidget *parent):
     DComboBox(parent)
 {
-
+    setFocusPolicy(Qt::TabFocus);
 }
 
 void LogCombox::setFocusReason(Qt::FocusReason iReson)
 {
     m_reson = iReson;
+}
+
+Qt::FocusReason LogCombox::getFocusReason()
+{
+    return m_reson;
 }
 /**
  * @brief LogCombox::paintEvent
@@ -23,36 +28,36 @@ void LogCombox::setFocusReason(Qt::FocusReason iReson)
 void LogCombox::paintEvent(QPaintEvent *e)
 {
     DComboBox::paintEvent(e);
-    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
-        DStylePainter painter(this);
-//    painter.setPen(palette().color(QPalette::Text));
-        DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
-//    style->drawControl()
-//    // draw the combobox frame, focusrect and selected etc.
-        QStyleOptionComboBox opt;
-        initStyleOption(&opt);
-        const  QStyleOptionComboBox *opt1 = &opt;
-//    painter.draw(QStyle::SE_ComboBoxFocusRect, opt);
+//    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
+//        DStylePainter painter(this);
+////    painter.setPen(palette().color(QPalette::Text));
+//        DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
+////    style->drawControl()
+////    // draw the combobox frame, focusrect and selected etc.
+//        QStyleOptionComboBox opt;
+//        initStyleOption(&opt);
+//        const  QStyleOptionComboBox *opt1 = &opt;
+////    painter.draw(QStyle::SE_ComboBoxFocusRect, opt);
 
-//    // draw the icon and text
-//    painter.drawControl(QStyle::CE_ComboBoxLabel, opt);
-        DStyleHelper dstyle(style);
-        int border_width = dstyle.pixelMetric(DStyle::PM_FocusBorderWidth, opt1, this);
-//        int border_space = style->pixelMetric(DStyle::PM_FocusFrameVMargin, opt1, this);
-//        int frame_radius = dstyle.pixelMetric(DStyle::PM_FrameRadius, opt1, this);
-        QColor color = dstyle.getColor(opt1, QPalette::Highlight);
-        // QRect borderRect = style->subElementRect(DStyle::SE_ComboBoxFocusRect, opt1, this);
+////    // draw the icon and text
+////    painter.drawControl(QStyle::CE_ComboBoxLabel, opt);
+//        DStyleHelper dstyle(style);
+//        int border_width = dstyle.pixelMetric(DStyle::PM_FocusBorderWidth, opt1, this);
+////        int border_space = style->pixelMetric(DStyle::PM_FocusFrameVMargin, opt1, this);
+////        int frame_radius = dstyle.pixelMetric(DStyle::PM_FrameRadius, opt1, this);
+//        QColor color = dstyle.getColor(opt1, QPalette::Highlight);
+//        // QRect borderRect = style->subElementRect(DStyle::SE_ComboBoxFocusRect, opt1, this);
 
-        painter.setPen(QPen(color, border_width, Qt::SolidLine));
-        painter.setBrush(Qt::NoBrush);
-        painter.setRenderHint(QPainter::Antialiasing);
+//        painter.setPen(QPen(color, border_width, Qt::SolidLine));
+//        painter.setBrush(Qt::NoBrush);
+//        painter.setRenderHint(QPainter::Antialiasing);
 
-        //.adjusted(1, 1, -1, -1)
+//        //.adjusted(1, 1, -1, -1)
 
-        //painter.drawRoundedRect(borderRect, frame_radius, frame_radius);
-        qDebug() << "tabcombox-------";
-        style->drawPrimitive(DStyle::PE_FrameFocusRect, opt1, & painter, this);
-    }
+//        //painter.drawRoundedRect(borderRect, frame_radius, frame_radius);
+//        qDebug() << "tabcombox-------";
+//        style->drawPrimitive(DStyle::PE_FrameFocusRect, opt1, & painter, this);
+//    }
 }
 /**
  * @brief LogCombox::keyPressEvent

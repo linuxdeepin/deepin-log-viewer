@@ -29,6 +29,7 @@ class LogPeriodButton : public Dtk::Widget::DPushButton
 public:
     LogPeriodButton(const QString text, QWidget *parent = nullptr);
     void setStandardSize(int iStahndardWidth);
+    Qt::FocusReason getFocusReason();
 protected:
     void enterEvent(QEvent *e)override;
     void leaveEvent(QEvent *e)override;
