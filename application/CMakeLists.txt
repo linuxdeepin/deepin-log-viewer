@@ -150,11 +150,12 @@ set (APP_CPP_FILES
      logcombox.cpp
      dbusmanager.cpp
      lognormalbutton.cpp
-     logsearchedit.cpp
      logapplication.cpp
      sharedmemorymanager.cpp
 
      common/collator.cpp
+     logsettings.cpp
+
     )
 set (APP_QRC_FILES
 assets/resources.qrc
