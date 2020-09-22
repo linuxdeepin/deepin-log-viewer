@@ -20,8 +20,9 @@
  */
 
 #include "logiconbutton.h"
-#include <QDebug>
 #include <QEvent>
+#include <QResizeEvent>
+#include <QDebug>
 #define ICON_SIZE 32
 LogIconButton::LogIconButton(QWidget *parent)
     : QPushButton(parent)
@@ -37,18 +38,17 @@ LogIconButton::LogIconButton(QString text, QWidget *parent)
     this->setFlat(true);
     this->setFocusPolicy(Qt::NoFocus);
     this->setIconSize(QSize(32, 32));
-
 }
-
+//修复button占高过大的问题
 /**
- * @brief LogIconButton::sizeHint 让此按钮高度与文字内容高度保持一致，防止放置此button的layout高度被撑高
+ * @brief LogIconButton::sizeHint
+ *  修复iconbutton因为图表过大把按钮撑大的问题,根据自体计算按钮高度
  * @return
  */
 QSize LogIconButton::sizeHint() const
 {
     int h = QFontMetrics(font()).height();
-    return QSize(this->width(), h);
-//    return  QPushButton::sizeHint();
+    return QSize(QPushButton::sizeHint().width(), h);
 }
 
 void LogIconButton::mousePressEvent(QMouseEvent *e)
@@ -64,17 +64,18 @@ bool LogIconButton::event(QEvent *e)
     return  false;
 }
 
+
+
+
 /**
- * @brief LogIconButton::resizeEvent 在此虚函数中重设icon的高度，使其与字体大小保持一致
+ * @brief LogIconButton::resizeEvent
+ * 修复iconbutton因为图表过大把按钮撑大的问题,根据自体计算按钮高度
  * @param e
  */
 void LogIconButton::resizeEvent(QResizeEvent *e)
 {
     Q_UNUSED(e)
     int h = QFontMetrics(font()).height();
-    resize(this->width(), h);
-
-//    qDebug() << "t" << this->height();
-    // QPushButton::resizeEvent(e);
+    resize(this->sizeHint().width(), h);
 
 }

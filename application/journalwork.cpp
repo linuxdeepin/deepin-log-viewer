@@ -73,6 +73,7 @@ void journalWork::stopWork()
 //    if (proc)
 //        proc->kill();
     //requestInterruption();
+    qDebug() << "stopWork";
     m_canRun = false;
     // deleteSd();
 }
@@ -132,6 +133,7 @@ void journalWork::doWork()
     }
 #if 1
     int r;
+
     sd_journal *j ;
     if ((!m_canRun)) {
         mutex.unlock();
@@ -170,6 +172,7 @@ void journalWork::doWork()
         return;
     }
     int cnt = 0;
+    qDebug() << "m_arg" << m_arg;
     SD_JOURNAL_FOREACH_BACKWARDS(j) {
         // if (isInterruptionRequested() || (!m_canRun)) {
         if ((!m_canRun)) {
@@ -198,8 +201,8 @@ void journalWork::doWork()
         //解锁返回字符串长度上限，默认是64k，写0为无限
         // sd_journal_set_data_threshold(j, 0);
         QString dt = getReplaceColorStr(d).split("=").value(1);
-        if (m_arg.size() == 2) {
-            if (t < static_cast<uint64_t>(m_arg.at(1).toLongLong()))
+        if (m_arg.size() == 3) {
+            if (t < static_cast<uint64_t>(m_arg.at(1).toLongLong()) || t > static_cast<uint64_t>(m_arg.at(2).toLongLong()))
                 continue;
         }
         logMsg.dateTime = getDateTimeFromStamp(dt);
@@ -208,14 +211,20 @@ void journalWork::doWork()
         if (r < 0)
             logMsg.hostName = "";
         else {
-            logMsg.hostName = getReplaceColorStr(d).split("=").value(1);
+            QStringList strList =    getReplaceColorStr(d).split("=");
+            strList.removeFirst();
+            strList.join("=");
+            logMsg.hostName = strList.join("=");
         }
 
         r = sd_journal_get_data(j, "_PID", reinterpret_cast<const void **>(&d), &l);
         if (r < 0)
             logMsg.daemonId = "";
         else {
-            logMsg.daemonId = getReplaceColorStr(d).split("=").value(1);
+            QStringList strList =    getReplaceColorStr(d).split("=");
+            strList.removeFirst();
+            strList.join("=");
+            logMsg.daemonId = strList.join("=");
         }
 
         r = sd_journal_get_data(j, "_COMM", reinterpret_cast<const void **>(&d), &l);
@@ -223,7 +232,10 @@ void journalWork::doWork()
             logMsg.daemonName = "unknown";
             qDebug() << logMsg.daemonId << "error code" << r;
         } else {
-            logMsg.daemonName = getReplaceColorStr(d).split("=").value(1);
+            QStringList strList =    getReplaceColorStr(d).split("=");
+            strList.removeFirst();
+            strList.join("=");
+            logMsg.daemonName = strList.join("=");
         }
 
 
@@ -231,7 +243,10 @@ void journalWork::doWork()
         if (r < 0) {
             logMsg.msg = "";
         } else {
-            logMsg.msg = getReplaceColorStr(d).split("=").value(1);
+            QStringList strList =    getReplaceColorStr(d).split("=");
+            strList.removeFirst();
+            strList.join("=");
+            logMsg.msg = strList.join("=");
         }
 
         r = sd_journal_get_data(j, "PRIORITY", reinterpret_cast<const void **>(&d), &l);
@@ -337,6 +352,7 @@ QString journalWork::getReplaceColorStr(const char *d)
     byteChar = Utils::replaceEmptyByteArray(byteChar);
     QString d_str = QString(byteChar);
     d_str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+    d_str.replace(QRegExp("\\002"), "");
     return  d_str;
 }
 

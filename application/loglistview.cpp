@@ -20,6 +20,7 @@
  */
 #include "loglistview.h"
 #include "logapplicationhelper.h"
+#include "dbusmanager.h"
 
 #include <DDesktopServices>
 #include <DDialog>
@@ -42,6 +43,7 @@
 #include <QDir>
 #include <QMenu>
 #include <QShortcut>
+#include <QAbstractButton>
 #define ITEM_HEIGHT 40
 #define ITEM_WIDTH 108
 
@@ -61,7 +63,7 @@ void LogListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     DStyledItemDelegate::paint(painter, option, index);
     // if (option.state & QStyle::State_HasFocus) {
     LogListView *parentView = qobject_cast<LogListView *>(this->parent());
-    if ((option.state & QStyle::State_HasFocus) && parentView && parentView->IsTabFocus()) {
+    if ((option.state & QStyle::State_HasFocus) && parentView && (parentView->focusReson() == Qt::TabFocusReason || parentView->focusReson() == Qt::BacktabFocusReason) && (parentView->hasFocus())) {
         // draw focus
         auto *style = dynamic_cast<DStyle *>(DApplication::style());
         QRect rect;
@@ -136,7 +138,8 @@ LogListView::LogListView(QWidget *parent)
     : DListView(parent)
 {
     initUI();
-
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &LogListView::customContextMenuRequested, this, &LogListView::requestshowRightMenu);
     connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
             &LogListView::onChangedTheme);
     DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
@@ -148,10 +151,8 @@ LogListView::LogListView(QWidget *parent)
     m_rightClickTriggerShortCut->setContext(Qt::WidgetShortcut);
     m_rightClickTriggerShortCut->setAutoRepeat(false);
     connect(m_rightClickTriggerShortCut, &QShortcut::activated, this, [this] {
-        //     qDebug() << "111111111" << visualRect(this->currentIndex())   ;
         QRect r = rectForIndex(this->currentIndex());
-        QContextMenuEvent *eve = new QContextMenuEvent(QContextMenuEvent::Reason::Keyboard, QPoint(r.x() + r.width() / 2, r.y() + r.height() / 2));
-        DApplication::sendEvent(this, eve);
+        showRightMenu(QPoint(r.x() + r.width() / 2, r.y() + r.height() / 2), true);
     });
 }
 
@@ -171,12 +172,15 @@ void LogListView::initUI()
 
     m_pModel = new QStandardItemModel(this);
     QStandardItem *item = nullptr;
+    QString  systemName =   DBusManager::getSystemInfo();
+    qDebug() << "systemName" << systemName;
     if (isFileExist("/var/log/journal")) {
         item = new QStandardItem(DApplication::translate("Tree", "System Log"));
         item->setToolTip(DApplication::translate("Tree", "System Log"));  // add by Airy for bug 16245
         item->setData(JOUR_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("System Log");
         m_pModel->appendRow(item);
     }
 
@@ -186,39 +190,80 @@ void LogListView::initUI()
         item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Kernel Log");
         m_pModel->appendRow(item);
     }
 
-    if (isFileExist("/var/log/boot.log")) {
+//    if (isFileExist("/var/log/boot.log")) {
+//        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+//        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+//        item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    } else {
+//        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+//        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+//        item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    }
+    if (systemName == "klu" || systemName == "panguV") {
+
+        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
+        item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
+        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Boot Klu Log");
+        m_pModel->appendRow(item);
+    } else {
         item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
         item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
         item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Boot Log");
         m_pModel->appendRow(item);
     }
+
+
+
+
     if (isFileExist("/var/log/dpkg.log")) {
         item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
         item->setToolTip(DApplication::translate("Tree", "dpkg Log"));  // add by Airy for bug 16245
         item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("dpkg Log");
         m_pModel->appendRow(item);
     }
-    if (isFileExist("/var/log/Xorg.0.log")) {
-        item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
-        item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
-        item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
-        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        m_pModel->appendRow(item);
-    }
-    if (isFileExist(QDir::homePath() + "/.kwin.log")) {
+//    if (isFileExist("/var/log/Xorg.0.log")) {
+//        item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
+//        item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
+//        item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
+//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+//        m_pModel->appendRow(item);
+//    }
+    // if (isFileExist(QDir::homePath() + "/.kwin.log")) {
+    if (systemName == "klu" || systemName == "panguV" || systemName == "pangu") {
         item = new QStandardItem(DApplication::translate("Tree", "Kwin Log"));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
         item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("dpkg Log");
+        m_pModel->appendRow(item);
+    } else {
+        item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
+        item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
+        item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
+        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Xorg Log");
         m_pModel->appendRow(item);
     }
     auto *appHelper = LogApplicationHelper::instance();
@@ -230,6 +275,7 @@ void LogListView::initUI()
         item->setData(APP_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Application Log");
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
     }
@@ -241,6 +287,7 @@ void LogListView::initUI()
             DApplication::translate("Tree", "Boot-Shutdown Event"));  // add by Airy for bug 16245
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Boot-Shutdown Event");
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
     }
@@ -397,10 +444,6 @@ void LogListView::truncateFile(QString path_)
     prc.waitForFinished();
 }
 
-bool LogListView::IsTabFocus() const
-{
-    return  m_IsTabFocus;
-}
 
 /**
  * @author Airy
@@ -412,15 +455,14 @@ void LogListView::slot_getAppPath(QString path)
     g_path = path;
 }
 
-
-/**
- * @author Airy
- * @brief LogListView::contextMenuEvent 显示右键菜单
- * @param event
- */
-void LogListView::contextMenuEvent(QContextMenuEvent *event)
+Qt::FocusReason LogListView::focusReson()
 {
-    Q_UNUSED(event);
+    return  m_reson;
+}
+
+void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
+{
+    qDebug() << __FUNCTION__;
     QModelIndex idx = this->currentIndex();
     QString pathData = idx.data(ITEM_DATE_ROLE).toString();
     if (!this->selectionModel()->selectedIndexes().empty()) {
@@ -434,7 +476,7 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
         g_context->addAction(g_clear);
         g_context->addAction(g_refresh);
 
-        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA) {
+        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA) {
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
@@ -469,7 +511,9 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
             dialog->setMessage(/*"清除日志内容"*/DApplication::translate("Action", "Are you sure you want to clear the log?"));
             dialog->addButton(QString(/*tr("取消")*/DApplication::translate("Action", "Cancel")), false, DDialog::ButtonNormal);
             dialog->addButton(QString(/*tr("确定")*/DApplication::translate("Action", "Confirm")), true, DDialog::ButtonRecommend);
-
+            dialog->getButton(0)->setAccessibleName("clear_confirm_btn");
+            dialog->getButton(1)->setAccessibleName("clear_cancel_btn");
+            dialog->setAccessibleName("clear_log_dialog");
             int Ok = dialog->exec();
             if (Ok == DDialog::Accepted) {
                 truncateFile(path);
@@ -477,10 +521,93 @@ void LogListView::contextMenuEvent(QContextMenuEvent *event)
             }
         });
 
-        this->setContextMenuPolicy(Qt::DefaultContextMenu);
-        g_context->exec(mapToGlobal(event->pos()));
+        this->setContextMenuPolicy(Qt::CustomContextMenu);
+        QPoint p;
+        if (isUsePoint) {
+            p = mapToGlobal(pos);
+        } else {
+            p = QCursor::pos();
+        }
+        g_context->exec(p);
+
     }
 }
+
+void LogListView::requestshowRightMenu(const QPoint &pos)
+{
+    showRightMenu(pos, false);
+}
+
+
+/**
+ * @author Airy
+ * @brief LogListView::contextMenuEvent 显示右键菜单
+ * @param event
+ */
+//void LogListView::contextMenuEvent(QContextMenuEvent *event)
+//{
+//    Q_UNUSED(event);
+//    QModelIndex idx = this->currentIndex();
+//    QString pathData = idx.data(ITEM_DATE_ROLE).toString();
+//    if (!this->selectionModel()->selectedIndexes().empty()) {
+
+//        g_context = new QMenu(this);
+//        g_openForder = new QAction(/*tr("在文件管理器中显示")*/DApplication::translate("Action", "Display in file manager"), this);
+//        g_clear = new QAction(/*tr("清除日志内容")*/DApplication::translate("Action", "Clear log"), this);
+//        g_refresh = new QAction(/*tr("刷新")*/DApplication::translate("Action", "Refresh"), this);
+
+//        g_context->addAction(g_openForder);
+//        g_context->addAction(g_clear);
+//        g_context->addAction(g_refresh);
+
+//        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA) {
+//            g_clear->setEnabled(false);
+//            g_openForder->setEnabled(false);
+//        }
+
+//        QString dirPath = QDir::homePath();
+//        QString _path_ = g_path;      //get app path
+//        QString path = "";
+
+
+//        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA) {
+//            path = pathData;
+//        } else if (pathData == APP_TREE_DATA) {
+//            path = _path_;
+//        }
+//        //显示当前日志目录
+//        connect(g_openForder, &QAction::triggered, this, [ = ] {
+//            DDesktopServices::showFileItem(path);
+//        });
+
+//        QModelIndex index = idx;
+//        //刷新逻辑
+//        connect(g_refresh, &QAction::triggered, this, [ = ]() {
+//            emit sigRefresh(index);
+//        });
+
+//        //清除日志逻辑
+//        connect(g_clear, &QAction::triggered, this, [ = ]() {
+
+//            DDialog *dialog = new DDialog(this);
+//            dialog->setWindowFlags(dialog->windowFlags() | Qt::WindowStaysOnTopHint);
+//            dialog->setIcon(QIcon::fromTheme("dialog-warning"));
+//            dialog->setMessage(/*"清除日志内容"*/DApplication::translate("Action", "Are you sure you want to clear the log?"));
+//            dialog->addButton(QString(/*tr("取消")*/DApplication::translate("Action", "Cancel")), false, DDialog::ButtonNormal);
+//            dialog->addButton(QString(/*tr("确定")*/DApplication::translate("Action", "Confirm")), true, DDialog::ButtonRecommend);
+
+//            int Ok = dialog->exec();
+//            if (Ok == DDialog::Accepted) {
+//                truncateFile(path);
+//                emit sigRefresh(index);
+//            }
+//        });
+
+//        this->setContextMenuPolicy(Qt::DefaultContextMenu);
+//        g_context->exec(mapToGlobal(event->pos()));
+
+//    }
+//}
 
 void LogListView::mouseMoveEvent(QMouseEvent *event)
 {
@@ -524,23 +651,17 @@ void LogListView::mousePressEvent(QMouseEvent *event)
 
 void LogListView::focusInEvent(QFocusEvent *event)
 {
-    qDebug() << "1";
-    if (event->reason() == Qt::TabFocusReason) {
-        setTabFocus(true);
-    } else {
-        setTabFocus(false);
+
+    if ((event->reason() != Qt::PopupFocusReason) && (event->reason() != Qt::ActiveWindowFocusReason)) {
+        m_reson = event->reason();
     }
     DListView::focusInEvent(event);
 }
 
 void LogListView::focusOutEvent(QFocusEvent *event)
 {
-    setTabFocus(false);
     DListView::focusOutEvent(event);
 }
 
-void LogListView::setTabFocus(bool iFocus)
-{
-    m_IsTabFocus = iFocus;
-}
+
 

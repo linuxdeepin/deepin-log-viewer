@@ -14,6 +14,8 @@
 #include <QPainter>
 #include <QTreeView>
 #include <QVBoxLayout>
+#include <QPainterPath>
+
 #include "structdef.h"
 
 DWIDGET_USE_NAMESPACE
@@ -24,6 +26,7 @@ logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
     : DWidget(parent)
 {
     initUI();
+    setFocusPolicy(Qt::NoFocus);
 }
 
 void logDetailInfoWidget::cleanText()
@@ -149,6 +152,8 @@ void logDetailInfoWidget::initUI()
     m_hline = new DHorizontalLine;
 
     m_textBrowser = new DTextBrowser(this);
+    //不设置nofocus焦点会上到这上面来,可是我们不需要它可以有焦点
+    m_textBrowser->setFocusPolicy(Qt::NoFocus);
     DFontSizeManager::instance()->bind(m_textBrowser, DFontSizeManager::T8);
     pa = DApplicationHelper::instance()->palette(m_textBrowser);
     pa.setBrush(DPalette::Text, pa.color(DPalette::TextTips));
@@ -217,6 +222,16 @@ void logDetailInfoWidget::initUI()
     v->setSpacing(4);
 
     this->setLayout(v);
+    m_daemonName->setAccessibleName("daemon_label");
+    m_level->setAccessibleName("level_label");
+    m_dateTime->setAccessibleName("dateTime_label");
+    m_userName->setAccessibleName("user_label");
+    m_pid->setAccessibleName("pid_label");
+    m_status->setAccessibleName("status_label");
+    m_action->setAccessibleName("action_label");
+    m_name->setAccessibleName("uname_label");
+    m_event->setAccessibleName("event_label");
+    m_textBrowser->setAccessibleName("msg_textBrowser");
 }
 
 void logDetailInfoWidget::setTextCustomSize(QWidget *w)
@@ -257,6 +272,7 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 
     DWidget::paintEvent(event);
 }
+
 
 //bool logDetailInfoWidget::event(QEvent *ev)
 //{
@@ -427,5 +443,11 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     } else if (dataStr.contains(KWIN_TABLE_DATA)) {
         fillDetailInfo("Kwin", hostname, "", "", QModelIndex(),
                        index.siblingAtColumn(0).data().toString());
+    } else if (dataStr.contains(BOOT_KLU_TABLE_DATA)) {
+        fillDetailInfo(index.siblingAtColumn(1).data().toString(),
+                       /*m_pModel->item(index.row(), 4)->text()*/ hostname,
+                       index.siblingAtColumn(5).data().toString(),
+                       index.siblingAtColumn(2).data().toString(), index,
+                       index.siblingAtColumn(3).data().toString());
     }
 }

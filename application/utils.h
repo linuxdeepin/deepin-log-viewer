@@ -75,7 +75,8 @@ public:
     static CommandErrorType isErroCommand(QString str);
     static bool checkAndDeleteDir(const QString &iFilePath);
     static bool deleteDir(const QString &iFilePath);
-
+    static void replaceColorfulFont(QString *iStr);
+    static bool isWayland();
 };
 
 

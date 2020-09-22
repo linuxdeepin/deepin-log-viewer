@@ -31,6 +31,7 @@
 #include <QButtonGroup>
 #include <QHBoxLayout>
 #include <QWidget>
+#include "structdef.h"
 class LogCombox;
 class LogPeriodButton;
 class LogNormalButton;
@@ -55,11 +56,14 @@ private:
 
     void setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period, bool needMove,
                             bool typecbx = false);  // modified by Airy
+    void setSelection(FILTER_CONFIG iConifg);
 
     void setUeButtonSytle();
 
     void resizeWidth();
     void updateWordWrap();
+    void updateDataState();
+    void setCurrentConfig(FILTER_CONFIG iConifg);
 
 
 signals:
@@ -75,6 +79,7 @@ signals:
 
 public slots:
     void slot_logCatelogueClicked(const QModelIndex &index);
+    void slot_logCatelogueRefresh(const QModelIndex &index);
     void slot_buttonClicked(int idx);
     void slot_exportButtonClicked();
     void slot_cbxLvIdxChanged(int idx);
@@ -109,6 +114,8 @@ private:
     QHBoxLayout *hLayout_all;
     //是否为按钮省略状态
     bool m_isIndentation = false;
+    QMap<QString, FILTER_CONFIG>m_config;
+    QString m_currentType = "";
 };
 
 #endif  // FILTERCONTENT_H

@@ -23,6 +23,7 @@
 #include <QDebug>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPainterPath>
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -139,7 +140,6 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
 
 void LogViewHeaderView::focusInEvent(QFocusEvent *event)
 {
-    qDebug() << "LogViewHeaderView::focusInEvent";
     m_reson = event->reason();
     DHeaderView::focusInEvent(event);
 }
@@ -190,7 +190,7 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
     DHeaderView::paintEvent(event);
     painter.restore();
     // draw focus
-    if (hasFocus() && m_reson == Qt::TabFocusReason) {
+    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
         QStyleOptionFocusRect o;
         o.QStyleOption::operator=(option);
         QRect focusRect {rect.x() - offset(), rect.y(), length() - sectionPosition(0), rect.height()};

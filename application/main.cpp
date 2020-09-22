@@ -20,8 +20,11 @@
  */
 #include "logapplicationhelper.h"
 #include "logcollectormain.h"
+#include "logapplication.h"
 #include "environments.h"
 #include "accessible.h"
+#include "dbusmanager.h"
+#include "utils.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
@@ -30,14 +33,37 @@
 #include <DLog>
 
 #include <QDateTime>
-
+#include <QSurfaceFormat>
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    DApplication a(argc, argv);
+    //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了
+    QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
+    //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了,这个真正有效
+    qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
+    QString  systemName =   DBusManager::getSystemInfo();
+    qDebug() << "systemName" << systemName;
+    if (systemName == "klu" || systemName == "panguV") {
+        qputenv("_d_disableDBusFileDialog", "true");
+    }
+    if (Utils::isWayland()) {
+        qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
+    }
 
+
+    setenv("PULSE_PROP_media.role", "video", 1);
+    QSurfaceFormat format;
+    format.setRenderableType(QSurfaceFormat::OpenGLES);
+    format.setDefaultFormat(format);
+    LogApplication a(argc, argv);
+
+    //  wayland环境判断
+    auto systemEnv = QProcessEnvironment::systemEnvironment();
+    QString XDG_SESSION_TYPE = systemEnv.value(QStringLiteral("XDG_SESSION_TYPE"));
+    QString WAYLAND_DISPLAY = systemEnv.value(QStringLiteral("WAYLAND_DISPLAY"));
+    qDebug() << "XDG_SESSION_TYPE:" << XDG_SESSION_TYPE << "---WAYLAND_DISPLAY:" << WAYLAND_DISPLAY;
     qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
     if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                               DGuiApplicationHelper::UserScope)) {
@@ -61,7 +87,12 @@ int main(int argc, char *argv[])
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
     LogApplicationHelper::instance();
+    QAccessible::installFactory(accessibleFactory);
+
     LogCollectorMain w;
+    a.setMainWindow(&w);
+
+
     w.show();
     Dtk::Widget::moveToCenter(&w);
 //    for (int i = 0; i < 120000; ++i) {

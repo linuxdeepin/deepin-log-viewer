@@ -30,7 +30,7 @@
 #include <QPen>
 #include <QDebug>
 #include <QStylePainter>
-
+#include <QPainterPath>
 
 DWIDGET_USE_NAMESPACE
 
@@ -63,7 +63,7 @@ void LogPeriodButton::leaveEvent(QEvent *e)
 }
 
 /**
- * @brief LogPeriodButton::paintEvent  通过鼠标是否在按钮上的状态绘hover效果
+ * @brief LogPeriodButton::paintEvent  通过鼠标是否在按钮上的状态绘hover效果 绘制焦点边框,屏蔽默认绘制事件,只在tabfoucus时绘制边框
  * @param event
  */
 void LogPeriodButton::paintEvent(QPaintEvent *event)
@@ -95,7 +95,7 @@ void LogPeriodButton::paintEvent(QPaintEvent *event)
     QStyleOptionButton subopt = btn;
     subopt.rect = style->proxy()->subElementRect(DStyle::SE_PushButtonContents, &btn, this);
     style->proxy()->drawControl(DStyle::CE_PushButtonLabel, &subopt,  &painter2, this);
-    if (hasFocus() && (m_reson == Qt::TabFocusReason)) {
+    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
 
         QStyleOptionFocusRect fropt;
         fropt.QStyleOption::operator=(btn);
@@ -103,7 +103,11 @@ void LogPeriodButton::paintEvent(QPaintEvent *event)
         style->proxy()->drawPrimitive(DStyle::PE_FrameFocusRect, &fropt, &painter2, this);
     }
 }
-
+/**
+ * @brief LogPeriodButton::focusInEvent
+ * 捕获最近一次获得焦点的reason以区分是否为tabfoucs
+ * @param event
+ */
 void LogPeriodButton::focusInEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)

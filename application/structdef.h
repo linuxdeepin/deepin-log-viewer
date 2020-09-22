@@ -71,28 +71,50 @@ struct KWIN_FILTERS {
     QString msg;
 };
 struct XORG_FILTERS {
-    qint64 timeFilter ;
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
 };
 struct DKPG_FILTERS {
-    qint64 timeFilter ;
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
+};
+struct APP_FILTERS {
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
+    int lvlFilter;
+    QString path;
+};
+struct JOURNAL_FILTERS {
+    int eventTypeFilter = -99;
+    int timeFilter = -99;
+
+};
+
+struct NORMAL_FILTERS {
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
+    int eventTypeFilter = 0;
+    QString searchstr = "";
+};
+
+struct KERN_FILTERS {
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
 };
 struct BOOT_FILTERS {
     QString searchstr;
     QString statusFilter;
 
 };
-struct NORMAL_FILTERS {
-    QString searchstr;
-    int eventTypeFilter;
 
-};
-struct JOURNAL_FILTERS {
-    int timeFilter;
-    int eventTypeFilter;
-
-};
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
-
+struct FILTER_CONFIG {
+    int levelCbx = INF + 1;
+    QString appListCbx = "";
+    int statusCbx = 0;
+    int dateBtn = 0;
+    int typeCbx = 0;
+};
 enum BUTTONID {
     ALL = 0,
     ONE_DAY,
@@ -114,6 +136,7 @@ enum LOG_FLAG {
     APP,
     Normal,
     Kwin,
+    BOOT_KLU,
     NONE = 9999
 };  // modified by
 // Airy
@@ -176,11 +199,13 @@ enum NORMAL_DISPLAY_COLUMN {
 #define BOOT_TABLE_DATA "bootItemData"
 #define KERN_TABLE_DATA "kernItemData"
 #define JOUR_TABLE_DATA "journalItemData"
+#define BOOT_KLU_TABLE_DATA "bootKluItemData"
 #define APP_TABLE_DATA "applicationItemData"
 #define LAST_TABLE_DATA "lastItemData"  // add by Airy
 #define KWIN_TABLE_DATA "kwinItemData"
 
 #define JOUR_TREE_DATA "journalctl"
+#define BOOT_KLU_TREE_DATA "bootklu"
 #define DPKG_TREE_DATA "/var/log/dpkg.log"
 #define XORG_TREE_DATA "/var/log/Xorg.0.log"
 #define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"

@@ -62,7 +62,7 @@ public:
     void run() override;
 
 signals:
-    void journalData(int aaaindex, QList<LOG_MSG_JOURNAL> list);
+    void journalData(int index, QList<LOG_MSG_JOURNAL> list);
     void journalFinished();
 
 public slots:

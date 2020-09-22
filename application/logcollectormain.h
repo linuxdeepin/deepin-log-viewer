@@ -48,11 +48,9 @@ public:
     void initConnection();
 
     void initShortCut();
-    void initKeyBoardSwitchOrder();
 public slots:
     void resizeWidthByFilterContentWidth(int iWidth);
-    bool eventFilter(QObject *obj, QEvent *evt);
-    void setNextTabFocus(QObject *obj, bool isNext);
+    bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
 private:
     Dtk::Widget::DSearchEdit *m_searchEdt;
     FilterContent *m_topRightWgt;

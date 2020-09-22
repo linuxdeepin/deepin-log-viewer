@@ -1,23 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE policyconfig PUBLIC
- "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
- "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+"http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
 <policyconfig>
-  <vendor>LinuxDeepin</vendor>
-  <vendor_url>https://www.deepin.com/</vendor_url>
-  <action id="com.deepin.pkexec.logViewerTruncate">
-    <description>authentication</description>
-    <description xml:lang="zh_CN">认证</description>
-    <message>Authentication is required to clear the log</message>
-    <message xml:lang="zh_CN">清除此日志需要授权</message>
-    <icon_name></icon_name>
-    <defaults>
-      <allow_any>no</allow_any>
-      <allow_inactive>no</allow_inactive>
-      <allow_active>auth_admin_keep</allow_active>
-    </defaults>
-    <annotate key="org.freedesktop.policykit.exec.path">/usr/bin/logViewerTruncate</annotate>
-    <annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
-  </action>
-
+	<vendor>LinuxDeepin</vendor>
+	<vendor_url>https://www.deepin.com/</vendor_url>
+	<action id="com.deepin.pkexec.logViewerTruncate">
+		<description>authentication</description>
+		<message>Authentication is required to clear the log</message>
+		<icon_name />
+		<defaults>
+			<allow_any>no</allow_any>
+			<allow_inactive>no</allow_inactive>
+			<allow_active>auth_admin_keep</allow_active>
+		</defaults>
+		<annotate key="org.freedesktop.policykit.exec.path">/usr/bin/logViewerTruncate</annotate>
+		<annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
+		<description xml:lang="es">autenticación</description>
+		<message xml:lang="es">La autenticación es necesaria para borrar el registro</message>
+		<description xml:lang="nl">authenticatie</description>
+		<message xml:lang="nl">Voer je wachtwoord in om het logboek te wissen</message>
+		<description xml:lang="fi">todennus</description>
+		<message xml:lang="fi">Lokin tyhjentäminen edellyttää todennusta</message>
+		<description xml:lang="pt">autenticação</description>
+		<message xml:lang="pt">É necessária a autenticação para limpar o registo</message>
+		<description xml:lang="it">autenticazione</description>
+		<message xml:lang="it">Autenticazione richiesta per ripulire il Log</message>
+		<description xml:lang="cs">ověření se</description>
+		<message xml:lang="cs">Pro vyčištění záznamu událostí je vyžadováno ověření se</message>
+		<description xml:lang="fr">authentification</description>
+		<message xml:lang="fr">L'authentification est requise pour effacer le journal</message>
+		<description xml:lang="ko">인증</description>
+		<message xml:lang="ko">로그를 지우려면 인증이 필요합니다</message>
+		<description xml:lang="zh_CN">认证</description>
+		<message xml:lang="zh_CN">清除此日志需要授权</message>
+		<description xml:lang="pl">uwierzytelnienie</description>
+		<message xml:lang="pl">Do wyczyszczenia dziennika wymagane jest uwierzytelnienie</message>
+		<description xml:lang="zh_HK">認證</description>
+		<message xml:lang="zh_HK">清除此日誌需要認證</message>
+		<description xml:lang="sq">mirëfilltësim</description>
+		<message xml:lang="sq">Për spastrimin e regjistrit lypset mirëfilltësim</message>
+		<description xml:lang="sr">идентификација</description>
+		<message xml:lang="sr">Идентификација је неопходана да обришете записник</message>
+		<description xml:lang="zh_TW">認證</description>
+		<message xml:lang="zh_TW">清除此日誌需要認證</message>
+		<description xml:lang="tr">kimlik doğrulama</description>
+		<message xml:lang="tr">Günlüğü temizlemek için kimlik doğrulaması gerekli</message>
+		<description xml:lang="gl_ES">autenticación</description>
+		<message xml:lang="gl_ES">A autenticación é necesaria para limpar o rexistro</message>
+		<description xml:lang="pt_BR">autenticação</description>
+		<message xml:lang="pt_BR">A autenticação é necessária para limpar os logs</message>
+		<description xml:lang="ca">autenticació</description>
+		<message xml:lang="ca">Cal autenticació per netejar el registre.</message>
+		<description xml:lang="uk">Розпізнавання</description>
+		<message xml:lang="uk">Для спорожнення журналу слід пройти розпізнавання</message>
+	</action>
 </policyconfig>
