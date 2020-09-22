@@ -20,6 +20,7 @@
  */
 
 #include "logcollectormain.h"
+#include "logsettings.h"
 
 #include <DApplication>
 #include <DTitlebar>
@@ -36,8 +37,7 @@
 #include <QKeyEvent>
 #include <DAboutDialog>
 //958+53+50 976
-#define MAINWINDOW_WIDTH 1024
-#define MAINWINDOW_HEIGHT 736
+
 #define LEFT_LIST_WIDTH 200
 DWIDGET_USE_NAMESPACE
 
@@ -51,6 +51,7 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
 
     m_logCatelogue->setDefaultSelect();
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
+    resize(LogSettings::instance()->getConfigWinSize());
 
 }
 
@@ -60,6 +61,9 @@ LogCollectorMain::~LogCollectorMain()
     if (m_searchEdt) {
         delete m_searchEdt;
         m_searchEdt = nullptr;
+    }
+    if (windowState() == Qt::WindowNoState) {
+        LogSettings::instance()->saveConfigWinSize(width(), height());
     }
 }
 

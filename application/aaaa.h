@@ -14,22 +14,14 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef LOGAPPLICATION_H
-#define LOGAPPLICATION_H
-#include <DApplication>
+#ifndef AAAA_H
+#define AAAA_H
 
-DWIDGET_USE_NAMESPACE
-class QKeyEvent;
-class LogCollectorMain;
-class LogApplication: public DApplication
+
+class aaaa
 {
 public:
-    LogApplication(int &argc, char **argv);
-    void setMainWindow(LogCollectorMain *iMainWindow);
-protected:
-    bool notify(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
-private:
-    LogCollectorMain *m_mainWindow{nullptr};
+    aaaa();
 };
 
-#endif // LOGAPPLICATION_H
+#endif // AAAA_H
