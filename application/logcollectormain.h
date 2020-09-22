@@ -25,12 +25,12 @@
 #include "filtercontent.h"
 #include "loglistview.h"
 #include "logtreeview.h"
-#include "logsearchedit.h"
 
 #include <DMainWindow>
 #include <DSearchEdit>
 #include <DSplitter>
 #include <DTreeView>
+
 
 #include <QHBoxLayout>
 #include <QShortcut>
@@ -46,8 +46,9 @@ public:
 
     void initUI();
     void initConnection();
-
+    void initSettings();
     void initShortCut();
+
 public slots:
     void resizeWidthByFilterContentWidth(int iWidth);
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
@@ -67,6 +68,8 @@ private:
     QShortcut *m_scExport {nullptr};    // export file          --> Ctrl+E
     int m_originFilterWidth = 0;
     QList<QWidget * > m_focusWidgetOrder;
+
+
 };
 
 #endif  // LOGCOLLECTORMAIN_H

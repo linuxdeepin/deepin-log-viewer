@@ -14,44 +14,50 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SHAREDMEMORYMANAGER_H
-#define SHAREDMEMORYMANAGER_H
+#ifndef LOGSETTINGS_H
+#define LOGSETTINGS_H
 
 #include <QObject>
+#include <QSettings>
 
 #include <mutex>
-struct ShareMemoryInfo {
-    bool isStart = true ;
-};
-class QSharedMemory;
-class SharedMemoryManager : public QObject
+#define MAINWINDOW_WIDTH 1024
+#define MAINWINDOW_HEIGHT 736
+class LogSettings : public QObject
 {
+    Q_OBJECT
 public:
+    explicit LogSettings(QObject *parent = nullptr);
 
-    static SharedMemoryManager *instance()
+    static LogSettings *instance()
     {
-        SharedMemoryManager *sin = m_instance.load();
+        LogSettings *sin = m_instance.load();
         if (!sin) {
             std::lock_guard<std::mutex> lock(m_mutex);
             sin = m_instance.load();
             if (!sin) {
-                sin = new SharedMemoryManager();
+                sin = new LogSettings();
                 m_instance.store(sin);
             }
         }
         return sin;
     }
-    void setRunnableTag(ShareMemoryInfo iShareInfo);
-    QString getRunnableKey();
-    bool isAttached();
-protected:
-    SharedMemoryManager(QObject *parent = nullptr);
-    void init();
+
+
+
+
+
+
+    QSettings *m_winInfoConfig = nullptr;
+    QString m_configPath;
+    QSize getConfigWinSize();
+    void saveConfigWinSize(int w, int h);
+signals:
+
+public slots:
 private:
-    static std::atomic<SharedMemoryManager *> m_instance;
+    static std::atomic<LogSettings *> m_instance;
     static std::mutex m_mutex;
-    QSharedMemory  *m_commondM = nullptr;
-    ShareMemoryInfo *m_pShareMemoryInfo = nullptr;
 };
 
-#endif // SHAREDMEMORYMANAGER_H
+#endif // LOGSETTINGS_H
