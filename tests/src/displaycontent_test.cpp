@@ -23,3 +23,13 @@ TEST(DisplayContent_Constructor_UT, DisplayContent_Constructor_UT_001)
     EXPECT_NE(p, nullptr);
     delete  p;
 }
+
+
+TEST(DisplayContent_Destructor_UT, DisplayContent_Destructor_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->~DisplayContent();
+    //  delete  p;
+}
+

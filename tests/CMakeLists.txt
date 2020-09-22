@@ -119,6 +119,7 @@ FILE(GLOB allSource
      ../application/logapplication.cpp
      ../application/sharedmemorymanager.cpp
      ../application/common/collator.cpp
+       ../application/logsettings.cpp
 )
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
