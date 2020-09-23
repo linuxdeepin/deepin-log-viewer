@@ -56,6 +56,7 @@
 #include <QFile>
 #include <QFontDatabase>
 #include <QProcessEnvironment>
+#include <QTime>
 QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
 
@@ -250,4 +251,15 @@ bool Utils::isWayland()
     } else {
         return false;
     }
+}
+
+bool Utils::sleep(unsigned int msec)
+{
+    QTime dieTime = QTime::currentTime().addMSecs(static_cast<int>(msec));
+
+    while (QTime::currentTime() < dieTime) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    }
+
+    return true;
 }

@@ -799,6 +799,7 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
         Utils::checkAndDeleteDir(m_fileName);
     }
     sigProgress(100, 100);
+    Utils::sleep(200);
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -895,6 +896,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
         Utils::checkAndDeleteDir(m_fileName);
     }
     sigProgress(100, 100);
+    Utils::sleep(200);
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -947,6 +949,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
     }
 
     sigProgress(100, 100);
+    Utils::sleep(200);
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -995,6 +998,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         Utils::checkAndDeleteDir(m_fileName);
     }
     sigProgress(100, 100);
+    Utils::sleep(200);
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -1040,6 +1044,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         Utils::checkAndDeleteDir(m_fileName);
     }
     sigProgress(100, 100);
+    Utils::sleep(200);
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -1086,6 +1091,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
         Utils::checkAndDeleteDir(m_fileName);
     }
     sigProgress(100, 100);
+    Utils::sleep(200);
     emit sigResult(m_canRunning);
 
     return true && m_canRunning;
@@ -1135,6 +1141,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
         Utils::checkAndDeleteDir(m_fileName);
     }
     sigProgress(100, 100);
+    Utils::sleep(200);
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -1180,6 +1187,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         Utils::checkAndDeleteDir(m_fileName);
     }
     sigProgress(100, 100);
+    Utils::sleep(200);
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }

@@ -77,6 +77,7 @@ public:
     static bool deleteDir(const QString &iFilePath);
     static void replaceColorfulFont(QString *iStr);
     static bool isWayland();
+    static bool sleep(unsigned int msec);
 };
 
 
