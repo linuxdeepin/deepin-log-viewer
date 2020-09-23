@@ -268,6 +268,8 @@
         <location filename="../application/journalwork.cpp" line="378"/>
         <location filename="../application/logexportthread.cpp" line="2122"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="65"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="74"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
@@ -278,6 +280,8 @@
         <location filename="../application/journalwork.cpp" line="381"/>
         <location filename="../application/logexportthread.cpp" line="2125"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="66"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="77"/>
         <source>Debug</source>
         <translation type="unfinished"></translation>
     </message>
@@ -288,6 +292,8 @@
         <location filename="../application/journalwork.cpp" line="380"/>
         <location filename="../application/logexportthread.cpp" line="2124"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="67"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="76"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -298,6 +304,8 @@
         <location filename="../application/journalwork.cpp" line="377"/>
         <location filename="../application/logexportthread.cpp" line="2121"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="68"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="73"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -307,6 +315,7 @@
         <location filename="../application/journalwork.cpp" line="374"/>
         <location filename="../application/logexportthread.cpp" line="2118"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="70"/>
         <source>Emergency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -316,6 +325,7 @@
         <location filename="../application/journalwork.cpp" line="375"/>
         <location filename="../application/logexportthread.cpp" line="2119"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="71"/>
         <source>Alert</source>
         <translation type="unfinished"></translation>
     </message>
@@ -325,6 +335,7 @@
         <location filename="../application/journalwork.cpp" line="376"/>
         <location filename="../application/logexportthread.cpp" line="2120"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="72"/>
         <source>Critical</source>
         <translation type="unfinished"></translation>
     </message>
@@ -334,6 +345,7 @@
         <location filename="../application/journalwork.cpp" line="379"/>
         <location filename="../application/logexportthread.cpp" line="2123"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="75"/>
         <source>Notice</source>
         <translation type="unfinished"></translation>
     </message>
