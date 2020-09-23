@@ -24,6 +24,7 @@
 #include "logexportthread.h"
 #include "logfileparser.h"
 #include "exportprogressdlg.h"
+#include "utils.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
