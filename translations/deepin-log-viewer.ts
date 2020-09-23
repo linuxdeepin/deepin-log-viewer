@@ -161,6 +161,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1015"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1155"/>
@@ -171,6 +172,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1169"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1170"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -194,6 +198,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1891"/>
 =======
         <location filename="../application/displaycontent.cpp" line="2008"/>
@@ -204,6 +209,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2038"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="2039"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <source>Export successful</source>
         <translation type="unfinished"></translation>
     </message>
@@ -211,6 +219,7 @@
 <context>
     <name>File</name>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -224,6 +233,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1167"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1168"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <source>Export File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -298,6 +310,7 @@
 <context>
     <name>Level</name>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="148"/>
         <location filename="../application/displaycontent.cpp" line="159"/>
 <<<<<<< HEAD
@@ -313,11 +326,19 @@
 >>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2122"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="149"/>
+        <location filename="../application/displaycontent.cpp" line="160"/>
+        <location filename="../application/journalbootwork.cpp" line="426"/>
+        <location filename="../application/journalwork.cpp" line="378"/>
+        <location filename="../application/logexportthread.cpp" line="2123"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="149"/>
         <location filename="../application/displaycontent.cpp" line="162"/>
 <<<<<<< HEAD
@@ -333,11 +354,19 @@
 >>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2125"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="150"/>
+        <location filename="../application/displaycontent.cpp" line="163"/>
+        <location filename="../application/journalbootwork.cpp" line="429"/>
+        <location filename="../application/journalwork.cpp" line="381"/>
+        <location filename="../application/logexportthread.cpp" line="2126"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
         <source>Debug</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="150"/>
         <location filename="../application/displaycontent.cpp" line="161"/>
 <<<<<<< HEAD
@@ -353,11 +382,19 @@
 >>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2124"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="151"/>
+        <location filename="../application/displaycontent.cpp" line="162"/>
+        <location filename="../application/journalbootwork.cpp" line="428"/>
+        <location filename="../application/journalwork.cpp" line="380"/>
+        <location filename="../application/logexportthread.cpp" line="2125"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="151"/>
         <location filename="../application/displaycontent.cpp" line="158"/>
 <<<<<<< HEAD
@@ -373,11 +410,19 @@
 >>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2121"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="152"/>
+        <location filename="../application/displaycontent.cpp" line="159"/>
+        <location filename="../application/journalbootwork.cpp" line="425"/>
+        <location filename="../application/journalwork.cpp" line="377"/>
+        <location filename="../application/logexportthread.cpp" line="2122"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="155"/>
 <<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="410"/>
@@ -392,11 +437,18 @@
 >>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2118"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="156"/>
+        <location filename="../application/journalbootwork.cpp" line="422"/>
+        <location filename="../application/journalwork.cpp" line="374"/>
+        <location filename="../application/logexportthread.cpp" line="2119"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
         <source>Emergency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="156"/>
 <<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="411"/>
@@ -411,11 +463,18 @@
 >>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2119"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="157"/>
+        <location filename="../application/journalbootwork.cpp" line="423"/>
+        <location filename="../application/journalwork.cpp" line="375"/>
+        <location filename="../application/logexportthread.cpp" line="2120"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
         <source>Alert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="157"/>
 <<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="412"/>
@@ -430,11 +489,18 @@
 >>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2120"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="158"/>
+        <location filename="../application/journalbootwork.cpp" line="424"/>
+        <location filename="../application/journalwork.cpp" line="376"/>
+        <location filename="../application/logexportthread.cpp" line="2121"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
         <source>Critical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="160"/>
 <<<<<<< HEAD
         <location filename="../application/journalbootwork.cpp" line="415"/>
@@ -449,6 +515,12 @@
 >>>>>>> fcfb24b... fix: 修复了在日志中切换显示周期后，返回到启动日志界面，状态下拉框自动被focus
         <location filename="../application/logexportthread.cpp" line="2123"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/displaycontent.cpp" line="161"/>
+        <location filename="../application/journalbootwork.cpp" line="427"/>
+        <location filename="../application/journalwork.cpp" line="379"/>
+        <location filename="../application/logexportthread.cpp" line="2124"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
         <source>Notice</source>
         <translation type="unfinished"></translation>
@@ -502,7 +574,7 @@
 <context>
     <name>SearchBar</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="109"/>
+        <location filename="../application/displaycontent.cpp" line="110"/>
         <source>No search results</source>
         <translation type="unfinished"></translation>
     </message>
@@ -515,6 +587,7 @@
 <context>
     <name>Table</name>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="302"/>
@@ -548,15 +621,22 @@
         <location filename="../application/displaycontent.cpp" line="472"/>
         <location filename="../application/displaycontent.cpp" line="965"/>
 =======
+=======
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/displaycontent.cpp" line="314"/>
-        <location filename="../application/displaycontent.cpp" line="474"/>
+        <location filename="../application/displaycontent.cpp" line="609"/>
         <location filename="../application/displaycontent.cpp" line="967"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1289"/>
+<<<<<<< HEAD
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="544"/>
         <location filename="../application/model/logbasemodel.cpp" line="72"/>
         <source>Process</source>
+=======
+        <location filename="../application/logexportwidget.cpp" line="543"/>
+        <source>Level</source>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -578,9 +658,9 @@
         <location filename="../application/displaycontent.cpp" line="1893"/>
 =======
         <location filename="../application/displaycontent.cpp" line="315"/>
-        <location filename="../application/displaycontent.cpp" line="472"/>
-        <location filename="../application/displaycontent.cpp" line="609"/>
+        <location filename="../application/displaycontent.cpp" line="475"/>
         <location filename="../application/displaycontent.cpp" line="968"/>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1782"/>
         <location filename="../application/displaycontent.cpp" line="1895"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
@@ -589,6 +669,11 @@
         <location filename="../application/logexportwidget.cpp" line="546"/>
         <location filename="../application/model/logbasemodel.cpp" line="66"/>
         <source>Date and Time</source>
+=======
+        <location filename="../application/logexportthread.cpp" line="1290"/>
+        <location filename="../application/logexportwidget.cpp" line="544"/>
+        <source>Process</source>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -616,12 +701,12 @@
         <location filename="../application/displaycontent.cpp" line="1965"/>
 =======
         <location filename="../application/displaycontent.cpp" line="316"/>
-        <location filename="../application/displaycontent.cpp" line="475"/>
-        <location filename="../application/displaycontent.cpp" line="611"/>
+        <location filename="../application/displaycontent.cpp" line="473"/>
+        <location filename="../application/displaycontent.cpp" line="610"/>
         <location filename="../application/displaycontent.cpp" line="969"/>
         <location filename="../application/displaycontent.cpp" line="1783"/>
-        <location filename="../application/displaycontent.cpp" line="1819"/>
         <location filename="../application/displaycontent.cpp" line="1896"/>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1929"/>
         <location filename="../application/displaycontent.cpp" line="1967"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
@@ -630,6 +715,11 @@
         <location filename="../application/logexportwidget.cpp" line="547"/>
         <location filename="../application/model/logbasemodel.cpp" line="74"/>
         <source>Info</source>
+=======
+        <location filename="../application/logexportthread.cpp" line="1292"/>
+        <location filename="../application/logexportwidget.cpp" line="546"/>
+        <source>Date and Time</source>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -645,14 +735,26 @@
         <location filename="../application/displaycontent.cpp" line="968"/>
 =======
         <location filename="../application/displaycontent.cpp" line="317"/>
-        <location filename="../application/displaycontent.cpp" line="473"/>
+        <location filename="../application/displaycontent.cpp" line="476"/>
+        <location filename="../application/displaycontent.cpp" line="612"/>
         <location filename="../application/displaycontent.cpp" line="970"/>
+<<<<<<< HEAD
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1293"/>
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
         <location filename="../application/logexportwidget.cpp" line="548"/>
         <location filename="../application/model/logbasemodel.cpp" line="69"/>
         <source>User</source>
+=======
+        <location filename="../application/displaycontent.cpp" line="1784"/>
+        <location filename="../application/displaycontent.cpp" line="1820"/>
+        <location filename="../application/displaycontent.cpp" line="1897"/>
+        <location filename="../application/displaycontent.cpp" line="1930"/>
+        <location filename="../application/displaycontent.cpp" line="1968"/>
+        <location filename="../application/logexportthread.cpp" line="1293"/>
+        <location filename="../application/logexportwidget.cpp" line="547"/>
+        <source>Info</source>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -666,15 +768,28 @@
         <location filename="../application/displaycontent.cpp" line="969"/>
 =======
         <location filename="../application/displaycontent.cpp" line="318"/>
+        <location filename="../application/displaycontent.cpp" line="474"/>
         <location filename="../application/displaycontent.cpp" line="971"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1294"/>
+<<<<<<< HEAD
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
+=======
+        <location filename="../application/logexportwidget.cpp" line="548"/>
+        <source>User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="319"/>
+        <location filename="../application/displaycontent.cpp" line="972"/>
+        <location filename="../application/logexportthread.cpp" line="1295"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <location filename="../application/logexportwidget.cpp" line="549"/>
         <source>PID</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="517"/>
@@ -684,10 +799,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="610"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="611"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -701,10 +820,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1784"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1785"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <source>Action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -718,10 +841,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1818"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1819"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -735,10 +862,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1926"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1927"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <source>Event Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -752,6 +883,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1927"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1928"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
@@ -806,6 +940,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1786"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1903"/>
@@ -816,6 +951,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1928"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1929"/>
+>>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <source>Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
