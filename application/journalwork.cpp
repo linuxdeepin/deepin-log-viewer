@@ -247,12 +247,11 @@ void journalWork::doWork()
 
         r = sd_journal_get_data(j, "PRIORITY", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
-            logMsg.level = "";;
+            logMsg.level = i2str(7);;
         } else {
             logMsg.level = i2str(getReplaceColorStr(d).split("=").value(1).toInt());
 
         }
-
         //     qWarning() << "logMsg.level" << "r:" << r << "d:" << d << "--------getReplaceColorStr(d):" << getReplaceColorStr(d) << "-----------logMsg.level:" << logMsg.level << "-------------logMsg.msg:" << logMsg.msg;
         cnt++;
         mutex.lock();
