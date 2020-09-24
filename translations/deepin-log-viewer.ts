@@ -331,8 +331,12 @@
         <location filename="../application/displaycontent.cpp" line="160"/>
         <location filename="../application/journalbootwork.cpp" line="426"/>
         <location filename="../application/journalwork.cpp" line="378"/>
+<<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="2123"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/logexportthread.cpp" line="2130"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
@@ -359,8 +363,12 @@
         <location filename="../application/displaycontent.cpp" line="163"/>
         <location filename="../application/journalbootwork.cpp" line="429"/>
         <location filename="../application/journalwork.cpp" line="381"/>
+<<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="2126"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/logexportthread.cpp" line="2133"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
         <source>Debug</source>
         <translation type="unfinished"></translation>
@@ -387,8 +395,12 @@
         <location filename="../application/displaycontent.cpp" line="162"/>
         <location filename="../application/journalbootwork.cpp" line="428"/>
         <location filename="../application/journalwork.cpp" line="380"/>
+<<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="2125"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/logexportthread.cpp" line="2132"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
@@ -415,8 +427,12 @@
         <location filename="../application/displaycontent.cpp" line="159"/>
         <location filename="../application/journalbootwork.cpp" line="425"/>
         <location filename="../application/journalwork.cpp" line="377"/>
+<<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="2122"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/logexportthread.cpp" line="2129"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
@@ -441,8 +457,12 @@
         <location filename="../application/displaycontent.cpp" line="156"/>
         <location filename="../application/journalbootwork.cpp" line="422"/>
         <location filename="../application/journalwork.cpp" line="374"/>
+<<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="2119"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/logexportthread.cpp" line="2126"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
         <source>Emergency</source>
         <translation type="unfinished"></translation>
@@ -467,8 +487,12 @@
         <location filename="../application/displaycontent.cpp" line="157"/>
         <location filename="../application/journalbootwork.cpp" line="423"/>
         <location filename="../application/journalwork.cpp" line="375"/>
+<<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="2120"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/logexportthread.cpp" line="2127"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
         <source>Alert</source>
         <translation type="unfinished"></translation>
@@ -493,8 +517,12 @@
         <location filename="../application/displaycontent.cpp" line="158"/>
         <location filename="../application/journalbootwork.cpp" line="424"/>
         <location filename="../application/journalwork.cpp" line="376"/>
+<<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="2121"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/logexportthread.cpp" line="2128"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
         <source>Critical</source>
         <translation type="unfinished"></translation>
@@ -519,8 +547,12 @@
         <location filename="../application/displaycontent.cpp" line="161"/>
         <location filename="../application/journalbootwork.cpp" line="427"/>
         <location filename="../application/journalwork.cpp" line="379"/>
+<<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="2124"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/logexportthread.cpp" line="2131"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
         <source>Notice</source>
         <translation type="unfinished"></translation>
@@ -626,6 +658,7 @@
         <location filename="../application/displaycontent.cpp" line="314"/>
         <location filename="../application/displaycontent.cpp" line="609"/>
         <location filename="../application/displaycontent.cpp" line="967"/>
+<<<<<<< HEAD
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1289"/>
 <<<<<<< HEAD
@@ -634,6 +667,9 @@
         <location filename="../application/model/logbasemodel.cpp" line="72"/>
         <source>Process</source>
 =======
+=======
+        <location filename="../application/logexportthread.cpp" line="1296"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="543"/>
         <source>Level</source>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
@@ -661,6 +697,7 @@
         <location filename="../application/displaycontent.cpp" line="475"/>
         <location filename="../application/displaycontent.cpp" line="968"/>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1782"/>
         <location filename="../application/displaycontent.cpp" line="1895"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
@@ -671,6 +708,9 @@
         <source>Date and Time</source>
 =======
         <location filename="../application/logexportthread.cpp" line="1290"/>
+=======
+        <location filename="../application/logexportthread.cpp" line="1297"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="544"/>
         <source>Process</source>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
@@ -707,6 +747,7 @@
         <location filename="../application/displaycontent.cpp" line="1783"/>
         <location filename="../application/displaycontent.cpp" line="1896"/>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1929"/>
         <location filename="../application/displaycontent.cpp" line="1967"/>
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
@@ -717,6 +758,9 @@
         <source>Info</source>
 =======
         <location filename="../application/logexportthread.cpp" line="1292"/>
+=======
+        <location filename="../application/logexportthread.cpp" line="1299"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="546"/>
         <source>Date and Time</source>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
@@ -751,7 +795,7 @@
         <location filename="../application/displaycontent.cpp" line="1897"/>
         <location filename="../application/displaycontent.cpp" line="1930"/>
         <location filename="../application/displaycontent.cpp" line="1968"/>
-        <location filename="../application/logexportthread.cpp" line="1293"/>
+        <location filename="../application/logexportthread.cpp" line="1300"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
         <source>Info</source>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
@@ -770,11 +814,15 @@
         <location filename="../application/displaycontent.cpp" line="318"/>
         <location filename="../application/displaycontent.cpp" line="474"/>
         <location filename="../application/displaycontent.cpp" line="971"/>
+<<<<<<< HEAD
 >>>>>>> 53e0498... fix: 修复了欧拉版发现主线也有的系统日志信息体有时会因为有=号导致信息分割错误显示不全的问题
         <location filename="../application/logexportthread.cpp" line="1294"/>
 <<<<<<< HEAD
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
 =======
+=======
+        <location filename="../application/logexportthread.cpp" line="1301"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="548"/>
         <source>User</source>
         <translation type="unfinished"></translation>
@@ -782,8 +830,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="319"/>
         <location filename="../application/displaycontent.cpp" line="972"/>
+<<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="1295"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/logexportthread.cpp" line="1302"/>
+>>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="549"/>
         <source>PID</source>
         <translation type="unfinished"></translation>
