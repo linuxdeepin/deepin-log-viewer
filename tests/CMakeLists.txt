@@ -369,3 +369,26 @@ add_custom_command(TARGET test
 #'make test'命令依赖与我们的测试程序
 add_dependencies(test ${EXE_NAME})
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
