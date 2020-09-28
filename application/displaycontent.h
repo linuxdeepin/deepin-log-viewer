@@ -42,14 +42,20 @@
 
 
 class ExportProgressDlg;
+/**
+ * @brief The DisplayContent class 主显示数据区域控件,包括数据表格和详情页
+ */
 class DisplayContent : public Dtk::Widget::DWidget
 {
     Q_OBJECT
+    /**
+     * @brief The LOAD_STATE enum 主表部分的显示状态
+     */
     enum LOAD_STATE {
-        DATA_LOADING = 0,
-        DATA_COMPLETE,
-        DATA_LOADING_K,
-        DATA_NO_SEARCH_RESULT,
+        DATA_LOADING = 0, //正在加载
+        DATA_COMPLETE, //加载完成
+        DATA_LOADING_K, //内核日志正在加载
+        DATA_NO_SEARCH_RESULT, //搜索无记录
     };
 public:
     explicit DisplayContent(QWidget *parent = nullptr);
@@ -108,7 +114,17 @@ private:
 
 signals:
     void loadMoreInfo();
+    /**
+     * @brief sigDetailInfo 选中treeview显示详情页信号
+     * @param index 当前选中的index
+     * @param pModel 当前的model指针
+     * @param name 当前应用日志选择的日志名称
+     */
     void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name);
+    /**
+     * @brief setExportEnable 是否允许导出信号
+     * @param iEnable 是否允许导出
+     */
     void setExportEnable(bool iEnable);
 
 public slots:
@@ -163,56 +179,155 @@ private:
     void resizeEvent(QResizeEvent *event);
 
 private:
-    //    Dtk::Widget::DTableView *m_tableView;
+    /**
+     * @brief m_treeView 主数据表控件件
+     */
     LogTreeView *m_treeView;
+    /**
+     * @brief m_pModel 主数据表的model
+     */
     QStandardItemModel *m_pModel;
 
-
+    //详情页控件
     logDetailInfoWidget *m_detailWgt {nullptr};
+    //搜索无结果时显示无搜索结果提示的label
     Dtk::Widget::DLabel *noResultLabel {nullptr};
+    //当前选中的日志类型的index
     QModelIndex m_curListIdx;
+    //日志等级的显示文本和代码内文本的转换map
     QMap<QString, QString> m_transDict;
+    //分页加载时,当前加载到的页数
     int m_limitTag {0};
-
+    /**
+     * @brief m_spinnerWgt 加载数据时转轮控件
+     */
     LogSpinnerWidget *m_spinnerWgt;
+    /**
+     * @brief m_spinnerWgt_K 加载内核日志数据时转轮控件
+     */
     LogSpinnerWidget *m_spinnerWgt_K;  // add by Airy
-
+    /**
+     * @brief m_curAppLog 当前选中的应用的日志文件路径
+     */
     QString m_curAppLog;
+
     QString m_currentStatus;
 
+    //当前选中的时间筛选选项
     int m_curBtnId {ALL};
+    //当前选中的等级筛选选项
     int m_curLevel {INF};
 
+    //当前加载的日志类型
     LOG_FLAG m_flag {NONE};
-
+    /**
+     * @brief m_logFileParse 获取日志工具类对象
+     */
     LogFileParser m_logFileParse;
 
-    QList<LOG_MSG_JOURNAL> jBootList, jBootListOrigin;// journalctl --boot cmd.
+    /**
+     * @brief jBootList 经过筛选完成的启动日志列表
+     */
+    /**
+     * @brief jBootListOrigin 未经过筛选的启动日志数据 journalctl --boot cmd.
+     */
+    QList<LOG_MSG_JOURNAL> jBootList, jBootListOrigin;
 
-    QList<LOG_MSG_JOURNAL> jList, jListOrigin; // journalctl cmd.
-    QList<LOG_MSG_DPKG> dList, dListOrigin;    // dpkg.log
-    //    QStringList xList;                           // Xorg.0.log
-    QList<LOG_MSG_XORG> xList, xListOrigin;                  // Xorg.0.log
-    QList<LOG_MSG_BOOT> bList, currentBootList;  // boot.log
-    QList<LOG_MSG_JOURNAL> kList, kListOrigin;                // kern.log
-    QList<LOG_MSG_APPLICATOIN> appList, appListOrigin;         //~/.cache/deepin/xxx.log(.xxx)
-    QList<LOG_MSG_NORMAL> norList;               // add by Airy
-    QList<LOG_MSG_NORMAL> nortempList;           // add by Airy
+    /**
+     * @brief jList 经过筛选完成的系统日志数据
+     */
+    /**
+     * @brief jListOrigin 未经过筛选的系统日志数据 journalctl cmd.
+     */
+    QList<LOG_MSG_JOURNAL> jList, jListOrigin;
+    /**
+     * @brief dList 经过筛选完成的dpkg日志数据
+     */
+    /**
+     * @brief dListOrigin 未经过筛选的dpkg日志数据  dpkg.log
+     */
+    QList<LOG_MSG_DPKG> dList, dListOrigin;
+    /**
+     * @brief xList 经过筛选完成的xorg日志数据
+     */
+    /**
+     * @brief xListOrigin 未经过筛选的xorg日志数据   Xorg.0.log
+     */
+    QList<LOG_MSG_XORG> xList, xListOrigin;
+    /**
+     * @brief currentBootList 经过筛选完成的启动日志数据
+     */
+    /**
+     * @brief bList 未经过筛选的启动日志数据   boot.log
+     */
+    QList<LOG_MSG_BOOT> bList, currentBootList;
+    /**
+     * @brief kList 经过筛选完成的内核日志数据
+     */
+    /**
+     * @brief kListOrigin 未经过筛选的内核日志数据   kern.log
+     */
+    QList<LOG_MSG_JOURNAL> kList, kListOrigin;
+    /**
+     * @brief appList 经过筛选完成的内核日志数据
+     */
+    /**
+     * @brief appListOrigin 未经过筛选的内核日志数据   ~/.cache/deepin/xxx.log(.xxx)
+     */
+    QList<LOG_MSG_APPLICATOIN> appList, appListOrigin;
+    /**
+     * @brief norList add 经过筛选完成的开关机日志数据 by Airy
+     */
+    QList<LOG_MSG_NORMAL> norList;
+    /**
+     * @brief nortempList 未经过筛选的开关机日志数据 add by Airy
+     */
+    QList<LOG_MSG_NORMAL> nortempList;
+    /**
+     * @brief m_currentKwinList add 经过筛选完成的kwin日志数据 by Airy /$HOME/.kwin.log
+     */
     QList<LOG_MSG_KWIN> m_currentKwinList;
-    QList<LOG_MSG_KWIN> m_kwinList;                   //$HOME/.kwin.log
+    /**
+     * @brief m_kwinList 未经过筛选的开关机日志数据
+     */
+    QList<LOG_MSG_KWIN> m_kwinList;
+    /**
+     * @brief m_iconPrefix 图标资源文件路径前缀
+     */
     QString m_iconPrefix = ICONPREFIX;
+    /**
+     * @brief m_icon_name_map 日志等级对应图标资源文件名的map
+     */
     QMap<QString, QString> m_icon_name_map;
+    //当前搜索关键字
     QString m_currentSearchStr{""};
+    /**
+     * @brief m_currentKwinFilter kwin日志当前筛选条件
+     */
     KWIN_FILTERS m_currentKwinFilter;
+    //导出进度条弹框
     ExportProgressDlg *m_exportDlg{nullptr};
+    //是否为第一次加载完成后收到数据,journalctl获取方式专用
     bool m_firstLoadPageData = false;
+    //启动日志当前筛选条件
     BOOT_FILTERS m_bootFilter = {"", ""};
+    /**
+     * @brief m_normalFilter 开关机日志当前筛选条件
+     */
     NORMAL_FILTERS m_normalFilter ;
+    //上次treeview滚筒条的值
     int m_treeViewLastScrollValue = -1;
+    //当前的显示加载状态
     DisplayContent::LOAD_STATE m_state;
+    //系统日志上次获取的时间
     QDateTime m_lastJournalGetTime{QDateTime::fromTime_t(0)};
+    /**
+     * @brief m_journalFilter 当前系统日志筛选条件
+     */
     JOURNAL_FILTERS m_journalFilter;
+    //当前系统日志获取进程标记量
     int m_journalCurrentIndex{-1};
+    //当前klu启动日志获取进程标记量
     int m_journalBootCurrentIndex{-1};
 };
 
