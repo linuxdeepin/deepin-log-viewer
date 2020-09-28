@@ -104,20 +104,26 @@ struct JOURNAL_FILTERS {
 
 };
 
+/**
+ * @brief The NORMAL_FILTERS struct 开关机日志筛选条件
+ */
 struct NORMAL_FILTERS {
-    qint64 timeFilterBegin = -1 ;
-    qint64 timeFilterEnd = -1;
-    int eventTypeFilter = 0;
-    QString searchstr = "";
+    qint64 timeFilterBegin = -1 ; //筛选开始时间
+    qint64 timeFilterEnd = -1; //筛选结束时间
+    int eventTypeFilter = 0; //筛选类型, 有 0全部 1登陆 2开机 3关机
+    QString searchstr = ""; //搜索关键字
 };
 
 struct KERN_FILTERS {
     qint64 timeFilterBegin = -1 ;
     qint64 timeFilterEnd = -1;
 };
+/**
+ * @brief The BOOT_FILTERS struct 启动日志筛选条件
+ */
 struct BOOT_FILTERS {
-    QString searchstr;
-    QString statusFilter;
+    QString searchstr;//搜索关键字
+    QString statusFilter; //状态筛选,有 ALL OK failed
 
 };
 
@@ -130,11 +136,14 @@ struct KERN_FILTERS1 {
 
 
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
+/**
+ * @brief The FILTER_CONFIG struct 筛选控件中的筛选情况记录结构体
+ */
 struct FILTER_CONFIG {
-    int levelCbx = INF + 1;
-    QString appListCbx = "";
-    int statusCbx = 0;
-    int dateBtn = 0;
+    int levelCbx = INF + 1; //等级筛选的筛选值
+    QString appListCbx = ""; //应用日志路径
+    int statusCbx = 0; //启动日志状态筛选下拉框的值
+    int dateBtn = 0; //时间筛选按钮当前选择筛选按钮对应BUTTONID
     int typeCbx = 0;
 };
 enum BUTTONID {

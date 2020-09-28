@@ -37,54 +37,54 @@
 <context>
     <name>Button</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="78"/>
-        <location filename="../application/filtercontent.cpp" line="79"/>
-        <location filename="../application/filtercontent.cpp" line="562"/>
+        <location filename="../application/filtercontent.cpp" line="85"/>
+        <location filename="../application/filtercontent.cpp" line="86"/>
+        <location filename="../application/filtercontent.cpp" line="617"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="93"/>
-        <location filename="../application/filtercontent.cpp" line="94"/>
-        <location filename="../application/filtercontent.cpp" line="554"/>
-        <location filename="../application/filtercontent.cpp" line="563"/>
+        <location filename="../application/filtercontent.cpp" line="100"/>
+        <location filename="../application/filtercontent.cpp" line="101"/>
+        <location filename="../application/filtercontent.cpp" line="609"/>
+        <location filename="../application/filtercontent.cpp" line="618"/>
         <source>Today</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="101"/>
-        <location filename="../application/filtercontent.cpp" line="103"/>
-        <location filename="../application/filtercontent.cpp" line="555"/>
-        <location filename="../application/filtercontent.cpp" line="564"/>
+        <location filename="../application/filtercontent.cpp" line="108"/>
+        <location filename="../application/filtercontent.cpp" line="110"/>
+        <location filename="../application/filtercontent.cpp" line="610"/>
+        <location filename="../application/filtercontent.cpp" line="619"/>
         <source>3 days</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="110"/>
-        <location filename="../application/filtercontent.cpp" line="112"/>
-        <location filename="../application/filtercontent.cpp" line="556"/>
-        <location filename="../application/filtercontent.cpp" line="565"/>
+        <location filename="../application/filtercontent.cpp" line="117"/>
+        <location filename="../application/filtercontent.cpp" line="119"/>
+        <location filename="../application/filtercontent.cpp" line="611"/>
+        <location filename="../application/filtercontent.cpp" line="620"/>
         <source>1 week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="119"/>
-        <location filename="../application/filtercontent.cpp" line="121"/>
-        <location filename="../application/filtercontent.cpp" line="557"/>
-        <location filename="../application/filtercontent.cpp" line="566"/>
+        <location filename="../application/filtercontent.cpp" line="126"/>
+        <location filename="../application/filtercontent.cpp" line="128"/>
+        <location filename="../application/filtercontent.cpp" line="612"/>
+        <location filename="../application/filtercontent.cpp" line="621"/>
         <source>1 month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="127"/>
-        <location filename="../application/filtercontent.cpp" line="129"/>
-        <location filename="../application/filtercontent.cpp" line="558"/>
-        <location filename="../application/filtercontent.cpp" line="567"/>
+        <location filename="../application/filtercontent.cpp" line="134"/>
+        <location filename="../application/filtercontent.cpp" line="136"/>
+        <location filename="../application/filtercontent.cpp" line="613"/>
+        <location filename="../application/filtercontent.cpp" line="622"/>
         <source>3 months</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="215"/>
+        <location filename="../application/filtercontent.cpp" line="222"/>
         <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
@@ -92,65 +92,65 @@
 <context>
     <name>ComboBox</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="161"/>
-        <location filename="../application/filtercontent.cpp" line="193"/>
-        <location filename="../application/filtercontent.cpp" line="206"/>
+        <location filename="../application/filtercontent.cpp" line="168"/>
+        <location filename="../application/filtercontent.cpp" line="200"/>
+        <location filename="../application/filtercontent.cpp" line="213"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="162"/>
+        <location filename="../application/filtercontent.cpp" line="169"/>
         <source>Emergency</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="163"/>
+        <location filename="../application/filtercontent.cpp" line="170"/>
         <source>Alert</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="164"/>
+        <location filename="../application/filtercontent.cpp" line="171"/>
         <source>Critical</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="165"/>
+        <location filename="../application/filtercontent.cpp" line="172"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="166"/>
+        <location filename="../application/filtercontent.cpp" line="173"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="167"/>
+        <location filename="../application/filtercontent.cpp" line="174"/>
         <source>Notice</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="168"/>
-        <location filename="../application/filtercontent.cpp" line="170"/>
+        <location filename="../application/filtercontent.cpp" line="175"/>
+        <location filename="../application/filtercontent.cpp" line="177"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="169"/>
+        <location filename="../application/filtercontent.cpp" line="176"/>
         <source>Debug</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="207"/>
+        <location filename="../application/filtercontent.cpp" line="214"/>
         <source>Login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="208"/>
+        <location filename="../application/filtercontent.cpp" line="215"/>
         <source>Boot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="209"/>
+        <location filename="../application/filtercontent.cpp" line="216"/>
         <source>Shutdown</source>
         <translation type="unfinished"></translation>
     </message>
@@ -158,6 +158,7 @@
 <context>
     <name>DisplayContent</name>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -175,6 +176,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1170"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1260"/>
+>>>>>>> 09f4565... chore: 增加注释
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -182,12 +186,12 @@
 <context>
     <name>ExportDlg</name>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="39"/>
+        <location filename="../application/exportprogressdlg.cpp" line="43"/>
         <source>Exporting...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="62"/>
+        <location filename="../application/exportprogressdlg.cpp" line="67"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -195,6 +199,7 @@
 <context>
     <name>ExportMessage</name>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -212,6 +217,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2039"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="2228"/>
+>>>>>>> 09f4565... chore: 增加注释
         <source>Export successful</source>
         <translation type="unfinished"></translation>
     </message>
@@ -219,6 +227,7 @@
 <context>
     <name>File</name>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -236,6 +245,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1168"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1258"/>
+>>>>>>> 09f4565... chore: 增加注释
         <source>Export File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -243,30 +255,30 @@
 <context>
     <name>Label</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="74"/>
-        <location filename="../application/filtercontent.cpp" line="552"/>
-        <location filename="../application/filtercontent.cpp" line="561"/>
+        <location filename="../application/filtercontent.cpp" line="81"/>
+        <location filename="../application/filtercontent.cpp" line="607"/>
+        <location filename="../application/filtercontent.cpp" line="616"/>
         <source>Period:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="156"/>
+        <location filename="../application/filtercontent.cpp" line="163"/>
         <source>Level:  </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="178"/>
+        <location filename="../application/filtercontent.cpp" line="185"/>
         <source>Application list:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="189"/>
+        <location filename="../application/filtercontent.cpp" line="196"/>
         <location filename="../application/logdetailinfowidget.cpp" line="157"/>
         <source>Status:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="202"/>
+        <location filename="../application/filtercontent.cpp" line="209"/>
         <location filename="../application/logdetailinfowidget.cpp" line="162"/>
         <source>Event Type:</source>
         <translation type="unfinished"></translation>
@@ -311,6 +323,7 @@
     <name>Level</name>
     <message>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="148"/>
         <location filename="../application/displaycontent.cpp" line="159"/>
 <<<<<<< HEAD
@@ -335,6 +348,12 @@
         <location filename="../application/logexportthread.cpp" line="2123"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="153"/>
+        <location filename="../application/displaycontent.cpp" line="164"/>
+        <location filename="../application/journalbootwork.cpp" line="426"/>
+        <location filename="../application/journalwork.cpp" line="377"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="2130"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
@@ -342,6 +361,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="149"/>
         <location filename="../application/displaycontent.cpp" line="162"/>
@@ -367,6 +387,12 @@
         <location filename="../application/logexportthread.cpp" line="2126"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="154"/>
+        <location filename="../application/displaycontent.cpp" line="167"/>
+        <location filename="../application/journalbootwork.cpp" line="429"/>
+        <location filename="../application/journalwork.cpp" line="380"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="2133"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
@@ -374,6 +400,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="150"/>
         <location filename="../application/displaycontent.cpp" line="161"/>
@@ -399,6 +426,12 @@
         <location filename="../application/logexportthread.cpp" line="2125"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="155"/>
+        <location filename="../application/displaycontent.cpp" line="166"/>
+        <location filename="../application/journalbootwork.cpp" line="428"/>
+        <location filename="../application/journalwork.cpp" line="379"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="2132"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
@@ -406,6 +439,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="151"/>
         <location filename="../application/displaycontent.cpp" line="158"/>
@@ -431,6 +465,12 @@
         <location filename="../application/logexportthread.cpp" line="2122"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="156"/>
+        <location filename="../application/displaycontent.cpp" line="163"/>
+        <location filename="../application/journalbootwork.cpp" line="425"/>
+        <location filename="../application/journalwork.cpp" line="376"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="2129"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
@@ -438,6 +478,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="155"/>
 <<<<<<< HEAD
@@ -461,6 +502,11 @@
         <location filename="../application/logexportthread.cpp" line="2119"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="160"/>
+        <location filename="../application/journalbootwork.cpp" line="422"/>
+        <location filename="../application/journalwork.cpp" line="373"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="2126"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
@@ -468,6 +514,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="156"/>
 <<<<<<< HEAD
@@ -491,6 +538,11 @@
         <location filename="../application/logexportthread.cpp" line="2120"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="161"/>
+        <location filename="../application/journalbootwork.cpp" line="423"/>
+        <location filename="../application/journalwork.cpp" line="374"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="2127"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
@@ -498,6 +550,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="157"/>
 <<<<<<< HEAD
@@ -521,6 +574,11 @@
         <location filename="../application/logexportthread.cpp" line="2121"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="162"/>
+        <location filename="../application/journalbootwork.cpp" line="424"/>
+        <location filename="../application/journalwork.cpp" line="375"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="2128"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
@@ -528,6 +586,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="160"/>
 <<<<<<< HEAD
@@ -551,6 +610,11 @@
         <location filename="../application/logexportthread.cpp" line="2124"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="165"/>
+        <location filename="../application/journalbootwork.cpp" line="427"/>
+        <location filename="../application/journalwork.cpp" line="378"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="2131"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
@@ -606,7 +670,7 @@
 <context>
     <name>SearchBar</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="110"/>
+        <location filename="../application/displaycontent.cpp" line="121"/>
         <source>No search results</source>
         <translation type="unfinished"></translation>
     </message>
@@ -619,6 +683,7 @@
 <context>
     <name>Table</name>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -668,10 +733,16 @@
         <source>Process</source>
 =======
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="335"/>
+        <location filename="../application/displaycontent.cpp" line="629"/>
+        <location filename="../application/displaycontent.cpp" line="1037"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="1296"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="543"/>
         <source>Level</source>
+<<<<<<< HEAD
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <translation type="unfinished"></translation>
     </message>
@@ -709,10 +780,19 @@
 =======
         <location filename="../application/logexportthread.cpp" line="1290"/>
 =======
+=======
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="336"/>
+        <location filename="../application/displaycontent.cpp" line="504"/>
+        <location filename="../application/displaycontent.cpp" line="1038"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="1297"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="544"/>
         <source>Process</source>
+<<<<<<< HEAD
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <translation type="unfinished"></translation>
     </message>
@@ -759,6 +839,17 @@
 =======
         <location filename="../application/logexportthread.cpp" line="1292"/>
 =======
+=======
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="337"/>
+        <location filename="../application/displaycontent.cpp" line="502"/>
+        <location filename="../application/displaycontent.cpp" line="630"/>
+        <location filename="../application/displaycontent.cpp" line="1039"/>
+        <location filename="../application/displaycontent.cpp" line="1935"/>
+        <location filename="../application/displaycontent.cpp" line="2063"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="1299"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="546"/>
@@ -767,6 +858,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="306"/>
@@ -795,6 +887,17 @@
         <location filename="../application/displaycontent.cpp" line="1897"/>
         <location filename="../application/displaycontent.cpp" line="1930"/>
         <location filename="../application/displaycontent.cpp" line="1968"/>
+=======
+        <location filename="../application/displaycontent.cpp" line="338"/>
+        <location filename="../application/displaycontent.cpp" line="505"/>
+        <location filename="../application/displaycontent.cpp" line="632"/>
+        <location filename="../application/displaycontent.cpp" line="1040"/>
+        <location filename="../application/displaycontent.cpp" line="1936"/>
+        <location filename="../application/displaycontent.cpp" line="1977"/>
+        <location filename="../application/displaycontent.cpp" line="2064"/>
+        <location filename="../application/displaycontent.cpp" line="2102"/>
+        <location filename="../application/displaycontent.cpp" line="2145"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="1300"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
         <source>Info</source>
@@ -802,6 +905,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="307"/>
@@ -821,6 +925,11 @@
 >>>>>>> 9b64710... fix: 修复了控制中心调整时间后，log记录时间显示有误
 =======
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="339"/>
+        <location filename="../application/displaycontent.cpp" line="503"/>
+        <location filename="../application/displaycontent.cpp" line="1041"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="1301"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="548"/>
@@ -828,12 +937,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="319"/>
         <location filename="../application/displaycontent.cpp" line="972"/>
 <<<<<<< HEAD
         <location filename="../application/logexportthread.cpp" line="1295"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="340"/>
+        <location filename="../application/displaycontent.cpp" line="1042"/>
+>>>>>>> 09f4565... chore: 增加注释
         <location filename="../application/logexportthread.cpp" line="1302"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="549"/>
@@ -841,6 +955,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -854,10 +969,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="611"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="631"/>
+>>>>>>> 09f4565... chore: 增加注释
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -875,10 +994,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1785"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1937"/>
+>>>>>>> 09f4565... chore: 增加注释
         <source>Action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -896,10 +1019,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1819"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="1976"/>
+>>>>>>> 09f4565... chore: 增加注释
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -917,10 +1044,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1927"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="2099"/>
+>>>>>>> 09f4565... chore: 增加注释
         <source>Event Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -938,6 +1069,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1928"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="2100"/>
+>>>>>>> 09f4565... chore: 增加注释
         <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
@@ -993,6 +1127,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1786"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1903"/>
@@ -1006,6 +1141,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1929"/>
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
+=======
+        <location filename="../application/displaycontent.cpp" line="2101"/>
+>>>>>>> 09f4565... chore: 增加注释
         <source>Date and Time</source>
         <translation type="unfinished"></translation>
     </message>

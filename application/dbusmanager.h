@@ -19,6 +19,9 @@
 
 #include <QObject>
 #include <QVariantMap>
+/**
+ * @brief The DBusManager class  dbus接口获取工具类
+ */
 class DBusManager : public QObject
 {
     Q_OBJECT

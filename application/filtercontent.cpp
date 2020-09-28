@@ -55,6 +55,10 @@
 #define FONT_18_MIN_WIDTH 100
 DWIDGET_USE_NAMESPACE
 
+/**
+ * @brief FilterContent::FilterContent 构造函数初始化ui和信号槽连接
+ * @param parent
+ */
 FilterContent::FilterContent(QWidget *parent)
     : DFrame(parent)
     , m_curBtnId(ALL)
@@ -66,6 +70,9 @@ FilterContent::FilterContent(QWidget *parent)
 
 FilterContent::~FilterContent() {}
 
+/**
+ * @brief FilterContent::initUI 初始化界面
+ */
 void FilterContent::initUI()
 {
     QVBoxLayout *vLayout = new QVBoxLayout;
@@ -74,7 +81,7 @@ void FilterContent::initUI()
     periodLabel = new DLabel(DApplication::translate("Label", "Period:"), this);
     periodLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     m_btnGroup = new QButtonGroup(this);
-
+    //初始化时间筛选按钮部分布局
     m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
     m_allBtn->setToolTip(DApplication::translate("Button", "All"));  // add by Airy for bug 16245
     // m_allBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
@@ -131,9 +138,9 @@ void FilterContent::initUI()
 //        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
     //m_threeMonthBtn->setFixdHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_threeMonthBtn, 5);
-
+    //设置初始时间筛选为全部
     setUeButtonSytle();
-
+    //所有时间筛选按钮放在上排layout
     hLayout_period->addWidget(periodLabel);
     hLayout_period->addWidget(m_allBtn);
     hLayout_period->addWidget(m_todayBtn);
@@ -232,7 +239,10 @@ void FilterContent::initUI()
     // default application list is not visible
     setSelectorVisible(true, false, false, true, false);
     m_currentType = JOUR_TREE_DATA;
+    //设置初始筛选选项
+
     updateDataState();
+    //为时间筛选按钮设置事件过滤器,为处理左右按键键盘事件触发切换选择时间筛选器选项
     m_allBtn->installEventFilter(this);
     m_todayBtn->installEventFilter(this);
     m_threeDayBtn->installEventFilter(this);
@@ -243,6 +253,9 @@ void FilterContent::initUI()
 
 }
 
+/**
+ * @brief FilterContent::initConnections 连接信号槽
+ */
 void FilterContent::initConnections()
 {
     connect(m_btnGroup, SIGNAL(buttonClicked(int)), this, SLOT(slot_buttonClicked(int)));
@@ -255,6 +268,9 @@ void FilterContent::initConnections()
             SLOT(slot_cbxLogTypeChanged(int)));  // add by Airy
 }
 
+/**
+ * @brief FilterContent::shortCutExport 主窗口触发导出快捷键时,在这里判断是否能够导出再发出导出信号
+ */
 void FilterContent::shortCutExport()
 {
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
@@ -262,6 +278,7 @@ void FilterContent::shortCutExport()
     if (exportBtn) {
         canExport = exportBtn->isEnabled();
     }
+    //判断现在导出按钮是否能够点击,不能点击时不可以导出
     if (!itemData.isEmpty() && canExport)
         emit sigExportInfo();
 }
@@ -272,17 +289,22 @@ void FilterContent::shortCutExport()
 //}
 
 
-
+/**
+ * @brief FilterContent::setAppComboBoxItem 刷新应用种类下拉列表
+ */
 void FilterContent::setAppComboBoxItem()
 {
+    //必须先disconnect变动值的信号槽,因为改变下拉选项会几次触发currentIndexChanged信号,这不是我们想要的
     disconnect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
-
     cbx_app->clear();
+    //获取应用列表
     auto *appHelper = LogApplicationHelper::instance();
     QMap<QString, QString> _map = appHelper->getMap();
     QMap<QString, QString>::const_iterator iter = _map.constBegin();
+    //添加数据进combox
     while (iter != _map.constEnd()) {
         cbx_app->addItem(iter.key());
+        //应用日志的路径为Qt::UserRole + 1
         cbx_app->setItemData(cbx_app->count() - 1, iter.value(), Qt::UserRole + 1);
         ++iter;
     }
@@ -290,6 +312,15 @@ void FilterContent::setAppComboBoxItem()
 
 }
 
+/**
+ * @brief FilterContent::setSelectorVisible 设置筛选控件显示或不显示以适应各种日志类型的筛选情况
+ * @param lvCbx 等级筛选下拉框是否显示
+ * @param appListCbx 应用筛选下拉框是否显示
+ * @param statusCbx 启动日志状态筛选下拉框是否显示
+ * @param period 时间筛选按钮是否显示
+ * @param needMove 如果筛选器只有单排布局,则需要移动导出按钮到上排布局,这个参数表示是否把导出按钮移动到上排的布局
+ * @param typecbx 开关机日志日志种类筛选下拉框是否显示
+ */
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
                                        bool needMove, bool typecbx)
 {
@@ -302,6 +333,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 //        statusComboxFocusReason =   cbx_status->getFocusReason();
 //        statushasFoucs = true;
 //    }
+    //先不立马更新界面,等全部更新好控件状态后再更新界面,否则会导致界面跳动
     setUpdatesEnabled(false);
     lvTxt->setVisible(lvCbx);
     cbx_lv->setVisible(lvCbx);
@@ -323,6 +355,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     }
     statusTxt->setVisible(statusCbx);
     cbx_status->setVisible(statusCbx);
+    //根据是否需要移动导出按钮移动到对应布局
     if (needMove) {
         hLayout_period->addWidget(exportBtn);
         hLayout_all->removeWidget(exportBtn);
@@ -332,6 +365,7 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 
     }
     resizeWidth();
+    //先不立马更新界面,等全部更新好控件状态后再更新界面,否则会导致界面跳动
     setUpdatesEnabled(true);
 
     //    va_end(arg_ptr);  //清除可变参数指针
@@ -349,8 +383,13 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 
 }
 
+/**
+ * @brief FilterContent::setSelection 设置当前筛选器选择的状态
+ * @param iConifg 控件的选择值的结构体
+ */
 void FilterContent::setSelection(FILTER_CONFIG iConifg)
 {
+    //控件不显示说明此情况下不需要给它设置值
     if (cbx_lv->isVisible())
         cbx_lv->setCurrentIndex(iConifg.levelCbx);
     if (cbx_app->isVisible()) {
@@ -379,6 +418,9 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
 
 }
 
+/**
+ * @brief FilterContent::setUeButtonSytle 时间筛选器重置为默认选择全部
+ */
 void FilterContent::setUeButtonSytle()
 {
     for (QAbstractButton *abtn : m_btnGroup->buttons()) {
@@ -390,6 +432,10 @@ void FilterContent::setUeButtonSytle()
 
 }
 
+/**
+ * @brief FilterContent::paintEvent 绘制事件徐函数,主要用来绘制出筛选控件背景的圆角矩形效果
+ * @param event 绘制事件
+ */
 void FilterContent::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
@@ -397,14 +443,15 @@ void FilterContent::paintEvent(QPaintEvent *event)
 
     // Save pen
     QPen oldPen = painter.pen();
-
+    //设置画笔颜色角色,根据主题变色
     painter.setRenderHint(QPainter::Antialiasing);
     DPalette pa = DApplicationHelper::instance()->palette(this);
     painter.setBrush(QBrush(pa.color(DPalette::Base)));
     QColor penColor = pa.color(DPalette::FrameBorder);
+    //设置透明度
     penColor.setAlphaF(0.05);
     painter.setPen(QPen(penColor));
-
+    //算出背景圆角矩形的大小位置
     QRectF rect = this->rect();
     rect.setX(0.5);
     rect.setY(0.5);
@@ -412,6 +459,7 @@ void FilterContent::paintEvent(QPaintEvent *event)
     rect.setHeight(rect.height() - 0.5);
 
     QPainterPath painterPath;
+    //绘制圆角矩形
     painterPath.addRoundedRect(rect, 8, 8);
     painter.drawPath(painterPath);
 
@@ -434,18 +482,19 @@ void FilterContent::paintEvent(QPaintEvent *event)
     DFrame::paintEvent(event);
 }
 
+/**
+ * @brief FilterContent::eventFilter 事件过滤器
+ * @param obj 发生事件的对象
+ * @param event 事件指针
+ * @return true为截获事件,处理后不继续传递,否则继续传递下去
+ */
 bool FilterContent::eventFilter(QObject *obj, QEvent *event)
 {
-
-//    LogPeriodButton *m_allBtn = nullptr;
-//    LogPeriodButton *m_todayBtn = nullptr;
-//    LogPeriodButton *m_threeDayBtn = nullptr;
-//    LogPeriodButton *m_lastWeekBtn = nullptr;
-//    LogPeriodButton *m_lastMonthBtn = nullptr;
-//    LogPeriodButton *m_threeMonthBtn = nullptr;
+    //判断是否为键盘按下事件
     if (event->type() == QEvent::KeyPress) {
         if (obj == m_allBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
+            //左右按钮使焦点和选项变为两边的按钮,第一个按钮往左是最后一个按钮
             if (kev->key() == Qt::Key_Right) {
                 m_todayBtn->click();
                 m_todayBtn->setFocus(Qt::TabFocusReason);
@@ -490,6 +539,7 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
                 m_lastWeekBtn->setFocus(Qt::TabFocusReason);
             }
         }  else if (obj == m_threeMonthBtn) {
+            //最后一个按钮往右为第一个按钮,如此循环
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_allBtn->click();
@@ -504,7 +554,9 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
 }
 
 
-//自适应宽度
+/**
+ * @brief FilterContent::resizeWidth 自适应宽度
+ */
 void FilterContent::resizeWidth()
 {
     int periodWidth = 0;
@@ -520,7 +572,10 @@ void FilterContent::resizeWidth()
     }
     emit   sigResizeWidth(periodWidth);
 }
-//根据当前宽度省略日期筛选按钮文字以适应宽度，让控件能塞下
+
+/**
+ * @brief FilterContent::updateWordWrap 根据当前宽度省略日期筛选按钮文字以适应宽度，让控件能塞下
+ */
 void FilterContent::updateWordWrap()
 {
     int currentWidth = this->rect().width();
@@ -570,32 +625,45 @@ void FilterContent::updateWordWrap()
     setUpdatesEnabled(true);
 }
 
+/**
+ * @brief FilterContent::updateDataState  每次日志类型变动或需要刷新时,按记录的数据刷新筛选器的选项
+ */
 void FilterContent::updateDataState()
 {
+    //如果没有记录当前日志的选项,则给一个默认的
     if (!m_config.contains(m_currentType)) {
         FILTER_CONFIG newConfig;
         m_config.insert(m_currentType, newConfig);
     }
+    //按记录的筛选器选项还原控件选项
     setSelection(m_config.value(m_currentType));
 }
 
+/**
+ * @brief FilterContent::setCurrentConfig 控件发生值改变时,改变当前类型的筛选器选项
+ * @param iConifg 筛选器选项
+ */
 void FilterContent::setCurrentConfig(FILTER_CONFIG iConifg)
 {
     m_config.insert(m_currentType, iConifg);
 }
 
+/**
+ * @brief FilterContent::slot_logCatelogueClicked 连接日志种类listview  itemchanged信号,根据日志种类改变筛选控件布局
+ * @param index  listview 当前选中index,用来确定日志种类
+ */
 void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
 {
     if (!index.isValid())
         return;
-
+    //获取日志种类
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty()) {
         return;
     }
 
     m_curTreeIndex = index;
-
+    //根据日志种类改变布局
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         m_currentType = APP_TREE_DATA;
         this->setAppComboBoxItem();
@@ -642,6 +710,10 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
 
 }
 
+/**
+ * @brief FilterContent::slot_logCatelogueRefresh 日志种类选择listview的右键菜单刷新时处理的槽函数
+ * @param index 刷新对应的日志种类
+ */
 void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
 {
     if (!index.isValid())
@@ -651,7 +723,7 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
     if (itemData.isEmpty()) {
         return;
     }
-
+    //现在只需处理应用日志刷新时需要刷新应用选择下拉列表的数据
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         //记录当前选择项目以便改变combox内容后可以选择原来的选项刷新
         //  QString cuurentText = cbx_app->currentText();
@@ -660,6 +732,7 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
         this->setAppComboBoxItem();
 
         updateDataState();
+        //第一次刷新手动发出选项变化信号
         emit sigCbxAppIdxChanged(cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString());
         connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
         // cbx_app->setCurrentText(cuurentText);
@@ -667,6 +740,10 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
     }
 }
 
+/**
+ * @brief FilterContent::slot_buttonClicked 时间筛选buttongroup值变化处理槽函数
+ * @param idx 当前选择的按钮
+ */
 void FilterContent::slot_buttonClicked(int idx)
 {
     /** note: In order to adapt to the new scene, select time-period first,
@@ -689,10 +766,7 @@ void FilterContent::slot_buttonClicked(int idx)
     case ONE_WEEK:
     case ONE_MONTH:
     case THREE_MONTHS: {
-//        foreach (QAbstractButton *, m_btnGroup->buttons()) {
-
-//        }
-//        qDebug()<<
+        //根据选择时间发出当前选项变化信号
         m_curBtnId = idx;
         emit sigButtonClicked(idx, m_curLvCbxId, m_curTreeIndex);
     } break;
@@ -712,47 +786,71 @@ void FilterContent::slot_buttonClicked(int idx)
     }
 }
 
+/**
+ * @brief FilterContent::slot_exportButtonClicked 导出按钮触发处理槽函数
+ */
 void FilterContent::slot_exportButtonClicked()
 {
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
+    //当前日志种类不为空则发出导出数据信号给其他类处理
     if (!itemData.isEmpty())
         emit sigExportInfo();
 }
 
+/**
+ * @brief FilterContent::slot_cbxLvIdxChanged 日志等级下拉框选择变化处理槽函数
+ * @param idx 当前选择的选项下标
+ */
 void FilterContent::slot_cbxLvIdxChanged(int idx)
 {
     m_curLvCbxId = idx - 1;
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.levelCbx = idx;
+    //变化时改变记录选择选项的数据结构,以便下次还原
     setCurrentConfig(curConfig);
+    //发出信号以供数据显示控件刷新数据
     emit sigButtonClicked(m_curBtnId, m_curLvCbxId, m_curTreeIndex);
 }
 
+/**
+ * @brief FilterContent::slot_cbxAppIdxChanged 应用选择下拉框选择变化处理槽函数
+ * @param idx 当前选择的选项下标
+ */
 void FilterContent::slot_cbxAppIdxChanged(int idx)
 {
     QString path = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     qDebug() << "apppath" << path;
     curConfig.appListCbx = path;
+    //变化时改变记录选择选项的数据结构,以便下次还原
     setCurrentConfig(curConfig);
-
+    //发出信号以供数据显示控件刷新数据
     emit sigCbxAppIdxChanged(path);
 }
 
+/**
+ * @brief FilterContent::slot_cbxStatusChanged 启动日志状态选择下拉框选择变化处理槽函数
+ * @param idx 当前选择的选项下标
+ */
 void FilterContent::slot_cbxStatusChanged(int idx)
 {
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.statusCbx = idx;
+    //变化时改变记录选择选项的数据结构,以便下次还原
     setCurrentConfig(curConfig);
     QString str;
     if (idx == 1)
         str = "OK";
     else if (idx == 2)
         str = "Failed";
+    //发出信号以供数据显示控件刷新数据
     emit sigStatusChanged(str);
 }
 
-// add by Airy
+/**
+ * @brief FilterContent::slot_cbxLogTypeChanged 开关机日志日志种类选择下拉框选择变化处理槽函数
+ * @param idx 当前选择的选项下标
+ */
 void FilterContent::slot_cbxLogTypeChanged(int idx)
 {
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
@@ -762,6 +860,10 @@ void FilterContent::slot_cbxLogTypeChanged(int idx)
     qDebug() << "emit signal " + QString::number(idx);
 }
 
+/**
+ * @brief FilterContent::setExportButtonEnable 导出按钮是否置灰
+ * @param iEnable true 不置灰 false 置灰
+ */
 void FilterContent::setExportButtonEnable(bool iEnable)
 {
     if (exportBtn) {
