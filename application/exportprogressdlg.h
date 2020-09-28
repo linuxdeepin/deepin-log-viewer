@@ -20,7 +20,9 @@
 #include <DProgressBar>
 #include <DWidget>
 DWIDGET_USE_NAMESPACE
-
+/**
+ * @brief The ExportProgressDlg class 导出进度框
+ */
 class ExportProgressDlg : public DDialog
 {
     Q_OBJECT
@@ -30,11 +32,17 @@ public:
     void setProgressBarRange(int minValue, int maxValue);
     void updateProgressBarValue(int curValue);
 signals:
+    /**
+     * @brief sigCloseBtnClicked 关闭或取消按钮触发时发出,用来取消与此相关的导出出逻辑
+     */
     void sigCloseBtnClicked();
 protected:
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
 
 private:
+    /**
+     * @brief m_pExportProgressBar 进度条
+     */
     DProgressBar *m_pExportProgressBar;
 };
 

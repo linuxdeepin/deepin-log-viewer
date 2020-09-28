@@ -26,6 +26,10 @@
 #include <QHBoxLayout>
 #include <QDebug>
 #include <QAbstractButton>
+/**
+ * @brief ExportProgressDlg::ExportProgressDlg 构造函数中主要用来初始化界面
+ * @param parent 父对象指针
+ */
 ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     : DDialog(parent)
 {
@@ -38,6 +42,7 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
 
     DLabel *txtLabel = new DLabel(DApplication::translate("ExportDlg", "Exporting...")); //提示信息
     txtLabel->setAlignment(Qt::AlignCenter);
+    //设置字号
     DFontSizeManager::instance()->bind(txtLabel, DFontSizeManager::T6);
     DPalette pa = DApplicationHelper::instance()->palette(txtLabel);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::BrightText));
@@ -47,7 +52,7 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     //pVLayouttxt->addSpacing(10);
     pVLayouttxt->addWidget(txtLabel, Qt::AlignHCenter);
     pVLayout->addLayout(pVLayouttxt);
-
+    //进度条设置初始化
     m_pExportProgressBar = new DProgressBar(this);
     m_pExportProgressBar->setAccessibleName("export_progressbar");
     m_pExportProgressBar->setTextVisible(false);
@@ -67,6 +72,11 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     //  setFixedHeight(120);
 }
 
+/**
+ * @brief ExportProgressDlg::setProgressBarRange 设置进度条的最大值最小值
+ * @param minValue 进度条最小值
+ * @param maxValue 进度条最大值
+ */
 void ExportProgressDlg::setProgressBarRange(int minValue, int maxValue)
 {
     if (m_pExportProgressBar != nullptr) {
@@ -75,6 +85,10 @@ void ExportProgressDlg::setProgressBarRange(int minValue, int maxValue)
     }
 }
 
+/**
+ * @brief ExportProgressDlg::updateProgressBarValue  给进度条赋值以显示进度
+ * @param curValue 当前进度条的值
+ */
 void ExportProgressDlg::updateProgressBarValue(int curValue)
 {
     if (m_pExportProgressBar != nullptr) {
@@ -83,6 +97,10 @@ void ExportProgressDlg::updateProgressBarValue(int curValue)
     }
 }
 
+/**
+ * @brief ExportProgressDlg::hideEvent 隐藏时清空进度条进度并发出取消信号
+ * @param event 隐藏事件
+ */
 void ExportProgressDlg::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event)
