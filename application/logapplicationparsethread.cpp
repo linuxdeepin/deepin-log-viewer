@@ -16,7 +16,9 @@
 */
 #include "logapplicationparsethread.h"
 #include "utils.h"
+
 #include <DMessageBox>
+
 #include <QDateTime>
 #include <QDebug>
 #include <QProcess>
@@ -25,7 +27,10 @@ DWIDGET_USE_NAMESPACE
 
 std::atomic<LogApplicationParseThread *> LogApplicationParseThread::m_instance;
 std::mutex LogApplicationParseThread::m_mutex;
-
+/**
+ * @brief LogApplicationParseThread::LogApplicationParseThread 构造函数
+ * @param parent 父对象
+ */
 LogApplicationParseThread::LogApplicationParseThread(QObject *parent)
     : QThread(parent)
 {
@@ -34,6 +39,9 @@ LogApplicationParseThread::LogApplicationParseThread(QObject *parent)
     initMap();
 }
 
+/**
+ * @brief LogApplicationParseThread::~LogApplicationParseThread 析构函数，停止并销毁process指针
+ */
 LogApplicationParseThread::~LogApplicationParseThread()
 {
     if (m_process) {
@@ -44,11 +52,18 @@ LogApplicationParseThread::~LogApplicationParseThread()
     }
 }
 
+/**
+ * @brief LogApplicationParseThread::setParam 设置获取的筛选条件
+ * @param iFilter 筛选条件结构体
+ */
 void LogApplicationParseThread::setParam(APP_FILTERS &iFilter)
 {
     m_AppFiler = iFilter;
 }
 
+/**
+ * @brief LogApplicationParseThread::stopProccess 停止qprocess获取进程
+ */
 void LogApplicationParseThread::stopProccess()
 {
     m_canRun = false;
@@ -58,17 +73,23 @@ void LogApplicationParseThread::stopProccess()
     }
 }
 
+/**
+ * @brief LogApplicationParseThread::doWork 获取数据线程逻辑
+ */
 void LogApplicationParseThread::doWork()
 {
+    //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
     m_appList.clear();
     initProccess();
 
     //connect(m_process, SIGNAL(finished(int)), m_process, SLOT(deleteLater()));
+    //因为筛选信息中含有日志文件路径，所以不能为空，否则无法获取
     if (m_AppFiler.path.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
         emit appCmdFinished(m_appList);
     } else {
         QStringList arg;
+        //使用cat命令获取日志文件的文本
         arg << "-c" << QString("cat %1").arg(m_AppFiler.path);
 
         m_process->start("/bin/bash", arg);
@@ -78,21 +99,25 @@ void LogApplicationParseThread::doWork()
         if (!m_canRun) {
             return;
         }
+        //替换截断空字符
         QString output(Utils::replaceEmptyByteArray(byteOutput));
         for (QString str : output.split('\n')) {
             if (!m_canRun) {
                 return;
             }
             LOG_MSG_APPLICATOIN msg;
-
+            //删除空白字符
             str.replace(QRegExp("\\s{2,}"), "");
+            //删除颜色字符
             str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
 
             QStringList list = str.split("]", QString::SkipEmptyParts);
+            //日志格式各字段用[]和空格隔开，有等级 时间 信息体 三个字段，至少应该能分割出三个
             if (list.count() < 3)
                 continue;
 
             QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
+            //原始文件时间日期文本为2020-07-03, 19:19:18.639 需要去除,
             if (dateTime.contains(",")) {
                 dateTime.replace(",", "");
             }
@@ -110,6 +135,7 @@ void LogApplicationParseThread::doWork()
             }  // add
 
             qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
+            //按筛选条件筛选时间段
             if (m_AppFiler.timeFilterBegin > 0 && m_AppFiler.timeFilterEnd > 0) {
                 if (dt < m_AppFiler.timeFilterBegin || dt > m_AppFiler.timeFilterEnd)
                     continue;
@@ -117,7 +143,7 @@ void LogApplicationParseThread::doWork()
 
             msg.dateTime = dateTime;
             msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
-
+            //筛选日志等级
             if (m_AppFiler.lvlFilter != LVALL) {
                 if (m_levelDict.value(msg.level) != m_AppFiler.lvlFilter)
                     continue;
@@ -193,6 +219,9 @@ void LogApplicationParseThread::onProcFinished(int ret)
 #endif
 }
 
+/**
+ * @brief LogApplicationParseThread::initMap 初始化数据结构
+ */
 void LogApplicationParseThread::initMap()
 {
     m_levelDict.insert("Warning", WARN);
@@ -201,6 +230,9 @@ void LogApplicationParseThread::initMap()
     m_levelDict.insert("Error", ERR);
 }
 
+/**
+ * @brief LogApplicationParseThread::initProccess 构造 QProcess成员指针
+ */
 void LogApplicationParseThread::initProccess()
 {
     if (!m_process) {
@@ -208,6 +240,9 @@ void LogApplicationParseThread::initProccess()
     }
 }
 
+/**
+ * @brief LogApplicationParseThread::run 线程执行虚函数重写逻辑
+ */
 void LogApplicationParseThread::run()
 {
     doWork();

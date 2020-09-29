@@ -16,13 +16,17 @@
 */
 #ifndef LOGAUTHTHREAD_H
 #define LOGAUTHTHREAD_H
+
+#include "structdef.h"
+
 #include <QProcess>
 #include <QRunnable>
 #include <QVector>
+
 #include <mutex>
-#include "structdef.h"
-
-
+/**
+ * @brief The LogAuthThread class 启动日志 内核日志 kwin日志 xorg日志 dpkg日志获取线程
+ */
 class LogAuthThread :  public QObject, public QRunnable
 {
     Q_OBJECT
@@ -46,14 +50,16 @@ public:
 
     QString getStandardOutput();
     QString getStandardError();
-    static int thread_count;
     void setType(LOG_FLAG flag) { m_type = flag; }
     void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
     void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
     void setFileterParam(DKPG_FILTERS iFIlters) { m_dkpgFilters = iFIlters; }
     void setFileterParam(KERN_FILTERS iFIlters) { m_kernFilters = iFIlters; }
     void stopProccess();
-
+    /**
+     * @brief thread_index 静态成员变量，用来每次构造时标记新的当前线程对象 m_threadIndex
+     */
+    static int thread_count;
 protected:
     void run() override;
 
@@ -82,20 +88,43 @@ public slots:
     void onFinished(int exitCode);
     void kernDataRecived();
 private:
+
     QStringList m_list;
     QString m_output;
     QString m_error;
+    /**
+     * @brief m_type 当前线程获取日志数据的类型，用来指定不同的获取逻辑和返回结果
+     */
     LOG_FLAG m_type;
+    /**
+     * @brief m_kwinFilters kwin日志筛选条件
+     */
     KWIN_FILTERS m_kwinFilters;
+    /**
+     * @brief m_xorgFilters xorg日志筛选条件
+     */
     XORG_FILTERS m_xorgFilters;
+    /**
+     * @brief m_dkpgFilters dpkg日志筛选条件
+     */
     DKPG_FILTERS m_dkpgFilters;
+    /**
+     * @brief m_kernFilters 内核日志筛选条件
+     */
     KERN_FILTERS m_kernFilters;
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
+    //获取数据用的cat命令的process
     QProcess *m_process = nullptr;
+    /**
+     * @brief m_canRun 是否可以继续运行的标记量，用于停止运行线程
+     */
     bool m_canRun = false;
+    /**
+     * @brief m_threadIndex 当前线程标号
+     */
     int m_threadCount;
-
+    //正在执行停止进程的变量，防止重复执行停止逻辑
     bool m_isStopProccess = false;
     GET_FIILE_DATA_FLAG m_flag;
     char *mMem{nullptr};

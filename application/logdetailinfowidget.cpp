@@ -38,13 +38,21 @@ DWIDGET_USE_NAMESPACE
 
 #define LABEL_MIN_WIDTH 120
 
+/**
+ * @brief logDetailInfoWidget::logDetailInfoWidget 构造函数
+ * @param parent 父对象
+ */
 logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
     : DWidget(parent)
 {
     initUI();
+    //此控件不需要有焦点
     setFocusPolicy(Qt::NoFocus);
 }
 
+/**
+ * @brief logDetailInfoWidget::cleanText 所有控件隐藏
+ */
 void logDetailInfoWidget::cleanText()
 {
     m_dateTime->hide();
@@ -74,11 +82,18 @@ void logDetailInfoWidget::cleanText()
     m_eventLabel->hide();
 }
 
+/**
+ * @brief logDetailInfoWidget::hideLine 设置是否隐藏分割线
+ * @param isHidden 是否隐藏分割线
+ */
 void logDetailInfoWidget::hideLine(bool isHidden)
 {
     m_hline->setHidden(isHidden);
 }
 
+/**
+ * @brief logDetailInfoWidget::initUI 初始化界面布局
+ */
 void logDetailInfoWidget::initUI()
 {
     // init pointer
@@ -86,6 +101,7 @@ void logDetailInfoWidget::initUI()
     QFont font;
     font.setBold(true);
     m_daemonName->setFont(font);
+    //设置字号
     DFontSizeManager::instance()->bind(m_daemonName, DFontSizeManager::T5);
     m_dateTime = new DLabel(this);
     DFontSizeManager::instance()->bind(m_dateTime, DFontSizeManager::T8);
@@ -259,26 +275,33 @@ void logDetailInfoWidget::setTextCustomSize(QWidget *w)
 //    w->setFont(font);
 }
 
+/**
+ * @brief logDetailInfoWidget::paintEvent 绘制背景
+ * @param event QPaintEvent事件
+ */
 void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
+    //抗锯齿
     painter.setRenderHint(QPainter::Antialiasing, true);
     // Save pen
     QPen oldPen = painter.pen();
 
     painter.setRenderHint(QPainter::Antialiasing);
+    //设置背景颜色
     DPalette pa = DApplicationHelper::instance()->palette(this);
     painter.setBrush(QBrush(pa.color(DPalette::Base)));
     QColor penColor = pa.color(DPalette::FrameBorder);
     penColor.setAlphaF(0.05);
     painter.setPen(QPen(penColor));
-
+    //绘制背景形状，形状为上半部分方角，下半部分圆角
     QRectF rect = this->rect();
     QRectF clipRect(rect.x(), rect.y() - rect.height(), rect.width(), rect.height() * 2);
     QRectF subRect(rect.x(), rect.y() - rect.height(), rect.width(), rect.height());
     QPainterPath clipPath, subPath;
     clipPath.addRoundedRect(clipRect, 8, 8);
     subPath.addRect(subRect);
+    //用一个大圆角矩形减去大圆角矩形的上半部分
     clipPath = clipPath.subtracted(subPath);
 
     painter.fillPath(clipPath, QBrush(pa.color(DPalette::Base)));
@@ -299,7 +322,19 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 //}
 
 
-
+/**
+ * @brief logDetailInfoWidget::fillDetailInfo 设置各字段显示信息
+ * @param deamonName 进程名
+ * @param usrName 用户名
+ * @param pid 进程号
+ * @param dateTime 时间
+ * @param level 日志等级
+ * @param msg 日志信息体
+ * @param status 状态
+ * @param action 动作
+ * @param uname 开关机日志用户名
+ * @param event 开关机日志类型
+ */
 void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QString pid,
                                          QString dateTime, QModelIndex level, QString msg,
                                          QString status, QString action, QString uname,
@@ -390,6 +425,12 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     m_textBrowser->setText(msg);
 }
 
+/**
+ * @brief logDetailInfoWidget::slot_DetailInfo 连接主表选择事件槽函数，显示信息
+ * @param index 主表控件当前选择的index
+ * @param pModel 主表控件的model
+ * @param name 应用日志的应用名称
+ */
 void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel,
                                           QString name)
 {
@@ -410,6 +451,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
 
     QString dataStr = index.data(Qt::UserRole + 1).toString();
     index.row();
+    //按照选择的当前日志类型显示具体的信息
     if (dataStr.contains(DPKG_TABLE_DATA)) {
 
         fillDetailInfo("dpkg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),

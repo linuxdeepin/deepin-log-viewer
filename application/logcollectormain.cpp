@@ -38,9 +38,14 @@
 #include <DAboutDialog>
 //958+53+50 976
 
+//日志类型选择器宽度
 #define LEFT_LIST_WIDTH 200
 DWIDGET_USE_NAMESPACE
 
+/**
+ * @brief LogCollectorMain::LogCollectorMain 构造函数
+ * @param parent 父对象
+ */
 LogCollectorMain::LogCollectorMain(QWidget *parent)
     : DMainWindow(parent)
 {
@@ -48,13 +53,18 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
     initConnection();
 
     initShortCut();
-
+    //日志类型选择器选第一个
     m_logCatelogue->setDefaultSelect();
+    //设置最小窗口尺寸
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
+    //恢复上次关闭时记录的窗口大小
     resize(LogSettings::instance()->getConfigWinSize());
 
 }
 
+/**
+ * @brief LogCollectorMain::~LogCollectorMain 析构函数
+ */
 LogCollectorMain::~LogCollectorMain()
 {
     /** delete when app quit */
@@ -62,11 +72,15 @@ LogCollectorMain::~LogCollectorMain()
         delete m_searchEdt;
         m_searchEdt = nullptr;
     }
+    //如果窗体状态不是最大最小状态，则记录此时窗口尺寸到配置文件里，方便下次打开时恢复大小
     if (windowState() == Qt::WindowNoState) {
         LogSettings::instance()->saveConfigWinSize(width(), height());
     }
 }
 
+/**
+ * @brief LogCollectorMain::initUI 初始化界面
+ */
 void LogCollectorMain::initUI()
 {
     /** add searchEdit */
@@ -165,6 +179,9 @@ void LogCollectorMain::initUI()
     m_originFilterWidth = m_topRightWgt->geometry().width();
 }
 
+/**
+ * @brief LogCollectorMain::initConnection 连接信号槽
+ */
 void LogCollectorMain::initConnection()
 {
     //! search
@@ -219,6 +236,9 @@ void LogCollectorMain::initConnection()
     });
 }
 
+/**
+ * @brief LogCollectorMain::initShortCut 初始化快捷键
+ */
 void LogCollectorMain::initShortCut()
 {
     // Resize Window --> Ctrl+Alt+F
@@ -265,7 +285,10 @@ void LogCollectorMain::initShortCut()
     }
 }
 
-
+/**
+ * @brief LogCollectorMain::resizeWidthByFilterContentWidth
+ * @param iWidth
+ */
 void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
 {
     int otherWidth = MAINWINDOW_WIDTH - m_originFilterWidth;
