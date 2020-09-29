@@ -16,23 +16,32 @@
 */
 #ifndef LOGAPPLICATIONPARSETHREAD_H
 #define LOGAPPLICATIONPARSETHREAD_H
+#include "structdef.h"
 
 #include <QMap>
 #include <QObject>
 #include <QThread>
+
 #include <mutex>
-#include "structdef.h"
+
 class QProcess;
+/**
+ * @brief The LogApplicationParseThread class 应用日志获取线程
+ */
 class LogApplicationParseThread : public QThread
 {
     Q_OBJECT
 public:
     explicit LogApplicationParseThread(QObject *parent = nullptr);
-
+    /**
+     * @brief instance 全局单列模式实现
+     * @return 此类的唯一对象
+     */
     static LogApplicationParseThread *instance()
     {
         LogApplicationParseThread *sin = m_instance.load();
         if (!sin) {
+            //加锁 线程安全
             std::lock_guard<std::mutex> lock(m_mutex);
             sin = m_instance.load();
             if (!sin) {
@@ -46,6 +55,9 @@ public:
     void setParam(APP_FILTERS &iFilter);
 
 signals:
+    /**
+     * @brief appCmdFinished 获取数据结束信号，发出所有日志的list
+     */
     void appCmdFinished(QList<LOG_MSG_APPLICATOIN>);
 
 public slots:
@@ -60,14 +72,31 @@ protected:
     void run() override;
 
 private:
+    /**
+     * @brief m_AppFiler 筛选条件结构体
+     */
     APP_FILTERS m_AppFiler;
-    int padding {0};
+    //获取数据用的cat命令的process
     QProcess *m_process = nullptr;
-    QMap<QString, int> m_levelDict;  // example:warning=>4
-
+    /**
+     * @brief m_levelDict example:warning=>4 等级字符串到等级数字的键值对
+     */
+    QMap<QString, int> m_levelDict;
+    /**
+     * @brief m_appList 获取的数据结果
+     */
     QList<LOG_MSG_APPLICATOIN> m_appList;
+    /**
+     * @brief m_canRun 是否可以继续运行的标记量，用于停止运行线程
+     */
     bool m_canRun = false;
+    /**
+     * @brief m_instance 单例用的本类指针的原子性封装
+     */
     static std::atomic<LogApplicationParseThread *> m_instance;
+    /**
+     * @brief m_mutex 单例用的锁
+     */
     static std::mutex m_mutex;
 };
 

@@ -38,6 +38,9 @@
 #include <QVBoxLayout>
 
 class DSplitter;
+/**
+ * @brief The LogCollectorMain class 主窗口类
+ */
 class LogCollectorMain : public Dtk::Widget::DMainWindow
 {
 public:
@@ -53,21 +56,40 @@ public slots:
     void resizeWidthByFilterContentWidth(int iWidth);
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
 private:
+    /**
+     * @brief m_searchEdt titlebar上的搜索框
+     */
     Dtk::Widget::DSearchEdit *m_searchEdt;
+    /**
+     * @brief m_topRightWgt 筛选控件
+     */
     FilterContent *m_topRightWgt;
     //    LogTreeView *m_treeView;
+    /**
+     * @brief m_logCatelogue  日志类型选择器
+     */
     LogListView *m_logCatelogue;
+    /**
+     * @brief m_midRightWgt 数据展示控件，包括表格和详情页
+     */
     DisplayContent *m_midRightWgt;
+    /**
+     * @brief m_hLayout 主layout,用来放m_logCatelogue和m_vLayout
+     */
     QHBoxLayout *m_hLayout;
+    /**
+     * @brief m_vLayout 用来放置m_midRightWgt和m_topRightWgt
+     */
     QVBoxLayout *m_vLayout;
 
     Dtk::Widget::DSplitter *m_hSplitter;
-
-    QShortcut *m_scWndReize {nullptr};  // Resize Window      --> Ctrl+Alt+F
-    QShortcut *m_scFindFont {nullptr};  // Find font          --> Ctrl+F
-    QShortcut *m_scExport {nullptr};    // export file          --> Ctrl+E
+    // Resize Window      --> Ctrl+Alt+F
+    QShortcut *m_scWndReize {nullptr};
+    // Find font          --> Ctrl+F
+    QShortcut *m_scFindFont {nullptr};
+    // export file          --> Ctrl+E
+    QShortcut *m_scExport {nullptr};
     int m_originFilterWidth = 0;
-    QList<QWidget * > m_focusWidgetOrder;
 
 
 };

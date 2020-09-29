@@ -21,6 +21,9 @@
 DWIDGET_USE_NAMESPACE
 class QKeyEvent;
 class LogCollectorMain;
+/**
+ * @brief The LogApplication class 主application类
+ */
 class LogApplication: public DApplication
 {
 public:
@@ -29,6 +32,7 @@ public:
 protected:
     bool notify(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
 private:
+    //mainwindow指针
     LogCollectorMain *m_mainWindow{nullptr};
 };
 
