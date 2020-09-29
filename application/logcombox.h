@@ -18,6 +18,9 @@
 #define LOGCOMBOX_H
 #include <DComboBox>
 DWIDGET_USE_NAMESPACE
+/**
+ * @brief The LogCombox class 屏蔽本类绘制逻辑，因为dtk已经实现键盘focus效果
+ */
 class LogCombox: public DComboBox
 {
 public:

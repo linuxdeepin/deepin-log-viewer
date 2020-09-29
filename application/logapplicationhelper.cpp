@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "logapplicationhelper.h"
+
 #include <QDebug>
 #include <QDir>
 #include <QFile>
@@ -23,12 +24,19 @@
 std::atomic<LogApplicationHelper *> LogApplicationHelper::m_instance;
 std::mutex LogApplicationHelper::m_mutex;
 
+/**
+ * @brief LogApplicationHelper::LogApplicationHelper 构造函数，获取日志文件路径和应用名称
+ * @param parent 父对象
+ */
 LogApplicationHelper::LogApplicationHelper(QObject *parent)
     : QObject(parent)
 {
     init();
 }
 
+/**
+ * @brief LogApplicationHelper::init  初始化数据函数
+ */
 void LogApplicationHelper::init()
 {
     m_desktop_files.clear();
@@ -46,8 +54,12 @@ void LogApplicationHelper::init()
     createLogFiles();
 }
 
+/**
+ * @brief LogApplicationHelper::createDesktopFiles 通过所有符合条件的destop文件获得包名和对应的应用文本
+ */
 void LogApplicationHelper::createDesktopFiles()
 {
+    //在该目录下遍历所有desktop文件
     QString path = "/usr/share/applications";
     QDir dir(path);
     if (!dir.exists())
@@ -55,6 +67,7 @@ void LogApplicationHelper::createDesktopFiles()
 
     QStringList fileInfoList = dir.entryList(QDir::Files | QDir::NoDotAndDotDot);
     for (QString desktop : fileInfoList) {
+        //需要符合以deepin或者dde开头的应用
         if (desktop.contains("deepin-") || desktop.contains("dde-")) {
             m_desktop_files.append(desktop);
         }
@@ -98,11 +111,14 @@ void LogApplicationHelper::createDesktopFiles()
             }
         }
         fi.close();
-
+        //转换插入应用包名和应用显示文本到数据结构
         parseField(filePath, var, isDeepin, isGeneric, isName);
     }
 }
 
+/**
+ * @brief LogApplicationHelper::createLogFiles 根据找到的符合要求的desktop文件的应用去初始化应用日志文件路径
+ */
 void LogApplicationHelper::createLogFiles()
 {
     QString homePath = QDir::homePath();
@@ -117,11 +133,12 @@ void LogApplicationHelper::createLogFiles()
 
     m_log_files = appDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
 //    qDebug() << "m_desktop_files" << m_desktop_files;
-//    qDebug() << "m_log_files" << m_log_files;
+
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
         QString _name = m_desktop_files[i].section(".", 0, 0);
 
         for (auto j = 0; j < m_log_files.count(); ++j) {
+            //desktop文件名和日志文件名比较，相同则符合条件
             if (_name == m_log_files[j]) {
                 QString logPath = path + m_log_files[j];
                 m_en_log_map.insert(_name, logPath);
@@ -131,6 +148,14 @@ void LogApplicationHelper::createLogFiles()
     }
 }
 
+/**
+ * @brief LogApplicationHelper::parseField 从desktop文件中提取正确的显示文本
+ * @param path desktop文件路径
+ * @param name 包名
+ * @param isDeepin  是否是deepin应用
+ * @param isGeneric 是否有GenericName字段
+ * @param isName 是否有Name字段
+ */
 void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin, bool isGeneric,
                                       bool isName)
 {
@@ -192,6 +217,11 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
     }
 }
 
+/**
+ * @brief LogApplicationHelper::getLogFile 通过日志目录获取日志文件路经
+ * @param path 通过日志文件目录
+ * @return 日志文件路经
+ */
 QString LogApplicationHelper::getLogFile(QString path)
 {
     QString ret;
@@ -211,10 +241,14 @@ QString LogApplicationHelper::getLogFile(QString path)
     return ret;
 }
 
+/**
+ * @brief LogApplicationHelper::getMap 刷新并返回所有显示文本对应的应用日志路径
+ * @return
+ */
 QMap<QString, QString> LogApplicationHelper::getMap()
 {
-//    qDebug() << "m_en_log_map" << m_en_log_map;
-//    qDebug() << "m_en_trans_map" << m_en_trans_map;
+//     qDebug() << "m_en_log_map" << m_en_log_map;
+    // qDebug() << "m_en_trans_map" << m_en_trans_map;
     init();
     QMap<QString, QString>::const_iterator iter = m_en_log_map.constBegin();
     while (iter != m_en_log_map.constEnd()) {
@@ -226,6 +260,11 @@ QMap<QString, QString> LogApplicationHelper::getMap()
     return m_trans_log_map;
 }
 
+/**
+ * @brief LogApplicationHelper::transName 从应用包名转换为应用显示文本
+ * @param str 应用包名
+ * @return 显示文本
+ */
 QString LogApplicationHelper::transName(QString str)
 {
     return m_en_trans_map.value(str);
