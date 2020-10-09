@@ -61,10 +61,7 @@ DWIDGET_USE_NAMESPACE
 #define STATUS_WIDTH 90
 #define DATETIME_WIDTH 175
 #define DEAMON_WIDTH 100
-/**
- * @brief DisplayContent::DisplayContent 初始化界面\等级数据和实际显示文字转换的数据结构\信号槽连接
- * @param parent
- */
+
 DisplayContent::DisplayContent(QWidget *parent)
     : DWidget(parent)
 
@@ -76,9 +73,6 @@ DisplayContent::DisplayContent(QWidget *parent)
 
 }
 
-/**
- * @brief DisplayContent::~DisplayContent 析构成员指针,释放空间
- */
 DisplayContent::~DisplayContent()
 {
     if (m_treeView) {
@@ -91,19 +85,14 @@ DisplayContent::~DisplayContent()
     }
     malloc_trim(0);
 }
-/**
- * @brief DisplayContent::mainLogTableView  返回主表控件指针给外部调用
- * @return 主表控件成员指针
- */
+
 LogTreeView *DisplayContent::mainLogTableView()
 {
     return  m_treeView;
 }
 
 
-/**
- * @brief DisplayContent::initUI 初始化布局及界面
- */
+
 void DisplayContent::initUI()
 {
     QVBoxLayout *vLayout = new QVBoxLayout(this);
@@ -121,12 +110,22 @@ void DisplayContent::initUI()
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
 
     DFontSizeManager::instance()->bind(noResultLabel, DFontSizeManager::T4);
+    //    QFont labelFont = noResultLabel->font();
+    //    labelFont.setPixelSize(20);
+    //    noResultLabel->setFont(labelFont);
     noResultLabel->setAlignment(Qt::AlignCenter);
+    //    vLayout->addWidget(noResultLabel, 5);
     m_spinnerWgt = new LogSpinnerWidget(this);
     m_spinnerWgt_K = new LogSpinnerWidget(this);
 
     vLayout->addWidget(m_spinnerWgt_K, 5);
     vLayout->addWidget(m_spinnerWgt, 5);
+
+    //    m_noResultWdg = new LogSearchNoResultWidget(this);
+    //    m_noResultWdg->setContent("");
+    //    vLayout->addWidget(m_noResultWdg, 10);
+    //    m_noResultWdg->hide();
+
     m_detailWgt = new logDetailInfoWidget(this);
     vLayout->addWidget(m_detailWgt, 3);
 
@@ -142,9 +141,6 @@ void DisplayContent::initUI()
     m_exportDlg->hide();
 }
 
-/**
- * @brief DisplayContent::initMap 初始化等级数据和实际显示文字转换的数据结构
- */
 void DisplayContent::initMap()
 {
     m_transDict.clear();
@@ -170,9 +166,6 @@ void DisplayContent::initMap()
     m_icon_name_map.insert("Error", "wrong.svg");
 }
 
-/**
- * @brief DisplayContent::initTableView 初始化主表控件,设置tablemodel
- */
 void DisplayContent::initTableView()
 {
     m_treeView = new LogTreeView(this);
@@ -182,9 +175,6 @@ void DisplayContent::initTableView()
     m_treeView->setModel(m_pModel);
 }
 
-/**
- * @brief DisplayContent::initConnections 初始化槽函数信号连接
- */
 void DisplayContent::initConnections()
 {
     connect(m_treeView, SIGNAL(clicked(const QModelIndex &)), this,
@@ -219,24 +209,9 @@ void DisplayContent::initConnections()
             &DisplayContent::slot_themeChanged);
 }
 
-/**
- * @brief DisplayContent::generateJournalFile 获取系统日志
- * @param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
- * @param lId 等级筛选id,对应PRIORITY枚举,直接传入获取系统接口,-1表示全部等级不筛选,
- * 0表示紧急
- * 1  ALERT（警告）：必须马上采取措施解决的问题
- * 2  CRIT（严重）：比较严重的情况 *
- * 3  ERR（错误）：运行出现错误
- * 4  WARNING（提醒）：可能会影响系统功能的事件
- * 5  NOTICE（注意）：不会影响系统但值得注意
- * 6  INFO（信息）：一般信息
- * 7  DEBUG（调试）：程序或系统调试信息等
- * @param iSearchStr 搜索关键字,现阶段不用,保留参数
- */
 void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
-    //系统日志上次获取的时间,和筛选条件一起判断,防止获取过于频繁
     if (m_lastJournalGetTime.msecsTo(QDateTime::currentDateTime()) < 500 && m_journalFilter.timeFilter == id && m_journalFilter.eventTypeFilter == lId) {
         qDebug() << "repeat refrsh journal too fast!";
         QItemSelectionModel *p = m_treeView->selectionModel();
@@ -270,6 +245,7 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_DAY: {
+        //        arg << "--since" << dt.toString("yyyy-MM-dd");
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
@@ -277,6 +253,8 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_DAYS: {
+        //        QString t = dt.addDays(-2).toString("yyyy-MM-dd");
+        //        arg << "--since" << t;
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
@@ -284,6 +262,9 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_WEEK: {
+        //        QString t = dt.addDays(-6).toString("yyyy-MM-dd");
+        //        arg << "--since" << t;
+
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
@@ -291,6 +272,8 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         m_journalCurrentIndex =   m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_MONTH: {
+        //        QString t = dt.addDays(-29).toString("yyyy-MM-dd");
+        //        arg << "--since" << t;
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
@@ -298,6 +281,8 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         m_journalCurrentIndex =    m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_MONTHS: {
+        //        QString t = dt.addDays(-89).toString("yyyy-MM-dd");
+        //        arg << "--since" << t;
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
@@ -312,10 +297,7 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
 
 }
-/**
- * @brief DisplayContent::createJournalTableStart 获取系统日志完成时第一次加载数据的第一页到treeview中
- * @param list 获得的系统日志数据list
- */
+
 void DisplayContent::createJournalTableStart(QList<LOG_MSG_JOURNAL> &list)
 {
     m_limitTag = 0;
@@ -325,9 +307,6 @@ void DisplayContent::createJournalTableStart(QList<LOG_MSG_JOURNAL> &list)
     insertJournalTable(list, 0, end);
 }
 
-/**
- * @brief DisplayContent::createJournalTableForm 系统日志表头项目创建和重置
- */
 void DisplayContent::createJournalTableForm()
 {
     m_pModel->clear();
@@ -340,11 +319,6 @@ void DisplayContent::createJournalTableForm()
         << DApplication::translate("Table", "PID"));
 }
 
-/**
- * @brief DisplayContent::generateDpkgFile 触发获取dpkg日志数据线程
- * @param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
- * @param iSearchStr 搜索关键字,保留字段,暂时不用
- */
 void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
@@ -407,10 +381,6 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
     }
 }
 
-/**
- * @brief DisplayContent::createDpkgTable 获取系统日志完成时第一次加载数据的第一页到treeview中
- * @param list 获得的DPKG日志数据list
- */
 void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
 {
     //    m_treeView->show();
@@ -420,17 +390,17 @@ void DisplayContent::createDpkgTable(QList<LOG_MSG_DPKG> &list)
     parseListToModel(list, m_pModel);
     m_treeView->setColumnWidth(0, DATETIME_WIDTH);
     m_treeView->hideColumn(2);
+
+    //    m_treeView->setModel(m_pModel);
+
+    // default first row select
+    //    m_treeView->selectRow(0);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-/**
- * @brief DisplayContent::generateKernFile 触发获取内核日志数据线程
- * @param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
- * @param iSearchStr 搜索关键字,保留字段,暂时不用
- */
 void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
@@ -440,6 +410,9 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     clearAllDatalist();
     setLoadState(DATA_LOADING);
     createKernTableForm();
+    //    m_spinnerWgt->hide();  // modified by Airy for bug 15520
+    //    m_treeView->show();
+
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
     KERN_FILTERS kernFilter;
@@ -492,9 +465,7 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     }
 
 }
-/**
- * @brief DisplayContent::createJournalTableForm 内核日志表头项目创建和重置
- */
+
 void DisplayContent::createKernTableForm()
 {
     m_pModel->clear();
@@ -508,10 +479,6 @@ void DisplayContent::createKernTableForm()
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
 }
 
-/**
- * @brief DisplayContent::createJournalTableStart 获取内核日志完成时第一次加载数据的第一页到treeview中
- * @param list 获得的内核日志数据list
- */
 // modified by Airy for bug  12263
 void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
 {
@@ -522,16 +489,34 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
     m_limitTag = 0;
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertKernTable(list, 0, end);
+
+    //    DStandardItem *item = nullptr;
+    //    for (int i = 0; i < list.size(); i++) {
+    //        item = new DStandardItem(list[i].dateTime);
+    //        item->setData(KERN_TABLE_DATA);
+    //        m_pModel->setItem(i, 0, item);
+    //        item = new DStandardItem(list[i].hostName);
+    //        item->setData(KERN_TABLE_DATA);
+    //        m_pModel->setItem(i, 1, item);
+    //        item = new DStandardItem(list[i].daemonName);
+    //        item->setData(KERN_TABLE_DATA);
+    //        m_pModel->setItem(i, 2, item);
+    //        item = new DStandardItem(list[i].msg);
+    //        item->setData(KERN_TABLE_DATA);
+    //        m_pModel->setItem(i, 3, item);
+    //    }
+
+    //    //    m_treeView->setModel(m_pModel);
+
+    //    // default first row select
+    //    //    m_treeView->selectRow(0);
+    //    QItemSelectionModel *p = m_treeView->selectionModel();
+    //    if (p)
+    //        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows |
+    //        QItemSelectionModel::Select);
+    //    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-
-
-/**
- * @brief DisplayContent::insertKernTable 按分页转换插入内核日志到treeview的model中
- * @param list 当前筛选状态下所有符合条件的内核日志数据结构
- * @param start 分页开始的数组下标
- * @param end 分页结束的数组下标
- */
 // add by Airy for bug
 void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int end)
 {
@@ -540,6 +525,11 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
         midList = midList.mid(start, end - start);
     }
     parseListToModel(midList, m_pModel);
+    //    m_treeView->setModel(m_pModel);
+
+    // default first row select
+    //    m_treeView->selectRow(0);
+
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
@@ -547,13 +537,6 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
 
 }
 
-/**
- * @brief DisplayContent::generateAppFile 触发获取应用日志数据线程
- * @param path 要获取的某一个应用的日志的日志文件路径
- * @param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
- * @param lId 等级筛选id,对应PRIORITY枚举,直接传入获取系统接口,-1表示全部等级不筛选,
- * @param iSearchStr 搜索关键字,现阶段不用,保留参数
- */
 void DisplayContent::generateAppFile(QString path, int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
@@ -619,9 +602,6 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
 
 }
 
-/**
- * @brief DisplayContent::createAppTableForm 系统日志表头项目创建和重置 设置列宽
- */
 void DisplayContent::createAppTableForm()
 {
     m_pModel->clear();
@@ -635,56 +615,53 @@ void DisplayContent::createAppTableForm()
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
 }
 
-/**
- * @brief DisplayContent::createAppTable 获取应用日志完成时第一次加载数据的第一页到treeview中
- * @param list 获得的应用日志数据list
- */
 void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
 {
+    //    m_treeView->show();
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
+    // m_pModel->clear();
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertApplicationTable(list, 0, end);
 }
 
-/**
- * @brief DisplayContent::createBootTable 获取启动日志完成时加载所有数据到treeview中
- * @param list 获得的启动日志数据list
- */
 void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
 {
+    //    m_treeView->show();
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
     m_pModel->clear();
     m_treeView->setColumnWidth(0, STATUS_WIDTH);
     parseListToModel(list, m_pModel);
+    //    m_treeView->setModel(m_pModel);
+    // default first row select
+    //    m_treeView->selectRow(0);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-/**
- * @brief DisplayContent::createXorgTable 获取Xorg日志完成时加载所有数据到treeview中
- * @param list 获得的Xorg日志数据list
- */
 void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
 {
+    //    m_treeView->show();
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
     m_pModel->clear();
     parseListToModel(list, m_pModel);
     m_treeView->setColumnWidth(0, DATETIME_WIDTH + 20);
+
+
+    //    m_treeView->setModel(m_pModel);
+
+    // default first row select
+    //    m_treeView->selectRow(0);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-/**
- * @brief DisplayContent::generateXorgFile 触发获取Xorg日志数据线程
- * @param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
- */
 void DisplayContent::generateXorgFile(int id)
 {
     clearAllFilter();
@@ -744,10 +721,6 @@ void DisplayContent::generateXorgFile(int id)
     }
 }
 
-/**
- * @brief DisplayContent::creatKwinTable 获取kwin日志完成时加载所有数据到treeview中
- * @param list 获得的kwin日志数据list
- */
 void DisplayContent::creatKwinTable(QList<LOG_MSG_KWIN> &list)
 {
     m_limitTag = 0;
@@ -760,10 +733,6 @@ void DisplayContent::creatKwinTable(QList<LOG_MSG_KWIN> &list)
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-/**
- * @brief DisplayContent::generateKwinFile 触发获取Kwin日志数据线程
- * @param iFilters 获取线程筛选条件结构体
- */
 void DisplayContent::generateKwinFile(KWIN_FILTERS iFilters)
 {
     clearAllFilter();
@@ -774,10 +743,6 @@ void DisplayContent::generateKwinFile(KWIN_FILTERS iFilters)
     m_logFileParse.parseByKwin(iFilters);
 }
 
-/**
- * @brief DisplayContent::createNormalTable 开关机日志表头项目创建和重置
- * @param list
- */
 void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 {
     setLoadState(DATA_COMPLETE);
@@ -788,17 +753,16 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
     m_treeView->setColumnWidth(1, DATETIME_WIDTH);
     m_treeView->setColumnWidth(2, DATETIME_WIDTH);
     m_treeView->setColumnWidth(3, DATETIME_WIDTH);
+    //    m_treeView->setModel(m_pModel);
+
+    // default first row select
+    //    m_treeView->selectRow(0);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-
-/**
- * @brief DisplayContent::generateNormalFile 触发获取开关机日志数据线程
- * @param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
- */
 // add by Airy
 void DisplayContent::generateNormalFile(int id)
 {
@@ -861,12 +825,6 @@ void DisplayContent::generateNormalFile(int id)
     nortempList = norList;
 }
 
-/**
- * @brief DisplayContent::insertJournalTable 按分页转换插入系统日志到treeview的model中
- * @param logList 当前筛选状态下所有符合条件的系统日志数据结构
- * @param start 分页开始的数组下标
- * @param end 分页结束的数组下标
- */
 void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end)
 {
     DStandardItem *item = nullptr;
@@ -934,11 +892,6 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
 //    m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
 }
 
-/**
- * @brief DisplayContent::getAppName 获取当前选择的应用的日志路径对应的日志名称
- * @param filePath  当前选择的应用的日志路径
- * @return 对应的日志名称
- */
 QString DisplayContent::getAppName(QString filePath)
 {
     QString ret;
@@ -962,10 +915,6 @@ QString DisplayContent::getAppName(QString filePath)
     return LogApplicationHelper::instance()->transName(ret);
 }
 
-/**
- * @brief DisplayContent::isAuthProcessAlive 日志获取进程是否存在
- * @return true:存在 false: 不存在
- */
 bool DisplayContent::isAuthProcessAlive()
 {
     bool ret = false;
@@ -975,19 +924,7 @@ bool DisplayContent::isAuthProcessAlive()
     return !(ret = (rslt == 0));
 }
 
-/**
- * @brief DisplayContent::generateJournalBootFile 触发获取klu下启动日志的线程
- * @param lId 等级筛选id,对应PRIORITY枚举,直接传入获取系统接口,-1表示全部等级不筛选,
- * 0表示紧急
- * 1  ALERT（警告）：必须马上采取措施解决的问题
- * 2  CRIT（严重）：比较严重的情况 *
- * 3  ERR（错误）：运行出现错误
- * 4  WARNING（提醒）：可能会影响系统功能的事件
- * 5  NOTICE（注意）：不会影响系统但值得注意
- * 6  INFO（信息）：一般信息
- * 7  DEBUG（调试）：程序或系统调试信息等
- * @param iSearchStr iSearchStr 搜索关键字,现阶段不用,保留参数
- */
+
 void DisplayContent::generateJournalBootFile(int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
@@ -1014,10 +951,6 @@ void DisplayContent::generateJournalBootFile(int lId, const QString &iSearchStr)
 
 }
 
-/**
- * @brief DisplayContent::createJournalBootTableStart 获取klu下启动日志完成时第一次加载数据的第一页到treeview中
- * @param list klu下启动日志数据list
- */
 void DisplayContent::createJournalBootTableStart(QList<LOG_MSG_JOURNAL> &list)
 {
     m_limitTag = 0;
@@ -1026,9 +959,6 @@ void DisplayContent::createJournalBootTableStart(QList<LOG_MSG_JOURNAL> &list)
     insertJournalBootTable(list, 0, end);
 }
 
-/**
- * @brief DisplayContent::createJournalBootTableForm klu下启动日志表头项目创建和重置
- */
 void DisplayContent::createJournalBootTableForm()
 {
     m_pModel->clear();
@@ -1042,12 +972,6 @@ void DisplayContent::createJournalBootTableForm()
         << DApplication::translate("Table", "PID"));
 }
 
-/**
- * @brief DisplayContent::insertJournalBootTable 按分页转换插入klu下启动日志到treeview的model中
- * @param logList 当前筛选状态下所有符合条件的klu下启动日志数据结构
- * @param start 分页开始的数组下标
- * @param end 分页结束的数组下标
- */
 void DisplayContent::insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int start, int end)
 {
     DStandardItem *item = nullptr;
@@ -1111,21 +1035,11 @@ void DisplayContent::insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int 
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-/**
- * @brief DisplayContent::slot_tableItemClicked treeview主表点击槽函数,用来发出信号在详情页显示当前选中项日志详细信息
- * @param index 选中的modelindex
- */
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
     emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
 }
 
-/**
- * @brief DisplayContent::slot_BtnSelected 连接外部筛选控件筛选条件处理触发获取对应数据的槽函数
- * @param btnId 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
- * @param lId 等级筛选id,对应PRIORITY枚举,直接传入获取系统接口,-1表示全部等级不筛选,
- * @param idx 日志类型选择的listview的当前选中的QModelIndex
- */
 void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 {
     qDebug() << QString("Button %1 clicked\n combobox: level is %2, cbxIdx is %3 tree %4 node!!")
@@ -1164,21 +1078,16 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
     }
 }
 
-/**
- * @brief DisplayContent::slot_appLogs 根据应用日志应用类型变化触发应用日志获取线程
- * @param path 应用日志的路径
- */
 void DisplayContent::slot_appLogs(QString path)
 {
+//    if (path.isEmpty())
+//        return;        //delete by Airy for bug 20457 :if path is empty,item is not empty
     appList.clear();
     m_curAppLog = path;
+    //    m_logFileParse.parseByApp(path, appList);
     generateAppFile(path, m_curBtnId, m_curLevel);
 }
 
-/**
- * @brief DisplayContent::slot_logCatelogueClicked 日志类型选择列表选项目变化根据日志类型获取数据
- * @param index loglistView当前选择的项目
- */
 void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
 {
     if (!index.isValid()) {
@@ -1239,11 +1148,12 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         generateJournalBootFile(m_curLevel);
     }
 
+//    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||   //modified by Airy for bug 19660:spinner always running
+//            !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
+//        setLoadState(DATA_COMPLETE);
+//    }
 }
 
-/**
- * @brief DisplayContent::slot_exportClicked 导出按钮触发槽函数,根据当前筛选出来的数据和数据类型,弹出文件目录选择框选择导出目录,执行导出逻辑
- */
 void DisplayContent::slot_exportClicked()
 {
     QString logName;
@@ -1281,14 +1191,12 @@ void DisplayContent::slot_exportClicked()
     for (int col = 0; col < m_pModel->columnCount(); ++col) {
         labels.append(m_pModel->horizontalHeaderItem(col)->text());
     }
-    //根据导出格式判断执行逻辑
     if (selectFilter == "TEXT (*.txt)") {
         LogExportThread *exportThread = new LogExportThread(this);
         connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
         connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
         connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
         switch (m_flag) {
-        //根据导出日志类型执行正确的导出逻辑
         case JOURNAL:
             exportThread->exportToTxtPublic(fileName, jList, labels, m_flag);
             break;
@@ -1443,12 +1351,13 @@ void DisplayContent::slot_exportClicked()
         }
         QThreadPool::globalInstance()->start(exportThread);
     }
+    //    if (exportTempModel) {
+    //        exportTempModel->deleteLater();
+    //        exportTempModel = nullptr;
+    //    }
+
 }
 
-/**
- * @brief DisplayContent::slot_statusChagned 启动日志的状态combox选项改变槽函数,筛选当前启动日志内容
- * @param status 筛选的状态,有all ok failed
- */
 void DisplayContent::slot_statusChagned(QString status)
 {
     m_bootFilter.statusFilter = status;
@@ -1456,10 +1365,6 @@ void DisplayContent::slot_statusChagned(QString status)
 
 }
 
-/**
- * @brief DisplayContent::slot_dpkgFinished 获取dpkg日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
- * @param list dpkg日志数据线程list
- */
 void DisplayContent::slot_dpkgFinished(QList<LOG_MSG_DPKG> list)
 {
     if (m_flag != DPKG)
@@ -1469,10 +1374,6 @@ void DisplayContent::slot_dpkgFinished(QList<LOG_MSG_DPKG> list)
     createDpkgTable(dList);
 }
 
-/**
- * @brief DisplayContent::slot_XorgFinished 获取xorg日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
- * @param list xorg日志数据线程list
- */
 void DisplayContent::slot_XorgFinished(QList<LOG_MSG_XORG> list)
 {
     if (m_flag != XORG)
@@ -1482,10 +1383,6 @@ void DisplayContent::slot_XorgFinished(QList<LOG_MSG_XORG> list)
     createXorgTable(xList);
 }
 
-/**
- * @brief DisplayContent::slot_bootFinished 获取启动日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
- * @param list 启动日志数据线程list
- */
 void DisplayContent::slot_bootFinished(QList<LOG_MSG_BOOT> list)
 {
     if (m_flag != BOOT)
@@ -1497,10 +1394,6 @@ void DisplayContent::slot_bootFinished(QList<LOG_MSG_BOOT> list)
     createBootTable(currentBootList);
 }
 
-/**
- * @brief DisplayContent::slot_kernFinished 获取内核日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
- * @param list 启动日志数据线程list
- */
 void DisplayContent::slot_kernFinished(QList<LOG_MSG_JOURNAL> list)
 {
     if (m_flag != KERN)
@@ -1511,10 +1404,6 @@ void DisplayContent::slot_kernFinished(QList<LOG_MSG_JOURNAL> list)
     createKernTable(kList);
 }
 
-/**
- * @brief DisplayContent::slot_kwinFinished 获取kwin日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
- * @param list kwin日志数据线程list
- */
 void DisplayContent::slot_kwinFinished(QList<LOG_MSG_KWIN> list)
 {
     if (m_flag != Kwin)
@@ -1550,14 +1439,8 @@ void DisplayContent::slot_journalFinished()
 //    // qDebug() << "jList" << jList.count();
 }
 
-/**
- * @brief DisplayContent::slot_journalData 系统日志数据获取线程槽函数,系统日志为获取500条就会执行此信号,不是一次把所有数据传进来,所以执行槽函数应该为每次获取向现在的model中添加而不是重置
- * @param index 槽函数发出线程的标记量序号
- * @param list 本次获取的500个或以下的数据
- */
 void DisplayContent::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
 {
-    //判断最近一次获取数据线程的标记量,和信号曹发来的sender的标记量作对比,如果相同才可以刷新,因为会出现上次的获取线程就算停下信号也发出来了
     if (m_flag != JOURNAL || index != m_journalCurrentIndex)
         return;
     if (list.isEmpty()) {
@@ -1567,7 +1450,6 @@ void DisplayContent::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
     }
     jListOrigin.append(list);
     jList.append(list);
-    //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
     if (m_firstLoadPageData) {
         createJournalTableStart(jList);
         m_firstLoadPageData = false;
@@ -1596,11 +1478,6 @@ void DisplayContent::slot_journalBootFinished()
     //    createJournalBootTable(jBootList);
 }
 
-/**
- * @brief DisplayContent::slot_journalBootData klu下启动日志日志数据获取线程槽函数,系统日志为获取500条就会执行此信号,不是一次把所有数据传进来,所以执行槽函数应该为每次获取向现在的model中添加而不是重置
- * @param index 槽函数发出线程的标记量序号
- * @param list 本次获取的500个或以下的数据
- */
 void DisplayContent::slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list)
 {
     if (m_flag != BOOT_KLU || index != m_journalBootCurrentIndex)
@@ -1612,17 +1489,12 @@ void DisplayContent::slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list
     }
     jBootListOrigin.append(list);
     jBootList.append(list);
-    //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
     if (m_firstLoadPageData) {
         createJournalBootTableStart(jBootList);
         m_firstLoadPageData = false;
     }
 }
 
-/**
- * @brief DisplayContent::slot_applicationFinished 获取应用日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
- * @param list 应用日志数据线程list
- */
 void DisplayContent::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list)
 {
     if (m_flag != APP)
@@ -1636,9 +1508,6 @@ void DisplayContent::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list)
     createApplicationTable(appList);
 }
 
-/**
- * @brief DisplayContent::slot_NormalFinished 获取开关机日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
- */
 void DisplayContent::slot_NormalFinished()
 {
     if (m_flag != Normal)
@@ -1649,10 +1518,6 @@ void DisplayContent::slot_NormalFinished()
     createNormalTable(nortempList);
 }
 
-/**
- * @brief DisplayContent::slot_vScrollValueChanged 滚动条滚动实现分页加载数据槽函数
- * @param valuePixel 当前滑动的像素
- */
 void DisplayContent::slot_vScrollValueChanged(int valuePixel)
 {
     if (!m_treeView) {
@@ -1661,27 +1526,26 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
     if (m_treeView->singleRowHeight() < 0) {
         return;
     }
-    //根据当前表格单行行高计算现在滑动了多少项
     int value = valuePixel / m_treeView->singleRowHeight(); // m_treeView->singleRowHeight();
     if (m_treeViewLastScrollValue == value) {
         return;
     }
     m_treeViewLastScrollValue = value;
     if (m_flag == JOURNAL) {
-        //算出现在滚动了多少页
+
         int rate = (value + 25) / SINGLE_LOAD;
         //  qDebug() << "valuePixel:" << valuePixel << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
         //    qDebug() << m_treeView->verticalScrollBar()->height();
-        //如果快滚到页底了就加载下一页数据到表格中
         if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
             if (m_limitTag >= rate)
                 return;
 
             int leftCnt = jList.count() - SINGLE_LOAD * rate;
-            //如果在页尾部则只加载最后一页的数量,否则加载单页全部数量
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            //        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
+            //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD
+            //                 * rate;
             qDebug() << "rate" << rate;
-            //把数据加入model中
             insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
             m_limitTag = rate;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
@@ -1750,10 +1614,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
 
 }
 
-/**
- * @brief DisplayContent::slot_searchResult 搜索框执行搜索槽函数
- * @param str 要搜索的关键字
- */
 void DisplayContent::slot_searchResult(QString str)
 {
     qDebug() << QString("search: %1  treeIndex: %2")
@@ -1768,7 +1628,6 @@ void DisplayContent::slot_searchResult(QString str)
         jList = jListOrigin;
         int cnt = jList.count();
         for (int i = cnt - 1; i >= 0; --i) {
-            //按关键字筛选
             LOG_MSG_JOURNAL msg = jList.at(i);
             if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
                     msg.hostName.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
@@ -1780,7 +1639,6 @@ void DisplayContent::slot_searchResult(QString str)
             jList.removeAt(i);
         }
         qDebug() << "tmp" << jList.length();
-        //清空model和分页重新加载
         createJournalTableForm();
         createJournalTableStart(jList);
     } break;
@@ -1828,8 +1686,9 @@ void DisplayContent::slot_searchResult(QString str)
         for (int i = cnt - 1; i >= 0; --i) {
             LOG_MSG_XORG msg = xList.at(i);
             if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) ||
-                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
+                    msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive)) {
                 continue;
+            }
             xList.removeAt(i);
         }
         createXorgTable(xList);
@@ -1880,7 +1739,6 @@ void DisplayContent::slot_searchResult(QString str)
     default:
         break;
     }
-    //如果搜索结果为空要显示无搜索结果提示
     if (0 == m_pModel->rowCount()) {
         if (m_currentSearchStr.isEmpty()) {
             setLoadState(DATA_COMPLETE);
@@ -1907,10 +1765,6 @@ void DisplayContent::slot_themeChanged(DGuiApplicationHelper::ColorType colorTyp
 }
 
 // add by Airy
-/**
- * @brief DisplayContent::slot_getLogtype 开关机日志筛选开关机日志类型的选择槽函数,根据选择类型筛选当前获取到的所有开关机日志以显示
- * @param tcbx 开关机日志的类型 0全部, 1登陆 2开机 3关机
- */
 void DisplayContent::slot_getLogtype(int tcbx)
 {
     m_normalFilter.eventTypeFilter = tcbx;
@@ -1918,11 +1772,6 @@ void DisplayContent::slot_getLogtype(int tcbx)
 
 }
 
-/**
- * @brief DisplayContent::parseListToModel 把dpkglist加入model中以供treeview显示
- * @param iList 要加入model中的原始数据
- * @param oPModel 要增加数据的model指针
- */
 void DisplayContent::parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
@@ -1961,11 +1810,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemMo
     }
 }
 
-/**
- * @brief DisplayContent::parseListToModel 把启动日志数据list加入model中以供treeview显示
- * @param iList 要加入model中的原始数据
- * @param oPModel 要增加数据的model指针
- */
 void DisplayContent::parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
@@ -1996,11 +1840,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemMo
     }
 }
 
-/**
- * @brief DisplayContent::parseListToModel 把应用日志数据list加入model中以供treeview显示
- * @param iList 要加入model中的原始数据
- * @param oPModel 要增加数据的model指针
- */
 void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
@@ -2047,11 +1886,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
     }
 }
 
-/**
- * @brief DisplayContent::parseListToModel 把xorg日志数据list加入model中以供treeview显示
- * @param iList 要加入model中的原始数据
- * @param oPModel 要增加数据的model指针
- */
 void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
@@ -2083,11 +1917,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemMo
     }
 }
 
-/**
- * @brief DisplayContent::parseListToModel 把开关机日志数据list加入model中以供treeview显示
- * @param iList 要加入model中的原始数据
- * @param oPModel 要增加数据的model指针
- */
 void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
@@ -2129,11 +1958,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItem
     }
 }
 
-/**
- * @brief DisplayContent::parseListToModel 把kwin日志数据list加入model中以供treeview显示
- * @param iList 要加入model中的原始数据
- * @param oPModel 要增加数据的model指针
- */
 void DisplayContent::parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
@@ -2160,10 +1984,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemMo
     }
 }
 
-/**
- * @brief DisplayContent::setLoadState 设置当前的显示状态
- * @param iState 显示状态
- */
 void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
 {
     if (!m_spinnerWgt->isHidden()) {
@@ -2182,27 +2002,23 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     }
     switch (iState) {
     case DATA_LOADING: {
-        //如果为正在加载,则不显示主表\搜索为空的提示lable,只显示加载的转圈动画控件,并且禁止导出,导出按钮置灰
         emit  setExportEnable(false);
         m_spinnerWgt->show();
         m_spinnerWgt->spinnerStart();
         break;
     }
     case DATA_COMPLETE: {
-        //如果为加载完成,则只显示主表,导出按钮置可用
         m_treeView->show();
         emit  setExportEnable(true);
         break;
     }
     case DATA_LOADING_K: {
-        //如果为内核正在加载,则不显示主表\搜索为空的提示lable,只显示加载的转圈动画控件,并且禁止导出,导出按钮置灰
         emit  setExportEnable(false);
         m_spinnerWgt_K->show();
         m_spinnerWgt_K->spinnerStart();
         break;
     }
     case DATA_NO_SEARCH_RESULT: {
-        //如果为无搜索结果状态,则只显示无搜索结果的提示label
         m_treeView->show();
         noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noResultLabel->show();
@@ -2214,10 +2030,6 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
 
 }
 
-/**
- * @brief DisplayContent::onExportResult 导出数据结束槽函数,成功则显示提示toast
- * @param isSuccess 导出是否成功
- */
 void DisplayContent::onExportResult(bool isSuccess)
 {
     QString titleIcon = ICONPREFIX ;
@@ -2242,9 +2054,6 @@ void DisplayContent::onExportFakeCloseDlg()
     }
 }
 
-/**
- * @brief DisplayContent::clearAllFilter 清空当前所有的筛选条件成员变量(只限在本类中筛选的条件)
- */
 void DisplayContent::clearAllFilter()
 {
     m_bootFilter = {"", ""};
@@ -2257,9 +2066,6 @@ void DisplayContent::clearAllFilter()
     m_normalFilter.eventTypeFilter = 0;
 }
 
-/**
- * @brief DisplayContent::clearAllDatalist 清空所有获取的数据list
- */
 void DisplayContent::clearAllDatalist()
 {
     m_detailWgt->cleanText();
@@ -2286,10 +2092,6 @@ void DisplayContent::clearAllDatalist()
 
 }
 
-/**
- * @brief DisplayContent::filterBoot 对启动日志进行筛选显示
- * @param ibootFilter  启动日志筛选条件
- */
 void DisplayContent::filterBoot(BOOT_FILTERS ibootFilter)
 {
     currentBootList.clear();
@@ -2314,10 +2116,6 @@ void DisplayContent::filterBoot(BOOT_FILTERS ibootFilter)
     createBootTable(currentBootList);
 }
 
-/**
- * @brief DisplayContent::filterNomal 对开关机日志进行筛选显示
- * @param inormalFilter 对开关机日志筛选条件
- */
 void DisplayContent::filterNomal(NORMAL_FILTERS inormalFilter)
 {
 
@@ -2375,18 +2173,12 @@ void DisplayContent::filterNomal(NORMAL_FILTERS inormalFilter)
     createNormalTable(nortempList);
 }
 
-/**
- * @brief DisplayContent::onExportProgress 导出时进度显示槽函数,连接导出数据进程
- * @param nCur 当前进行到的count
- * @param nTotal 总数量
- */
 void DisplayContent::onExportProgress(int nCur, int nTotal)
 {
     LogExportThread *exportThread = nullptr;
     if (sender()) {
         exportThread = qobject_cast<LogExportThread *>(sender());
     }
-    //如果导出线程不再运行则不处理此信号
     if (!m_exportDlg || !exportThread || !exportThread->isProcessing()) {
         return;
     }
@@ -2398,11 +2190,6 @@ void DisplayContent::onExportProgress(int nCur, int nTotal)
     m_exportDlg->updateProgressBarValue(nCur);
 }
 
-/**
- * @brief DisplayContent::parseListToModel 把系统日志数据list加入model中以供treeview显示
- * @param iList 要加入model中的原始数据
- * @param oPModel 要增加数据的model指针
- */
 void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
@@ -2468,31 +2255,18 @@ void DisplayContent::paintEvent(QPaintEvent *event)
 
 }
 
-/**
- * @brief DisplayContent::resizeEvent 重载resizeEvent以让无搜索结果提示的lable大小和treeview使文字居中
- * @param event
- */
 void DisplayContent::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
     noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
 }
 
-/**
- * @brief DisplayContent::getIconByname 获取日志等级信息对应的图标文件名
- * @param str 日志等级字符串
- * @return 日志等级图标文件名
- */
 QString DisplayContent::getIconByname(QString str)
 {
     //    qDebug() << str << m_icon_name_map.value(str);
-    return m_icon_name_map.value(str);
+    return m_icon_name_map      .value(str);
 }
 
-/**
- * @brief DisplayContent::createApplicationTable 获取应用日志完成时加载所有数据到treeview中
- * @param list 获得的应用日志数据list
- */
 void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
 {
     //    m_treeView->show();
@@ -2505,12 +2279,6 @@ void DisplayContent::createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list)
     insertApplicationTable(list, 0, end);
 }
 
-/**
- * @brief DisplayContent::insertApplicationTable 按分页转换插入应用日志到treeview的model中
- * @param logList 当前筛选状态下所有符合条件的应用日志数据结构
- * @param start 分页开始的数组下标
- * @param end 分页结束的数组下标
- */
 void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end)
 {
     QList<LOG_MSG_APPLICATOIN> midList = list;
@@ -2527,8 +2295,8 @@ void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int
 
 /**
  * @author Airy
- * @brief DisplayContent::slot_refreshClicked for refresh日志类型listview右键刷新数据槽函数
- * @param index 当前选中的日志类型的index
+ * @brief DisplayContent::slot_refreshClicked for refresh
+ * @param index
  */
 void DisplayContent::slot_refreshClicked(const QModelIndex &index)
 {
