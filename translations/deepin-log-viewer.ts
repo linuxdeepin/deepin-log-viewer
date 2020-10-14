@@ -244,17 +244,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="467"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="489"/>
         <source>Boot record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="469"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="491"/>
         <source>Shutdown record</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="472"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="494"/>
         <source>Login record</source>
         <translation type="unfinished"></translation>
     </message>
