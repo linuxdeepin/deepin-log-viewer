@@ -20,7 +20,9 @@ build*/
 
 # log
 *.log
-
+#cppcheck
+*.cppcheck
+test-cppcheck-build-dir/*
 # debian
 debian/*
 !debian/changelog
