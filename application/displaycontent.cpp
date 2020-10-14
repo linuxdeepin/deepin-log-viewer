@@ -54,7 +54,7 @@
 #include "malloc.h"
 DWIDGET_USE_NAMESPACE
 
-#define SINGLE_LOAD 200
+#define SINGLE_LOAD 500
 
 #define LEVEL_WIDTH 80
 #define STATUS_WIDTH 90
@@ -170,6 +170,10 @@ void DisplayContent::initTableView()
     m_treeView->setObjectName("mainLogTable");
     m_pModel = new QStandardItemModel(this);
     m_treeView->setModel(m_pModel);
+    m_kernModel = new LogBaseModel(nullptr, this);
+    connect(m_kernModel, &LogBaseModel::updateView, this, &DisplayContent::updateScrollerBar);
+
+
 }
 
 void DisplayContent::initConnections()
@@ -185,6 +189,8 @@ void DisplayContent::initConnections()
             SLOT(slot_bootFinished(QList<LOG_MSG_BOOT>)));
     connect(&m_logFileParse, SIGNAL(kernFinished(QList<LOG_MSG_JOURNAL>)), this,
             SLOT(slot_kernFinished(QList<LOG_MSG_JOURNAL>)));
+    connect(&m_logFileParse, SIGNAL(kernFinished(LOG_DATA_BASE_INFO *)), this,
+            SLOT(slot_kernFinished(LOG_DATA_BASE_INFO *)));
     connect(&m_logFileParse, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()),
             Qt::QueuedConnection);
     connect(&m_logFileParse, &LogFileParser::journalData, this, &DisplayContent::slot_journalData,
@@ -992,6 +998,9 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
 
 void DisplayContent::slot_exportClicked()
 {
+//    LogExportThread *exportThread = new LogExportThread(this);
+//    exportThread->exportTest();
+//    return;
     QString logName;
     if (m_curListIdx.isValid())
         logName = QString("/%1").arg(m_curListIdx.data().toString());
@@ -1240,6 +1249,16 @@ void DisplayContent::slot_kernFinished(QList<LOG_MSG_JOURNAL> list)
     createKernTable(kList);
 }
 
+void DisplayContent::slot_kernFinished(LOG_DATA_BASE_INFO *iInfo)
+{
+    if (m_flag != KERN)
+        return;
+    m_kernModel->setBaseInfo(iInfo);
+    m_treeView->setModel(m_kernModel);
+    m_treeView->update();
+    setLoadState(DATA_COMPLETE);
+}
+
 void DisplayContent::slot_kwinFinished(QList<LOG_MSG_KWIN> list)
 {
     if (m_flag != Kwin)
@@ -1433,17 +1452,30 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
     } else if (m_flag == KERN) {  // modified by Airy for bug 12263
         int rate = (value + 25) / SINGLE_LOAD;
 
-        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag >= rate)
-                return;
+        /*   if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
+               if (m_limitTag >= rate)
+                   return;
 
-            int leftCnt = kList.count() - SINGLE_LOAD * rate;
-            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+               int leftCnt = kList.count() - SINGLE_LOAD * rate;
+               int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertKernTable(kList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+               insertKernTable(kList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
 
-            m_limitTag = rate;
-            m_treeView->verticalScrollBar()->setValue(valuePixel);
+               m_limitTag = rate;
+
+               m_treeView->verticalScrollBar()->setValue(valuePixel);
+           }*/
+        if (!m_kernModel) {
+            return;
+        }
+        if (valuePixel > m_treeView->verticalScrollBar()->maximum() * 0.75) {
+            m_kernModel->addPage();
+            //m_treeView->verticalScrollBar()->setValue((m_treeView->verticalScrollBar()->maximum() - m_treeView->verticalScrollBar()->minimum()) / 4 * 3);
+
+        } else if (valuePixel < m_treeView->verticalScrollBar()->maximum() * 0.25) {
+            m_kernModel->reducePage();
+            // m_treeView->verticalScrollBar()->setValue((m_treeView->verticalScrollBar()->maximum() - m_treeView->verticalScrollBar()->minimum())  / 4);
+
         }
 
     }
@@ -1987,6 +2019,21 @@ void DisplayContent::filterNomal(NORMAL_FILTERS inormalFilter)
         }
     }
     createNormalTable(nortempList);
+}
+
+void DisplayContent::updateScrollerBar(bool iDirectionDown, int iCurrentPage, int iTotal)
+{
+    if (iCurrentPage >= iTotal - 1 || iCurrentPage == 0) {
+        return;
+    }
+    if (iDirectionDown) {
+        m_treeView->verticalScrollBar()->setValue((m_treeView->verticalScrollBar()->maximum() - m_treeView->verticalScrollBar()->minimum()) / 4 * 3);
+
+    } else {
+        m_treeView->verticalScrollBar()->setValue((m_treeView->verticalScrollBar()->maximum() - m_treeView->verticalScrollBar()->minimum()) / 4);
+
+    }
+
 }
 
 void DisplayContent::onExportProgress(int nCur, int nTotal)

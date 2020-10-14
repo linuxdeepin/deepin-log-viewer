@@ -24,6 +24,8 @@
 #include "table.h"
 #include "xlsxdocument.h"
 #include "utils.h"
+//#include <Xlsx/Workbook.h>
+#include "xlsxwriter.h"
 
 #include <DApplication>
 
@@ -350,6 +352,66 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_labels = labels;
     m_runMode = XlsKWIN;
     m_canRunning = true;
+}
+
+void LogExportThread::exportTest()
+{
+    try {
+        QElapsedTimer timer;
+        timer.start();
+//        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+//            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+//            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
+//        });
+//        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
+//            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
+//            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
+//        });
+//        for (int col = 0; col < labels.count(); ++col) {
+//            QXlsx::Format boldFont;
+//            boldFont.setFontBold(true);
+//            xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
+//        }
+        // ++currentXlsRow;
+
+//        SimpleXlsx::CWorkbook book("Incognito");
+//        std::vector<SimpleXlsx::ColumnWidth> ColWidth;
+//        SimpleXlsx::CWorksheet &Sheet = book.AddSheet("Unicode", ColWidth);
+//        for (int row = 0; row < 1048576; ++row) {
+//            Sheet.BeginRow();
+//            for (int col = 0; col < 8; ++col) {
+//                Sheet.AddCell("OpenXLSX");
+//            }
+//            Sheet.EndRow();
+
+//        }
+//        if (book.Save("/home/zyc/Desktop/Simple.xlsx"))  qDebug() << "The book has been saved successfully" ;
+//        else qDebug() << "The book saving has been failed" ;
+
+
+        lxw_workbook  *workbook  = workbook_new("/home/zyc/Desktop/Simple.xlsx");
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        for (int i = 0; i < 1048576; ++i) {
+            for (int j = 0; j < 8; ++j) {
+                worksheet_write_string(worksheet, i, j, "OpenXLSX", NULL);
+            }
+        }
+
+        workbook_close(workbook);
+        malloc_trim(0);
+        qDebug() << "exportTest" << workbook << worksheet << timer.elapsed();
+
+
+    } catch (QString ErrorStr) {
+        qDebug() << "Export Stop" << ErrorStr;
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return ;
+    }
+    // emit sigResult(m_canRunning);
+    return  ;
 }
 
 bool LogExportThread::isProcessing()
@@ -1752,6 +1814,8 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList,
                                   QStringList labels, LOG_FLAG iFlag)
 {
+
+
     try {
         auto currentXlsRow = 1;
         QXlsx::Document xlsx(&m_canRunning);
@@ -1812,6 +1876,61 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
     return true && m_canRunning;
 }
 
+bool LogExportThread::exportToXlsNew(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag)
+{
+    try {
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
+        for (int col = 0; col < labels.count(); ++col) {
+            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
+        }
+        ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+
+        for (int row = 0; row < jList.count(); ++row) {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_JOURNAL message = jList.at(row);
+            int col = 0;
+
+            if (iFlag == JOURNAL) {
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.level.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonId.toStdString().c_str(), NULL);
+            } else if (iFlag == KERN) {
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+            }
+
+            ++currentXlsRow;
+            sigProgress(row + 1, jList.count() * 3 + end);
+        }
+
+
+        workbook_close(workbook);
+        malloc_trim(0);
+        sigProgress(100, 100);
+    } catch (QString ErrorStr) {
+        qDebug() << "Export Stop" << ErrorStr;
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
+}
+
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
     QElapsedTimer timer;
@@ -1820,7 +1939,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         auto currentXlsRow = 1;
 
         QXlsx::Document xlsx(&m_canRunning);
-        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
+        connect(& xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
         });
@@ -2238,7 +2357,11 @@ void LogExportThread::run()
         break;
     }
     case XlsJOURNAL: {
-        exportToXls(m_fileName, m_jList, m_labels, m_flag);
+        QElapsedTimer timer;
+        timer.start();
+        //  exportToXls(m_fileName, m_jList, m_labels, m_flag);
+        exportToXlsNew(m_fileName, m_jList, m_labels, m_flag);
+        qDebug() << "export test" << timer.elapsed();
         break;
     }
     case XlsAPP: {

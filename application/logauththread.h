@@ -2,6 +2,7 @@
 #define LOGAUTHTHREAD_H
 #include <QProcess>
 #include <QRunnable>
+#include <QVector>
 #include <mutex>
 #include "structdef.h"
 
@@ -47,14 +48,19 @@ protected:
     void handleDkpg();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
-
-
+    bool doReadFileWork();
+    void close();
+    void splitLines();
+    void splitLine(QVector<qint64> *enters, char *ptr, bool progress);
+    void detectTextCodec();
+    void setCodec(QTextCodec *codec) {mCodec = codec;}
 signals:
     void kernFinished(QList<LOG_MSG_JOURNAL>);
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
     void xorgFinished(QList<LOG_MSG_XORG> iKwinList);
     void dpkgFinished(QList<LOG_MSG_DPKG> iKwinList);
+    void kernFinished(LOG_DATA_BASE_INFO *info);
     void proccessError(const QString &iError);
 public slots:
     void onFinished(int exitCode);
@@ -75,6 +81,14 @@ private:
     int m_threadCount;
 
     bool m_isStopProccess = false;
+    GET_FIILE_DATA_FLAG m_flag;
+    char *mMem{nullptr};
+    qint64 mSize{0};
+    QVector<qint64> mEnters;
+    int mLineCnt{0};
+    QFile *mFile{nullptr};
+    int mEnterCharOffset;
+    QTextCodec *mCodec;
 };
 
 #endif  // LOGAUTHTHREAD_H

@@ -63,6 +63,7 @@ signals:
     void xlogFinished(QList<LOG_MSG_XORG>);
     void bootFinished(QList<LOG_MSG_BOOT>);
     void kernFinished(QList<LOG_MSG_JOURNAL>);
+    void kernFinished(LOG_DATA_BASE_INFO *iInfo);
     void journalFinished();
 
     void journalBootFinished();

@@ -436,5 +436,22 @@ void LogTreeView::focusInEvent(QFocusEvent *event)
     DTreeView::focusInEvent(event);
 }
 
+void LogTreeView::scrollContentsBy(int dx, int dy)
+{
+//   qDebug() << "scrollContentsBy" << dx << dy;
+    DTreeView::scrollContentsBy(dx, dy);
+//    if (LogBaseModel *logModel = qobject_cast<LogBaseModel *> (model())) {
+
+//    } else {
+//        DTreeView::scrollContentsBy(dx, dy);
+//    }
+}
+
+void LogTreeView::resizeEvent(QResizeEvent *e)
+{
+    QTreeView::resizeEvent(e);
+    m_ViewPortLineCnt = viewport()->height() / singleRowHeight();
+}
+
 
 

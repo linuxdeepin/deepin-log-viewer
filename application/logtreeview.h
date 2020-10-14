@@ -24,7 +24,7 @@
 
 #include <DTreeView>
 #include <QTime>
-
+#include "model/logbasemodel.h"
 class QKeyEvent;
 class LogViewHeaderView;
 class LogViewItemDelegate;
@@ -41,11 +41,13 @@ protected:
                  const QModelIndex &index) const override;
     void keyPressEvent(QKeyEvent *event) override;
     bool event(QEvent *e) override;
+
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event)override;
-
+    void scrollContentsBy(int dx, int dy) override;
+    void resizeEvent(QResizeEvent *e) override;
 private:
     LogViewItemDelegate *m_itemDelegate;
     LogViewHeaderView *m_headerDelegate;
@@ -58,6 +60,8 @@ private:
     QPointF m_lastTouchBeginPos;
     QTime m_lastTouchTime;
     Qt::FocusReason m_reson;
+    int m_ViewPortLineCnt{0};
+    //LogBaseModel *m_logBaseModel = nullptr;
 };
 
 #endif  // LOGTREEVIEW_H

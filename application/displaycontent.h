@@ -28,7 +28,7 @@
 #include "logspinnerwidget.h"
 #include "logtreeview.h"
 #include "structdef.h"
-
+#include "model/logbasemodel.h"
 #include <DApplicationHelper>
 #include <DIconButton>
 #include <DLabel>
@@ -125,6 +125,7 @@ public slots:
     void slot_XorgFinished(QList<LOG_MSG_XORG> list);
     void slot_bootFinished(QList<LOG_MSG_BOOT> list);
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
+    void slot_kernFinished(LOG_DATA_BASE_INFO *iInfo);
     void slot_kwinFinished(QList<LOG_MSG_KWIN> list);
     void slot_journalFinished();
     void slot_journalBootFinished();
@@ -158,6 +159,7 @@ public slots:
     void clearAllDatalist();
     void filterBoot(BOOT_FILTERS ibootFilter);
     void filterNomal(NORMAL_FILTERS inormalFilter);
+    void updateScrollerBar(bool iDirection, int iCurrentPage, int iTotal);
 private:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
@@ -166,7 +168,7 @@ private:
     //    Dtk::Widget::DTableView *m_tableView;
     LogTreeView *m_treeView;
     QStandardItemModel *m_pModel;
-
+    LogBaseModel *m_kernModel{nullptr};
 
     logDetailInfoWidget *m_detailWgt {nullptr};
     Dtk::Widget::DLabel *noResultLabel {nullptr};

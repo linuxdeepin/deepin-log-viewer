@@ -442,8 +442,8 @@ void LogFileParser::parseByKern(qint64 ms)
     KERN_FILTERS kernfilter;
     kernfilter.timeFilter = ms;
     authThread->setFileterParam(kernfilter);
-    connect(authThread, &LogAuthThread::kernFinished, this,
-            &LogFileParser::kernFinished);
+    connect(authThread, static_cast<void (LogAuthThread::*)(LOG_DATA_BASE_INFO *)>(&LogAuthThread::kernFinished), this,
+            static_cast<void (LogFileParser::*)(LOG_DATA_BASE_INFO *)>(&LogFileParser::kernFinished));
     connect(this, &LogFileParser::stopKern, authThread,
             &LogAuthThread::stopProccess);
     QThreadPool::globalInstance()->start(authThread);

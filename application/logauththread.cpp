@@ -2,7 +2,8 @@
 #include "utils.h"
 #include <QDebug>
 #include <QDateTime>
-
+#include <QtConcurrent>
+#include <future>
 
 #include "sharedmemorymanager.h"
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
@@ -79,7 +80,8 @@ void LogAuthThread::run()
     m_canRun = true;
     switch (m_type) {
     case KERN:
-        handleKern();
+        //  handleKern();
+        doReadFileWork();
         break;
     case BOOT:
         handleBoot();
@@ -158,6 +160,7 @@ void LogAuthThread::handleBoot()
 
 void LogAuthThread::handleKern()
 {
+
     QList<LOG_MSG_JOURNAL> kList;
     QFile file("/var/log/kern.log"); // add by Airy
     if (!file.exists()) {
@@ -277,6 +280,7 @@ void LogAuthThread::handleKern()
     }
 
     emit kernFinished(kList);
+
 
 }
 
@@ -528,6 +532,175 @@ qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
     QString tStr = QString("%1 %2 %3 %4").arg(m).arg(d).arg(curdt.year()).arg(t);
     QDateTime dt = local.toDateTime(tStr, "MMM d yyyy hh:mm:ss");
     return dt.toMSecsSinceEpoch();
+}
+
+bool LogAuthThread::doReadFileWork()
+{
+    if (mFile) {
+        close();
+    }
+
+    mFile = new QFile("/home/zyc/Documents/tech/同方内核日志没有/kern.log");
+    if (!mFile->open(QIODevice::ReadOnly)) {
+        qDebug() << "failed to open file as read only";
+        delete mFile;
+        mFile = nullptr;
+        return false;
+    }
+
+    mSize = mFile->size();
+    if (mSize <= 0) {
+        qDebug() << "file is empty";
+        mFile->close();
+        delete mFile;
+        mFile = nullptr;
+        return false;
+    }
+
+    auto mem = mFile->map(0, mSize, QFileDevice::MapPrivateOption);
+    //由于map出的内存是不带\0的，所以可能会导致越界访问
+    //一个临时的修复方法是把最后一个字节改为\0
+    mem[mSize - 1] = '\0';
+    mMem = (char *)(mem);
+
+    QTime time;
+    time.restart();
+    mEnters.push_back(-1);//插入“第0行”方便处理。假设第0行的行结束标记在-1字节
+
+
+    //分割为一行一行；MacBook 2005 2.4G（已被）耗时3.2s左右
+    mEnterCharOffset = 2;
+    auto firstNewLine = strchr(mMem, '\n');
+    if (firstNewLine != nullptr) {
+        if (firstNewLine == mMem || *(firstNewLine - 1) != '\r') {
+            mEnterCharOffset = 1;
+        }
+
+        --mEnterCharOffset;
+        splitLines();
+    }
+
+    if (!m_flag.canRun)
+        return false;
+
+    if (mEnters.last() < mSize) {//没有\n的最后一行
+        qDebug() << "add last line";
+        if (mSize >= 2 && mMem[mSize - 2] == '\r') { //\r\0
+            mEnters.push_back(mSize - 2);
+        } else {
+            mEnters.push_back(mSize - 1);
+        }
+    }
+
+    qDebug() << "create enters cost " << time.elapsed(); //2G+release: 5s
+    //TODO mEnters记录到工程文件中，下次秒开
+
+    mLineCnt = mEnters.size() - 1;
+
+    detectTextCodec();
+    LOG_DATA_BASE_INFO *info = new LOG_DATA_BASE_INFO;
+    info->mMem = mMem;
+    info->mSize = mSize;
+    info->mCodec = mCodec;
+    info->mEnters = mEnters;
+    info->mLineCnt = mLineCnt;
+    info->mEnterCharOffset = mEnterCharOffset;
+    qDebug() << "doReadFileWork finished-------";
+    kernFinished(info);
+    return true;
+}
+
+void LogAuthThread::close()
+{
+    if (mFile) {
+        mEnters.clear();
+        mFile->unmap((uchar *)mMem);
+        mFile->close();
+        delete mFile;
+        mFile = nullptr;
+    }
+}
+
+void LogAuthThread::detectTextCodec()
+{
+    //先只判断两种类型：UTF-8/GBK
+
+    QTextCodec::ConverterState state;
+    auto utf8 = QTextCodec::codecForName("UTF-8");
+    utf8->toUnicode(mMem, 4096, &state);//取4k来判断
+    if (state.invalidChars > 0) {
+        setCodec(QTextCodec::codecForName("GBK"));
+    } else {
+        setCodec(utf8);
+    }
+}
+
+void sumAllListFunc(QList<LOG_MSG_JOURNAL *> *resultList, const QList<LOG_MSG_JOURNAL *> *itemList)
+{
+    resultList->append(*itemList);
+}
+void LogAuthThread::splitLines()
+{
+    const qint64 blockSize = 524288000; //500M
+    int extraParts = mSize / blockSize;
+
+    if (mSize - extraParts * blockSize == 0) {//临界情况，刚好是500M的整数倍
+        extraParts -= 1;
+    }
+
+    qDebug() << "open using extra thread count: " << extraParts;
+
+    m_flag.cur = 0;
+    m_flag.from = 1;
+    m_flag.to = mSize / 100; //按一行100个字符估计总行数
+
+    auto *extraEnters = new QVector<qint64>[extraParts];
+    auto *extraRets = new std::future<void>[extraParts];
+    auto *chBackup = new char[extraParts];
+    for (int i = 0; i < extraParts; i++) {
+        qint64 pos = blockSize * (i + 1);
+        QVector<qint64> *enters = &extraEnters[i];
+        enters->clear();
+
+        //临时把mMem[pos]修改为0，方便分段处理
+        chBackup[i] = mMem[pos];
+        if (chBackup[i] == '\n') {
+            enters->push_back(i - mEnterCharOffset);
+        }
+        mMem[pos] = 0;
+
+        extraRets[i] = async(std::launch::async, [ &, enters] {
+            splitLine(enters, mMem + pos + 1, false);
+        });
+    }
+
+    splitLine(&mEnters, mMem, true); //FIXME:extraParts>0的时候进度统计的有问题
+
+    for (int i = 0; i < extraParts; i++) {
+        extraRets[i].wait();
+
+        //恢复mMem[pos]
+        qint64 pos = blockSize * (i + 1);
+        mMem[pos] = chBackup[i];
+
+        //合并结果
+        mEnters.append(extraEnters[i]);
+        QVector<qint64>().swap(extraEnters[i]);//提前释放内存
+    }
+
+    delete[] extraEnters;
+    delete[] extraRets;
+    delete[] chBackup;
+}
+
+void LogAuthThread::splitLine(QVector<qint64> *enters, char *ptr, bool progress)
+{
+    while (m_flag.canRun && (ptr = strchr(ptr, '\n')) != nullptr) {
+        enters->push_back(ptr - mMem - mEnterCharOffset);//定位在\r（如有）或\n上
+        if (progress)
+            ++m_flag.cur;
+        ++ptr;
+    }
 }
 
 

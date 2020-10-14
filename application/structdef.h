@@ -23,6 +23,7 @@
 #define STRUCTDEF_H
 #include <QString>
 #include <QDir>
+#include <QVector>
 struct LOG_MSG_JOURNAL {
     // include dateTime level type detailInfo...
     QString dateTime;
@@ -32,7 +33,13 @@ struct LOG_MSG_JOURNAL {
     QString level;
     QString msg;
 };
-
+struct LOG_MSG_KERN {
+    QString dateTime;
+    QString hostName;
+    QString daemonName;
+    QString daemonId;
+    QString msg;
+};
 struct LOG_MSG_DPKG {
     QString dateTime;
     QString action;
@@ -55,7 +62,14 @@ struct LOG_MSG_XORG {
     QString dateTime;
     QString msg;
 };
-
+struct LOG_DATA_BASE_INFO {
+    char *mMem{nullptr};
+    qint64 mSize{0};
+    QVector<qint64> mEnters;
+    int mLineCnt{0};
+    int mEnterCharOffset;
+    QTextCodec *mCodec;
+};
 // add by Airy
 struct LOG_MSG_NORMAL {
     QString eventType;
@@ -93,6 +107,11 @@ struct JOURNAL_FILTERS {
     int timeFilter;
     int eventTypeFilter;
 
+};
+struct KERN_FILTERS1 {
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1 ;
+    QString searchstr;
 };
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 
@@ -173,7 +192,12 @@ enum NORMAL_DISPLAY_COLUMN {
 };
 }
 
-
+struct  GET_FIILE_DATA_FLAG {
+    int from;
+    int to;
+    int cur;
+    bool canRun{true};
+};
 
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"

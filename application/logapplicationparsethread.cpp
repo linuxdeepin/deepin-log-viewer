@@ -125,6 +125,7 @@ void LogApplicationParseThread::doWork()
 
 }
 
+
 void LogApplicationParseThread::onProcFinished(int ret)
 {
     Q_UNUSED(ret)

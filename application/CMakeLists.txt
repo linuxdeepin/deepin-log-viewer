@@ -132,12 +132,14 @@ set (APP_CPP_FILES
      exportprogressdlg.cpp
      logscrollbar.cpp
      model/log_sort_filter_proxy_model.cpp
+     model/logbasemodel.cpp
      logcombox.cpp
      dbusmanager.cpp
      lognormalbutton.cpp
      logsearchedit.cpp
      logapplication.cpp
      sharedmemorymanager.cpp
+
      common/collator.cpp
     )
 set (APP_QRC_FILES
@@ -280,6 +282,10 @@ endfunction()
 
 find_library(ICUIL18N_LIB icui18n)
 find_library(ICUUC_LIB icuuc)
+# ZLIB
+find_package(ZLIB REQUIRED "1.0")
+list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+message("zlib version: " ${ZLIB_VERSION})
 #lupdate start
 set(TS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../translations")
 set(TS_FILES
@@ -294,18 +300,26 @@ endforeach()
 
 file (GLOB APP_TS_FILES translations/*.ts)
 qt5_create_translation(APP_QM_FILES ${APP_TS_FILES} ${APP_QM_FILES})
-
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
 add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES})
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/QtXlsxWriter/src/xlsx")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
 include_directories(${DtkWidget_INCLUDE_DIRS})
 include_directories(${DtkCore_INCLUDE_DIRS})
 include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc)
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a)
 
+#这个excel库不用，静态链接后速度太慢
+#include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/simplexlsx-code")
+#target_link_libraries(${EXE_NAME} ${CMAKE_BINARY_DIR}/3rdparty/simplexlsx-code/libSimpleXlsx.a )
+
+#当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
+target_link_libraries(${EXE_NAME} ${ZLIB_LIBRARIES})
 #include_directories(${Qt5Widgets_LIBRARIES}
 #                                               ${Qt5Core_LIBRARIES}
 #                                              ${Qt5DBus_LIBRARIES}
