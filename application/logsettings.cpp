@@ -23,19 +23,35 @@
 #define MAINWINDOW_WIDTH_NAME "logMainWindowWidthName"
 std::atomic<LogSettings *> LogSettings::m_instance;
 std::mutex LogSettings::m_mutex;
-LogSettings::LogSettings(QObject *parent) : QObject(parent)
+/**
+ * @brief LogSettings::LogSettings 构造函数从配置文件初始化配置
+ * @param parent　父对象
+ */
+LogSettings::LogSettings(QObject *parent)
+    : QObject(parent),
+      m_winInfoConfig(nullptr),
+      m_logDirConfig(nullptr),
+      m_configPath(""),
+      m_logDirPath("")
 {
-    QDir winInfoPath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
-    if (!winInfoPath.exists()) {
-        winInfoPath.mkpath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+    QDir infoPath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+    if (!infoPath.exists()) {
+        infoPath.mkpath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
     }
 
-    m_configPath = winInfoPath.filePath("wininfo-config.conf");
+    m_configPath = infoPath.filePath("wininfo-config.conf");
     m_winInfoConfig = new QSettings(m_configPath, QSettings::IniFormat, this);
+
+    m_logDirPath = infoPath.filePath("logdir-config.conf");
+    m_logDirConfig = new QSettings(m_logDirPath, QSettings::IniFormat, this);
 
 
 }
 
+/**
+ * @brief LogSettings::getConfigWinSize　通过配置文件获取之前保存的窗口大小
+ * @return　之前保存的窗口大小
+ */
 QSize LogSettings::getConfigWinSize()
 {
     QVariant tempHeight = m_winInfoConfig->value(MAINWINDOW_HEIGHT_NAME);
@@ -56,6 +72,11 @@ QSize LogSettings::getConfigWinSize()
     return  QSize(winWidth, winHeight);
 }
 
+/**
+ * @brief LogSettings::saveConfigWinSize 保存当前窗口尺寸到配置文件
+ * @param w　当前窗口宽度
+ * @param h　当前窗口高度
+ */
 void LogSettings::saveConfigWinSize(int w, int h)
 {
     int winWidth = w > MAINWINDOW_WIDTH ? w : MAINWINDOW_WIDTH;

@@ -28,7 +28,10 @@ class LogSettings : public QObject
     Q_OBJECT
 public:
     explicit LogSettings(QObject *parent = nullptr);
-
+    /**
+     * @brief instance 单例构造
+     * @return　本对象全局单例
+     */
     static LogSettings *instance()
     {
         LogSettings *sin = m_instance.load();
@@ -47,11 +50,26 @@ public:
 
 
 
-
-    QSettings *m_winInfoConfig = nullptr;
+    /**
+     * @brief m_winInfoConfig 窗口配置对象
+     */
+    QSettings *m_winInfoConfig ;
+    /**
+     * @brief m_logDirConfig 日志文件路径配置对象
+     */
+    QSettings *m_logDirConfig ;
+    /**
+     * @brief m_configPath 窗口配置文件路径
+     */
     QString m_configPath;
+    /**
+     * @brief m_logDirPath 日志文件路径配置的文件路径
+     */
+    QString m_logDirPath;
     QSize getConfigWinSize();
     void saveConfigWinSize(int w, int h);
+    void saveLogDir(const QString &iKey, const QString &iDir);
+    QString getLogDir(const QString &iKey);
 signals:
 
 public slots:
