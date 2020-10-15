@@ -703,11 +703,12 @@
     <name>Main</name>
     <message>
         <location filename="../application/main.cpp" line="81"/>
+        <location filename="../application/main.cpp" line="82"/>
         <source>Log Viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="85"/>
+        <location filename="../application/main.cpp" line="86"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translation type="unfinished"></translation>
     </message>

@@ -38,12 +38,15 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 #set(CMAKE_CXX_FLAGS "-g -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#${EXE_NAME}
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--as-need -fPIE")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
 #-ldtkwidget -ldtkgui -ldtkcore
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "sw_64")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mieee")
 endif ()
 
 if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
+    add_definitions(-DQT_NO_DEBUG_OUTPUT)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 
