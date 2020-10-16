@@ -813,6 +813,8 @@ void DisplayContent::generateNormalFile(int id)
 
     switch (id) {
     case ALL:
+        m_normalFilter.timeFilterEnd = -1;
+        m_normalFilter.timeFilterBegin = -1;
         m_logFileParse.parseByNormal(norList, m_normalFilter);
         break;
     case ONE_DAY: {
