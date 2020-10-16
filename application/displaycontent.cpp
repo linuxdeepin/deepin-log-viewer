@@ -802,7 +802,7 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 // add by Airy
 void DisplayContent::generateNormalFile(int id)
 {
-    // clearAllFilter();
+    clearAllFilter();
     clearAllDatalist();
     norList.clear();
     nortempList.clear();
@@ -2253,9 +2253,9 @@ void DisplayContent::clearAllFilter()
     m_currentSearchStr.clear();
     m_currentKwinFilter = {""};
     m_normalFilter.searchstr = "";
-    m_normalFilter.timeFilterEnd = -1;
-    m_normalFilter.timeFilterBegin = -1;
-    m_normalFilter.eventTypeFilter = 0;
+//    m_normalFilter.timeFilterEnd = -1;
+//    m_normalFilter.timeFilterBegin = -1;
+//    m_normalFilter.eventTypeFilter = 0;
 }
 
 /**
