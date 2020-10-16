@@ -808,7 +808,7 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
 // add by Airy
 void DisplayContent::generateNormalFile(int id)
 {
-    clearAllFilter();
+    // clearAllFilter();
     clearAllDatalist();
     norList.clear();
     nortempList.clear();
@@ -1667,7 +1667,8 @@ void DisplayContent::slot_NormalFinished()
     setLoadState(DATA_COMPLETE);
     nortempList = norList;
     //    createXorgTable(xList);
-    createNormalTable(nortempList);
+    // createNormalTable(nortempList);
+    filterNomal(m_normalFilter);
 }
 
 /**
