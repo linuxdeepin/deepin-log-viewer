@@ -204,6 +204,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1891"/>
 =======
         <location filename="../application/displaycontent.cpp" line="2008"/>
@@ -220,6 +221,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2228"/>
 >>>>>>> 09f4565... chore: 增加注释
+=======
+        <location filename="../application/displaycontent.cpp" line="2229"/>
+>>>>>>> bcabc43... fix:　修复了开关机日志从有时间筛选切换到时间筛选为全部时，不显示所有全部时间的问题
         <source>Export successful</source>
         <translation type="unfinished"></translation>
     </message>
@@ -893,9 +897,14 @@
         <location filename="../application/displaycontent.cpp" line="502"/>
         <location filename="../application/displaycontent.cpp" line="630"/>
         <location filename="../application/displaycontent.cpp" line="1039"/>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1935"/>
         <location filename="../application/displaycontent.cpp" line="2063"/>
 >>>>>>> 09f4565... chore: 增加注释
+=======
+        <location filename="../application/displaycontent.cpp" line="1936"/>
+        <location filename="../application/displaycontent.cpp" line="2064"/>
+>>>>>>> bcabc43... fix:　修复了开关机日志从有时间筛选切换到时间筛选为全部时，不显示所有全部时间的问题
         <location filename="../application/logexportthread.cpp" line="1299"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="546"/>
@@ -938,12 +947,20 @@
         <location filename="../application/displaycontent.cpp" line="505"/>
         <location filename="../application/displaycontent.cpp" line="632"/>
         <location filename="../application/displaycontent.cpp" line="1040"/>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1936"/>
         <location filename="../application/displaycontent.cpp" line="1977"/>
         <location filename="../application/displaycontent.cpp" line="2064"/>
         <location filename="../application/displaycontent.cpp" line="2102"/>
         <location filename="../application/displaycontent.cpp" line="2145"/>
 >>>>>>> 09f4565... chore: 增加注释
+=======
+        <location filename="../application/displaycontent.cpp" line="1937"/>
+        <location filename="../application/displaycontent.cpp" line="1978"/>
+        <location filename="../application/displaycontent.cpp" line="2065"/>
+        <location filename="../application/displaycontent.cpp" line="2103"/>
+        <location filename="../application/displaycontent.cpp" line="2146"/>
+>>>>>>> bcabc43... fix:　修复了开关机日志从有时间筛选切换到时间筛选为全部时，不显示所有全部时间的问题
         <location filename="../application/logexportthread.cpp" line="1300"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
         <source>Info</source>
@@ -1027,6 +1044,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1653"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1770"/>
@@ -1043,10 +1061,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1937"/>
 >>>>>>> 09f4565... chore: 增加注释
+=======
+        <location filename="../application/displaycontent.cpp" line="1938"/>
+>>>>>>> bcabc43... fix:　修复了开关机日志从有时间筛选切换到时间筛选为全部时，不显示所有全部时间的问题
         <source>Action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1068,10 +1090,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1976"/>
 >>>>>>> 09f4565... chore: 增加注释
+=======
+        <location filename="../application/displaycontent.cpp" line="1977"/>
+>>>>>>> bcabc43... fix:　修复了开关机日志从有时间筛选切换到时间筛选为全部时，不显示所有全部时间的问题
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1093,10 +1119,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2099"/>
 >>>>>>> 09f4565... chore: 增加注释
+=======
+        <location filename="../application/displaycontent.cpp" line="2100"/>
+>>>>>>> bcabc43... fix:　修复了开关机日志从有时间筛选切换到时间筛选为全部时，不显示所有全部时间的问题
         <source>Event Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1118,6 +1148,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2100"/>
 >>>>>>> 09f4565... chore: 增加注释
+=======
+        <location filename="../application/displaycontent.cpp" line="2101"/>
+>>>>>>> bcabc43... fix:　修复了开关机日志从有时间筛选切换到时间筛选为全部时，不显示所有全部时间的问题
         <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1174,6 +1207,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1786"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1903"/>
@@ -1190,6 +1224,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2101"/>
 >>>>>>> 09f4565... chore: 增加注释
+=======
+        <location filename="../application/displaycontent.cpp" line="2102"/>
+>>>>>>> bcabc43... fix:　修复了开关机日志从有时间筛选切换到时间筛选为全部时，不显示所有全部时间的问题
         <source>Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
