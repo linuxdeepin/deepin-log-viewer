@@ -4,7 +4,7 @@
     <message>
         <location filename="../application/loglistview.cpp" line="468"/>
         <source>Display in file manager</source>
-        <translation type="unfinished"/>
+        <translation>Im Dateimanager anzeigen</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="469"/>
@@ -19,7 +19,7 @@
     <message>
         <location filename="../application/loglistview.cpp" line="508"/>
         <source>Are you sure you want to clear the log?</source>
-        <translation type="unfinished"/>
+        <translation>Sind Sie sicher, dass Sie das Protokoll löschen möchten?</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="509"/>
@@ -166,7 +166,7 @@
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="22"/>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>Wird exportiert ...</translation>
     </message>
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="44"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1859"/>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>Exportieren erfolgreich</translation>
     </message>
 </context>
 <context>

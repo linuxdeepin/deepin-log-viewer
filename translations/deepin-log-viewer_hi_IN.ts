@@ -166,7 +166,7 @@
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="22"/>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>निर्यात जारी है...</translation>
     </message>
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="44"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1859"/>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>निर्यात सफल</translation>
     </message>
 </context>
 <context>
@@ -202,7 +202,7 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="155"/>
         <source>Level:  </source>
-        <translation type="unfinished"/>
+        <translation>स्तर :</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="177"/>
@@ -342,7 +342,7 @@
         <location filename="../application/logauththread.cpp" line="340"/>
         <location filename="../application/logauththread.cpp" line="359"/>
         <source>Log file is empty</source>
-        <translation type="unfinished"/>
+        <translation>लॉग फाइल रिक्त है</translation>
     </message>
 </context>
 <context>
@@ -553,7 +553,7 @@
         <location filename="../application/loglistview.cpp" line="248"/>
         <location filename="../application/loglistview.cpp" line="249"/>
         <source>Kwin Log</source>
-        <translation type="unfinished"/>
+        <translation>Kwin लॉग</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="255"/>

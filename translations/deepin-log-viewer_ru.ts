@@ -166,7 +166,7 @@
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="22"/>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>Экспортирование...</translation>
     </message>
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="44"/>
@@ -179,7 +179,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1859"/>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>Экспортирование прошло успешно</translation>
     </message>
 </context>
 <context>
@@ -342,7 +342,7 @@
         <location filename="../application/logauththread.cpp" line="340"/>
         <location filename="../application/logauththread.cpp" line="359"/>
         <source>Log file is empty</source>
-        <translation type="unfinished"/>
+        <translation>Файл журнала пустой</translation>
     </message>
 </context>
 <context>
@@ -358,12 +358,12 @@
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>Log Viewer</source>
-        <translation>Просмотр Журнала</translation>
+        <translation>Просмотрщик Журнала</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="74"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation>Просмотр журнала - полезный инструмент для просмотра системных журналов.</translation>
+        <translation>Просмотрщик журнала - это полезный инструмент для просмотра системных журналов.</translation>
     </message>
 </context>
 <context>
@@ -371,7 +371,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="109"/>
         <source>No search results</source>
-        <translation>Нет результатов поиска</translation>
+        <translation>Поиск не дал результатов</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="71"/>
@@ -553,7 +553,7 @@
         <location filename="../application/loglistview.cpp" line="248"/>
         <location filename="../application/loglistview.cpp" line="249"/>
         <source>Kwin Log</source>
-        <translation type="unfinished"/>
+        <translation>Журнал Kwin</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="255"/>

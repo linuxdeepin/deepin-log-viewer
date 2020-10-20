@@ -202,7 +202,7 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="155"/>
         <source>Level:  </source>
-        <translation>Ниво:</translation>
+        <translation>Ниво:  </translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="177"/>
