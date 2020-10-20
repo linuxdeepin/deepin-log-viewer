@@ -9,7 +9,7 @@
     <message>
         <location filename="../application/loglistview.cpp" line="469"/>
         <source>Clear log</source>
-        <translation>Tyhjennä loki</translation>
+        <translation>Tyhjennä tapahtumaloki</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="470"/>
@@ -19,7 +19,7 @@
     <message>
         <location filename="../application/loglistview.cpp" line="508"/>
         <source>Are you sure you want to clear the log?</source>
-        <translation>Haluatko varmasti tyhjentää lokin?</translation>
+        <translation>Haluatko varmasti tyhjentää tapahtumalokin?</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="509"/>
