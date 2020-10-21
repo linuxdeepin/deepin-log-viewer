@@ -28,6 +28,12 @@ set(LINK_LIBS
 #    ${ICUUC_LIBRARIES}
 #     ${SYSTEMD_LIBRARIES}
 )
+#option(BENCHMARK_ON "open the info of benchmark" OFF)
+#if (BENCHMARK_ON)
+
+#endif(BENCHMARK_ON)
+##开启性能打印
+add_definitions(-DPERF_ON)
 
 
 set(CMAKE_CXX_STANDARD 11)
@@ -156,7 +162,7 @@ set (APP_CPP_FILES
      sharedmemorymanager.cpp
      common/collator.cpp
      logsettings.cpp
-
+     DebugTimeManager.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc

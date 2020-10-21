@@ -25,6 +25,7 @@
 #include "logfileparser.h"
 #include "exportprogressdlg.h"
 #include "utils.h"
+#include "DebugTimeManager.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -1278,6 +1279,7 @@ void DisplayContent::slot_exportClicked()
     //    }
     if (fileName.isEmpty())
         return;
+
     m_exportDlg->show();
     QStringList labels;
     for (int col = 0; col < m_pModel->columnCount(); ++col) {
@@ -1292,32 +1294,41 @@ void DisplayContent::slot_exportClicked()
         switch (m_flag) {
         //根据导出日志类型执行正确的导出逻辑
         case JOURNAL:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(jList.count()));
             exportThread->exportToTxtPublic(fileName, jList, labels, m_flag);
             break;
         case BOOT_KLU:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(jBootList.count()));
             exportThread->exportToTxtPublic(fileName, jBootList, labels, JOURNAL);
             break;
         case APP: {
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(appList.count()));
             QString appName = getAppName(m_curAppLog);
             exportThread->exportToTxtPublic(fileName, appList, labels, appName);
             break;
         }
         case DPKG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dList.count()));
             exportThread->exportToTxtPublic(fileName, dList, labels);
             break;
         case BOOT:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(currentBootList.count()));
             exportThread->exportToTxtPublic(fileName, currentBootList, labels);
             break;
         case XORG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(xList.count()));
             exportThread->exportToTxtPublic(fileName, xList, labels);
             break;
         case Normal:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(nortempList.count()));
             exportThread->exportToTxtPublic(fileName, nortempList, labels);
             break;
         case KERN:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(kList.count()));
             exportThread->exportToTxtPublic(fileName, kList, labels, m_flag);
             break;
         case Kwin:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(m_currentKwinList.count()));
             exportThread->exportToTxtPublic(fileName, m_currentKwinList, labels);
             break;
         default:
@@ -1331,32 +1342,41 @@ void DisplayContent::slot_exportClicked()
         connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
         switch (m_flag) {
         case JOURNAL:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(jList.count()));
             exportThread->exportToHtmlPublic(fileName, jList, labels, m_flag);
             break;
         case BOOT_KLU:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(jBootList.count()));
             exportThread->exportToHtmlPublic(fileName, jBootList, labels, JOURNAL);
             break;
         case APP: {
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(appList.count()));
             QString appName = getAppName(m_curAppLog);
             exportThread->exportToHtmlPublic(fileName, appList, labels, appName);
             break;
         }
         case DPKG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(dList.count()));
             exportThread->exportToHtmlPublic(fileName, dList, labels);
             break;
         case BOOT:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(currentBootList.count()));
             exportThread->exportToHtmlPublic(fileName, currentBootList, labels);
             break;
         case XORG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(xList.count()));
             exportThread->exportToHtmlPublic(fileName, xList, labels);
             break;
         case Normal:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(nortempList.count()));
             exportThread->exportToHtmlPublic(fileName, nortempList, labels);
             break;
         case KERN:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(kList.count()));
             exportThread->exportToHtmlPublic(fileName, kList, labels, m_flag);
             break;
         case Kwin:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(m_currentKwinList.count()));
             exportThread->exportToHtmlPublic(fileName, m_currentKwinList, labels);
             break;
         default:
@@ -1372,32 +1392,41 @@ void DisplayContent::slot_exportClicked()
 
         switch (m_flag) {
         case JOURNAL:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(jList.count()));
             exportThread->exportToDocPublic(fileName, jList, labels, m_flag);
             break;
         case BOOT_KLU:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(jBootList.count()));
             exportThread->exportToDocPublic(fileName, jBootList, labels, JOURNAL);
             break;
         case APP: {
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(appList.count()));
             QString appName = getAppName(m_curAppLog);
             exportThread->exportToDocPublic(fileName, appList, labels, appName);
             break;
         }
         case DPKG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(dList.count()));
             exportThread->exportToDocPublic(fileName, dList, labels);
             break;
         case BOOT:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(currentBootList.count()));
             exportThread->exportToDocPublic(fileName, currentBootList, labels);
             break;
         case XORG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(xList.count()));
             exportThread->exportToDocPublic(fileName, xList, labels);
             break;
         case Normal:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(nortempList.count()));
             exportThread->exportToDocPublic(fileName, nortempList, labels);
             break;
         case KERN:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(kList.count()));
             exportThread->exportToDocPublic(fileName, kList, labels, m_flag);
             break;
         case Kwin:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(m_currentKwinList.count()));
             exportThread->exportToDocPublic(fileName, m_currentKwinList, labels);
             break;
         default:
@@ -1412,32 +1441,41 @@ void DisplayContent::slot_exportClicked()
         connect(exportThread, &LogExportThread::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
         switch (m_flag) {
         case JOURNAL:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jList.count()));
             exportThread->exportToXlsPublic(fileName, jList, labels, m_flag);
             break;
         case BOOT_KLU:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jBootList.count()));
             exportThread->exportToXlsPublic(fileName, jBootList, labels, JOURNAL);
             break;
         case APP: {
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(appList.count()));
             QString appName = getAppName(m_curAppLog);
             exportThread->exportToXlsPublic(fileName, appList, labels, appName);
             break;
         }
         case DPKG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(dList.count()));
             exportThread->exportToXlsPublic(fileName, dList, labels);
             break;
         case BOOT:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(currentBootList.count()));
             exportThread->exportToXlsPublic(fileName, currentBootList, labels);
             break;
         case XORG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(xList.count()));
             exportThread->exportToXlsPublic(fileName, xList, labels);
             break;
         case Normal:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(nortempList.count()));
             exportThread->exportToXlsPublic(fileName, nortempList, labels);
             break;
         case KERN:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(kList.count()));
             exportThread->exportToXlsPublic(fileName, kList, labels, m_flag);
             break;
         case Kwin:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(m_currentKwinList.count()));
             exportThread->exportToXlsPublic(fileName, m_currentKwinList, labels);
             break;
         default:
@@ -1469,6 +1507,7 @@ void DisplayContent::slot_dpkgFinished(QList<LOG_MSG_DPKG> list)
     dList = list;
     dListOrigin = list;
     createDpkgTable(dList);
+    PERF_PRINT_END("POINT-03", "type=dpkg");
 }
 
 /**
@@ -1482,6 +1521,7 @@ void DisplayContent::slot_XorgFinished(QList<LOG_MSG_XORG> list)
     xListOrigin = list;
     xList = list;
     createXorgTable(xList);
+    PERF_PRINT_END("POINT-03", "type=xorg");
 }
 
 /**
@@ -1497,6 +1537,7 @@ void DisplayContent::slot_bootFinished(QList<LOG_MSG_BOOT> list)
     currentBootList.clear();
     currentBootList = bList;
     createBootTable(currentBootList);
+    PERF_PRINT_END("POINT-03", "type=boot");
 }
 
 /**
@@ -1511,6 +1552,7 @@ void DisplayContent::slot_kernFinished(QList<LOG_MSG_JOURNAL> list)
     kList = list;
     setLoadState(DATA_COMPLETE);
     createKernTable(kList);
+    PERF_PRINT_END("POINT-03", "type=kern");
 }
 
 /**
@@ -1526,6 +1568,7 @@ void DisplayContent::slot_kwinFinished(QList<LOG_MSG_KWIN> list)
     m_currentKwinList = m_kwinList;
     setLoadState(DATA_COMPLETE);
     creatKwinTable(m_currentKwinList);
+    PERF_PRINT_END("POINT-03", "type=kwin");
 }
 
 void DisplayContent::slot_journalFinished()
@@ -1573,6 +1616,8 @@ void DisplayContent::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
     if (m_firstLoadPageData) {
         createJournalTableStart(jList);
         m_firstLoadPageData = false;
+        PERF_PRINT_END("POINT-01", "");
+        PERF_PRINT_END("POINT-03", "type=system");
     }
     // qDebug() << "jList" << jList.count();
 }
@@ -1618,6 +1663,7 @@ void DisplayContent::slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list
     if (m_firstLoadPageData) {
         createJournalBootTableStart(jBootList);
         m_firstLoadPageData = false;
+        PERF_PRINT_END("POINT-03", "type=boot_klu");
     }
 }
 
@@ -1636,6 +1682,7 @@ void DisplayContent::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list)
     appListOrigin = list;
 
     createApplicationTable(appList);
+    PERF_PRINT_END("POINT-03", "type=application");
 }
 
 /**
@@ -1650,6 +1697,7 @@ void DisplayContent::slot_NormalFinished()
     //    createXorgTable(xList);
     // createNormalTable(nortempList);
     filterNomal(m_normalFilter);
+    PERF_PRINT_END("POINT-03", "type=on_off");
 }
 
 /**
@@ -2225,11 +2273,13 @@ void DisplayContent::onExportResult(bool isSuccess)
 {
     QString titleIcon = ICONPREFIX ;
     if (isSuccess) {
+
         if (m_exportDlg && !m_exportDlg->isHidden()) {
             m_exportDlg->hide();
         }
         DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export successful"));
         qDebug() << "sendMessage"  ;
+        PERF_PRINT_END("POINT-04", "");
     }
     //  this->setFocus();
     DApplication::setActiveWindow(this);

@@ -25,6 +25,7 @@
 #include "accessible.h"
 #include "dbusmanager.h"
 #include "utils.h"
+#include "DebugTimeManager.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
@@ -39,6 +40,9 @@ DCORE_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+
+    PERF_PRINT_BEGIN("POINT-01", "");
+
     //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了
     QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
     //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了,这个真正有效
@@ -99,5 +103,7 @@ int main(int argc, char *argv[])
 //    for (int i = 0; i < 120000; ++i) {
 //        qDebug() << "fake log" << i;
 //    }
-    return a.exec();
+    bool result = a.exec();
+    PERF_PRINT_END("POINT-02", "");
+    return  result;
 }

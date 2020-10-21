@@ -21,6 +21,7 @@
 
 #include "logcollectormain.h"
 #include "logsettings.h"
+#include "DebugTimeManager.h"
 
 #include <DApplication>
 #include <DTitlebar>
@@ -355,6 +356,12 @@ bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *
         }
     }
     return  false;
+}
+
+void LogCollectorMain::closeEvent(QCloseEvent *event)
+{
+    PERF_PRINT_BEGIN("POINT-02", "");
+    DMainWindow::closeEvent(event);
 }
 
 
