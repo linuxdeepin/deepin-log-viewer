@@ -28,12 +28,10 @@ set(LINK_LIBS
 #    ${ICUUC_LIBRARIES}
 #     ${SYSTEMD_LIBRARIES}
 )
-#option(BENCHMARK_ON "open the info of benchmark" OFF)
-#if (BENCHMARK_ON)
+option(PERF_ON "open the info of benchmark" ON)
+configure_file(config.h.in config.h @ONLY)
 
-#endif(BENCHMARK_ON)
-##开启性能打印
-add_definitions(-DPERF_ON)
+
 
 
 set(CMAKE_CXX_STANDARD 11)
