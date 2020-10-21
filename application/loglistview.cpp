@@ -21,6 +21,7 @@
 #include "loglistview.h"
 #include "logapplicationhelper.h"
 #include "dbusmanager.h"
+#include "DebugTimeManager.h"
 
 #include <DDesktopServices>
 #include <DDialog>
@@ -398,6 +399,7 @@ void LogListView::paintEvent(QPaintEvent *event)
  */
 void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+    PERF_PRINT_BEGIN("POINT-03", "");
     if (current.row() < 0) {
         return;
     }

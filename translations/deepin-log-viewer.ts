@@ -4,32 +4,32 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="471"/>
+        <location filename="../application/loglistview.cpp" line="473"/>
         <source>Display in file manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="472"/>
+        <location filename="../application/loglistview.cpp" line="474"/>
         <source>Clear log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="473"/>
+        <location filename="../application/loglistview.cpp" line="475"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="511"/>
+        <location filename="../application/loglistview.cpp" line="513"/>
         <source>Are you sure you want to clear the log?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="512"/>
+        <location filename="../application/loglistview.cpp" line="514"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="513"/>
+        <location filename="../application/loglistview.cpp" line="515"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
@@ -164,6 +164,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1015"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1155"/>
@@ -183,6 +184,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1262"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="1263"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -203,6 +207,7 @@
 <context>
     <name>ExportMessage</name>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -232,6 +237,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2231"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="2280"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <source>Export successful</source>
         <translation type="unfinished"></translation>
     </message>
@@ -239,6 +247,7 @@
 <context>
     <name>File</name>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -264,6 +273,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1260"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="1261"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <source>Export File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -340,6 +352,7 @@
     <message>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="148"/>
         <location filename="../application/displaycontent.cpp" line="159"/>
 <<<<<<< HEAD
@@ -372,6 +385,10 @@
         <location filename="../application/journalwork.cpp" line="377"/>
 >>>>>>> 09f4565... chore: 增加注释
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="154"/>
+        <location filename="../application/displaycontent.cpp" line="165"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/journalbootwork.cpp" line="480"/>
         <location filename="../application/journalwork.cpp" line="432"/>
 >>>>>>> bb384c6... chore: 增加注释
@@ -382,6 +399,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="149"/>
@@ -416,6 +434,10 @@
         <location filename="../application/journalwork.cpp" line="380"/>
 >>>>>>> 09f4565... chore: 增加注释
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="155"/>
+        <location filename="../application/displaycontent.cpp" line="168"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/journalbootwork.cpp" line="483"/>
         <location filename="../application/journalwork.cpp" line="435"/>
 >>>>>>> bb384c6... chore: 增加注释
@@ -426,6 +448,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="150"/>
@@ -460,6 +483,10 @@
         <location filename="../application/journalwork.cpp" line="379"/>
 >>>>>>> 09f4565... chore: 增加注释
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="156"/>
+        <location filename="../application/displaycontent.cpp" line="167"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/journalbootwork.cpp" line="482"/>
         <location filename="../application/journalwork.cpp" line="434"/>
 >>>>>>> bb384c6... chore: 增加注释
@@ -470,6 +497,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="151"/>
@@ -504,6 +532,10 @@
         <location filename="../application/journalwork.cpp" line="376"/>
 >>>>>>> 09f4565... chore: 增加注释
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="157"/>
+        <location filename="../application/displaycontent.cpp" line="164"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/journalbootwork.cpp" line="479"/>
         <location filename="../application/journalwork.cpp" line="431"/>
 >>>>>>> bb384c6... chore: 增加注释
@@ -514,6 +546,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="155"/>
@@ -545,6 +578,9 @@
         <location filename="../application/journalwork.cpp" line="373"/>
 >>>>>>> 09f4565... chore: 增加注释
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="161"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/journalbootwork.cpp" line="476"/>
         <location filename="../application/journalwork.cpp" line="428"/>
 >>>>>>> bb384c6... chore: 增加注释
@@ -555,6 +591,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="156"/>
@@ -586,6 +623,9 @@
         <location filename="../application/journalwork.cpp" line="374"/>
 >>>>>>> 09f4565... chore: 增加注释
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="162"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/journalbootwork.cpp" line="477"/>
         <location filename="../application/journalwork.cpp" line="429"/>
 >>>>>>> bb384c6... chore: 增加注释
@@ -596,6 +636,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="157"/>
@@ -627,6 +668,9 @@
         <location filename="../application/journalwork.cpp" line="375"/>
 >>>>>>> 09f4565... chore: 增加注释
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="163"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/journalbootwork.cpp" line="478"/>
         <location filename="../application/journalwork.cpp" line="430"/>
 >>>>>>> bb384c6... chore: 增加注释
@@ -637,6 +681,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="160"/>
@@ -668,6 +713,9 @@
         <location filename="../application/journalwork.cpp" line="378"/>
 >>>>>>> 09f4565... chore: 增加注释
 =======
+=======
+        <location filename="../application/displaycontent.cpp" line="166"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/journalbootwork.cpp" line="481"/>
         <location filename="../application/journalwork.cpp" line="433"/>
 >>>>>>> bb384c6... chore: 增加注释
@@ -718,13 +766,13 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../application/main.cpp" line="81"/>
-        <location filename="../application/main.cpp" line="82"/>
+        <location filename="../application/main.cpp" line="85"/>
+        <location filename="../application/main.cpp" line="86"/>
         <source>Log Viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="86"/>
+        <location filename="../application/main.cpp" line="90"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -732,12 +780,12 @@
 <context>
     <name>SearchBar</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="121"/>
+        <location filename="../application/displaycontent.cpp" line="122"/>
         <source>No search results</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="90"/>
+        <location filename="../application/logcollectormain.cpp" line="91"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -745,6 +793,7 @@
 <context>
     <name>Table</name>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -804,6 +853,11 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1039"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="336"/>
+        <location filename="../application/displaycontent.cpp" line="630"/>
+        <location filename="../application/displaycontent.cpp" line="1040"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/logexportthread.cpp" line="1296"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="543"/>
@@ -850,6 +904,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="336"/>
         <location filename="../application/displaycontent.cpp" line="504"/>
 <<<<<<< HEAD
@@ -858,6 +913,11 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1040"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="337"/>
+        <location filename="../application/displaycontent.cpp" line="505"/>
+        <location filename="../application/displaycontent.cpp" line="1041"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/logexportthread.cpp" line="1297"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="544"/>
@@ -913,6 +973,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="337"/>
         <location filename="../application/displaycontent.cpp" line="502"/>
         <location filename="../application/displaycontent.cpp" line="630"/>
@@ -931,10 +992,19 @@
         <location filename="../application/displaycontent.cpp" line="1938"/>
         <location filename="../application/displaycontent.cpp" line="2066"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="338"/>
+        <location filename="../application/displaycontent.cpp" line="503"/>
+        <location filename="../application/displaycontent.cpp" line="631"/>
+        <location filename="../application/displaycontent.cpp" line="1042"/>
+        <location filename="../application/displaycontent.cpp" line="1986"/>
+        <location filename="../application/displaycontent.cpp" line="2114"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/logexportthread.cpp" line="1299"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="546"/>
         <source>Date and Time</source>
+<<<<<<< HEAD
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
         <translation type="unfinished"></translation>
     </message>
@@ -1032,6 +1102,29 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1043"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="339"/>
+        <location filename="../application/displaycontent.cpp" line="506"/>
+        <location filename="../application/displaycontent.cpp" line="633"/>
+        <location filename="../application/displaycontent.cpp" line="1043"/>
+        <location filename="../application/displaycontent.cpp" line="1987"/>
+        <location filename="../application/displaycontent.cpp" line="2028"/>
+        <location filename="../application/displaycontent.cpp" line="2115"/>
+        <location filename="../application/displaycontent.cpp" line="2153"/>
+        <location filename="../application/displaycontent.cpp" line="2196"/>
+        <location filename="../application/logexportthread.cpp" line="1300"/>
+        <location filename="../application/logexportwidget.cpp" line="547"/>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="340"/>
+        <location filename="../application/displaycontent.cpp" line="504"/>
+        <location filename="../application/displaycontent.cpp" line="1044"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/logexportthread.cpp" line="1301"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="548"/>
@@ -1039,6 +1132,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="319"/>
         <location filename="../application/displaycontent.cpp" line="972"/>
@@ -1054,6 +1148,10 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1044"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="341"/>
+        <location filename="../application/displaycontent.cpp" line="1045"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <location filename="../application/logexportthread.cpp" line="1302"/>
 >>>>>>> 7ded527... fix: 修复了系统日志中存在unknown信息，级别分类显示空白的问题
         <location filename="../application/logexportwidget.cpp" line="549"/>
@@ -1061,6 +1159,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1078,10 +1177,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="631"/>
 >>>>>>> 09f4565... chore: 增加注释
+=======
+        <location filename="../application/displaycontent.cpp" line="632"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1111,10 +1214,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1940"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="1988"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <source>Action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1144,10 +1251,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="1979"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="2027"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1177,10 +1288,14 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2102"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="2150"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <source>Event Type</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1210,6 +1325,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2103"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="2151"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <source>Username</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1268,6 +1386,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <location filename="../application/displaycontent.cpp" line="1786"/>
 =======
         <location filename="../application/displaycontent.cpp" line="1903"/>
@@ -1290,6 +1409,9 @@
 =======
         <location filename="../application/displaycontent.cpp" line="2104"/>
 >>>>>>> b5bc88f... chore: 更新翻译文件
+=======
+        <location filename="../application/displaycontent.cpp" line="2152"/>
+>>>>>>> 37b2e65... chore: 增加性能测试打印
         <source>Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1297,52 +1419,52 @@
 <context>
     <name>Tree</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="178"/>
         <location filename="../application/loglistview.cpp" line="179"/>
+        <location filename="../application/loglistview.cpp" line="180"/>
         <source>System Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="188"/>
         <location filename="../application/loglistview.cpp" line="189"/>
+        <location filename="../application/loglistview.cpp" line="190"/>
         <source>Kernel Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="214"/>
         <location filename="../application/loglistview.cpp" line="215"/>
-        <location filename="../application/loglistview.cpp" line="222"/>
+        <location filename="../application/loglistview.cpp" line="216"/>
         <location filename="../application/loglistview.cpp" line="223"/>
+        <location filename="../application/loglistview.cpp" line="224"/>
         <source>Boot Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="235"/>
         <location filename="../application/loglistview.cpp" line="236"/>
+        <location filename="../application/loglistview.cpp" line="237"/>
         <source>dpkg Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="253"/>
         <location filename="../application/loglistview.cpp" line="254"/>
+        <location filename="../application/loglistview.cpp" line="255"/>
         <source>Kwin Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="261"/>
         <location filename="../application/loglistview.cpp" line="262"/>
+        <location filename="../application/loglistview.cpp" line="263"/>
         <source>Xorg Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="272"/>
-        <location filename="../application/loglistview.cpp" line="274"/>
+        <location filename="../application/loglistview.cpp" line="273"/>
+        <location filename="../application/loglistview.cpp" line="275"/>
         <source>Application Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="284"/>
-        <location filename="../application/loglistview.cpp" line="287"/>
+        <location filename="../application/loglistview.cpp" line="285"/>
+        <location filename="../application/loglistview.cpp" line="288"/>
         <source>Boot-Shutdown Event</source>
         <translation type="unfinished"></translation>
     </message>

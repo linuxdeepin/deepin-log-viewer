@@ -55,6 +55,9 @@ public:
 public slots:
     void resizeWidthByFilterContentWidth(int iWidth);
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
+    // QWidget interface
+protected:
+    void closeEvent(QCloseEvent *event);
 private:
     /**
      * @brief m_searchEdt titlebar上的搜索框
@@ -90,6 +93,8 @@ private:
     // export file          --> Ctrl+E
     QShortcut *m_scExport {nullptr};
     int m_originFilterWidth = 0;
+
+
 
 
 };
