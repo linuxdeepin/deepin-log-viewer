@@ -36,5 +36,9 @@
         <file>images/light/kwin.svg</file>
         <file>images/uospm_warning_32px.svg</file>
         <file>images/ok.svg</file>
+        <file>images/dark/onoff_checked.svg</file>
+        <file>images/dark/onoff.svg</file>
+        <file>images/light/onoff_checked.svg</file>
+        <file>images/light/onoff.svg</file>
     </qresource>
 </RCC>
