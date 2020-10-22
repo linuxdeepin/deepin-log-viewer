@@ -4,7 +4,7 @@
 * Author:     zyc <zyc@uniontech.com>
 * Maintainer:  zyc <zyc@uniontech.com>
 * This program is free software: you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
+* it under the terms of the GNU General Public License detachas published by
 * the Free Software Foundation, either version 3 of the License, or
 * any later version.
 * This program is distributed in the hope that it will be useful,
@@ -41,6 +41,17 @@ bool SharedMemoryManager::isAttached()
 {
     return (m_commondM && m_commondM->isAttached());
 }
+
+void SharedMemoryManager::releaseMemory()
+{
+    if (m_commondM) {
+        m_commondM->unlock();
+        if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
+            m_commondM->detach();
+    }
+}
+
+
 
 void SharedMemoryManager::init()
 {

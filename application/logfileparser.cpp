@@ -23,6 +23,7 @@
 #endif
 #include "logfileparser.h"
 #include "journalwork.h"
+#include "sharedmemorymanager.h"
 #include "utils.h"
 #include <DMessageBox>
 #include <QDateTime>
@@ -71,6 +72,8 @@ LogFileParser::LogFileParser(QWidget *parent)
 LogFileParser::~LogFileParser()
 {
     stopAllLoad();
+    //释放共享内存
+    SharedMemoryManager::instance()->releaseMemory();
 }
 
 int LogFileParser::parseByJournal(QStringList arg)
