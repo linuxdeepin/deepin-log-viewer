@@ -44,8 +44,11 @@ public:
     void setRunnableTag(ShareMemoryInfo iShareInfo);
     QString getRunnableKey();
     bool isAttached();
+    void releaseMemory();
+
 protected:
     SharedMemoryManager(QObject *parent = nullptr);
+
     void init();
 private:
     static std::atomic<SharedMemoryManager *> m_instance;
