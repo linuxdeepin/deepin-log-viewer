@@ -362,7 +362,7 @@ void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
             } else if (item->data(ITEM_DATE_ROLE).toString() == APP_TREE_DATA) {
                 _itemIcon = icon + "application.svg";
             } else if (item->data(ITEM_DATE_ROLE).toString() == LAST_TREE_DATA) {
-                _itemIcon = icon + "start.svg";
+                _itemIcon = icon + "onoff.svg";
             } else if (item->data(ITEM_DATE_ROLE).toString() == KWIN_TREE_DATA) {
                 _itemIcon = icon + "kwin.svg";
             }
