@@ -37,4 +37,5 @@ obj-x86_64-linux-gnu/*
 *.qmake*
 Makefile
 moc_*
-
+#test output
+tests/test_output/*

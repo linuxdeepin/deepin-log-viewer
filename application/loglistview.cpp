@@ -117,7 +117,7 @@ bool LogListDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, cons
         }
         return false;
     }
-    return LogListDelegate::helpEvent(event, view, option, index);
+    return DStyledItemDelegate::helpEvent(event, view, option, index);
 }
 
 

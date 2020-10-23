@@ -891,6 +891,11 @@ QVariant slot_logCatelogueClicked_ModelIndex_data_Func(void *obj, int arole)
 {
     return QString(slot_logCatelogueClicked_ModelIndex_data);
 }
+bool slot_logCatelogueClicked_ModelIndex_isValid_Func(void *obj)
+{
+    return true;
+}
+
 TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelogueClicked_UT_001)
 {
     DisplayContent_slot_logCatelogueClicked_UT_Param param = GetParam();
@@ -934,6 +939,7 @@ TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelo
     }
 
     stub->set(ADDR(QModelIndex, data), slot_logCatelogueClicked_ModelIndex_data_Func);
+    stub->set(ADDR(QModelIndex, isValid), slot_logCatelogueClicked_ModelIndex_isValid_Func);
     p->slot_logCatelogueClicked(QModelIndex());
     p->deleteLater();
 }
@@ -1921,10 +1927,467 @@ TEST_P(DisplayContent_setLoadState_UT, DisplayContent_setLoadState_UT)
 
 
     p->setLoadState(param.m_loadState);
-    EXPECT_EQ(param.m_spinnerWgtIsShowResult, p->m_spinnerWgt->isVisible());
-    EXPECT_EQ(param.m_spinnerWgtKIsShowResult, p->m_spinnerWgt_K->isVisible());
-    EXPECT_EQ(param.m_noResultLabelIsShowResult, p->noResultLabel->isVisible());
-    EXPECT_EQ(param.m_treeViewIsShowResult, p->m_treeView->isVisible());
+    EXPECT_EQ(param.m_spinnerWgtIsShowResult, !p->m_spinnerWgt->isHidden());
+    EXPECT_EQ(param.m_spinnerWgtKIsShowResult, !p->m_spinnerWgt_K->isHidden());
+    EXPECT_EQ(param.m_noResultLabelIsShowResult, !p->noResultLabel->isHidden());
+    EXPECT_EQ(param.m_treeViewIsShowResult, !p->m_treeView->isHidden());
+    p->deleteLater();
+}
+
+class DisplayContent_onExportResult_UT_Param
+{
+public:
+    DisplayContent_onExportResult_UT_Param(bool iIsSuccess, bool iNeedHide)
+    {
+
+        m_isSuccess = iIsSuccess;
+        m_NeedHide = iNeedHide;
+
+    }
+    bool m_isSuccess;
+    bool m_NeedHide;
+
+};
+
+class DisplayContent_onExportResult_UT : public ::testing::TestWithParam<DisplayContent_onExportResult_UT_Param>
+{
+};
+
+
+INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_onExportResult_UT, ::testing::Values(DisplayContent_onExportResult_UT_Param(false, true)
+                                                                                             , DisplayContent_onExportResult_UT_Param(true, true)
+                                                                                             , DisplayContent_onExportResult_UT_Param(true, false)
+                                                                                            ));
+
+#include "exportprogressdlg.h"
+TEST_P(DisplayContent_onExportResult_UT, DisplayContent_onExportResult_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_onExportResult_UT_Param param = GetParam();
+    if (param.m_NeedHide) {
+        p->m_exportDlg->show();
+    } else {
+        p->m_exportDlg->hide();
+    }
+    p->onExportResult(param.m_isSuccess);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_onExportFakeCloseDlg_UT, DisplayContent_onExportFakeCloseDlg_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_exportDlg->show();
+    p->onExportFakeCloseDlg();
+    EXPECT_EQ(p->m_exportDlg->isHidden(), true);
+    p->m_exportDlg->hide();
+    p->onExportFakeCloseDlg();
+    EXPECT_EQ(p->m_exportDlg->isHidden(), true);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_clearAllFilter_UT, DisplayContent_clearAllFilter_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    p->clearAllFilter();
+
+    EXPECT_EQ(p->m_bootFilter.searchstr, "");
+    EXPECT_EQ(p->m_bootFilter.statusFilter, "");
+    EXPECT_EQ(p->m_currentSearchStr.isEmpty(), true);
+    EXPECT_EQ(p->m_currentKwinFilter.msg, "");
+    EXPECT_EQ(p->m_normalFilter.searchstr, "");
+    EXPECT_EQ(p->m_normalFilter.timeFilterEnd, -1);
+    EXPECT_EQ(p->m_normalFilter.timeFilterBegin, -1);
+    EXPECT_EQ(p->m_normalFilter.eventTypeFilter, 0);
+    p->deleteLater();
+}
+
+#include <QStandardItemModel>
+TEST(DisplayContent_clearAllDatalist_UT, DisplayContent_clearAllDatalist_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    p->clearAllDatalist();
+
+    EXPECT_EQ(p->m_pModel->rowCount(), 0);
+    EXPECT_EQ(p->m_pModel->columnCount(), 0);
+    EXPECT_EQ(p->jList.size(), 0);
+    EXPECT_EQ(p->jListOrigin.size(), 0);
+    EXPECT_EQ(p->dListOrigin.size(), 0);
+    EXPECT_EQ(p->xList.size(), 0);
+    EXPECT_EQ(p->xListOrigin.size(), 0);
+    EXPECT_EQ(p->bList.size(), 0);
+    EXPECT_EQ(p->currentBootList.size(), 0);
+    EXPECT_EQ(p->kList.size(), 0);
+    EXPECT_EQ(p->kListOrigin.size(), 0);
+    EXPECT_EQ(p->appList.size(), 0);
+    EXPECT_EQ(p->appListOrigin.size(), 0);
+    EXPECT_EQ(p->norList.size(), 0);
+    EXPECT_EQ(p->nortempList.size(), 0);
+    EXPECT_EQ(p->m_currentKwinList.size(), 0);
+    EXPECT_EQ(p->m_kwinList.size(), 0);
+    EXPECT_EQ(p->jBootList.size(), 0);
+    EXPECT_EQ(p->jBootListOrigin.size(), 0);
+    p->deleteLater();
+}
+
+class DisplayContent_filterBoot_UT_Param
+{
+public:
+    DisplayContent_filterBoot_UT_Param(bool iIsStatusFilerEmpty, bool iIsMsgFilerEmpty)
+    {
+
+        m_isStatusFilerEmpty = iIsStatusFilerEmpty;
+        m_isMsgFilerEmpty = iIsMsgFilerEmpty;
+
+    }
+    bool m_isStatusFilerEmpty;
+    bool m_isMsgFilerEmpty;
+
+
+};
+
+class DisplayContent_filterBoot_UT : public ::testing::TestWithParam<DisplayContent_filterBoot_UT_Param>
+{
+};
+
+
+INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_filterBoot_UT, ::testing::Values(DisplayContent_filterBoot_UT_Param(false, false)
+                                                                                         , DisplayContent_filterBoot_UT_Param(true, true)
+                                                                                         , DisplayContent_filterBoot_UT_Param(true, false)
+                                                                                        ));
+
+TEST_P(DisplayContent_filterBoot_UT, DisplayContent_filterBoot_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_filterBoot_UT_Param param = GetParam();
+    BOOT_FILTERS filter;
+    filter.searchstr = param.m_isMsgFilerEmpty ? "" : "msg";
+    filter.statusFilter = param.m_isStatusFilerEmpty ? "" : "OK";
+    QList<LOG_MSG_BOOT> list;
+    LOG_MSG_BOOT item;
+    for (int i = 0; i < 100; ++i) {
+        item.msg = QString("msg%1").arg(i);
+        item.status = "OK";
+        list.append(item);
+    }
+    p->bList.append(list);
+    p->filterBoot(filter);
+    EXPECT_EQ(p->currentBootList.size(), 100);
+    p->deleteLater();
+}
+
+
+class DisplayContent_filterNomal_UT_Param
+{
+public:
+    DisplayContent_filterNomal_UT_Param(bool iIsEventTypeFilterEmpty, bool iIsMsgFilerEmpty)
+    {
+
+        m_isEventTypeFilterEmpty = iIsEventTypeFilterEmpty;
+        m_isMsgFilerEmpty = iIsMsgFilerEmpty;
+
+    }
+    bool m_isEventTypeFilterEmpty;
+    bool m_isMsgFilerEmpty;
+
+
+};
+
+class DisplayContent_filterNomal_UT : public ::testing::TestWithParam<DisplayContent_filterNomal_UT_Param>
+{
+};
+
+
+INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_filterNomal_UT, ::testing::Values(DisplayContent_filterNomal_UT_Param(false, false)
+                                                                                          , DisplayContent_filterNomal_UT_Param(true, true)
+                                                                                          , DisplayContent_filterNomal_UT_Param(true, false)
+                                                                                          , DisplayContent_filterNomal_UT_Param(false, true)
+                                                                                         ));
+
+TEST_P(DisplayContent_filterNomal_UT, DisplayContent_filterNomal_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_filterNomal_UT_Param param = GetParam();
+    NORMAL_FILTERS filter;
+    filter.searchstr = param.m_isMsgFilerEmpty ? "" : "msg";
+    filter.eventTypeFilter = param.m_isEventTypeFilterEmpty ? -1 : 2;
+    QList<LOG_MSG_NORMAL> list;
+    LOG_MSG_NORMAL item;
+    for (int i = 0; i < 100; ++i) {
+        item.msg = QString("msg%1").arg(i);
+        item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        item.userName = "test_user";
+        item.eventType = "Boot";
+        list.append(item);
+    }
+    p->norList.append(list);
+    p->filterNomal(filter);
+    int resultCount = (param.m_isEventTypeFilterEmpty && (!param.m_isMsgFilerEmpty)) ? 0 : 100;
+
+    EXPECT_EQ(p->nortempList.size(), resultCount);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_onExportProgress_UT, DisplayContent_onExportProgress_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->onExportProgress(5, 100);
+    p->deleteLater();
+}
+
+
+
+class DisplayContent_parseListToModel_JOURNAL_UT_Param
+{
+public:
+    DisplayContent_parseListToModel_JOURNAL_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
+    {
+
+        isEmptyList = iIsEmptyList;
+        isEmptyList = iIsEmptyModel;
+    }
+    bool isEmptyList;
+    bool isEmptyModel;
+
+
+};
+
+class DisplayContent_parseListToModel_JOURNAL_UT : public ::testing::TestWithParam<DisplayContent_parseListToModel_JOURNAL_UT_Param>
+{
+};
+
+
+INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_parseListToModel_JOURNAL_UT, ::testing::Values(DisplayContent_parseListToModel_JOURNAL_UT_Param(true, true)
+                                                                                                       , DisplayContent_parseListToModel_JOURNAL_UT_Param(true, false)
+                                                                                                       , DisplayContent_parseListToModel_JOURNAL_UT_Param(false, false)
+                                                                                                      ));
+
+
+TEST_P(DisplayContent_parseListToModel_JOURNAL_UT, DisplayContent_parseListToModel_JOURNAL_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_parseListToModel_JOURNAL_UT_Param param = GetParam();
+    QList<LOG_MSG_JOURNAL> list;
+    if (!param.isEmptyList) {
+        LOG_MSG_JOURNAL item;
+        for (int i = 0; i < 100; ++i) {
+            item.msg = QString("msg%1").arg(i);
+            item.level = "Debug";
+            item.daemonId = "1";
+            item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+            item.hostName = "test_host";
+            item.daemonName = "test_daemon";
+            list.append(item);
+        }
+    }
+
+    p->parseListToModel(list, (param.isEmptyModel ? nullptr : p->m_pModel));
+    p->deleteLater();
+}
+
+class DisplayContent_getIconByname_UT_Param
+{
+public:
+    DisplayContent_getIconByname_UT_Param(const QString &iKey, const QString &iValue)
+    {
+
+        key = iKey;
+        value = iValue;
+    }
+    QString key;
+    QString value;
+
+
+};
+
+class DisplayContent_getIconByname_UT : public ::testing::TestWithParam<DisplayContent_getIconByname_UT_Param>
+{
+};
+
+
+INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_getIconByname_UT, ::testing::Values(DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Emergency"), "warning2.svg")
+                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Alert"), "warning3.svg")
+                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Critical"), "warning2.svg")
+                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Error"), "wrong.svg")
+                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Warning"), "warning.svg")
+                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Notice"), "warning.svg")
+                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Info"), "")
+                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Debug"), "")
+                                                                                            , DisplayContent_getIconByname_UT_Param("Warning", "warning.svg")
+                                                                                            , DisplayContent_getIconByname_UT_Param("Debug", "")
+                                                                                            , DisplayContent_getIconByname_UT_Param("Error", "wrong.svg")
+                                                                                           ));
+
+
+TEST_P(DisplayContent_getIconByname_UT, DisplayContent_getIconByname_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_getIconByname_UT_Param param = GetParam();
+    EXPECT_EQ(p->getIconByname(param.key), param.value);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_createApplicationTable_UT, DisplayContent_createApplicationTable_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_APPLICATOIN> list;
+    LOG_MSG_APPLICATOIN item;
+    for (int i = 0; i < 100; ++i) {
+        item.msg = QString("msg%1").arg(i);
+        item.level = "Debug";
+        item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        item.src = "test_src";
+        list.append(item);
+    }
+    p->createApplicationTable(list);
+    p->deleteLater();
+}
+
+class DisplayContent_insertApplicationTable_UT_Param
+{
+public:
+    DisplayContent_insertApplicationTable_UT_Param(bool iIsEndMore)
+    {
+
+        m_isEndMore = iIsEndMore;
+    }
+    bool m_isEndMore;
+};
+
+class DisplayContent_insertApplicationTable_UT : public ::testing::TestWithParam<DisplayContent_insertApplicationTable_UT_Param>
+{
+};
+
+
+INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_insertApplicationTable_UT, ::testing::Values(DisplayContent_insertApplicationTable_UT_Param(true),
+                                                                                                     DisplayContent_insertApplicationTable_UT_Param(false)
+                                                                                                    ));
+
+TEST_P(DisplayContent_insertApplicationTable_UT, DisplayContent_insertApplicationTable_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_insertApplicationTable_UT_Param param = GetParam();
+    QList<LOG_MSG_APPLICATOIN> list;
+    LOG_MSG_APPLICATOIN item;
+    for (int i = 0; i < 100; ++i) {
+        item.msg = QString("msg%1").arg(i);
+        item.level = "Debug";
+        item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        item.src = "test_src";
+        list.append(item);
+    }
+    int end = 0;
+    int start = 0;
+    if (param.m_isEndMore) {
+        qDebug() << "param.m_isEndMore";
+        start = 0;
+        end = 20;
+    } else {
+        qDebug() << "param.m_noEndMore";
+        start = 20;
+        end = 0;
+    }
+    p->insertApplicationTable(list, start, end);
+    p->deleteLater();
+}
+
+class DisplayContent_slot_refreshClicked_UT_Param
+{
+public:
+    DisplayContent_slot_refreshClicked_UT_Param(int iIndex)
+    {
+        index = iIndex;
+
+    }
+    int index;
+
+
+
+};
+
+class DisplayContent_slot_refreshClicked_UT : public ::testing::TestWithParam<DisplayContent_slot_refreshClicked_UT_Param>
+{
+};
+
+static QString slot_refreshClicked_ModelIndex_data = "";
+INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_slot_refreshClicked_UT, ::testing::Values(DisplayContent_slot_refreshClicked_UT_Param(0)
+                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(1)
+                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(2)
+                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(3)
+                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(4)
+                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(5)
+                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(6)
+                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(7)
+                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(8)
+                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(9)
+                                                                                                 ));
+QVariant slot_refreshClicked_ModelIndex_data_Func(void *obj, int arole)
+{
+    return QString(slot_refreshClicked_ModelIndex_data);
+}
+bool slot_refreshClicked_ModelIndex_isValid_Func(void *obj)
+{
+    return true;
+}
+
+TEST_P(DisplayContent_slot_refreshClicked_UT, DisplayContent_slot_refreshClicked_UT_001)
+{
+    DisplayContent_slot_refreshClicked_UT_Param param = GetParam();
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    Stub *stub = new Stub;
+
+    switch (param.index) {
+    case 0:
+        slot_refreshClicked_ModelIndex_data = JOUR_TREE_DATA;
+        break;
+    case 1:
+        slot_refreshClicked_ModelIndex_data = DPKG_TREE_DATA;
+        break;
+    case 2:
+        slot_refreshClicked_ModelIndex_data = XORG_TREE_DATA;
+        break;
+    case 3:
+        slot_refreshClicked_ModelIndex_data = BOOT_TREE_DATA;
+        break;
+    case 4:
+        slot_refreshClicked_ModelIndex_data = KERN_TREE_DATA;
+        break;
+    case 5:
+        slot_refreshClicked_ModelIndex_data = APP_TREE_DATA;
+        break;
+    case 6:
+        slot_refreshClicked_ModelIndex_data = LAST_TREE_DATA;
+        break;
+    case 7:
+        slot_refreshClicked_ModelIndex_data = KWIN_TREE_DATA;
+        break;
+    case 8:
+        slot_refreshClicked_ModelIndex_data = BOOT_KLU_TREE_DATA;
+        break;
+    case 9:
+        slot_refreshClicked_ModelIndex_data = "";
+        break;
+    default:
+        break;
+    }
+
+    stub->set(ADDR(QModelIndex, data), slot_refreshClicked_ModelIndex_data_Func);
+    stub->set(ADDR(QModelIndex, isValid), slot_refreshClicked_ModelIndex_isValid_Func);
+
+    p->slot_refreshClicked(QModelIndex());
     p->deleteLater();
 }
 

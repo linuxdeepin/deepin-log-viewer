@@ -270,6 +270,11 @@
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="68"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="77"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2221"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="130"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="146"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="130"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="146"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
@@ -282,6 +287,11 @@
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="69"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="80"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2224"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="133"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="149"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="133"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="149"/>
         <source>Debug</source>
         <translation type="unfinished"></translation>
     </message>
@@ -294,6 +304,11 @@
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="70"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="79"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2223"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="132"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="148"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="132"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="148"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -306,6 +321,11 @@
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="71"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="76"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2220"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="129"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="145"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="129"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="145"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -316,6 +336,11 @@
         <location filename="../application/logexportthread.cpp" line="2126"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="73"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2217"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="126"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="142"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="126"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="142"/>
         <source>Emergency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -326,6 +351,11 @@
         <location filename="../application/logexportthread.cpp" line="2127"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="74"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2218"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="127"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="143"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="127"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="143"/>
         <source>Alert</source>
         <translation type="unfinished"></translation>
     </message>
@@ -336,6 +366,11 @@
         <location filename="../application/logexportthread.cpp" line="2128"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="75"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2219"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="128"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="144"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="128"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="144"/>
         <source>Critical</source>
         <translation type="unfinished"></translation>
     </message>
@@ -346,6 +381,11 @@
         <location filename="../application/logexportthread.cpp" line="2131"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="78"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2222"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="131"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="147"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="131"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="147"/>
         <source>Notice</source>
         <translation type="unfinished"></translation>
     </message>
@@ -406,6 +446,12 @@
         <location filename="../tests/src/displaycontent_test.cpp" line="215"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="423"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="728"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="712"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="751"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="793"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1193"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1232"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1274"/>
         <source>Level</source>
         <translation type="unfinished"></translation>
     </message>
@@ -434,6 +480,12 @@
         <location filename="../tests/src/displaycontent_test.cpp" line="327"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="424"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="730"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="713"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="752"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="794"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1194"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1233"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1275"/>
         <source>Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -453,6 +505,12 @@
         <location filename="../tests/src/displaycontent_test.cpp" line="330"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="426"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="731"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="715"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="754"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="796"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1196"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1235"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1277"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -481,6 +539,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="611"/>
         <location filename="../tests/src/displaycontent_test.cpp" line="425"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="714"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="753"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="795"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1195"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1234"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1276"/>
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>

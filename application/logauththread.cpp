@@ -609,7 +609,6 @@ qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
     QLocale local(QLocale::English, QLocale::UnitedStates);
 
     QDate curdt = QDate::currentDate();
-
     QString tStr = QString("%1 %2 %3 %4").arg(m).arg(d).arg(curdt.year()).arg(t);
     QDateTime dt = local.toDateTime(tStr, "MMM d yyyy hh:mm:ss");
     return dt.toMSecsSinceEpoch();

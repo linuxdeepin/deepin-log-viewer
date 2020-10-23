@@ -2303,30 +2303,32 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     if (!index.isValid()) {
         return;
     }
-
     m_curListIdx = index;
-
     clearAllDatalist();
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty())
         return;
-
+    qDebug() << "slot_refreshClickeditemData" << itemData;
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         // default level is info so PRIORITY=6
         m_flag = JOURNAL;
         generateJournalFile(m_curBtnId, m_curLevel);
+        qDebug() << "slot_refreshClicked 111111" ;
     } else if (itemData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = DPKG;
         generateDpkgFile(m_curBtnId);
+        qDebug() << "slot_refreshClicked 22222222" ;
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
         xList.clear();
         m_flag = XORG;
         //        m_logFileParse.parseByXlog(xList);
         generateXorgFile(m_curBtnId);
+        qDebug() << "slot_refreshClicked 3333333" ;
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         bList.clear();
         m_flag = BOOT;
         m_logFileParse.parseByBoot();
+        qDebug() << "slot_refreshClicked 4444444" ;
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = KERN;
         generateKernFile(m_curBtnId);
@@ -2336,17 +2338,22 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         //应用日志不使用直接刷新,而是刷新筛选器中的选项造成刷新
 //        m_flag = APP;
 //        generateAppFile(m_curAppLog, m_curBtnId, m_curLevel);
+        qDebug() << "slot_refreshClicked 555555555" ;
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
         norList.clear();
         m_flag = Normal;
+        qDebug() << "slot_refreshClicked_LAST" << itemData;
         //        m_logFileParse.parseByNormal(norList);
         generateNormalFile(m_curBtnId);
+        qDebug() << "slot_refreshClicked 6666666666" ;
     } else if (itemData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
         m_kwinList.clear();
         m_currentKwinList.clear();
         m_flag = Kwin;
         m_logFileParse.parseByKwin(m_currentKwinFilter);
+        qDebug() << "slot_refreshClicked 77777777" ;
     } else if (itemData.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
+        qDebug() << "slot_refreshClickeditemDataBOOT_KLU_TREE_DATA" << itemData;
         m_flag = BOOT_KLU;
         generateJournalBootFile(m_curLevel);
     }

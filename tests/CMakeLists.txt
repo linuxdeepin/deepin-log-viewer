@@ -10,7 +10,7 @@ endif ()
 #add_subdirectory(../3rdparty/docx docx_binary_dir)
 #add_subdirectory(../3rdparty/QtXlsxWriter)
 configure_file(../application/environments.h.in environments.h @ONLY)
-
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_output/)
 set(LINK_LIBS
     Qt5::Core
     Qt5::Widgets
@@ -327,7 +327,7 @@ FILE(GLOB allTestSource
 include_directories(src)
 
 
-add_executable (${EXE_NAME} ${allSource} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES}   ${allTestSource})
+add_executable (${EXE_NAME} ${allSource} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource})
 
 
 

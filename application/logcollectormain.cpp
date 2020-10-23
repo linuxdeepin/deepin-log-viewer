@@ -313,7 +313,6 @@ void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
 bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt)
 {
 
-//    qDebug() << "handleApplicationTabEventNotify" << obj->objectName() << obj->metaObject()->className() << obj << this->titlebar();
 
     if (evt->key() == Qt::Key_Tab) {
         DWindowCloseButton *closebtn = this->titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
