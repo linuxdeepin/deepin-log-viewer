@@ -173,7 +173,7 @@ QByteArray Utils::replaceEmptyByteArray(QByteArray &iReplaceStr)
  * @param str 要判断的字符串结果
  * @return 见头文件中CommandErrorType的定义
  */
-Utils::CommandErrorType Utils::isErroCommand(QString str)
+Utils::CommandErrorType Utils::isErroCommand(const QString &str)
 {
     if (str.contains("权限") || str.contains("permission", Qt::CaseInsensitive)) {
         return PermissionError;

@@ -477,6 +477,9 @@ bool LogExportThread::exportToTxt(QString fileName, QStandardItemModel *pModel, 
         return false;
     }
     try {
+        if (!pModel) {
+            throw  QString("model is null");
+        }
         QTextStream out(&fi);
         if (flag == APP) {
             for (int row = 0; row < pModel->rowCount(); ++row) {
@@ -813,6 +816,9 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
 {
 #if 1
     try {
+        if (!pModel) {
+            throw  QString("model is null");
+        }
         Docx::Document doc(DOCTEMPLATE);
         Docx::Table *tab = doc.addTable(pModel->rowCount() + 1, pModel->columnCount());
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
@@ -1368,6 +1374,9 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
         return false;
     }
     try {
+        if (!pModel) {
+            throw  QString("model is null");
+        }
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
         html.write("<body>\n");
@@ -1847,6 +1856,9 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
 bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     try {
+        if (!pModel) {
+            throw  QString("model is null");
+        }
         auto currentXlsRow = 1;
         QXlsx::Document xlsx(&m_canRunning);
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {

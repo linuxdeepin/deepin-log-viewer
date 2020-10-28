@@ -111,6 +111,9 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
                     contentRect.height()
                    };
     }
+    if (!model()) {
+        return;
+    }
     QString title = model()->headerData(logicalIndex, orientation(), Qt::DisplayRole).toString();
     int align = Qt::AlignLeft | Qt::AlignVCenter;
 
@@ -217,6 +220,9 @@ int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
     int margin = style->pixelMetric(DStyle::PM_ContentsMargins, &option);
 
     QFontMetrics fm(DApplication::font());
+    if (!model()) {
+        return -1;
+    }
     QString buf = model()->headerData(logicalIndex, Qt::Horizontal, Qt::DisplayRole).toString();
     if (sortIndicatorSection() == logicalIndex) {
         return fm.width(buf) + margin * 3 + 8;

@@ -72,7 +72,7 @@ public:
     static QPixmap renderSVG(const QString &filePath, const QSize &size);
     static QString loadFontFamilyFromFiles(const QString &fontFileName);
     static QByteArray replaceEmptyByteArray(QByteArray &iReplaceStr);
-    static CommandErrorType isErroCommand(QString str);
+    static CommandErrorType isErroCommand(const QString &str);
     static bool checkAndDeleteDir(const QString &iFilePath);
     static bool deleteDir(const QString &iFilePath);
     static void replaceColorfulFont(QString *iStr);
