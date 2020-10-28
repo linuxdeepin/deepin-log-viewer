@@ -161,6 +161,7 @@ set (APP_CPP_FILES
      common/collator.cpp
      logsettings.cpp
      DebugTimeManager.cpp
+     wtmpparse.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
