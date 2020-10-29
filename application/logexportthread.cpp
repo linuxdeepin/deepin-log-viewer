@@ -38,6 +38,10 @@
 #include <malloc.h>
 DWIDGET_USE_NAMESPACE
 
+/**
+ * @brief LogExportThread::LogExportThread 导出日志线程类构造函数
+ * @param parent 父对象
+ */
 LogExportThread::LogExportThread(QObject *parent)
     :  QObject(parent),
        QRunnable()
@@ -45,12 +49,21 @@ LogExportThread::LogExportThread(QObject *parent)
     setAutoDelete(true);
     initMap();
 }
-
+/**
+ * @brief LogExportThread::~LogExportThread 析构函数
+ */
 LogExportThread::~LogExportThread()
 {
+    //释放空闲内存
     malloc_trim(0);
 }
 
+/**
+ * @brief LogExportThread::exportToTxtPublic 导出到日志txt格式配置函数对QStandardItemModel数据类型的重载
+ * @param fileName 导出文件路径全称
+ * @param pModel 要导出的数据源，为QStandardItemModel
+ * @param flag 导出的日志类型
+ */
 void LogExportThread::exportToTxtPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
@@ -60,6 +73,13 @@ void LogExportThread::exportToTxtPublic(QString fileName, QStandardItemModel *pM
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToTxtPublic 导出到日志txt格式配置函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_JOURNAL
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ */
 void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag)
 {
     m_fileName = fileName;
@@ -71,6 +91,13 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_JOURNAL>
 
 }
 
+/**
+ * @brief LogExportThread::exportToTxtPublic  导出到日志txt格式配置函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
+ * @param labels 表头字符串
+ * @param iAppName 导出的应用日志的应用名称
+ */
 void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
     m_fileName = fileName;
@@ -81,6 +108,12 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_APPLICAT
     m_appName = iAppName;
 }
 
+/**
+ * @brief LogExportThread::exportToTxtPublic 导出到日志txt格式配置函数，对LOG_MSG_DPKG数据类型的重载（指dpkg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -90,6 +123,12 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_DPKG> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToTxtPublic 导出到日志txt格式配置函数，对LOG_MSG_BOOT数据类型的重载（指启动日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_BOOT
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -99,6 +138,12 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_BOOT> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToTxtPublic 导出到日志txt格式配置函数，对LOG_MSG_XORG数据类型的重载（指xorg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_XORG
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -108,6 +153,13 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_XORG> jL
     m_canRunning = true;
 }
 
+
+/**
+ * @brief LogExportThread::exportToTxtPublic 导出到日志txt格式配置函数，对LOG_MSG_NORMAL数据类型的重载（指开关机日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_NORMAL
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -117,6 +169,12 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_NORMAL> 
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToTxtPublic导出到日志txt格式配置函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_KWIN
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -126,6 +184,12 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToHtmlPublic 导出到日志html格式配置函数对QStandardItemModel数据类型的重载
+ * @param fileName 导出文件路径全称
+ * @param pModel 要导出的数据源，为QStandardItemModel
+ * @param flag 导出的日志类型
+ */
 void LogExportThread::exportToHtmlPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
@@ -136,6 +200,13 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QStandardItemModel *p
 
 }
 
+/**
+ * @brief LogExportThread::exportToHtmlPublic 导出到日志html格式配置函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_JOURNAL
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ */
 void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG flag)
 {
     m_fileName = fileName;
@@ -147,6 +218,13 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_JOURNAL
 
 }
 
+/**
+ * @brief LogExportThread::exportToHtmlPublic  导出到日志html格式配置函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
+ * @param labels 表头字符串
+ * @param iAppName 导出的应用日志的应用名称
+ */
 void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
     m_fileName = fileName;
@@ -157,6 +235,12 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_APPLICA
     m_appName = iAppName;
 }
 
+/**
+ * @brief LogExportThread::exportToHtmlPublic 导出到日志html格式配置函数，对LOG_MSG_DPKG数据类型的重载（指dpkg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -166,6 +250,12 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_DPKG> j
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToHtmlPublic导出到日志html格式配置函数，对LOG_MSG_BOOT数据类型的重载（指启动日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_BOOT
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -175,6 +265,12 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_BOOT> j
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToHtmlPublic导出到日志html格式配置函数，对LOG_MSG_XORG数据类型的重载（指xorg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_XORG
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -184,6 +280,12 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_XORG> j
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToHtmlPublic导出到日志html格式配置函数，对LOG_MSG_NORMAL数据类型的重载（指开关机日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_NORMAL
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -193,6 +295,12 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_NORMAL>
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToHtmlPublic导出到日志html格式配置函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_KWIN
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -202,6 +310,12 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_KWIN> j
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToDocPublic导出到日志doc格式配置函数对QStandardItemModel数据类型的重载
+ * @param fileName 导出文件路径全称
+ * @param pModel 要导出的数据源，为QStandardItemModel
+ * @param flag 导出的日志类型
+ */
 void LogExportThread::exportToDocPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
@@ -212,6 +326,13 @@ void LogExportThread::exportToDocPublic(QString fileName, QStandardItemModel *pM
 
 }
 
+/**
+ * @brief LogExportThread::exportToDocPublic导出到日志doc格式配置函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_JOURNAL
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ */
 void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag)
 {
     m_fileName = fileName;
@@ -223,6 +344,13 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_JOURNAL>
 
 }
 
+/**
+ * @brief LogExportThread::exportToDocPublic导出到日志doc格式配置函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
+ * @param labels 表头字符串
+ * @param iAppName 导出的应用日志的应用名称
+ */
 void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
     m_fileName = fileName;
@@ -233,6 +361,12 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_APPLICAT
     m_appName = iAppName;
 }
 
+/**
+ * @brief LogExportThread::exportToDocPublic 导出到日志doc格式配置函数，对LOG_MSG_DPKG数据类型的重载（指dpkg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -242,6 +376,12 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_DPKG> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToDocPublic 导出到日志doc格式配置函数，对LOG_MSG_BOOT数据类型的重载（指启动日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_BOOT
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -251,6 +391,12 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_BOOT> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToDocPublic 导出到日志doc格式配置函数，对LOG_MSG_XORG数据类型的重载（指xorg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_XORG
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -260,6 +406,12 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_XORG> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToDocPublic 导出到日志doc格式配置函数，对LOG_MSG_NORMAL数据类型的重载（指开关机日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_NORMAL
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -269,6 +421,12 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_NORMAL> 
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToDocPublic导出到日志doc格式配置函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_KWIN
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -278,6 +436,12 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToXlsPublic 导出到日志xlsx格式配置函数对QStandardItemModel数据类型的重载
+ * @param fileName 导出文件路径全称
+ * @param pModel 要导出的数据源，为QStandardItemModel
+ * @param flag 导出的日志类型
+ */
 void LogExportThread::exportToXlsPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
@@ -287,6 +451,13 @@ void LogExportThread::exportToXlsPublic(QString fileName, QStandardItemModel *pM
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToXlsPublic 导出到日志xlsx格式配置函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_JOURNAL
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ */
 void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag)
 {
     m_fileName = fileName;
@@ -297,6 +468,13 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_JOURNAL>
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToXlsPublic 导出到日志xlsx格式配置函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
+ * @param labels 表头字符串
+ * @param iAppName 导出的应用日志的应用名称
+ */
 void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
     m_fileName = fileName;
@@ -307,6 +485,12 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_APPLICAT
     m_appName = iAppName;
 }
 
+/**
+ * @brief LogExportThread::exportToXlsPublic 导出到日志xlsx格式配置函数，对LOG_MSG_DPKG数据类型的重载（指dpkg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -316,6 +500,12 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_DPKG> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToXlsPublic导出到日志xlsx格式配置函数，对LOG_MSG_BOOT数据类型的重载（指启动日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -325,6 +515,12 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_BOOT> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToXlsPublic导出到日志xlsx格式配置函数，对LOG_MSG_XORG数据类型的重载（指xorg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_XORG
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -334,6 +530,12 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_XORG> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToXlsPublic 导出到日志xlsx格式配置函数，对LOG_MSG_NORMAL数据类型的重载（指开关机日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_NORMAL
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -343,6 +545,12 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_NORMAL> 
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::exportToXlsPublic 导出到日志xlsw格式配置函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_KWIN
+ * @param labels 表头字符串
+ */
 void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
     m_fileName = fileName;
@@ -352,34 +560,53 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_canRunning = true;
 }
 
+/**
+ * @brief LogExportThread::isProcessing 返回当前线程获取数据逻辑启动停止控制的变量
+ * @return 当前线程获取数据逻辑启动停止控制的变量
+ */
 bool LogExportThread::isProcessing()
 {
     return m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::stopImmediately 停止前线程获取数据逻辑
+ */
 void LogExportThread::stopImmediately()
 {
     m_canRunning = false;
 }
 
+/**
+ * @brief LogExportThread::exportToTxt 导出数据到txt格式函数对QStandardItemModel数据类型的重载
+ * @param fileName 导出文件路径全称
+ * @param pModel 要导出的数据源，为QStandardItemModel
+ * @param flag 导出的日志类型
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToTxt(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     QFile fi(fileName);
+    //判断文件路径是否存在，不存在就返回错误
     if (!fi.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
         emit sigError(openErroStr);
         return false;
     }
     try {
+        //判读啊model指针是为空，为空则不导出
         if (!pModel) {
             throw  QString("model is null");
         }
         QTextStream out(&fi);
+        //日志类型为应用日志时
         if (flag == APP) {
             for (int row = 0; row < pModel->rowCount(); ++row) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
+                //获取表头项目和对应内容，拼成目标字符串写入文件
                 out << pModel->horizontalHeaderItem(0)->text() << ": "
                     << pModel->item(row, 0)->data(Qt::UserRole + 6).toString() << " ";
                 for (int col = 1; col < pModel->columnCount(); ++col) {
@@ -387,22 +614,28 @@ bool LogExportThread::exportToTxt(QString fileName, QStandardItemModel *pModel, 
                         << pModel->item(row, col)->text() << " ";
                 }
                 out << "\n";
+                //导出进度信号
                 sigProgress(row + 1, pModel->rowCount());
             }
         } else {
+            //日志类型为其他所有日志时
             for (int row = 0; row < pModel->rowCount(); row++) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
+                //获取表头项目和对应内容，拼成目标字符串写入文件
                 for (int col = 0; col < pModel->columnCount(); col++) {
                     out << pModel->horizontalHeaderItem(col)->text() << ": "
                         << pModel->item(row, col)->text() << " ";
                 }
                 out << "\n";
+                //导出进度信号
                 sigProgress(row + 1, pModel->rowCount());
             }
         }
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
@@ -412,12 +645,22 @@ bool LogExportThread::exportToTxt(QString fileName, QStandardItemModel *pModel, 
         return false;
     }
     fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToTxt导出到日志txt格式函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_JOURNAL
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
     if (!fi.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -427,8 +670,10 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
     try {
 
         QTextStream out(&fi);
+        //导出日志为系统日志时
         if (flag == JOURNAL) {
             for (int i = 0; i < jList.count(); i++) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
@@ -440,6 +685,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
                 //        "PID:")) << jMsg.daemonId << " "; out << QString(DApplication::translate("Table",
                 //        "Level:")) << jMsg.level << " "; out << QString(DApplication::translate("Table",
                 //        "Info:")) << jMsg.msg << " "; //delete bug
+                //导出各字段的描述和对应内容拼成目标字符串
                 out << QString(DApplication::translate("Table", "Level:")) << jMsg.level << " ";
                 out << QString(DApplication::translate("Table", "Process:")) << jMsg.daemonName << " ";
                 out << QString(DApplication::translate("Table", "Date and Time:")) << jMsg.dateTime << " ";
@@ -452,26 +698,33 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
                 out << QString(DApplication::translate("Table", "User:")) << jMsg.hostName << " ";
                 out << QString(DApplication::translate("Table", "PID:")) << jMsg.daemonId << " ";
                 out << "\n";
+                //导出进度信号
                 sigProgress(i + 1, jList.count());
             }
         } else if (flag == KERN) {
+            //导出日志为内核日志时
             for (int i = 0; i < jList.count(); i++) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
                 int col = 0;
                 LOG_MSG_JOURNAL jMsg = jList.at(i);
+                //导出各字段的描述和对应内容拼成目标字符串
                 out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
                 out << labels.value(col++, "") << ":" << jMsg.hostName << " ";
                 out << labels.value(col++, "") << ":" << jMsg.daemonName << " ";
                 out << labels.value(col++, "") << ":" << jMsg.msg << " ";
                 out << "\n";
+                //导出进度信号
                 sigProgress(i + 1, jList.count());
             }
         }
+        //设置文件编码为utf8
         out.setCodec(QTextCodec::codecForName("utf-8"));
 
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
@@ -481,12 +734,22 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
         return false;
     }
     fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToTxt导出到日志txt格式函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
+ * @param labels 表头字符串
+ * @param iAppName 导出的应用日志的应用名称
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
     if (!fi.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -497,19 +760,23 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         QTextStream out(&fi);
         out.setCodec(QTextCodec::codecForName("utf-8"));
         for (int i = 0; i < jList.count(); i++) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             int col = 0;
+            //导出各字段的描述和对应内容拼成目标字符串
             LOG_MSG_APPLICATOIN jMsg = jList.at(i);
             out << labels.value(col++, "") << ":" << strTranslate(jMsg.level)  << " ";
             out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
             out << labels.value(col++, "") << ":" << iAppName << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
+            //导出进度信号
             sigProgress(i + 1, jList.count());
         }
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
@@ -519,12 +786,21 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         return false;
     }
     fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToTxt 导出到日志txt格式配置函数，对LOG_MSG_DPKG数据类型的重载（指dpkg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
     if (!fi.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -535,18 +811,22 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         QTextStream out(&fi);
         out.setCodec(QTextCodec::codecForName("utf-8"));
         for (int i = 0; i < jList.count(); i++) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             int col = 0;
+            //导出各字段的描述和对应内容拼成目标字符串
             LOG_MSG_DPKG jMsg = jList.at(i);
             out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << labels.value(col++, "") << ":" << jMsg.action << " ";
             out << "\n";
+            //导出进度信号
             sigProgress(i + 1, jList.count());
         }
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
@@ -556,12 +836,21 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         return false;
     }
     fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToTxt 导出到日志txt格式函数，对LOG_MSG_BOOT数据类型的重载（指启动日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_BOOT
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
     if (!fi.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -572,17 +861,21 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         QTextStream out(&fi);
         out.setCodec(QTextCodec::codecForName("utf-8"));
         for (int i = 0; i < jList.count(); i++) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //导出各字段的描述和对应内容拼成目标字符串
             LOG_MSG_BOOT jMsg = jList.at(i);
             int col = 0;
             out << labels.value(col++, "") << ":" << jMsg.status << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
+            //导出进度信号
             sigProgress(i + 1, jList.count());
         }
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
@@ -592,12 +885,21 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         return false;
     }
     fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToTxt 导出到日志txt格式函数，对LOG_MSG_XORG数据类型的重载（指xorg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_XORG
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
     if (!fi.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -608,17 +910,21 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_XORG> jList, Q
         QTextStream out(&fi);
         out.setCodec(QTextCodec::codecForName("utf-8"));
         for (int i = 0; i < jList.count(); i++) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //导出各字段的描述和对应内容拼成目标字符串
             LOG_MSG_XORG jMsg = jList.at(i);
             int col = 0;
             out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
+            //导出进度信号
             sigProgress(i + 1, jList.count());
         }
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
@@ -628,12 +934,21 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_XORG> jList, Q
         return false;
     }
     fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToTxt 导出到日志txt格式函数，对LOG_MSG_NORMAL数据类型的重载（指开关机日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_NORMAL
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
     if (!fi.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -644,9 +959,11 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList,
         QTextStream out(&fi);
         out.setCodec(QTextCodec::codecForName("utf-8"));
         for (int i = 0; i < jList.count(); i++) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //导出各字段的描述和对应内容拼成目标字符串
             LOG_MSG_NORMAL jMsg = jList.at(i);
             int col = 0;
             out << labels.value(col++, "") << ":" << jMsg.eventType << " ";
@@ -654,9 +971,11 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList,
             out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
+            //导出进度信号
             sigProgress(i + 1, jList.count());
         }
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
@@ -666,12 +985,20 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList,
         return false;
     }
     fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
-
+/**
+ * @brief LogExportThread::exportToTxt导出到日志txt格式函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_KWIN
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
     if (!fi.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -682,16 +1009,20 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         QTextStream out(&fi);
         out.setCodec(QTextCodec::codecForName("utf-8"));
         for (int i = 0; i < jList.count(); i++) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //导出各字段的描述和对应内容拼成目标字符串
             LOG_MSG_KWIN jMsg = jList.at(i);
             int col = 0;
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
+            //导出进度信号
             sigProgress(i + 1, jList.count());
         }
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
@@ -701,22 +1032,34 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         return false;
     }
     fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToDoc导出到日志doc格式函数对QStandardItemModel数据类型的重载
+ * @param fileName 导出文件路径全称
+ * @param pModel 要导出的数据源，为QStandardItemModel
+ * @param flag 导出的日志类型
+ * @return 是否导出成功
+ */
 
 bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
 #if 1
     try {
+        //判读啊model指针是为空，为空则不导出
         if (!pModel) {
             throw  QString("model is null");
         }
+        //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
+        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
         Docx::Table *tab = doc.addTable(pModel->rowCount() + 1, pModel->columnCount());
+        //设置表格内文字内容向左对齐
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
-
+        //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < pModel->columnCount(); ++col) {
             auto item = pModel->horizontalHeaderItem(col);
             auto cel = tab->cell(0, col);
@@ -724,13 +1067,17 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
                 cel->addText(pModel->horizontalHeaderItem(col)->text());
             }
         }
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(pModel->rowCount() * 0.1 > 5 ? pModel->rowCount() * 0.1 : 5);
-
+        //往表格的单元格中添加数据内容
+        //日志类型为应用日志时
         if (flag == APP) {
             for (int row = 0; row < pModel->rowCount(); ++row) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
+                //把数据填入表格单元格中
                 auto cel = tab->cell(row + 1, 0);
                 cel->addText(pModel->item(row, 0)->data(Qt::UserRole + 6).toString());
                 for (int col = 1; col < pModel->columnCount(); ++col) {
@@ -740,13 +1087,16 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
                     auto cel = tab->cell(row + 1, col);
                     cel->addText(pModel->item(row, col)->text());
                 }
+                //导出进度信号
                 sigProgress(row + 1, pModel->rowCount() + end);
             }
         } else {
             for (int row = 0; row < pModel->rowCount(); ++row) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
+                //把数据填入表格单元格中
                 for (int col = 0; col < pModel->columnCount(); ++col) {
                     if (!m_canRunning) {
                         throw  QString(stopStr);
@@ -754,12 +1104,14 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
                     auto cel = tab->cell(row + 1, col);
                     cel->addText(pModel->item(row, col)->text());
                 }
+                //导出进度信号
                 sigProgress(row + 1, pModel->rowCount() + end);
             }
         }
-
+        //保存，把拼好的xml写入文件中
         doc.save(fileName);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
@@ -801,41 +1153,60 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
     doc->setHtml(html);
     writer.write(doc);
 #endif
+    //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
     }
+    //100%进度
     sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
     Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToDoc导出到日志doc格式函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_JOURNAL
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList,
                                   QStringList labels, LOG_FLAG iFlag)
 {
 #if 1
     try {
+        //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
         Docx::Table *tab;
+        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
         if (iFlag == JOURNAL) {
             tab = doc.addTable(jList.count() + 1, 6);
         } else if (iFlag == KERN) {
             tab = doc.addTable(jList.count() + 1, 4);
         }
 
+        //设置表格内文字内容向左对齐
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
+        //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-
+        //往表格的单元格中添加数据内容
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_JOURNAL message = jList.at(row);
+            //把数据填入表格单元格中
             int col = 0;
             if (iFlag == JOURNAL) {
                 tab->cell(row + 1, col++)->addText(message.level);
@@ -850,11 +1221,14 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
                 tab->cell(row + 1, col++)->addText(message.daemonName);
                 tab->cell(row + 1, col++)->addText(message.msg);
             }
+            //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
 
+        //保存，把拼好的xml写入文件中
         doc.save(fileName);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
@@ -898,45 +1272,67 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
     doc->setHtml(html);
     writer.write(doc);
 #endif
+    //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
     }
+    //100%进度
     sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
     Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToDoc导出到日志doc格式配置函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
+ * @param labels 表头字符串
+ * @param iAppName 导出的应用日志的应用名称
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
 
     try {
+        //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
+        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
         Docx::Table *tab = doc.addTable(jList.count() + 1, 4);
+        //设置表格内文字内容向左对齐
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
+        //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_APPLICATOIN message = jList.at(row);
             int col = 0;
+            //把数据填入表格单元格中
             tab->cell(row + 1, col++)->addText(strTranslate(message.level));
             tab->cell(row + 1, col++)->addText(message.dateTime);
             tab->cell(row + 1, col++)->addText(iAppName);
             tab->cell(row + 1, col++)->addText(message.msg);
+            //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
 
 
+        //保存，把拼好的xml写入文件中
         doc.save(fileName);
 
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -950,45 +1346,66 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         return false;
     }
 
+    //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
     }
 
+    //100%进度
     sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
     Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToDoc导出到日志doc格式函数，对LOG_MSG_DPKG数据类型的重载（指dpkg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     try {
+        //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
+        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
         Docx::Table *tab = doc.addTable(jList.count() + 1, 3);
+        //设置表格内文字内容向左对齐
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
+        //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_DPKG message = jList.at(row);
             int col = 0;
+            //把数据填入表格单元格中
             tab->cell(row + 1, col++)->addText(message.dateTime);
             tab->cell(row + 1, col++)->addText(message.msg);
             tab->cell(row + 1, col++)->addText(message.action);
+            //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
 
 
+        //保存，把拼好的xml写入文件中
         doc.save(fileName);
 
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
@@ -1000,41 +1417,62 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         }
         return false;
     }
+    //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
     }
+    //100%进度
     sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
     Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToDoc导出到日志doc格式配置函数，对LOG_MSG_BOOT数据类型的重载（指启动日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_BOOT
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     try {
+        //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
+        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
         Docx::Table *tab = doc.addTable(jList.count() + 1, 2);
+        //设置表格内文字内容向左对齐
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
+        //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
 
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_BOOT message = jList.at(row);
             int col = 0;
+            //把数据填入表格单元格中
             tab->cell(row + 1, col++)->addText(message.status);
             tab->cell(row + 1, col++)->addText(message.msg);
+            //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
+        //保存，把拼好的xml写入文件中
         doc.save(fileName);
 
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
@@ -1046,42 +1484,63 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         }
         return false;
     }
+    //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
     }
+    //100%进度
     sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
     Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToDoc导出到日志doc格式函数，对LOG_MSG_XORG数据类型的重载（指xorg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_XORG
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     try {
+        //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
+        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
         Docx::Table *tab = doc.addTable(jList.count() + 1, 2);
+        //设置表格内文字内容向左对齐
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
+        //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_XORG message = jList.at(row);
             int col = 0;
+            //把数据填入表格单元格中
             tab->cell(row + 1, col++)->addText(message.dateTime);
             tab->cell(row + 1, col++)->addText(message.msg);
+            //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
 
 
+        //保存，把拼好的xml写入文件中
         doc.save(fileName);
 
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
@@ -1093,45 +1552,66 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
         }
         return false;
     }
+    //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
     }
+    //100%进度
     sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
     Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToDoc 导出到日志doc格式函数，对LOG_MSG_NORMAL数据类型的重载（指开关机日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_NORMAL
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
     try {
+        //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
+        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
         Docx::Table *tab = doc.addTable(jList.count() + 1, 4);
+        //设置表格内文字内容向左对齐
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
+        //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_NORMAL message = jList.at(row);
             int col = 0;
+            //把数据填入表格单元格中
             tab->cell(row + 1, col++)->addText(message.eventType);
             tab->cell(row + 1, col++)->addText(message.userName);
             tab->cell(row + 1, col++)->addText(message.dateTime);
             tab->cell(row + 1, col++)->addText(message.msg);
+            //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
 
 
+        //保存，把拼好的xml写入文件中
         doc.save(fileName);
 
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
@@ -1143,31 +1623,49 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
         }
         return false;
     }
+    //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
     }
+    //100%进度
     sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
     Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToDoc导出到日志doc格式函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_KWIN
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
     try {
+        //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
+        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
         Docx::Table *tab = doc.addTable(jList.count() + 1, 1);
+        //设置表格内文字内容向左对齐
         tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
+        //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
             auto cel = tab->cell(0, col);
             cel->addText(labels.at(col));
         }
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //把数据填入表格单元格中
             LOG_MSG_KWIN message = jList.at(row);
             int col = 0;
             tab->cell(row + 1, col++)->addText(message.msg);
@@ -1175,9 +1673,11 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         }
 
 
+        //保存，把拼好的xml写入文件中
         doc.save(fileName);
 
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
@@ -1189,11 +1689,15 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         }
         return false;
     }
+    //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
     }
+    //100%进度
     sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
     Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -1201,36 +1705,49 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
 
 
 
-
+/**
+ * @brief LogExportThread::exportToHtml导出到日志html格式函数对QStandardItemModel数据类型的重载
+ * @param fileName 导出文件路径全称
+ * @param pModel 要导出的数据源，为QStandardItemModel
+ * @param flag 导出的日志类型
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     QFile html(fileName);
+    //判断文件路径是否存在，不存在就返回错误
     if (!html.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
         emit sigError(openErroStr);
         return false;
     }
     try {
+        //判读啊model指针是为空，为空则不导出
         if (!pModel) {
             throw  QString("model is null");
         }
+        //写网页头
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
         html.write("<body>\n");
+        //写入表格标签
         html.write("<table border=\"1\">\n");
-        // write title
+        // 写入表头
         html.write("<tr>");
         for (int i = 0; i < pModel->columnCount(); ++i) {
             QString labelInfo = QString("<td>%1</td>").arg(pModel->horizontalHeaderItem(i)->text());
             html.write(labelInfo.toUtf8().data());
         }
         html.write("</tr>");
-        // write contents
+        // 写入内容
+        //日志类型为应用日志时
         if (flag == APP) {
             for (int row = 0; row < pModel->rowCount(); ++row) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
+                //根据字段拼出每行的网页内容
                 html.write("<tr>");
 
                 QString info =
@@ -1242,19 +1759,24 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
                     html.write(info.toUtf8().data());
                 }
                 html.write("</tr>");
+                //导出进度信号
                 sigProgress(row + 1, pModel->rowCount());
             }
         } else {
+            //日志类型为其他所有日志时
             for (int row = 0; row < pModel->rowCount(); ++row) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
+                //根据字段拼出每行的网页内容
                 html.write("<tr>");
                 for (int col = 0; col < pModel->columnCount(); ++col) {
                     QString info = QString("<td>%1</td>").arg(pModel->item(row, col)->text());
                     html.write(info.toUtf8().data());
                 }
                 html.write("</tr>");
+                //导出进度信号
                 sigProgress(row + 1, pModel->rowCount());
             }
         }
@@ -1262,6 +1784,7 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
         html.write("</body>\n");
         html.write("</html>\n");
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
@@ -1271,13 +1794,23 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
         return false;
     }
     html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToHtml 导出到日志html格式函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_JOURNAL
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag)
 {
     QFile html(fileName);
+    //判断文件路径是否存在，不存在就返回错误
     if (!html.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
         emit sigError(openErroStr);
@@ -1285,10 +1818,14 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
     }
     try {
 
+        //写网页头
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
         html.write("<body>\n");
+        //写入表格标签
         html.write("<table border=\"1\">\n");
+        // 写入内容
+        //日志类型为系统日志时
         if (flag == JOURNAL) {
             //    QString title = QString(
             //        "<tr><td>时间</td><td>主机名</td><td>守护进程</td><td>进程ID</td><td>级别</td><td>消息</"
@@ -1302,6 +1839,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
             //                    "Level")) + QString("</td><td>") +
             //                    QString(DApplication::translate("Table", "Info")) + QString("</td></tr>");
             //                    //delete  for bug
+            // 写入表头
             QString title = QString("<tr><td>") + QString(DApplication::translate("Table", "Level")) +
                             QString("</td><td>") + QString(DApplication::translate("Table", "Process")) +
                             QString("</td><td>") +
@@ -1311,7 +1849,9 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
                             QString("</td><td>") + QString(DApplication::translate("Table", "PID")) +
                             QString("</td></tr>");
             html.write(title.toUtf8().data());
+            // 写入内容
             for (int i = 0; i < jList.count(); i++) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
@@ -1324,6 +1864,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
                 //                .arg(jMsg.daemonId)
                 //                .arg(jMsg.level)
                 //                .arg(jMsg.msg); //delete for bug
+                //根据字段拼出每行的网页内容
                 QString info =
                     QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td></tr>")
                     .arg(jMsg.level)
@@ -1333,15 +1874,19 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
                     .arg(jMsg.hostName)
                     .arg(jMsg.daemonId);
                 html.write(info.toUtf8().data());
+                //导出进度信号
                 sigProgress(i + 1, jList.count());
 
             }
         } else if (flag == KERN) {
+            //日志类型为内核日志时
+            // 写入表头
             html.write("<tr>");
             for (int i = 0; i < labels.count(); ++i) {
                 QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
                 html.write(labelInfo.toUtf8().data());
             }
+            //根据字段拼出每行的网页内容
             html.write("</tr>");
             for (int row = 0; row < jList.count(); ++row) {
                 if (!m_canRunning) {
@@ -1367,6 +1912,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
         html.write("</body>\n");
         html.write("</html>\n");
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
@@ -1376,12 +1922,22 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
         return false;
     }
     html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToHtml导出到日志html格式函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
+ * @param labels 表头字符串
+ * @param iAppName 导出的应用日志的应用名称
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
     if (!html.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -1389,20 +1945,26 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> 
         return false;
     }
     try {
+        //写网页头
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
         html.write("<body>\n");
+        //写入表格标签
         html.write("<table border=\"1\">\n");
+        // 写入表头
         html.write("<tr>");
         for (int i = 0; i < labels.count(); ++i) {
             QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
             html.write(labelInfo.toUtf8().data());
         }
         html.write("</tr>");
+        // 写入内容
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_APPLICATOIN jMsg = jList.at(row);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(strTranslate(jMsg.level));
@@ -1414,6 +1976,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> 
             info = QString("<td>%1</td>").arg(jMsg.msg);
             html.write(info.toUtf8().data());
             html.write("</tr>");
+            //导出进度信号
             sigProgress(row + 1, jList.count());
         }
 
@@ -1421,6 +1984,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> 
         html.write("</body>\n");
         html.write("</html>\n");
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
@@ -1430,12 +1994,21 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> 
         return false;
     }
     html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToHtml 导出到日志html格式配置函数，对LOG_MSG_DPKG数据类型的重载（指dpkg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
     if (!html.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -1443,20 +2016,26 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, 
         return false;
     }
     try {
+        //写网页头
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
         html.write("<body>\n");
+        //写入表格标签
         html.write("<table border=\"1\">\n");
+        // 写入表头
         html.write("<tr>");
         for (int i = 0; i < labels.count(); ++i) {
             QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
             html.write(labelInfo.toUtf8().data());
         }
         html.write("</tr>");
+        // 写入内容
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_DPKG jMsg = jList.at(row);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.dateTime);
@@ -1466,6 +2045,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, 
             info = QString("<td>%1</td>").arg(jMsg.action);
             html.write(info.toUtf8().data());
             html.write("</tr>");
+            //导出进度信号
             sigProgress(row + 1, jList.count());
         }
 
@@ -1473,6 +2053,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, 
         html.write("</body>\n");
         html.write("</html>\n");
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
@@ -1482,12 +2063,21 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, 
         return false;
     }
     html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToHtml导出到日志html格式函数，对LOG_MSG_BOOT数据类型的重载（指启动日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_BOOT
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
     if (!html.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -1495,20 +2085,26 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, 
         return false;
     }
     try {
+        //写网页头
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
         html.write("<body>\n");
+        //写入表格标签
         html.write("<table border=\"1\">\n");
+        // 写入表头
         html.write("<tr>");
         for (int i = 0; i < labels.count(); ++i) {
             QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
             html.write(labelInfo.toUtf8().data());
         }
         html.write("</tr>");
+        // 写入内容
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_BOOT jMsg = jList.at(row);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.status);
@@ -1516,6 +2112,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, 
             info = QString("<td>%1</td>").arg(jMsg.msg);
             html.write(info.toUtf8().data());
             html.write("</tr>");
+            //导出进度信号
             sigProgress(row + 1, jList.count());
         }
 
@@ -1523,6 +2120,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, 
         html.write("</body>\n");
         html.write("</html>\n");
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
@@ -1532,12 +2130,21 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, 
         return false;
     }
     html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToHtml 导出到日志html格式函数，对LOG_MSG_XORG数据类型的重载（指xorg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_XORG
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
     if (!html.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -1545,20 +2152,26 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, 
         return false;
     }
     try {
+        //写网页头
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
         html.write("<body>\n");
+        //写入表格标签
         html.write("<table border=\"1\">\n");
+        // 写入表头
         html.write("<tr>");
         for (int i = 0; i < labels.count(); ++i) {
             QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
             html.write(labelInfo.toUtf8().data());
         }
         html.write("</tr>");
+        // 写入内容
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_XORG jMsg = jList.at(row);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.dateTime);
@@ -1566,6 +2179,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, 
             info = QString("<td>%1</td>").arg(jMsg.msg);
             html.write(info.toUtf8().data());
             html.write("</tr>");
+            //导出进度信号
             sigProgress(row + 1, jList.count());
         }
 
@@ -1573,6 +2187,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, 
         html.write("</body>\n");
         html.write("</html>\n");
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
@@ -1582,12 +2197,21 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, 
         return false;
     }
     html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToHtml 导出到日志html格式配置函数，对LOG_MSG_NORMAL数据类型的重载（指开关机日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_NORMAL
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
     if (!html.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -1595,20 +2219,26 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList
         return false;
     }
     try {
+        //写网页头
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
         html.write("<body>\n");
+        //写入表格标签
         html.write("<table border=\"1\">\n");
+        // 写入表头
         html.write("<tr>");
         for (int i = 0; i < labels.count(); ++i) {
             QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
             html.write(labelInfo.toUtf8().data());
         }
         html.write("</tr>");
+        // 写入内容
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_NORMAL jMsg = jList.at(row);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.eventType);
@@ -1620,6 +2250,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList
             info = QString("<td>%1</td>").arg(jMsg.msg);
             html.write(info.toUtf8().data());
             html.write("</tr>");
+            //导出进度信号
             sigProgress(row + 1, jList.count());
         }
 
@@ -1627,6 +2258,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList
         html.write("</body>\n");
         html.write("</html>\n");
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
@@ -1636,12 +2268,21 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList
         return false;
     }
     html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToHtml导出到日志html格式函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_KWIN
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
+    //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
     if (!html.open(QIODevice::WriteOnly)) {
         emit sigResult(false);
@@ -1649,25 +2290,32 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
         return false;
     }
     try {
+        //写网页头
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
         html.write("<body>\n");
+        //写入表格标签
         html.write("<table border=\"1\">\n");
+        // 写入表头
         html.write("<tr>");
         for (int i = 0; i < labels.count(); ++i) {
             QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
             html.write(labelInfo.toUtf8().data());
         }
         html.write("</tr>");
+        // 写入内容
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_KWIN jMsg = jList.at(row);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.msg);
             html.write(info.toUtf8().data());
             html.write("</tr>");
+            //导出进度信号
             sigProgress(row + 1, jList.count());
         }
 
@@ -1675,6 +2323,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
         html.write("</body>\n");
         html.write("</html>\n");
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
@@ -1684,20 +2333,30 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
         return false;
     }
     html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
 
-
+/**
+ * @brief LogExportThread::exportToXls 导出到日志xlsx格式函数对QStandardItemModel数据类型的重载
+ * @param fileName 导出文件路径全称
+ * @param pModel 要导出的数据源，为QStandardItemModel
+ * @param flag 导出的日志类型
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     try {
+        //判断model指针是否为空，为空则抛出错误，返回不执行
         if (!pModel) {
             throw  QString("model is null");
         }
         auto currentXlsRow = 1;
+        //传入控制停止导出逻辑的bool变量
         QXlsx::Document xlsx(&m_canRunning);
+        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
@@ -1706,9 +2365,11 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
         });
+        // 写入表头
         for (int col = 0; col < pModel->columnCount(); ++col) {
             auto item = pModel->horizontalHeaderItem(col);
             if (item) {
+                //设置表头字体加粗
                 QXlsx::Format boldFont;
                 boldFont.setFontBold(true);
                 xlsx.write(currentXlsRow, col + 1, item->text(), boldFont);
@@ -1716,14 +2377,16 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
         }
         ++currentXlsRow;
         int end = static_cast<int>(pModel->rowCount() * 0.1 > 5 ? pModel->rowCount() * 0.1 : 5);
-
+        //应用日志导出内容
         if (flag == APP) {
             for (int row = 0; row < pModel->rowCount(); ++row) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
                 xlsx.write(currentXlsRow, 0 + 1,
                            pModel->item(row, 0)->data(Qt::UserRole + 6).toString());
+                //根据字段拼出每行的网页内容
                 for (int col = 1; col < pModel->columnCount(); ++col) {
                     if (!m_canRunning) {
                         throw  QString(stopStr);
@@ -1736,9 +2399,11 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
             }
         } else {
             for (int row = 0; row < pModel->rowCount(); ++row) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
                 if (!m_canRunning) {
                     throw  QString(stopStr);
                 }
+                //根据字段拼出每行的网页内容
                 for (int col = 0; col < pModel->columnCount(); ++col) {
                     if (!m_canRunning) {
                         throw  QString(stopStr);
@@ -1747,6 +2412,7 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
                 }
                 ++currentXlsRow;
 
+                //导出进度信号
                 sigProgress(row + 1, pModel->rowCount() * 3 + end);
 
             }
@@ -1758,6 +2424,7 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
         }
         sigProgress(100, 100);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1765,16 +2432,26 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
         }
         return false;
     }
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
-
+/**
+ * @brief LogExportThread::exportToXls导出到日志xlsx格式函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_JOURNAL
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList,
                                   QStringList labels, LOG_FLAG iFlag)
 {
     try {
         auto currentXlsRow = 1;
+        //传入控制停止导出逻辑的bool变量
         QXlsx::Document xlsx(&m_canRunning);
+        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
@@ -1783,7 +2460,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
         });
+        // 写入表头
         for (int col = 0; col < labels.count(); ++col) {
+            //设置表头字体加粗
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
@@ -1792,12 +2471,14 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_JOURNAL message = jList.at(row);
             int col = 1;
 
+            //根据字段拼出每行的网页内容,根据情况区分系统日志和内核日志
             if (iFlag == JOURNAL) {
                 xlsx.write(currentXlsRow, col++, message.level);
                 xlsx.write(currentXlsRow, col++, message.daemonName);
@@ -1813,6 +2494,8 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
             }
 
             ++currentXlsRow;
+            //导出进度信号
+
             sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
@@ -1821,6 +2504,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
         }
         sigProgress(100, 100);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1828,10 +2512,19 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
         }
         return false;
     }
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToXls导出到日志xlsx格式函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
+ * @param labels 表头字符串
+ * @param iAppName 导出的应用日志的应用名称
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
     QElapsedTimer timer;
@@ -1839,7 +2532,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
     try {
         auto currentXlsRow = 1;
 
+        //传入控制停止导出逻辑的bool变量
         QXlsx::Document xlsx(&m_canRunning);
+        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
@@ -1848,7 +2543,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
         });
+        // 写入表头
         for (int col = 0; col < labels.count(); ++col) {
+            //设置表头字体加粗
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
@@ -1856,9 +2553,11 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_APPLICATOIN message = jList.at(row);
             int col = 1;
             xlsx.write(currentXlsRow, col++, strTranslate(message.level));
@@ -1866,6 +2565,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             xlsx.write(currentXlsRow, col++, iAppName);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
+            //导出进度信号
             sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
@@ -1874,6 +2574,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         }
         sigProgress(100, 100);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1881,15 +2582,25 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         }
         return false;
     }
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToXls 导出到日志xlsx格式函数，对LOG_MSG_DPKG数据类型的重载（指dpkg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
+        //传入控制停止导出逻辑的bool变量
         QXlsx::Document xlsx(&m_canRunning);
+        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
@@ -1898,7 +2609,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
         });
+        // 写入表头
         for (int col = 0; col < labels.count(); ++col) {
+            //设置表头字体加粗
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
@@ -1906,15 +2619,18 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_DPKG message = jList.at(row);
             int col = 1;
             xlsx.write(currentXlsRow, col++, message.dateTime);
             xlsx.write(currentXlsRow, col++, message.msg);
             xlsx.write(currentXlsRow, col++, message.action);
             ++currentXlsRow;
+            //导出进度信号
             sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
@@ -1923,6 +2639,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         }
         sigProgress(100, 100);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1930,18 +2647,28 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         }
         return false;
     }
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToXls导出到日志xlsx格式函数，对LOG_MSG_BOOT数据类型的重载（指启动日志）
+ * @param fileName 导出文件路径全称
+ * @param jList  要导出的数据源 LOG_MSG_DPKG
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
+        //传入控制停止导出逻辑的bool变量
         QXlsx::Document xlsx(&m_canRunning);
 //        connect(&xlsx, &QXlsx::Document::saveProcess, this, [ = ](int iCurrent, int iTotal) {
 //            sigProgress(iCurrent + iTotal, iTotal * 2);
 //        });
+        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
@@ -1950,7 +2677,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
         });
+        // 写入表头
         for (int col = 0; col < labels.count(); ++col) {
+            //设置表头字体加粗
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
@@ -1958,14 +2687,17 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_BOOT message = jList.at(row);
             int col = 1;
             xlsx.write(currentXlsRow, col++, message.status);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
+            //导出进度信号
             sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
@@ -1974,6 +2706,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         }
         sigProgress(100, 100);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1981,15 +2714,25 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         }
         return false;
     }
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToXls导出到日志xlsx格式函数，对LOG_MSG_XORG数据类型的重载（指xorg日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_XORG
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
+        //传入控制停止导出逻辑的bool变量
         QXlsx::Document xlsx(&m_canRunning);
+        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
@@ -1998,7 +2741,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
         });
+        // 写入表头
         for (int col = 0; col < labels.count(); ++col) {
+            //设置表头字体加粗
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
@@ -2006,14 +2751,17 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_XORG message = jList.at(row);
             int col = 1;
             xlsx.write(currentXlsRow, col++, message.dateTime);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
+            //导出进度信号
             sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
@@ -2022,6 +2770,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
         }
         sigProgress(100, 100);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2029,15 +2778,25 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
         }
         return false;
     }
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToXls导出到日志xlsx格式函数，对LOG_MSG_NORMAL数据类型的重载（指开关机日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_NORMAL
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
+        //传入控制停止导出逻辑的bool变量
         QXlsx::Document xlsx(&m_canRunning);
+        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
@@ -2046,7 +2805,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
         });
+        // 写入表头
         for (int col = 0; col < labels.count(); ++col) {
+            //设置表头字体加粗
             QXlsx::Format boldFont;
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
@@ -2054,9 +2815,11 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_NORMAL message = jList.at(row);
             int col = 1;
             xlsx.write(currentXlsRow, col++, message.eventType);
@@ -2064,6 +2827,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
             xlsx.write(currentXlsRow, col++, message.dateTime);
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
+            //导出进度信号
             sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
@@ -2072,6 +2836,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
         }
         sigProgress(100, 100);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2080,15 +2845,25 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
         return false;
     }
 
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::exportToXls导出到日志xlsw格式函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 LOG_MSG_KWIN
+ * @param labels 表头字符串
+ * @return 是否导出成功
+ */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
     try {
         auto currentXlsRow = 1;
+        //传入控制停止导出逻辑的bool变量
         QXlsx::Document xlsx(&m_canRunning);
+        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
         connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal, iTotal * 3 + end);
@@ -2097,21 +2872,26 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
             int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
             sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
         });
+        // 写入表头
         for (int col = 0; col < labels.count(); ++col) {
             QXlsx::Format boldFont;
+            //设置表头字体加粗
             boldFont.setFontBold(true);
             xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
+            //根据字段拼出每行的网页内容
             LOG_MSG_KWIN message = jList.at(row);
             int col = 1;
             xlsx.write(currentXlsRow, col++, message.msg);
             ++currentXlsRow;
+            //导出进度信号
             sigProgress(row + 1, jList.count() * 3 + end);
         }
         ++currentXlsRow;
@@ -2121,6 +2901,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         }
         sigProgress(100, 100);
     } catch (QString ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2128,10 +2909,14 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         }
         return false;
     }
+    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
 
+/**
+ * @brief LogExportThread::initMap 初始化等级和对应显示字符的map
+ */
 void LogExportThread::initMap()
 {
     m_levelStrMap.clear();
@@ -2145,6 +2930,11 @@ void LogExportThread::initMap()
     m_levelStrMap.insert("Debug", DApplication::translate("Level", "Debug"));
 }
 
+/**
+ * @brief LogExportThread::strTranslate 通过等级字符获取显示字符
+ * @param iLevelStr 等级字符
+ * @return 显示字符
+ */
 QString LogExportThread::strTranslate(QString &iLevelStr)
 {
     return m_levelStrMap.value(iLevelStr, iLevelStr);
@@ -2153,7 +2943,9 @@ QString LogExportThread::strTranslate(QString &iLevelStr)
 
 
 
-
+/**
+ * @brief LogExportThread::run 线程的run函数，通过配置类型执行相应的导出逻辑
+ */
 void LogExportThread::run()
 {
     switch (m_runMode) {
