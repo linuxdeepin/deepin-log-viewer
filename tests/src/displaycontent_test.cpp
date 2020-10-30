@@ -21,6 +21,7 @@
 #include <DApplication>
 #include <QDebug>
 #include <QFileDialog>
+#include <QPaintEvent>
 TEST(DisplayContent_Constructor_UT, DisplayContent_Constructor_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);
@@ -292,7 +293,10 @@ public:
     int time;
 
 };
-
+void parseByKern(void *obj, KERN_FILTERS &iKernFilter)
+{
+    qDebug() << "parseByKern---";
+}
 class DisplayContent_generateKernFile_UT : public ::testing::TestWithParam<DisplayContent_generateKernFile_UT_Param>
 {
 };
@@ -312,6 +316,8 @@ TEST_P(DisplayContent_generateKernFile_UT, DisplayContent_generateKernFile_UT_00
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     Utils::sleep(200);
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByKern), parseByKern);
     p->generateKernFile(param.time);
     p->deleteLater();
 }
@@ -803,6 +809,10 @@ QVariant slot_BtnSelected_ModelIndex_data_Func(void *obj, int arole)
 {
     return QString(slot_BtnSelected_ModelIndex_data);
 }
+void DisplayContent_slot_BtnSelected_UT_DisplayContent_generateKernFile(int id, const QString &iSearchStr = "")
+{
+    qDebug() << "DisplayContent_slot_BtnSelected_UT_DisplayContent_generateKernFile--";
+}
 TEST_P(DisplayContent_slot_BtnSelected_UT, DisplayContent_slot_BtnSelected_UT_001)
 {
     DisplayContent_slot_BtnSelected_UT_Param param = GetParam();
@@ -843,6 +853,7 @@ TEST_P(DisplayContent_slot_BtnSelected_UT, DisplayContent_slot_BtnSelected_UT_00
     }
 
     stub->set(ADDR(QModelIndex, data), slot_BtnSelected_ModelIndex_data_Func);
+    stub->set(ADDR(DisplayContent, generateKernFile), DisplayContent_slot_BtnSelected_UT_DisplayContent_generateKernFile);
     p->slot_BtnSelected(0, 0, QModelIndex());
     p->deleteLater();
 }
@@ -1138,6 +1149,13 @@ TEST(DisplayContent_slot_kwinFinished_UT, DisplayContent_slot_kwinFinished_UT_00
     p->deleteLater();
 }
 
+TEST(DisplayContent_slot_journalBootFinished_UT, DisplayContent_slot_journalBootFinished_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->slot_journalBootFinished();
+    p->deleteLater();
+}
 
 
 class DisplayContent_slot_journalData_UT_Param
@@ -1308,7 +1326,29 @@ TEST(DisplayContent_slot_NormalFinished_UT, DisplayContent_NormalFinished_UT_001
     p->slot_NormalFinished();
     p->deleteLater();
 }
+TEST(DisplayContent_slot_themeChanged_UT, DisplayContent_slot_themeChanged_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->slot_themeChanged(DGuiApplicationHelper::LightType);
+    p->deleteLater();
+}
 
+TEST(DisplayContent_resizeEvent_UT, DisplayContent_resizeEvent_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->resizeEvent(nullptr);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_paintEvent_UT, DisplayContent_paintEvent_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->paintEvent(new QPaintEvent(p->rect()));
+    p->deleteLater();
+}
 class DisplayContent_slot_vScrollValueChanged_UT_Param
 {
 public:

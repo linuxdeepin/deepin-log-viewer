@@ -31,7 +31,15 @@ TEST(LogCombox_Constructor_UT, LogCombox_Constructor_UT)
     p->deleteLater();
 }
 
-TEST(LogCollectorMain_setFocusReason_UT, LogCollectorMain_setFocusReason_UT)
+TEST(LogCombox_paintEvent_UT, LogCombox_paintEvent_UT)
+{
+    LogCombox *p = new LogCombox(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->paintEvent(new QPaintEvent(p->rect()));
+    p->deleteLater();
+}
+
+TEST(LogCombox_setFocusReason_UT, LogCombox_setFocusReason_UT)
 {
     LogCombox *p = new LogCombox(nullptr);
     EXPECT_NE(p, nullptr);
@@ -40,7 +48,7 @@ TEST(LogCollectorMain_setFocusReason_UT, LogCollectorMain_setFocusReason_UT)
     p->deleteLater();
 }
 
-TEST(LogCollectorMain_getFocusReason_UT, LogCollectorMain_getFocusReason_UT)
+TEST(LogCombox_getFocusReason_UT, LogCombox_getFocusReason_UT)
 {
     LogCombox *p = new LogCombox(nullptr);
     EXPECT_NE(p, nullptr);
@@ -49,7 +57,7 @@ TEST(LogCollectorMain_getFocusReason_UT, LogCollectorMain_getFocusReason_UT)
     p->deleteLater();
 }
 
-TEST(LogCollectorMain_keyPressEvent_UT, LogCollectorMain_keyPressEvent_UT_001)
+TEST(LogCombox_keyPressEvent_UT, LogCombox_keyPressEvent_UT_001)
 {
     LogCombox *p = new LogCombox(nullptr);
     EXPECT_NE(p, nullptr);
@@ -58,7 +66,7 @@ TEST(LogCollectorMain_keyPressEvent_UT, LogCollectorMain_keyPressEvent_UT_001)
     p->deleteLater();
 }
 
-TEST(LogCollectorMain_keyPressEvent_UT, LogCollectorMain_keyPressEvent_UT_002)
+TEST(LogCombox_keyPressEvent_UT, LogCombox_keyPressEvent_UT_002)
 {
     LogCombox *p = new LogCombox(nullptr);
     EXPECT_NE(p, nullptr);
@@ -67,7 +75,7 @@ TEST(LogCollectorMain_keyPressEvent_UT, LogCollectorMain_keyPressEvent_UT_002)
     p->deleteLater();
 }
 
-TEST(LogCollectorMain_focusInEvent_UT, LogCollectorMain_focusInEvent_UT_001)
+TEST(LogCombox_focusInEvent_UT, LogCombox_focusInEvent_UT_001)
 {
     LogCombox *p = new LogCombox(nullptr);
     EXPECT_NE(p, nullptr);
@@ -76,7 +84,7 @@ TEST(LogCollectorMain_focusInEvent_UT, LogCollectorMain_focusInEvent_UT_001)
     p->deleteLater();
 }
 
-TEST(LogCollectorMain_focusInEvent_UT, LogCollectorMain_focusInEvent_UT_002)
+TEST(LogCombox_focusInEvent_UT, LogCombox_focusInEvent_UT_002)
 {
     LogCombox *p = new LogCombox(nullptr);
     EXPECT_NE(p, nullptr);
@@ -85,7 +93,7 @@ TEST(LogCollectorMain_focusInEvent_UT, LogCollectorMain_focusInEvent_UT_002)
     p->deleteLater();
 }
 
-TEST(LogCollectorMain_focusOutEvent_UT, LogCollectorMain_focusOutEvent_UT)
+TEST(LogCombox_focusOutEvent_UT, LogCombox_focusOutEvent_UT)
 {
     LogCombox *p = new LogCombox(nullptr);
     EXPECT_NE(p, nullptr);

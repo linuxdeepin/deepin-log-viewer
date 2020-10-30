@@ -122,6 +122,7 @@ FILE(GLOB allSource
      ../application/sharedmemorymanager.cpp
      ../application/common/collator.cpp
        ../application/logsettings.cpp
+      ../application/wtmpparse.cpp
 )
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
@@ -209,7 +210,7 @@ set (TEST_ACCESSIBLE_HEADERS_FILES
 #include_directories(${Qt5Core_LIBRARIES})
 #include_directories(${Qt5Widgets_LIBRARIES})
 
-
+#add_definitions(-DQT_NO_DEBUG_OUTPUT)
 
 # 5. 头文件
 # 5.1. 定义函数，用于递归添加头文件

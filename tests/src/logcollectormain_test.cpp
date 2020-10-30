@@ -67,6 +67,14 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_002)
     p->deleteLater();
 }
 
+TEST(LogCollectorMain_initConnection_UT, LogCollectorMain_initConnection_UT)
+{
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    p->initConnection();
+    p->deleteLater();
+}
 TEST(LogCollectorMain_resizeWidthByFilterContentWidth_UT, LogCollectorMain_resizeWidthByFilterContentWidth_UT)
 {
     LogCollectorMain *p = new LogCollectorMain(nullptr);

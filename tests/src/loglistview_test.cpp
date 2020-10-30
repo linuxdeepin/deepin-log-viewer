@@ -24,6 +24,7 @@
 #include <QTreeView>
 #include <QPaintEvent>
 #include <QToolTip>
+#include <QMenu>
 TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
 {
     LogListView *v = new LogListView(nullptr);
@@ -163,12 +164,18 @@ TEST(LogListView_focusReson_UT, LogListView_focusReson_UT_002)
     p->focusReson();
     p->deleteLater();
 }
-
+QAction *LogListView_showRightMenu_UT_QMenu_exec_Func(void **p, const QPoint &pos, QAction *at = nullptr)
+{
+    qDebug() << "QMenu exec";
+    return new QAction;
+}
 
 TEST(LogListView_showRightMenu_UT, LogListView_showRightMenu_UT_001)
 {
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
+    Stub *stub = new Stub;
+    stub->set((QAction * (QMenu::*)(const QPoint & pos, QAction * at))ADDR(QMenu, exec), LogListView_showRightMenu_UT_QMenu_exec_Func);
     p->showRightMenu(QPoint(10, 10), true);
     p->deleteLater();
 }
@@ -178,6 +185,8 @@ TEST(LogListView_showRightMenu_UT, LogListView_showRightMenu_UT_002)
 {
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
+    Stub *stub = new Stub;
+    stub->set((QAction * (QMenu::*)(const QPoint & pos, QAction * at))ADDR(QMenu, exec), LogListView_showRightMenu_UT_QMenu_exec_Func);
     p->showRightMenu(QPoint(), false);
     p->deleteLater();
 }
@@ -208,57 +217,105 @@ TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_002)
     p->deleteLater();
 }
 
-//class LogListView_keyPressEvent_UT_Param
-//{
-//public:
-//    LogListView_keyPressEvent_UT_Param(bool iKey, const QString &iObjectName, bool iResult, const QString &iFocusObjectName)
-//    {
-//        key = iKey;
-//        objectName = iObjectName;
-//        result = iResult;
-//        focusObjectName = iFocusObjectName;
-//    }
-//    int key;
-//    QString objectName;
-//    bool result;
-//    QString focusObjectName;
-//};
+class LogListView_keyPressEvent_UT_Param
+{
+public:
+    LogListView_keyPressEvent_UT_Param(int iKey)
+    {
+        key = iKey;
+    }
+    int key;
 
-//class LogListView_keyPressEvent_UT : public ::testing::TestWithParam<LogListView_keyPressEvent_UT_Param>
-//{
-//};
+};
 
-//INSTANTIATE_TEST_SUITE_P(LogListView, LogListView_keyPressEvent_UT, ::testing::Values(/*LogListView_keyPressEvent_UT_Param(Qt::Key_0, "", false, ""),
-//                                                                                                                  LogListView_keyPressEvent_UT_Param(Qt::Key_Tab, "", false, ""),
-//                                                                                                                                                                                                                                    */
-//                             LogListView_keyPressEvent_UT_Param(Qt::Key_Tab, "titlebar", true, ""),
-//                             LogListView_keyPressEvent_UT_Param(Qt::Key_Tab, "searchChildEdt", false, "titlebar"),
-//                             LogListView_keyPressEvent_UT_Param(Qt::Key_Tab, "DTitlebarDWindowCloseButton", false, "logTypeSelectList"),
-//                             LogListView_keyPressEvent_UT_Param(Qt::Key_Tab, "mainLogTable", true, "searchChildEdt"),
-//                             LogListView_keyPressEvent_UT_Param(Qt::Key_Backtab, "logTypeSelectList", true, "DTitlebarDWindowCloseButton"),
-//                             LogListView_keyPressEvent_UT_Param(Qt::Key_Backtab, "DTitlebarDWindowOptionButton", true, "searchChildEdt"),
-//                             LogListView_keyPressEvent_UT_Param(Qt::Key_Backtab, "searchChildEdt", true, "")
-//                             // LogListView_keyPressEvent_UT_Param(Qt::Key_Backtab, "", false, "")
-//                         ));
+class LogListView_keyPressEvent_UT : public ::testing::TestWithParam<LogListView_keyPressEvent_UT_Param>
+{
+};
 
-//TEST_P(LogListView_keyPressEvent_UT, LogListView_keyPressEvent_UT_001)
-//{
-//    LogListView_keyPressEvent_UT_Param param = GetParam();
-//    LogCollectorMain *p = new LogCollectorMain(nullptr);
-//    EXPECT_NE(p, nullptr);
+INSTANTIATE_TEST_SUITE_P(LogListView, LogListView_keyPressEvent_UT, ::testing::Values(LogListView_keyPressEvent_UT_Param(Qt::Key_Up)
+                                                                                      , LogListView_keyPressEvent_UT_Param(Qt::Key_Down)
+                                                                                      , LogListView_keyPressEvent_UT_Param(Qt::Key_0)));
 
-//    QKeyEvent   *keyEvent = new QKeyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
-//    QWidget *w = nullptr;
-//    if (!param.objectName.isEmpty())
-//        w = p->titlebar()->findChild<QWidget *>(param.objectName);
-//    bool rs = p->handleApplicationTabEventNotify(w, keyEvent);
-////    EXPECT_EQ(rs, param.result);
+TEST_P(LogListView_keyPressEvent_UT, LogListView_keyPressEvent_UT_001)
+{
+    LogListView_keyPressEvent_UT_Param param = GetParam();
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
 
-////    EXPECT_EQ(p->focusWidget()->objectName(), param.focusObjectName) ;
-//    p->deleteLater();
-//}
+    QKeyEvent   *keyEvent = new QKeyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
+    p->keyPressEvent(keyEvent);
+    p->deleteLater();
+}
 
+class LogListView_mousePressEvent_UT_Param
+{
+public:
+    LogListView_mousePressEvent_UT_Param(Qt::MouseButton iKey)
+    {
+        key = iKey;
+    }
+    Qt::MouseButton key;
 
+};
+
+class LogListView_mousePressEvent_UT : public ::testing::TestWithParam<LogListView_mousePressEvent_UT_Param>
+{
+};
+
+INSTANTIATE_TEST_SUITE_P(LogListView, LogListView_mousePressEvent_UT, ::testing::Values(LogListView_mousePressEvent_UT_Param(Qt::RightButton)
+                                                                                        , LogListView_mousePressEvent_UT_Param(Qt::NoButton)
+                                                                                       ));
+
+TEST_P(LogListView_mousePressEvent_UT, LogListView_mousePressEvent_UT_001)
+{
+    LogListView_mousePressEvent_UT_Param param = GetParam();
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    QMouseEvent   *keyEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(1, 1), param.key, param.key, Qt::NoModifier);
+    p->mousePressEvent(keyEvent);
+    p->deleteLater();
+}
+
+class LogListView_focusInEvent_UT_Param
+{
+public:
+    LogListView_focusInEvent_UT_Param(Qt::FocusReason iReason)
+    {
+        reason = iReason;
+    }
+    Qt::FocusReason reason;
+
+};
+
+class LogListView_focusInEvent_UT : public ::testing::TestWithParam<LogListView_focusInEvent_UT_Param>
+{
+};
+
+INSTANTIATE_TEST_SUITE_P(LogListView, LogListView_focusInEvent_UT, ::testing::Values(LogListView_focusInEvent_UT_Param(Qt::PopupFocusReason)
+                                                                                     , LogListView_focusInEvent_UT_Param(Qt::ActiveWindowFocusReason)
+                                                                                     , LogListView_focusInEvent_UT_Param(Qt::NoFocusReason)
+                                                                                    ));
+
+TEST_P(LogListView_focusInEvent_UT, LogListView_focusInEvent_UT_001)
+{
+    LogListView_focusInEvent_UT_Param param = GetParam();
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    QFocusEvent   *focusEvent = new QFocusEvent(QEvent::FocusIn, param.reason);
+    p->focusInEvent(focusEvent);
+    p->deleteLater();
+}
+
+TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_focusOutEvent_UT_001)
+{
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    QFocusEvent   *focusEvent = new QFocusEvent(QEvent::FocusOut, Qt::OtherFocusReason);
+    p->focusOutEvent(focusEvent);
+    p->deleteLater();
+}
 
 
 

@@ -173,14 +173,18 @@ QByteArray Utils::replaceEmptyByteArray(QByteArray &iReplaceStr)
  * @param str 要判断的字符串结果
  * @return 见头文件中CommandErrorType的定义
  */
-Utils::CommandErrorType Utils::isErroCommand(QString str)
+Utils::CommandErrorType Utils::isErroCommand(const QString &str)
 {
-    if (str.contains("权限") || str.contains("permission", Qt::CaseInsensitive)) {
+    qDebug() << "str" << str << str.contains("dsaasdasd") << str.contains("permission", Qt::CaseInsensitive);
+    if (str.contains(QString("权限")) || str.contains(QString("permission"), Qt::CaseInsensitive)) {
+        qDebug() << "2222222";
         return PermissionError;
     }
-    if (str.contains("请重试") || str.contains("retry", Qt::CaseInsensitive)) {
+    if (str.contains(QString("请重试")) || str.contains(QString("retry"), Qt::CaseInsensitive)) {
+        qDebug() << "111111111";
         return RetryError;
     }
+    qDebug() << "3333333";
     return NoError;
 }
 

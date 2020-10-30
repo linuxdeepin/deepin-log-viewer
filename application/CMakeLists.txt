@@ -124,6 +124,7 @@ find_package(Qt5LinguistTools REQUIRED)
 
 set (APP_CPP_FILES
     main.cpp
+    wtmpparse.cpp
      filtercontent.cpp
      displaycontent.cpp
      logcollectormain.cpp

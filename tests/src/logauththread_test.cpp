@@ -20,6 +20,7 @@
 
 #include <QDate>
 #include <QDebug>
+#include <QProcess>
 TEST(LogAuthThread_Constructor_UT, LogAuthThread_Constructor_UT)
 {
     LogAuthThread *p = new LogAuthThread(nullptr);
@@ -99,7 +100,10 @@ public:
 class LogAuthThread_run_UT : public ::testing::TestWithParam<LogAuthThread_run_UT_Param>
 {
 };
-
+void LogAuthThread_run_UT_LogAuthThread_handleKern(void *obj)
+{
+    qDebug() << "LogAuthThread_run_UT_LogAuthThread_handleKern---";
+}
 INSTANTIATE_TEST_SUITE_P(LogApplicationParseThread, LogAuthThread_run_UT, ::testing::Values(LogAuthThread_run_UT_Param(KERN)
                                                                                             , LogAuthThread_run_UT_Param(BOOT)
                                                                                             , LogAuthThread_run_UT_Param(Kwin)
@@ -112,15 +116,23 @@ TEST_P(LogAuthThread_run_UT, LogAuthThread_run_UT_001)
     LogAuthThread *p = new LogAuthThread(nullptr);
     EXPECT_NE(p, nullptr);
     LogAuthThread_run_UT_Param param = GetParam();
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleKern), LogAuthThread_run_UT_LogAuthThread_handleKern);
     p->m_canRun = param.type;
     p->run();
     p->deleteLater();
+}
+void LogAuthThread_handleBoot_UT_QProcess_start(void *, const QString &program, const QStringList &arguments, QProcess::OpenMode mode = QProcess::ReadWrite)
+{
+    qDebug() << "LogAuthThread_handleBoot_UT_start--";
 }
 
 TEST(LogAuthThread_handleBoot_UT, LogAuthThread_handleBoot_UT)
 {
     LogAuthThread *p = new LogAuthThread(nullptr);
     EXPECT_NE(p, nullptr);
+    Stub stub;
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QProcess::OpenMode mode))ADDR(QProcess, start), LogAuthThread_handleBoot_UT_QProcess_start);
     p->handleBoot();
     p->deleteLater();
 }
@@ -129,6 +141,8 @@ TEST(LogAuthThread_handleKern_UT, LogAuthThread_handleKern_UT)
 {
     LogAuthThread *p = new LogAuthThread(nullptr);
     EXPECT_NE(p, nullptr);
+    Stub stub;
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QProcess::OpenMode mode))ADDR(QProcess, start), LogAuthThread_handleBoot_UT_QProcess_start);
     p->handleKern();
     p->deleteLater();
 }
