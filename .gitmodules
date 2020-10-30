@@ -1,6 +1,3 @@
-[submodule "simplexlsx-code"]
-	path = simplexlsx-code
-	url = git://git.code.sf.net/p/simplexlsx/code
 [submodule "3rdparty/simplexlsx-code"]
 	path = 3rdparty/simplexlsx-code
 	url = git://git.code.sf.net/p/simplexlsx/code

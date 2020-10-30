@@ -238,6 +238,10 @@ set (APP_HEADERS_FILES
     model/log_sort_filter_proxy_model.h
     common/collator.h
     )
+file(GLOB DOCX_FACTORY_TEST
+    "../3rdparty/DocxFactory/src/*.cpp"
+    )
+
 set (TEST_ACCESSIBLE_HEADERS_FILES
      accessible.h
      accessibledefine.h
@@ -301,18 +305,20 @@ endforeach()
 file (GLOB APP_TS_FILES translations/*.ts)
 qt5_create_translation(APP_QM_FILES ${APP_TS_FILES} ${APP_QM_FILES})
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
-add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES})
+add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} ${DOCX_FACTORY_TEST})
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/QtXlsxWriter/src/xlsx")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/include")
 include_directories(${DtkWidget_INCLUDE_DIRS})
 include_directories(${DtkCore_INCLUDE_DIRS})
 include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a)
+
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/lib/libDocxFactory.so)
 
 #这个excel库不用，静态链接后速度太慢
 #include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/simplexlsx-code")

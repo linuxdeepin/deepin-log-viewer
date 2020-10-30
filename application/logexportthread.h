@@ -106,6 +106,7 @@ public:
     void exportToXlsPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     void exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
     void exportTest();
+    void exportDocTest();
     bool isProcessing();
 public slots:
     // 停止线程
@@ -132,6 +133,7 @@ private:
     bool exportToDoc(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
     bool exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag);
     bool exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName);
+    bool exportToDocNew(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName);
     bool exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels);
     bool exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels);
     bool exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels);

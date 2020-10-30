@@ -26,6 +26,9 @@
 #include "utils.h"
 //#include <Xlsx/Workbook.h>
 #include "xlsxwriter.h"
+#include "WordProcessingMerger.h"
+#include "WordProcessingCompiler.h"
+#include <exception>
 
 #include <DApplication>
 
@@ -412,6 +415,47 @@ void LogExportThread::exportTest()
     }
     // emit sigResult(m_canRunning);
     return  ;
+}
+
+void LogExportThread::exportDocTest()
+{
+
+    try {
+        DocxFactory::WordProcessingCompiler &l_compiler =
+            DocxFactory::WordProcessingCompiler::getInstance();
+        time_t l_start = clock();
+        l_compiler.compile(
+            "/home/zyc/Documents/work_space/works/oldlog/dde_log_viewer/3rdparty/DocxFactory/exercises/templates/test1.docx",
+            "/home/zyc/Documents/work_space/works/oldlog/dde_log_viewer/3rdparty/DocxFactory/exercises/templates/test1.dfw");
+
+
+
+        DocxFactory:: WordProcessingMerger &l_merger =
+            DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(
+            "/home/zyc/Documents/work_space/works/oldlog/dde_log_viewer/3rdparty/DocxFactory/exercises/templates/test1.dfw");
+
+
+        for (int i = 0; i < 1000; i++) {
+            for (int col = 1; col <= 8; ++col) {
+                l_merger.setClipboardValue("tableRow", QString("column%1").arg(col).toStdString(), "testDocxtestDocxtestDocxtestDocxtestDocxtestDocxtestDocxtestDocx");
+            }
+
+            l_merger.paste("tableRow");
+        }
+
+
+
+        l_merger.save("/home/zyc/Desktop/docfactory_benchmark.docx");
+
+
+        qDebug()  << "Completed (in "
+                  << (double)(clock() - l_start) / CLOCKS_PER_SEC
+                  << " seconds)."
+                  ;
+    } catch (const std::exception &p_exception) {
+        qDebug() << p_exception.what() ;
+    }
 }
 
 bool LogExportThread::isProcessing()
@@ -963,7 +1007,8 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
-
+    QElapsedTimer timer;
+    timer.start();
     try {
         Docx::Document doc(DOCTEMPLATE);
         Docx::Table *tab = doc.addTable(jList.count() + 1, 4);
@@ -1010,7 +1055,63 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
 
     sigProgress(100, 100);
     emit sigResult(m_canRunning);
+
+    qDebug() << "exportdoc benchmark rows:" << jList.count() << "time:" << timer.elapsed();
     return true && m_canRunning;
+}
+
+bool LogExportThread::exportToDocNew(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
+{
+    QElapsedTimer timer;
+    timer.start();
+    try {
+        DocxFactory::WordProcessingCompiler &l_compiler =
+            DocxFactory::WordProcessingCompiler::getInstance();
+        l_compiler.compile(
+            "/home/zyc/Documents/work_space/works/oldlog/dde_log_viewer/3rdparty/DocxFactory/exercises/templates/test_app.docx",
+            "/home/zyc/Documents/work_space/works/oldlog/dde_log_viewer/3rdparty/DocxFactory/exercises/templates/test_app.dfw");
+
+
+
+        DocxFactory:: WordProcessingMerger &l_merger =
+            DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(
+            "/home/zyc/Documents/work_space/works/oldlog/dde_log_viewer/3rdparty/DocxFactory/exercises/templates/test_app.dfw");
+        for (int col = 0; col < labels.count(); ++col) {
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+        }
+
+        l_merger.paste("tableRow");
+        for (int row = 0; row < 1000000; ++row)  {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_APPLICATOIN message = jList.at(100);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), strTranslate(message.level).toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), iAppName.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
+            l_merger.paste("tableRow");
+            sigProgress(row + 1, jList.count());
+        }
+
+
+        fileName = fileName + "x";
+        l_merger.save(fileName.toStdString());
+
+
+
+        sigProgress(100, 100);
+        emit sigResult(m_canRunning);
+        qDebug() << "exportdoc New benchmark rows:" << jList.count() << "time:" << timer.elapsed();
+        return  true;
+    } catch (const std::exception &p_exception) {
+        qDebug() << p_exception.what() ;
+        emit sigResult(false);
+        return  false;
+    }
+
+
 }
 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
@@ -2329,7 +2430,7 @@ void LogExportThread::run()
         break;
     }
     case DocAPP: {
-        exportToDoc(m_fileName, m_appList, m_labels, m_appName);
+        exportToDocNew(m_fileName, m_appList, m_labels, m_appName);
         break;
     }
     case DocDPKG: {

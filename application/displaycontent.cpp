@@ -999,7 +999,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
 void DisplayContent::slot_exportClicked()
 {
 //    LogExportThread *exportThread = new LogExportThread(this);
-//    exportThread->exportTest();
+//    exportThread->exportDocTest();
 //    return;
     QString logName;
     if (m_curListIdx.isValid())
