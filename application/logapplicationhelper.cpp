@@ -21,6 +21,8 @@
 #include <QFile>
 #include <QLocale>
 
+
+
 std::atomic<LogApplicationHelper *> LogApplicationHelper::m_instance;
 std::mutex LogApplicationHelper::m_mutex;
 
@@ -30,6 +32,7 @@ std::mutex LogApplicationHelper::m_mutex;
  */
 LogApplicationHelper::LogApplicationHelper(QObject *parent)
     : QObject(parent)
+    , m_DbusLauncher(new DBbusLauncher(DBbusLauncher::staticInterfaceName(), "/com/deepin/dde/daemon/Launcher", QDBusConnection::sessionBus(), this))
 {
     init();
 }
@@ -59,6 +62,21 @@ void LogApplicationHelper::init()
  */
 void LogApplicationHelper::createDesktopFiles()
 {
+    QDBusPendingReply<LauncherItemInfoList> reply   = m_DbusLauncher->GetAllItemInfos();
+    if (reply.isError()) {
+        qWarning() << "application info from dbus is empty!!";
+        qWarning() << reply.error();
+        return;
+    }
+
+    const LauncherItemInfoList &datas = reply.value();
+    QStringList fileInfoListDbus;
+    for (const auto &it : datas) {
+        qDebug() << "createDesktopFiles" << it.ID << it.Icon << it.Name << it.Path << it.CategoryID << it.TimeInstalled;
+        if (it.Path.contains("deepin-") ||  it.Path.contains("dde-")) {
+            m_desktop_files.append(it.Path);
+        }
+    }
     //在该目录下遍历所有desktop文件
     QString path = "/usr/share/applications";
     QDir dir(path);
@@ -69,12 +87,14 @@ void LogApplicationHelper::createDesktopFiles()
     for (QString desktop : fileInfoList) {
         //需要符合以deepin或者dde开头的应用
         if (desktop.contains("deepin-") || desktop.contains("dde-")) {
-            m_desktop_files.append(desktop);
+            //   m_desktop_files.append(desktop);
         }
     }
-
+    qDebug() << "  m_desktop_files.count()" <<    m_desktop_files.count();
+    qDebug() << "fileInfoListDbus" <<    fileInfoListDbus.count();
     for (QString var : m_desktop_files) {
-        QString filePath = path + "/" + var;
+        //QString filePath = path + "/" + var;
+        QString filePath = var;
         //  qDebug() << "m_desktop_files filePath" << filePath;
         QFile fi(filePath);
         if (!fi.open(QIODevice::ReadOnly))
@@ -112,7 +132,7 @@ void LogApplicationHelper::createDesktopFiles()
         }
         fi.close();
         //转换插入应用包名和应用显示文本到数据结构
-        parseField(filePath, var, isDeepin, isGeneric, isName);
+        parseField(filePath, var.split(QDir::separator()).last(), isDeepin, isGeneric, isName);
     }
 }
 
@@ -135,7 +155,7 @@ void LogApplicationHelper::createLogFiles()
 //    qDebug() << "m_desktop_files" << m_desktop_files;
 
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
-        QString _name = m_desktop_files[i].section(".", 0, 0);
+        QString _name = m_desktop_files[i].split(QDir::separator()).last().section(".", 0, 0);
 
         for (auto j = 0; j < m_log_files.count(); ++j) {
             //desktop文件名和日志文件名比较，相同则符合条件

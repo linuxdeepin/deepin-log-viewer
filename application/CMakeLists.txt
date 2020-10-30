@@ -21,6 +21,7 @@ set(LINK_LIBS
     ${DtkWidget_LIBRARIES}
     ${DtkCore_LIBRARIES}
     ${DtkGUI_LIBRARIES}
+
 #${DtkWidget_LDFLAGS}
 #${DtkGui_LDFLAGS}
 #${DtkCore_LDFLAGS}
@@ -105,6 +106,9 @@ find_package(DtkWidget REQUIRED)
 find_package(DtkGui REQUIRED)
 find_package(DtkCore REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
+find_package(DFrameworkdbus REQUIRED)
+pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
+
 #pkg_search_module(DtkWidget REQUIRED dtkwidget)
 #pkg_search_module(DtkGui REQUIRED dtkgui)
 #pkg_search_module(DtkCore REQUIRED dtkcore)
@@ -327,7 +331,8 @@ include_directories(${DtkCore_INCLUDE_DIRS})
 include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc)
+include_directories( ${DFrameworkDBus_INCLUDE_DIRS})
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS}   ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc)
 
 #include_directories(${Qt5Widgets_LIBRARIES}
 #                                               ${Qt5Core_LIBRARIES}
