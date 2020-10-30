@@ -98,6 +98,7 @@ private:
      * @brief m_mutex 单例用的锁
      */
     static std::mutex m_mutex;
+
 };
 
 #endif  // LOGAPPLICATIONPARSETHREAD_H

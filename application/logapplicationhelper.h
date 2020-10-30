@@ -17,11 +17,13 @@
 #ifndef LOGAPPLICATIONHELPER_H
 #define LOGAPPLICATIONHELPER_H
 
+#include "com_deepin_dde_daemon_launcherd.h"
+
 #include <QMap>
 #include <QObject>
 
 #include <mutex>
-
+using DBbusLauncher = com::deepin::dde::daemon::Launcher;
 /**
  * @brief The LogApplicationHelper class 获取应用日志文件路径信息工具类
  */
@@ -101,6 +103,10 @@ private:
      * @brief m_mutex 单例用的锁
      */
     static std::mutex m_mutex;
+    /**
+     * @brief m_DbusLauncher 获取所有应用信息的dbus接口
+     */
+    DBbusLauncher *m_DbusLauncher;
 };
 
 #endif  // LOGAPPLICATIONHELPER_H
