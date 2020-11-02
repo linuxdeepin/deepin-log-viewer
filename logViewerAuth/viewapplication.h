@@ -13,6 +13,7 @@ public:
 public slots:
     void dataRecived();
     void releaseMemery();
+    bool doReadFileWork();
 };
 
 #endif // VIEWAPPLICATION_H

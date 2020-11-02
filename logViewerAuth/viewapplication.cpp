@@ -103,4 +103,9 @@ void ViewApplication::releaseMemery()
     }
 }
 
+bool ViewApplication::doReadFileWork()
+{
+
+}
+
 
