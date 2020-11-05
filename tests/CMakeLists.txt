@@ -10,7 +10,7 @@ endif ()
 #add_subdirectory(../3rdparty/docx docx_binary_dir)
 #add_subdirectory(../3rdparty/QtXlsxWriter)
 configure_file(../application/environments.h.in environments.h @ONLY)
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_output/)
+#set(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/test_output/)
 set(LINK_LIBS
     Qt5::Core
     Qt5::Widgets
@@ -31,7 +31,7 @@ set(LINK_LIBS
 )
 #可访问private
 ADD_COMPILE_OPTIONS(-fno-access-control)
-set (EXE_NAME deepin-log-viewer-test)
+set (PROJECT_NAME_TEST deepin-log-viewer-test)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -39,7 +39,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 #set(CMAKE_CXX_FLAGS "-g -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#${EXE_NAME}
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#${PROJECT_NAME_TEST}
 #编译生成覆盖环境
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
 #添加-fno-inline编译选项，禁止内联，能获取到函数地址，可以对内联函数进行打桩
@@ -230,7 +230,7 @@ endfunction()
 
 
 
-#target_include_directories(${EXE_NAME}
+#target_include_directories(${PROJECT_NAME_TEST}
 #     ${DtkWidget_INCLUDE_DIRS} ${OBJECT_BINARY_DIR})
 
 #file(GLOB_RECURSE application_source_files "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
@@ -265,7 +265,7 @@ include_directories( ${Qt5TestLib_LIBRARIES})
 #                                              ${DtkGUI_INCLUDE_DIRS}
 #                                              ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
 #                                              ${Qt5Xml_LIBRARIES})
-#target_include_directories(${EXE_NAME} PUBLIC ${Qt5Widgets_LIBRARIES}
+#target_include_directories(${PROJECT_NAME_TEST} PUBLIC ${Qt5Widgets_LIBRARIES}
 #                                               ${Qt5Core_LIBRARIES}
 #                                              ${Qt5DBus_LIBRARIES}
 #                                              ${PROJECT_BINARY_DIR}
@@ -328,50 +328,52 @@ FILE(GLOB allTestSource
 include_directories(src)
 
 
-add_executable (${EXE_NAME} ${allSource} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource})
+add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource})
 
 
 
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc gmock gmock_main gtest gtest_main)
+target_link_libraries(${PROJECT_NAME_TEST}  ${LINK_LIBS} -lsystemd -licui18n -licuuc gmock gmock_main gtest gtest_main)
+
+
+
 #------------------------------ 创建'make test'指令---------------------------------------
 add_custom_target(test
     #执行mkdir -p 创建 coverageResult
-    COMMAND mkdir -p coverageResult
-    #设置工作目录
+    COMMAND mkdir -p tests/coverageResult
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )
+
 
 add_custom_command(TARGET test
     COMMAND echo " =================== CREAT LCOV REPROT BEGIN ==================== "
 
     #1.清理原先的gcov信息
-    COMMAND lcov --directory ./CMakeFiles/${PROJECT_NAME_TEST}.dir --zerocounters
-    COMMAND lcov --directory ./CMakeFiles/${PROJECT_NAME}.dir --zerocounters
-    COMMAND ./${PROJECT_NAME_TEST}
+    COMMAND lcov --directory ./tests/CMakeFiles/${PROJECT_NAME_TEST}.dir --zerocounters
+    COMMAND lcov --directory ./tests/CMakeFiles/${PROJECT_NAME}.dir --zerocounters
+    COMMAND ./tests/${PROJECT_NAME_TEST}
 
     #2.收集gcov信息到.info文件中
-    COMMAND lcov --directory . --capture --output-file ./coverageResult/${PROJECT_NAME}_Coverage.info
+    COMMAND lcov --directory . --capture --output-file ./tests/coverageResult/${PROJECT_NAME}_Coverage.info
 
     #3.过滤一些我们不感兴趣的文件的覆盖率信息
     COMMAND echo " =================== do filter begin ==================== "
-    COMMAND lcov --remove ./coverageResult/${PROJECT_NAME}_Coverage.info
-    '*/${PROJECT_NAME_TEST}_autogen/*' '*/${PROJECT_NAME}_autogen/*' '*/usr/include/*' '*/src/*' '*/googletest/*'
-    -o ./coverageResult/${PROJECT_NAME}_Coverage.info
+    COMMAND lcov --remove ./tests/coverageResult/${PROJECT_NAME}_Coverage.info
+    '*/${PROJECT_NAME_TEST}_autogen/*' '*/${PROJECT_NAME}_autogen/*' '*/usr/include/*' '*/dbuslogin1manager*' '*/tests/*' '*/googletest/*' '*/3rdparty/*' '*/test/*' 'accessible.h' 'accessibledefine.h'
+    -o ./tests/coverageResult/${PROJECT_NAME}_Coverage.info
     COMMAND echo " =================== do filter end ==================== "
 
     #3.将.info信息生成报告到reprot文件夹中
-    COMMAND genhtml -o ./coverageResult/report ./coverageResult/${PROJECT_NAME}_Coverage.info
+    COMMAND genhtml -o ./tests/coverageResult/report ./tests/coverageResult/${PROJECT_NAME}_Coverage.info
 
     COMMAND echo " =================== CREAT LCOV REPROT END ==================== "
 
     COMMAND echo " Coverage files have been output to ${CMAKE_BINARY_DIR}/coverageResult/report "
 
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-)
+    )
 
 #'make test'命令依赖与我们的测试程序
-add_dependencies(test ${EXE_NAME})
-
+add_dependencies(test ${PROJECT_NAME_TEST})
 
 
 

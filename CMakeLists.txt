@@ -10,3 +10,8 @@ add_subdirectory(application)
 add_subdirectory(logViewerAuth)
 add_subdirectory(logViewerTruncate)
 add_subdirectory(tests)
+
+
+
+
+
