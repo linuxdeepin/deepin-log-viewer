@@ -27,8 +27,11 @@ SharedMemoryManager::SharedMemoryManager(QObject *parent)
 }
 void SharedMemoryManager::setRunnableTag(ShareMemoryInfo iShareInfo)
 {
+    m_commondM->lock();
     qDebug() << "setRunnableTag" << iShareInfo.isStart;
+    m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
     m_pShareMemoryInfo->isStart = iShareInfo.isStart;
+    m_commondM->unlock();
 
 }
 
@@ -45,9 +48,12 @@ bool SharedMemoryManager::isAttached()
 void SharedMemoryManager::releaseMemory()
 {
     if (m_commondM) {
-        m_commondM->unlock();
+        //  m_commondM->unlock();
+        qDebug() << "m_commondM->error" << m_commondM->error() << m_commondM->errorString();
         if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
             m_commondM->detach();
+        qDebug() << "m_commondM->error" << m_commondM->error() << m_commondM->errorString();
+
     }
 }
 
@@ -72,6 +78,8 @@ void SharedMemoryManager::init()
         // 主进程：首次赋值m_pShareMemoryInfo
 
     }
-    m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
-    m_pShareMemoryInfo->isStart = true;
+    ShareMemoryInfo info;
+    info.isStart = true;
+
+    setRunnableTag(info);
 }

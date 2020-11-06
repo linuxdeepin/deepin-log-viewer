@@ -468,7 +468,6 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
     QModelIndex idx = this->currentIndex();
     QString pathData = idx.data(ITEM_DATE_ROLE).toString();
     if (!this->selectionModel()->selectedIndexes().empty()) {
-
         g_context = new QMenu(this);
         g_openForder = new QAction(/*tr("在文件管理器中显示")*/DApplication::translate("Action", "Display in file manager"), this);
         g_clear = new QAction(/*tr("清除日志内容")*/DApplication::translate("Action", "Clear log"), this);

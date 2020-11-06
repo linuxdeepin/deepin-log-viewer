@@ -5,6 +5,9 @@ class QProcess;
 class QSharedMemory;
 class ViewApplication : public QCoreApplication
 {
+    struct ShareMemoryInfo {
+        bool isStart = true ;
+    };
 public:
     ViewApplication(int &argc, char **argv);
     ~ViewApplication();
@@ -13,6 +16,8 @@ public:
 public slots:
     void dataRecived();
     void releaseMemery();
+    ShareMemoryInfo getControlInfo();
+
 };
 
 #endif // VIEWAPPLICATION_H

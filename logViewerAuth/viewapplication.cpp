@@ -14,9 +14,7 @@
 #include <iostream>
 #include<signal.h>
 
-struct ShareMemoryInfo {
-    bool isStart = true ;
-};
+
 namespace {
 std::function<void(int)> shutdown_handler;
 void signal_handler(int signal) { shutdown_handler(signal); }
@@ -51,7 +49,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
 
 
 
-    ShareMemoryInfo   *m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
+    //ShareMemoryInfo   *m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
 
     connect(m_proc, &QProcess::readyReadStandardOutput, this, [ = ] {
 //        signal(SIGKILL, [](int x)
@@ -59,7 +57,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
 //            exit(0);
 //        });
 
-        if (!m_pShareMemoryInfo->isStart)
+        if (!getControlInfo().isStart)
         {
             // qDebug() << "stop-----------";
             m_proc->kill();
@@ -97,11 +95,26 @@ void ViewApplication::dataRecived()
 void ViewApplication::releaseMemery()
 {
     if (m_commondM) {
-        m_commondM->unlock();
+        //  m_commondM->unlock();
         if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
             m_commondM->detach();          //解除关联
         m_commondM->deleteLater();
     }
+}
+
+ViewApplication::ShareMemoryInfo ViewApplication::getControlInfo()
+{
+    ShareMemoryInfo defaultInfo;
+    defaultInfo.isStart = false;
+    if (m_commondM && m_commondM->isAttached()) {
+        m_commondM->lock();
+        ShareMemoryInfo   *m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
+        defaultInfo = m_pShareMemoryInfo ? *m_pShareMemoryInfo : defaultInfo;
+        m_commondM->unlock();
+        return defaultInfo;
+
+    }
+    return defaultInfo;
 }
 
 

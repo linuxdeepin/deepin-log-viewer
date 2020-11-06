@@ -29,7 +29,7 @@ set(LINK_LIBS
 #    ${ICUUC_LIBRARIES}
 #     ${SYSTEMD_LIBRARIES}
 )
-option(PERF_ON "open the info of benchmark" ON)
+
 configure_file(config.h.in config.h @ONLY)
 
 
