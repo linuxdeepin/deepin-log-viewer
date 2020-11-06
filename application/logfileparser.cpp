@@ -73,7 +73,7 @@ LogFileParser::~LogFileParser()
 {
     stopAllLoad();
     //释放共享内存
-    SharedMemoryManager::instance()->releaseMemory();
+    SharedMemoryManager::instance()->releaseAllMem();
 }
 
 int LogFileParser::parseByJournal(QStringList arg)

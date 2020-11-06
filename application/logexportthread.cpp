@@ -1480,21 +1480,21 @@ bool LogExportThread::exportToDocNew(QString fileName, QList<LOG_MSG_APPLICATOIN
         DocxFactory::WordProcessingCompiler &l_compiler =
             DocxFactory::WordProcessingCompiler::getInstance();
         l_compiler.compile(
-            "/home/zyc/Documents/work_space/works/oldlog/dde_log_viewer/3rdparty/DocxFactory/exercises/templates/test_app.docx",
-            "/home/zyc/Documents/work_space/works/oldlog/dde_log_viewer/3rdparty/DocxFactory/exercises/templates/test_app.dfw");
+            "~/test_app.docx",
+            "~/test_app.dfw");
 
 
 
         DocxFactory:: WordProcessingMerger &l_merger =
             DocxFactory:: WordProcessingMerger::getInstance();
         l_merger.load(
-            "/home/zyc/Documents/work_space/works/oldlog/dde_log_viewer/3rdparty/DocxFactory/exercises/templates/test_app.dfw");
+            "~/test_app.dfw");
         for (int col = 0; col < labels.count(); ++col) {
             l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
         }
 
         l_merger.paste("tableRow");
-        for (int row = 0; row < 1000000; ++row)  {
+        for (int row = 0; row < 100000; ++row)  {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
@@ -1503,6 +1503,10 @@ bool LogExportThread::exportToDocNew(QString fileName, QList<LOG_MSG_APPLICATOIN
             l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.dateTime.toStdString());
             l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), iAppName.toStdString());
             l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
+//            l_merger.setClipboardValue("tableRow", QString("column5").toStdString(), strTranslate(message.level).toStdString());
+//            l_merger.setClipboardValue("tableRow", QString("column6").toStdString(), message.dateTime.toStdString());
+//            l_merger.setClipboardValue("tableRow", QString("column7").toStdString(), iAppName.toStdString());
+//            l_merger.setClipboardValue("tableRow", QString("column8").toStdString(), message.msg.toStdString());
             l_merger.paste("tableRow");
             sigProgress(row + 1, jList.count());
         }
@@ -2701,11 +2705,11 @@ bool LogExportThread::exportToXlsNew(QString fileName, QList<LOG_MSG_JOURNAL> jL
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
-        for (int row = 0; row < jList.count(); ++row) {
+        for (int row = 0; row < 100000 ; ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
-            LOG_MSG_JOURNAL message = jList.at(row);
+            LOG_MSG_JOURNAL message = jList.at(1);
             int col = 0;
 
             if (iFlag == JOURNAL) {
@@ -2730,6 +2734,7 @@ bool LogExportThread::exportToXlsNew(QString fileName, QList<LOG_MSG_JOURNAL> jL
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
+        qDebug() << "export xlsx new";
     } catch (QString ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);

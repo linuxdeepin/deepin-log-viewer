@@ -4,32 +4,32 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="473"/>
+        <location filename="../application/loglistview.cpp" line="472"/>
         <source>Display in file manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="474"/>
+        <location filename="../application/loglistview.cpp" line="473"/>
         <source>Clear log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="475"/>
+        <location filename="../application/loglistview.cpp" line="474"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="513"/>
+        <location filename="../application/loglistview.cpp" line="512"/>
         <source>Are you sure you want to clear the log?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="514"/>
+        <location filename="../application/loglistview.cpp" line="513"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="515"/>
+        <location filename="../application/loglistview.cpp" line="514"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
@@ -403,6 +403,15 @@
         <location filename="../application/logexportthread.cpp" line="2927"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="69"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="78"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2261"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="130"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="146"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="130"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="146"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2635"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2672"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
@@ -460,6 +469,15 @@
         <location filename="../application/logexportthread.cpp" line="2930"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="70"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="81"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2264"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="133"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="149"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="133"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="149"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2638"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2675"/>
         <source>Debug</source>
         <translation type="unfinished"></translation>
     </message>
@@ -517,6 +535,15 @@
         <location filename="../application/logexportthread.cpp" line="2929"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="71"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="80"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2263"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="132"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="148"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="132"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="148"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2637"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2674"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -574,6 +601,15 @@
         <location filename="../application/logexportthread.cpp" line="2926"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="72"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="77"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2260"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="129"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="145"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="129"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="145"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2634"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2671"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
@@ -627,6 +663,14 @@
         <location filename="../application/logexportthread.cpp" line="2923"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="74"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2257"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="126"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="142"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="126"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="142"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2631"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2668"/>
         <source>Emergency</source>
         <translation type="unfinished"></translation>
     </message>
@@ -680,6 +724,14 @@
         <location filename="../application/logexportthread.cpp" line="2924"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="75"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2258"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="127"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="143"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="127"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="143"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2632"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2669"/>
         <source>Alert</source>
         <translation type="unfinished"></translation>
     </message>
@@ -733,6 +785,14 @@
         <location filename="../application/logexportthread.cpp" line="2925"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="76"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2259"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="128"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="144"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="128"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="144"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2633"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2670"/>
         <source>Critical</source>
         <translation type="unfinished"></translation>
     </message>
@@ -786,6 +846,14 @@
         <location filename="../application/logexportthread.cpp" line="2928"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="79"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="2262"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="131"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="147"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="131"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="147"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2636"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2673"/>
         <source>Notice</source>
         <translation type="unfinished"></translation>
     </message>
@@ -832,11 +900,13 @@
     <message>
         <location filename="../application/main.cpp" line="85"/>
         <location filename="../application/main.cpp" line="86"/>
+        <location filename="../tests/src/test_main.cpp" line="70"/>
         <source>Log Viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="90"/>
+        <location filename="../tests/src/test_main.cpp" line="74"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -933,6 +1003,21 @@
         <location filename="../application/logexportthread.cpp" line="1843"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/logexportwidget.cpp" line="543"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="216"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="429"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="734"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="712"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="751"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="793"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1193"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1232"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1274"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1672"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1711"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1753"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2152"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2191"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2233"/>
         <source>Level</source>
 <<<<<<< HEAD
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
@@ -1001,6 +1086,9 @@
         <location filename="../application/logexportthread.cpp" line="1844"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/logexportwidget.cpp" line="544"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="217"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="335"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="735"/>
         <source>Process</source>
 <<<<<<< HEAD
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
@@ -1091,6 +1179,22 @@
         <location filename="../application/logexportthread.cpp" line="1846"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/logexportwidget.cpp" line="546"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="218"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="333"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="430"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="736"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="713"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="752"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="794"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1194"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1233"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1275"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1673"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1712"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1754"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2153"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2192"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2234"/>
         <source>Date and Time</source>
 <<<<<<< HEAD
 >>>>>>> a42f5e2... fix: 修复了导出完成的提示框，进度条未加载完就消失了的问题
@@ -1205,6 +1309,22 @@
         <location filename="../application/displaycontent.cpp" line="2196"/>
         <location filename="../application/logexportthread.cpp" line="1847"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="219"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="336"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="432"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="737"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="715"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="754"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="796"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1196"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1235"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1277"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1675"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1714"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1756"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2155"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2194"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2236"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1224,6 +1344,9 @@
         <location filename="../application/logexportthread.cpp" line="1848"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/logexportwidget.cpp" line="548"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="220"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="334"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="738"/>
         <source>User</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1259,6 +1382,8 @@
         <location filename="../application/logexportthread.cpp" line="1849"/>
 >>>>>>> 0f748fa... fix: 修复了应用日志中显示deepin lock 和deepin shutdown的日志的问题
         <location filename="../application/logexportwidget.cpp" line="549"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="221"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="739"/>
         <source>PID</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1283,7 +1408,23 @@
 >>>>>>> 09f4565... chore: 增加注释
 =======
         <location filename="../application/displaycontent.cpp" line="632"/>
+<<<<<<< HEAD
 >>>>>>> 37b2e65... chore: 增加性能测试打印
+=======
+        <location filename="../tests/src/displaycontent_test.cpp" line="431"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="714"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="753"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="795"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1195"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1234"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1276"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1674"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1713"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="1755"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2154"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2193"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="2235"/>
+>>>>>>> 6e7f01f... chore: 合并单元测试分支ut_test内容，修复共享内存未正确释放的问题，注册dbus接口数据类型
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>

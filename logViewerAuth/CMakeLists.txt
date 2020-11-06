@@ -20,6 +20,8 @@ set (AUTH_CPP_FILES
        viewapplication.h
        authsharedmemorymanager.cpp
        authsharedmemorymanager.h
+       ../application/basesharedmemorymanager.h
+
     )
 add_executable (${EXE_NAME}
     ${AUTH_CPP_FILES}
@@ -30,4 +32,4 @@ find_package(Qt5Core REQUIRED)
 set(CMAKE_INSTALL_PREFIX /usr)
 # Install files
 install(TARGETS ${EXE_NAME} DESTINATION bin)
-target_link_libraries(${EXE_NAME} ${LINK_LIBS} )
+target_link_libraries(${EXE_NAME} ${LINK_LIBS} log-ChardetDetector log-common )

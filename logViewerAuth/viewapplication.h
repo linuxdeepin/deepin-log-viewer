@@ -24,6 +24,7 @@ class QSharedMemory;
 class QFile;
 class ViewApplication : public QCoreApplication
 {
+
 public:
     ViewApplication(int &argc, char **argv);
     ~ViewApplication();
@@ -36,7 +37,7 @@ public slots:
 private:
 
     QProcess *m_proc;
-    QSharedMemory *m_commondM;
+
 
     QFile *mFile;
     char *mMem;
@@ -46,6 +47,8 @@ private:
     QList<QFile *> mFiles;
     QList<char *> mMems;
     QList<qint64> mSizes;
+
+
 };
 
 #endif // VIEWAPPLICATION_H

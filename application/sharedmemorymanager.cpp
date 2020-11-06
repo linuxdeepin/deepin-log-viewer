@@ -23,14 +23,13 @@
 std::atomic<SharedMemoryManager *> SharedMemoryManager::m_instance;
 std::mutex SharedMemoryManager::m_mutex;
 SharedMemoryManager::SharedMemoryManager(QObject *parent)
-    :  QObject(parent)
+    :  BaseSharedMemoryManager(parent)
 {
     init();
 }
 void SharedMemoryManager::setRunnableTag(ShareMemoryInfo iShareInfo)
 {
-    qDebug() << "setRunnableTag" << iShareInfo.isStart;
-    m_pShareMemoryInfo->isStart = iShareInfo.isStart;
+    setMemomData<ShareMemoryInfo>(&m_commondM, &iShareInfo);
 
 }
 
@@ -44,42 +43,24 @@ bool SharedMemoryManager::isAttached()
     return (m_commondM && m_commondM->isAttached());
 }
 
-void SharedMemoryManager::releaseMemory()
+void SharedMemoryManager::releaseAllMem()
 {
-    if (m_commondM) {
-        m_commondM->unlock();
-        if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
-            m_commondM->detach();
-    }
+    releaseMemory(&m_commondM);
     foreach (QSharedMemory *item, m_sizeSharedMems.values()) {
-        releaseMemory(item);
+        releaseMemory(&item);
+    }
+    foreach (QSharedMemory *item, m_dataSharedMems.values()) {
+        releaseMemory(&item);
     }
 }
 
-bool SharedMemoryManager::releaseMemory(QSharedMemory *iMem)
-{
-    bool result = false;
-    if (iMem) {
-        result = iMem->unlock();
-        if (!result) {
-            return result;
-        }
-        if (iMem->isAttached()) {     //检测程序当前是否关联共享内存
-            result =   iMem->detach();
-            return  result;
-        } else {
-            return true;
-        }
-    } else {
-        return true;
-    }
-}
+
 
 bool SharedMemoryManager::initSizeInfo()
 {
     QSharedMemory *sizeMem = nullptr;
     QString sizeTag = LOG_SIZE_INFO_TAG_PREFIX + QString::number(0);
-    if (initShareMemory<ShareMemorySizeInfo>(sizeMem, sizeTag, nullptr, QSharedMemory::ReadOnly)) {
+    if (initShareMemory(&sizeMem, sizeTag, QSharedMemory::ReadOnly)) {
         m_sizeSharedMems.insert(sizeTag, sizeMem);
         return  true;
     } else {
@@ -97,72 +78,43 @@ QStringList SharedMemoryManager::getSizeInfoAllTag()
 bool SharedMemoryManager::initDataInfo(const QString &iTag)
 {
     QSharedMemory *dataMem = nullptr;
-    if (initShareMemory<ShareMemorySizeInfo>(dataMem, iTag, nullptr, QSharedMemory::ReadOnly)) {
-        m_sizeSharedMems.insert(iTag, dataMem);
+    if (initShareMemory(&dataMem, iTag, QSharedMemory::ReadOnly)) {
+        m_dataSharedMems.insert(iTag, dataMem);
         return  true;
     } else {
         return  false;
     }
 }
-bool SharedMemoryManager::getSizeInfoByTag(const QString &iTag, ShareMemorySizeInfo *oInfo)
+
+QStringList SharedMemoryManager::getDataInfoAllTag()
+{
+    return m_dataSharedMems.keys();
+}
+bool SharedMemoryManager::getSizeInfoByTag(const QString &iTag, ShareMemorySizeInfo &oInfo)
 {
     QSharedMemory *mem = m_sizeSharedMems.value(iTag, nullptr);
     if (!mem) {
         return  false;
     }
-    oInfo =  static_cast<ShareMemorySizeInfo *>(mem->data());
-    return  oInfo;
+
+    return  getMemomData<ShareMemorySizeInfo>(&mem, oInfo);
+}
+
+bool SharedMemoryManager::getDataByTag(const QString &iTag, char **oData)
+{
+    QSharedMemory *mem = m_dataSharedMems.value(iTag, nullptr);
+    if (!mem) {
+        return  false;
+    }
+
+    return    getMemomDataLong<char>(&mem, oData);
 }
 
 
 
 void SharedMemoryManager::init()
 {
-    m_commondM = new QSharedMemory(this);
-    QString tag = LOG_POLIKIT_STOP_TAG ;//+ QString::number(m_threadCount);
-    m_commondM->setKey(tag);
-    if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
-        m_commondM->detach();
-    if (!m_commondM->create(sizeof(ShareMemoryInfo))) {     //创建共享内存，大小为size
-        qDebug() << "ShareMemory create error" << m_commondM->key() << QSharedMemory:: SharedMemoryError(m_commondM->error()) << m_commondM->errorString();
-        if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
-            m_commondM->detach();
-        m_commondM->attach();
-
-    } else {
-        // 创建好以后，保持共享内存连接，防止释放。
-        m_commondM->attach();
-        // 主进程：首次赋值m_pShareMemoryInfo
-
-    }
-    m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
-    m_pShareMemoryInfo->isStart = true;
-
-
-
+    QString tag = LOG_POLIKIT_STOP_TAG ;
+    createShareMemoryWrite<ShareMemoryInfo>(&m_commondM, tag);
 }
 
-template<typename T>
-bool SharedMemoryManager::initShareMemory(QSharedMemory *iMem, const QString &iTag, SharedMemoryManager::T *iData, QSharedMemory::AccessMode mode)
-{
-    bool result = false;
-    if (iMem) {
-        result =   releaseMemory(iMem);
-        if (!result) {
-            return  false;
-        }
-    }
-
-    iMem = new QSharedMemory(iTag, this);
-    if (iMem->isAttached())      //检测程序当前是否关联共享内存
-        iMem->detach();          //解除关联
-    result =  iMem->attach(mode);
-
-    iData = static_cast<T *>(iMem->data());
-    result = iData && result;
-    if (!result) {
-        releaseMemory(iMem);
-    }
-    return  result ;
-
-}

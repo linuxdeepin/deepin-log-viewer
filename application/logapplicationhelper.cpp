@@ -34,6 +34,8 @@ LogApplicationHelper::LogApplicationHelper(QObject *parent)
     : QObject(parent)
     , m_DbusLauncher(new DBbusLauncher(DBbusLauncher::staticInterfaceName(), "/com/deepin/dde/daemon/Launcher", QDBusConnection::sessionBus(), this))
 {
+    registerLauncherItemInfoMetaType();
+    registerLauncherItemInfoListMetaType();
     init();
 }
 
@@ -70,6 +72,7 @@ void LogApplicationHelper::createDesktopFiles()
     }
 
     const LauncherItemInfoList &datas = reply.value();
+    qDebug() << " datas.size()" << datas.size();
     QStringList fileInfoListDbus;
     for (const auto &it : datas) {
         qDebug() << "createDesktopFiles" << it.ID << it.Icon << it.Name << it.Path << it.CategoryID << it.TimeInstalled;

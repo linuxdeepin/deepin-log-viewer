@@ -20,6 +20,7 @@
 
 #include <QDebug>
 #include <QDateTime>
+#include <QTextCodec>
 
 #include <QtConcurrent>
 #include <future>
@@ -128,7 +129,8 @@ void LogAuthThread::run()
     switch (m_type) {
     case KERN:
         //  handleKern();
-        doReadFileWork();
+        //doReadFileWork();
+        handleKernNew();
         break;
     case BOOT:
         handleBoot();
@@ -736,11 +738,29 @@ void LogAuthThread::handleKernNew()
         {
             return ;
         }
-        SharedMemoryManager::instance();
+        if (!SharedMemoryManager::instance()->initSizeInfo())
+        {
+            return ;
+        }
+        foreach (QString key, SharedMemoryManager::instance()->getSizeInfoAllTag())
+        {
+            ShareMemorySizeInfo sizeInfo;
+            if (!SharedMemoryManager::instance()->getSizeInfoByTag(key, sizeInfo)) {
+                continue;
+            }
+            if (!SharedMemoryManager::instance()->initDataInfo(sizeInfo.key)) {
+                continue;
+            }
+            char *dataPtr = nullptr;
+            if (!SharedMemoryManager::instance()->getDataByTag(sizeInfo.key, &dataPtr)) {
+                continue;
+            }
+            auto ba = QByteArray::fromRawData(dataPtr, sizeInfo.infoSize);
+            qDebug() << "Map Process Data" << QTextCodec::codecForName("UTF-8")->toUnicode(ba);
 
+        }
     });
-
-
+    qDebug() << "kern New Finish";
 }
 
 void LogAuthThread::close()

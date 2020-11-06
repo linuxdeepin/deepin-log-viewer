@@ -16,6 +16,7 @@
 */
 #ifndef SHAREDMEMORYMANAGER_H
 #define SHAREDMEMORYMANAGER_H
+#include "basesharedmemorymanager.h"
 
 #include <QObject>
 #include <QSharedMemory>
@@ -31,7 +32,7 @@ struct ShareMemorySizeInfo {
 };
 
 
-class SharedMemoryManager : public QObject
+class SharedMemoryManager : public BaseSharedMemoryManager
 {
 public:
 
@@ -51,15 +52,14 @@ public:
     void setRunnableTag(ShareMemoryInfo iShareInfo);
     QString getRunnableKey();
     bool isAttached();
-    void releaseMemory();
-    template<typename T>
-    bool initShareMemory(QSharedMemory *iMem, const QString &iTag, T *iData, QSharedMemory::AccessMode mode = QSharedMemory::ReadWrite);
-    bool releaseMemory(QSharedMemory *iMem);
+    void releaseAllMem();
+
     bool initSizeInfo();
     QStringList getSizeInfoAllTag();
     bool  initDataInfo(const QString &iTag);
-
-    bool getSizeInfoByTag(const QString &iTag, ShareMemorySizeInfo *oInfo);
+    QStringList getDataInfoAllTag();
+    bool getSizeInfoByTag(const QString &iTag, ShareMemorySizeInfo &oInfo);
+    bool getDataByTag(const QString &iTag, char **oData);
 protected:
     SharedMemoryManager(QObject *parent = nullptr);
 
@@ -68,8 +68,8 @@ private:
     static std::atomic<SharedMemoryManager *> m_instance;
     static std::mutex m_mutex;
     QSharedMemory  *m_commondM = nullptr;
-    ShareMemoryInfo *m_pShareMemoryInfo = nullptr;
     QMap<QString, QSharedMemory *>  m_sizeSharedMems;
+    QMap<QString, QSharedMemory *>  m_dataSharedMems;
 };
 
 #endif // SHAREDMEMORYMANAGER_H

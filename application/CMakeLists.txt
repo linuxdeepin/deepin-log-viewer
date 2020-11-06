@@ -29,7 +29,7 @@ set(LINK_LIBS
 #    ${ICUUC_LIBRARIES}
 #     ${SYSTEMD_LIBRARIES}
 )
-option(PERF_ON "open the info of benchmark" ON)
+
 configure_file(config.h.in config.h @ONLY)
 
 
@@ -163,11 +163,14 @@ set (APP_CPP_FILES
      lognormalbutton.cpp
      logapplication.cpp
      sharedmemorymanager.cpp
-
+    basesharedmemorymanager.cpp
+     basesharedmemorymanager.h
      common/collator.cpp
      logsettings.cpp
      DebugTimeManager.cpp
      wtmpparse.cpp
+     fileloader/logfileloader.cpp
+     fileloader/logdatacontrol.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -291,7 +294,7 @@ function(include_sub_directories_recursively root_dir)
         include_directories(${root_dir})
     endif()
 
-    file(GLOB ALL_SUB RELATIVE ${root_dir} ${root_dir}/*) # 获得当前目录下的所有文件，让如ALL_SUB列表中
+    file(GLOB ALL_SUB RELATIVE ${root_dir} ${root_dir}/*) # 获得当前APP_HEADERS_FILES目录下的所有文件，让如ALL_SUB列表中
     foreach(sub ${ALL_SUB})
         if (IS_DIRECTORY ${root_dir}/${sub})
             include_sub_directories_recursively(${root_dir}/${sub}) # 对子目录递归调用，包含
@@ -336,7 +339,8 @@ add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} 
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/QtXlsxWriter/src/xlsx")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/common")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/ChardetDetector")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/include")
 include_directories(${DtkWidget_INCLUDE_DIRS})
@@ -347,8 +351,7 @@ include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 include_directories( ${DFrameworkDBus_INCLUDE_DIRS})
 
 
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc  ${DFrameworkDBus_LIBRARIES}  ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/lib/libDocxFactory.so)
-
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc log-ChardetDetector log-common  ${DFrameworkDBus_LIBRARIES}  ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/lib/libDocxFactory.so)
 #这个excel库不用，静态链接后速度太慢
 #include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/simplexlsx-code")
 #target_link_libraries(${EXE_NAME} ${CMAKE_BINARY_DIR}/3rdparty/simplexlsx-code/libSimpleXlsx.a )

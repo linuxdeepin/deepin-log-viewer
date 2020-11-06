@@ -37,18 +37,23 @@ ViewApplication::ViewApplication(int &argc, char **argv)
         return ;
     }
 
+
     AuthSharedMemoryManager::instance()->initRunnableTagMem(fileList[1]);
     QString tag;
-    QString path = "/home/zyc/Documents/tech/同方内核日志没有/kern.log";
+//   QString path = "/home/zyc/Documents/tech/同方内核日志没有/kern.log";
+    QString path = "/var/log/kern.log";
     if (doReadFileWork(path)) {
-        AuthSharedMemoryManager::instance()->addDataInfo(mSize, mMem, tag);
+        if (AuthSharedMemoryManager::instance()->addDataInfo(mSize, mMem, tag)) {
+            qInfo() << QString("load file complete:%1").arg(1);
+        }
     }
-    qInfo() << QString("load file complete:%1").arg(1);
+
     m_timer = new QTimer(this);
     m_timer->setInterval(1000);
     m_timer->setSingleShot(false);
     connect(m_timer, &QTimer::timeout, this, &ViewApplication::checkClose);
     m_timer->start();
+
 
 
 }
@@ -103,12 +108,18 @@ void ViewApplication::close()
 
 void ViewApplication::checkClose()
 {
-    ShareMemoryInfo *info =  AuthSharedMemoryManager::instance()->getRunnableTag();
-    if (!info) {
-        quit();
-    }
-    if (!info->isStart) {
+    ShareMemoryInfo info =  AuthSharedMemoryManager::instance()->getRunnableTag();
+
+    if (!info.isStart) {
+        AuthSharedMemoryManager::instance()->releaseAllMem();
+        close();
         quit();
     }
 }
+
+
+
+
+
+
 

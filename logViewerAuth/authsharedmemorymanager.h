@@ -16,12 +16,14 @@
 */
 #ifndef SHAREDMEMORYMANAGER_H
 #define SHAREDMEMORYMANAGER_H
+#include <../application/basesharedmemorymanager.h>
 
 #include <QObject>
 #include <QSharedMemory>
 #include <QMap>
 
 #include <mutex>
+
 struct ShareMemoryInfo {
     bool isStart = true ;
 };
@@ -31,7 +33,7 @@ struct ShareMemorySizeInfo {
 };
 
 
-class AuthSharedMemoryManager : public QObject
+class AuthSharedMemoryManager : public BaseSharedMemoryManager
 {
 public:
 
@@ -50,15 +52,11 @@ public:
     }
 
     bool isAttached();
-    bool releaseMemory(QSharedMemory *iMem);
-    template<typename T>
-    bool createShareMemoryWrite(QSharedMemory *iMem, const QString &iTag,  int iSize = -1);
-    bool initShareMemory(QSharedMemory *iMem, const QString &iTag,  QSharedMemory::AccessMode mode = QSharedMemory::ReadWrite);
 
 
     bool initRunnableTagMem(const QString &iTag);
     bool addDataInfo(qint64 iInfoSize, char *iDataInfo, QString &oTag);
-    ShareMemoryInfo *getRunnableTag();
+    ShareMemoryInfo getRunnableTag();
     QString getRunnableKey();
     void releaseAllMem();
 protected:
@@ -71,7 +69,6 @@ private:
     QSharedMemory  *m_stopSharedMem ;
     QMap<QString, QSharedMemory *>  m_sizeSharedMems;
     QMap<QString, QSharedMemory *>m_fileDataSharedMems;
-    ShareMemoryInfo *m_pShareMemoryInfo;
 };
 
 #endif // SHAREDMEMORYMANAGER_H
