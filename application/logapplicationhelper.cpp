@@ -64,22 +64,21 @@ void LogApplicationHelper::init()
  */
 void LogApplicationHelper::createDesktopFiles()
 {
-    QDBusPendingReply<LauncherItemInfoList> reply   = m_DbusLauncher->GetAllItemInfos();
-    if (reply.isError()) {
-        qWarning() << "application info from dbus is empty!!";
-        qWarning() << reply.error();
-        return;
-    }
+//    QDBusPendingReply<LauncherItemInfoList> reply   = m_DbusLauncher->GetAllItemInfos();
+//    if (reply.isError()) {
+//        qWarning() << "application info from dbus is empty!!";
+//        qWarning() << reply.error();
+//        return;
+//    }
 
-    const LauncherItemInfoList &datas = reply.value();
-    qDebug() << " datas.size()" << datas.size();
-    QStringList fileInfoListDbus;
-    for (const auto &it : datas) {
-        qDebug() << "createDesktopFiles" << it.ID << it.Icon << it.Name << it.Path << it.CategoryID << it.TimeInstalled;
-        if (it.Path.contains("deepin-") ||  it.Path.contains("dde-")) {
-            m_desktop_files.append(it.Path);
-        }
-    }
+//    const LauncherItemInfoList &datas = reply.value();
+//    qDebug() << " datas.size()" << datas.size();
+//    for (const auto &it : datas) {
+//        qDebug() << "createDesktopFiles" << it.ID << it.Icon << it.Name << it.Path << it.CategoryID << it.TimeInstalled;
+//        if (it.Path.contains("deepin-") ||  it.Path.contains("dde-")) {
+//            //  m_desktop_files.append(it.Path);
+//        }
+//    }
     //在该目录下遍历所有desktop文件
     QString path = "/usr/share/applications";
     QDir dir(path);
@@ -87,17 +86,17 @@ void LogApplicationHelper::createDesktopFiles()
         return;
 
     QStringList fileInfoList = dir.entryList(QDir::Files | QDir::NoDotAndDotDot);
+    QStringList tempDesktopFiles;
     for (QString desktop : fileInfoList) {
         //需要符合以deepin或者dde开头的应用
         if (desktop.contains("deepin-") || desktop.contains("dde-")) {
-            //   m_desktop_files.append(desktop);
+            tempDesktopFiles.append(desktop);
         }
     }
-    qDebug() << "  m_desktop_files.count()" <<    m_desktop_files.count();
-    qDebug() << "fileInfoListDbus" <<    fileInfoListDbus.count();
-    for (QString var : m_desktop_files) {
-        //QString filePath = path + "/" + var;
-        QString filePath = var;
+    qDebug() << "  tempDesktopFiles.count()" <<    tempDesktopFiles.count();
+    for (QString var : tempDesktopFiles) {
+        QString filePath = path + "/" + var;
+        //  QString filePath = var;
         //  qDebug() << "m_desktop_files filePath" << filePath;
         QFile fi(filePath);
         if (!fi.open(QIODevice::ReadOnly))
@@ -106,7 +105,7 @@ void LogApplicationHelper::createDesktopFiles()
         bool isDeepin = false;
         bool isGeneric = false;
         bool isName = false;
-
+        bool canDisplay = true;
         while (!fi.atEnd()) {
             QString lineStr = fi.readLine();
             lineStr.replace("\n", "");
@@ -116,6 +115,46 @@ void LogApplicationHelper::createDesktopFiles()
             }
             if (lineStr.startsWith("Name", Qt::CaseInsensitive) && !isName) {
                 isName = true;
+            }
+            if (lineStr.startsWith("NoDisplay")) {
+                QStringList noDisplayList = lineStr.split("=", QString::SkipEmptyParts);
+                if (noDisplayList.value(1, "") == "true") {
+                    canDisplay = false;
+                }
+            }
+            if (lineStr.startsWith("Hidden")) {
+                QStringList hiddenList = lineStr.split("=", QString::SkipEmptyParts);
+                if (hiddenList.value(1, "") == "true") {
+                    canDisplay = false;
+                }
+            }
+            QString currentDesktop(qgetenv("XDG_CURRENT_DESKTOP"));
+            if (lineStr.startsWith("OnlyShowIn")) {
+                bool isHide = true;
+                QStringList onlyShowInList = lineStr.split("=", QString::SkipEmptyParts).value(1, "").replace("'", "").replace("\"", "").split("; ", QString::SkipEmptyParts);
+                foreach (QString item, onlyShowInList) {
+                    if (item == currentDesktop) {
+                        isHide = false;
+                        break;
+                    }
+                }
+                if (isHide) {
+                    canDisplay = false;
+                }
+            }
+
+            if (lineStr.startsWith("NotShowIn")) {
+                bool isHide = false;
+                QStringList notShowInList = lineStr.split("=", QString::SkipEmptyParts).value(1, "").split(";", QString::SkipEmptyParts);
+                foreach (QString item, notShowInList) {
+                    if (item == currentDesktop) {
+                        isHide = true;
+                        break;
+                    }
+                }
+                if (isHide) {
+                    canDisplay = false;
+                }
             }
 
             if (!lineStr.contains("X-Deepin-Vendor", Qt::CaseInsensitive)) {
@@ -135,8 +174,12 @@ void LogApplicationHelper::createDesktopFiles()
         }
         fi.close();
         //转换插入应用包名和应用显示文本到数据结构
-        parseField(filePath, var.split(QDir::separator()).last(), isDeepin, isGeneric, isName);
+        if (canDisplay) {
+            m_desktop_files.append(var);
+            parseField(filePath, var.split(QDir::separator()).last(), isDeepin, isGeneric, isName);
+        }
     }
+    qDebug() << "  m_desktop_files.count()" <<    m_desktop_files.count();
 }
 
 /**
@@ -155,6 +198,7 @@ void LogApplicationHelper::createLogFiles()
     }
 
     m_log_files = appDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
+    qDebug() << " m_log_files.size()" << appDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
 //    qDebug() << "m_desktop_files" << m_desktop_files;
 
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
@@ -190,7 +234,9 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
 //   qDebug() << "parseField" << "path" << path << "name" << name << "isDeepin" << isDeepin << "isGeneric" << isGeneric << "isName" << isName;
     // insert map at first, en-en, then repalce transName if has name,
     m_en_trans_map.insert(name.section(".", 0, 0), name.section(".", 0, 0));  // desktop name
-
+    if (name.contains("shutdown")) {
+        qDebug() << "1111";
+    }
     while (!fi.atEnd()) {
         QString lineStr = fi.readLine();
         lineStr.replace("\n", "");

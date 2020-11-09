@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QPaintEvent>
+#include <QThreadPool>
 TEST(DisplayContent_Constructor_UT, DisplayContent_Constructor_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);
@@ -537,12 +538,18 @@ TEST(DisplayContent_creatKwinTable_UT, DisplayContent_creatKwinTable_UT_001)
     p->deleteLater();
 }
 
+void QThreadPool_start(QRunnable *runnable, int priority = 0)
+{
+    qDebug() << "QThreadPool_sstart";
+}
 TEST(DisplayContent_generateKwinFile_UT, DisplayContent_generateKwinFile_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     KWIN_FILTERS f;
     f.msg = "";
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
     p->generateKwinFile(f);
     p->deleteLater();
 }

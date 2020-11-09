@@ -35,7 +35,6 @@ TEST(SharedMemoryManager_setRunnableTag_UT, SharedMemoryManager_setRunnableTag_U
     ShareMemoryInfo info;
     info.isStart = true;
     p->setRunnableTag(info);
-    EXPECT_EQ(p->m_pShareMemoryInfo->isStart, true);
     p->deleteLater();
 }
 

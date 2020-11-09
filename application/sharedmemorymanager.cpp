@@ -30,7 +30,11 @@ void SharedMemoryManager::setRunnableTag(ShareMemoryInfo iShareInfo)
     m_commondM->lock();
     qDebug() << "setRunnableTag" << iShareInfo.isStart;
     m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
-    m_pShareMemoryInfo->isStart = iShareInfo.isStart;
+    if (m_pShareMemoryInfo) {
+        m_pShareMemoryInfo->isStart = iShareInfo.isStart;
+    } else {
+        qWarning() << "conntrol mem is Not Attech ";
+    }
     m_commondM->unlock();
 
 }
@@ -61,6 +65,7 @@ void SharedMemoryManager::releaseMemory()
 
 void SharedMemoryManager::init()
 {
+    qDebug() << "1111";
     m_commondM = new QSharedMemory(this);
     QString tag = LOG_POLIKIT_STOP_TAG ;//+ QString::number(m_threadCount);
     m_commondM->setKey(tag);
