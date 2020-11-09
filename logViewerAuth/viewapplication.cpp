@@ -21,6 +21,7 @@ void signal_handler(int signal) { shutdown_handler(signal); }
 } // namespace
 ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc, argv)
 {
+
     QCommandLineParser parser;
     parser.process(*this);
     const QStringList fileList = parser.positionalArguments();
