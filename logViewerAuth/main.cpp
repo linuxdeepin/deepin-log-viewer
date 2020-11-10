@@ -12,5 +12,5 @@ int main(int argc, char *argv[])
 {
     ViewApplication app(argc, argv);
 
-    return 0;
+    return app.exec();
 }

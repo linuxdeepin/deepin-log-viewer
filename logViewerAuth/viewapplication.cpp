@@ -1,4 +1,5 @@
 #include "viewapplication.h"
+#include "authsharedmemorymanager.h"
 
 #include <QDebug>
 #include <QFile>
@@ -10,18 +11,22 @@
 #include <QSharedMemory>
 #include <QBuffer>
 #include <QDataStream>
+#include <QFile>
+#include <QTimer>
 
 #include <iostream>
 #include<signal.h>
 
-struct ShareMemoryInfo {
-    bool isStart = true ;
-};
+
 namespace {
 std::function<void(int)> shutdown_handler;
 void signal_handler(int signal) { shutdown_handler(signal); }
 } // namespace
-ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc, argv)
+ViewApplication::ViewApplication(int &argc, char **argv)
+    : QCoreApplication(argc, argv)
+    , mFile(nullptr)
+    , mMem(nullptr)
+    , mSize(0)
 {
     QCommandLineParser parser;
     parser.process(*this);
@@ -31,82 +36,79 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
         qDebug() << "less than 2";
         return ;
     }
-    QStringList arg;
-    //    "/var/log/boot.log";//开机的时候系统核心去侦测与启动，接下来开始各种核心支援的功能启动等；
-    arg << "-c" << QString("cat %1").arg(fileList[0]);
-    m_proc = new QProcess(this);
-    shutdown_handler = [&](int signal) {
-        if (m_proc) {
-            m_proc->kill();
-        }
-        exit(0);
-    };
 
-    m_commondM = new QSharedMemory();
-    m_commondM->setKey(fileList[1]);
-    if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
-        m_commondM->detach();          //解除关联
-    m_commondM->attach(QSharedMemory::ReadOnly);
+    AuthSharedMemoryManager::instance()->initRunnableTagMem(fileList[1]);
+    QString tag;
+    QString path = "/home/zyc/Documents/tech/同方内核日志没有/kern.log";
+    if (doReadFileWork(path)) {
+        AuthSharedMemoryManager::instance()->addDataInfo(mSize, mMem, tag);
+    }
+    qInfo() << QString("load file complete:%1").arg(1);
+    m_timer = new QTimer(this);
+    m_timer->setInterval(1000);
+    m_timer->setSingleShot(false);
+    connect(m_timer, &QTimer::timeout, this, &ViewApplication::checkClose);
+    m_timer->start();
 
 
-
-
-    ShareMemoryInfo   *m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
-
-    connect(m_proc, &QProcess::readyReadStandardOutput, this, [ = ] {
-//        signal(SIGKILL, [](int x)
-//        {
-//            exit(0);
-//        });
-
-        if (!m_pShareMemoryInfo->isStart)
-        {
-            // qDebug() << "stop-----------";
-            m_proc->kill();
-            releaseMemery();
-            exit(0);
-        }
-        QByteArray byte =   m_proc->readAll();
-        std::cout << byte.replace('\u0000', "").data();
-    });
-    m_proc->start("/bin/bash", arg);
-
-    m_proc->waitForFinished(-1);
-    //直接
-
-//    QTextStream stream(&byte);
-//    QByteArray encode;
-//    stream.setCodec(encode);
-//    QString str = stream.readAll();
-    //必须要replace \u0000,不然QByteArray会忽略这以后的内容
-
-    m_proc->close();
 }
 
 ViewApplication::~ViewApplication()
 {
-    releaseMemery();
+    close();
+    AuthSharedMemoryManager::instance()->releaseAllMem();
+    qDebug() << "~ViewApplication";
 }
 
-void ViewApplication::dataRecived()
+
+
+bool ViewApplication::doReadFileWork(const QString &iFilePath)
 {
-    m_commondM->detach();
-    m_commondM->deleteLater();
+    if (mFile) {
+        close();
+    }
+    QString path = iFilePath;
+    path = "/home/zyc/Documents/tech/同方内核日志没有/kern.log";
+    mFile = new QFile(path);
+    if (!mFile->open(QIODevice::ReadOnly)) {
+        qDebug() << "failed to open file as read only";
+        close();
+        return false;
+    }
+
+    mSize = mFile->size();
+    if (mSize <= 0) {
+        qDebug() << "file is empty";
+        close();
+        return false;
+    }
+
+    auto mem = mFile->map(0, mSize, QFileDevice::MapPrivateOption);
+    //由于map出的内存是不带\0的，所以可能会导致越界访问
+    //一个临时的修复方法是把最后一个字节改为\0
+    mem[mSize - 1] = '\0';
+    mMem = (char *)(mem);
+    return  true;
 }
 
-void ViewApplication::releaseMemery()
+void ViewApplication::close()
 {
-    if (m_commondM) {
-        m_commondM->unlock();
-        if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
-            m_commondM->detach();          //解除关联
-        m_commondM->deleteLater();
+    if (mFile) {
+        mFile->unmap((uchar *)mMem);
+        mFile->close();
+        delete mFile;
+        mFile = nullptr;
     }
 }
 
-bool ViewApplication::doReadFileWork()
+void ViewApplication::checkClose()
 {
-
+    ShareMemoryInfo *info =  AuthSharedMemoryManager::instance()->getRunnableTag();
+    if (!info) {
+        quit();
+    }
+    if (!info->isStart) {
+        quit();
+    }
 }
-
 

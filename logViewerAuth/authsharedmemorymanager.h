@@ -31,45 +31,47 @@ struct ShareMemorySizeInfo {
 };
 
 
-class SharedMemoryManager : public QObject
+class AuthSharedMemoryManager : public QObject
 {
 public:
 
-    static SharedMemoryManager *instance()
+    static AuthSharedMemoryManager *instance()
     {
-        SharedMemoryManager *sin = m_instance.load();
+        AuthSharedMemoryManager *sin = m_instance.load();
         if (!sin) {
             std::lock_guard<std::mutex> lock(m_mutex);
             sin = m_instance.load();
             if (!sin) {
-                sin = new SharedMemoryManager();
+                sin = new AuthSharedMemoryManager();
                 m_instance.store(sin);
             }
         }
         return sin;
     }
-    void setRunnableTag(ShareMemoryInfo iShareInfo);
-    QString getRunnableKey();
-    bool isAttached();
-    void releaseMemory();
-    template<typename T>
-    bool initShareMemory(QSharedMemory *iMem, const QString &iTag, T *iData, QSharedMemory::AccessMode mode = QSharedMemory::ReadWrite);
-    bool releaseMemory(QSharedMemory *iMem);
-    bool initSizeInfo();
-    QStringList getSizeInfoAllTag();
-    bool  initDataInfo(const QString &iTag);
 
-    bool getSizeInfoByTag(const QString &iTag, ShareMemorySizeInfo *oInfo);
+    bool isAttached();
+    bool releaseMemory(QSharedMemory *iMem);
+    template<typename T>
+    bool createShareMemoryWrite(QSharedMemory *iMem, const QString &iTag,  int iSize = -1);
+    bool initShareMemory(QSharedMemory *iMem, const QString &iTag,  QSharedMemory::AccessMode mode = QSharedMemory::ReadWrite);
+
+
+    bool initRunnableTagMem(const QString &iTag);
+    bool addDataInfo(qint64 iInfoSize, char *iDataInfo, QString &oTag);
+    ShareMemoryInfo *getRunnableTag();
+    QString getRunnableKey();
+    void releaseAllMem();
 protected:
-    SharedMemoryManager(QObject *parent = nullptr);
+    AuthSharedMemoryManager(QObject *parent = nullptr);
 
     void init();
 private:
-    static std::atomic<SharedMemoryManager *> m_instance;
+    static std::atomic<AuthSharedMemoryManager *> m_instance;
     static std::mutex m_mutex;
-    QSharedMemory  *m_commondM = nullptr;
-    ShareMemoryInfo *m_pShareMemoryInfo = nullptr;
+    QSharedMemory  *m_stopSharedMem ;
     QMap<QString, QSharedMemory *>  m_sizeSharedMems;
+    QMap<QString, QSharedMemory *>m_fileDataSharedMems;
+    ShareMemoryInfo *m_pShareMemoryInfo;
 };
 
 #endif // SHAREDMEMORYMANAGER_H

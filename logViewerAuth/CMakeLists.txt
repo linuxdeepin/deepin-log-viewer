@@ -13,11 +13,13 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 set (AUTH_CPP_FILES
         main.cpp
        viewapplication.cpp
        viewapplication.h
+       authsharedmemorymanager.cpp
+       authsharedmemorymanager.h
     )
 add_executable (${EXE_NAME}
     ${AUTH_CPP_FILES}

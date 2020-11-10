@@ -71,6 +71,7 @@ protected:
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
     bool doReadFileWork();
+    void handleKernNew();
     void close();
     void splitLines();
     void splitLine(QVector<qint64> *enters, char *ptr, bool progress);

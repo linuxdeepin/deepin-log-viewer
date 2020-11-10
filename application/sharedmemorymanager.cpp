@@ -18,6 +18,8 @@
 #include <QSharedMemory>
 #include <QDebug>
 #define LOG_POLIKIT_STOP_TAG "LOGAUTHCONTROL"
+#define LOG_SIZE_INFO_TAG_PREFIX "LOGAUTHSIZE"
+#define LOG_FILE_DATA_TAG_PREFIX "LOGAUTHFILE"
 std::atomic<SharedMemoryManager *> SharedMemoryManager::m_instance;
 std::mutex SharedMemoryManager::m_mutex;
 SharedMemoryManager::SharedMemoryManager(QObject *parent)
@@ -49,6 +51,67 @@ void SharedMemoryManager::releaseMemory()
         if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
             m_commondM->detach();
     }
+    foreach (QSharedMemory *item, m_sizeSharedMems.values()) {
+        releaseMemory(item);
+    }
+}
+
+bool SharedMemoryManager::releaseMemory(QSharedMemory *iMem)
+{
+    bool result = false;
+    if (iMem) {
+        result = iMem->unlock();
+        if (!result) {
+            return result;
+        }
+        if (iMem->isAttached()) {     //检测程序当前是否关联共享内存
+            result =   iMem->detach();
+            return  result;
+        } else {
+            return true;
+        }
+    } else {
+        return true;
+    }
+}
+
+bool SharedMemoryManager::initSizeInfo()
+{
+    QSharedMemory *sizeMem = nullptr;
+    QString sizeTag = LOG_SIZE_INFO_TAG_PREFIX + QString::number(0);
+    if (initShareMemory<ShareMemorySizeInfo>(sizeMem, sizeTag, nullptr, QSharedMemory::ReadOnly)) {
+        m_sizeSharedMems.insert(sizeTag, sizeMem);
+        return  true;
+    } else {
+        return  false;
+    }
+
+}
+
+QStringList SharedMemoryManager::getSizeInfoAllTag()
+{
+    return m_sizeSharedMems.keys();
+
+}
+
+bool SharedMemoryManager::initDataInfo(const QString &iTag)
+{
+    QSharedMemory *dataMem = nullptr;
+    if (initShareMemory<ShareMemorySizeInfo>(dataMem, iTag, nullptr, QSharedMemory::ReadOnly)) {
+        m_sizeSharedMems.insert(iTag, dataMem);
+        return  true;
+    } else {
+        return  false;
+    }
+}
+bool SharedMemoryManager::getSizeInfoByTag(const QString &iTag, ShareMemorySizeInfo *oInfo)
+{
+    QSharedMemory *mem = m_sizeSharedMems.value(iTag, nullptr);
+    if (!mem) {
+        return  false;
+    }
+    oInfo =  static_cast<ShareMemorySizeInfo *>(mem->data());
+    return  oInfo;
 }
 
 
@@ -74,4 +137,32 @@ void SharedMemoryManager::init()
     }
     m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
     m_pShareMemoryInfo->isStart = true;
+
+
+
+}
+
+template<typename T>
+bool SharedMemoryManager::initShareMemory(QSharedMemory *iMem, const QString &iTag, SharedMemoryManager::T *iData, QSharedMemory::AccessMode mode)
+{
+    bool result = false;
+    if (iMem) {
+        result =   releaseMemory(iMem);
+        if (!result) {
+            return  false;
+        }
+    }
+
+    iMem = new QSharedMemory(iTag, this);
+    if (iMem->isAttached())      //检测程序当前是否关联共享内存
+        iMem->detach();          //解除关联
+    result =  iMem->attach(mode);
+
+    iData = static_cast<T *>(iMem->data());
+    result = iData && result;
+    if (!result) {
+        releaseMemory(iMem);
+    }
+    return  result ;
+
 }

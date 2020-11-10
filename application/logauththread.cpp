@@ -655,7 +655,7 @@ bool LogAuthThread::doReadFileWork()
     mEnters.push_back(-1);//插入“第0行”方便处理。假设第0行的行结束标记在-1字节
 
 
-    //分割为一行一行；MacBook 2005 2.4G（已被）耗时3.2s左右
+    //分割为一行一行；
     mEnterCharOffset = 2;
     auto firstNewLine = strchr(mMem, '\n');
     if (firstNewLine != nullptr) {
@@ -695,6 +695,52 @@ bool LogAuthThread::doReadFileWork()
     qDebug() << "doReadFileWork finished-------";
     kernFinished(info);
     return true;
+}
+
+void LogAuthThread::handleKernNew()
+{
+    QList<LOG_MSG_JOURNAL> kList;
+    QFile file("/var/log/kern.log"); // add by Airy
+    if (!file.exists()) {
+        emit kernFinished(kList);
+        return;
+    }
+    if (!m_canRun) {
+        return;
+    }
+    initProccess();
+    if (!m_canRun) {
+        return;
+    }
+    // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
+    m_process->setProcessChannelMode(QProcess::MergedChannels);
+    if (!m_canRun) {
+        return;
+    }
+    //如果共享内存没有初始化绑定好，则无法开始，因为不能开启一个可能无法停止的进程
+    if (!SharedMemoryManager::instance()->isAttached()) {
+        return;
+    }
+    //共享内存对应变量置true，允许进程内部逻辑运行
+    ShareMemoryInfo   shareInfo ;
+    shareInfo.isStart = true;
+    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+    //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+    m_process->start("pkexec", QStringList() << "logViewerAuth"
+                     //         << "/home/zyc/Documents/tech/同方内核日志没有/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
+                     //   << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
+                     << "/var/log/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
+    connect(m_process, &QProcess::readyRead, this, [ = ] {
+        QString result(m_process->readAll());
+        if (!result.contains("load file complete"))
+        {
+            return ;
+        }
+        SharedMemoryManager::instance();
+
+    });
+
+
 }
 
 void LogAuthThread::close()
