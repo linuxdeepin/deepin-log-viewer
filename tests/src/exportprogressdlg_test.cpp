@@ -17,7 +17,7 @@
 
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include "exportprogressdlg.h"
 
 #include <QDebug>
@@ -49,10 +49,10 @@ class ExportProgressDlg_setProgressBarRange_UT : public ::testing::TestWithParam
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, ExportProgressDlg_setProgressBarRange_UT, ::testing::Values(ExportProgressDlg_setProgressBarRange_UT_Param(true, 0, 100),
-                                                                                                     ExportProgressDlg_setProgressBarRange_UT_Param(false, 0, 100),
-                                                                                                     ExportProgressDlg_setProgressBarRange_UT_Param(true, 100, 0)
-                                                                                                    ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, ExportProgressDlg_setProgressBarRange_UT, ::testing::Values(ExportProgressDlg_setProgressBarRange_UT_Param(true, 0, 100),
+                                                                                                    ExportProgressDlg_setProgressBarRange_UT_Param(false, 0, 100),
+                                                                                                    ExportProgressDlg_setProgressBarRange_UT_Param(true, 100, 0)
+                                                                                                   ));
 
 TEST_P(ExportProgressDlg_setProgressBarRange_UT, ExportProgressDlg_setProgressBarRange_UT)
 {
@@ -89,9 +89,9 @@ class ExportProgressDlg_updateProgressBarValue_UT : public ::testing::TestWithPa
 };
 
 
-INSTANTIATE_TEST_SUITE_P(ExportProgressDlg, ExportProgressDlg_updateProgressBarValue_UT, ::testing::Values(ExportProgressDlg_updateProgressBarValue_UT_Param(true, 50),
-                                                                                                           ExportProgressDlg_updateProgressBarValue_UT_Param(false, 50)
-                                                                                                          ));
+INSTANTIATE_TEST_CASE_P(ExportProgressDlg, ExportProgressDlg_updateProgressBarValue_UT, ::testing::Values(ExportProgressDlg_updateProgressBarValue_UT_Param(true, 50),
+                                                                                                          ExportProgressDlg_updateProgressBarValue_UT_Param(false, 50)
+                                                                                                         ));
 
 TEST_P(ExportProgressDlg_updateProgressBarValue_UT, ExportProgressDlg_updateProgressBarValue_UT)
 {

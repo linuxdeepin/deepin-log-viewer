@@ -17,7 +17,7 @@
 #include "logdetailinfowidget.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 #include <DLabel>
 

@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include "logapplication.h"
 #include "logcollectormain.h"
 #include <QDebug>
@@ -62,12 +62,13 @@ class LogApplication_notify_UT : public ::testing::TestWithParam<LogApplication_
 };
 
 static bool LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result = false;
-INSTANTIATE_TEST_SUITE_P(LogApplication, LogApplication_notify_UT, ::testing::Values(LogApplication_notify_UT_Param(false, true, true, true),
-                                                                                     LogApplication_notify_UT_Param(true, true, true, true),
-                                                                                     LogApplication_notify_UT_Param(true, false, true, true),
-                                                                                     LogApplication_notify_UT_Param(true, true, false, true),
-                                                                                     LogApplication_notify_UT_Param(true, true, true, false)
-                                                                                    ));
+std::vector<LogApplication_notify_UT_Param> vec1 {LogApplication_notify_UT_Param(false, true, true, true),
+        LogApplication_notify_UT_Param(true, true, true, true),
+        LogApplication_notify_UT_Param(true, false, true, true),
+        LogApplication_notify_UT_Param(true, true, false, true),
+        LogApplication_notify_UT_Param(true, true, true, false)};
+
+INSTANTIATE_TEST_CASE_P(LogApplication, LogApplication_notify_UT, ::testing::ValuesIn(vec1));
 bool LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Func(void *obj, QObject *obj1, QKeyEvent *evt)
 {
     return LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result;

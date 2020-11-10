@@ -17,7 +17,7 @@
 
 #include <gtest/gtest.h>
 #include "../application/dbusmanager.h"
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 TEST(DBusManager_Constructor_UT, DBusManager_Constructor_UT_001)
 {

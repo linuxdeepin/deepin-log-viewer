@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include "logapplicationparsethread.h"
 #include "structdef.h"
 #include <QDebug>
@@ -81,7 +81,7 @@ class LogApplicationParseThread_doWork_UT : public ::testing::TestWithParam<LogA
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogApplicationParseThread, LogApplicationParseThread_doWork_UT, ::testing::Values(LogApplicationParseThread_doWork_UT_Param(false, true, true)
+INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogApplicationParseThread_doWork_UT, ::testing::Values(LogApplicationParseThread_doWork_UT_Param(false, true, true)
                                                                                                            , LogApplicationParseThread_doWork_UT_Param(true, true, true)
                                                                                                            , LogApplicationParseThread_doWork_UT_Param(true, false, false)
                                                                                                           ));

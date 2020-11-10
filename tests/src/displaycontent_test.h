@@ -17,7 +17,7 @@
 #ifndef DISPLAYCONTENT_TEST_H
 #define DISPLAYCONTENT_TEST_H
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include <QObject>
 class displaycontent_test : public QObject, public::testing::Test
 {

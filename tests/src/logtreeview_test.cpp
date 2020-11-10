@@ -17,7 +17,7 @@
 #include "logtreeview.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 #include <QDebug>
 #include <QPaintEvent>
@@ -79,7 +79,7 @@ class LogTreeView_keyPressEvent_UT : public ::testing::TestWithParam<LogTreeView
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogTreeView, LogTreeView_keyPressEvent_UT, ::testing::Values(LogTreeView_keyPressEvent_UT_Param(Qt::Key_Up)
+INSTANTIATE_TEST_CASE_P(LogTreeView, LogTreeView_keyPressEvent_UT, ::testing::Values(LogTreeView_keyPressEvent_UT_Param(Qt::Key_Up)
                                                                                       , LogTreeView_keyPressEvent_UT_Param(Qt::Key_Down)
                                                                                       , LogTreeView_keyPressEvent_UT_Param(Qt::Key_0)));
 
@@ -109,7 +109,7 @@ class LogTreeView_event_UT : public ::testing::TestWithParam<LogTreeView_event_U
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogTreeView, LogTreeView_event_UT, ::testing::Values(LogTreeView_event_UT_Param(QEvent::TouchBegin)
+INSTANTIATE_TEST_CASE_P(LogTreeView, LogTreeView_event_UT, ::testing::Values(LogTreeView_event_UT_Param(QEvent::TouchBegin)
                                                                               , LogTreeView_event_UT_Param(QEvent::Hide)));
 
 TEST_P(LogTreeView_event_UT, LogTreeView_event_UT_001)

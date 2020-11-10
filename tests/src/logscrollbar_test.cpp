@@ -16,7 +16,7 @@
 */
 #include "logscrollbar.h"
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 #include <QMouseEvent>
 #include <QDebug>

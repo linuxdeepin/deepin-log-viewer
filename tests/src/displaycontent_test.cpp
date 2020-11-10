@@ -17,7 +17,7 @@
 #include "displaycontent_test.h"
 #include "../application/displaycontent.h"
 #include "../application/utils.h"
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include <DApplication>
 #include <QDebug>
 #include <QFileDialog>
@@ -122,64 +122,65 @@ public:
 class DisplayContent_generateJournalFile_UT : public ::testing::TestWithParam<DisplayContent_generateJournalFile_UT_Param>
 {
 };
+/**/
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_generateJournalFile_UT, ::testing::Values(DisplayContent_generateJournalFile_UT_Param(0, -1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(0, 0)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(0, 1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(0, 2)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(0, 3)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(0, 4)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(0, 5)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(0, 6)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(0, 7)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(1, -1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(1, 0)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(1, 1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(1, 2)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(1, 3)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(1, 4)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(1, 5)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(1, 6)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(1, 7)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(2, -1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(2, 0)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(2, 1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(2, 2)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(2, 3)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(2, 4)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(2, 5)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(2, 6)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(2, 7)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(3, -1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(3, 0)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(3, 1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(3, 2)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(3, 3)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(3, 4)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(3, 5)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(3, 6)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(3, 7)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(4, -1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(4, 0)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(4, 1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(4, 2)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(4, 3)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(4, 4)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(4, 5)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(4, 6)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(4, 7)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(5, -1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(5, 0)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(5, 1)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(5, 2)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(5, 3)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(5, 4)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(5, 5)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(5, 6)
-                                                                                                  , DisplayContent_generateJournalFile_UT_Param(5, 7)
+std::vector<DisplayContent_generateJournalFile_UT_Param> vec_DisplayContent_generateJournalFile_UT_Param {DisplayContent_generateJournalFile_UT_Param(0, -1)
+    , DisplayContent_generateJournalFile_UT_Param(0, 0)
+    , DisplayContent_generateJournalFile_UT_Param(0, 1)
+    , DisplayContent_generateJournalFile_UT_Param(0, 2)
+    , DisplayContent_generateJournalFile_UT_Param(0, 3)
+    , DisplayContent_generateJournalFile_UT_Param(0, 4)
+    , DisplayContent_generateJournalFile_UT_Param(0, 5)
+    , DisplayContent_generateJournalFile_UT_Param(0, 6)
+    , DisplayContent_generateJournalFile_UT_Param(0, 7)
+    , DisplayContent_generateJournalFile_UT_Param(1, -1)
+    , DisplayContent_generateJournalFile_UT_Param(1, 0)
+    , DisplayContent_generateJournalFile_UT_Param(1, 1)
+    , DisplayContent_generateJournalFile_UT_Param(1, 2)
+    , DisplayContent_generateJournalFile_UT_Param(1, 3)
+    , DisplayContent_generateJournalFile_UT_Param(1, 4)
+    , DisplayContent_generateJournalFile_UT_Param(1, 5)
+    , DisplayContent_generateJournalFile_UT_Param(1, 6)
+    , DisplayContent_generateJournalFile_UT_Param(1, 7)
+    , DisplayContent_generateJournalFile_UT_Param(2, -1)
+    , DisplayContent_generateJournalFile_UT_Param(2, 0)
+    , DisplayContent_generateJournalFile_UT_Param(2, 1)
+    , DisplayContent_generateJournalFile_UT_Param(2, 2)
+    , DisplayContent_generateJournalFile_UT_Param(2, 3)
+    , DisplayContent_generateJournalFile_UT_Param(2, 4)
+    , DisplayContent_generateJournalFile_UT_Param(2, 5)
+    , DisplayContent_generateJournalFile_UT_Param(2, 6)
+    , DisplayContent_generateJournalFile_UT_Param(2, 7)
+    , DisplayContent_generateJournalFile_UT_Param(3, -1)
+    , DisplayContent_generateJournalFile_UT_Param(3, 0)
+    , DisplayContent_generateJournalFile_UT_Param(3, 1)
+    , DisplayContent_generateJournalFile_UT_Param(3, 2)
+    , DisplayContent_generateJournalFile_UT_Param(3, 3)
+    , DisplayContent_generateJournalFile_UT_Param(3, 4)
+    , DisplayContent_generateJournalFile_UT_Param(3, 5)
+    , DisplayContent_generateJournalFile_UT_Param(3, 6)
+    , DisplayContent_generateJournalFile_UT_Param(3, 7)
+    , DisplayContent_generateJournalFile_UT_Param(4, -1)
+    , DisplayContent_generateJournalFile_UT_Param(4, 0)
+    , DisplayContent_generateJournalFile_UT_Param(4, 1)
+    , DisplayContent_generateJournalFile_UT_Param(4, 2)
+    , DisplayContent_generateJournalFile_UT_Param(4, 3)
+    , DisplayContent_generateJournalFile_UT_Param(4, 4)
+    , DisplayContent_generateJournalFile_UT_Param(4, 5)
+    , DisplayContent_generateJournalFile_UT_Param(4, 6)
+    , DisplayContent_generateJournalFile_UT_Param(4, 7)
+    , DisplayContent_generateJournalFile_UT_Param(5, -1)
+    , DisplayContent_generateJournalFile_UT_Param(5, 0)
+    , DisplayContent_generateJournalFile_UT_Param(5, 1)
+    , DisplayContent_generateJournalFile_UT_Param(5, 2)
+    , DisplayContent_generateJournalFile_UT_Param(5, 3)
+    , DisplayContent_generateJournalFile_UT_Param(5, 4)
+    , DisplayContent_generateJournalFile_UT_Param(5, 5)
+    , DisplayContent_generateJournalFile_UT_Param(5, 6)
+    , DisplayContent_generateJournalFile_UT_Param(5, 7)};
 
-                                                                                                 ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateJournalFile_UT, ::testing::ValuesIn(vec_DisplayContent_generateJournalFile_UT_Param));
 
 TEST_P(DisplayContent_generateJournalFile_UT, DisplayContent_generateJournalFile_UT_001)
 {
@@ -249,13 +250,13 @@ class DisplayContent_generateDpkgFile_UT : public ::testing::TestWithParam<Displ
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_generateDpkgFile_UT, ::testing::Values(DisplayContent_generateDpkgFile_UT_Param(0)
-                                                                                               , DisplayContent_generateDpkgFile_UT_Param(1)
-                                                                                               , DisplayContent_generateDpkgFile_UT_Param(2)
-                                                                                               , DisplayContent_generateDpkgFile_UT_Param(3)
-                                                                                               , DisplayContent_generateDpkgFile_UT_Param(4)
-                                                                                               , DisplayContent_generateDpkgFile_UT_Param(5)
-                                                                                              ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateDpkgFile_UT, ::testing::Values(DisplayContent_generateDpkgFile_UT_Param(0)
+                                                                                              , DisplayContent_generateDpkgFile_UT_Param(1)
+                                                                                              , DisplayContent_generateDpkgFile_UT_Param(2)
+                                                                                              , DisplayContent_generateDpkgFile_UT_Param(3)
+                                                                                              , DisplayContent_generateDpkgFile_UT_Param(4)
+                                                                                              , DisplayContent_generateDpkgFile_UT_Param(5)
+                                                                                             ));
 
 TEST_P(DisplayContent_generateDpkgFile_UT, DisplayContent_generateDpkgFile_UT_001)
 {
@@ -303,13 +304,13 @@ class DisplayContent_generateKernFile_UT : public ::testing::TestWithParam<Displ
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_generateKernFile_UT, ::testing::Values(DisplayContent_generateKernFile_UT_Param(0)
-                                                                                               , DisplayContent_generateKernFile_UT_Param(1)
-                                                                                               , DisplayContent_generateKernFile_UT_Param(2)
-                                                                                               , DisplayContent_generateKernFile_UT_Param(3)
-                                                                                               , DisplayContent_generateKernFile_UT_Param(4)
-                                                                                               , DisplayContent_generateKernFile_UT_Param(5)
-                                                                                              ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateKernFile_UT, ::testing::Values(DisplayContent_generateKernFile_UT_Param(0)
+                                                                                              , DisplayContent_generateKernFile_UT_Param(1)
+                                                                                              , DisplayContent_generateKernFile_UT_Param(2)
+                                                                                              , DisplayContent_generateKernFile_UT_Param(3)
+                                                                                              , DisplayContent_generateKernFile_UT_Param(4)
+                                                                                              , DisplayContent_generateKernFile_UT_Param(5)
+                                                                                             ));
 
 TEST_P(DisplayContent_generateKernFile_UT, DisplayContent_generateKernFile_UT_001)
 {
@@ -402,13 +403,13 @@ class DisplayContent_generateAppFile_UT : public ::testing::TestWithParam<Displa
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_generateAppFile_UT, ::testing::Values(DisplayContent_generateAppFile_UT_Param(0)
-                                                                                              , DisplayContent_generateAppFile_UT_Param(1)
-                                                                                              , DisplayContent_generateAppFile_UT_Param(2)
-                                                                                              , DisplayContent_generateAppFile_UT_Param(3)
-                                                                                              , DisplayContent_generateAppFile_UT_Param(4)
-                                                                                              , DisplayContent_generateAppFile_UT_Param(5)
-                                                                                             ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateAppFile_UT, ::testing::Values(DisplayContent_generateAppFile_UT_Param(0)
+                                                                                             , DisplayContent_generateAppFile_UT_Param(1)
+                                                                                             , DisplayContent_generateAppFile_UT_Param(2)
+                                                                                             , DisplayContent_generateAppFile_UT_Param(3)
+                                                                                             , DisplayContent_generateAppFile_UT_Param(4)
+                                                                                             , DisplayContent_generateAppFile_UT_Param(5)
+                                                                                            ));
 
 TEST_P(DisplayContent_generateAppFile_UT, DisplayContent_generateAppFile_UT_001)
 {
@@ -506,13 +507,13 @@ class DisplayContent_generateXorgFile_UT : public ::testing::TestWithParam<Displ
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_generateXorgFile_UT, ::testing::Values(DisplayContent_generateXorgFile_UT_Param(0)
-                                                                                               , DisplayContent_generateXorgFile_UT_Param(1)
-                                                                                               , DisplayContent_generateXorgFile_UT_Param(2)
-                                                                                               , DisplayContent_generateXorgFile_UT_Param(3)
-                                                                                               , DisplayContent_generateXorgFile_UT_Param(4)
-                                                                                               , DisplayContent_generateXorgFile_UT_Param(5)
-                                                                                              ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateXorgFile_UT, ::testing::Values(DisplayContent_generateXorgFile_UT_Param(0)
+                                                                                              , DisplayContent_generateXorgFile_UT_Param(1)
+                                                                                              , DisplayContent_generateXorgFile_UT_Param(2)
+                                                                                              , DisplayContent_generateXorgFile_UT_Param(3)
+                                                                                              , DisplayContent_generateXorgFile_UT_Param(4)
+                                                                                              , DisplayContent_generateXorgFile_UT_Param(5)
+                                                                                             ));
 
 TEST_P(DisplayContent_generateXorgFile_UT, DisplayContent_generateXorgFile_UT_001)
 {
@@ -589,13 +590,13 @@ class DisplayContent_generateNormalFile_UT : public ::testing::TestWithParam<Dis
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_generateNormalFile_UT, ::testing::Values(DisplayContent_generateNormalFile_UT_Param(0)
-                                                                                                 , DisplayContent_generateNormalFile_UT_Param(1)
-                                                                                                 , DisplayContent_generateNormalFile_UT_Param(2)
-                                                                                                 , DisplayContent_generateNormalFile_UT_Param(3)
-                                                                                                 , DisplayContent_generateNormalFile_UT_Param(4)
-                                                                                                 , DisplayContent_generateNormalFile_UT_Param(5)
-                                                                                                ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateNormalFile_UT, ::testing::Values(DisplayContent_generateNormalFile_UT_Param(0)
+                                                                                                , DisplayContent_generateNormalFile_UT_Param(1)
+                                                                                                , DisplayContent_generateNormalFile_UT_Param(2)
+                                                                                                , DisplayContent_generateNormalFile_UT_Param(3)
+                                                                                                , DisplayContent_generateNormalFile_UT_Param(4)
+                                                                                                , DisplayContent_generateNormalFile_UT_Param(5)
+                                                                                               ));
 
 TEST_P(DisplayContent_generateNormalFile_UT, DisplayContent_generateNormalFile_UT_001)
 {
@@ -649,11 +650,11 @@ class DisplayContent_getAppName_UT : public ::testing::TestWithParam<DisplayCont
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_getAppName_UT, ::testing::Values(DisplayContent_getAppName_UT_Param("", "")
-                                                                                         , DisplayContent_getAppName_UT_Param("deepin-log-viewer.log", "日志收集工具")
-                                                                                         , DisplayContent_getAppName_UT_Param("deepin-log-viewer", "日志收集工具")
-                                                                                         , DisplayContent_getAppName_UT_Param("/test/deepin-log-viewer.log", "日志收集工具")
-                                                                                        ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_getAppName_UT, ::testing::Values(DisplayContent_getAppName_UT_Param("", "")
+                                                                                        , DisplayContent_getAppName_UT_Param("deepin-log-viewer.log", "日志收集工具")
+                                                                                        , DisplayContent_getAppName_UT_Param("deepin-log-viewer", "日志收集工具")
+                                                                                        , DisplayContent_getAppName_UT_Param("/test/deepin-log-viewer.log", "日志收集工具")
+                                                                                       ));
 
 TEST_P(DisplayContent_getAppName_UT, DisplayContent_getAppName_UT_001)
 {
@@ -694,15 +695,15 @@ class DisplayContent_generateJournalBootFile_UT : public ::testing::TestWithPara
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_generateJournalBootFile_UT, ::testing::Values(DisplayContent_generateJournalBootFile_UT_Param(0)
-                                                                                                      , DisplayContent_generateJournalBootFile_UT_Param(1)
-                                                                                                      , DisplayContent_generateJournalBootFile_UT_Param(2)
-                                                                                                      , DisplayContent_generateJournalBootFile_UT_Param(3)
-                                                                                                      , DisplayContent_generateJournalBootFile_UT_Param(4)
-                                                                                                      , DisplayContent_generateJournalBootFile_UT_Param(5)
-                                                                                                      , DisplayContent_generateJournalBootFile_UT_Param(6)
-                                                                                                      , DisplayContent_generateJournalBootFile_UT_Param(7)
-                                                                                                     ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateJournalBootFile_UT, ::testing::Values(DisplayContent_generateJournalBootFile_UT_Param(0)
+                                                                                                     , DisplayContent_generateJournalBootFile_UT_Param(1)
+                                                                                                     , DisplayContent_generateJournalBootFile_UT_Param(2)
+                                                                                                     , DisplayContent_generateJournalBootFile_UT_Param(3)
+                                                                                                     , DisplayContent_generateJournalBootFile_UT_Param(4)
+                                                                                                     , DisplayContent_generateJournalBootFile_UT_Param(5)
+                                                                                                     , DisplayContent_generateJournalBootFile_UT_Param(6)
+                                                                                                     , DisplayContent_generateJournalBootFile_UT_Param(7)
+                                                                                                    ));
 
 TEST_P(DisplayContent_generateJournalBootFile_UT, DisplayContent_generateJournalBootFile_UT)
 {
@@ -802,16 +803,16 @@ class DisplayContent_slot_BtnSelected_UT : public ::testing::TestWithParam<Displ
 };
 
 char *slot_BtnSelected_ModelIndex_data = "";
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_slot_BtnSelected_UT, ::testing::Values(DisplayContent_slot_BtnSelected_UT_Param(0)
-                                                                                               , DisplayContent_slot_BtnSelected_UT_Param(1)
-                                                                                               , DisplayContent_slot_BtnSelected_UT_Param(2)
-                                                                                               , DisplayContent_slot_BtnSelected_UT_Param(3)
-                                                                                               , DisplayContent_slot_BtnSelected_UT_Param(4)
-                                                                                               , DisplayContent_slot_BtnSelected_UT_Param(5)
-                                                                                               , DisplayContent_slot_BtnSelected_UT_Param(6)
-                                                                                               , DisplayContent_slot_BtnSelected_UT_Param(7)
-                                                                                               , DisplayContent_slot_BtnSelected_UT_Param(8)
-                                                                                              ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_BtnSelected_UT, ::testing::Values(DisplayContent_slot_BtnSelected_UT_Param(0)
+                                                                                              , DisplayContent_slot_BtnSelected_UT_Param(1)
+                                                                                              , DisplayContent_slot_BtnSelected_UT_Param(2)
+                                                                                              , DisplayContent_slot_BtnSelected_UT_Param(3)
+                                                                                              , DisplayContent_slot_BtnSelected_UT_Param(4)
+                                                                                              , DisplayContent_slot_BtnSelected_UT_Param(5)
+                                                                                              , DisplayContent_slot_BtnSelected_UT_Param(6)
+                                                                                              , DisplayContent_slot_BtnSelected_UT_Param(7)
+                                                                                              , DisplayContent_slot_BtnSelected_UT_Param(8)
+                                                                                             ));
 QVariant slot_BtnSelected_ModelIndex_data_Func(void *obj, int arole)
 {
     return QString(slot_BtnSelected_ModelIndex_data);
@@ -894,17 +895,17 @@ class DisplayContent_slot_logCatelogueClicked_UT : public ::testing::TestWithPar
 };
 
 QString slot_logCatelogueClicked_ModelIndex_data = "";
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_slot_logCatelogueClicked_UT, ::testing::Values(DisplayContent_slot_logCatelogueClicked_UT_Param(0)
-                                                                                                       , DisplayContent_slot_logCatelogueClicked_UT_Param(1)
-                                                                                                       , DisplayContent_slot_logCatelogueClicked_UT_Param(2)
-                                                                                                       , DisplayContent_slot_logCatelogueClicked_UT_Param(3)
-                                                                                                       , DisplayContent_slot_logCatelogueClicked_UT_Param(4)
-                                                                                                       , DisplayContent_slot_logCatelogueClicked_UT_Param(5)
-                                                                                                       , DisplayContent_slot_logCatelogueClicked_UT_Param(6)
-                                                                                                       , DisplayContent_slot_logCatelogueClicked_UT_Param(7)
-                                                                                                       , DisplayContent_slot_logCatelogueClicked_UT_Param(8)
-                                                                                                       , DisplayContent_slot_logCatelogueClicked_UT_Param(9)
-                                                                                                      ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_logCatelogueClicked_UT, ::testing::Values(DisplayContent_slot_logCatelogueClicked_UT_Param(0)
+                                                                                                      , DisplayContent_slot_logCatelogueClicked_UT_Param(1)
+                                                                                                      , DisplayContent_slot_logCatelogueClicked_UT_Param(2)
+                                                                                                      , DisplayContent_slot_logCatelogueClicked_UT_Param(3)
+                                                                                                      , DisplayContent_slot_logCatelogueClicked_UT_Param(4)
+                                                                                                      , DisplayContent_slot_logCatelogueClicked_UT_Param(5)
+                                                                                                      , DisplayContent_slot_logCatelogueClicked_UT_Param(6)
+                                                                                                      , DisplayContent_slot_logCatelogueClicked_UT_Param(7)
+                                                                                                      , DisplayContent_slot_logCatelogueClicked_UT_Param(8)
+                                                                                                      , DisplayContent_slot_logCatelogueClicked_UT_Param(9)
+                                                                                                     ));
 QVariant slot_logCatelogueClicked_ModelIndex_data_Func(void *obj, int arole)
 {
     return QString(slot_logCatelogueClicked_ModelIndex_data);
@@ -981,7 +982,7 @@ TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelo
 //};
 
 
-//INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_slot_exportClicked_UT, ::testing::Values(DisplayContent_slot_exportClicked_UT_Param(0)
+//INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_exportClicked_UT, ::testing::Values(DisplayContent_slot_exportClicked_UT_Param(0)
 //                                                                                                 , DisplayContent_slot_exportClicked_UT_Param(1)
 //                                                                                                 , DisplayContent_slot_exportClicked_UT_Param(2)
 //                                                                                                 , DisplayContent_slot_exportClicked_UT_Param(3)
@@ -1187,23 +1188,23 @@ class DisplayContent_slot_journalData_UT : public ::testing::TestWithParam<Displ
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_slot_journalData_UT, ::testing::Values(DisplayContent_slot_journalData_UT_Param(JOURNAL, true, true, true)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(JOURNAL, true, true, false)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(JOURNAL, true, false, true)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(JOURNAL, true, false, false)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(JOURNAL, false, true, true)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(JOURNAL, false, true, false)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(JOURNAL, false, false, true)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(JOURNAL, false, false, false)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(NONE, true, true, true)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(NONE, true, true, false)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(NONE, true, false, true)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(NONE, true, false, false)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(NONE, false, true, true)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(NONE, false, true, false)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(NONE, false, false, true)
-                                                                                               , DisplayContent_slot_journalData_UT_Param(NONE, false, false, false)
-                                                                                              ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_journalData_UT, ::testing::Values(DisplayContent_slot_journalData_UT_Param(JOURNAL, true, true, true)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(JOURNAL, true, true, false)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(JOURNAL, true, false, true)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(JOURNAL, true, false, false)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(JOURNAL, false, true, true)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(JOURNAL, false, true, false)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(JOURNAL, false, false, true)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(JOURNAL, false, false, false)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(NONE, true, true, true)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(NONE, true, true, false)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(NONE, true, false, true)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(NONE, true, false, false)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(NONE, false, true, true)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(NONE, false, true, false)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(NONE, false, false, true)
+                                                                                              , DisplayContent_slot_journalData_UT_Param(NONE, false, false, false)
+                                                                                             ));
 
 
 TEST_P(DisplayContent_slot_journalData_UT, DisplayContent_slot_journalData_UT_001)
@@ -1258,23 +1259,23 @@ class DisplayContent_slot_journalBootData_UT : public ::testing::TestWithParam<D
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_slot_journalBootData_UT, ::testing::Values(DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, true, true, true)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, true, true, false)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, true, false, true)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, true, false, false)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, false, true, true)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, false, true, false)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, false, false, true)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, false, false, false)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(NONE, true, true, true)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(NONE, true, true, false)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(NONE, true, false, true)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(NONE, true, false, false)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(NONE, false, true, true)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(NONE, false, true, false)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(NONE, false, false, true)
-                                                                                                   , DisplayContent_slot_journalBootData_UT_Param(NONE, false, false, false)
-                                                                                                  ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_journalBootData_UT, ::testing::Values(DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, true, true, true)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, true, true, false)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, true, false, true)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, true, false, false)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, false, true, true)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, false, true, false)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, false, false, true)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(BOOT_KLU, false, false, false)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(NONE, true, true, true)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(NONE, true, true, false)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(NONE, true, false, true)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(NONE, true, false, false)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(NONE, false, true, true)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(NONE, false, true, false)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(NONE, false, false, true)
+                                                                                                  , DisplayContent_slot_journalBootData_UT_Param(NONE, false, false, false)
+                                                                                                 ));
 
 
 TEST_P(DisplayContent_slot_journalBootData_UT, DisplayContent_slot_journalBootData_UT_001)
@@ -1386,31 +1387,31 @@ int DisplayContent_slot_vScrollValueChanged_treeView_singleRowHeight_Func(void *
     return DisplayContent_slot_vScrollValueChanged_treeView_singleRowHeight;
 }
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_slot_vScrollValueChanged_UT, ::testing::Values(DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, false, true, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, false, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, true, false, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, true, true, false, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, true, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, true, true, true, false)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, false, true, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, false, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, true, false, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, true, true, false, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, true, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, true, true, true, false)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, false, true, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, false, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, true, false, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, true, true, false, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, true, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, true, true, true, false)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, false, true, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, false, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, true, false, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, true, true, false, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, true, true, true, true)
-                                                                                                       , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, true, true, true, false)
-                                                                                                      ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_vScrollValueChanged_UT, ::testing::Values(DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, false, true, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, false, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, true, false, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, true, true, false, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, true, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(JOURNAL, true, true, true, true, false)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, false, true, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, false, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, true, false, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, true, true, false, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, true, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(BOOT_KLU, true, true, true, true, false)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, false, true, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, false, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, true, false, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, true, true, false, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, true, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(APP, true, true, true, true, false)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, false, true, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, false, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, true, false, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, true, true, false, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, true, true, true, true)
+                                                                                                      , DisplayContent_slot_vScrollValueChanged_UT_Param(KERN, true, true, true, true, false)
+                                                                                                     ));
 
 
 TEST_P(DisplayContent_slot_vScrollValueChanged_UT, DisplayContent_slot_vScrollValueChanged_UT_001)
@@ -1476,35 +1477,35 @@ class DisplayContent_slot_searchResult_UT : public ::testing::TestWithParam<Disp
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_slot_searchResult_UT, ::testing::Values(DisplayContent_slot_searchResult_UT_Param(JOURNAL, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(JOURNAL, false, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(JOURNAL, true, false)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(NONE, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(BOOT_KLU, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(BOOT_KLU, false, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(BOOT_KLU, true, false)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(KERN, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(KERN, false, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(KERN, true, false)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(BOOT, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(BOOT, false, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(BOOT, true, false)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(XORG, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(XORG, false, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(XORG, true, false)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(DPKG, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(DPKG, false, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(DPKG, true, false)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(APP, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(APP, false, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(APP, true, false)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(Normal, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(Normal, false, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(Normal, true, false)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(Kwin, true, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(Kwin, false, true)
-                                                                                                , DisplayContent_slot_searchResult_UT_Param(Kwin, true, false)
-                                                                                               ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_searchResult_UT, ::testing::Values(DisplayContent_slot_searchResult_UT_Param(JOURNAL, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(JOURNAL, false, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(JOURNAL, true, false)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(NONE, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(BOOT_KLU, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(BOOT_KLU, false, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(BOOT_KLU, true, false)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(KERN, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(KERN, false, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(KERN, true, false)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(BOOT, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(BOOT, false, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(BOOT, true, false)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(XORG, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(XORG, false, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(XORG, true, false)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(DPKG, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(DPKG, false, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(DPKG, true, false)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(APP, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(APP, false, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(APP, true, false)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(Normal, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(Normal, false, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(Normal, true, false)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(Kwin, true, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(Kwin, false, true)
+                                                                                               , DisplayContent_slot_searchResult_UT_Param(Kwin, true, false)
+                                                                                              ));
 
 
 TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_001)
@@ -1652,10 +1653,10 @@ class DisplayContent_parseListToModel_DPKG_UT : public ::testing::TestWithParam<
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_parseListToModel_DPKG_UT, ::testing::Values(DisplayContent_parseListToModel_DPKG_UT_Param(true, true)
-                                                                                                    , DisplayContent_parseListToModel_DPKG_UT_Param(true, false)
-                                                                                                    , DisplayContent_parseListToModel_DPKG_UT_Param(false, false)
-                                                                                                   ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_DPKG_UT, ::testing::Values(DisplayContent_parseListToModel_DPKG_UT_Param(true, true)
+                                                                                                   , DisplayContent_parseListToModel_DPKG_UT_Param(true, false)
+                                                                                                   , DisplayContent_parseListToModel_DPKG_UT_Param(false, false)
+                                                                                                  ));
 
 
 TEST_P(DisplayContent_parseListToModel_DPKG_UT, DisplayContent_parseListToModel_DPKG_UT)
@@ -1698,10 +1699,10 @@ class DisplayContent_parseListToModel_BOOT_UT : public ::testing::TestWithParam<
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_parseListToModel_BOOT_UT, ::testing::Values(DisplayContent_parseListToModel_BOOT_UT_Param(true, true)
-                                                                                                    , DisplayContent_parseListToModel_BOOT_UT_Param(true, false)
-                                                                                                    , DisplayContent_parseListToModel_BOOT_UT_Param(false, false)
-                                                                                                   ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_BOOT_UT, ::testing::Values(DisplayContent_parseListToModel_BOOT_UT_Param(true, true)
+                                                                                                   , DisplayContent_parseListToModel_BOOT_UT_Param(true, false)
+                                                                                                   , DisplayContent_parseListToModel_BOOT_UT_Param(false, false)
+                                                                                                  ));
 
 
 TEST_P(DisplayContent_parseListToModel_BOOT_UT, DisplayContent_parseListToModel_BOOT_UT)
@@ -1744,10 +1745,10 @@ class DisplayContent_parseListToModel_APP_UT : public ::testing::TestWithParam<D
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_parseListToModel_APP_UT, ::testing::Values(DisplayContent_parseListToModel_APP_UT_Param(true, true)
-                                                                                                   , DisplayContent_parseListToModel_APP_UT_Param(true, false)
-                                                                                                   , DisplayContent_parseListToModel_APP_UT_Param(false, false)
-                                                                                                  ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_APP_UT, ::testing::Values(DisplayContent_parseListToModel_APP_UT_Param(true, true)
+                                                                                                  , DisplayContent_parseListToModel_APP_UT_Param(true, false)
+                                                                                                  , DisplayContent_parseListToModel_APP_UT_Param(false, false)
+                                                                                                 ));
 
 
 TEST_P(DisplayContent_parseListToModel_APP_UT, DisplayContent_parseListToModel_APP_UT)
@@ -1792,10 +1793,10 @@ class DisplayContent_parseListToModel_XORG_UT : public ::testing::TestWithParam<
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_parseListToModel_XORG_UT, ::testing::Values(DisplayContent_parseListToModel_XORG_UT_Param(true, true)
-                                                                                                    , DisplayContent_parseListToModel_XORG_UT_Param(true, false)
-                                                                                                    , DisplayContent_parseListToModel_XORG_UT_Param(false, false)
-                                                                                                   ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_XORG_UT, ::testing::Values(DisplayContent_parseListToModel_XORG_UT_Param(true, true)
+                                                                                                   , DisplayContent_parseListToModel_XORG_UT_Param(true, false)
+                                                                                                   , DisplayContent_parseListToModel_XORG_UT_Param(false, false)
+                                                                                                  ));
 
 
 TEST_P(DisplayContent_parseListToModel_XORG_UT, DisplayContent_parseListToModel_XORG_UT)
@@ -1838,10 +1839,10 @@ class DisplayContent_parseListToModel_NORMAL_UT : public ::testing::TestWithPara
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_parseListToModel_NORMAL_UT, ::testing::Values(DisplayContent_parseListToModel_NORMAL_UT_Param(true, true)
-                                                                                                      , DisplayContent_parseListToModel_NORMAL_UT_Param(true, false)
-                                                                                                      , DisplayContent_parseListToModel_NORMAL_UT_Param(false, false)
-                                                                                                     ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_NORMAL_UT, ::testing::Values(DisplayContent_parseListToModel_NORMAL_UT_Param(true, true)
+                                                                                                     , DisplayContent_parseListToModel_NORMAL_UT_Param(true, false)
+                                                                                                     , DisplayContent_parseListToModel_NORMAL_UT_Param(false, false)
+                                                                                                    ));
 
 
 TEST_P(DisplayContent_parseListToModel_NORMAL_UT, DisplayContent_parseListToModel_NORMAL_UT)
@@ -1886,10 +1887,10 @@ class DisplayContent_parseListToModel_KWIN_UT : public ::testing::TestWithParam<
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_parseListToModel_KWIN_UT, ::testing::Values(DisplayContent_parseListToModel_KWIN_UT_Param(true, true)
-                                                                                                    , DisplayContent_parseListToModel_KWIN_UT_Param(true, false)
-                                                                                                    , DisplayContent_parseListToModel_KWIN_UT_Param(false, false)
-                                                                                                   ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_KWIN_UT, ::testing::Values(DisplayContent_parseListToModel_KWIN_UT_Param(true, true)
+                                                                                                   , DisplayContent_parseListToModel_KWIN_UT_Param(true, false)
+                                                                                                   , DisplayContent_parseListToModel_KWIN_UT_Param(false, false)
+                                                                                                  ));
 
 
 TEST_P(DisplayContent_parseListToModel_KWIN_UT, DisplayContent_parseListToModel_KWIN_UT)
@@ -1950,15 +1951,15 @@ class DisplayContent_setLoadState_UT : public ::testing::TestWithParam<DisplayCo
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_setLoadState_UT, ::testing::Values(DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_LOADING, true, true, true, true, true, false, false, false)
-                                                                                           , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_COMPLETE, true, true, true, true, false, false, false, true)
-                                                                                           , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_LOADING_K, true, true, true, true, false, true, false, false)
-                                                                                           , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_NO_SEARCH_RESULT, true, true, true, true, false, false, true, true)
-                                                                                           , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_LOADING, false, false, false, false, true, false, false, false)
-                                                                                           , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_COMPLETE, false, false, false, false, false, false, false, true)
-                                                                                           , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_LOADING_K, false, false, false, false, false, true, false, false)
-                                                                                           , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_NO_SEARCH_RESULT, false, false, false, false, false, false, true, true)
-                                                                                          ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_setLoadState_UT, ::testing::Values(DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_LOADING, true, true, true, true, true, false, false, false)
+                                                                                          , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_COMPLETE, true, true, true, true, false, false, false, true)
+                                                                                          , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_LOADING_K, true, true, true, true, false, true, false, false)
+                                                                                          , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_NO_SEARCH_RESULT, true, true, true, true, false, false, true, true)
+                                                                                          , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_LOADING, false, false, false, false, true, false, false, false)
+                                                                                          , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_COMPLETE, false, false, false, false, false, false, false, true)
+                                                                                          , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_LOADING_K, false, false, false, false, false, true, false, false)
+                                                                                          , DisplayContent_setLoadState_UT_Param(DisplayContent::DATA_NO_SEARCH_RESULT, false, false, false, false, false, false, true, true)
+                                                                                         ));
 
 
 TEST_P(DisplayContent_setLoadState_UT, DisplayContent_setLoadState_UT)
@@ -2001,10 +2002,10 @@ class DisplayContent_onExportResult_UT : public ::testing::TestWithParam<Display
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_onExportResult_UT, ::testing::Values(DisplayContent_onExportResult_UT_Param(false, true)
-                                                                                             , DisplayContent_onExportResult_UT_Param(true, true)
-                                                                                             , DisplayContent_onExportResult_UT_Param(true, false)
-                                                                                            ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_onExportResult_UT, ::testing::Values(DisplayContent_onExportResult_UT_Param(false, true)
+                                                                                            , DisplayContent_onExportResult_UT_Param(true, true)
+                                                                                            , DisplayContent_onExportResult_UT_Param(true, false)
+                                                                                           ));
 
 #include "exportprogressdlg.h"
 TEST_P(DisplayContent_onExportResult_UT, DisplayContent_onExportResult_UT)
@@ -2103,10 +2104,10 @@ class DisplayContent_filterBoot_UT : public ::testing::TestWithParam<DisplayCont
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_filterBoot_UT, ::testing::Values(DisplayContent_filterBoot_UT_Param(false, false)
-                                                                                         , DisplayContent_filterBoot_UT_Param(true, true)
-                                                                                         , DisplayContent_filterBoot_UT_Param(true, false)
-                                                                                        ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_filterBoot_UT, ::testing::Values(DisplayContent_filterBoot_UT_Param(false, false)
+                                                                                        , DisplayContent_filterBoot_UT_Param(true, true)
+                                                                                        , DisplayContent_filterBoot_UT_Param(true, false)
+                                                                                       ));
 
 TEST_P(DisplayContent_filterBoot_UT, DisplayContent_filterBoot_UT)
 {
@@ -2151,11 +2152,11 @@ class DisplayContent_filterNomal_UT : public ::testing::TestWithParam<DisplayCon
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_filterNomal_UT, ::testing::Values(DisplayContent_filterNomal_UT_Param(false, false)
-                                                                                          , DisplayContent_filterNomal_UT_Param(true, true)
-                                                                                          , DisplayContent_filterNomal_UT_Param(true, false)
-                                                                                          , DisplayContent_filterNomal_UT_Param(false, true)
-                                                                                         ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_filterNomal_UT, ::testing::Values(DisplayContent_filterNomal_UT_Param(false, false)
+                                                                                         , DisplayContent_filterNomal_UT_Param(true, true)
+                                                                                         , DisplayContent_filterNomal_UT_Param(true, false)
+                                                                                         , DisplayContent_filterNomal_UT_Param(false, true)
+                                                                                        ));
 
 TEST_P(DisplayContent_filterNomal_UT, DisplayContent_filterNomal_UT)
 {
@@ -2212,10 +2213,10 @@ class DisplayContent_parseListToModel_JOURNAL_UT : public ::testing::TestWithPar
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_parseListToModel_JOURNAL_UT, ::testing::Values(DisplayContent_parseListToModel_JOURNAL_UT_Param(true, true)
-                                                                                                       , DisplayContent_parseListToModel_JOURNAL_UT_Param(true, false)
-                                                                                                       , DisplayContent_parseListToModel_JOURNAL_UT_Param(false, false)
-                                                                                                      ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_JOURNAL_UT, ::testing::Values(DisplayContent_parseListToModel_JOURNAL_UT_Param(true, true)
+                                                                                                      , DisplayContent_parseListToModel_JOURNAL_UT_Param(true, false)
+                                                                                                      , DisplayContent_parseListToModel_JOURNAL_UT_Param(false, false)
+                                                                                                     ));
 
 
 TEST_P(DisplayContent_parseListToModel_JOURNAL_UT, DisplayContent_parseListToModel_JOURNAL_UT)
@@ -2261,18 +2262,18 @@ class DisplayContent_getIconByname_UT : public ::testing::TestWithParam<DisplayC
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_getIconByname_UT, ::testing::Values(DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Emergency"), "warning2.svg")
-                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Alert"), "warning3.svg")
-                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Critical"), "warning2.svg")
-                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Error"), "wrong.svg")
-                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Warning"), "warning.svg")
-                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Notice"), "warning.svg")
-                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Info"), "")
-                                                                                            , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Debug"), "")
-                                                                                            , DisplayContent_getIconByname_UT_Param("Warning", "warning.svg")
-                                                                                            , DisplayContent_getIconByname_UT_Param("Debug", "")
-                                                                                            , DisplayContent_getIconByname_UT_Param("Error", "wrong.svg")
-                                                                                           ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_getIconByname_UT, ::testing::Values(DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Emergency"), "warning2.svg")
+                                                                                           , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Alert"), "warning3.svg")
+                                                                                           , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Critical"), "warning2.svg")
+                                                                                           , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Error"), "wrong.svg")
+                                                                                           , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Warning"), "warning.svg")
+                                                                                           , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Notice"), "warning.svg")
+                                                                                           , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Info"), "")
+                                                                                           , DisplayContent_getIconByname_UT_Param(DApplication::translate("Level", "Debug"), "")
+                                                                                           , DisplayContent_getIconByname_UT_Param("Warning", "warning.svg")
+                                                                                           , DisplayContent_getIconByname_UT_Param("Debug", "")
+                                                                                           , DisplayContent_getIconByname_UT_Param("Error", "wrong.svg")
+                                                                                          ));
 
 
 TEST_P(DisplayContent_getIconByname_UT, DisplayContent_getIconByname_UT)
@@ -2317,9 +2318,9 @@ class DisplayContent_insertApplicationTable_UT : public ::testing::TestWithParam
 };
 
 
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_insertApplicationTable_UT, ::testing::Values(DisplayContent_insertApplicationTable_UT_Param(true),
-                                                                                                     DisplayContent_insertApplicationTable_UT_Param(false)
-                                                                                                    ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_insertApplicationTable_UT, ::testing::Values(DisplayContent_insertApplicationTable_UT_Param(true),
+                                                                                                    DisplayContent_insertApplicationTable_UT_Param(false)
+                                                                                                   ));
 
 TEST_P(DisplayContent_insertApplicationTable_UT, DisplayContent_insertApplicationTable_UT_001)
 {
@@ -2369,17 +2370,17 @@ class DisplayContent_slot_refreshClicked_UT : public ::testing::TestWithParam<Di
 };
 
 static QString slot_refreshClicked_ModelIndex_data = "";
-INSTANTIATE_TEST_SUITE_P(DisplayContent, DisplayContent_slot_refreshClicked_UT, ::testing::Values(DisplayContent_slot_refreshClicked_UT_Param(0)
-                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(1)
-                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(2)
-                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(3)
-                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(4)
-                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(5)
-                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(6)
-                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(7)
-                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(8)
-                                                                                                  , DisplayContent_slot_refreshClicked_UT_Param(9)
-                                                                                                 ));
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_refreshClicked_UT, ::testing::Values(DisplayContent_slot_refreshClicked_UT_Param(0)
+                                                                                                 , DisplayContent_slot_refreshClicked_UT_Param(1)
+                                                                                                 , DisplayContent_slot_refreshClicked_UT_Param(2)
+                                                                                                 , DisplayContent_slot_refreshClicked_UT_Param(3)
+                                                                                                 , DisplayContent_slot_refreshClicked_UT_Param(4)
+                                                                                                 , DisplayContent_slot_refreshClicked_UT_Param(5)
+                                                                                                 , DisplayContent_slot_refreshClicked_UT_Param(6)
+                                                                                                 , DisplayContent_slot_refreshClicked_UT_Param(7)
+                                                                                                 , DisplayContent_slot_refreshClicked_UT_Param(8)
+                                                                                                 , DisplayContent_slot_refreshClicked_UT_Param(9)
+                                                                                                ));
 QVariant slot_refreshClicked_ModelIndex_data_Func(void *obj, int arole)
 {
     return QString(slot_refreshClicked_ModelIndex_data);

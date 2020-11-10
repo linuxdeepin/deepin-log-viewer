@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include "logauththread.h"
 
 #include <QDate>
@@ -69,7 +69,7 @@ class LogAuthThread_stopProccess_UT : public ::testing::TestWithParam<LogAuthThr
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogApplicationParseThread, LogAuthThread_stopProccess_UT, ::testing::Values(LogAuthThread_stopProccess_UT_Param(false, true)
+INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogAuthThread_stopProccess_UT, ::testing::Values(LogAuthThread_stopProccess_UT_Param(false, true)
                                                                                                      , LogAuthThread_stopProccess_UT_Param(true, true)
                                                                                                      , LogAuthThread_stopProccess_UT_Param(true, false)
                                                                                                     ));
@@ -104,7 +104,7 @@ void LogAuthThread_run_UT_LogAuthThread_handleKern(void *obj)
 {
     qDebug() << "LogAuthThread_run_UT_LogAuthThread_handleKern---";
 }
-INSTANTIATE_TEST_SUITE_P(LogApplicationParseThread, LogAuthThread_run_UT, ::testing::Values(LogAuthThread_run_UT_Param(KERN)
+INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogAuthThread_run_UT, ::testing::Values(LogAuthThread_run_UT_Param(KERN)
                                                                                             , LogAuthThread_run_UT_Param(BOOT)
                                                                                             , LogAuthThread_run_UT_Param(Kwin)
                                                                                             , LogAuthThread_run_UT_Param(XORG)

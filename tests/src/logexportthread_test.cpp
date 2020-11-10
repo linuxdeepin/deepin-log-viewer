@@ -18,7 +18,7 @@
 #include "structdef.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 #include <DApplication>
 #include <DStandardItem>
@@ -847,7 +847,7 @@ class LogExportThread_exportToTxt_JOURNAL_UT : public ::testing::TestWithParam<L
 };
 
 
-INSTANTIATE_TEST_SUITE_P(LogApplication, LogExportThread_exportToTxt_JOURNAL_UT, ::testing::Values(LogExportThread_exportToTxt_JOURNAL_UT_Param(false, KERN, false),
+INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToTxt_JOURNAL_UT, ::testing::Values(LogExportThread_exportToTxt_JOURNAL_UT_Param(false, KERN, false),
                                                                                                    LogExportThread_exportToTxt_JOURNAL_UT_Param(true, JOURNAL, true),
                                                                                                    LogExportThread_exportToTxt_JOURNAL_UT_Param(true, KERN, true),
                                                                                                    LogExportThread_exportToTxt_JOURNAL_UT_Param(true, APP, true)
@@ -1328,7 +1328,7 @@ class LogExportThread_exportToDoc_JOURNAL_UT : public ::testing::TestWithParam<L
 };
 
 
-INSTANTIATE_TEST_SUITE_P(LogApplication, LogExportThread_exportToDoc_JOURNAL_UT, ::testing::Values(LogExportThread_exportToDoc_JOURNAL_UT_Param(false, KERN, false),
+INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToDoc_JOURNAL_UT, ::testing::Values(LogExportThread_exportToDoc_JOURNAL_UT_Param(false, KERN, false),
                                                                                                    LogExportThread_exportToDoc_JOURNAL_UT_Param(true, JOURNAL, true),
                                                                                                    LogExportThread_exportToDoc_JOURNAL_UT_Param(true, KERN, true),
                                                                                                    LogExportThread_exportToDoc_JOURNAL_UT_Param(true, APP, true)
@@ -1807,7 +1807,7 @@ class LogExportThread_exportToHtml_JOURNAL_UT : public ::testing::TestWithParam<
 };
 
 
-INSTANTIATE_TEST_SUITE_P(LogApplication, LogExportThread_exportToHtml_JOURNAL_UT, ::testing::Values(LogExportThread_exportToHtml_JOURNAL_UT_Param(false, KERN, false),
+INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToHtml_JOURNAL_UT, ::testing::Values(LogExportThread_exportToHtml_JOURNAL_UT_Param(false, KERN, false),
                                                                                                     LogExportThread_exportToHtml_JOURNAL_UT_Param(true, JOURNAL, true),
                                                                                                     LogExportThread_exportToHtml_JOURNAL_UT_Param(true, KERN, true),
                                                                                                     LogExportThread_exportToHtml_JOURNAL_UT_Param(true, APP, true)
@@ -2287,7 +2287,7 @@ class LogExportThread_exportToXls_JOURNAL_UT : public ::testing::TestWithParam<L
 };
 
 
-INSTANTIATE_TEST_SUITE_P(LogApplication, LogExportThread_exportToXls_JOURNAL_UT, ::testing::Values(LogExportThread_exportToXls_JOURNAL_UT_Param(false, KERN, false),
+INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToXls_JOURNAL_UT, ::testing::Values(LogExportThread_exportToXls_JOURNAL_UT_Param(false, KERN, false),
                                                                                                    LogExportThread_exportToXls_JOURNAL_UT_Param(true, JOURNAL, true),
                                                                                                    LogExportThread_exportToXls_JOURNAL_UT_Param(true, KERN, true),
                                                                                                    LogExportThread_exportToXls_JOURNAL_UT_Param(true, APP, true)
@@ -2665,7 +2665,7 @@ class LogExportThread_strTranslate_UT : public ::testing::TestWithParam<LogExpor
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogExportThread, LogExportThread_strTranslate_UT, ::testing::Values(LogExportThread_strTranslate_UT_Param("Emergency", Dtk::Widget::DApplication::translate("Level", "Emergency")),
+INSTANTIATE_TEST_CASE_P(LogExportThread, LogExportThread_strTranslate_UT, ::testing::Values(LogExportThread_strTranslate_UT_Param("Emergency", Dtk::Widget::DApplication::translate("Level", "Emergency")),
                                                                                              LogExportThread_strTranslate_UT_Param("Alert", Dtk::Widget::DApplication::translate("Level", "Alert")),
                                                                                              LogExportThread_strTranslate_UT_Param("Critical", Dtk::Widget::DApplication::translate("Level", "Critical")),
                                                                                              LogExportThread_strTranslate_UT_Param("Error", Dtk::Widget::DApplication::translate("Level", "Error")),
@@ -2700,7 +2700,7 @@ class LogExportThread_run_UT : public ::testing::TestWithParam<LogExportThread_r
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogExportThread, LogExportThread_run_UT, ::testing::Values(LogExportThread_run_UT_Param(LogExportThread::HtmlModel)
+INSTANTIATE_TEST_CASE_P(LogExportThread, LogExportThread_run_UT, ::testing::Values(LogExportThread_run_UT_Param(LogExportThread::HtmlModel)
                                                                                     , LogExportThread_run_UT_Param(LogExportThread::HtmlJOURNAL)
                                                                                     , LogExportThread_run_UT_Param(LogExportThread::HtmlAPP)
                                                                                     , LogExportThread_run_UT_Param(LogExportThread::HtmlDPKG)

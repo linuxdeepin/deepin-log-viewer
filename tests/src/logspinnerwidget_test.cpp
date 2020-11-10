@@ -17,7 +17,7 @@
 #include "logspinnerwidget.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 #include <QDebug>
 TEST(LogSpinnerWidget_Constructor_UT, LogSpinnerWidget_Constructor_UT_001)

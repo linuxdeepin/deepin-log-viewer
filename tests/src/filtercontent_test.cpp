@@ -19,7 +19,7 @@
 #include "logperiodbutton.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include <QDebug>
 #include <QKeyEvent>
 
@@ -63,8 +63,8 @@ class FilterContent_shortCutExport_UT : public ::testing::TestWithParam<FilterCo
 };
 
 
-INSTANTIATE_TEST_SUITE_P(FilterContent, FilterContent_shortCutExport_UT, ::testing::Values(FilterContent_shortCutExport_UT_Param(true),
-                                                                                           FilterContent_shortCutExport_UT_Param(false)));
+INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_shortCutExport_UT, ::testing::Values(FilterContent_shortCutExport_UT_Param(true),
+                                                                                          FilterContent_shortCutExport_UT_Param(false)));
 
 TEST_P(FilterContent_shortCutExport_UT, FilterContent_shortCutExport_UT)
 {
@@ -114,8 +114,8 @@ class FilterContent_setSelectorVisible_UT : public ::testing::TestWithParam<Filt
 };
 
 
-INSTANTIATE_TEST_SUITE_P(FilterContent, FilterContent_setSelectorVisible_UT, ::testing::Values(FilterContent_setSelectorVisible_UT_Param(true, true, true, true, true, true),
-                                                                                               FilterContent_setSelectorVisible_UT_Param(false, false, false, false, false, false)));
+INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_setSelectorVisible_UT, ::testing::Values(FilterContent_setSelectorVisible_UT_Param(true, true, true, true, true, true),
+                                                                                              FilterContent_setSelectorVisible_UT_Param(false, false, false, false, false, false)));
 
 TEST_P(FilterContent_setSelectorVisible_UT, FilterContent_setSelectorVisible_UT)
 {
@@ -151,10 +151,10 @@ class FilterContent_setSelection_UT : public ::testing::TestWithParam<FilterCont
 };
 
 
-INSTANTIATE_TEST_SUITE_P(FilterContent, FilterContent_setSelection_UT, ::testing::Values(FilterContent_setSelection_UT_Param(true, true, true, true, true),
-                                                                                         FilterContent_setSelection_UT_Param(false, false, false, false, false),
-                                                                                         FilterContent_setSelection_UT_Param(true, true, true, true, false)
-                                                                                        ));
+INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_setSelection_UT, ::testing::Values(FilterContent_setSelection_UT_Param(true, true, true, true, true),
+                                                                                        FilterContent_setSelection_UT_Param(false, false, false, false, false),
+                                                                                        FilterContent_setSelection_UT_Param(true, true, true, true, false)
+                                                                                       ));
 
 TEST_P(FilterContent_setSelection_UT, FilterContent_setSelection_UT)
 {
@@ -207,20 +207,20 @@ class FilterContent_eventFilter_UT : public ::testing::TestWithParam<FilterConte
 };
 
 
-INSTANTIATE_TEST_SUITE_P(FilterContent, FilterContent_eventFilter_UT, ::testing::Values(FilterContent_eventFilter_UT_Param(false, false, INVALID, INVALID),
-                                                                                        FilterContent_eventFilter_UT_Param(true, true, ALL, ONE_DAY),
-                                                                                        FilterContent_eventFilter_UT_Param(true, false, ALL, THREE_MONTHS),
-                                                                                        FilterContent_eventFilter_UT_Param(true, true, ONE_DAY, THREE_DAYS),
-                                                                                        FilterContent_eventFilter_UT_Param(true, false, ONE_DAY, ALL),
-                                                                                        FilterContent_eventFilter_UT_Param(true, true, THREE_DAYS, ONE_WEEK),
-                                                                                        FilterContent_eventFilter_UT_Param(true, false, THREE_DAYS, ONE_DAY),
-                                                                                        FilterContent_eventFilter_UT_Param(true, true, ONE_WEEK, ONE_MONTH),
-                                                                                        FilterContent_eventFilter_UT_Param(true, false, ONE_WEEK, THREE_DAYS),
-                                                                                        FilterContent_eventFilter_UT_Param(true, true, ONE_MONTH, THREE_MONTHS),
-                                                                                        FilterContent_eventFilter_UT_Param(true, false, ONE_MONTH, ONE_WEEK),
-                                                                                        FilterContent_eventFilter_UT_Param(true, true, THREE_MONTHS, ALL),
-                                                                                        FilterContent_eventFilter_UT_Param(true, false, THREE_MONTHS, ONE_MONTH)
-                                                                                       ));
+INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_eventFilter_UT, ::testing::Values(FilterContent_eventFilter_UT_Param(false, false, INVALID, INVALID),
+                                                                                       FilterContent_eventFilter_UT_Param(true, true, ALL, ONE_DAY),
+                                                                                       FilterContent_eventFilter_UT_Param(true, false, ALL, THREE_MONTHS),
+                                                                                       FilterContent_eventFilter_UT_Param(true, true, ONE_DAY, THREE_DAYS),
+                                                                                       FilterContent_eventFilter_UT_Param(true, false, ONE_DAY, ALL),
+                                                                                       FilterContent_eventFilter_UT_Param(true, true, THREE_DAYS, ONE_WEEK),
+                                                                                       FilterContent_eventFilter_UT_Param(true, false, THREE_DAYS, ONE_DAY),
+                                                                                       FilterContent_eventFilter_UT_Param(true, true, ONE_WEEK, ONE_MONTH),
+                                                                                       FilterContent_eventFilter_UT_Param(true, false, ONE_WEEK, THREE_DAYS),
+                                                                                       FilterContent_eventFilter_UT_Param(true, true, ONE_MONTH, THREE_MONTHS),
+                                                                                       FilterContent_eventFilter_UT_Param(true, false, ONE_MONTH, ONE_WEEK),
+                                                                                       FilterContent_eventFilter_UT_Param(true, true, THREE_MONTHS, ALL),
+                                                                                       FilterContent_eventFilter_UT_Param(true, false, THREE_MONTHS, ONE_MONTH)
+                                                                                      ));
 LogPeriodButton *getLogPeriodButtonByName(int iName, FilterContent *p)
 {
     LogPeriodButton *w = nullptr;
@@ -308,9 +308,9 @@ class FilterContent_updateDataState_UT : public ::testing::TestWithParam<FilterC
 };
 
 
-INSTANTIATE_TEST_SUITE_P(FilterContent, FilterContent_updateDataState_UT, ::testing::Values(FilterContent_updateDataState_UT_Param(true),
-                                                                                            FilterContent_updateDataState_UT_Param(false)
-                                                                                           ));
+INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_updateDataState_UT, ::testing::Values(FilterContent_updateDataState_UT_Param(true),
+                                                                                           FilterContent_updateDataState_UT_Param(false)
+                                                                                          ));
 
 TEST_P(FilterContent_updateDataState_UT, FilterContent_updateDataState_UT)
 {
@@ -353,17 +353,17 @@ class FilterContent_slot_logCatelogueClicked_UT : public ::testing::TestWithPara
 };
 
 static QString FilterContent_slot_logCatelogueClicked_ModelIndex_data = "";
-INSTANTIATE_TEST_SUITE_P(FilterContent, FilterContent_slot_logCatelogueClicked_UT, ::testing::Values(FilterContent_slot_logCatelogueClicked_UT_Param(0),
-                                                                                                     FilterContent_slot_logCatelogueClicked_UT_Param(1),
-                                                                                                     FilterContent_slot_logCatelogueClicked_UT_Param(2),
-                                                                                                     FilterContent_slot_logCatelogueClicked_UT_Param(3),
-                                                                                                     FilterContent_slot_logCatelogueClicked_UT_Param(4),
-                                                                                                     FilterContent_slot_logCatelogueClicked_UT_Param(5),
-                                                                                                     FilterContent_slot_logCatelogueClicked_UT_Param(6),
-                                                                                                     FilterContent_slot_logCatelogueClicked_UT_Param(7),
-                                                                                                     FilterContent_slot_logCatelogueClicked_UT_Param(8),
-                                                                                                     FilterContent_slot_logCatelogueClicked_UT_Param(9)
-                                                                                                    ));
+INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_slot_logCatelogueClicked_UT, ::testing::Values(FilterContent_slot_logCatelogueClicked_UT_Param(0),
+                                                                                                    FilterContent_slot_logCatelogueClicked_UT_Param(1),
+                                                                                                    FilterContent_slot_logCatelogueClicked_UT_Param(2),
+                                                                                                    FilterContent_slot_logCatelogueClicked_UT_Param(3),
+                                                                                                    FilterContent_slot_logCatelogueClicked_UT_Param(4),
+                                                                                                    FilterContent_slot_logCatelogueClicked_UT_Param(5),
+                                                                                                    FilterContent_slot_logCatelogueClicked_UT_Param(6),
+                                                                                                    FilterContent_slot_logCatelogueClicked_UT_Param(7),
+                                                                                                    FilterContent_slot_logCatelogueClicked_UT_Param(8),
+                                                                                                    FilterContent_slot_logCatelogueClicked_UT_Param(9)
+                                                                                                   ));
 QVariant FilterContent_slot_logCatelogueClicked_ModelIndex_data_Func(void *obj, int arole)
 {
     return QString(FilterContent_slot_logCatelogueClicked_ModelIndex_data);
@@ -430,17 +430,17 @@ class FilterContent_slot_logCatelogueRefresh_UT : public ::testing::TestWithPara
 };
 
 static QString FilterContent_slot_logCatelogueRefresh_ModelIndex_data = "";
-INSTANTIATE_TEST_SUITE_P(FilterContent, FilterContent_slot_logCatelogueRefresh_UT, ::testing::Values(FilterContent_slot_logCatelogueRefresh_UT_Param(0),
-                                                                                                     FilterContent_slot_logCatelogueRefresh_UT_Param(1),
-                                                                                                     FilterContent_slot_logCatelogueRefresh_UT_Param(2),
-                                                                                                     FilterContent_slot_logCatelogueRefresh_UT_Param(3),
-                                                                                                     FilterContent_slot_logCatelogueRefresh_UT_Param(4),
-                                                                                                     FilterContent_slot_logCatelogueRefresh_UT_Param(5),
-                                                                                                     FilterContent_slot_logCatelogueRefresh_UT_Param(6),
-                                                                                                     FilterContent_slot_logCatelogueRefresh_UT_Param(7),
-                                                                                                     FilterContent_slot_logCatelogueRefresh_UT_Param(8),
-                                                                                                     FilterContent_slot_logCatelogueRefresh_UT_Param(9)
-                                                                                                    ));
+INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_slot_logCatelogueRefresh_UT, ::testing::Values(FilterContent_slot_logCatelogueRefresh_UT_Param(0),
+                                                                                                    FilterContent_slot_logCatelogueRefresh_UT_Param(1),
+                                                                                                    FilterContent_slot_logCatelogueRefresh_UT_Param(2),
+                                                                                                    FilterContent_slot_logCatelogueRefresh_UT_Param(3),
+                                                                                                    FilterContent_slot_logCatelogueRefresh_UT_Param(4),
+                                                                                                    FilterContent_slot_logCatelogueRefresh_UT_Param(5),
+                                                                                                    FilterContent_slot_logCatelogueRefresh_UT_Param(6),
+                                                                                                    FilterContent_slot_logCatelogueRefresh_UT_Param(7),
+                                                                                                    FilterContent_slot_logCatelogueRefresh_UT_Param(8),
+                                                                                                    FilterContent_slot_logCatelogueRefresh_UT_Param(9)
+                                                                                                   ));
 QVariant FilterContent_slot_logCatelogueRefresh_ModelIndex_data_Func(void *obj, int arole)
 {
     return QString(FilterContent_slot_logCatelogueRefresh_ModelIndex_data);
@@ -496,8 +496,8 @@ class FilterContent_slot_buttonClicked_UT : public ::testing::TestWithParam<int>
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(FilterContent, FilterContent_slot_buttonClicked_UT, ::testing::Values(ALL, ONE_DAY, THREE_DAYS, ONE_WEEK, ONE_MONTH, THREE_MONTHS, RESET
-                                                                                              ));
+INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_slot_buttonClicked_UT, ::testing::Values(ALL, ONE_DAY, THREE_DAYS, ONE_WEEK, ONE_MONTH, THREE_MONTHS, RESET
+                                                                                             ));
 
 TEST_P(FilterContent_slot_buttonClicked_UT, FilterContent_slot_buttonClicked_UT)
 {

@@ -309,24 +309,25 @@ include_directories( ${DFrameworkDBus_INCLUDE_DIRS})
 
 
 
+find_package(GTest REQUIRED)
+include_directories(${GTEST_INCLUDE_DIRS})
 
 
 
 
 
 
+#include_directories(googletest)
+#include_directories(googletest/googlemock/include)
+#include_directories(googletest/googletest/include)
 
-include_directories(googletest)
-include_directories(googletest/googlemock/include)
-include_directories(googletest/googletest/include)
-
-#GTest & GMock
-add_subdirectory(googletest)
+##GTest & GMock
+#add_subdirectory(googletest)
 
 
 
 FILE(GLOB allTestSource
-    src/*.cpp
+  src/*.cpp
 )
 include_directories(src)
 
@@ -335,7 +336,7 @@ add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${DOCX_CPP_FI
 
 
 
-target_link_libraries(${PROJECT_NAME_TEST}  ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc gmock gmock_main gtest gtest_main)
+target_link_libraries(${PROJECT_NAME_TEST}  ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread)
 
 
 

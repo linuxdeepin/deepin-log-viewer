@@ -17,7 +17,7 @@
 #include "wtmpparse.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 #include <QDebug>
 

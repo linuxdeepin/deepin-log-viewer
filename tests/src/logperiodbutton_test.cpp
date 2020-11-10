@@ -17,7 +17,7 @@
 #include "logperiodbutton.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 #include <QDebug>
 #include <QPaintEvent>
@@ -93,7 +93,7 @@ class LogPeriodButton_focusInEvent_UT : public ::testing::TestWithParam<LogPerio
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogPeriodButton, LogPeriodButton_focusInEvent_UT, ::testing::Values(LogPeriodButton_focusInEvent_UT_Param(Qt::MouseFocusReason)
+INSTANTIATE_TEST_CASE_P(LogPeriodButton, LogPeriodButton_focusInEvent_UT, ::testing::Values(LogPeriodButton_focusInEvent_UT_Param(Qt::MouseFocusReason)
                                                                                              , LogPeriodButton_focusInEvent_UT_Param(Qt::NoFocusReason)
                                                                                             ));
 

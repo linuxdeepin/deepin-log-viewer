@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include "logapplicationhelper.h"
 #include <QDebug>
 
@@ -70,7 +70,7 @@ class LogApplicationHelper_parseField_UT : public ::testing::TestWithParam<LogAp
 };
 
 
-INSTANTIATE_TEST_SUITE_P(LogApplication, LogApplicationHelper_parseField_UT, ::testing::Values(LogApplicationHelper_parseField_UT_Param(false, true, true, true),
+INSTANTIATE_TEST_CASE_P(LogApplication, LogApplicationHelper_parseField_UT, ::testing::Values(LogApplicationHelper_parseField_UT_Param(false, true, true, true),
                                                                                                LogApplicationHelper_parseField_UT_Param(true, true, true, true),
                                                                                                LogApplicationHelper_parseField_UT_Param(true, true, false, true),
                                                                                                LogApplicationHelper_parseField_UT_Param(true, false, false, true)

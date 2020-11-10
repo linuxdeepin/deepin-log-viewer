@@ -17,7 +17,7 @@
 #include "utils.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 #include <QDebug>
 #include <QSize>
@@ -104,7 +104,7 @@ class Utils_isErroCommand_UT : public ::testing::TestWithParam<Utils_isErroComma
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(Utils, Utils_isErroCommand_UT, ::testing::Values(Utils_isErroCommand_UT_Param("权限", Utils::PermissionError)
+INSTANTIATE_TEST_CASE_P(Utils, Utils_isErroCommand_UT, ::testing::Values(Utils_isErroCommand_UT_Param("权限", Utils::PermissionError)
                                                                           , Utils_isErroCommand_UT_Param("permission", Utils::PermissionError)
                                                                           , Utils_isErroCommand_UT_Param("请重试", Utils::RetryError)
                                                                           , Utils_isErroCommand_UT_Param("retry", Utils::RetryError)

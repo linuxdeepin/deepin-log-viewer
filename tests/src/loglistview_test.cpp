@@ -17,7 +17,7 @@
 #include "loglistview.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include <QPainter>
 #include <QDebug>
 #include <QHelpEvent>
@@ -232,7 +232,7 @@ class LogListView_keyPressEvent_UT : public ::testing::TestWithParam<LogListView
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogListView, LogListView_keyPressEvent_UT, ::testing::Values(LogListView_keyPressEvent_UT_Param(Qt::Key_Up)
+INSTANTIATE_TEST_CASE_P(LogListView, LogListView_keyPressEvent_UT, ::testing::Values(LogListView_keyPressEvent_UT_Param(Qt::Key_Up)
                                                                                       , LogListView_keyPressEvent_UT_Param(Qt::Key_Down)
                                                                                       , LogListView_keyPressEvent_UT_Param(Qt::Key_0)));
 
@@ -262,7 +262,7 @@ class LogListView_mousePressEvent_UT : public ::testing::TestWithParam<LogListVi
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogListView, LogListView_mousePressEvent_UT, ::testing::Values(LogListView_mousePressEvent_UT_Param(Qt::RightButton)
+INSTANTIATE_TEST_CASE_P(LogListView, LogListView_mousePressEvent_UT, ::testing::Values(LogListView_mousePressEvent_UT_Param(Qt::RightButton)
                                                                                         , LogListView_mousePressEvent_UT_Param(Qt::NoButton)
                                                                                        ));
 
@@ -291,7 +291,7 @@ class LogListView_focusInEvent_UT : public ::testing::TestWithParam<LogListView_
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogListView, LogListView_focusInEvent_UT, ::testing::Values(LogListView_focusInEvent_UT_Param(Qt::PopupFocusReason)
+INSTANTIATE_TEST_CASE_P(LogListView, LogListView_focusInEvent_UT, ::testing::Values(LogListView_focusInEvent_UT_Param(Qt::PopupFocusReason)
                                                                                      , LogListView_focusInEvent_UT_Param(Qt::ActiveWindowFocusReason)
                                                                                      , LogListView_focusInEvent_UT_Param(Qt::NoFocusReason)
                                                                                     ));

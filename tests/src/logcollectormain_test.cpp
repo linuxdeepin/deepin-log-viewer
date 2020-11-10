@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 #include "logcollectormain.h"
 
 #include <DTitlebar>
@@ -103,7 +103,7 @@ class LogCollectorMain_handleApplicationTabEventNotify_UT : public ::testing::Te
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogCollectorMain, LogCollectorMain_handleApplicationTabEventNotify_UT, ::testing::Values(/*LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_0, "", false, ""),
+INSTANTIATE_TEST_CASE_P(LogCollectorMain, LogCollectorMain_handleApplicationTabEventNotify_UT, ::testing::Values(/*LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_0, "", false, ""),
                                                                                                                   LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "", false, ""),
                                                                                                                                                                                                                                     */
                              LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "titlebar", true, ""),

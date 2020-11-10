@@ -17,7 +17,7 @@
 #include "lognormalbutton.h"
 
 #include <gtest/gtest.h>
-#include <gtest/src/stub.h>
+#include <stub.h>
 
 #include <QKeyEvent>
 #include <QDebug>
@@ -62,7 +62,7 @@ class LogNormalButton_keyPressEvent_UT : public ::testing::TestWithParam<LogNorm
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogNormalButton, LogNormalButton_keyPressEvent_UT, ::testing::Values(LogNormalButton_keyPressEvent_UT_Param(Qt::Key_Enter)
+INSTANTIATE_TEST_CASE_P(LogNormalButton, LogNormalButton_keyPressEvent_UT, ::testing::Values(LogNormalButton_keyPressEvent_UT_Param(Qt::Key_Enter)
                                                                                               , LogNormalButton_keyPressEvent_UT_Param(Qt::Key_Return)
                                                                                               , LogNormalButton_keyPressEvent_UT_Param(Qt::Key_0)));
 
@@ -92,7 +92,7 @@ class LogNormalButton_keyReleaseEvent_UT : public ::testing::TestWithParam<LogNo
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogNormalButton, LogNormalButton_keyReleaseEvent_UT, ::testing::Values(LogNormalButton_keyReleaseEvent_UT_Param(Qt::Key_Enter)
+INSTANTIATE_TEST_CASE_P(LogNormalButton, LogNormalButton_keyReleaseEvent_UT, ::testing::Values(LogNormalButton_keyReleaseEvent_UT_Param(Qt::Key_Enter)
                                                                                                 , LogNormalButton_keyReleaseEvent_UT_Param(Qt::Key_Return)
                                                                                                 , LogNormalButton_keyReleaseEvent_UT_Param(Qt::Key_0)));
 
@@ -130,7 +130,7 @@ class LogNormalButton_focusInEvent_UT : public ::testing::TestWithParam<LogNorma
 {
 };
 
-INSTANTIATE_TEST_SUITE_P(LogNormalButton, LogNormalButton_focusInEvent_UT, ::testing::Values(LogNormalButton_focusInEvent_UT_Param(Qt::ActiveWindowFocusReason)
+INSTANTIATE_TEST_CASE_P(LogNormalButton, LogNormalButton_focusInEvent_UT, ::testing::Values(LogNormalButton_focusInEvent_UT_Param(Qt::ActiveWindowFocusReason)
                                                                                              , LogNormalButton_focusInEvent_UT_Param(Qt::NoFocusReason)
                                                                                             ));
 
