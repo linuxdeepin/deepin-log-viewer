@@ -210,7 +210,7 @@ void LogListView::initUI()
 //        item->setData(VListViewItemMargin, Dtk::MarginsRole);
 //        m_pModel->appendRow(item);
 //    }
-    if (systemName == "klu" || systemName == "panguV") {
+    if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU")) {
 
         item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
         item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
@@ -250,7 +250,8 @@ void LogListView::initUI()
 //        m_pModel->appendRow(item);
 //    }
     // if (isFileExist(QDir::homePath() + "/.kwin.log")) {
-    if (systemName == "klu" || systemName == "panguV"  || systemName == "pangu") {
+    //w515是新版本内核的panguv返回值  panguV是老版本
+    if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName == "pangu" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU") || systemName.toUpper().contains("PANGU")) {
         item = new QStandardItem(DApplication::translate("Tree", "Kwin Log"));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
         item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);
