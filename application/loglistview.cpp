@@ -250,7 +250,7 @@ void LogListView::initUI()
 //        m_pModel->appendRow(item);
 //    }
     // if (isFileExist(QDir::homePath() + "/.kwin.log")) {
-    if (systemName == "klu" || systemName == "panguV" || systemName == "pangu") {
+    if (systemName == "klu" || systemName == "panguV"  || systemName == "pangu") {
         item = new QStandardItem(DApplication::translate("Tree", "Kwin Log"));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
         item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);

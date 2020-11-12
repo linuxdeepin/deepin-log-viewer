@@ -40,5 +40,6 @@
         <file>images/dark/onoff.svg</file>
         <file>images/light/onoff_checked.svg</file>
         <file>images/light/onoff.svg</file>
+        <file>images/warning_info.svg</file>
     </qresource>
 </RCC>

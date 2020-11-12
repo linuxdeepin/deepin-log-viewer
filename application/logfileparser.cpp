@@ -25,7 +25,8 @@
 #include "journalwork.h"
 #include "sharedmemorymanager.h"
 #include "utils.h"
-#include <DMessageBox>
+
+
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
@@ -37,6 +38,7 @@
 #include <QProcess>
 #include <QtConcurrent>
 
+#include <DMessageManager>
 int journalWork::thread_index = 0;
 int JournalBootWork::thread_index = 0;
 DWIDGET_USE_NAMESPACE
@@ -573,10 +575,13 @@ void LogFileParser::slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList
 #include <unistd.h>
 #include <QApplication>
 
-
+/**
+ * @brief LogFileParser::slog_proccessError 处理转发日志获取线程的错误信息信号
+ * @param iError 错误信息
+ */
 void LogFileParser::slog_proccessError(const QString &iError)
 {
-    DMessageBox::information(nullptr, tr("information"), iError);
+    emit proccessError(iError);
 }
 
 

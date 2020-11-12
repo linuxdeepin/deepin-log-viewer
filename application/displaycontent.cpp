@@ -215,7 +215,8 @@ void DisplayContent::initConnections()
 
     connect(m_treeView->verticalScrollBar(), &QScrollBar::valueChanged, this,
             &DisplayContent::slot_vScrollValueChanged);
-
+    connect(&m_logFileParse, &LogFileParser::proccessError, this, &DisplayContent::slot_logLoadFailed,
+            Qt::QueuedConnection);
     connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
             &DisplayContent::slot_themeChanged);
 }
@@ -1698,6 +1699,15 @@ void DisplayContent::slot_NormalFinished()
     // createNormalTable(nortempList);
     filterNomal(m_normalFilter);
     PERF_PRINT_END("POINT-03", "type=on_off");
+}
+/**
+ * @brief DisplayContent::slot_logLoadFailed 数据获取失败槽函数，显示错误提示框
+ * @param iError 错误信息
+ */
+void DisplayContent::slot_logLoadFailed(const QString &iError)
+{
+    QString titleIcon = ICONPREFIX ;
+    DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "warning_info.svg"), iError);
 }
 
 /**

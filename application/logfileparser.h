@@ -81,6 +81,11 @@ signals:
     void stopApp();
     void stopJournal();
     void stopJournalBoot();
+    /**
+     * @brief proccessError 获取日志文件失败错误信息传递信号，传递到主界面显示 DMessage tooltip
+     * @param iError 错误字符
+     */
+    void proccessError(const QString &iError);
 
 private:
     void quitLogAuththread(QThread *iThread);

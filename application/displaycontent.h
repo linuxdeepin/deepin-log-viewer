@@ -148,7 +148,7 @@ public slots:
     void slot_journalData(int index, QList<LOG_MSG_JOURNAL> list);
     void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
     void slot_NormalFinished();  // add by Airy
-
+    void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
 
     void slot_searchResult(QString str);
