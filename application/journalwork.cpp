@@ -139,7 +139,7 @@ void journalWork::deleteSd()
 
 }
 
-/**a
+/**
  * @brief journalWork::run 线程执行函数
  */
 void journalWork::run()

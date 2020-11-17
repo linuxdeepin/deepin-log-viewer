@@ -82,9 +82,9 @@ class LogApplicationParseThread_doWork_UT : public ::testing::TestWithParam<LogA
 };
 
 INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogApplicationParseThread_doWork_UT, ::testing::Values(LogApplicationParseThread_doWork_UT_Param(false, true, true)
-                                                                                                          , LogApplicationParseThread_doWork_UT_Param(true, true, true)
-                                                                                                          , LogApplicationParseThread_doWork_UT_Param(true, false, false)
-                                                                                                         ));
+                                                                                                           , LogApplicationParseThread_doWork_UT_Param(true, true, true)
+                                                                                                           , LogApplicationParseThread_doWork_UT_Param(true, false, false)
+                                                                                                          ));
 
 TEST_P(LogApplicationParseThread_doWork_UT, LogApplicationParseThread_doWork_UT_001)
 {
@@ -120,6 +120,13 @@ TEST(LogApplicationParseThread_initMap_UT, LogApplicationParseThread_initMap_UT)
     p->deleteLater();
 }
 
+TEST(LogApplicationParseThread_run_UT, LogApplicationParseThread_run_UT)
+{
+    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->run();
+    p->deleteLater();
+}
 
 TEST(LogApplicationParseThread_initProccess_UT, LogApplicationParseThread_initProccess_UT)
 {

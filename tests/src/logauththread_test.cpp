@@ -70,9 +70,9 @@ class LogAuthThread_stopProccess_UT : public ::testing::TestWithParam<LogAuthThr
 };
 
 INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogAuthThread_stopProccess_UT, ::testing::Values(LogAuthThread_stopProccess_UT_Param(false, true)
-                                                                                                    , LogAuthThread_stopProccess_UT_Param(true, true)
-                                                                                                    , LogAuthThread_stopProccess_UT_Param(true, false)
-                                                                                                   ));
+                                                                                                     , LogAuthThread_stopProccess_UT_Param(true, true)
+                                                                                                     , LogAuthThread_stopProccess_UT_Param(true, false)
+                                                                                                    ));
 
 TEST_P(LogAuthThread_stopProccess_UT, LogAuthThread_stopProccess_UT_001)
 {
@@ -97,31 +97,31 @@ public:
     LOG_FLAG type;
 };
 
-//class LogAuthThread_run_UT : public ::testing::TestWithParam<LogAuthThread_run_UT_Param>
-//{
-//};
-//void LogAuthThread_run_UT_LogAuthThread_handleKern(void *obj)
-//{
-//    qDebug() << "LogAuthThread_run_UT_LogAuthThread_handleKern---";
-//}
-//INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogAuthThread_run_UT, ::testing::Values(LogAuthThread_run_UT_Param(KERN)
-//                                                                                            , LogAuthThread_run_UT_Param(BOOT)
-//                                                                                            , LogAuthThread_run_UT_Param(Kwin)
-//                                                                                            , LogAuthThread_run_UT_Param(XORG)
-//                                                                                            , LogAuthThread_run_UT_Param(DPKG)
-//                                                                                           ));
+class LogAuthThread_run_UT : public ::testing::TestWithParam<LogAuthThread_run_UT_Param>
+{
+};
+void LogAuthThread_run_UT_LogAuthThread_handleKern(void *obj)
+{
+    qDebug() << "LogAuthThread_run_UT_LogAuthThread_handleKern---";
+}
+INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogAuthThread_run_UT, ::testing::Values(LogAuthThread_run_UT_Param(KERN)
+                                                                                            , LogAuthThread_run_UT_Param(BOOT)
+                                                                                            , LogAuthThread_run_UT_Param(Kwin)
+                                                                                            , LogAuthThread_run_UT_Param(XORG)
+                                                                                            , LogAuthThread_run_UT_Param(DPKG)
+                                                                                           ));
 
-//TEST_P(LogAuthThread_run_UT, LogAuthThread_run_UT_001)
-//{
-//    LogAuthThread *p = new LogAuthThread(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    LogAuthThread_run_UT_Param param = GetParam();
-//    Stub stub;
-//    stub.set(ADDR(LogAuthThread, handleKern), LogAuthThread_run_UT_LogAuthThread_handleKern);
-//    p->m_canRun = param.type;
-//    p->run();
-//    p->deleteLater();
-//}
+TEST_P(LogAuthThread_run_UT, LogAuthThread_run_UT_001)
+{
+    LogAuthThread *p = new LogAuthThread(nullptr);
+    EXPECT_NE(p, nullptr);
+    LogAuthThread_run_UT_Param param = GetParam();
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleKern), LogAuthThread_run_UT_LogAuthThread_handleKern);
+    p->m_canRun = param.type;
+    p->run();
+    p->deleteLater();
+}
 void LogAuthThread_handleBoot_UT_QProcess_start(void *, const QString &program, const QStringList &arguments, QProcess::OpenMode mode = QProcess::ReadWrite)
 {
     qDebug() << "LogAuthThread_handleBoot_UT_start--";

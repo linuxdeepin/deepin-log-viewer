@@ -17,16 +17,12 @@
 #include "displaycontent_test.h"
 #include "../application/displaycontent.h"
 #include "../application/utils.h"
-#include "stuballthread.h"
 #include <stub.h>
 #include <DApplication>
 #include <QDebug>
 #include <QFileDialog>
 #include <QPaintEvent>
 #include <QThreadPool>
-
-
-
 TEST(DisplayContent_Constructor_UT, DisplayContent_Constructor_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);
@@ -111,8 +107,6 @@ TEST(DisplayContent_initConnections_UT, DisplayContent_initConnections_UT_001)
     p->initConnections();
     delete  p;
 }
-
-
 class DisplayContent_generateJournalFile_UT_Param
 {
 public:
@@ -190,9 +184,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateJournalFile_UT, :
 
 TEST_P(DisplayContent_generateJournalFile_UT, DisplayContent_generateJournalFile_UT_001)
 {
-    Stub stub ;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent_generateJournalFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -269,9 +260,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateDpkgFile_UT, ::te
 
 TEST_P(DisplayContent_generateDpkgFile_UT, DisplayContent_generateDpkgFile_UT_001)
 {
-    Stub stub ;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent_generateDpkgFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -331,8 +319,6 @@ TEST_P(DisplayContent_generateKernFile_UT, DisplayContent_generateKernFile_UT_00
     EXPECT_NE(p, nullptr);
     Utils::sleep(200);
     Stub stub;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     stub.set(ADDR(LogFileParser, parseByKern), parseByKern);
     p->generateKernFile(param.time);
     p->deleteLater();
@@ -427,9 +413,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateAppFile_UT, ::tes
 
 TEST_P(DisplayContent_generateAppFile_UT, DisplayContent_generateAppFile_UT_001)
 {
-    Stub stub ;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent_generateAppFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -534,9 +517,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateXorgFile_UT, ::te
 
 TEST_P(DisplayContent_generateXorgFile_UT, DisplayContent_generateXorgFile_UT_001)
 {
-    Stub stub ;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent_generateXorgFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -559,16 +539,18 @@ TEST(DisplayContent_creatKwinTable_UT, DisplayContent_creatKwinTable_UT_001)
     p->deleteLater();
 }
 
-
+void QThreadPool_start(QRunnable *runnable, int priority = 0)
+{
+    qDebug() << "QThreadPool_sstart";
+}
 TEST(DisplayContent_generateKwinFile_UT, DisplayContent_generateKwinFile_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     KWIN_FILTERS f;
     f.msg = "";
-    Stub stub ;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
     p->generateKwinFile(f);
     p->deleteLater();
 }
@@ -618,9 +600,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateNormalFile_UT, ::
 
 TEST_P(DisplayContent_generateNormalFile_UT, DisplayContent_generateNormalFile_UT_001)
 {
-    Stub stub ;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent_generateNormalFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -728,9 +707,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateJournalBootFile_U
 
 TEST_P(DisplayContent_generateJournalBootFile_UT, DisplayContent_generateJournalBootFile_UT)
 {
-    Stub stub ;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent_generateJournalBootFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -884,8 +860,6 @@ TEST_P(DisplayContent_slot_BtnSelected_UT, DisplayContent_slot_BtnSelected_UT_00
         break;
     }
 
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     stub->set(ADDR(QModelIndex, data), slot_BtnSelected_ModelIndex_data_Func);
     stub->set(ADDR(DisplayContent, generateKernFile), DisplayContent_slot_BtnSelected_UT_DisplayContent_generateKernFile);
     p->slot_BtnSelected(0, 0, QModelIndex());
@@ -982,8 +956,7 @@ TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelo
     default:
         break;
     }
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
+
     stub->set(ADDR(QModelIndex, data), slot_logCatelogueClicked_ModelIndex_data_Func);
     stub->set(ADDR(QModelIndex, isValid), slot_logCatelogueClicked_ModelIndex_isValid_Func);
     p->slot_logCatelogueClicked(QModelIndex());
@@ -1076,8 +1049,7 @@ TEST(DisplayContent_slot_exportClicked_UT, DisplayContent_slot_exportClicked_UT_
 //    default:
 //        break;
 //    }
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
+
     stub->set(ADDR(QFileDialog, getSaveFileName), exportClicked_getSaveFileName);
     p->slot_exportClicked();
     p->deleteLater();
@@ -1086,9 +1058,6 @@ TEST(DisplayContent_slot_statusChagned_UT, DisplayContent_slot_statusChagned_UT_
 {
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
-    Stub stub;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     p->slot_statusChagned("OK");
     p->deleteLater();
 }
@@ -1096,9 +1065,6 @@ TEST(DisplayContent_slot_statusChagned_UT, DisplayContent_slot_statusChagned_UT_
 
 TEST(DisplayContent_slot_dpkgFinished_UT, DisplayContent_slot_dpkgFinished_UT_001)
 {
-    Stub stub;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -1120,9 +1086,6 @@ TEST(DisplayContent_slot_dpkgFinished_UT, DisplayContent_slot_dpkgFinished_UT_00
 
 TEST(DisplayContent_slot_XorgFinished_UT, DisplayContent_slot_XorgFinished_UT_001)
 {
-    Stub stub;
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_XORG> list;
@@ -1477,8 +1440,6 @@ TEST_P(DisplayContent_slot_vScrollValueChanged_UT, DisplayContent_slot_vScrollVa
     }
     Stub *stub = new Stub;
     stub->set(ADDR(LogTreeView, singleRowHeight), DisplayContent_slot_vScrollValueChanged_treeView_singleRowHeight_Func);
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     if (!param.isLastHeight) {
         p->m_treeViewLastScrollValue = valuePixel;
     } else {
@@ -1549,7 +1510,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_searchResult_UT, ::t
 
 TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_001)
 {
-
     DisplayContent_slot_searchResult_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -1659,8 +1619,6 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
     DisplayContent_slot_searchResult_QString_contains = param.isContains;
     Stub *stub = new Stub;
     stub->set((bool(QString::*)(const QString &, Qt::CaseSensitivity) const)ADDR(QString, contains), DisplayContent_slot_searchResult_QString_contains_Func);
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     QString searchstr = param.isSearchEmpty ? "" : "testsearchstr";
     p->slot_searchResult(searchstr);
     p->deleteLater();
@@ -1668,9 +1626,6 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
 
 TEST(DisplayContent_slot_getLogtype_UT, DisplayContent_slot_getLogtype_UT_001)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->slot_getLogtype(0);
@@ -1706,9 +1661,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_DPKG_UT,
 
 TEST_P(DisplayContent_parseListToModel_DPKG_UT, DisplayContent_parseListToModel_DPKG_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_DPKG_UT_Param param = GetParam();
@@ -1755,9 +1707,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_BOOT_UT,
 
 TEST_P(DisplayContent_parseListToModel_BOOT_UT, DisplayContent_parseListToModel_BOOT_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_BOOT_UT_Param param = GetParam();
@@ -1804,9 +1753,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_APP_UT, 
 
 TEST_P(DisplayContent_parseListToModel_APP_UT, DisplayContent_parseListToModel_APP_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_APP_UT_Param param = GetParam();
@@ -1855,9 +1801,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_XORG_UT,
 
 TEST_P(DisplayContent_parseListToModel_XORG_UT, DisplayContent_parseListToModel_XORG_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_XORG_UT_Param param = GetParam();
@@ -1904,9 +1847,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_NORMAL_U
 
 TEST_P(DisplayContent_parseListToModel_NORMAL_UT, DisplayContent_parseListToModel_NORMAL_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_NORMAL_UT_Param param = GetParam();
@@ -1955,9 +1895,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_KWIN_UT,
 
 TEST_P(DisplayContent_parseListToModel_KWIN_UT, DisplayContent_parseListToModel_KWIN_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_KWIN_UT_Param param = GetParam();
@@ -2073,9 +2010,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_onExportResult_UT, ::test
 #include "exportprogressdlg.h"
 TEST_P(DisplayContent_onExportResult_UT, DisplayContent_onExportResult_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_onExportResult_UT_Param param = GetParam();
@@ -2103,9 +2037,6 @@ TEST(DisplayContent_onExportFakeCloseDlg_UT, DisplayContent_onExportFakeCloseDlg
 
 TEST(DisplayContent_clearAllFilter_UT, DisplayContent_clearAllFilter_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -2125,9 +2056,6 @@ TEST(DisplayContent_clearAllFilter_UT, DisplayContent_clearAllFilter_UT)
 #include <QStandardItemModel>
 TEST(DisplayContent_clearAllDatalist_UT, DisplayContent_clearAllDatalist_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -2183,9 +2111,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_filterBoot_UT, ::testing:
 
 TEST_P(DisplayContent_filterBoot_UT, DisplayContent_filterBoot_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_filterBoot_UT_Param param = GetParam();
@@ -2235,9 +2160,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_filterNomal_UT, ::testing
 
 TEST_P(DisplayContent_filterNomal_UT, DisplayContent_filterNomal_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_filterNomal_UT_Param param = GetParam();
@@ -2263,9 +2185,6 @@ TEST_P(DisplayContent_filterNomal_UT, DisplayContent_filterNomal_UT)
 
 TEST(DisplayContent_onExportProgress_UT, DisplayContent_onExportProgress_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->onExportProgress(5, 100);
@@ -2302,9 +2221,6 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_JOURNAL_
 
 TEST_P(DisplayContent_parseListToModel_JOURNAL_UT, DisplayContent_parseListToModel_JOURNAL_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_JOURNAL_UT_Param param = GetParam();
@@ -2476,13 +2392,10 @@ bool slot_refreshClicked_ModelIndex_isValid_Func(void *obj)
 
 TEST_P(DisplayContent_slot_refreshClicked_UT, DisplayContent_slot_refreshClicked_UT_001)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
     DisplayContent_slot_refreshClicked_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
-
+    Stub *stub = new Stub;
 
     switch (param.index) {
     case 0:

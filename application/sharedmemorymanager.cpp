@@ -65,6 +65,7 @@ void SharedMemoryManager::releaseMemory()
 
 void SharedMemoryManager::init()
 {
+    qDebug() << "1111";
     m_commondM = new QSharedMemory(this);
     QString tag = LOG_POLIKIT_STOP_TAG ;//+ QString::number(m_threadCount);
     m_commondM->setKey(tag);
