@@ -14,9 +14,13 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <gtest/gtest.h>
+
 #include <stub.h>
 #include "journalwork.h"
+#include "stuballthread.h"
+
+#include <gtest/gtest.h>
+
 #include <DApplication>
 
 #include <QDebug>
@@ -86,12 +90,6 @@ TEST(journalWork_setArg_UT, journalWork_setArg_UT_002)
     QStringList testArg;
     p->setArg(testArg);
     EXPECT_EQ(p->m_arg.isEmpty(), true);
-    p->deleteLater();
-}
-TEST(journalWork_run_UT, journalWork_run_UT)
-{
-    journalWork *p = new journalWork(nullptr);
-    p->run();
     p->deleteLater();
 }
 

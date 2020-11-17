@@ -94,8 +94,8 @@ class LogPeriodButton_focusInEvent_UT : public ::testing::TestWithParam<LogPerio
 };
 
 INSTANTIATE_TEST_CASE_P(LogPeriodButton, LogPeriodButton_focusInEvent_UT, ::testing::Values(LogPeriodButton_focusInEvent_UT_Param(Qt::MouseFocusReason)
-                                                                                             , LogPeriodButton_focusInEvent_UT_Param(Qt::NoFocusReason)
-                                                                                            ));
+                                                                                            , LogPeriodButton_focusInEvent_UT_Param(Qt::NoFocusReason)
+                                                                                           ));
 
 TEST_P(LogPeriodButton_focusInEvent_UT, LogPeriodButton_focusInEvent_UT_001)
 {

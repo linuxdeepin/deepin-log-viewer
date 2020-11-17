@@ -17,9 +17,13 @@
 #include <gtest/gtest.h>
 #include <stub.h>
 #include "journalbootwork.h"
+#include "stuballthread.h"
+
 #include <DApplication>
 
 #include <QDebug>
+#include <QThreadPool>
+#include <QThread>
 TEST(JournalBootWork_Constructor_UT, JournalBootWork_Constructor_UT_001)
 {
     JournalBootWork *p = new JournalBootWork(nullptr);
@@ -88,12 +92,7 @@ TEST(JournalBootWork_setArg_UT, JournalBootWork_setArg_UT_002)
     EXPECT_EQ(p->m_arg.isEmpty(), true);
     p->deleteLater();
 }
-TEST(JournalBootWork_run_UT, JournalBootWork_run_UT)
-{
-    JournalBootWork *p = new JournalBootWork(nullptr);
-    p->run();
-    p->deleteLater();
-}
+
 
 
 TEST(JournalBootWork_doWork_UT, JournalBootWork_doWork_UT)
