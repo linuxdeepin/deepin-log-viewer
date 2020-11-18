@@ -1494,7 +1494,7 @@ bool LogExportThread::exportToDocNew(QString fileName, QList<LOG_MSG_APPLICATOIN
         }
 
         l_merger.paste("tableRow");
-        for (int row = 0; row < 200000; ++row)  {
+        for (int row = 0; row < 100000; ++row)  {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
@@ -2705,7 +2705,7 @@ bool LogExportThread::exportToXlsNew(QString fileName, QList<LOG_MSG_JOURNAL> jL
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
-        for (int row = 0; row < 200000 ; ++row) {
+        for (int row = 0; row < 100000 ; ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
