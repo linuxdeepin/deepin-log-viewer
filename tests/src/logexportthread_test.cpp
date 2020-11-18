@@ -848,10 +848,10 @@ class LogExportThread_exportToTxt_JOURNAL_UT : public ::testing::TestWithParam<L
 
 
 INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToTxt_JOURNAL_UT, ::testing::Values(LogExportThread_exportToTxt_JOURNAL_UT_Param(false, KERN, false),
-                                                                                                   LogExportThread_exportToTxt_JOURNAL_UT_Param(true, JOURNAL, true),
-                                                                                                   LogExportThread_exportToTxt_JOURNAL_UT_Param(true, KERN, true),
-                                                                                                   LogExportThread_exportToTxt_JOURNAL_UT_Param(true, APP, true)
-                                                                                                  ));
+                                                                                                  LogExportThread_exportToTxt_JOURNAL_UT_Param(true, JOURNAL, true),
+                                                                                                  LogExportThread_exportToTxt_JOURNAL_UT_Param(true, KERN, true),
+                                                                                                  LogExportThread_exportToTxt_JOURNAL_UT_Param(true, APP, true)
+                                                                                                 ));
 
 
 
@@ -1329,10 +1329,10 @@ class LogExportThread_exportToDoc_JOURNAL_UT : public ::testing::TestWithParam<L
 
 
 INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToDoc_JOURNAL_UT, ::testing::Values(LogExportThread_exportToDoc_JOURNAL_UT_Param(false, KERN, false),
-                                                                                                   LogExportThread_exportToDoc_JOURNAL_UT_Param(true, JOURNAL, true),
-                                                                                                   LogExportThread_exportToDoc_JOURNAL_UT_Param(true, KERN, true),
-                                                                                                   LogExportThread_exportToDoc_JOURNAL_UT_Param(true, APP, true)
-                                                                                                  ));
+                                                                                                  LogExportThread_exportToDoc_JOURNAL_UT_Param(true, JOURNAL, true),
+                                                                                                  LogExportThread_exportToDoc_JOURNAL_UT_Param(true, KERN, true),
+                                                                                                  LogExportThread_exportToDoc_JOURNAL_UT_Param(true, APP, true)
+                                                                                                 ));
 
 
 
@@ -1808,10 +1808,10 @@ class LogExportThread_exportToHtml_JOURNAL_UT : public ::testing::TestWithParam<
 
 
 INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToHtml_JOURNAL_UT, ::testing::Values(LogExportThread_exportToHtml_JOURNAL_UT_Param(false, KERN, false),
-                                                                                                    LogExportThread_exportToHtml_JOURNAL_UT_Param(true, JOURNAL, true),
-                                                                                                    LogExportThread_exportToHtml_JOURNAL_UT_Param(true, KERN, true),
-                                                                                                    LogExportThread_exportToHtml_JOURNAL_UT_Param(true, APP, true)
-                                                                                                   ));
+                                                                                                   LogExportThread_exportToHtml_JOURNAL_UT_Param(true, JOURNAL, true),
+                                                                                                   LogExportThread_exportToHtml_JOURNAL_UT_Param(true, KERN, true),
+                                                                                                   LogExportThread_exportToHtml_JOURNAL_UT_Param(true, APP, true)
+                                                                                                  ));
 
 
 
@@ -2288,10 +2288,10 @@ class LogExportThread_exportToXls_JOURNAL_UT : public ::testing::TestWithParam<L
 
 
 INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToXls_JOURNAL_UT, ::testing::Values(LogExportThread_exportToXls_JOURNAL_UT_Param(false, KERN, false),
-                                                                                                   LogExportThread_exportToXls_JOURNAL_UT_Param(true, JOURNAL, true),
-                                                                                                   LogExportThread_exportToXls_JOURNAL_UT_Param(true, KERN, true),
-                                                                                                   LogExportThread_exportToXls_JOURNAL_UT_Param(true, APP, true)
-                                                                                                  ));
+                                                                                                  LogExportThread_exportToXls_JOURNAL_UT_Param(true, JOURNAL, true),
+                                                                                                  LogExportThread_exportToXls_JOURNAL_UT_Param(true, KERN, true),
+                                                                                                  LogExportThread_exportToXls_JOURNAL_UT_Param(true, APP, true)
+                                                                                                 ));
 
 
 
@@ -2666,14 +2666,14 @@ class LogExportThread_strTranslate_UT : public ::testing::TestWithParam<LogExpor
 };
 
 INSTANTIATE_TEST_CASE_P(LogExportThread, LogExportThread_strTranslate_UT, ::testing::Values(LogExportThread_strTranslate_UT_Param("Emergency", Dtk::Widget::DApplication::translate("Level", "Emergency")),
-                                                                                             LogExportThread_strTranslate_UT_Param("Alert", Dtk::Widget::DApplication::translate("Level", "Alert")),
-                                                                                             LogExportThread_strTranslate_UT_Param("Critical", Dtk::Widget::DApplication::translate("Level", "Critical")),
-                                                                                             LogExportThread_strTranslate_UT_Param("Error", Dtk::Widget::DApplication::translate("Level", "Error")),
-                                                                                             LogExportThread_strTranslate_UT_Param("Warning", Dtk::Widget::DApplication::translate("Level", "Warning")),
-                                                                                             LogExportThread_strTranslate_UT_Param("Notice", Dtk::Widget::DApplication::translate("Level", "Notice")),
-                                                                                             LogExportThread_strTranslate_UT_Param("Info", Dtk::Widget::DApplication::translate("Level", "Info")),
-                                                                                             LogExportThread_strTranslate_UT_Param("Debug", Dtk::Widget:: DApplication::translate("Level", "Debug"))
-                                                                                            ));
+                                                                                            LogExportThread_strTranslate_UT_Param("Alert", Dtk::Widget::DApplication::translate("Level", "Alert")),
+                                                                                            LogExportThread_strTranslate_UT_Param("Critical", Dtk::Widget::DApplication::translate("Level", "Critical")),
+                                                                                            LogExportThread_strTranslate_UT_Param("Error", Dtk::Widget::DApplication::translate("Level", "Error")),
+                                                                                            LogExportThread_strTranslate_UT_Param("Warning", Dtk::Widget::DApplication::translate("Level", "Warning")),
+                                                                                            LogExportThread_strTranslate_UT_Param("Notice", Dtk::Widget::DApplication::translate("Level", "Notice")),
+                                                                                            LogExportThread_strTranslate_UT_Param("Info", Dtk::Widget::DApplication::translate("Level", "Info")),
+                                                                                            LogExportThread_strTranslate_UT_Param("Debug", Dtk::Widget:: DApplication::translate("Level", "Debug"))
+                                                                                           ));
 
 TEST_P(LogExportThread_strTranslate_UT, LogExportThread_strTranslate_UT_001)
 {
@@ -2685,79 +2685,79 @@ TEST_P(LogExportThread_strTranslate_UT, LogExportThread_strTranslate_UT_001)
 }
 
 
-class LogExportThread_run_UT_Param
-{
-public:
-    LogExportThread_run_UT_Param(LogExportThread::RUN_MODE iMode)
-    {
-        mode = iMode;
-    }
-    LogExportThread::RUN_MODE mode;
+//class LogExportThread_run_UT_Param
+//{
+//public:
+//    LogExportThread_run_UT_Param(LogExportThread::RUN_MODE iMode)
+//    {
+//        mode = iMode;
+//    }
+//    LogExportThread::RUN_MODE mode;
 
-};
+//};
 
-class LogExportThread_run_UT : public ::testing::TestWithParam<LogExportThread_run_UT_Param>
-{
-};
+//class LogExportThread_run_UT : public ::testing::TestWithParam<LogExportThread_run_UT_Param>
+//{
+//};
 
-INSTANTIATE_TEST_CASE_P(LogExportThread, LogExportThread_run_UT, ::testing::Values(LogExportThread_run_UT_Param(LogExportThread::HtmlModel)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlJOURNAL)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlAPP)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlDPKG)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlBOOT)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlXORG)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlNORMAL)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlKWIN)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtModel)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtJOURNAL)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtAPP)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtDPKG)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtBOOT)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtXORG)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtNORMAL)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtKWIN)
-//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocModel)
-//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocJOURNAL)
-//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocAPP)
-//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocDPKG)
-//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocBOOT)
-//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocXORG)
-//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocNORMAL)
-//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocKWIN)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsModel)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsJOURNAL)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsAPP)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsDPKG)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsBOOT)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsXORG)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsNORMAL)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsKWIN)
-                                                                                    , LogExportThread_run_UT_Param(LogExportThread::NoneExportType)
-                                                                                   ));
+//INSTANTIATE_TEST_CASE_P(LogExportThread, LogExportThread_run_UT, ::testing::Values(LogExportThread_run_UT_Param(LogExportThread::HtmlModel)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlJOURNAL)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlAPP)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlDPKG)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlBOOT)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlXORG)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlNORMAL)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::HtmlKWIN)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtModel)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtJOURNAL)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtAPP)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtDPKG)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtBOOT)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtXORG)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtNORMAL)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::TxtKWIN)
+////                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocModel)
+////                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocJOURNAL)
+////                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocAPP)
+////                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocDPKG)
+////                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocBOOT)
+////                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocXORG)
+////                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocNORMAL)
+////                                                                                    , LogExportThread_run_UT_Param(LogExportThread::DocKWIN)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsModel)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsJOURNAL)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsAPP)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsDPKG)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsBOOT)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsXORG)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsNORMAL)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::XlsKWIN)
+//                                                                                    , LogExportThread_run_UT_Param(LogExportThread::NoneExportType)
+//                                                                                   ));
 
-TEST_P(LogExportThread_run_UT, LogExportThread_run_UT)
-{
-    LogExportThread_run_UT_Param param = GetParam();
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_JOURNAL> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_JOURNAL info;
-        info.msg = "testmsg";
-        info.level = "testlevel";
-        info.daemonId = "testid";
-        info.dateTime = "testdatetime";
-        info.hostName = "testhostName";
-        info.daemonName = "testdaemonName";
-        jList << info;
-    }
-    p->m_jList = jList;
-    p->m_runMode = param.mode;
-    if (param.mode == LogExportThread::HtmlJOURNAL || param.mode == LogExportThread::TxtJOURNAL || param.mode == LogExportThread::XlsJOURNAL || param.mode == LogExportThread::DocJOURNAL) {
-        p->m_flag = JOURNAL;
-    }
-    p->run();
-    p->deleteLater();
-}
+//TEST_P(LogExportThread_run_UT, LogExportThread_run_UT)
+//{
+//    LogExportThread_run_UT_Param param = GetParam();
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_JOURNAL> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_JOURNAL info;
+//        info.msg = "testmsg";
+//        info.level = "testlevel";
+//        info.daemonId = "testid";
+//        info.dateTime = "testdatetime";
+//        info.hostName = "testhostName";
+//        info.daemonName = "testdaemonName";
+//        jList << info;
+//    }
+//    p->m_jList = jList;
+//    p->m_runMode = param.mode;
+//    if (param.mode == LogExportThread::HtmlJOURNAL || param.mode == LogExportThread::TxtJOURNAL || param.mode == LogExportThread::XlsJOURNAL || param.mode == LogExportThread::DocJOURNAL) {
+//        p->m_flag = JOURNAL;
+//    }
+//    p->run();
+//    p->deleteLater();
+//}
 
 

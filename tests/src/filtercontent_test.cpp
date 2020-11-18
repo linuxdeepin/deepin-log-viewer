@@ -17,11 +17,15 @@
 #include "logcombox.h"
 #include "filtercontent.h"
 #include "logperiodbutton.h"
+#include "stuballthread.h"
 
 #include <gtest/gtest.h>
 #include <stub.h>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QThread>
+#include <QThreadPool>
+
 
 TEST(FilterContent_Constructor_UT, FilterContent_Constructor_UT)
 {
@@ -68,6 +72,9 @@ INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_shortCutExport_UT, ::testin
 
 TEST_P(FilterContent_shortCutExport_UT, FilterContent_shortCutExport_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     FilterContent *p = new FilterContent(nullptr);
     EXPECT_NE(p, nullptr);
     FilterContent_shortCutExport_UT_Param param = GetParam();
@@ -119,6 +126,9 @@ INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_setSelectorVisible_UT, ::te
 
 TEST_P(FilterContent_setSelectorVisible_UT, FilterContent_setSelectorVisible_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     FilterContent *p = new FilterContent(nullptr);
     EXPECT_NE(p, nullptr);
     FilterContent_setSelectorVisible_UT_Param param = GetParam();
@@ -158,6 +168,9 @@ INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_setSelection_UT, ::testing:
 
 TEST_P(FilterContent_setSelection_UT, FilterContent_setSelection_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     FilterContent *p = new FilterContent(nullptr);
     EXPECT_NE(p, nullptr);
     FilterContent_setSelection_UT_Param param = GetParam();
@@ -250,6 +263,9 @@ LogPeriodButton *getLogPeriodButtonByName(int iName, FilterContent *p)
 }
 TEST_P(FilterContent_eventFilter_UT, FilterContent_eventFilter_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     FilterContent *p = new FilterContent(nullptr);
     EXPECT_NE(p, nullptr);
     FilterContent_eventFilter_UT_Param param = GetParam();
@@ -314,6 +330,9 @@ INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_updateDataState_UT, ::testi
 
 TEST_P(FilterContent_updateDataState_UT, FilterContent_updateDataState_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     FilterContent *p = new FilterContent(nullptr);
     EXPECT_NE(p, nullptr);
     FilterContent_updateDataState_UT_Param param = GetParam();
@@ -370,10 +389,12 @@ QVariant FilterContent_slot_logCatelogueClicked_ModelIndex_data_Func(void *obj, 
 }
 TEST_P(FilterContent_slot_logCatelogueClicked_UT, FilterContent_slot_logCatelogueClicked_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     FilterContent *p = new FilterContent(nullptr);
     EXPECT_NE(p, nullptr);
     FilterContent_slot_logCatelogueClicked_UT_Param param = GetParam();
-    Stub *stub = new Stub;
 
     switch (param.index) {
     case 0:
@@ -451,6 +472,8 @@ TEST_P(FilterContent_slot_logCatelogueRefresh_UT, FilterContent_slot_logCatelogu
     EXPECT_NE(p, nullptr);
     FilterContent_slot_logCatelogueRefresh_UT_Param param = GetParam();
     Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
 
     switch (param.index) {
     case 0:
@@ -501,6 +524,9 @@ INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_slot_buttonClicked_UT, ::te
 
 TEST_P(FilterContent_slot_buttonClicked_UT, FilterContent_slot_buttonClicked_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     FilterContent *p = new FilterContent(nullptr);
     EXPECT_NE(p, nullptr);
     int param = GetParam();
@@ -519,6 +545,7 @@ TEST(FilterContent_slot_exportButtonClicked_UT, FilterContent_slot_exportButtonC
 
 TEST(FilterContent_slot_cbxLvIdxChanged_UT, FilterContent_slot_cbxLvIdxChanged_UT)
 {
+    Stub *stub = new Stub;
     FilterContent *p = new FilterContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->slot_cbxLvIdxChanged(1);

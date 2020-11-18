@@ -6,6 +6,7 @@
 #include "../application/accessible.h"
 #include "../application/dbusmanager.h"
 #include "../application/utils.h"
+#include "stub.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
@@ -17,6 +18,8 @@
 #include <QApplication>
 #include <QDateTime>
 #include <QSurfaceFormat>
+#include <QThread>
+#include <QThreadPool>
 
 #include <gtest/gtest.h>
 
@@ -25,6 +28,7 @@
 QT_BEGIN_NAMESPACE
 QTEST_ADD_GPU_BLACKLIST_SUPPORT_DEFS
 QT_END_NAMESPACE
+
 
 int main(int argc, char *argv[])
 {
@@ -92,7 +96,6 @@ int main(int argc, char *argv[])
     // a.exec();
     testing::InitGoogleTest(&argc, argv);
     int ret = RUN_ALL_TESTS();
-
 #ifdef ENABLE_UI_TEST
 //    app.exec();
     QTest::qExec(&app, argc, argv);

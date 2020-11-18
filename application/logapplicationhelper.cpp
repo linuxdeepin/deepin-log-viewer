@@ -235,7 +235,6 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
     // insert map at first, en-en, then repalce transName if has name,
     m_en_trans_map.insert(name.section(".", 0, 0), name.section(".", 0, 0));  // desktop name
     if (name.contains("shutdown")) {
-        qDebug() << "1111";
     }
     while (!fi.atEnd()) {
         QString lineStr = fi.readLine();

@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "logfileparser.h"
+#include "stuballthread.h"
 
 #include <gtest/gtest.h>
 #include <stub.h>
@@ -38,6 +39,9 @@ TEST(LogFileParser_Destructor_UT, LogFileParser_Destructor_UT)
 
 TEST(LogFileParser_parseByJournal_UT, LogFileParser_parseByJournal_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     p->parseByJournal(QStringList());
@@ -46,6 +50,9 @@ TEST(LogFileParser_parseByJournal_UT, LogFileParser_parseByJournal_UT)
 
 TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     p->parseByJournalBoot(QStringList());
@@ -55,6 +62,9 @@ TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
 
 TEST(LogFileParser_parseByDpkg_UT, LogFileParser_parseByDpkg_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     DKPG_FILTERS filter;
@@ -64,6 +74,9 @@ TEST(LogFileParser_parseByDpkg_UT, LogFileParser_parseByDpkg_UT)
 
 TEST(LogFileParser_parseByXlog_UT, LogFileParser_parseByXlog_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     XORG_FILTERS filter;
@@ -73,6 +86,9 @@ TEST(LogFileParser_parseByXlog_UT, LogFileParser_parseByXlog_UT)
 
 TEST(LogFileParser_parseByNormal, LogFileParser_parseByXlog_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     NORMAL_FILTERS filter;
@@ -83,6 +99,9 @@ TEST(LogFileParser_parseByNormal, LogFileParser_parseByXlog_UT)
 
 TEST(LogFileParser_parseByKwin_UT, LogFileParser_parseByKwin_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     KWIN_FILTERS filter;
@@ -97,8 +116,9 @@ TEST(LogFileParser_parseByBoot_UT, LogFileParser_parseByBoot_UT)
 {
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
-    Stub stub ;
-    stub.set(ADDR(QThreadPool, start), LogFileParser_parseByBoot_UT_QThreadPool_start);
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     p->parseByBoot();
     p->deleteLater();
 }
@@ -108,14 +128,18 @@ TEST(LogFileParser_parseByKern_UT, LogFileParser_parseByKern_UT)
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     KERN_FILTERS filter;
-    Stub stub ;
-    stub.set(ADDR(QThreadPool, start), LogFileParser_parseByBoot_UT_QThreadPool_start);
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     p->parseByKern(filter);
     p->deleteLater();
 }
 
 TEST(LogFileParser_parseByApp_UT, LogFileParser_parseByApp_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     APP_FILTERS filter;
@@ -125,6 +149,9 @@ TEST(LogFileParser_parseByApp_UT, LogFileParser_parseByApp_UT)
 
 TEST(LogFileParser_createFile_UT, LogFileParser_createFile_UT)
 {
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     p->createFile("", 0);
