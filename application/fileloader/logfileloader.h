@@ -16,6 +16,7 @@
 */
 #ifndef LOGFILELOADER_H
 #define LOGFILELOADER_H
+#include "common.h"
 
 #include <QObject>
 #include <QFile>
@@ -95,7 +96,7 @@ public slots:
 
         m_lineCnt = m_enters.size() - 1;
 
-        //detectTextCodec();
+
         m_canOpenProgress = false;
     }
     void close()

@@ -11,6 +11,9 @@
 #include <KEncodingProber>
 #include "../ChardetDetector/chardet.h"
 
+std::atomic<Common *> Common::m_instance;
+std::mutex Common::m_mutex;
+
 //QByteArray m_codecStr;
 /*static */float Common::codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country)
 {
@@ -152,6 +155,32 @@ QByteArray Common::detectEncode(const QByteArray &data, const QString &fileName)
     }
 
     return  m_codecStr;
+}
+
+bool Common::detectEncodeForCodec(const char *str, QTextCodec *oCodec, const QString &fileName)
+{
+    QByteArray codec_name = detectEncode(str);
+
+    if (codec_name.isEmpty()) {
+        return str;
+    } else if ("gb18030" == codec_name) {
+        oCodec = QTextCodec::codecForName(codec_name);
+        m_codecStr = codec_name;
+        return true;
+    } else if (((QString)codec_name).contains("windows", Qt::CaseInsensitive) || ((QString)codec_name).contains("IBM", Qt::CaseInsensitive)
+               || ((QString)codec_name).contains("x-mac", Qt::CaseInsensitive) || ((QString)codec_name).contains("Big5", Qt::CaseInsensitive)
+               || ((QString)codec_name).contains("iso", Qt::CaseInsensitive)) {
+        oCodec = QTextCodec::codecForName("GBK");
+        m_codecStr = codec_name;
+        return true;
+    } else if (!((QString)codec_name).contains("UTF", Qt::CaseInsensitive)) {
+        oCodec = QTextCodec::codecForName(codec_name);
+        m_codecStr = codec_name;
+        return true;
+    } else {
+        oCodec = QTextCodec::codecForName("UTF-8");
+        return true;
+    }
 }
 
 int Common::ChartDet_DetectingTextCoding(const char *str, QString &encoding, float &confidence)
