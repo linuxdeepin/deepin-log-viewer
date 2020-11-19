@@ -1,6 +1,0 @@
-[submodule "3rdparty/simplexlsx-code"]
-	path = 3rdparty/simplexlsx-code
-	url = git://git.code.sf.net/p/simplexlsx/code
-[submodule "3rdparty/libxlsxwriter"]
-	path = 3rdparty/libxlsxwriter
-	url = https://github.com/jmcnamara/libxlsxwriter.git
