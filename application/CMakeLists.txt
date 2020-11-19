@@ -107,6 +107,9 @@ find_package(DtkGui REQUIRED)
 find_package(DtkCore REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
 find_package(DFrameworkdbus REQUIRED)
+find_package(Boost)
+find_package(Zint)
+find_package(RapidJSON)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 
 #pkg_search_module(DtkWidget REQUIRED dtkwidget)
@@ -269,7 +272,28 @@ set (APP_HEADERS_FILES
     common/collator.h
     )
 file(GLOB DOCX_FACTORY_TEST
-    "../3rdparty/DocxFactory/src/*.cpp"
+    ../3rdparty/DocxFactory/src/barcode/**
+    ../3rdparty/DocxFactory/src/console/**
+    ../3rdparty/DocxFactory/src/ConverterPrinter/**
+    ../3rdparty/DocxFactory/src/DocxCompiler/**
+    ../3rdparty/DocxFactory/src/DocxMerger/**
+    ../3rdparty/DocxFactory/src/json/**
+    ../3rdparty/DocxFactory/src/locale/**
+    ../3rdparty/DocxFactory/src/math/**
+    ../3rdparty/DocxFactory/src/opc/**
+    ../3rdparty/DocxFactory/src/os/**
+    ../3rdparty/DocxFactory/src/parser/**
+    ../3rdparty/DocxFactory/src/str/**
+    ../3rdparty/DocxFactory/src/time/**
+    ../3rdparty/DocxFactory/src/unix/**
+    ../3rdparty/DocxFactory/src/UnoUtil/**
+    ../3rdparty/DocxFactory/src/util/**
+    ../3rdparty/DocxFactory/src/win/**
+    ../3rdparty/DocxFactory/src/WordProcessingCompiler/**
+    ../3rdparty/DocxFactory/src/WordProcessingMerger/**
+    ../3rdparty/DocxFactory/src/xml/**
+    ../3rdparty/DocxFactory/src/zip/**
+     ../3rdparty/DocxFactory/src/*.cpp
     )
 
 set (TEST_ACCESSIBLE_HEADERS_FILES
@@ -349,15 +373,21 @@ include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 include_directories( ${DFrameworkDBus_INCLUDE_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
+include_directories(${Zint_INCLUDE_DIRS})
+include_directories(${RapidJSON_INCLUDE_DIRS})
 
-
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc log-ChardetDetector log-common  ${DFrameworkDBus_LIBRARIES}  ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/lib/libDocxFactory.so)
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc log-ChardetDetector log-common   ${DFrameworkDBus_LIBRARIES}  ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a )
 #这个excel库不用，静态链接后速度太慢
 #include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/simplexlsx-code")
 #target_link_libraries(${EXE_NAME} ${CMAKE_BINARY_DIR}/3rdparty/simplexlsx-code/libSimpleXlsx.a )
 
 #当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
 target_link_libraries(${EXE_NAME} ${ZLIB_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${Boost_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${Zint_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${RapidJSON_LIBRARIES})
+
 #include_directories(${Qt5Widgets_LIBRARIES}
 #                                               ${Qt5Core_LIBRARIES}
 #                                              ${Qt5DBus_LIBRARIES}
@@ -385,7 +415,7 @@ install(FILES assets/images/deepin-log-viewer.svg
 install(FILES assets/com.deepin.pkexec.logViewerAuth.policy
                     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 install(FILES assets/com.deepin.pkexec.logViewerTruncate.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
-
+install(DIRECTORY 3rdparty/DocxFactory/lib DESTINATION lib/deepin-log-viewer/plugins/)
                 # Install files
                 install(TARGETS ${EXE_NAME} DESTINATION bin)
 

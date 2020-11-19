@@ -164,7 +164,8 @@ public slots:
             m_enters.append(extraEnters[i]);
             QVector<qint64>().swap(extraEnters[i]);//提前释放内存
         }
-
+//        int default
+// Common::instance()->detectEncodeForCodec(QByteArray::fromRawData(m_fileMem, );
         delete[] extraEnters;
         delete[] extraRets;
         delete[] chBackup;

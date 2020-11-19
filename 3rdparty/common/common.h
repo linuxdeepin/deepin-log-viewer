@@ -31,7 +31,7 @@ public:
     static float codecConfidenceForData(const QTextCodec *codec, const QByteArray &data, const QLocale::Country &country);
     QString  trans2uft8(const char *str);
     QByteArray detectEncode(const QByteArray &data, const QString &fileName = QString());
-    bool detectEncodeForCodec(const char *str, QTextCodec *oCodec, const QString &fileName = QString());
+    bool detectEncodeForCodec(const QByteArray &data, QTextCodec *oCodec, const QString &fileName = QString());
     int ChartDet_DetectingTextCoding(const char *str, QString &encoding, float &confidence);
     QByteArray textCodecDetect(const QByteArray &data, const QString &fileName);
 

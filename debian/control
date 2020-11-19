@@ -2,7 +2,7 @@ Source: deepin-log-viewer
 Section: utils
 Priority: optional
 Maintainer: Packages <deepin@deepin.com>
-Build-Depends: debhelper (>= 11),cmake, pkg-config, qtbase5-dev, qtchooser (>= 55-gc9562a1-1~),qt5-qmake, libdtkwidget-dev, libdtkgui-dev, qtbase5-private-dev, qttools5-dev-tools, libqt5svg5-dev, libsystemd-dev, libicu-dev,qttools5-dev, libdframeworkdbus-dev ,libkf5codecs-dev, libzip-dev
+Build-Depends: debhelper (>= 11),cmake, pkg-config, qtbase5-dev, qtchooser (>= 55-gc9562a1-1~),qt5-qmake, libdtkwidget-dev, libdtkgui-dev, qtbase5-private-dev, qttools5-dev-tools, libqt5svg5-dev, libsystemd-dev, libicu-dev,qttools5-dev, libdframeworkdbus-dev ,libkf5codecs-dev, libzip-dev,libxerces-c-dev ,libboost-dev,libzint-dev ,rapidjson-dev
 Standards-Version: 4.1.3
 
 Package: deepin-log-viewer

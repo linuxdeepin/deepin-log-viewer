@@ -9,11 +9,11 @@ option(DMAN_RELEAE OFF "Install dman resources to system or not")
 add_subdirectory(3rdparty/libxlsxwriter)
 add_subdirectory(3rdparty/common)
 add_subdirectory(3rdparty/ChardetDetector)
+
 #add_subdirectory(3rdparty/simplexlsx-code)
 add_subdirectory(application)
 add_subdirectory(logViewerAuth)
 add_subdirectory(logViewerTruncate)
-
 option(USE_TEST ON "UT" )
 if (USE_TEST)
 add_subdirectory(tests)

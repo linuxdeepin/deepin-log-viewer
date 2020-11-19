@@ -157,12 +157,12 @@ QByteArray Common::detectEncode(const QByteArray &data, const QString &fileName)
     return  m_codecStr;
 }
 
-bool Common::detectEncodeForCodec(const char *str, QTextCodec *oCodec, const QString &fileName)
+bool Common::detectEncodeForCodec(const QByteArray &data, QTextCodec *oCodec, const QString &fileName)
 {
-    QByteArray codec_name = detectEncode(str);
+    QByteArray codec_name = detectEncode(data);
 
     if (codec_name.isEmpty()) {
-        return str;
+        return false;
     } else if ("gb18030" == codec_name) {
         oCodec = QTextCodec::codecForName(codec_name);
         m_codecStr = codec_name;
