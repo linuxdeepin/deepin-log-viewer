@@ -61,18 +61,13 @@ public:
     }
     bool isStop;
     bool isProcess;
-
-
 };
 
 class LogAuthThread_stopProccess_UT : public ::testing::TestWithParam<LogAuthThread_stopProccess_UT_Param>
 {
 };
 
-INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogAuthThread_stopProccess_UT, ::testing::Values(LogAuthThread_stopProccess_UT_Param(false, true)
-                                                                                                    , LogAuthThread_stopProccess_UT_Param(true, true)
-                                                                                                    , LogAuthThread_stopProccess_UT_Param(true, false)
-                                                                                                   ));
+INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogAuthThread_stopProccess_UT, ::testing::Values(LogAuthThread_stopProccess_UT_Param(false, true), LogAuthThread_stopProccess_UT_Param(true, true), LogAuthThread_stopProccess_UT_Param(true, false)));
 
 TEST_P(LogAuthThread_stopProccess_UT, LogAuthThread_stopProccess_UT_001)
 {
@@ -181,18 +176,18 @@ TEST(LogAuthThread_initProccess_UT, LogAuthThread_initProccess_UT)
 
 int yearStub(void *obj)
 {
-    return  2020;
+    return 2020;
 }
-TEST(LogAuthThread_formatDateTime_UT, LogAuthThread_formatDateTime_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    Stub *stub = new Stub;
-    stub->set(ADDR(QDate, year), yearStub);
-    qint64 result = p->formatDateTime("Oct", "21", "09:50:16");
-    EXPECT_EQ(result, 1603245016000);
-    p->deleteLater();
-}
+//TEST(LogAuthThread_formatDateTime_UT, LogAuthThread_formatDateTime_UT)
+//{
+//    LogAuthThread *p = new LogAuthThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    Stub *stub = new Stub;
+//    stub->set(ADDR(QDate, year), yearStub);
+//    qint64 result = p->formatDateTime("Oct", "21", "09:50:16");
+//    EXPECT_EQ(result, 1603245016000);
+//    p->deleteLater();
+//}
 
 TEST(LogAuthThread_onFinished_UT, LogAuthThread_onFinished_UT_001)
 {
@@ -202,7 +197,6 @@ TEST(LogAuthThread_onFinished_UT, LogAuthThread_onFinished_UT_001)
     p->onFinished(0);
     p->deleteLater();
 }
-
 
 TEST(LogAuthThread_onFinished_UT, LogAuthThread_onFinished_UT_002)
 {
@@ -224,5 +218,3 @@ TEST(LogAuthThread_kernDataRecived_UT, LogAuthThread_kernDataRecived_UT)
     p->kernDataRecived();
     p->deleteLater();
 }
-
-

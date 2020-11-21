@@ -35,7 +35,7 @@ TEST(LogApplication_setMainWindow_UT, LogApplication_setMainWindow_UT)
     char **argv;
     LogApplication *p = new LogApplication(argc, argv);
     EXPECT_NE(p, nullptr);
-    LogCollectorMain *m = new  LogCollectorMain(nullptr);
+    LogCollectorMain *m = new LogCollectorMain(nullptr);
     p->setMainWindow(m);
     EXPECT_EQ(m, p->m_mainWindow);
     p->deleteLater();
@@ -63,10 +63,10 @@ class LogApplication_notify_UT : public ::testing::TestWithParam<LogApplication_
 
 static bool LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result = false;
 std::vector<LogApplication_notify_UT_Param> vec1 {LogApplication_notify_UT_Param(false, true, true, true),
-        LogApplication_notify_UT_Param(true, true, true, true),
-        LogApplication_notify_UT_Param(true, false, true, true),
-        LogApplication_notify_UT_Param(true, true, false, true),
-        LogApplication_notify_UT_Param(true, true, true, false)};
+                                                  LogApplication_notify_UT_Param(true, true, true, true),
+                                                  LogApplication_notify_UT_Param(true, false, true, true),
+                                                  LogApplication_notify_UT_Param(true, true, false, true),
+                                                  LogApplication_notify_UT_Param(true, true, true, false)};
 
 INSTANTIATE_TEST_CASE_P(LogApplication, LogApplication_notify_UT, ::testing::ValuesIn(vec1));
 bool LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Func(void *obj, QObject *obj1, QKeyEvent *evt)
@@ -74,28 +74,27 @@ bool LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Fun
     return LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result;
 }
 
-TEST_P(LogApplication_notify_UT, LogApplication_notify_UT)
-{
-    int argc = 0;
-    char **argv;
-    Stub *stub = new Stub;
-    stub->set(ADDR(LogCollectorMain, handleApplicationTabEventNotify), LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Func);
+//TEST_P(LogApplication_notify_UT, LogApplication_notify_UT)
+//{
+//    int argc = 0;
+//    char **argv;
+//    Stub *stub = new Stub;
+//    stub->set(ADDR(LogCollectorMain, handleApplicationTabEventNotify), LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Func);
 
-    LogApplication *p = new LogApplication(argc, argv);
-    EXPECT_NE(p, nullptr);
-    LogCollectorMain *m = new  LogCollectorMain(nullptr);
-    LogApplication_notify_UT_Param param = GetParam();
-    if (param.isKeyPress) {
-        int key = param.isKeyTab ? Qt::Key_Tab : Qt::Key_Left;
-        QKeyEvent   *keyEvent = new QKeyEvent(QEvent::KeyPress, key, Qt::NoModifier);
-        LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result = param.isSucces;
-        p->m_mainWindow = param.isMainWindow ? p->m_mainWindow : nullptr;
-        p->notify(nullptr, keyEvent);
-    } else {
-        QEvent *e = new QEvent(QEvent::None);
-        p->notify(nullptr, e);
-    }
+//    LogApplication *p = new LogApplication(argc, argv);
+//    EXPECT_NE(p, nullptr);
+//    LogCollectorMain *m = new  LogCollectorMain(nullptr);
+//    LogApplication_notify_UT_Param param = GetParam();
+//    if (param.isKeyPress) {
+//        int key = param.isKeyTab ? Qt::Key_Tab : Qt::Key_Left;
+//        QKeyEvent   *keyEvent = new QKeyEvent(QEvent::KeyPress, key, Qt::NoModifier);
+//        LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result = param.isSucces;
+//        p->m_mainWindow = param.isMainWindow ? p->m_mainWindow : nullptr;
+//        p->notify(nullptr, keyEvent);
+//    } else {
+//        QEvent *e = new QEvent(QEvent::None);
+//        p->notify(nullptr, e);
+//    }
 
-    p->deleteLater();
-}
-
+//    p->deleteLater();
+//}

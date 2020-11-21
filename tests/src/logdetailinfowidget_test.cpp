@@ -21,7 +21,6 @@
 
 #include <DLabel>
 
-
 #include <QDebug>
 #include <QPaintEvent>
 #include <QTextBrowser>
@@ -85,13 +84,13 @@ TEST(logDetailInfoWidget_setTextCustomSize_UT, logDetailInfoWidget_setTextCustom
     p->deleteLater();
 }
 
-TEST(logDetailInfoWidget_paintEvent_UT, logDetailInfoWidget_paintEvent_UT)
-{
-    logDetailInfoWidget *p = new logDetailInfoWidget(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->paintEvent(new QPaintEvent(p->rect()));
-    p->deleteLater();
-}
+//TEST(logDetailInfoWidget_paintEvent_UT, logDetailInfoWidget_paintEvent_UT)
+//{
+//    logDetailInfoWidget *p = new logDetailInfoWidget(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->paintEvent(new QPaintEvent(p->rect()));
+//    p->deleteLater();
+//}
 
 TEST(logDetailInfoWidget_fillDetailInfo_UT, logDetailInfoWidget_fillDetailInfo_UT_001)
 {
@@ -116,5 +115,3 @@ TEST(logDetailInfoWidget_slot_DetailInfo_UT, logDetailInfoWidget_slot_DetailInfo
     p->slot_DetailInfo(QModelIndex(), nullptr, "");
     p->deleteLater();
 }
-
-

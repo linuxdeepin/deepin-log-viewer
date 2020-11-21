@@ -42,20 +42,17 @@ TEST(Utils_getQssContent_UT, Utils_getQssContent_UT)
     EXPECT_EQ(result.isEmpty(), true);
 }
 
-
 TEST(Utils_getConfigPath_UT, Utils_getConfigPath_UT)
 {
     QString result = Utils::getConfigPath();
     EXPECT_EQ(result.isEmpty(), false);
 }
 
-
 TEST(Utils_isFontMimeType_UT, Utils_isFontMimeType_UT_001)
 {
     bool result = Utils::isFontMimeType(QString(""));
     EXPECT_EQ(result, false);
 }
-
 
 TEST(Utils_suffixList_UT, Utils_suffixList_UT)
 {
@@ -67,7 +64,6 @@ TEST(Utils_suffixList_UT, Utils_suffixList_UT)
 TEST(Utils_renderSVG_UT, Utils_renderSVG_UT)
 {
     QPixmap result = Utils::renderSVG(QString(""), QSize(20, 20));
-
 }
 
 TEST(Utils_loadFontFamilyFromFiles_UT, Utils_loadFontFamilyFromFiles_UT)
@@ -84,9 +80,6 @@ TEST(Utils_replaceEmptyByteArray_UT, Utils_replaceEmptyByteArray_UT)
     EXPECT_EQ(compareResult, true);
 }
 
-
-
-
 class Utils_isErroCommand_UT_Param
 {
 public:
@@ -97,45 +90,35 @@ public:
     }
     QString command;
     Utils::CommandErrorType type;
-
 };
 
 class Utils_isErroCommand_UT : public ::testing::TestWithParam<Utils_isErroCommand_UT_Param>
 {
 };
 
-INSTANTIATE_TEST_CASE_P(Utils, Utils_isErroCommand_UT, ::testing::Values(Utils_isErroCommand_UT_Param("权限", Utils::PermissionError)
-                                                                          , Utils_isErroCommand_UT_Param("permission", Utils::PermissionError)
-                                                                          , Utils_isErroCommand_UT_Param("请重试", Utils::RetryError)
-                                                                          , Utils_isErroCommand_UT_Param("retry", Utils::RetryError)
-                                                                          , Utils_isErroCommand_UT_Param("", Utils::NoError)
-                                                                         ));
+INSTANTIATE_TEST_CASE_P(Utils, Utils_isErroCommand_UT, ::testing::Values(Utils_isErroCommand_UT_Param("权限", Utils::PermissionError), Utils_isErroCommand_UT_Param("permission", Utils::PermissionError), Utils_isErroCommand_UT_Param("请重试", Utils::RetryError), Utils_isErroCommand_UT_Param("retry", Utils::RetryError), Utils_isErroCommand_UT_Param("", Utils::NoError)));
 
 TEST_P(Utils_isErroCommand_UT, Utils_isErroCommand_UT_001)
 {
     Utils_isErroCommand_UT_Param param = GetParam();
 
-    Utils::CommandErrorType resultType =  Utils::isErroCommand(param.command);
+    Utils::CommandErrorType resultType = Utils::isErroCommand(param.command);
     bool compareResult = resultType == param.type;
-//    qDebug() << "compareResult" << compareResult << resultType << param.type;
-//    EXPECT_EQ(compareResult, true);
-
+    //    qDebug() << "compareResult" << compareResult << resultType << param.type;
+    //    EXPECT_EQ(compareResult, true);
 }
 
 TEST(Utils_checkAndDeleteDir_UT, Utils_checkAndDeleteDir_UT)
 {
-
     bool result = Utils::checkAndDeleteDir(QString("testdirstr__"));
     EXPECT_EQ(result, false);
 }
 
 TEST(Utils_deleteDir_UT, Utils_deleteDir_UT)
 {
-
     bool result = Utils::deleteDir(QString("testdirstr__"));
     EXPECT_EQ(result, true);
 }
-
 
 TEST(Utils_replaceColorfulFont_UT, Utils_replaceColorfulFont_UT)
 {
@@ -150,13 +133,8 @@ TEST(Utils_isWayland_UT, Utils_isWayland_UT)
     Utils::isWayland();
 }
 
-TEST(Utils_sleep_UT, Utils_sleep_UT)
-{
-    bool result = Utils::sleep(10);
-    EXPECT_EQ(result, true);
-}
-
-
-
-
-
+//TEST(Utils_sleep_UT, Utils_sleep_UT)
+//{
+//    bool result = Utils::sleep(10);
+//    EXPECT_EQ(result, true);
+//}

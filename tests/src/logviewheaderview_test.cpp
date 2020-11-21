@@ -32,33 +32,31 @@ TEST(LogViewHeaderView_Constructor_UT, LogViewHeaderView_Constructor_UT_001)
     p->deleteLater();
 }
 
-TEST(LogViewHeaderView_paintSection_UT, LogViewHeaderView_paintSection_UT_001)
-{
-    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
-    EXPECT_NE(p, nullptr);
-    p->paintSection(new QPainter, p->rect(), 0);
-    p->deleteLater();
-}
+//TEST(LogViewHeaderView_paintSection_UT, LogViewHeaderView_paintSection_UT_001)
+//{
+//    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->paintSection(new QPainter, p->rect(), 0);
+//    p->deleteLater();
+//}
 
 TEST(LogViewHeaderView_focusInEvent_UT, LogViewHeaderView_focusInEvent_UT)
 {
     LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
     EXPECT_NE(p, nullptr);
-    QFocusEvent   *e = new QFocusEvent(QEvent::FocusOut, Qt::ShortcutFocusReason);
+    QFocusEvent *e = new QFocusEvent(QEvent::FocusOut, Qt::ShortcutFocusReason);
     p->focusInEvent(e);
     EXPECT_EQ(p->m_reson, Qt::ShortcutFocusReason);
     p->deleteLater();
 }
 
-
-TEST(LogViewHeaderView_paintEvent_UT, LogViewHeaderView_paintEvent_UT_001)
-{
-    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
-    EXPECT_NE(p, nullptr);
-    p->paintEvent(new QPaintEvent(p->rect()));
-    p->deleteLater();
-}
-
+//TEST(LogViewHeaderView_paintEvent_UT, LogViewHeaderView_paintEvent_UT_001)
+//{
+//    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->paintEvent(new QPaintEvent(p->rect()));
+//    p->deleteLater();
+//}
 
 TEST(LogViewHeaderView_sizeHint_UT, LogViewHeaderView_sizeHint_UT_001)
 {
@@ -68,11 +66,10 @@ TEST(LogViewHeaderView_sizeHint_UT, LogViewHeaderView_sizeHint_UT_001)
     p->deleteLater();
 }
 
-TEST(LogViewHeaderView_sectionSizeHint_UT, LogViewHeaderView_sectionSizeHint_UT_001)
-{
-    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
-    EXPECT_NE(p, nullptr);
-    p->sectionSizeHint(0);
-    p->deleteLater();
-}
-
+//TEST(LogViewHeaderView_sectionSizeHint_UT, LogViewHeaderView_sectionSizeHint_UT_001)
+//{
+//    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->sectionSizeHint(0);
+//    p->deleteLater();
+//}

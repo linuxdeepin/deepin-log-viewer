@@ -38,7 +38,6 @@ TEST(LogPeriodButton_setStandardSize_UT, LogPeriodButton_setStandardSize_UT_001)
     p->deleteLater();
 }
 
-
 TEST(LogPeriodButton_getFocusReason_UT, LogPeriodButton_getFocusReason_UT_001)
 {
     LogPeriodButton *p = new LogPeriodButton("", nullptr);
@@ -67,16 +66,15 @@ TEST(LogPeriodButton_leaveEvent_UT, LogPeriodButton_leaveEvent_UT_001)
     p->deleteLater();
 }
 
-TEST(LogPeriodButton_paintEvent_UT, LogPeriodButton_paintEvent_UT_001)
-{
-    LogPeriodButton *p = new LogPeriodButton("", nullptr);
-    EXPECT_NE(p, nullptr);
+//TEST(LogPeriodButton_paintEvent_UT, LogPeriodButton_paintEvent_UT_001)
+//{
+//    LogPeriodButton *p = new LogPeriodButton("", nullptr);
+//    EXPECT_NE(p, nullptr);
 
-    p->paintEvent(new QPaintEvent(p->rect()));
+//    p->paintEvent(new QPaintEvent(p->rect()));
 
-    p->deleteLater();
-}
-
+//    p->deleteLater();
+//}
 
 class LogPeriodButton_focusInEvent_UT_Param
 {
@@ -86,16 +84,13 @@ public:
         reason = iReason;
     }
     Qt::FocusReason reason;
-
 };
 
 class LogPeriodButton_focusInEvent_UT : public ::testing::TestWithParam<LogPeriodButton_focusInEvent_UT_Param>
 {
 };
 
-INSTANTIATE_TEST_CASE_P(LogPeriodButton, LogPeriodButton_focusInEvent_UT, ::testing::Values(LogPeriodButton_focusInEvent_UT_Param(Qt::MouseFocusReason)
-                                                                                            , LogPeriodButton_focusInEvent_UT_Param(Qt::NoFocusReason)
-                                                                                           ));
+INSTANTIATE_TEST_CASE_P(LogPeriodButton, LogPeriodButton_focusInEvent_UT, ::testing::Values(LogPeriodButton_focusInEvent_UT_Param(Qt::MouseFocusReason), LogPeriodButton_focusInEvent_UT_Param(Qt::NoFocusReason)));
 
 TEST_P(LogPeriodButton_focusInEvent_UT, LogPeriodButton_focusInEvent_UT_001)
 {
@@ -103,8 +98,7 @@ TEST_P(LogPeriodButton_focusInEvent_UT, LogPeriodButton_focusInEvent_UT_001)
     LogPeriodButton *p = new LogPeriodButton(nullptr);
     EXPECT_NE(p, nullptr);
     p->setChecked(false);
-    QFocusEvent   *focusEvent = new QFocusEvent(QEvent::FocusIn, param.reason);
+    QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusIn, param.reason);
     p->focusInEvent(focusEvent);
     p->deleteLater();
 }
-

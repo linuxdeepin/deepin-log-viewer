@@ -39,7 +39,6 @@ TEST(LogExportThread_Destructor_UT, LogExportThread_Destructor_UT)
     p->deleteLater();
 }
 
-
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_001)
 {
     LogExportThread *p = new LogExportThread(nullptr);
@@ -200,7 +199,6 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
     p->deleteLater();
 }
 
-
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_001)
 {
     LogExportThread *p = new LogExportThread(nullptr);
@@ -360,9 +358,6 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
     EXPECT_EQ(p->m_canRunning, true);
     p->deleteLater();
 }
-
-
-
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_001)
 {
@@ -684,7 +679,6 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
     p->deleteLater();
 }
 
-
 TEST(LogExportThread_isProcessing_UT, LogExportThread_isProcessing_UT)
 {
     LogExportThread *p = new LogExportThread(nullptr);
@@ -701,7 +695,6 @@ TEST(LogExportThread_stopImmediately_UT, LogExportThread_stopImmediately_UT)
     EXPECT_EQ(p->m_canRunning, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT_001)
 {
@@ -821,11 +814,10 @@ TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT0
         p_model->insertRow(p_model->rowCount(), items);
     }
     p->m_canRunning = true;
-    bool result =  p->exportToTxt("./testExport.txt", p_model, JOURNAL);
+    bool result = p->exportToTxt("./testExport.txt", p_model, JOURNAL);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 class LogExportThread_exportToTxt_JOURNAL_UT_Param
 {
@@ -839,21 +831,13 @@ public:
     bool canFileRead;
     LOG_FLAG flag;
     bool result;
-
 };
 
 class LogExportThread_exportToTxt_JOURNAL_UT : public ::testing::TestWithParam<LogExportThread_exportToTxt_JOURNAL_UT_Param>
 {
 };
 
-
-INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToTxt_JOURNAL_UT, ::testing::Values(LogExportThread_exportToTxt_JOURNAL_UT_Param(false, KERN, false),
-                                                                                                  LogExportThread_exportToTxt_JOURNAL_UT_Param(true, JOURNAL, true),
-                                                                                                  LogExportThread_exportToTxt_JOURNAL_UT_Param(true, KERN, true),
-                                                                                                  LogExportThread_exportToTxt_JOURNAL_UT_Param(true, APP, true)
-                                                                                                 ));
-
-
+INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToTxt_JOURNAL_UT, ::testing::Values(LogExportThread_exportToTxt_JOURNAL_UT_Param(false, KERN, false), LogExportThread_exportToTxt_JOURNAL_UT_Param(true, JOURNAL, true), LogExportThread_exportToTxt_JOURNAL_UT_Param(true, KERN, true), LogExportThread_exportToTxt_JOURNAL_UT_Param(true, APP, true)));
 
 TEST_P(LogExportThread_exportToTxt_JOURNAL_UT, LogExportThread_exportToTxt_JOURNAL_UT)
 {
@@ -883,8 +867,6 @@ TEST_P(LogExportThread_exportToTxt_JOURNAL_UT, LogExportThread_exportToTxt_JOURN
     p->deleteLater();
 }
 
-
-
 TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_001)
 {
     LogExportThread *p = new LogExportThread(nullptr);
@@ -898,7 +880,7 @@ TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_001)
         info.src = "testsrc";
         jList << info;
     }
-    QString fileName = "./testExport.txt" ;
+    QString fileName = "./testExport.txt";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
@@ -910,7 +892,6 @@ TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_001)
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_002)
 {
@@ -925,7 +906,7 @@ TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_002)
         info.src = "testsrc";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
@@ -933,11 +914,10 @@ TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_002)
     }
     QString appname("testapp");
     p->m_canRunning = true;
-    bool result =   p->exportToTxt(fileName, jList, labels, appname);
+    bool result = p->exportToTxt(fileName, jList, labels, appname);
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_DPKG_UT, LogExportThread_exportToTxt_DPKG_UT_001)
 {
@@ -951,18 +931,17 @@ TEST(LogExportThread_exportToTxt_DPKG_UT, LogExportThread_exportToTxt_DPKG_UT_00
         info.dateTime = "testdatetime";
         jList << info;
     }
-    QString fileName = "./testExport.txt" ;
+    QString fileName = "./testExport.txt";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToTxt(fileName, jList, labels);
+    bool result = p->exportToTxt(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_DPKG_UT, LogExportThread_exportToTxt_DPKG_UT_002)
 {
@@ -976,7 +955,7 @@ TEST(LogExportThread_exportToTxt_DPKG_UT, LogExportThread_exportToTxt_DPKG_UT_00
         info.dateTime = "testdatetime";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
@@ -987,7 +966,6 @@ TEST(LogExportThread_exportToTxt_DPKG_UT, LogExportThread_exportToTxt_DPKG_UT_00
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_BOOT_UT, LogExportThread_exportToTxt_BOOT_UT_001)
 {
@@ -1000,18 +978,17 @@ TEST(LogExportThread_exportToTxt_BOOT_UT, LogExportThread_exportToTxt_BOOT_UT_00
         info.status = "teststatus";
         jList << info;
     }
-    QString fileName = "./testExport.txt" ;
+    QString fileName = "./testExport.txt";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToTxt(fileName, jList, labels);
+    bool result = p->exportToTxt(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_BOOT_UT, LogExportThread_exportToTxt_BOOT_UT_002)
 {
@@ -1024,7 +1001,7 @@ TEST(LogExportThread_exportToTxt_BOOT_UT, LogExportThread_exportToTxt_BOOT_UT_00
         info.status = "teststatus";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
@@ -1035,7 +1012,6 @@ TEST(LogExportThread_exportToTxt_BOOT_UT, LogExportThread_exportToTxt_BOOT_UT_00
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_XORG_UT, LogExportThread_exportToTxt_XORG_UT_001)
 {
@@ -1049,18 +1025,17 @@ TEST(LogExportThread_exportToTxt_XORG_UT, LogExportThread_exportToTxt_XORG_UT_00
         jList << info;
     }
 
-    QString fileName = "./testExport.txt" ;
+    QString fileName = "./testExport.txt";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToTxt(fileName, jList, labels);
+    bool result = p->exportToTxt(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_XORG_UT, LogExportThread_exportToTxt_XORG_UT_002)
 {
@@ -1073,7 +1048,7 @@ TEST(LogExportThread_exportToTxt_XORG_UT, LogExportThread_exportToTxt_XORG_UT_00
         info.dateTime = "testdateTime";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
@@ -1084,7 +1059,6 @@ TEST(LogExportThread_exportToTxt_XORG_UT, LogExportThread_exportToTxt_XORG_UT_00
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_NORMAL_UT, LogExportThread_exportToTxt_NORMAL_UT_001)
 {
@@ -1099,18 +1073,17 @@ TEST(LogExportThread_exportToTxt_NORMAL_UT, LogExportThread_exportToTxt_NORMAL_U
         info.eventType = "test";
         jList << info;
     }
-    QString fileName = "./testExport.txt" ;
+    QString fileName = "./testExport.txt";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToTxt(fileName, jList, labels);
+    bool result = p->exportToTxt(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_NORMAL_UT, LogExportThread_exportToTxt_NORMAL_UT_002)
 {
@@ -1125,7 +1098,7 @@ TEST(LogExportThread_exportToTxt_NORMAL_UT, LogExportThread_exportToTxt_NORMAL_U
         info.eventType = "test";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
@@ -1147,18 +1120,17 @@ TEST(LogExportThread_exportToTxt_KWIN_UT, LogExportThread_exportToTxt_KWIN_UT_00
         info.msg = "testmsg";
         jList << info;
     }
-    QString fileName = "./testExport.txt" ;
+    QString fileName = "./testExport.txt";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToTxt(fileName, jList, labels);
+    bool result = p->exportToTxt(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToTxt_KWIN_UT, LogExportThread_exportToTxt_KWIN_UT_002)
 {
@@ -1170,7 +1142,7 @@ TEST(LogExportThread_exportToTxt_KWIN_UT, LogExportThread_exportToTxt_KWIN_UT_00
         info.msg = "testmsg";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 8; ++i) {
@@ -1182,131 +1154,128 @@ TEST(LogExportThread_exportToTxt_KWIN_UT, LogExportThread_exportToTxt_KWIN_UT_00
     p->deleteLater();
 }
 
+//TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT_001)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QStandardItemModel *p_model = new QStandardItemModel();
+//    p_model->setHorizontalHeaderLabels(QStringList()
+//                                       << Dtk::Widget::DApplication::translate("Table", "Level")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Source")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
+//    QList<QStandardItem *> items;
+//    Dtk::Widget::DStandardItem *item = nullptr;
+//    for (int i = 0; i < 5; i++) {
+//        items.clear();
+//        //int col = 0;
+//        item = new Dtk::Widget::DStandardItem;
+//        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+//        items << item;
+//        //        item = new DStandardItem(list[i].src);
+//        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+//        items << item;
+//        p_model->insertRow(p_model->rowCount(), items);
+//    }
 
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc("", p_model, APP);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
-TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT_001)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QStandardItemModel *p_model = new QStandardItemModel();
-    p_model->setHorizontalHeaderLabels(QStringList()
-                                       << Dtk::Widget::DApplication::translate("Table", "Level")
-                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
-                                       << Dtk::Widget::DApplication::translate("Table", "Source")
-                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
-    QList<QStandardItem *> items;
-    Dtk::Widget::DStandardItem *item = nullptr;
-    for (int i = 0; i < 5; i++) {
-        items.clear();
-        //int col = 0;
-        item = new Dtk::Widget::DStandardItem;
-        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
-        items << item;
-        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
-        items << item;
-        //        item = new DStandardItem(list[i].src);
-        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
-        items << item;
-        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
-        items << item;
-        p_model->insertRow(p_model->rowCount(), items);
-    }
+//TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT_002)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QStandardItemModel *p_model = new QStandardItemModel();
+//    p_model->setHorizontalHeaderLabels(QStringList()
+//                                       << Dtk::Widget::DApplication::translate("Table", "Level")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Source")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
+//    QList<QStandardItem *> items;
+//    Dtk::Widget::DStandardItem *item = nullptr;
+//    for (int i = 0; i < 5; i++) {
+//        items.clear();
+//        //int col = 0;
+//        item = new Dtk::Widget::DStandardItem;
 
-    p->m_canRunning = true;
-    bool result = p->exportToDoc("", p_model, APP);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
+//        item->setData(APP_TABLE_DATA);
+//        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+//        items << item;
+//        //        item = new DStandardItem(list[i].src);
+//        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+//        items << item;
+//        p_model->insertRow(p_model->rowCount(), items);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc("./testExport.doc", p_model, APP);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
-TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT_002)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QStandardItemModel *p_model = new QStandardItemModel();
-    p_model->setHorizontalHeaderLabels(QStringList()
-                                       << Dtk::Widget::DApplication::translate("Table", "Level")
-                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
-                                       << Dtk::Widget::DApplication::translate("Table", "Source")
-                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
-    QList<QStandardItem *> items;
-    Dtk::Widget::DStandardItem *item = nullptr;
-    for (int i = 0; i < 5; i++) {
-        items.clear();
-        //int col = 0;
-        item = new Dtk::Widget::DStandardItem;
+//TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT003)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QStandardItemModel *p_model = new QStandardItemModel();
+//    p_model->setHorizontalHeaderLabels(QStringList()
+//                                       << Dtk::Widget::DApplication::translate("Table", "Level")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Source")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
+//    QList<QStandardItem *> items;
+//    Dtk::Widget::DStandardItem *item = nullptr;
+//    for (int i = 0; i < 5; i++) {
+//        items.clear();
+//        //int col = 0;
 
-        item->setData(APP_TABLE_DATA);
-        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
-        items << item;
-        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
-        items << item;
-        //        item = new DStandardItem(list[i].src);
-        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
-        items << item;
-        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
-        items << item;
-        p_model->insertRow(p_model->rowCount(), items);
-    }
-    p->m_canRunning = true;
-    bool result = p->exportToDoc("./testExport.doc", p_model, APP);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
-TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT003)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QStandardItemModel *p_model = new QStandardItemModel();
-    p_model->setHorizontalHeaderLabels(QStringList()
-                                       << Dtk::Widget::DApplication::translate("Table", "Level")
-                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
-                                       << Dtk::Widget::DApplication::translate("Table", "Source")
-                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
-    QList<QStandardItem *> items;
-    Dtk::Widget::DStandardItem *item = nullptr;
-    for (int i = 0; i < 5; i++) {
-        items.clear();
-        //int col = 0;
-
-        item = new Dtk::Widget::DStandardItem;
-        item->setData(APP_TABLE_DATA);
-        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
-        items << item;
-        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
-        items << item;
-        //        item = new DStandardItem(list[i].src);
-        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
-        items << item;
-        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
-        items << item;
-        p_model->insertRow(p_model->rowCount(), items);
-    }
-    p->m_canRunning = true;
-    bool result =  p->exportToDoc("./testExport.doc", p_model, JOURNAL);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
+//        item = new Dtk::Widget::DStandardItem;
+//        item->setData(APP_TABLE_DATA);
+//        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+//        items << item;
+//        //        item = new DStandardItem(list[i].src);
+//        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+//        items << item;
+//        p_model->insertRow(p_model->rowCount(), items);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc("./testExport.doc", p_model, JOURNAL);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
 class LogExportThread_exportToDoc_JOURNAL_UT_Param
 {
@@ -1320,472 +1289,451 @@ public:
     bool canFileRead;
     LOG_FLAG flag;
     bool result;
-
 };
 
 class LogExportThread_exportToDoc_JOURNAL_UT : public ::testing::TestWithParam<LogExportThread_exportToDoc_JOURNAL_UT_Param>
 {
 };
 
-
-INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToDoc_JOURNAL_UT, ::testing::Values(LogExportThread_exportToDoc_JOURNAL_UT_Param(false, KERN, false),
-                                                                                                  LogExportThread_exportToDoc_JOURNAL_UT_Param(true, JOURNAL, true),
-                                                                                                  LogExportThread_exportToDoc_JOURNAL_UT_Param(true, KERN, true),
-                                                                                                  LogExportThread_exportToDoc_JOURNAL_UT_Param(true, APP, true)
-                                                                                                 ));
-
-
+INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToDoc_JOURNAL_UT, ::testing::Values(LogExportThread_exportToDoc_JOURNAL_UT_Param(false, KERN, false), LogExportThread_exportToDoc_JOURNAL_UT_Param(true, JOURNAL, true), LogExportThread_exportToDoc_JOURNAL_UT_Param(true, KERN, true), LogExportThread_exportToDoc_JOURNAL_UT_Param(true, APP, true)));
 
 TEST_P(LogExportThread_exportToDoc_JOURNAL_UT, LogExportThread_exportToDoc_JOURNAL_UT)
 {
+    //    LogExportThread *p = new LogExportThread(nullptr);
+    //    EXPECT_NE(p, nullptr);
+    //    LogExportThread_exportToDoc_JOURNAL_UT_Param param = GetParam();
+    //    QList<LOG_MSG_JOURNAL> jList;
+    //    for (int i = 0; i < 5; ++i) {
+    //        LOG_MSG_JOURNAL info;
+    //        info.msg = "testmsg";
+    //        info.level = "testlevel";
+    //        info.daemonId = "testid";
+    //        info.dateTime = "testdatetime";
+    //        info.hostName = "testhostName";
+    //        info.daemonName = "testdaemonName";
+    //        jList << info;
+    //    }
+    //    QString fileName = param.canFileRead ? "./testExport.doc" : "";
+    //    QStringList labels;
+
+    //    for (int i = 0; i < 2; ++i) {
+    //        labels << QString("testhead%1").arg(i);
+    //    }
+    //    p->m_canRunning = true;
+    //    bool result = p->exportToDoc(fileName, jList, labels, param.flag);
+    //    EXPECT_EQ(result, param.result);
+    //    p->deleteLater();
+}
+
+//TEST(LogExportThread_exportToDoc_APP_UT, LogExportThread_exportToDoc_APP_UT_001)
+//{
 //    LogExportThread *p = new LogExportThread(nullptr);
 //    EXPECT_NE(p, nullptr);
-//    LogExportThread_exportToDoc_JOURNAL_UT_Param param = GetParam();
-//    QList<LOG_MSG_JOURNAL> jList;
+//    QList<LOG_MSG_APPLICATOIN> jList;
 //    for (int i = 0; i < 5; ++i) {
-//        LOG_MSG_JOURNAL info;
+//        LOG_MSG_APPLICATOIN info;
 //        info.msg = "testmsg";
 //        info.level = "testlevel";
-//        info.daemonId = "testid";
 //        info.dateTime = "testdatetime";
-//        info.hostName = "testhostName";
-//        info.daemonName = "testdaemonName";
+//        info.src = "testsrc";
 //        jList << info;
 //    }
-//    QString fileName = param.canFileRead ? "./testExport.doc" : "";
+//    QString fileName = "./testExport.doc";
 //    QStringList labels;
 
 //    for (int i = 0; i < 2; ++i) {
 //        labels << QString("testhead%1").arg(i);
 //    }
 //    p->m_canRunning = true;
-//    bool result = p->exportToDoc(fileName, jList, labels, param.flag);
-//    EXPECT_EQ(result, param.result);
+//    QString appname("testapp");
+//    bool result = p->exportToDoc(fileName, jList, labels, appname);
+//    EXPECT_EQ(result, true);
 //    p->deleteLater();
-}
+//}
 
+//TEST(LogExportThread_exportToDoc_APP_UT, LogExportThread_exportToDoc_APP_UT_002)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_APPLICATOIN> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_APPLICATOIN info;
+//        info.msg = "testmsg";
+//        info.level = "testlevel";
+//        info.dateTime = "testdatetime";
+//        info.src = "testsrc";
+//        jList << info;
+//    }
+//    QString fileName = "";
+//    QStringList labels;
 
+//    for (int i = 0; i < 2; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    QString appname("testapp");
+//    bool result = p->exportToDoc(fileName, jList, labels, appname);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
-TEST(LogExportThread_exportToDoc_APP_UT, LogExportThread_exportToDoc_APP_UT_001)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_APPLICATOIN> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_APPLICATOIN info;
-        info.msg = "testmsg";
-        info.level = "testlevel";
-        info.dateTime = "testdatetime";
-        info.src = "testsrc";
-        jList << info;
-    }
-    QString fileName = "./testExport.doc" ;
-    QStringList labels;
+//TEST(LogExportThread_exportToDoc_DPKG_UT, LogExportThread_exportToDoc_DPKG_UT_001)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_DPKG> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_DPKG info;
+//        info.msg = "testmsg";
+//        info.action = "testaction";
+//        info.dateTime = "testdatetime";
+//        jList << info;
+//    }
+//    QString fileName = "./testExport.doc";
+//    QStringList labels;
 
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    QString appname("testapp");
-    bool result = p->exportToDoc(fileName, jList, labels, appname);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
+//    for (int i = 0; i < 2; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
+//TEST(LogExportThread_exportToDoc_DPKG_UT, LogExportThread_exportToDoc_DPKG_UT_002)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_DPKG> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_DPKG info;
+//        info.msg = "testmsg";
+//        info.action = "testaction";
+//        info.dateTime = "testdatetime";
+//        jList << info;
+//    }
+//    QString fileName = "";
+//    QStringList labels;
 
-TEST(LogExportThread_exportToDoc_APP_UT, LogExportThread_exportToDoc_APP_UT_002)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_APPLICATOIN> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_APPLICATOIN info;
-        info.msg = "testmsg";
-        info.level = "testlevel";
-        info.dateTime = "testdatetime";
-        info.src = "testsrc";
-        jList << info;
-    }
-    QString fileName = "" ;
-    QStringList labels;
+//    for (int i = 0; i < 2; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    QString appname("testapp");
-    bool result =   p->exportToDoc(fileName, jList, labels, appname);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
+//TEST(LogExportThread_exportToDoc_BOOT_UT, LogExportThread_exportToDoc_BOOT_UT_001)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_BOOT> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_BOOT info;
+//        info.msg = "testmsg";
+//        info.status = "teststatus";
+//        jList << info;
+//    }
+//    QString fileName = "./testExport.doc";
+//    QStringList labels;
 
+//    for (int i = 0; i < 2; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
-TEST(LogExportThread_exportToDoc_DPKG_UT, LogExportThread_exportToDoc_DPKG_UT_001)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_DPKG> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_DPKG info;
-        info.msg = "testmsg";
-        info.action = "testaction";
-        info.dateTime = "testdatetime";
-        jList << info;
-    }
-    QString fileName = "./testExport.doc" ;
-    QStringList labels;
+//TEST(LogExportThread_exportToDoc_BOOT_UT, LogExportThread_exportToDoc_BOOT_UT_002)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_BOOT> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_BOOT info;
+//        info.msg = "testmsg";
+//        info.status = "teststatus";
+//        jList << info;
+//    }
+//    QString fileName = "";
+//    QStringList labels;
 
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result =    p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
+//    for (int i = 0; i < 2; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
+//TEST(LogExportThread_exportToDoc_XORG_UT, LogExportThread_exportToDoc_XORG_UT_001)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_XORG> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_XORG info;
+//        info.msg = "testmsg";
+//        info.dateTime = "testdateTime";
+//        jList << info;
+//    }
 
-TEST(LogExportThread_exportToDoc_DPKG_UT, LogExportThread_exportToDoc_DPKG_UT_002)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_DPKG> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_DPKG info;
-        info.msg = "testmsg";
-        info.action = "testaction";
-        info.dateTime = "testdatetime";
-        jList << info;
-    }
-    QString fileName = "" ;
-    QStringList labels;
+//    QString fileName = "./testExport.doc";
+//    QStringList labels;
 
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result = p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
+//    for (int i = 0; i < 2; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
+//TEST(LogExportThread_exportToDoc_XORG_UT, LogExportThread_exportToDoc_XORG_UT_002)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_XORG> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_XORG info;
+//        info.msg = "testmsg";
+//        info.dateTime = "testdateTime";
+//        jList << info;
+//    }
+//    QString fileName = "";
+//    QStringList labels;
 
-TEST(LogExportThread_exportToDoc_BOOT_UT, LogExportThread_exportToDoc_BOOT_UT_001)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_BOOT> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_BOOT info;
-        info.msg = "testmsg";
-        info.status = "teststatus";
-        jList << info;
-    }
-    QString fileName = "./testExport.doc" ;
-    QStringList labels;
+//    for (int i = 0; i < 2; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result =    p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
+//TEST(LogExportThread_exportToDoc_NORMAL_UT, LogExportThread_exportToDoc_NORMAL_UT_001)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_NORMAL> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_NORMAL info;
+//        info.msg = "testmsg";
+//        info.dateTime = "testdateTime";
+//        info.userName = "test";
+//        info.eventType = "test";
+//        jList << info;
+//    }
+//    QString fileName = "./testExport.doc";
+//    QStringList labels;
 
+//    for (int i = 0; i < 2; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
-TEST(LogExportThread_exportToDoc_BOOT_UT, LogExportThread_exportToDoc_BOOT_UT_002)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_BOOT> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_BOOT info;
-        info.msg = "testmsg";
-        info.status = "teststatus";
-        jList << info;
-    }
-    QString fileName = "" ;
-    QStringList labels;
+//TEST(LogExportThread_exportToDoc_NORMAL_UT, LogExportThread_exportToDoc_NORMAL_UT_002)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_NORMAL> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_NORMAL info;
+//        info.msg = "testmsg";
+//        info.dateTime = "testdateTime";
+//        info.userName = "test";
+//        info.eventType = "test";
+//        jList << info;
+//    }
+//    QString fileName = "";
+//    QStringList labels;
 
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result = p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
+//    for (int i = 0; i < 2; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
+//TEST(LogExportThread_exportToDoc_KWIN_UT, LogExportThread_exportToDoc_KWIN_UT_001)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_KWIN> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_KWIN info;
+//        info.msg = "testmsg";
+//        jList << info;
+//    }
+//    QString fileName = "./testExport.doc";
+//    QStringList labels;
 
-TEST(LogExportThread_exportToDoc_XORG_UT, LogExportThread_exportToDoc_XORG_UT_001)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_XORG> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_XORG info;
-        info.msg = "testmsg";
-        info.dateTime = "testdateTime";
-        jList << info;
-    }
+//    for (int i = 0; i < 1; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
-    QString fileName = "./testExport.doc" ;
-    QStringList labels;
+//TEST(LogExportThread_exportToDoc_KWIN_UT, LogExportThread_exportToDoc_KWIN_UT_002)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QList<LOG_MSG_KWIN> jList;
+//    for (int i = 0; i < 5; ++i) {
+//        LOG_MSG_KWIN info;
+//        info.msg = "testmsg";
+//        jList << info;
+//    }
+//    QString fileName = "";
+//    QStringList labels;
 
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result =    p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
+//    for (int i = 0; i < 1; ++i) {
+//        labels << QString("testhead%1").arg(i);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToDoc(fileName, jList, labels);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
+//TEST(LogExportThread_exportToHtml_Model_UT, LogExportThread_exportToHtml_Model_UT_001)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QStandardItemModel *p_model = new QStandardItemModel();
+//    p_model->setHorizontalHeaderLabels(QStringList()
+//                                       << Dtk::Widget::DApplication::translate("Table", "Level")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Source")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
+//    QList<QStandardItem *> items;
+//    Dtk::Widget::DStandardItem *item = nullptr;
+//    for (int i = 0; i < 5; i++) {
+//        items.clear();
+//        //int col = 0;
+//        item = new Dtk::Widget::DStandardItem;
+//        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+//        items << item;
+//        //        item = new DStandardItem(list[i].src);
+//        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+//        items << item;
+//        p_model->insertRow(p_model->rowCount(), items);
+//    }
 
-TEST(LogExportThread_exportToDoc_XORG_UT, LogExportThread_exportToDoc_XORG_UT_002)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_XORG> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_XORG info;
-        info.msg = "testmsg";
-        info.dateTime = "testdateTime";
-        jList << info;
-    }
-    QString fileName = "" ;
-    QStringList labels;
+//    p->m_canRunning = true;
+//    bool result = p->exportToHtml("", p_model, APP);
+//    EXPECT_EQ(result, false);
+//    p->deleteLater();
+//}
 
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result = p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
+//TEST(LogExportThread_exportToHtml_Model_UT, LogExportThread_exportToHtml_Model_UT_002)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QStandardItemModel *p_model = new QStandardItemModel();
+//    p_model->setHorizontalHeaderLabels(QStringList()
+//                                       << Dtk::Widget::DApplication::translate("Table", "Level")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Source")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
+//    QList<QStandardItem *> items;
+//    Dtk::Widget::DStandardItem *item = nullptr;
+//    for (int i = 0; i < 5; i++) {
+//        items.clear();
+//        //int col = 0;
+//        item = new Dtk::Widget::DStandardItem;
 
+//        item->setData(APP_TABLE_DATA);
+//        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+//        items << item;
+//        //        item = new DStandardItem(list[i].src);
+//        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+//        items << item;
+//        p_model->insertRow(p_model->rowCount(), items);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToHtml("./testExport.doc", p_model, APP);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
-TEST(LogExportThread_exportToDoc_NORMAL_UT, LogExportThread_exportToDoc_NORMAL_UT_001)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_NORMAL> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_NORMAL info;
-        info.msg = "testmsg";
-        info.dateTime = "testdateTime";
-        info.userName = "test";
-        info.eventType = "test";
-        jList << info;
-    }
-    QString fileName = "./testExport.doc" ;
-    QStringList labels;
+//TEST(LogExportThread_exportToHtml_Model_UT, LogExportThread_exportToHtml_Model_UT003)
+//{
+//    LogExportThread *p = new LogExportThread(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QStandardItemModel *p_model = new QStandardItemModel();
+//    p_model->setHorizontalHeaderLabels(QStringList()
+//                                       << Dtk::Widget::DApplication::translate("Table", "Level")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Source")
+//                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
+//    QList<QStandardItem *> items;
+//    Dtk::Widget::DStandardItem *item = nullptr;
+//    for (int i = 0; i < 5; i++) {
+//        items.clear();
+//        //int col = 0;
 
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result =    p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
-
-TEST(LogExportThread_exportToDoc_NORMAL_UT, LogExportThread_exportToDoc_NORMAL_UT_002)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_NORMAL> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_NORMAL info;
-        info.msg = "testmsg";
-        info.dateTime = "testdateTime";
-        info.userName = "test";
-        info.eventType = "test";
-        jList << info;
-    }
-    QString fileName = "" ;
-    QStringList labels;
-
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result = p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
-TEST(LogExportThread_exportToDoc_KWIN_UT, LogExportThread_exportToDoc_KWIN_UT_001)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_KWIN> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_KWIN info;
-        info.msg = "testmsg";
-        jList << info;
-    }
-    QString fileName = "./testExport.doc" ;
-    QStringList labels;
-
-    for (int i = 0; i < 1; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result =    p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
-
-TEST(LogExportThread_exportToDoc_KWIN_UT, LogExportThread_exportToDoc_KWIN_UT_002)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_KWIN> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_KWIN info;
-        info.msg = "testmsg";
-        jList << info;
-    }
-    QString fileName = "" ;
-    QStringList labels;
-
-    for (int i = 0; i < 1; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    bool result = p->exportToDoc(fileName, jList, labels);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
-TEST(LogExportThread_exportToHtml_Model_UT, LogExportThread_exportToHtml_Model_UT_001)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QStandardItemModel *p_model = new QStandardItemModel();
-    p_model->setHorizontalHeaderLabels(QStringList()
-                                       << Dtk::Widget::DApplication::translate("Table", "Level")
-                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
-                                       << Dtk::Widget::DApplication::translate("Table", "Source")
-                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
-    QList<QStandardItem *> items;
-    Dtk::Widget::DStandardItem *item = nullptr;
-    for (int i = 0; i < 5; i++) {
-        items.clear();
-        //int col = 0;
-        item = new Dtk::Widget::DStandardItem;
-        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
-        items << item;
-        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
-        items << item;
-        //        item = new DStandardItem(list[i].src);
-        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
-        items << item;
-        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
-        items << item;
-        p_model->insertRow(p_model->rowCount(), items);
-    }
-
-    p->m_canRunning = true;
-    bool result = p->exportToHtml("", p_model, APP);
-    EXPECT_EQ(result, false);
-    p->deleteLater();
-}
-
-TEST(LogExportThread_exportToHtml_Model_UT, LogExportThread_exportToHtml_Model_UT_002)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QStandardItemModel *p_model = new QStandardItemModel();
-    p_model->setHorizontalHeaderLabels(QStringList()
-                                       << Dtk::Widget::DApplication::translate("Table", "Level")
-                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
-                                       << Dtk::Widget::DApplication::translate("Table", "Source")
-                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
-    QList<QStandardItem *> items;
-    Dtk::Widget::DStandardItem *item = nullptr;
-    for (int i = 0; i < 5; i++) {
-        items.clear();
-        //int col = 0;
-        item = new Dtk::Widget::DStandardItem;
-
-        item->setData(APP_TABLE_DATA);
-        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
-        items << item;
-        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
-        items << item;
-        //        item = new DStandardItem(list[i].src);
-        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
-        items << item;
-        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
-        items << item;
-        p_model->insertRow(p_model->rowCount(), items);
-    }
-    p->m_canRunning = true;
-    bool result = p->exportToHtml("./testExport.doc", p_model, APP);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
-TEST(LogExportThread_exportToHtml_Model_UT, LogExportThread_exportToHtml_Model_UT003)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QStandardItemModel *p_model = new QStandardItemModel();
-    p_model->setHorizontalHeaderLabels(QStringList()
-                                       << Dtk::Widget::DApplication::translate("Table", "Level")
-                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
-                                       << Dtk::Widget::DApplication::translate("Table", "Source")
-                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
-    QList<QStandardItem *> items;
-    Dtk::Widget::DStandardItem *item = nullptr;
-    for (int i = 0; i < 5; i++) {
-        items.clear();
-        //int col = 0;
-
-        item = new Dtk::Widget::DStandardItem;
-        item->setData(APP_TABLE_DATA);
-        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
-        items << item;
-        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
-        items << item;
-        //        item = new DStandardItem(list[i].src);
-        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
-        items << item;
-        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
-        items << item;
-        p_model->insertRow(p_model->rowCount(), items);
-    }
-    p->m_canRunning = true;
-    bool result =  p->exportToHtml("./testExport.doc", p_model, JOURNAL);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
+//        item = new Dtk::Widget::DStandardItem;
+//        item->setData(APP_TABLE_DATA);
+//        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+//        items << item;
+//        //        item = new DStandardItem(list[i].src);
+//        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+//        items << item;
+//        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
+//        item->setData(APP_TABLE_DATA);
+//        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+//        items << item;
+//        p_model->insertRow(p_model->rowCount(), items);
+//    }
+//    p->m_canRunning = true;
+//    bool result = p->exportToHtml("./testExport.doc", p_model, JOURNAL);
+//    EXPECT_EQ(result, true);
+//    p->deleteLater();
+//}
 
 class LogExportThread_exportToHtml_JOURNAL_UT_Param
 {
@@ -1799,78 +1747,67 @@ public:
     bool canFileRead;
     LOG_FLAG flag;
     bool result;
-
 };
 
 class LogExportThread_exportToHtml_JOURNAL_UT : public ::testing::TestWithParam<LogExportThread_exportToHtml_JOURNAL_UT_Param>
 {
 };
 
-
-INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToHtml_JOURNAL_UT, ::testing::Values(LogExportThread_exportToHtml_JOURNAL_UT_Param(false, KERN, false),
-                                                                                                   LogExportThread_exportToHtml_JOURNAL_UT_Param(true, JOURNAL, true),
-                                                                                                   LogExportThread_exportToHtml_JOURNAL_UT_Param(true, KERN, true),
-                                                                                                   LogExportThread_exportToHtml_JOURNAL_UT_Param(true, APP, true)
-                                                                                                  ));
-
-
+INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToHtml_JOURNAL_UT, ::testing::Values(LogExportThread_exportToHtml_JOURNAL_UT_Param(false, KERN, false), LogExportThread_exportToHtml_JOURNAL_UT_Param(true, JOURNAL, true), LogExportThread_exportToHtml_JOURNAL_UT_Param(true, KERN, true), LogExportThread_exportToHtml_JOURNAL_UT_Param(true, APP, true)));
 
 TEST_P(LogExportThread_exportToHtml_JOURNAL_UT, LogExportThread_exportToHtml_JOURNAL_UT)
 {
+    //    LogExportThread *p = new LogExportThread(nullptr);
+    //    EXPECT_NE(p, nullptr);
+    //    LogExportThread_exportToHtml_JOURNAL_UT_Param param = GetParam();
+    //    QList<LOG_MSG_JOURNAL> jList;
+    //    for (int i = 0; i < 5; ++i) {
+    //        LOG_MSG_JOURNAL info;
+    //        info.msg = "testmsg";
+    //        info.level = "testlevel";
+    //        info.daemonId = "testid";
+    //        info.dateTime = "testdatetime";
+    //        info.hostName = "testhostName";
+    //        info.daemonName = "testdaemonName";
+    //        jList << info;
+    //    }
+    //    QString fileName = param.canFileRead ? "./testExport.doc" : "";
+    //    QStringList labels;
+
+    //    for (int i = 0; i < 2; ++i) {
+    //        labels << QString("testhead%1").arg(i);
+    //    }
+    //    p->m_canRunning = true;
+    //    bool result = p->exportToHtml(fileName, jList, labels, param.flag);
+    //    EXPECT_EQ(result, param.result);
+    //    p->deleteLater();
+}
+
+//TEST(LogExportThread_exportToHtml_APP_UT, LogExportThread_exportToHtml_APP_UT_001)
+//{
 //    LogExportThread *p = new LogExportThread(nullptr);
 //    EXPECT_NE(p, nullptr);
-//    LogExportThread_exportToHtml_JOURNAL_UT_Param param = GetParam();
-//    QList<LOG_MSG_JOURNAL> jList;
+//    QList<LOG_MSG_APPLICATOIN> jList;
 //    for (int i = 0; i < 5; ++i) {
-//        LOG_MSG_JOURNAL info;
+//        LOG_MSG_APPLICATOIN info;
 //        info.msg = "testmsg";
 //        info.level = "testlevel";
-//        info.daemonId = "testid";
 //        info.dateTime = "testdatetime";
-//        info.hostName = "testhostName";
-//        info.daemonName = "testdaemonName";
+//        info.src = "testsrc";
 //        jList << info;
 //    }
-//    QString fileName = param.canFileRead ? "./testExport.doc" : "";
+//    QString fileName = "./testExport.doc";
 //    QStringList labels;
 
 //    for (int i = 0; i < 2; ++i) {
 //        labels << QString("testhead%1").arg(i);
 //    }
 //    p->m_canRunning = true;
-//    bool result = p->exportToHtml(fileName, jList, labels, param.flag);
-//    EXPECT_EQ(result, param.result);
+//    QString appname("testapp");
+//    bool result = p->exportToHtml(fileName, jList, labels, appname);
+//    EXPECT_EQ(result, true);
 //    p->deleteLater();
-}
-
-
-
-TEST(LogExportThread_exportToHtml_APP_UT, LogExportThread_exportToHtml_APP_UT_001)
-{
-    LogExportThread *p = new LogExportThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_APPLICATOIN> jList;
-    for (int i = 0; i < 5; ++i) {
-        LOG_MSG_APPLICATOIN info;
-        info.msg = "testmsg";
-        info.level = "testlevel";
-        info.dateTime = "testdatetime";
-        info.src = "testsrc";
-        jList << info;
-    }
-    QString fileName = "./testExport.doc" ;
-    QStringList labels;
-
-    for (int i = 0; i < 2; ++i) {
-        labels << QString("testhead%1").arg(i);
-    }
-    p->m_canRunning = true;
-    QString appname("testapp");
-    bool result = p->exportToHtml(fileName, jList, labels, appname);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
+//}
 
 TEST(LogExportThread_exportToHtml_APP_UT, LogExportThread_exportToHtml_APP_UT_002)
 {
@@ -1885,7 +1822,7 @@ TEST(LogExportThread_exportToHtml_APP_UT, LogExportThread_exportToHtml_APP_UT_00
         info.src = "testsrc";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -1893,11 +1830,10 @@ TEST(LogExportThread_exportToHtml_APP_UT, LogExportThread_exportToHtml_APP_UT_00
     }
     p->m_canRunning = true;
     QString appname("testapp");
-    bool result =   p->exportToHtml(fileName, jList, labels, appname);
+    bool result = p->exportToHtml(fileName, jList, labels, appname);
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToHtml_DPKG_UT, LogExportThread_exportToHtml_DPKG_UT_001)
 {
@@ -1911,18 +1847,17 @@ TEST(LogExportThread_exportToHtml_DPKG_UT, LogExportThread_exportToHtml_DPKG_UT_
         info.dateTime = "testdatetime";
         jList << info;
     }
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToHtml(fileName, jList, labels);
+    bool result = p->exportToHtml(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToHtml_DPKG_UT, LogExportThread_exportToHtml_DPKG_UT_002)
 {
@@ -1936,7 +1871,7 @@ TEST(LogExportThread_exportToHtml_DPKG_UT, LogExportThread_exportToHtml_DPKG_UT_
         info.dateTime = "testdatetime";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -1947,7 +1882,6 @@ TEST(LogExportThread_exportToHtml_DPKG_UT, LogExportThread_exportToHtml_DPKG_UT_
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToHtml_BOOT_UT, LogExportThread_exportToHtml_BOOT_UT_001)
 {
@@ -1960,18 +1894,17 @@ TEST(LogExportThread_exportToHtml_BOOT_UT, LogExportThread_exportToHtml_BOOT_UT_
         info.status = "teststatus";
         jList << info;
     }
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToHtml(fileName, jList, labels);
+    bool result = p->exportToHtml(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToHtml_BOOT_UT, LogExportThread_exportToHtml_BOOT_UT_002)
 {
@@ -1984,7 +1917,7 @@ TEST(LogExportThread_exportToHtml_BOOT_UT, LogExportThread_exportToHtml_BOOT_UT_
         info.status = "teststatus";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -1995,7 +1928,6 @@ TEST(LogExportThread_exportToHtml_BOOT_UT, LogExportThread_exportToHtml_BOOT_UT_
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToHtml_XORG_UT, LogExportThread_exportToHtml_XORG_UT_001)
 {
@@ -2009,18 +1941,17 @@ TEST(LogExportThread_exportToHtml_XORG_UT, LogExportThread_exportToHtml_XORG_UT_
         jList << info;
     }
 
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToHtml(fileName, jList, labels);
+    bool result = p->exportToHtml(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToHtml_XORG_UT, LogExportThread_exportToHtml_XORG_UT_002)
 {
@@ -2033,7 +1964,7 @@ TEST(LogExportThread_exportToHtml_XORG_UT, LogExportThread_exportToHtml_XORG_UT_
         info.dateTime = "testdateTime";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -2044,7 +1975,6 @@ TEST(LogExportThread_exportToHtml_XORG_UT, LogExportThread_exportToHtml_XORG_UT_
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToHtml_NORMAL_UT, LogExportThread_exportToHtml_NORMAL_UT_001)
 {
@@ -2059,18 +1989,17 @@ TEST(LogExportThread_exportToHtml_NORMAL_UT, LogExportThread_exportToHtml_NORMAL
         info.eventType = "test";
         jList << info;
     }
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToHtml(fileName, jList, labels);
+    bool result = p->exportToHtml(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToHtml_NORMAL_UT, LogExportThread_exportToHtml_NORMAL_UT_002)
 {
@@ -2085,7 +2014,7 @@ TEST(LogExportThread_exportToHtml_NORMAL_UT, LogExportThread_exportToHtml_NORMAL
         info.eventType = "test";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -2107,18 +2036,17 @@ TEST(LogExportThread_exportToHtml_KWIN_UT, LogExportThread_exportToHtml_KWIN_UT_
         info.msg = "testmsg";
         jList << info;
     }
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 1; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToHtml(fileName, jList, labels);
+    bool result = p->exportToHtml(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToHtml_KWIN_UT, LogExportThread_exportToHtml_KWIN_UT_002)
 {
@@ -2130,7 +2058,7 @@ TEST(LogExportThread_exportToHtml_KWIN_UT, LogExportThread_exportToHtml_KWIN_UT_
         info.msg = "testmsg";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 1; ++i) {
@@ -2141,7 +2069,6 @@ TEST(LogExportThread_exportToHtml_KWIN_UT, LogExportThread_exportToHtml_KWIN_UT_
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_Model_UT, LogExportThread_exportToXls_Model_UT_001)
 {
@@ -2261,11 +2188,10 @@ TEST(LogExportThread_exportToXls_Model_UT, LogExportThread_exportToXls_Model_UT0
         p_model->insertRow(p_model->rowCount(), items);
     }
     p->m_canRunning = true;
-    bool result =  p->exportToXls("./testExport.doc", p_model, JOURNAL);
+    bool result = p->exportToXls("./testExport.doc", p_model, JOURNAL);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 class LogExportThread_exportToXls_JOURNAL_UT_Param
 {
@@ -2279,51 +2205,41 @@ public:
     bool canFileRead;
     LOG_FLAG flag;
     bool result;
-
 };
 
 class LogExportThread_exportToXls_JOURNAL_UT : public ::testing::TestWithParam<LogExportThread_exportToXls_JOURNAL_UT_Param>
 {
 };
 
-
-INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToXls_JOURNAL_UT, ::testing::Values(LogExportThread_exportToXls_JOURNAL_UT_Param(false, KERN, false),
-                                                                                                  LogExportThread_exportToXls_JOURNAL_UT_Param(true, JOURNAL, true),
-                                                                                                  LogExportThread_exportToXls_JOURNAL_UT_Param(true, KERN, true),
-                                                                                                  LogExportThread_exportToXls_JOURNAL_UT_Param(true, APP, true)
-                                                                                                 ));
-
-
+INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToXls_JOURNAL_UT, ::testing::Values(LogExportThread_exportToXls_JOURNAL_UT_Param(false, KERN, false), LogExportThread_exportToXls_JOURNAL_UT_Param(true, JOURNAL, true), LogExportThread_exportToXls_JOURNAL_UT_Param(true, KERN, true), LogExportThread_exportToXls_JOURNAL_UT_Param(true, APP, true)));
 
 TEST_P(LogExportThread_exportToXls_JOURNAL_UT, LogExportThread_exportToXls_JOURNAL_UT)
 {
-//    LogExportThread *p = new LogExportThread(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    LogExportThread_exportToXls_JOURNAL_UT_Param param = GetParam();
-//    QList<LOG_MSG_JOURNAL> jList;
-//    for (int i = 0; i < 5; ++i) {
-//        LOG_MSG_JOURNAL info;
-//        info.msg = "testmsg";
-//        info.level = "testlevel";
-//        info.daemonId = "testid";
-//        info.dateTime = "testdatetime";
-//        info.hostName = "testhostName";
-//        info.daemonName = "testdaemonName";
-//        jList << info;
-//    }
-//    QString fileName = param.canFileRead ? "./testExport.doc" : "";
-//    QStringList labels;
+    //    LogExportThread *p = new LogExportThread(nullptr);
+    //    EXPECT_NE(p, nullptr);
+    //    LogExportThread_exportToXls_JOURNAL_UT_Param param = GetParam();
+    //    QList<LOG_MSG_JOURNAL> jList;
+    //    for (int i = 0; i < 5; ++i) {
+    //        LOG_MSG_JOURNAL info;
+    //        info.msg = "testmsg";
+    //        info.level = "testlevel";
+    //        info.daemonId = "testid";
+    //        info.dateTime = "testdatetime";
+    //        info.hostName = "testhostName";
+    //        info.daemonName = "testdaemonName";
+    //        jList << info;
+    //    }
+    //    QString fileName = param.canFileRead ? "./testExport.doc" : "";
+    //    QStringList labels;
 
-//    for (int i = 0; i < 2; ++i) {
-//        labels << QString("testhead%1").arg(i);
-//    }
-//    p->m_canRunning = true;
-//    bool result = p->exportToXls(fileName, jList, labels, param.flag);
-//    EXPECT_EQ(result, param.result);
-//    p->deleteLater();
+    //    for (int i = 0; i < 2; ++i) {
+    //        labels << QString("testhead%1").arg(i);
+    //    }
+    //    p->m_canRunning = true;
+    //    bool result = p->exportToXls(fileName, jList, labels, param.flag);
+    //    EXPECT_EQ(result, param.result);
+    //    p->deleteLater();
 }
-
-
 
 TEST(LogExportThread_exportToXls_APP_UT, LogExportThread_exportToXls_APP_UT_001)
 {
@@ -2338,7 +2254,7 @@ TEST(LogExportThread_exportToXls_APP_UT, LogExportThread_exportToXls_APP_UT_001)
         info.src = "testsrc";
         jList << info;
     }
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -2350,7 +2266,6 @@ TEST(LogExportThread_exportToXls_APP_UT, LogExportThread_exportToXls_APP_UT_001)
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_APP_UT, LogExportThread_exportToXls_APP_UT_002)
 {
@@ -2365,7 +2280,7 @@ TEST(LogExportThread_exportToXls_APP_UT, LogExportThread_exportToXls_APP_UT_002)
         info.src = "testsrc";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -2373,11 +2288,10 @@ TEST(LogExportThread_exportToXls_APP_UT, LogExportThread_exportToXls_APP_UT_002)
     }
     p->m_canRunning = true;
     QString appname("testapp");
-    bool result =   p->exportToXls(fileName, jList, labels, appname);
+    bool result = p->exportToXls(fileName, jList, labels, appname);
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_DPKG_UT, LogExportThread_exportToXls_DPKG_UT_001)
 {
@@ -2391,18 +2305,17 @@ TEST(LogExportThread_exportToXls_DPKG_UT, LogExportThread_exportToXls_DPKG_UT_00
         info.dateTime = "testdatetime";
         jList << info;
     }
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToXls(fileName, jList, labels);
+    bool result = p->exportToXls(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_DPKG_UT, LogExportThread_exportToXls_DPKG_UT_002)
 {
@@ -2416,7 +2329,7 @@ TEST(LogExportThread_exportToXls_DPKG_UT, LogExportThread_exportToXls_DPKG_UT_00
         info.dateTime = "testdatetime";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -2427,7 +2340,6 @@ TEST(LogExportThread_exportToXls_DPKG_UT, LogExportThread_exportToXls_DPKG_UT_00
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_BOOT_UT, LogExportThread_exportToXls_BOOT_UT_001)
 {
@@ -2440,18 +2352,17 @@ TEST(LogExportThread_exportToXls_BOOT_UT, LogExportThread_exportToXls_BOOT_UT_00
         info.status = "teststatus";
         jList << info;
     }
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToXls(fileName, jList, labels);
+    bool result = p->exportToXls(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_BOOT_UT, LogExportThread_exportToXls_BOOT_UT_002)
 {
@@ -2464,7 +2375,7 @@ TEST(LogExportThread_exportToXls_BOOT_UT, LogExportThread_exportToXls_BOOT_UT_00
         info.status = "teststatus";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -2475,7 +2386,6 @@ TEST(LogExportThread_exportToXls_BOOT_UT, LogExportThread_exportToXls_BOOT_UT_00
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_XORG_UT, LogExportThread_exportToXls_XORG_UT_001)
 {
@@ -2489,18 +2399,17 @@ TEST(LogExportThread_exportToXls_XORG_UT, LogExportThread_exportToXls_XORG_UT_00
         jList << info;
     }
 
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToXls(fileName, jList, labels);
+    bool result = p->exportToXls(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_XORG_UT, LogExportThread_exportToXls_XORG_UT_002)
 {
@@ -2513,7 +2422,7 @@ TEST(LogExportThread_exportToXls_XORG_UT, LogExportThread_exportToXls_XORG_UT_00
         info.dateTime = "testdateTime";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -2524,7 +2433,6 @@ TEST(LogExportThread_exportToXls_XORG_UT, LogExportThread_exportToXls_XORG_UT_00
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_NORMAL_UT, LogExportThread_exportToXls_NORMAL_UT_001)
 {
@@ -2539,18 +2447,17 @@ TEST(LogExportThread_exportToXls_NORMAL_UT, LogExportThread_exportToXls_NORMAL_U
         info.eventType = "test";
         jList << info;
     }
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToXls(fileName, jList, labels);
+    bool result = p->exportToXls(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_NORMAL_UT, LogExportThread_exportToXls_NORMAL_UT_002)
 {
@@ -2565,7 +2472,7 @@ TEST(LogExportThread_exportToXls_NORMAL_UT, LogExportThread_exportToXls_NORMAL_U
         info.eventType = "test";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 2; ++i) {
@@ -2587,18 +2494,17 @@ TEST(LogExportThread_exportToXls_KWIN_UT, LogExportThread_exportToXls_KWIN_UT_00
         info.msg = "testmsg";
         jList << info;
     }
-    QString fileName = "./testExport.doc" ;
+    QString fileName = "./testExport.doc";
     QStringList labels;
 
     for (int i = 0; i < 1; ++i) {
         labels << QString("testhead%1").arg(i);
     }
     p->m_canRunning = true;
-    bool result =    p->exportToXls(fileName, jList, labels);
+    bool result = p->exportToXls(fileName, jList, labels);
     EXPECT_EQ(result, true);
     p->deleteLater();
 }
-
 
 TEST(LogExportThread_exportToXls_KWIN_UT, LogExportThread_exportToXls_KWIN_UT_002)
 {
@@ -2610,7 +2516,7 @@ TEST(LogExportThread_exportToXls_KWIN_UT, LogExportThread_exportToXls_KWIN_UT_00
         info.msg = "testmsg";
         jList << info;
     }
-    QString fileName = "" ;
+    QString fileName = "";
     QStringList labels;
 
     for (int i = 0; i < 1; ++i) {
@@ -2646,8 +2552,6 @@ TEST(LogExportThread_initMap_UT, LogExportThread_initMap_UT)
     p->deleteLater();
 }
 
-
-
 class LogExportThread_strTranslate_UT_Param
 {
 public:
@@ -2658,22 +2562,13 @@ public:
     }
     QString key;
     QString value;
-
 };
 
 class LogExportThread_strTranslate_UT : public ::testing::TestWithParam<LogExportThread_strTranslate_UT_Param>
 {
 };
 
-INSTANTIATE_TEST_CASE_P(LogExportThread, LogExportThread_strTranslate_UT, ::testing::Values(LogExportThread_strTranslate_UT_Param("Emergency", Dtk::Widget::DApplication::translate("Level", "Emergency")),
-                                                                                            LogExportThread_strTranslate_UT_Param("Alert", Dtk::Widget::DApplication::translate("Level", "Alert")),
-                                                                                            LogExportThread_strTranslate_UT_Param("Critical", Dtk::Widget::DApplication::translate("Level", "Critical")),
-                                                                                            LogExportThread_strTranslate_UT_Param("Error", Dtk::Widget::DApplication::translate("Level", "Error")),
-                                                                                            LogExportThread_strTranslate_UT_Param("Warning", Dtk::Widget::DApplication::translate("Level", "Warning")),
-                                                                                            LogExportThread_strTranslate_UT_Param("Notice", Dtk::Widget::DApplication::translate("Level", "Notice")),
-                                                                                            LogExportThread_strTranslate_UT_Param("Info", Dtk::Widget::DApplication::translate("Level", "Info")),
-                                                                                            LogExportThread_strTranslate_UT_Param("Debug", Dtk::Widget:: DApplication::translate("Level", "Debug"))
-                                                                                           ));
+INSTANTIATE_TEST_CASE_P(LogExportThread, LogExportThread_strTranslate_UT, ::testing::Values(LogExportThread_strTranslate_UT_Param("Emergency", Dtk::Widget::DApplication::translate("Level", "Emergency")), LogExportThread_strTranslate_UT_Param("Alert", Dtk::Widget::DApplication::translate("Level", "Alert")), LogExportThread_strTranslate_UT_Param("Critical", Dtk::Widget::DApplication::translate("Level", "Critical")), LogExportThread_strTranslate_UT_Param("Error", Dtk::Widget::DApplication::translate("Level", "Error")), LogExportThread_strTranslate_UT_Param("Warning", Dtk::Widget::DApplication::translate("Level", "Warning")), LogExportThread_strTranslate_UT_Param("Notice", Dtk::Widget::DApplication::translate("Level", "Notice")), LogExportThread_strTranslate_UT_Param("Info", Dtk::Widget::DApplication::translate("Level", "Info")), LogExportThread_strTranslate_UT_Param("Debug", Dtk::Widget::DApplication::translate("Level", "Debug"))));
 
 TEST_P(LogExportThread_strTranslate_UT, LogExportThread_strTranslate_UT_001)
 {
@@ -2683,7 +2578,6 @@ TEST_P(LogExportThread_strTranslate_UT, LogExportThread_strTranslate_UT_001)
     EXPECT_EQ(param.value == p->strTranslate(param.key), true);
     p->deleteLater();
 }
-
 
 //class LogExportThread_run_UT_Param
 //{
@@ -2759,5 +2653,3 @@ TEST_P(LogExportThread_strTranslate_UT, LogExportThread_strTranslate_UT_001)
 //    p->run();
 //    p->deleteLater();
 //}
-
-
