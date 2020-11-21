@@ -340,16 +340,16 @@ target_link_libraries(${PROJECT_NAME_TEST}  ${LINK_LIBS} ${DFrameworkDBus_LIBRAR
 
 
 
-##------------------------------ 创建'make test'指令---------------------------------------
-#add_custom_target(test
+#------------------------------ 创建'make test'指令---------------------------------------
+add_custom_target(test
 #    #执行mkdir -p 创建 coverageResult
 #    COMMAND mkdir -p tests/coverageResult
 #    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-#)
+)
 
 
-#add_custom_command(TARGET test
-#    COMMAND echo " =================== CREAT LCOV REPROT BEGIN ==================== "
+add_custom_command(TARGET test
+    COMMAND echo " =================== CREAT LCOV REPROT BEGIN ==================== "
 
 #    #1.清理原先的gcov信息
 #    COMMAND lcov --directory ./tests/CMakeFiles/${PROJECT_NAME_TEST}.dir --zerocounters
@@ -373,11 +373,12 @@ target_link_libraries(${PROJECT_NAME_TEST}  ${LINK_LIBS} ${DFrameworkDBus_LIBRAR
 
 #    COMMAND echo " Coverage files have been output to ${CMAKE_BINARY_DIR}/coverageResult/report "
 
-#    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-#    )
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
 
-##'make test'命令依赖与我们的测试程序
-#add_dependencies(test ${PROJECT_NAME_TEST})
+# debian 会自动执行 make test
+#'make test'命令依赖与我们的测试程序
+add_dependencies(test ${PROJECT_NAME_TEST})
 
 
 
