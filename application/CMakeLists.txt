@@ -18,10 +18,6 @@ set(LINK_LIBS
     Qt5::Xml
     Qt5::DBus
     Qt5::Concurrent
-    ${DtkWidget_LIBRARIES}
-    ${DtkCore_LIBRARIES}
-    ${DtkGUI_LIBRARIES}
-
 #${DtkWidget_LDFLAGS}
 #${DtkGui_LDFLAGS}
 #${DtkCore_LDFLAGS}
@@ -333,6 +329,9 @@ include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 include_directories( ${DFrameworkDBus_INCLUDE_DIRS})
 target_link_libraries(${EXE_NAME}  ${LINK_LIBS}   ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc)
+target_link_libraries(${EXE_NAME} ${DtkWidget_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${DtkCore_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${DtkGUI_LIBRARIES})
 
 #include_directories(${Qt5Widgets_LIBRARIES}
 #                                               ${Qt5Core_LIBRARIES}
