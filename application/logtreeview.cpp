@@ -28,6 +28,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QHeaderView>
+#include <QPainterPath>
 #include <QScrollBar>
 #include "structdef.h"
 

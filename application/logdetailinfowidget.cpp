@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QHBoxLayout>
 #include <QPaintEvent>
+#include <QPainterPath>
 #include <QPainter>
 #include <QTreeView>
 #include <QVBoxLayout>

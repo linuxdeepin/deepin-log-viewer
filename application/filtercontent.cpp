@@ -37,6 +37,7 @@
 #include <QProcess>
 #include <QVBoxLayout>
 #include <QResizeEvent>
+#include <QPainterPath>
 #include "logapplicationhelper.h"
 #include "logperiodbutton.h"
 #include "structdef.h"

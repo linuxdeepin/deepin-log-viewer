@@ -17,9 +17,13 @@ set(LINK_LIBS
     Qt5::Gui
     Qt5::Xml
     Qt5::Concurrent
-    ${DtkWidget_LIBRARIES}
-    ${DtkCore_LIBRARIES}
-    ${DtkGUI_LIBRARIES}
+#   ${DtkCore_LIBRARIES}
+#   ${DtkGUI_LIBRARIES}
+#    ${DtkWidget_LIBRARIES}
+
+#dtkwidget
+#dtkcore
+#dtkgui
 #${DtkWidget_LDFLAGS}
 #${DtkGui_LDFLAGS}
 #${DtkCore_LDFLAGS}
@@ -276,7 +280,11 @@ include_directories(${DtkWidget_INCLUDE_DIRS})
 include_directories(${DtkCore_INCLUDE_DIRS})
 include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc)
+message("dtk lib------- DtkWidget_LIBRARIES: ${DtkWidget_LIBRARIES}")#"---- DtkCore_LIBRARIES:${DtkCore_LIBRARIES} ---DtkGUI_LIBRARIES: ${DtkGUI_LIBRARIES}")
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc )
+target_link_libraries(${EXE_NAME} ${DtkCore_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${DtkGUI_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${DtkWidget_LIBRARIES})
 
 #include_directories(${Qt5Widgets_LIBRARIES}
 #                                               ${Qt5Core_LIBRARIES}

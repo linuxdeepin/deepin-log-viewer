@@ -24,6 +24,7 @@
 #include <DPalette>
 #include <QBrush>
 #include <QPaintEvent>
+#include <QPainterPath>
 #include <QPainter>
 #include <QPen>
 
