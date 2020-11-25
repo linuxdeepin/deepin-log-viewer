@@ -139,6 +139,7 @@ void JournalBootWork::deleteSd()
  */
 void JournalBootWork::run()
 {
+    qDebug() << "JournalBootWork::run----threadrun";
     doWork();
 
 }

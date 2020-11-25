@@ -65,21 +65,18 @@ class FilterContent_shortCutExport_UT : public ::testing::TestWithParam<FilterCo
 
 INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_shortCutExport_UT, ::testing::Values(FilterContent_shortCutExport_UT_Param(true), FilterContent_shortCutExport_UT_Param(false)));
 
-//TEST_P(FilterContent_shortCutExport_UT, FilterContent_shortCutExport_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    FilterContent *p = new FilterContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    FilterContent_shortCutExport_UT_Param param = GetParam();
-//    if (param.m_isExportBtn) {
-//        p->exportBtn;
-//        p->exportBtn = nullptr;
-//    }
-//    p->shortCutExport();
-//    p->deleteLater();
-//}
+TEST_P(FilterContent_shortCutExport_UT, FilterContent_shortCutExport_UT)
+{
+    FilterContent *p = new FilterContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    FilterContent_shortCutExport_UT_Param param = GetParam();
+    if (param.m_isExportBtn) {
+        p->exportBtn;
+        p->exportBtn = nullptr;
+    }
+    p->shortCutExport();
+    p->deleteLater();
+}
 
 TEST(FilterContent_setAppComboBoxItemUT, FilterContent_setAppComboBoxItem_UT)
 {
@@ -115,17 +112,14 @@ class FilterContent_setSelectorVisible_UT : public ::testing::TestWithParam<Filt
 
 INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_setSelectorVisible_UT, ::testing::Values(FilterContent_setSelectorVisible_UT_Param(true, true, true, true, true, true), FilterContent_setSelectorVisible_UT_Param(false, false, false, false, false, false)));
 
-//TEST_P(FilterContent_setSelectorVisible_UT, FilterContent_setSelectorVisible_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    FilterContent *p = new FilterContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    FilterContent_setSelectorVisible_UT_Param param = GetParam();
-//    p->setSelectorVisible(param.lvCbx, param.appListCbx, param.statusCbx, param.period, param.needMove, param.typecbx);
-//    p->deleteLater();
-//}
+TEST_P(FilterContent_setSelectorVisible_UT, FilterContent_setSelectorVisible_UT)
+{
+    FilterContent *p = new FilterContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    FilterContent_setSelectorVisible_UT_Param param = GetParam();
+    p->setSelectorVisible(param.lvCbx, param.appListCbx, param.statusCbx, param.period, param.needMove, param.typecbx);
+    p->deleteLater();
+}
 
 class FilterContent_setSelection_UT_Param
 {
@@ -151,20 +145,17 @@ class FilterContent_setSelection_UT : public ::testing::TestWithParam<FilterCont
 
 INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_setSelection_UT, ::testing::Values(FilterContent_setSelection_UT_Param(true, true, true, true, true), FilterContent_setSelection_UT_Param(false, false, false, false, false), FilterContent_setSelection_UT_Param(true, true, true, true, false)));
 
-//TEST_P(FilterContent_setSelection_UT, FilterContent_setSelection_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    FilterContent *p = new FilterContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    FilterContent_setSelection_UT_Param param = GetParam();
-//    p->setSelectorVisible(param.lvCbxVisible, param.appListCbxVisible, param.statusCbxVisible, true, true, param.typecbxVisible);
-//    FILTER_CONFIG config;
-//    config.appListCbx = param.pathEmpty ? "" : "app";
-//    p->setSelection(config);
-//    p->deleteLater();
-//}
+TEST_P(FilterContent_setSelection_UT, FilterContent_setSelection_UT)
+{
+    FilterContent *p = new FilterContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    FilterContent_setSelection_UT_Param param = GetParam();
+    p->setSelectorVisible(param.lvCbxVisible, param.appListCbxVisible, param.statusCbxVisible, true, true, param.typecbxVisible);
+    FILTER_CONFIG config;
+    config.appListCbx = param.pathEmpty ? "" : "app";
+    p->setSelection(config);
+    p->deleteLater();
+}
 
 TEST(FilterContent_setUeButtonSytle_UT, FilterContent_setUeButtonSytle_UT)
 {
@@ -174,14 +165,6 @@ TEST(FilterContent_setUeButtonSytle_UT, FilterContent_setUeButtonSytle_UT)
     EXPECT_EQ(p->m_allBtn->isChecked(), true);
     p->deleteLater();
 }
-
-//TEST(FilterContent_paintEvent_UT, FilterContent_paintEvent_UT)
-//{
-//    FilterContent *p = new FilterContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->paintEvent(nullptr);
-//    p->deleteLater();
-//}
 
 class FilterContent_eventFilter_UT_Param
 {
@@ -231,37 +214,34 @@ LogPeriodButton *getLogPeriodButtonByName(int iName, FilterContent *p)
     }
     return w;
 }
-//TEST_P(FilterContent_eventFilter_UT, FilterContent_eventFilter_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    FilterContent *p = new FilterContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    FilterContent_eventFilter_UT_Param param = GetParam();
-//    QEvent *event = nullptr;
-//    if (param.isKeyPressed) {
-//        int key = param.isKeyRight ? Qt::Key_Right : Qt::Key_Left;
-//        QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, key, Qt::NoModifier);
-//        event = keyEvent;
-//        LogPeriodButton *w = nullptr;
-//        w = getLogPeriodButtonByName(param.originWidgetName, p);
-//        p->eventFilter(w, event);
-//        LogPeriodButton *wResult = nullptr;
-//        wResult = getLogPeriodButtonByName(param.resultWidgetName, p);
-//        EXPECT_NE(wResult, nullptr);
-//        bool checkCorrect = false;
-//        if (wResult && wResult->isChecked()) {
-//            checkCorrect = true;
-//        }
-//        EXPECT_EQ(checkCorrect, true);
-//    } else {
-//        event = new QEvent(QEvent::None);
-//        p->eventFilter(nullptr, event);
-//    }
+TEST_P(FilterContent_eventFilter_UT, FilterContent_eventFilter_UT)
+{
+    FilterContent *p = new FilterContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    FilterContent_eventFilter_UT_Param param = GetParam();
+    QEvent *event = nullptr;
+    if (param.isKeyPressed) {
+        int key = param.isKeyRight ? Qt::Key_Right : Qt::Key_Left;
+        QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, key, Qt::NoModifier);
+        event = keyEvent;
+        LogPeriodButton *w = nullptr;
+        w = getLogPeriodButtonByName(param.originWidgetName, p);
+        p->eventFilter(w, event);
+        LogPeriodButton *wResult = nullptr;
+        wResult = getLogPeriodButtonByName(param.resultWidgetName, p);
+        EXPECT_NE(wResult, nullptr);
+        bool checkCorrect = false;
+        if (wResult && wResult->isChecked()) {
+            checkCorrect = true;
+        }
+        EXPECT_EQ(checkCorrect, true);
+    } else {
+        event = new QEvent(QEvent::None);
+        p->eventFilter(nullptr, event);
+    }
 
-//    p->deleteLater();
-//}
+    p->deleteLater();
+}
 
 TEST(FilterContent_resizeWidth_UT, FilterContent_resizeWidth_UT)
 {
@@ -295,20 +275,17 @@ class FilterContent_updateDataState_UT : public ::testing::TestWithParam<FilterC
 
 INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_updateDataState_UT, ::testing::Values(FilterContent_updateDataState_UT_Param(true), FilterContent_updateDataState_UT_Param(false)));
 
-//TEST_P(FilterContent_updateDataState_UT, FilterContent_updateDataState_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    FilterContent *p = new FilterContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    FilterContent_updateDataState_UT_Param param = GetParam();
-//    if (param.isNew) {
-//        p->m_config.clear();
-//    }
-//    p->updateDataState();
-//    p->deleteLater();
-//}
+TEST_P(FilterContent_updateDataState_UT, FilterContent_updateDataState_UT)
+{
+    FilterContent *p = new FilterContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    FilterContent_updateDataState_UT_Param param = GetParam();
+    if (param.isNew) {
+        p->m_config.clear();
+    }
+    p->updateDataState();
+    p->deleteLater();
+}
 
 TEST(FilterContent_setCurrentConfig_UT, FilterContent_setCurrentConfig_UT)
 {
@@ -344,54 +321,53 @@ QVariant FilterContent_slot_logCatelogueClicked_ModelIndex_data_Func(void *obj, 
 {
     return QString(FilterContent_slot_logCatelogueClicked_ModelIndex_data);
 }
-//TEST_P(FilterContent_slot_logCatelogueClicked_UT, FilterContent_slot_logCatelogueClicked_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    FilterContent *p = new FilterContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    FilterContent_slot_logCatelogueClicked_UT_Param param = GetParam();
+TEST_P(FilterContent_slot_logCatelogueClicked_UT, FilterContent_slot_logCatelogueClicked_UT)
+{
+    Stub stub;
 
-//    switch (param.index) {
-//    case 0:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = JOUR_TREE_DATA;
-//        break;
-//    case 1:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = DPKG_TREE_DATA;
-//        break;
-//    case 2:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = XORG_TREE_DATA;
-//        break;
-//    case 3:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = BOOT_TREE_DATA;
-//        break;
-//    case 4:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = KERN_TREE_DATA;
-//        break;
-//    case 5:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = APP_TREE_DATA;
-//        break;
-//    case 6:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = LAST_TREE_DATA;
-//        break;
-//    case 7:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = KWIN_TREE_DATA;
-//        break;
-//    case 8:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = BOOT_KLU_TREE_DATA;
-//        break;
-//    case 9:
-//        FilterContent_slot_logCatelogueClicked_ModelIndex_data = "";
-//        break;
-//    default:
-//        break;
-//    }
+    FilterContent *p = new FilterContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    FilterContent_slot_logCatelogueClicked_UT_Param param = GetParam();
 
-//    stub->set(ADDR(QModelIndex, data), FilterContent_slot_logCatelogueClicked_ModelIndex_data_Func);
-//    p->slot_logCatelogueClicked(QModelIndex());
-//    p->deleteLater();
-//}
+    switch (param.index) {
+    case 0:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = JOUR_TREE_DATA;
+        break;
+    case 1:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = DPKG_TREE_DATA;
+        break;
+    case 2:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = XORG_TREE_DATA;
+        break;
+    case 3:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = BOOT_TREE_DATA;
+        break;
+    case 4:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = KERN_TREE_DATA;
+        break;
+    case 5:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = APP_TREE_DATA;
+        break;
+    case 6:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = LAST_TREE_DATA;
+        break;
+    case 7:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = KWIN_TREE_DATA;
+        break;
+    case 8:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = BOOT_KLU_TREE_DATA;
+        break;
+    case 9:
+        FilterContent_slot_logCatelogueClicked_ModelIndex_data = "";
+        break;
+    default:
+        break;
+    }
+
+    stub.set(ADDR(QModelIndex, data), FilterContent_slot_logCatelogueClicked_ModelIndex_data_Func);
+    p->slot_logCatelogueClicked(QModelIndex());
+    p->deleteLater();
+}
 
 class FilterContent_slot_logCatelogueRefresh_UT_Param
 {
@@ -413,54 +389,51 @@ QVariant FilterContent_slot_logCatelogueRefresh_ModelIndex_data_Func(void *obj, 
 {
     return QString(FilterContent_slot_logCatelogueRefresh_ModelIndex_data);
 }
-//TEST_P(FilterContent_slot_logCatelogueRefresh_UT, FilterContent_slot_logCatelogueRefresh_UT)
-//{
-//    FilterContent *p = new FilterContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    FilterContent_slot_logCatelogueRefresh_UT_Param param = GetParam();
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
+TEST_P(FilterContent_slot_logCatelogueRefresh_UT, FilterContent_slot_logCatelogueRefresh_UT)
+{
+    FilterContent *p = new FilterContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    FilterContent_slot_logCatelogueRefresh_UT_Param param = GetParam();
+    Stub stub ;
+    switch (param.index) {
+    case 0:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = JOUR_TREE_DATA;
+        break;
+    case 1:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = DPKG_TREE_DATA;
+        break;
+    case 2:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = XORG_TREE_DATA;
+        break;
+    case 3:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = BOOT_TREE_DATA;
+        break;
+    case 4:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = KERN_TREE_DATA;
+        break;
+    case 5:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = APP_TREE_DATA;
+        break;
+    case 6:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = LAST_TREE_DATA;
+        break;
+    case 7:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = KWIN_TREE_DATA;
+        break;
+    case 8:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = BOOT_KLU_TREE_DATA;
+        break;
+    case 9:
+        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = "";
+        break;
+    default:
+        break;
+    }
 
-//    switch (param.index) {
-//    case 0:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = JOUR_TREE_DATA;
-//        break;
-//    case 1:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = DPKG_TREE_DATA;
-//        break;
-//    case 2:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = XORG_TREE_DATA;
-//        break;
-//    case 3:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = BOOT_TREE_DATA;
-//        break;
-//    case 4:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = KERN_TREE_DATA;
-//        break;
-//    case 5:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = APP_TREE_DATA;
-//        break;
-//    case 6:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = LAST_TREE_DATA;
-//        break;
-//    case 7:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = KWIN_TREE_DATA;
-//        break;
-//    case 8:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = BOOT_KLU_TREE_DATA;
-//        break;
-//    case 9:
-//        FilterContent_slot_logCatelogueRefresh_ModelIndex_data = "";
-//        break;
-//    default:
-//        break;
-//    }
-
-//    stub->set(ADDR(QModelIndex, data), FilterContent_slot_logCatelogueRefresh_ModelIndex_data_Func);
-//    p->slot_logCatelogueRefresh(QModelIndex());
-//    p->deleteLater();
-//}
+    stub.set(ADDR(QModelIndex, data), FilterContent_slot_logCatelogueRefresh_ModelIndex_data_Func);
+    p->slot_logCatelogueRefresh(QModelIndex());
+    p->deleteLater();
+}
 
 class FilterContent_slot_buttonClicked_UT : public ::testing::TestWithParam<int>
 {
@@ -468,17 +441,14 @@ class FilterContent_slot_buttonClicked_UT : public ::testing::TestWithParam<int>
 
 INSTANTIATE_TEST_CASE_P(FilterContent, FilterContent_slot_buttonClicked_UT, ::testing::Values(ALL, ONE_DAY, THREE_DAYS, ONE_WEEK, ONE_MONTH, THREE_MONTHS, RESET));
 
-//TEST_P(FilterContent_slot_buttonClicked_UT, FilterContent_slot_buttonClicked_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    FilterContent *p = new FilterContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    int param = GetParam();
-//    p->slot_buttonClicked(param);
-//    p->deleteLater();
-//}
+TEST_P(FilterContent_slot_buttonClicked_UT, FilterContent_slot_buttonClicked_UT)
+{
+    FilterContent *p = new FilterContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    int param = GetParam();
+    p->slot_buttonClicked(param);
+    p->deleteLater();
+}
 
 TEST(FilterContent_slot_exportButtonClicked_UT, FilterContent_slot_exportButtonClicked_UT)
 {

@@ -106,12 +106,13 @@ TEST(JournalBootWork_getReplaceColorStr_UT, JournalBootWork_getReplaceColorStr_U
     p->deleteLater();
 }
 
-//TEST(JournalBootWork_getDateTimeFromStamp_UT, JournalBootWork_getReplaceColorStr_UT)
-//{
-//    JournalBootWork *p = new JournalBootWork(nullptr);
-//    EXPECT_EQ(p->getDateTimeFromStamp("1603160995838863"), "2020-10-20 10:29:55");
-//    p->deleteLater();
-//}
+TEST(JournalBootWork_getDateTimeFromStamp_UT, JournalBootWork_getDateTimeFromStamp_UT)
+{
+    JournalBootWork *p = new JournalBootWork(nullptr);
+    bool rs =  p->getDateTimeFromStamp("1603160995838863") == QString("2020-10-20 10:29:55");
+    //  EXPECT_EQ(rs, true);
+    p->deleteLater();
+}
 
 TEST(JournalBootWork_initMap_UT, JournalBootWork_initMap_UT)
 {

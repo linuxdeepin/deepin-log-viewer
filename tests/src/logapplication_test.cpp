@@ -14,10 +14,14 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <gtest/gtest.h>
-#include <stub.h>
+
 #include "logapplication.h"
 #include "logcollectormain.h"
+#include <stuballthread.h>
+
+#include <gtest/gtest.h>
+#include <stub.h>
+
 #include <QDebug>
 #include <QKeyEvent>
 TEST(LogApplication_Constructor_UT, LogApplication_Constructor_UT)
@@ -33,6 +37,16 @@ TEST(LogApplication_setMainWindow_UT, LogApplication_setMainWindow_UT)
 {
     int argc = 0;
     char **argv;
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     LogApplication *p = new LogApplication(argc, argv);
     EXPECT_NE(p, nullptr);
     LogCollectorMain *m = new LogCollectorMain(nullptr);
@@ -63,10 +77,10 @@ class LogApplication_notify_UT : public ::testing::TestWithParam<LogApplication_
 
 static bool LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result = false;
 std::vector<LogApplication_notify_UT_Param> vec1 {LogApplication_notify_UT_Param(false, true, true, true),
-                                                  LogApplication_notify_UT_Param(true, true, true, true),
-                                                  LogApplication_notify_UT_Param(true, false, true, true),
-                                                  LogApplication_notify_UT_Param(true, true, false, true),
-                                                  LogApplication_notify_UT_Param(true, true, true, false)};
+        LogApplication_notify_UT_Param(true, true, true, true),
+        LogApplication_notify_UT_Param(true, false, true, true),
+        LogApplication_notify_UT_Param(true, true, false, true),
+        LogApplication_notify_UT_Param(true, true, true, false)};
 
 INSTANTIATE_TEST_CASE_P(LogApplication, LogApplication_notify_UT, ::testing::ValuesIn(vec1));
 bool LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Func(void *obj, QObject *obj1, QKeyEvent *evt)
@@ -74,27 +88,36 @@ bool LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Fun
     return LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result;
 }
 
-//TEST_P(LogApplication_notify_UT, LogApplication_notify_UT)
-//{
-//    int argc = 0;
-//    char **argv;
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(LogCollectorMain, handleApplicationTabEventNotify), LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Func);
+TEST_P(LogApplication_notify_UT, LogApplication_notify_UT)
+{
+    int argc = 0;
+    char **argv;
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogCollectorMain, handleApplicationTabEventNotify), LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Func);
 
-//    LogApplication *p = new LogApplication(argc, argv);
-//    EXPECT_NE(p, nullptr);
-//    LogCollectorMain *m = new  LogCollectorMain(nullptr);
-//    LogApplication_notify_UT_Param param = GetParam();
-//    if (param.isKeyPress) {
-//        int key = param.isKeyTab ? Qt::Key_Tab : Qt::Key_Left;
-//        QKeyEvent   *keyEvent = new QKeyEvent(QEvent::KeyPress, key, Qt::NoModifier);
-//        LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result = param.isSucces;
-//        p->m_mainWindow = param.isMainWindow ? p->m_mainWindow : nullptr;
-//        p->notify(nullptr, keyEvent);
-//    } else {
-//        QEvent *e = new QEvent(QEvent::None);
-//        p->notify(nullptr, e);
-//    }
+    LogApplication *p = new LogApplication(argc, argv);
+    EXPECT_NE(p, nullptr);
+    LogCollectorMain *m = new  LogCollectorMain(nullptr);
+    LogApplication_notify_UT_Param param = GetParam();
+    if (param.isKeyPress) {
+        int key = param.isKeyTab ? Qt::Key_Tab : Qt::Key_Left;
+        QKeyEvent   *keyEvent = new QKeyEvent(QEvent::KeyPress, key, Qt::NoModifier);
+        LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result = param.isSucces;
+        p->m_mainWindow = param.isMainWindow ? p->m_mainWindow : nullptr;
+        p->notify(nullptr, keyEvent);
+    } else {
+        QEvent *e = new QEvent(QEvent::None);
+        p->notify(nullptr, e);
+    }
 
-//    p->deleteLater();
-//}
+    p->deleteLater();
+}

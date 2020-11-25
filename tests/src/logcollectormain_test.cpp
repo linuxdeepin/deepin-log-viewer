@@ -14,9 +14,12 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+#include "logcollectormain.h"
+#include <stuballthread.h>
+
 #include <gtest/gtest.h>
 #include <stub.h>
-#include "logcollectormain.h"
 
 #include <DTitlebar>
 #include <DWindowCloseButton>
@@ -25,6 +28,16 @@
 #include <QDebug>
 TEST(LogCollectorMain_Constructor_UT, LogCollectorMain_Constructor_UT)
 {
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->deleteLater();
@@ -32,6 +45,16 @@ TEST(LogCollectorMain_Constructor_UT, LogCollectorMain_Constructor_UT)
 
 TEST(LogCollectorMain_Destructor_UT, LogCollectorMain_Destructor_UT)
 {
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->~LogCollectorMain();
@@ -39,6 +62,16 @@ TEST(LogCollectorMain_Destructor_UT, LogCollectorMain_Destructor_UT)
 }
 TEST(LogCollectorMain_initUI_UT, LogCollectorMain_initUI_UT)
 {
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->deleteLater();
@@ -46,6 +79,16 @@ TEST(LogCollectorMain_initUI_UT, LogCollectorMain_initUI_UT)
 
 TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->initShortCut();
@@ -55,6 +98,16 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_001)
 
 TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_002)
 {
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->m_scWndReize->deleteLater();
@@ -69,6 +122,16 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_002)
 
 TEST(LogCollectorMain_initConnection_UT, LogCollectorMain_initConnection_UT)
 {
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -77,6 +140,16 @@ TEST(LogCollectorMain_initConnection_UT, LogCollectorMain_initConnection_UT)
 }
 TEST(LogCollectorMain_resizeWidthByFilterContentWidth_UT, LogCollectorMain_resizeWidthByFilterContentWidth_UT)
 {
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->resizeWidthByFilterContentWidth(500);
@@ -106,18 +179,28 @@ class LogCollectorMain_handleApplicationTabEventNotify_UT : public ::testing::Te
 INSTANTIATE_TEST_CASE_P(LogCollectorMain, LogCollectorMain_handleApplicationTabEventNotify_UT, ::testing::Values(/*LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_0, "", false, ""),
                                                                                                                   LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "", false, ""),
                                                                                                                                                                                                                                     */
-                             LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "titlebar", true, ""),
-                             LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "searchChildEdt", false, "titlebar"),
-                             LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "DTitlebarDWindowCloseButton", false, "logTypeSelectList"),
-                             LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "mainLogTable", true, "searchChildEdt"),
-                             LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "logTypeSelectList", true, "DTitlebarDWindowCloseButton"),
-                             LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "DTitlebarDWindowOptionButton", true, "searchChildEdt"),
-                             LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "searchChildEdt", true, "")
-                             // LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "", false, "")
-                         ));
+                            LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "titlebar", true, ""),
+                            LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "searchChildEdt", false, "titlebar"),
+                            LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "DTitlebarDWindowCloseButton", false, "logTypeSelectList"),
+                            LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Tab, "mainLogTable", true, "searchChildEdt"),
+                            LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "logTypeSelectList", true, "DTitlebarDWindowCloseButton"),
+                            LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "DTitlebarDWindowOptionButton", true, "searchChildEdt"),
+                            LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "searchChildEdt", true, "")
+                            // LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "", false, "")
+                        ));
 
 TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_handleApplicationTabEventNotify_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     LogCollectorMain_handleApplicationTabEventNotify_UT_Param param = GetParam();
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);

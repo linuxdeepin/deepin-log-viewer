@@ -144,6 +144,7 @@ void journalWork::deleteSd()
  */
 void journalWork::run()
 {
+    qDebug() << "journalWork::run--------threadrun";
     doWork();
 
 }

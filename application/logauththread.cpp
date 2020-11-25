@@ -118,7 +118,7 @@ void LogAuthThread::stopProccess()
  */
 void LogAuthThread::run()
 {
-    qDebug() << " LogAuthThread::run" << m_type;
+    qDebug() << " LogAuthThread::run-----threadrun" << m_type;
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
     //根据类型成员变量执行对应日志的获取逻辑
@@ -610,9 +610,10 @@ qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
 
     QDate curdt = QDate::currentDate();
 
-    QString tStr = QString("%1 %2 %3 %4").arg(m).arg(d).arg(curdt.year()).arg(t);
-    QDateTime dt = local.toDateTime(tStr, "MMM d yyyy hh:mm:ss");
-    return dt.toMSecsSinceEpoch();
+//    QString tStr = QString("%1 %2 %3 %4").arg(m).arg(d).arg(curdt.year()).arg(t);
+//    QDateTime dt = local.toDateTime(tStr, "MMM d yyyy hh:mm:ss");
+//    return dt.toMSecsSinceEpoch();
+    return  0;
 }
 
 

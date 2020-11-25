@@ -31,13 +31,6 @@ TEST(LogCombox_Constructor_UT, LogCombox_Constructor_UT)
     p->deleteLater();
 }
 
-//TEST(LogCombox_paintEvent_UT, LogCombox_paintEvent_UT)
-//{
-//    LogCombox *p = new LogCombox(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->paintEvent(new QPaintEvent(p->rect()));
-//    p->deleteLater();
-//}
 
 TEST(LogCombox_setFocusReason_UT, LogCombox_setFocusReason_UT)
 {

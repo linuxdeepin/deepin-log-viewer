@@ -327,7 +327,23 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 
 FILE(GLOB allTestSource
-  src/*.cpp
+src/*.cpp
+# src/displaycontent_test.cpp
+#  src/test_main.cpp
+#  src/stuballthread.cpp
+#src/exportprogressdlg_test.cpp
+#src/dbusmanager_test.cpp
+#src/filtercontent_test.cpp
+#src/journalbootwork_test.cpp
+#src/journalwork_test.cpp
+#src/logapplication_test.cpp
+#src/logapplicationhelper_test.cpp
+#src/logapplicationparsethread_test.cpp
+#src/logauththread_test.cpp
+#src/logcollectormain_test.cpp
+#src/logcombox_test.cpp
+#src/logdetailinfowidget_test.cpp
+#src/logexportthread_test.cpp
 )
 include_directories(src)
 

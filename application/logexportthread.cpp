@@ -2948,6 +2948,7 @@ QString LogExportThread::strTranslate(QString &iLevelStr)
  */
 void LogExportThread::run()
 {
+    qDebug() << " LogExportThread::run()threadrun";
     switch (m_runMode) {
     case TxtModel: {
         exportToTxt(m_fileName, m_pModel, m_flag);

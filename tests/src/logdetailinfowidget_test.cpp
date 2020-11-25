@@ -84,13 +84,7 @@ TEST(logDetailInfoWidget_setTextCustomSize_UT, logDetailInfoWidget_setTextCustom
     p->deleteLater();
 }
 
-//TEST(logDetailInfoWidget_paintEvent_UT, logDetailInfoWidget_paintEvent_UT)
-//{
-//    logDetailInfoWidget *p = new logDetailInfoWidget(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->paintEvent(new QPaintEvent(p->rect()));
-//    p->deleteLater();
-//}
+
 
 TEST(logDetailInfoWidget_fillDetailInfo_UT, logDetailInfoWidget_fillDetailInfo_UT_001)
 {
