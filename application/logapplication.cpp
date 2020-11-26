@@ -66,6 +66,8 @@ bool LogApplication::notify(QObject *obj, QEvent *evt)
         }
         break;
     }
+    default:
+        break;
     }
     return  DApplication::notify(obj, evt) ;
 }

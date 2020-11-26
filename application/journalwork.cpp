@@ -251,7 +251,6 @@ void journalWork::doWork()
         else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
-            strList.join("=");
             logMsg.hostName = strList.join("=");
         }
         //获取进程号
@@ -261,7 +260,6 @@ void journalWork::doWork()
         else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
-            strList.join("=");
             logMsg.daemonId = strList.join("=");
         }
         //获取进程名
@@ -272,7 +270,6 @@ void journalWork::doWork()
         } else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
-            strList.join("=");
             logMsg.daemonName = strList.join("=");
         }
 
@@ -284,7 +281,6 @@ void journalWork::doWork()
             //出来的数据格式为 字段名= 信息体，但是因为信息体中也可能有=号，所以要把第一个去掉，后面的用=号拼起来
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
-            strList.join("=");
             logMsg.msg = strList.join("=");
         }
 

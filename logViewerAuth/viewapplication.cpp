@@ -15,10 +15,7 @@
 #include<signal.h>
 
 
-namespace {
-std::function<void(int)> shutdown_handler;
-void signal_handler(int signal) { shutdown_handler(signal); }
-} // namespace
+
 ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc, argv)
 {
 
@@ -34,12 +31,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     //    "/var/log/boot.log";//开机的时候系统核心去侦测与启动，接下来开始各种核心支援的功能启动等；
     arg << "-c" << QString("cat %1").arg(fileList[0]);
     m_proc = new QProcess(this);
-    shutdown_handler = [&](int signal) {
-        if (m_proc) {
-            m_proc->kill();
-        }
-        exit(0);
-    };
+
 
     m_commondM = new QSharedMemory();
     m_commondM->setKey(fileList[1]);

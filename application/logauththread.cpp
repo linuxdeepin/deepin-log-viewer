@@ -30,8 +30,9 @@ int LogAuthThread::thread_count = 0;
  * @param parent 父对象
  */
 LogAuthThread::LogAuthThread(QObject *parent)
-    :  QObject(parent),
-       QRunnable()
+    :  QObject(parent)
+    , QRunnable()
+    , m_type(NONE)
 
 {
     //使用线程池启动该线程，跑完自己删自己
@@ -610,10 +611,9 @@ qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
 
     QDate curdt = QDate::currentDate();
 
-//    QString tStr = QString("%1 %2 %3 %4").arg(m).arg(d).arg(curdt.year()).arg(t);
-//    QDateTime dt = local.toDateTime(tStr, "MMM d yyyy hh:mm:ss");
-//    return dt.toMSecsSinceEpoch();
-    return  0;
+    QString tStr = QString("%1 %2 %3 %4").arg(m).arg(d).arg(curdt.year()).arg(t);
+    QDateTime dt = local.toDateTime(tStr, "MMM d yyyy hh:mm:ss");
+    return dt.toMSecsSinceEpoch();
 }
 
 

@@ -36,7 +36,9 @@
 QT_BEGIN_NAMESPACE_XLSX
 
 ChartPrivate::ChartPrivate(Chart *q, Chart::CreateFlag flag)
-    : AbstractOOXmlFilePrivate(q, flag), chartType(static_cast<Chart::ChartType>(0))
+    : AbstractOOXmlFilePrivate(q, flag)
+    , chartType(static_cast<Chart::ChartType>(0))
+    , sheet(nullptr)
 {
 
 }

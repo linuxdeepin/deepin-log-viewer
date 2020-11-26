@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-workdir=../../build-deepin-log-viewer-unknown-Release/tests #编译路径
+workdir=../../build-deepin-log-viewer-unknown-Release/test #编译路径
 
 executable=deepin-log-viewer-test #可执行程序的文件名
 
@@ -18,7 +18,7 @@ extract_info="*/application/*"  #针对当前目录进行覆盖率操作
 
 # lcov -d `pwd` -c -o coverage.info
 
-# lcov --remove coverage.info  '*/deepin-log-viewer-test_autogen/*' '*/deepin-log-viewer_autogen/*' '*/usr/include/*' '*/dbuslogin1manager*' '*/tests/*' '*/googletest/*' '*/3rdparty/*' '*/test/*' 'accessible.h' 'accessibledefine.h' --output-file coverage.info
+# lcov --remove coverage.info  '*/deepin-log-viewer-test_autogen/*' '*/deepin-log-viewer_autogen/*' '*/usr/include/*' '*/dbuslogin1manager*' '*/test/*' '*/googletest/*' '*/3rdparty/*' '*/test/*' 'accessible.h' 'accessibledefine.h' --output-file coverage.info
 
 # lcov --extract coverage.info $extract_info --output-file  coverage.info
 
@@ -27,7 +27,7 @@ extract_info="*/application/*"  #针对当前目录进行覆盖率操作
 lcov --directory `pwd` --capture --output-file coverage.info
 
 #    #3.过滤一些我们不感兴趣的文件的覆盖率信息
-lcov --remove coverage.info '*/deepin-log-viewer-test_autogen/*' '*/deepin-log-viewer_autogen/*' '*/usr/include/*' '*/dbuslogin1manager*' '*/tests/*' '*/googletest/*' '*/3rdparty/*' '*/test/*' '*/accessible.h' '*/accessibledefine.h' -o coverage.info
+lcov --remove coverage.info '*/deepin-log-viewer-test_autogen/*' '*/deepin-log-viewer_autogen/*' '*/usr/include/*' '*/dbuslogin1manager*' '*/test/*' '*/googletest/*' '*/3rdparty/*' '*/test/*' '*/accessible.h' '*/accessibledefine.h' -o coverage.info
 
 
 

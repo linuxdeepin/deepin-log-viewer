@@ -4,7 +4,7 @@ if (NOT DEFINED VERSION)
     set(VERSION 1.2.2)
 endif ()
 
-project(logViewerAuth)
+project(logViewerAuth LANGUAGES CXX)
 set (EXE_NAME logViewerAuth)
 set(LINK_LIBS
     Qt5::Core
@@ -14,6 +14,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++11")
 set (AUTH_CPP_FILES
         main.cpp
        viewapplication.cpp

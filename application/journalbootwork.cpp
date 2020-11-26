@@ -327,7 +327,6 @@ void JournalBootWork::doWork()
         else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
-            strList.join("=");
             logMsg.daemonId = strList.join("=");
         }
         //获取进程名
@@ -338,7 +337,6 @@ void JournalBootWork::doWork()
         } else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
-            strList.join("=");
             logMsg.daemonName = strList.join("=");
         }
 

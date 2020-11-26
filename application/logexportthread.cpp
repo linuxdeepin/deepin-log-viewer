@@ -1181,12 +1181,15 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
     try {
         //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
-        Docx::Table *tab;
+        Docx::Table *tab = nullptr;
         //添加一个行数为数据的条数+1,列数等于数据字段数的表格
         if (iFlag == JOURNAL) {
             tab = doc.addTable(jList.count() + 1, 6);
         } else if (iFlag == KERN) {
             tab = doc.addTable(jList.count() + 1, 4);
+        } else {
+            qDebug() << "exportToDoc type is Wrong!";
+            return false;
         }
 
         //设置表格内文字内容向左对齐

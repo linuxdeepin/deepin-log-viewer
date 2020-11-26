@@ -11,6 +11,7 @@
 using namespace Docx;
 
 OpcPackage::OpcPackage()
+    : m_rels(nullptr)
 {
 
 }

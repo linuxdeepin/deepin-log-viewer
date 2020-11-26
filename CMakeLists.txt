@@ -9,6 +9,6 @@ option(DMAN_RELEAE OFF "Install dman resources to system or not")
 add_subdirectory(application)
 add_subdirectory(logViewerAuth)
 add_subdirectory(logViewerTruncate)
-add_subdirectory(tests)
+add_subdirectory(test)
 
 option(PERF_ON "open the info of benchmark" ON)
