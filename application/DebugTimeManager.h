@@ -25,6 +25,7 @@
 #include <QMap>
 #include <QString>
 #include "config.h"
+#define PERF_ON
 #ifdef PERF_ON
 #define PERF_PRINT_BEGIN(point, dsec) DebugTimeManager::getInstance()->beginPointLinux(point,dsec)
 #define PERF_PRINT_END(point, dsec) DebugTimeManager::getInstance()->endPointLinux(point, dsec)
