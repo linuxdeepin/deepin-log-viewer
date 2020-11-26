@@ -23,14 +23,19 @@
 #include <QString>
 #include <QVector>
 #include <QDebug>
-
+#include <QTextCodec>
+#include <QStack>
 #include <future>
+struct FILE_ENTER {
+    qint64 begin;
+    qint64 end;
+};
 template < typename DataType, typename FilterType >
 class LogFileLoader : public QObject
 {
-    //Q_OBJECT
+    Q_OBJECT
 public:
-    explicit LogFileLoader(QObject *parent = nullptr, const QString &iFilePath = "")
+    explicit LogFileLoader(FilterType iFilter, QObject *parent = nullptr,  const QString &iFilePath = "")
         : QObject(parent)
         , m_fileMem(nullptr)
         , m_size(0)
@@ -38,6 +43,7 @@ public:
         , m_dataCur(-1)
         , m_dataFrom(-1)
         , m_dataTo(-1)
+        , m_codec(nullptr)
     {
 
     }
@@ -72,6 +78,8 @@ public slots:
         m_enters.push_back(-1);
         m_enterCharOffset = 2;
         char *firstlineData = strchr(m_fileMem, '\n');
+        int decodeSize = 4096 > m_size ? m_size : 4096;
+        bool isDecoadeSuccess = Common::instance()->detectEncodeForCodec(QByteArray::fromRawData(m_fileMem, decodeSize), m_codec);
         if (firstlineData != nullptr) {
             if (firstlineData == m_fileMem || *(firstlineData - 1) != '\r') {
                 m_enterCharOffset = 1;
@@ -95,8 +103,6 @@ public slots:
 
 
         m_lineCnt = m_enters.size() - 1;
-
-
         m_canOpenProgress = false;
     }
     void close()
@@ -106,6 +112,10 @@ public slots:
             if (m_fileMem) {
                 m_file->unmap((uchar *)m_fileMem);
                 m_fileMem = nullptr;
+            }
+            if (m_codec) {
+                delete m_codec;
+                m_codec = nullptr;
             }
             m_file->close();
             delete m_file;
@@ -131,12 +141,12 @@ public slots:
         m_dataFrom = 1;
         m_dataTo = m_size / 100; //按一行100个字符估计总行数
 
-        auto *extraEnters = new QVector<qint64>[extraParts];
+        auto *extraEnters = new QMap<qint64, FILE_ENTER>[extraParts];
         auto *extraRets = new std::future<void>[extraParts];
         auto *chBackup = new char[extraParts];
         for (int i = 0; i < extraParts; i++) {
             qint64 pos = blockSize * (i + 1);
-            QVector<qint64> *enters = &extraEnters[i];
+            QMap<qint64, FILE_ENTER> *enters = &extraEnters[i];
             enters->clear();
 
             //临时把mMem[pos]修改为0，方便分段处理
@@ -164,23 +174,67 @@ public slots:
             m_enters.append(extraEnters[i]);
             QVector<qint64>().swap(extraEnters[i]);//提前释放内存
         }
-//        int default
-// Common::instance()->detectEncodeForCodec(QByteArray::fromRawData(m_fileMem, );
         delete[] extraEnters;
         delete[] extraRets;
         delete[] chBackup;
     }
-    void splitLine(int &iCur, QVector<qint64> *iEnters, char *ptr, bool isProgress)
+    void splitLine(int &iCur, QMap<qint64, FILE_ENTER> *iEnters, char *ptr, bool isProgress)
     {
+        QString dataStr = "";
+        qint64 lastEnd = 0;
+        qint64 currentEnd = 0;
+        DataType dataStruct;
+        FILE_ENTER enter;
+        qint64 i = 0;
         while (m_canOpenProgress && (ptr = strchr(ptr, '\n')) != nullptr) {
-            iEnters->push_back(ptr - m_fileMem - m_enterCharOffset);//定位在\r（如有）或\n上
+            currentEnd = ptr - m_fileMem - m_enterCharOffset;
+            dataStr =  m_codec->toUnicode(QByteArray::fromRawData(m_fileMem + lastEnd, (int)(currentEnd - lastEnd - 1)));
+            dataStruct = getData(dataStr);
+            if (filterData(dataStruct, m_Filter)) {
+                enter.begin = lastEnd == 0 ? lastEnd : lastEnd + 1;
+                enter.end = currentEnd;
+                iEnters->insert(i++, enter);
+            }
             if (isProgress)
                 ++iCur;
             ++ptr;
+            lastEnd = currentEnd;
         }
     }
+
+    QString getLine(int from, int to) const
+    {
+        if (!m_fileMem) {
+            return  QString("");
+        }
+        if (from <= 0 || from > m_lineCnt) {
+            return QString("");
+        }
+
+        if (to > m_lineCnt) {
+            to = m_lineCnt;
+        }
+
+        auto start = getLineStart(from);
+        auto ba = QByteArray::fromRawData(m_fileMem + start, (int)(m_enters[to] - start));
+        return m_codec->toUnicode(ba);
+    }
+    qint64 getLineStart(int num) const
+    {
+        if (num == 1) {
+            return 0;
+        }
+
+        return m_enters[num - 1] + 1 + m_enterCharOffset;
+    }
+
+
+    virtual DataType getData(const QString &iStrData) = 0;
+    virtual bool filterData(DataType iData, FilterType iFilter) = 0;
+
 public:
     QFile *m_file;
+    QMap<qint64, FILE_ENTER> m_entersFilter;
     QVector<qint64> m_enters;
     char *m_fileMem;
     qint64 m_size;
@@ -190,6 +244,8 @@ public:
     int m_dataCur;
     int m_dataFrom;
     int m_dataTo; //按一行100个字符估计总行数
+    QTextCodec *m_codec;
+    FilterType m_Filter;
 
 };
 

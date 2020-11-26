@@ -33,241 +33,237 @@ DocxMergerXmlString::~DocxMergerXmlString()
 
 
 
-void DocxMergerXmlString::save( DocxMergerPasteFieldGroup* p_pasteFieldGroup )
+void DocxMergerXmlString::save(DocxMergerPasteFieldGroup *p_pasteFieldGroup)
 {
-	ZipFile*				l_zipFile		= m_itemFile ->getZipFile();
-	string					l_wordMlPrefix	= m_itemFile ->getWordMlPrefix();
-	DocxMergerXmlString*	l_sect;
+    ZipFile                *l_zipFile       = m_itemFile ->getZipFile();
+    string                  l_wordMlPrefix  = m_itemFile ->getWordMlPrefix();
+    DocxMergerXmlString    *l_sect;
 
-	switch ( m_type )
-	{
-	/*
-	case DocxMergerXmlString::TYPE_TEXT_FIELD:
+    switch (m_type) {
+    /*
+    case DocxMergerXmlString::TYPE_TEXT_FIELD:
 
-		( ( DocxMergerTextField* ) m_ptr ) ->save(
-			p_pasteFieldGroup,
-			p_zipFile,
-			p_wordMlPrefix,
-			p_relMlPrefix );
+        ( ( DocxMergerTextField* ) m_ptr ) ->save(
+            p_pasteFieldGroup,
+            p_zipFile,
+            p_wordMlPrefix,
+            p_relMlPrefix );
 
-		break;
-				
-	case DocxMergerXmlString::TYPE_NUMBER_FIELD:
+        break;
 
-		( ( DocxMergerNumberField* ) m_ptr ) ->save(
-			p_pasteFieldGroup,
-			p_zipFile,
-			p_wordMlPrefix,
-			p_relMlPrefix );
+    case DocxMergerXmlString::TYPE_NUMBER_FIELD:
 
-		break;
+        ( ( DocxMergerNumberField* ) m_ptr ) ->save(
+            p_pasteFieldGroup,
+            p_zipFile,
+            p_wordMlPrefix,
+            p_relMlPrefix );
 
-	case DocxMergerXmlString::TYPE_DATE_TIME_FIELD:
+        break;
 
-		( ( DocxMergerDateTimeField* ) m_ptr ) ->save(
-			p_pasteFieldGroup,
-			p_zipFile,
-			p_wordMlPrefix,
-			p_relMlPrefix );
+    case DocxMergerXmlString::TYPE_DATE_TIME_FIELD:
 
-		break;
+        ( ( DocxMergerDateTimeField* ) m_ptr ) ->save(
+            p_pasteFieldGroup,
+            p_zipFile,
+            p_wordMlPrefix,
+            p_relMlPrefix );
 
-	case DocxMergerXmlString::TYPE_BOOLEAN_FIELD:
+        break;
 
-		( ( DocxMergerBooleanField* ) m_ptr ) ->save(
-			p_pasteFieldGroup,
-			p_zipFile,
-			p_wordMlPrefix,
-			p_relMlPrefix );
+    case DocxMergerXmlString::TYPE_BOOLEAN_FIELD:
 
-		break;
+        ( ( DocxMergerBooleanField* ) m_ptr ) ->save(
+            p_pasteFieldGroup,
+            p_zipFile,
+            p_wordMlPrefix,
+            p_relMlPrefix );
 
-	case DocxMergerXmlString::TYPE_ALT_CHUNK_FIELD:
+        break;
 
-		if( p_openTc ->size() > 0 )
-			p_openTc ->back() = true; // if in tc, then either there's a p after it or it will add a p
+    case DocxMergerXmlString::TYPE_ALT_CHUNK_FIELD:
 
-		( ( DocxMergerAltChunkField* ) m_ptr ) ->save(
-			p_pasteFieldGroup,
-			p_zipFile,
-			p_wordMlPrefix,
-			p_relMlPrefix );
+        if( p_openTc ->size() > 0 )
+            p_openTc ->back() = true; // if in tc, then either there's a p after it or it will add a p
 
-		break;
+        ( ( DocxMergerAltChunkField* ) m_ptr ) ->save(
+            p_pasteFieldGroup,
+            p_zipFile,
+            p_wordMlPrefix,
+            p_relMlPrefix );
 
-	case DocxMergerXmlString::TYPE_PIC_FIELD:
+        break;
 
-		( ( DocxMergerPicField* ) m_ptr ) ->save(
-			p_pasteFieldGroup,
-			p_zipFile,
-			p_wordMlPrefix,
-			p_relMlPrefix );
+    case DocxMergerXmlString::TYPE_PIC_FIELD:
 
-		break;
+        ( ( DocxMergerPicField* ) m_ptr ) ->save(
+            p_pasteFieldGroup,
+            p_zipFile,
+            p_wordMlPrefix,
+            p_relMlPrefix );
 
-	case DocxMergerXmlString::TYPE_BARCODE_FIELD:
+        break;
 
-		( ( DocxMergerBarcodeField* ) m_ptr ) ->save(
-			p_pasteFieldGroup,
-			p_zipFile,
-			p_wordMlPrefix,
-			p_relMlPrefix );
+    case DocxMergerXmlString::TYPE_BARCODE_FIELD:
 
-		break;
-	*/
+        ( ( DocxMergerBarcodeField* ) m_ptr ) ->save(
+            p_pasteFieldGroup,
+            p_zipFile,
+            p_wordMlPrefix,
+            p_relMlPrefix );
 
-	case DocxMergerXmlString::TYPE_ALT_CHUNK_FIELD:
+        break;
+    */
 
-		m_itemFile ->setOpenTcBack( true ); // if in tc, then either there's a p after it or it will add a p
+    case DocxMergerXmlString::TYPE_ALT_CHUNK_FIELD:
 
-	case DocxMergerXmlString::TYPE_TEXT_FIELD:
-	case DocxMergerXmlString::TYPE_NUMBER_FIELD:
-	case DocxMergerXmlString::TYPE_DATE_TIME_FIELD:
-	case DocxMergerXmlString::TYPE_BOOLEAN_FIELD:
-	case DocxMergerXmlString::TYPE_PIC_FIELD:
-	case DocxMergerXmlString::TYPE_BARCODE_FIELD:
-	case DocxMergerXmlString::TYPE_CHART_FIELD:
+        m_itemFile ->setOpenTcBack(true);   // if in tc, then either there's a p after it or it will add a p
 
-		( ( DocxMergerField* ) m_ptr ) ->save( p_pasteFieldGroup );
+    case DocxMergerXmlString::TYPE_TEXT_FIELD:
+    case DocxMergerXmlString::TYPE_NUMBER_FIELD:
+    case DocxMergerXmlString::TYPE_DATE_TIME_FIELD:
+    case DocxMergerXmlString::TYPE_BOOLEAN_FIELD:
+    case DocxMergerXmlString::TYPE_PIC_FIELD:
+    case DocxMergerXmlString::TYPE_BARCODE_FIELD:
+    case DocxMergerXmlString::TYPE_CHART_FIELD:
 
-		break;
+        ((DocxMergerField *) m_ptr) ->save(p_pasteFieldGroup);
 
-	case DocxMergerXmlString::TYPE_PAGE_BREAK:
+        break;
 
-		if ( !( m_itemFile ->getFirstPage() ) )
-			( *l_zipFile ) << m_str;
+    case DocxMergerXmlString::TYPE_PAGE_BREAK:
 
-		m_itemFile ->setFirstPage( false );
+        if (!(m_itemFile ->getFirstPage()))
+            (*l_zipFile) << m_str;
 
-		if ( m_itemFile ->getType() == DocxMergerItemFile::DOCUMENT )
-		{
-			l_sect = ( DocxMergerXmlString* ) m_ptr;
-			if ( l_sect != m_itemFile ->getSect() )
-			{
-				if ( m_itemFile ->getSect() )
-					( *l_zipFile ) <<
-						  "<"	+ l_wordMlPrefix + ":p>"
-						+ "<"	+ l_wordMlPrefix + ":pPr>"
-						+ *m_itemFile ->getSect() ->getStr()
-						+ "</"	+ l_wordMlPrefix + ":pPr>"
-						+ "</"	+ l_wordMlPrefix + ":p>";
-			
-				m_itemFile ->setSect( l_sect );
-			}
-		}
+        m_itemFile ->setFirstPage(false);
 
-		break;
+        if (m_itemFile ->getType() == DocxMergerItemFile::DOCUMENT) {
+            l_sect = (DocxMergerXmlString *) m_ptr;
+            if (l_sect != m_itemFile ->getSect()) {
+                if (m_itemFile ->getSect())
+                    (*l_zipFile) <<
+                                 "<"   + l_wordMlPrefix + ":p>"
+                                 + "<"   + l_wordMlPrefix + ":pPr>"
+                                 + *m_itemFile ->getSect() ->getStr()
+                                 + "</"  + l_wordMlPrefix + ":pPr>"
+                                 + "</"  + l_wordMlPrefix + ":p>";
 
-	case DocxMergerXmlString::TYPE_ID:
+                m_itemFile ->setSect(l_sect);
+            }
+        }
 
-		( *l_zipFile ) << ( ( DocxMergerId* ) m_ptr ) ->getNextId();
+        break;
 
-		break;
+    case DocxMergerXmlString::TYPE_ID:
 
-	case DocxMergerXmlString::TYPE_ID_REF:
+        (*l_zipFile) << ((DocxMergerId *) m_ptr) ->getNextId();
 
-		( *l_zipFile ) << ( ( DocxMergerId* ) m_ptr ) ->getCurrId();
+        break;
 
-		break;
+    case DocxMergerXmlString::TYPE_ID_REF:
 
-	case DocxMergerXmlString::TYPE_SHADE:
+        (*l_zipFile) << ((DocxMergerId *) m_ptr) ->getCurrId();
 
-		( *l_zipFile ) << ( m_itemFile ->getShadeBack() );
+        break;
 
-		break;
+    case DocxMergerXmlString::TYPE_SHADE:
 
-	case DocxMergerXmlString::TYPE_TC_START:
+        (*l_zipFile) << (m_itemFile ->getShadeBack());
 
-		m_itemFile ->pushBackOpenTc( false );
+        break;
 
-		break;
+    case DocxMergerXmlString::TYPE_TC_START:
 
-	case DocxMergerXmlString::TYPE_TC_END:
+        m_itemFile ->pushBackOpenTc(false);
 
-		if ( !( m_itemFile ->getOpenTcBack() ) )
-		{
-			( *l_zipFile ) <<
-				  "<"	+ l_wordMlPrefix + ":p>"
-				+ "<"	+ l_wordMlPrefix + ":pPr>"
-				+ "<"	+ l_wordMlPrefix + ":spacing "
-						+ l_wordMlPrefix + ":before=\"0\" "
-						+ l_wordMlPrefix + ":after=\"0\" "
-						+ l_wordMlPrefix + ":line=\"2\" "
-						+ l_wordMlPrefix + ":lineRule=\"exact\"/>"
+        break;
 
-				+ "<"	+ l_wordMlPrefix + ":rPr>"
-				+ "<"	+ l_wordMlPrefix + ":sz "
-						+ l_wordMlPrefix + ":val=\"2\"/>"
+    case DocxMergerXmlString::TYPE_TC_END:
 
-				+ "<"	+ l_wordMlPrefix + ":szCs "
-						+ l_wordMlPrefix + ":val=\"2\"/>"
+        if (!(m_itemFile ->getOpenTcBack())) {
+            (*l_zipFile) <<
+                         "<"   + l_wordMlPrefix + ":p>"
+                         + "<"   + l_wordMlPrefix + ":pPr>"
+                         + "<"   + l_wordMlPrefix + ":spacing "
+                         + l_wordMlPrefix + ":before=\"0\" "
+                         + l_wordMlPrefix + ":after=\"0\" "
+                         + l_wordMlPrefix + ":line=\"2\" "
+                         + l_wordMlPrefix + ":lineRule=\"exact\"/>"
 
-				+ "</"	+ l_wordMlPrefix + ":rPr>"
-				+ "</"	+ l_wordMlPrefix + ":pPr>"
-				+ "</"	+ l_wordMlPrefix + ":p>";
-		}
+                         + "<"   + l_wordMlPrefix + ":rPr>"
+                         + "<"   + l_wordMlPrefix + ":sz "
+                         + l_wordMlPrefix + ":val=\"2\"/>"
 
-		m_itemFile ->popBackOpenTc();
+                         + "<"   + l_wordMlPrefix + ":szCs "
+                         + l_wordMlPrefix + ":val=\"2\"/>"
 
-		break;
+                         + "</"  + l_wordMlPrefix + ":rPr>"
+                         + "</"  + l_wordMlPrefix + ":pPr>"
+                         + "</"  + l_wordMlPrefix + ":p>";
+        }
 
-	case DocxMergerXmlString::TYPE_P_START:
+        m_itemFile ->popBackOpenTc();
 
-		m_itemFile ->setOpenTcBack( true );
+        break;
 
-		( *l_zipFile ) << m_str;
+    case DocxMergerXmlString::TYPE_P_START:
 
-		break;
+        m_itemFile ->setOpenTcBack(true);
 
-	case DocxMergerXmlString::TYPE_XML:
+        (*l_zipFile) << m_str;
 
-		( *l_zipFile ) << m_str;
+        break;
 
-		break;
-	}
+    case DocxMergerXmlString::TYPE_XML:
+
+        (*l_zipFile) << m_str;
+
+        break;
+    }
 } // save
 
 
 
-void DocxMergerXmlString::deserialize( UnzipFile* p_unzipFile )
+void DocxMergerXmlString::deserialize(UnzipFile *p_unzipFile)
 {
-	p_unzipFile ->insertPtrBySeq( p_unzipFile ->readNum<uint32>(), this );
+    p_unzipFile ->insertPtrBySeq(p_unzipFile ->readNum<uint32>(), this);
 
-	m_itemFile	= ( DocxMergerItemFile* )	p_unzipFile ->readNum<uint32>();
-	m_item		= ( DocxMergerItem* )		p_unzipFile ->readNum<uint32>();
-	m_type		= ( XmlStringType )			p_unzipFile ->readNum<int16>();
-	m_str		=							p_unzipFile ->readStr();
-	m_ptr		= ( void* )					p_unzipFile ->readNum<uint32>();
+    m_itemFile  = (DocxMergerItemFile *)    p_unzipFile ->readNum<uint32>();
+    m_item      = (DocxMergerItem *)        p_unzipFile ->readNum<uint32>();
+    m_type      = (XmlStringType)          p_unzipFile ->readNum<int16>();
+    m_str       =                           p_unzipFile ->readStr();
+    m_ptr       = (void *)                  p_unzipFile ->readNum<uint32>();
 } // deserialize
 
-void DocxMergerXmlString::link( UnzipFile* p_unzipFile )
+void DocxMergerXmlString::link(UnzipFile *p_unzipFile)
 {
-	const map<uint32, void*>*	l_ptrsBySeq = p_unzipFile ->getPtrsBySeq();
-	uint32						l_ptrSeq;
+    const map<uint32, void *>   *l_ptrsBySeq = p_unzipFile ->getPtrsBySeq();
+    uint64                      l_ptrSeq;
 
-	l_ptrSeq	= ( uint32 ) m_itemFile;
-	m_itemFile	= ( DocxMergerItemFile* ) l_ptrsBySeq ->find( l_ptrSeq ) ->second;
+    l_ptrSeq    = (uint64) m_itemFile;
+    m_itemFile  = (DocxMergerItemFile *) l_ptrsBySeq ->find(l_ptrSeq) ->second;
 
-	l_ptrSeq	= ( uint32 ) m_item;
-	m_item		= ( DocxMergerItem* ) l_ptrsBySeq ->find( l_ptrSeq ) ->second;
+    l_ptrSeq    = (uint64) m_item;
+    m_item      = (DocxMergerItem *) l_ptrsBySeq ->find(l_ptrSeq) ->second;
 
-	l_ptrSeq	= ( uint32 ) m_ptr;
-	m_ptr		= ( void* ) l_ptrsBySeq ->find( l_ptrSeq ) ->second;
+    l_ptrSeq    = (uint64) m_ptr;
+    m_ptr       = (void *) l_ptrsBySeq ->find(l_ptrSeq) ->second;
 } // link
 
 
 
 DocxMergerXmlString::XmlStringType DocxMergerXmlString::getType() const
 {
-	return m_type;
+    return m_type;
 } // getType
 
-const string* DocxMergerXmlString::getStr() const
+const string *DocxMergerXmlString::getStr() const
 {
-	return &m_str;
+    return &m_str;
 } // getStr
 
-void* DocxMergerXmlString::getPtr() const
+void *DocxMergerXmlString::getPtr() const
 {
-	return m_ptr;
+    return m_ptr;
 } // getPtr

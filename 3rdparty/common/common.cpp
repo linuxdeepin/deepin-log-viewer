@@ -157,7 +157,7 @@ QByteArray Common::detectEncode(const QByteArray &data, const QString &fileName)
     return  m_codecStr;
 }
 
-bool Common::detectEncodeForCodec(const QByteArray &data, QTextCodec *oCodec, const QString &fileName)
+bool Common::detectEncodeForCodec(const QByteArray &data, QTextCodec *oCodec)
 {
     QByteArray codec_name = detectEncode(data);
 

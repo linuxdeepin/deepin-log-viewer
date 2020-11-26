@@ -110,6 +110,7 @@ find_package(DFrameworkdbus REQUIRED)
 find_package(Boost)
 find_package(Zint)
 find_package(RapidJSON)
+#find_package(OpenOffice REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 
 #pkg_search_module(DtkWidget REQUIRED dtkwidget)
@@ -174,6 +175,7 @@ set (APP_CPP_FILES
      wtmpparse.cpp
      fileloader/logfileloader.cpp
      fileloader/logdatacontrol.cpp
+     fileloader/xorgfileloader.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -359,7 +361,7 @@ endforeach()
 file (GLOB APP_TS_FILES translations/*.ts)
 qt5_create_translation(APP_QM_FILES ${APP_TS_FILES} ${APP_QM_FILES})
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -pthread")
-add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} ${DOCX_FACTORY_TEST})
+add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} )
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/QtXlsxWriter/src/xlsx")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
