@@ -40,3 +40,8 @@ obj-x86_64-linux-gnu/*
 Makefile
 moc_*
 
+#test
+*/report/*
+*/coverage/*
+report/*
+

@@ -1,6 +1,8 @@
 #!/bin/bash
+workspace=$1
+appname=$2
 
-cd ../.
+cd $workspace
 
 dpkg-buildpackage -b -d -uc -us
 
@@ -29,5 +31,7 @@ cd ../report
 
 line=`cat index.html | grep headerCovTableEntryLo | awk '{print $2}'| cut -d '>' -f 2 | head -n 1`
 func=`cat index.html | grep headerCovTableEntryLo | awk '{print $2}' | cut -d '>' -f 2 | tail -n 1`
-touch deepin-voice-note.csv
-echo "日志收集工具","行覆盖率: "$line"% 函数覆盖率: "$func"%"> deepin-voice-note.csv
+
+cd $workspace
+touch $appname.csv
+echo $appname,"行覆盖率: "$line"% 函数覆盖率: "$func"%"> $appname.csv
