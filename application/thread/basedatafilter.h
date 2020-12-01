@@ -14,5 +14,31 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "xorgfileloader.h"
+#ifndef BASEDATAFILTER_H
+#define BASEDATAFILTER_H
 
+#include <QObject>
+#include <QThread>
+template < typename DataType, typename FilterType >
+class BaseDataFilter : public QThread
+{
+    // Q_OBJECT
+public:
+    explicit BaseDataFilter(QObject *parent = nullptr)
+    {
+
+    }
+    ~BaseDataFilter() override
+    {
+
+    }
+
+signals:
+
+public slots:
+
+public:
+
+};
+
+#endif // BASEDATAFILTER_H

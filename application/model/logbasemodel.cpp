@@ -10,6 +10,7 @@ DWIDGET_USE_NAMESPACE
 
 LogBaseModel::LogBaseModel(LOG_DATA_BASE_INFO *info, QObject *parent)
     : QAbstractTableModel(parent)
+    , m_curentDataLineRage(0, 0)
 {
     setBaseInfo(info);
 }
@@ -17,10 +18,11 @@ LogBaseModel::LogBaseModel(LOG_DATA_BASE_INFO *info, QObject *parent)
 int LogBaseModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    if (m_currentPage >= m_allPage - 1) {
-        return m_lastPageCount;
-    }
-    return m_pageSize * 3;
+//    if (m_currentPage >= m_allPage - 1) {
+//        return m_lastPageCount;
+//    }
+//    return m_pageSize * 3;
+    return  m_currentData.size();
 }
 
 int LogBaseModel::columnCount(const QModelIndex &parent) const
@@ -34,28 +36,54 @@ QVariant LogBaseModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return {};
 
-    if (index.row() < 0 || index.row() >= m_baseInfo->mLineCnt)
-        return {};
-    int actualRow = 0;
-    if (m_currentPage < 1) {
-        // actualRow = (m_currentPage - 1) * m_pageSize + index.row();
-        actualRow = index.row();
-//   } else if () {
+//    if (index.row() < 0 || index.row() >= m_baseInfo->mLineCnt)
+//        return {};
+//    int actualRow = 0;
+//    if (m_currentPage < 1) {
+//        // actualRow = (m_currentPage - 1) * m_pageSize + index.row();
+//        actualRow = index.row();
+////   } else if () {
 
-    } else if (m_currentPage >= m_allPage) {
-        int p_temp = m_allPage - 1 > 0 ? m_allPage - 1 : 0;
-        actualRow = p_temp * m_pageSize + index.row();
-    } else {
-        actualRow = (m_currentPage - 1) * m_pageSize + index.row();
+//    } else if (m_currentPage >= m_allPage) {
+//        int p_temp = m_allPage - 1 > 0 ? m_allPage - 1 : 0;
+//        actualRow = p_temp * m_pageSize + index.row();
+//    } else {
+//        actualRow = (m_currentPage - 1) * m_pageSize + index.row();
+//    }
+
+//    // actualRow = (m_currentPage - 1) * m_pageSize + index.row();
+//    qDebug() << m_baseInfo->mLineCnt << m_currentPage << m_allPage << "actualRow" << actualRow;
+//    QString str =   getLine(m_baseInfo->mLineCnt - actualRow, m_baseInfo->mLineCnt - actualRow);
+//    str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+//    str.replace('\u0000', "");
+//    return filterData(str, index, role);
+    ;
+    LOG_MSG_KERN itemData = m_currentData[index.row()];
+    if (static_cast<Qt::ItemDataRole>(role) == Qt::DisplayRole) {
+        switch (index.column()) {
+
+        case KERN_SPACE::kernDateTimeColumn: {
+            return itemData.dateTime;
+        }
+        case KERN_SPACE::kernHostNameColumn: {
+            return itemData.hostName;
+        }
+        case KERN_SPACE::kernDaemonNameColumn:
+            return  itemData.daemonName;
+        case KERN_SPACE::kernMsgColumn:
+            //  qDebug() << "msgInfo" << msgInfo;
+            return itemData.msg;
+
+        default:
+            break;
+
+        }
+    } else if (role == Qt::TextAlignmentRole) {
+        return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
+    } else if (role == Qt::UserRole + 1) {
+        return KERN_TABLE_DATA;
     }
-
-    // actualRow = (m_currentPage - 1) * m_pageSize + index.row();
-    qDebug() << m_baseInfo->mLineCnt << m_currentPage << m_allPage << "actualRow" << actualRow;
-    QString str =   getLine(m_baseInfo->mLineCnt - actualRow, m_baseInfo->mLineCnt - actualRow);
-    str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-    str.replace('\u0000', "");
-    return filterData(str, index, role);
-
+    return {};
 }
 
 QVariant LogBaseModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -172,17 +200,18 @@ void LogBaseModel::setBaseInfo(LOG_DATA_BASE_INFO *iInfo)
         }
 
     }
+    refreshPage(true, true);
 }
 
 void LogBaseModel::setKernFilter(KERN_FILTERS1 iFilter)
 {
-    beginResetModel();
     m_kernFilter = iFilter;
-    endResetModel();
+    refreshPage(true, true);
 }
 
 void LogBaseModel::setCurrentPage(int iPage)
 {
+
     beginResetModel();
     if (iPage < 0) {
         m_currentPage = 0;
@@ -191,6 +220,7 @@ void LogBaseModel::setCurrentPage(int iPage)
     } else {
         m_currentPage = iPage;
     }
+
 
     endResetModel();
 }
@@ -203,18 +233,139 @@ int LogBaseModel::getCurrentPage()
 void LogBaseModel::addPage()
 {
     // qDebug() << __FUNCTION__;
-    setCurrentPage(m_currentPage + 1);
-    emit updateView(true, m_currentPage, m_allPage);
+    //  setCurrentPage(m_currentPage + 1);
+    refreshPage(true);
+    //  emit updateView(true, m_currentPage, m_allPage);
 }
 
 void LogBaseModel::reducePage()
 {
-
     // qDebug() << __FUNCTION__;
-
-    setCurrentPage(m_currentPage - 1);
-    emit updateView(false, m_currentPage, m_allPage);
+    // setCurrentPage(m_currentPage - 1);
+    refreshPage(false);
+    //  emit updateView(false, m_currentPage, m_allPage);
 }
+
+void LogBaseModel::refreshPage(bool isAdd, bool iReset)
+{
+    beginResetModel();
+    QString str ;
+    LOG_MSG_KERN itemData;
+    bool isContainsStr = false;
+    if (m_kernFilter.searchstr.isEmpty()) {
+        isContainsStr = true;
+    }
+
+    int count = 0;
+    if (iReset) {
+        m_curentDataLineRage.first = 0;
+        m_curentDataLineRage.second = 0;
+    }
+    if (isAdd) {
+        if (m_curentDataLineRage.second >= m_baseInfo->mEnters.size()) {
+            return;
+        }
+    } else {
+        if (m_curentDataLineRage.first < 0) {
+            return;
+        }
+    }
+    if (isAdd) {
+        for (int i = m_curentDataLineRage.second ; i < m_baseInfo->mEnters.size(); ++i) {
+            m_curentDataLineRage.second = i;
+            if (!getKernDataFromlineCnt(i, itemData)) {
+                continue;
+            }
+            m_currentData .push_back(itemData);
+            if (count < m_pageSize) {
+                count++;
+            } else {
+
+                break;
+            }
+        }
+    } else {
+        for (int i = m_curentDataLineRage.first ; i > 0; --i) {
+            m_curentDataLineRage.first = i;
+            if (!getKernDataFromlineCnt(i, itemData)) {
+                continue;
+            }
+            m_currentData .push_front(itemData);
+            if (count < m_pageSize) {
+                count++;
+            } else {
+                break;
+            }
+        }
+    }
+    if (count > 0 && m_currentData.size() > m_pageSize * 2) {
+        QVector<LOG_MSG_KERN>::iterator iterEnd ;
+        QVector<LOG_MSG_KERN>::iterator iterBegin;
+        if (isAdd) {
+            iterBegin = m_currentData.begin();
+            iterEnd = m_currentData.begin();
+            iterEnd += m_pageSize;
+        } else {
+            iterBegin = m_currentData.end();
+            iterEnd = m_currentData.end();
+            iterBegin -= m_pageSize;
+        }
+        m_currentData.erase(iterBegin, iterEnd);
+    }
+    endResetModel();
+}
+
+bool LogBaseModel::getKernDataFromlineCnt(int iCount, LOG_MSG_KERN &oItemData)
+{
+    bool isContainsStr = false;
+    if (m_kernFilter.searchstr.isEmpty()) {
+        isContainsStr = true;
+    } else {
+        isContainsStr = false;
+    }
+    QString  str = getLine(iCount, iCount);
+    str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+    str.replace('\u0000', "");
+    QStringList list = str.split(" ", QString::SkipEmptyParts);
+    if (list.size() < 5) {
+        return  false;
+    }
+    QStringList timeList;
+    timeList.append(list[0]);
+    timeList.append(list[1]);
+    timeList.append(list[2]);
+    QStringList tmpList = list[4].split("[");
+
+
+    if (tmpList.size() != 2) {
+        oItemData.daemonName = list[4].split(":")[0];
+    } else {
+        oItemData.daemonName = list[4].split("[")[0];
+        QString id = list[4].split("[")[1];
+        id.chop(2);
+        oItemData.daemonId = id;
+    }
+    QString msgInfo;
+    for (auto i = 5; i < list.size(); i++) {
+        msgInfo.append(list[i] + " ");
+    }
+    qint64 iTime = formatDateTime(list[0], list[1], list[2]);
+    //对时间筛选
+    if (m_kernFilter.timeFilterBegin > 0 && m_kernFilter.timeFilterEnd > 0) {
+        if (iTime < m_kernFilter.timeFilterBegin || iTime > m_kernFilter.timeFilterEnd)
+            return  false;
+    }
+    oItemData.dateTime = timeList.join(" ");
+    oItemData.hostName = list[3];
+    oItemData.msg = msgInfo;
+    if (!isContainsStr) {
+        if (oItemData.msg.contains(m_kernFilter.searchstr) || oItemData.dateTime.contains(m_kernFilter.searchstr) || oItemData.hostName.contains(m_kernFilter.searchstr) || oItemData.daemonName.contains(m_kernFilter.searchstr) || oItemData.daemonId.contains(m_kernFilter.searchstr)) {
+            isContainsStr = true;
+        }
+    }
+    return isContainsStr;
+}
+
 
 
 

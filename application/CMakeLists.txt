@@ -176,6 +176,7 @@ set (APP_CPP_FILES
      fileloader/logfileloader.cpp
      fileloader/logdatacontrol.cpp
      fileloader/xorgfileloader.cpp
+     thread/basedatafilter.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc

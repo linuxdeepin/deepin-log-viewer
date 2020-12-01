@@ -20,15 +20,15 @@
 #include "structdef.h"
 #include <QObject>
 
-class XorgFileLoader : public LogFileLoader<LOG_MSG_XORG, XORG_FILTERS>
-{
-    Q_OBJECT
-public:
-    explicit XorgFileLoader(LOG_MSG_XORG iFilter, QObject *parent = nullptr,  const QString &iFilePath = "");
-    LOG_MSG_XORG getData(int line);
-signals:
+//class XorgFileLoader : public LogFileLoader<LOG_MSG_XORG, XORG_FILTERS>
+//{
 
-public slots:
-};
+//public:
+//    explicit XorgFileLoader(LOG_MSG_XORG iFilter, QObject *parent = nullptr,  const QString &iFilePath = "");
+//    LOG_MSG_XORG getData(int line);
+//signals:
+
+//public slots:
+//};
 
 #endif // XORGFILELOADER_H

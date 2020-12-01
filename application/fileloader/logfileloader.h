@@ -30,12 +30,12 @@ struct FILE_ENTER {
     qint64 begin;
     qint64 end;
 };
-template < typename DataType, typename FilterType >
+//template < typename DataType, typename FilterType >
 class LogFileLoader : public QObject
 {
-    Q_OBJECT
+    // Q_OBJECT
 public:
-    explicit LogFileLoader(FilterType iFilter, QObject *parent = nullptr,  const QString &iFilePath = "")
+    explicit LogFileLoader(const QString &iFilePath = "", QObject *parent = nullptr)
         : QObject(parent)
         , m_fileMem(nullptr)
         , m_size(0)
@@ -44,6 +44,10 @@ public:
         , m_dataFrom(-1)
         , m_dataTo(-1)
         , m_codec(nullptr)
+        , m_fileDir(iFilePath)
+        , m_handledFileDir("")
+        , m_isLoadComplete(false)
+        , m_curentDataLineRage(0, 0)
     {
 
     }
@@ -52,13 +56,16 @@ public:
         close();
     }
 signals:
-
+    void firstPageFinished();
+    void dataFinished();
 public slots:
-    bool openLoadData(const QString &iFilePath)
+    bool openLoadData()
     {
         m_canOpenProgress = true;
+        m_isLoadComplete = false;
         close();
-        m_file =  new QFile(iFilePath);
+        m_handledFileDir = m_fileDir;
+        m_file =  new QFile(m_handledFileDir);
         if (!m_file->open(QIODevice::ReadOnly)) {
             qWarning() << "open file path falied";
             m_canOpenProgress = false;
@@ -104,6 +111,7 @@ public slots:
 
         m_lineCnt = m_enters.size() - 1;
         m_canOpenProgress = false;
+
     }
     void close()
     {
@@ -113,14 +121,17 @@ public slots:
                 m_file->unmap((uchar *)m_fileMem);
                 m_fileMem = nullptr;
             }
-            if (m_codec) {
-                delete m_codec;
-                m_codec = nullptr;
-            }
+
             m_file->close();
             delete m_file;
             m_file = nullptr;
         }
+    }
+    void allFinished()
+    {
+
+        m_isLoadComplete = true;
+        emit dataFinished();
     }
     void stopOpenProgress()
     {
@@ -141,12 +152,12 @@ public slots:
         m_dataFrom = 1;
         m_dataTo = m_size / 100; //按一行100个字符估计总行数
 
-        auto *extraEnters = new QMap<qint64, FILE_ENTER>[extraParts];
+        auto *extraEnters = new QVector<qint64>[extraParts];
         auto *extraRets = new std::future<void>[extraParts];
         auto *chBackup = new char[extraParts];
         for (int i = 0; i < extraParts; i++) {
             qint64 pos = blockSize * (i + 1);
-            QMap<qint64, FILE_ENTER> *enters = &extraEnters[i];
+            QVector<qint64> *enters = &extraEnters[i];
             enters->clear();
 
             //临时把mMem[pos]修改为0，方便分段处理
@@ -157,12 +168,12 @@ public slots:
             m_fileMem[pos] = 0;
 
             extraRets[i] = async(std::launch::async, [ &, enters] {
-                splitLine(&m_dataCur, enters, m_fileMem + pos + 1, false);
+                splitLine(m_dataCur, enters, m_fileMem + pos + 1, false);
             });
         }
 
-        splitLine(&m_dataCur, &m_enters, m_fileMem, true);//FIXME:extraParts>0的时候进度统计的有问题
-
+        splitLine(m_dataCur, &m_enters, m_fileMem, true);//FIXME:extraParts>0的时候进度统计的有问题
+        bool isFirstPage = true;
         for (int i = 0; i < extraParts; i++) {
             extraRets[i].wait();
 
@@ -172,33 +183,25 @@ public slots:
 
             //合并结果
             m_enters.append(extraEnters[i]);
+            if (extraEnters[i].size() > 2 && isFirstPage) {
+                isFirstPage = false;
+                emit firstPageFinished();
+            }
             QVector<qint64>().swap(extraEnters[i]);//提前释放内存
         }
         delete[] extraEnters;
         delete[] extraRets;
         delete[] chBackup;
+        allFinished();
     }
-    void splitLine(int &iCur, QMap<qint64, FILE_ENTER> *iEnters, char *ptr, bool isProgress)
+    void splitLine(int &iCur, QVector<qint64> *iEnters, char *ptr, bool isProgress)
     {
-        QString dataStr = "";
-        qint64 lastEnd = 0;
-        qint64 currentEnd = 0;
-        DataType dataStruct;
-        FILE_ENTER enter;
         qint64 i = 0;
         while (m_canOpenProgress && (ptr = strchr(ptr, '\n')) != nullptr) {
-            currentEnd = ptr - m_fileMem - m_enterCharOffset;
-            dataStr =  m_codec->toUnicode(QByteArray::fromRawData(m_fileMem + lastEnd, (int)(currentEnd - lastEnd - 1)));
-            dataStruct = getData(dataStr);
-            if (filterData(dataStruct, m_Filter)) {
-                enter.begin = lastEnd == 0 ? lastEnd : lastEnd + 1;
-                enter.end = currentEnd;
-                iEnters->insert(i++, enter);
-            }
+            iEnters->push_back(ptr - m_fileMem - m_enterCharOffset);
             if (isProgress)
                 ++iCur;
             ++ptr;
-            lastEnd = currentEnd;
         }
     }
 
@@ -229,12 +232,20 @@ public slots:
     }
 
 
-    virtual DataType getData(const QString &iStrData) = 0;
-    virtual bool filterData(DataType iData, FilterType iFilter) = 0;
-
+    void stop()
+    {
+        m_canOpenProgress = false;
+    }
+    int getCount()
+    {
+        return  m_lineCnt;
+    }
+    bool getIsComplete()
+    {
+        return m_isLoadComplete;
+    }
 public:
     QFile *m_file;
-    QMap<qint64, FILE_ENTER> m_entersFilter;
     QVector<qint64> m_enters;
     char *m_fileMem;
     qint64 m_size;
@@ -245,7 +256,11 @@ public:
     int m_dataFrom;
     int m_dataTo; //按一行100个字符估计总行数
     QTextCodec *m_codec;
-    FilterType m_Filter;
+    QString m_fileDir;
+    QString m_handledFileDir;
+    bool m_isLoadComplete;
+    QPair<int, int> m_curentDataLineRage;
+//    FilterType m_Filter;
 
 };
 

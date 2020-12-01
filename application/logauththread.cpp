@@ -129,8 +129,8 @@ void LogAuthThread::run()
     switch (m_type) {
     case KERN:
         //  handleKern();
-        //doReadFileWork();
-        handleKernNew();
+        doReadFileWork();
+        // handleKernNew();
         break;
     case BOOT:
         handleBoot();
