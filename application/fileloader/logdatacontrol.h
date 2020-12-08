@@ -21,6 +21,8 @@
 #include <QObject>
 #include <QThread>
 #include <QVector>
+#include <QEventLoop>
+#include <QCoreApplication>
 template < typename DataType, typename FilterType >
 class LoghDataControl : public QObject
 {
@@ -118,11 +120,6 @@ public slots:
     {
         QString str ;
         DataType itemData;
-        //   QList<DataType>　rs_abc;
-//        bool isContainsStr = false;
-//        if (m_kernFilter.searchstr.isEmpty()) {
-//            isContainsStr = true;
-//        }
         if (iReset) {
             m_currrentShowFileIndex = 0;
             foreach (LogFileLoader *itemFile, m_files.values()) {
@@ -132,14 +129,13 @@ public slots:
         }
         int count = 0;
         for (; m_currrentShowFileIndex < m_files.size(); ++m_currrentShowFileIndex) {
-            while (count < m_pageSize ||) {
-
-            }
             LogFileLoader *file = m_files.value(m_currrentShowFileIndex, nullptr);
-            if (!file || !(file->getIsComplete())) {
+            if (!file) {
                 return false ;
             }
-
+            while (!file->getIsComplete()) {
+                QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+            }
 
 
             if (isAdd) {
@@ -184,17 +180,16 @@ public slots:
                 break;
             }
         }
-        LogIndexData<DataType>　itemdata;
+        LogIndexData<DataType> itemIndexData;
         int lastFileIndex = -1;
         int lastDataIndex = -1;
-        QPair<int, int>　dataRange;
         if (count > 0 && m_currentData.size() > m_pageSize * 2) {
             int limit = -1;
             if (isAdd) {
                 for (int i = 0; i < m_pageSize; ++i) {
-                    itemdata =  m_currentData.takeFirst();
-                    lastFileIndex = itemData.fileIndex;
-                    lastDataIndex = itemData.dataIndex;
+                    itemIndexData =  m_currentData.takeFirst();
+                    lastFileIndex = itemIndexData.fileIndex;
+                    lastDataIndex = itemIndexData.dataIndex;
                 }
                 foreach (int key, m_LineRage.keys()) {
                     if (key < lastFileIndex) {
@@ -206,9 +201,9 @@ public slots:
                 }
             } else {
                 for (int i = 0; i < m_pageSize; ++i) {
-                    itemdata =  m_currentData.takeFlast();
-                    lastFileIndex = itemData.fileIndex;
-                    lastDataIndex = itemData.dataIndex;
+                    itemIndexData =  m_currentData.takelast();
+                    lastFileIndex = itemIndexData.fileIndex;
+                    lastDataIndex = itemIndexData.dataIndex;
                 }
                 foreach (int key, m_LineRage.keys()) {
                     if (key > lastFileIndex) {
@@ -219,10 +214,8 @@ public slots:
                     }
                 }
             }
-//            m_currentData.erase(iterBegin, iterEnd);
         }
         return true;
-
     }
     FilterType m_Filter;
     QString m_LogDir;

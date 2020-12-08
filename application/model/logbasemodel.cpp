@@ -248,7 +248,12 @@ void LogBaseModel::reducePage()
 
 void LogBaseModel::refreshPage(bool isAdd, bool iReset)
 {
+    if (!m_baseInfo->mMem || m_baseInfo->mLineCnt <= 0) {
+        return;
+    }
+    qDebug() << "m_baseInfo->mEnters.size()" << m_baseInfo->mEnters.size();
     beginResetModel();
+
     QString str ;
     LOG_MSG_KERN itemData;
     bool isContainsStr = false;

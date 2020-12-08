@@ -182,6 +182,9 @@ void DisplayContent::initTableView()
     m_pModel = new QStandardItemModel(this);
     m_treeView->setModel(m_pModel);
     m_kernModel = new LogBaseModel(nullptr, this);
+    KERN_FILTERS1 f;
+    f.searchstr = "574.723232";
+    m_kernModel->setKernFilter(f);
     connect(m_kernModel, &LogBaseModel::updateView, this, &DisplayContent::updateScrollerBar);
 
 

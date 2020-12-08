@@ -94,10 +94,8 @@ public slots:
             --m_enterCharOffset;
             splitLines();
         }
-
         if (!m_canOpenProgress)
             return false;
-
         if (m_enters.last() < m_size) {//没有\n的最后一行
             qDebug() << "add last line";
             if (m_size >= 2 && m_fileMem[m_size - 2] == '\r') { //\r\0
@@ -106,12 +104,8 @@ public slots:
                 m_enters.push_back(m_size - 1);
             }
         }
-
-
-
         m_lineCnt = m_enters.size() - 1;
         m_canOpenProgress = false;
-
     }
     void close()
     {
@@ -193,6 +187,9 @@ public slots:
         delete[] extraRets;
         delete[] chBackup;
         allFinished();
+    }
+    void  splitLinesSingle()
+    {
     }
     void splitLine(int &iCur, QVector<qint64> *iEnters, char *ptr, bool isProgress)
     {

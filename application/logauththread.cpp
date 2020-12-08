@@ -625,11 +625,14 @@ qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
 
 bool LogAuthThread::doReadFileWork()
 {
+    QElapsedTimer timer;
+    timer.start();
     if (mFile) {
         close();
     }
 
     mFile = new QFile("/home/zyc/Documents/tech/同方内核日志没有/kern.log");
+//     mFile = new QFile("/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log");
     if (!mFile->open(QIODevice::ReadOnly)) {
         qDebug() << "failed to open file as read only";
         delete mFile;
@@ -694,8 +697,9 @@ bool LogAuthThread::doReadFileWork()
     info->mEnters = mEnters;
     info->mLineCnt = mLineCnt;
     info->mEnterCharOffset = mEnterCharOffset;
-    qDebug() << "doReadFileWork finished-------";
+
     kernFinished(info);
+    qDebug() << "doReadFileWork finished-------" << timer.elapsed();;
     return true;
 }
 
