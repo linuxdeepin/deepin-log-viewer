@@ -49,13 +49,9 @@ int main(int argc, char *argv[])
     qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
     QString  systemName =   DBusManager::getSystemInfo();
     qDebug() << "systemName" << systemName;
-    if (systemName == "klu" || systemName == "panguV") {
-        qputenv("_d_disableDBusFileDialog", "true");
-    }
     if (Utils::isWayland()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
     }
-
 
     setenv("PULSE_PROP_media.role", "video", 1);
     QSurfaceFormat format;
