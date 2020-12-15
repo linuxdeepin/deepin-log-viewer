@@ -52,7 +52,6 @@ int main(int argc, char *argv[])
     if (Utils::isWayland()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
     }
-
     setenv("PULSE_PROP_media.role", "video", 1);
     QSurfaceFormat format;
     format.setRenderableType(QSurfaceFormat::OpenGLES);
