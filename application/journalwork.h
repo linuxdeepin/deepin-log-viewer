@@ -76,7 +76,7 @@ signals:
     /**
      * @brief journalFinished 获取数据结束
      */
-    void journalFinished();
+    void journalFinished(int index);
 
 public slots:
     void doWork();

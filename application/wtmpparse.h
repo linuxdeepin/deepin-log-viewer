@@ -18,18 +18,19 @@ static char utmpbuf[NRECS * UTSIZE];
 static int num_recs;
 static int cur_rec;
 static int fdWtmp = -1;
-
+static int bpos;
+static __off_t fpos;
 struct utmp_list {
     struct utmp value;
     struct utmp_list *next;
 };
-
+int wtmp_open_back(char *filename);
 int wtmp_open(char *filename);
-
+int seek_end(void);
 int wtmp_reload(void);
-
+int wtmp_reload_back(void);
 struct utmp *wtmp_next(void);
-
+struct utmp *wtmp_back(void);
 void wtmp_close(void);
 
 struct utmp_list *st_list_init(void);

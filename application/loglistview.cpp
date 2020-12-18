@@ -262,16 +262,6 @@ void LogListView::initUI()
             m_pModel->appendRow(item);
         }
     }
-
-
-//    if (isFileExist("/var/log/Xorg.0.log")) {
-//        item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
-//        item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
-//        item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
-//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-//        m_pModel->appendRow(item);
-//    }
     // if (isFileExist(QDir::homePath() + "/.kwin.log")) {
     //w515是新版本内核的panguv返回值  panguV是老版本
     if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName == "pangu" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU") || systemName.toUpper().contains("PANGU")) {

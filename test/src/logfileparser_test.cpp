@@ -185,31 +185,8 @@ TEST(LogFileParser_quitLogAuththread_UT, LogFileParser_quitLogAuththread_UT_002)
     p->deleteLater();
 }
 
-TEST(LogFileParser_slot_journalFinished_UT, LogFileParser_slot_journalFinished_UT)
-{
-    LogFileParser *p = new LogFileParser(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->slot_journalFinished();
-    EXPECT_EQ(p->m_isJournalLoading, false);
-    p->deleteLater();
-}
 
-TEST(LogFileParser_slot_journalBootFinished_UT, LogFileParser_slot_journalBootFinished_UT)
-{
-    LogFileParser *p = new LogFileParser(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->slot_journalBootFinished();
-    p->deleteLater();
-}
 
-TEST(LogFileParser_slot_applicationFinished_UT, LogFileParser_slot_applicationFinished_UT)
-{
-    LogFileParser *p = new LogFileParser(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_APPLICATOIN> appList;
-    p->slot_applicationFinished(appList);
-    p->deleteLater();
-}
 QMessageBox::StandardButton LogFileParser_slog_proccessError_UT_DMessageBox_information(QWidget *parent, const QString &title,
                                                                                         const QString &text, QMessageBox::StandardButtons buttons = QMessageBox::Ok,
                                                                                         QMessageBox::StandardButton defaultButton = QMessageBox::NoButton)

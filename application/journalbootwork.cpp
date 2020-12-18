@@ -380,7 +380,7 @@ void JournalBootWork::doWork()
         emit journaBootlData(m_threadIndex, logList);
     }
 
-    emit journalBootFinished();
+    emit journalBootFinished(m_threadIndex);
     //第一次加载时这个之后的代码都不执行?故放到最后
     deleteSd();
     sd_journal_close(j);

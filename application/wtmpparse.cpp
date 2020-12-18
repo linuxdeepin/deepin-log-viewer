@@ -15,11 +15,28 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "wtmpparse.h"
+#include <QDebug>
+
 int wtmp_open(char *filename)
 {
     fdWtmp = open(filename, O_RDONLY);
     cur_rec = num_recs = 0;
     return fdWtmp;
+}
+
+int wtmp_open_back(char *filename)
+{
+    fdWtmp = open(filename, O_RDONLY);
+    qDebug() << "fdWtmp" << fdWtmp;
+    bpos = cur_rec = num_recs = 0;
+    fpos = lseek(fdWtmp, 0, SEEK_END);
+    return fdWtmp;
+}
+
+int seek_end(void)
+{
+    qDebug() << lseek(0, fdWtmp, SEEK_END);
+    return 0;
 }
 
 int wtmp_reload(void)
@@ -32,6 +49,7 @@ int wtmp_reload(void)
 
     return num_recs;
 }
+
 struct utmp *wtmp_next(void)
 {
     struct utmp *recp;
@@ -44,6 +62,39 @@ struct utmp *wtmp_next(void)
 
     recp = (struct utmp *)&utmpbuf[cur_rec * UTSIZE];
     cur_rec++;
+
+    return recp;
+}
+
+int wtmp_reload_back(void)
+{
+    int amt_read;
+
+    //   qDebug() << "endsize" << endsize << NRECS << UTSIZE;
+
+    off_t o;
+    o = ((fpos - 1) / (NRECS * UTSIZE)) * (NRECS * UTSIZE);
+    bpos = (int)(fpos - o);
+    fpos -= NRECS * UTSIZE;
+    amt_read = pread(fdWtmp, utmpbuf, NRECS * UTSIZE, fpos);
+    num_recs = amt_read / UTSIZE;
+
+    cur_rec = 0;
+
+    return num_recs;
+}
+struct utmp *wtmp_back(void)
+{
+    struct utmp *recp;
+
+    if (fdWtmp == -1)
+        return NULLUT;
+
+    if (cur_rec == 0 && wtmp_reload_back() == 0)
+        return NULLUT;
+
+    recp = (struct utmp *)&utmpbuf[cur_rec * UTSIZE];
+    cur_rec--;
 
     return recp;
 }

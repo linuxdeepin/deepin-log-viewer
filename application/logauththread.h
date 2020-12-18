@@ -55,10 +55,13 @@ public:
     void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
     void setFileterParam(DKPG_FILTERS iFIlters) { m_dkpgFilters = iFIlters; }
     void setFileterParam(KERN_FILTERS iFIlters) { m_kernFilters = iFIlters; }
+    void setFileterParam(NORMAL_FILTERS iFIlters) { m_normalFilters = iFIlters; }
     void setFileterParam(DNF_FILTERS iFIlters) { m_dnfFilters = iFIlters; }
     void setFileterParam(DMESG_FILTERS iFIlters) { m_dmesgFilters = iFIlters; }
     void stopProccess();
+    int getIndex();
     QString startTime();
+
     /**
      * @brief thread_index 静态成员变量，用来每次构造时标记新的当前线程对象 m_threadIndex
      */
@@ -73,16 +76,34 @@ protected:
     void handleDkpg();
     void handleDnf();
     void handleDmesg();
+    void handleNormal();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
     qint64 formatDateTime(QString y, QString t);
 
 signals:
-    void kernFinished(QList<LOG_MSG_JOURNAL>);
-    void bootFinished(QList<LOG_MSG_BOOT>);
-    void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
-    void xorgFinished(QList<LOG_MSG_XORG> iKwinList);
-    void dpkgFinished(QList<LOG_MSG_DPKG> iKwinList);
+    void kernFinished(int index);
+    /**
+     * @brief kernData
+     * @param index 当前线程的数字标号
+     * @param iDataList　数据list
+     */
+    void kernData(int index, QList<LOG_MSG_JOURNAL> iDataList);
+    void bootFinished(int index);
+    /**
+     * @brief bootData
+     * @param index 当前线程的数字标号
+     * @param iDataList　数据list
+     */
+    void bootData(int index, QList<LOG_MSG_BOOT> iDataList);
+    void kwinFinished(int index);
+    void kwinData(int index, QList<LOG_MSG_KWIN> iDataList);
+    void xorgFinished(int index);
+    void xorgData(int index, QList<LOG_MSG_XORG> iDataList);
+    void dpkgFinished(int index);
+    void dpkgData(int index, QList<LOG_MSG_DPKG> iDataList);
+    void normalFinished(int index);
+    void normalData(int index, QList<LOG_MSG_NORMAL> iDataList);
     void dnfFinished(QList<LOG_MSG_DNF> iKwinList);
     void dmesgFinished(QList<LOG_MSG_DMESG> iKwinList);
     void proccessError(const QString &iError);
@@ -114,6 +135,10 @@ private:
      * @brief m_kernFilters 内核日志筛选条件
      */
     KERN_FILTERS m_kernFilters;
+    /**
+     * @brief m_normalFilters 开关机日志筛选条件
+     */
+    NORMAL_FILTERS m_normalFilters;
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
     //获取数据用的cat命令的process

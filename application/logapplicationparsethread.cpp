@@ -27,6 +27,7 @@ DWIDGET_USE_NAMESPACE
 
 std::atomic<LogApplicationParseThread *> LogApplicationParseThread::m_instance;
 std::mutex LogApplicationParseThread::m_mutex;
+int LogApplicationParseThread::thread_count = 0;
 /**
  * @brief LogApplicationParseThread::LogApplicationParseThread 构造函数
  * @param parent 父对象
@@ -37,6 +38,9 @@ LogApplicationParseThread::LogApplicationParseThread(QObject *parent)
     qRegisterMetaType<QList<LOG_MSG_APPLICATOIN> >("QList<LOG_MSG_APPLICATOIN>");
 
     initMap();
+    //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
+    thread_count++;
+    m_threadCount = thread_count;
 }
 
 /**
@@ -73,6 +77,11 @@ void LogApplicationParseThread::stopProccess()
     }
 }
 
+int LogApplicationParseThread::getIndex()
+{
+    return m_threadCount;
+}
+
 /**
  * @brief LogApplicationParseThread::doWork 获取数据线程逻辑
  */
@@ -86,7 +95,7 @@ void LogApplicationParseThread::doWork()
     //connect(m_process, SIGNAL(finished(int)), m_process, SLOT(deleteLater()));
     //因为筛选信息中含有日志文件路径，所以不能为空，否则无法获取
     if (m_AppFiler.path.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
-        emit appCmdFinished(m_appList);
+        emit appFinished(m_threadCount);
     } else {
         QStringList arg;
         //使用cat命令获取日志文件的文本
@@ -100,8 +109,9 @@ void LogApplicationParseThread::doWork()
             return;
         }
         //替换截断空字符
-        QString output(Utils::replaceEmptyByteArray(byteOutput));
-        for (QString str : output.split('\n')) {
+        QStringList strList = QString(Utils::replaceEmptyByteArray(byteOutput)).split('\n', QString::SkipEmptyParts);
+        for (int i = strList.size() - 1; i >= 0; --i) {
+            QString str = strList.at(i);
             if (!m_canRun) {
                 return;
             }
@@ -157,12 +167,22 @@ void LogApplicationParseThread::doWork()
                 msg.msg = list[2];
             }
 
-            m_appList.insert(0, msg);
+            m_appList.append(msg);
+            //每获得500个数据就发出信号给控件加载
+            if (m_appList.count() % SINGLE_READ_CNT == 0) {
+                emit appData(m_threadCount, m_appList);
+                m_appList.clear();
+            }
         }
         if (!m_canRun) {
             return;
         }
-        emit appCmdFinished(m_appList);
+        //最后可能有余下不足500的数据
+        if (m_appList.count() >= 0) {
+            emit appData(m_threadCount, m_appList);
+        }
+
+        emit appFinished(m_threadCount);
     }
 
 
