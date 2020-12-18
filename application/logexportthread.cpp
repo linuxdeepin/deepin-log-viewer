@@ -42,9 +42,10 @@ DWIDGET_USE_NAMESPACE
  * @brief LogExportThread::LogExportThread 导出日志线程类构造函数
  * @param parent 父对象
  */
-LogExportThread::LogExportThread(QObject *parent)
+LogExportThread::LogExportThread(bool &isDataComplete, QObject *parent)
     :  QObject(parent),
-       QRunnable()
+       QRunnable(),
+       m_allLoadComplete(isDataComplete)
 {
     setAutoDelete(true);
     initMap();
@@ -567,6 +568,11 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jL
 bool LogExportThread::isProcessing()
 {
     return m_canRunning;
+}
+
+void LogExportThread::setDataLoadComlete(bool &isComplete)
+{
+    m_allLoadComplete = isComplete;
 }
 
 /**
@@ -2952,6 +2958,10 @@ QString LogExportThread::strTranslate(QString &iLevelStr)
 void LogExportThread::run()
 {
     qDebug() << " LogExportThread::run()threadrun";
+    sigProgress(0, 100);
+    while (!m_allLoadComplete) {
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+    }
     switch (m_runMode) {
     case TxtModel: {
         exportToTxt(m_fileName, m_pModel, m_flag);

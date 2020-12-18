@@ -43,40 +43,55 @@ public:
     int parseByJournal(QStringList arg = QStringList());
     int parseByJournalBoot(QStringList arg = QStringList());
 
-    void parseByDpkg(DKPG_FILTERS &iDpkgFilter);
+    int parseByDpkg(DKPG_FILTERS &iDpkgFilter);
 #if 0
     void parseByXlog(QStringList &xList);
     void parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms = 0);  // modifed by Airy for show period
 #endif
-    void parseByXlog(XORG_FILTERS &iXorgFilter);
-    void parseByBoot();
-    void parseByKern(KERN_FILTERS &iKernFilter);
-    void parseByApp(APP_FILTERS &iAPPFilter);
+    int parseByXlog(XORG_FILTERS &iXorgFilter);
+    int parseByBoot();
+    int parseByKern(KERN_FILTERS &iKernFilter);
+    int parseByApp(APP_FILTERS &iAPPFilter);
 
-    void parseByNormal(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler);  // add by Airy
-    void parseByKwin(KWIN_FILTERS iKwinfilter);
+    void parseByNormal1(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler);  // add by Airy
+    int parseByNormal(NORMAL_FILTERS &iNormalFiler);   // add by Airy
+
+    int parseByKwin(KWIN_FILTERS iKwinfilter);
     void createFile(QString output, int count);
     void stopAllLoad();
 
 signals:
-    void dpkgFinished(QList<LOG_MSG_DPKG>);
-    void xlogFinished(QList<LOG_MSG_XORG>);
-    void bootFinished(QList<LOG_MSG_BOOT>);
-    void kernFinished(QList<LOG_MSG_JOURNAL>);
-    void journalFinished();
+    void dpkgFinished(int index);
+    void dpkgData(int index, QList<LOG_MSG_DPKG>);
+    void xlogFinished(int index);
+    void xlogData(int index, QList<LOG_MSG_XORG>);
+    void bootFinished(int index);
+    void bootData(int index, QList<LOG_MSG_BOOT>);
+    void kernFinished(int index);
+    void kernData(int index, QList<LOG_MSG_JOURNAL>);
+    void journalFinished(int index);
 
-    void journalBootFinished();
+    void journalBootFinished(int index);
 
     void journalData(int index, QList<LOG_MSG_JOURNAL>);
     void journaBootlData(int index, QList<LOG_MSG_JOURNAL>);
 
-    void applicationFinished(QList<LOG_MSG_APPLICATOIN>);
-    void normalFinished();  // add by Airy
-    void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
+    //void normalFinished();  // add by Airy
+
+    void normalFinished(int index);
+    void normalData(int index, QList<LOG_MSG_NORMAL>);
+    void kwinFinished(int index);
+    void kwinData(int index, QList<LOG_MSG_KWIN> iKwinList);
+    /**
+     * @brief appFinished 获取数据结束信号
+     */
+    void appFinished(int index);
+    void appData(int index, QList<LOG_MSG_APPLICATOIN> iDataList);
     void stopKern();
     void stopBoot();
     void stopDpkg();
     void stopXlog();
+    void stopNormal();
     void stopKwin();
     void stopApp();
     void stopJournal();
@@ -92,9 +107,6 @@ private:
 signals:
 
 public slots:
-    void slot_journalFinished();
-    void slot_journalBootFinished();
-    void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> iAppList);
     void slog_proccessError(const QString &iError);
 private:
     QString m_rootPasswd;

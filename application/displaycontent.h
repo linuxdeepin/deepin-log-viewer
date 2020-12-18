@@ -73,7 +73,8 @@ private:
     void createJournalTableStart(QList<LOG_MSG_JOURNAL> &list);
     void createJournalTableForm();
     void generateDpkgFile(int id, const QString &iSearchStr = "");
-    void createDpkgTable(QList<LOG_MSG_DPKG> &list);
+    void createDpkgTableStart(QList<LOG_MSG_DPKG> &list);
+    void createDpkgTableForm();
 
     void generateKernFile(int id, const QString &iSearchStr = "");
     void createKernTableForm();
@@ -82,16 +83,20 @@ private:
     void generateAppFile(QString path, int id, int lId, const QString &iSearchStr = "");
     void createAppTableForm();
     void createAppTable(QList<LOG_MSG_APPLICATOIN> &list);
-    void createApplicationTable(QList<LOG_MSG_APPLICATOIN> &list);
 
+    void createBootTableForm();
     void createBootTable(QList<LOG_MSG_BOOT> &list);
+    void generateBootFile();
 
+    void createXorgTableForm();
     void createXorgTable(QList<LOG_MSG_XORG> &list);
     void generateXorgFile(int id);  // add by Airy for peroid
 
+    void createKwinTableForm();
     void creatKwinTable(QList<LOG_MSG_KWIN> &list);
     void generateKwinFile(KWIN_FILTERS iFilters);
 
+    void createNormalTableForm();
     void createNormalTable(QList<LOG_MSG_NORMAL> &list);  // add by Airy
     void generateNormalFile(int id);                      // add by Airy for peroid
 
@@ -99,7 +104,11 @@ private:
     void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
     void insertKernTable(QList<LOG_MSG_JOURNAL> list, int start,
                          int end);  // add by Airy for bug 12263
-
+    void insertDpkgTable(QList<LOG_MSG_DPKG> list, int start, int end);
+    void insertXorgTable(QList<LOG_MSG_XORG> list, int start, int end);
+    void insertBootTable(QList<LOG_MSG_BOOT> list, int start, int end);
+    void insertKwinTable(QList<LOG_MSG_KWIN> list, int start, int end);
+    void insertNormalTable(QList<LOG_MSG_NORMAL> list, int start, int end);
     QString getAppName(QString filePath);
 
     bool isAuthProcessAlive();
@@ -137,17 +146,25 @@ public slots:
 
     void slot_statusChagned(QString status);
 
-    void slot_dpkgFinished(QList<LOG_MSG_DPKG> list);
-    void slot_XorgFinished(QList<LOG_MSG_XORG> list);
-    void slot_bootFinished(QList<LOG_MSG_BOOT> list);
-    void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
-    void slot_kwinFinished(QList<LOG_MSG_KWIN> list);
-    void slot_journalFinished();
-    void slot_journalBootFinished();
+    void slot_dpkgFinished(int index);
+    void slot_dpkgData(int index, QList<LOG_MSG_DPKG> list);
+    void slot_XorgFinished(int index);
+    void slot_xorgData(int index, QList<LOG_MSG_XORG> list);
+    void slot_bootFinished(int index);
+    void slot_bootData(int index, QList<LOG_MSG_BOOT> list);
+    void slot_kernFinished(int index);
+    void slot_kernData(int index, QList<LOG_MSG_JOURNAL> list);
+    void slot_kwinFinished(int index);
+    void slot_kwinData(int index, QList<LOG_MSG_KWIN> list);
+    void slot_journalFinished(int index);
+    void slot_journalBootFinished(int index);
     void slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list);
     void slot_journalData(int index, QList<LOG_MSG_JOURNAL> list);
-    void slot_applicationFinished(QList<LOG_MSG_APPLICATOIN> list);
-    void slot_NormalFinished();  // add by Airy
+    void slot_applicationFinished(int index);
+    void slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> list);
+    void slot_normalFinished(int index);
+    void slot_normalData(int index, QList<LOG_MSG_NORMAL> list);
+
     void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
 
@@ -172,8 +189,16 @@ public slots:
     void onExportFakeCloseDlg();
     void clearAllFilter();
     void clearAllDatalist();
-    void filterBoot(BOOT_FILTERS ibootFilter);
-    void filterNomal(NORMAL_FILTERS inormalFilter);
+    QList<LOG_MSG_BOOT>  filterBoot(BOOT_FILTERS ibootFilter, QList<LOG_MSG_BOOT> &iList);
+    QList<LOG_MSG_NORMAL>  filterNomal(NORMAL_FILTERS inormalFilter, QList<LOG_MSG_NORMAL> &iList);
+    QList<LOG_MSG_DPKG> filterDpkg(const QString &iSearchStr, QList<LOG_MSG_DPKG> &iList);
+    QList<LOG_MSG_JOURNAL> filterKern(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
+    QList<LOG_MSG_XORG> filterXorg(const QString &iSearchStr, QList<LOG_MSG_XORG> &iList);
+    QList<LOG_MSG_KWIN> filterKwin(const QString &iSearchStr, QList<LOG_MSG_KWIN> &iList);
+    QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, QList<LOG_MSG_APPLICATOIN> &iList);
+    QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
+    QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
+
 private:
     void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
@@ -276,11 +301,11 @@ private:
      */
     QList<LOG_MSG_APPLICATOIN> appList, appListOrigin;
     /**
-     * @brief norList add 经过筛选完成的开关机日志数据 by Airy
+     * @brief norList add 未经过筛选完成的开关机日志数据 by Airy
      */
     QList<LOG_MSG_NORMAL> norList;
     /**
-     * @brief nortempList 未经过筛选的开关机日志数据 add by Airy
+     * @brief nortempList 经过筛选的开关机日志数据 add by Airy
      */
     QList<LOG_MSG_NORMAL> nortempList;
     /**
@@ -329,6 +354,15 @@ private:
     int m_journalCurrentIndex{-1};
     //当前klu启动日志获取进程标记量
     int m_journalBootCurrentIndex{-1};
+    //当前启动日志获取进程标记量
+    int m_bootCurrentIndex{-1};
+    int m_dpkgCurrentIndex{-1};
+    int m_kernCurrentIndex{-1};
+    int m_normalCurrentIndex{-1};
+    int m_xorgCurrentIndex{-1};
+    int m_kwinCurrentIndex{-1};
+    int m_appCurrentIndex{-1};
+    bool m_isDataLoadComplete{false};
 };
 
 #endif  // DISPLAYCONTENT_H

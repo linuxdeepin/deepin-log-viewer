@@ -29,21 +29,24 @@
 #include <QIcon>
 TEST(LogExportThread_Constructor_UT, LogExportThread_Constructor_UT)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     p->deleteLater();
 }
 
 TEST(LogExportThread_Destructor_UT, LogExportThread_Destructor_UT)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     p->deleteLater();
 }
 
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     p->exportToTxtPublic("aa", nullptr, XORG);
     EXPECT_EQ(p->m_fileName, "aa");
@@ -56,7 +59,8 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
 
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> jList;
     LOG_MSG_JOURNAL info;
@@ -75,7 +79,8 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
 
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_003)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_APPLICATOIN> jList;
     LOG_MSG_APPLICATOIN info;
@@ -95,7 +100,8 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
 
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_004)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_DPKG> jList;
     LOG_MSG_DPKG info;
@@ -113,7 +119,8 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
 
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_005)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     LOG_MSG_BOOT info;
@@ -131,7 +138,8 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
 
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_006)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     LOG_MSG_BOOT info;
@@ -149,7 +157,8 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
 
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_007)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_XORG> jList;
     LOG_MSG_XORG info;
@@ -167,7 +176,8 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
 
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_008)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_NORMAL> jList;
     LOG_MSG_NORMAL info;
@@ -185,7 +195,8 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
 
 TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_009)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_KWIN> jList;
     LOG_MSG_KWIN info;
@@ -203,7 +214,8 @@ TEST(LogExportThread_exportToTxtPublic_UT, LogExportThread_exportToTxtPublic_UT_
 
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     p->exportToHtmlPublic("aa", nullptr, XORG);
     EXPECT_EQ(p->m_fileName, "aa");
@@ -216,7 +228,8 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
 
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> jList;
     LOG_MSG_JOURNAL info;
@@ -235,7 +248,8 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
 
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_003)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_APPLICATOIN> jList;
     LOG_MSG_APPLICATOIN info;
@@ -255,7 +269,8 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
 
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_004)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_DPKG> jList;
     LOG_MSG_DPKG info;
@@ -273,7 +288,8 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
 
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_005)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     LOG_MSG_BOOT info;
@@ -291,7 +307,8 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
 
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_006)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     LOG_MSG_BOOT info;
@@ -309,7 +326,8 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
 
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_007)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_XORG> jList;
     LOG_MSG_XORG info;
@@ -327,7 +345,8 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
 
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_008)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_NORMAL> jList;
     LOG_MSG_NORMAL info;
@@ -345,7 +364,8 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
 
 TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_UT_009)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_KWIN> jList;
     LOG_MSG_KWIN info;
@@ -363,7 +383,8 @@ TEST(LogExportThread_exportToHtmlPublic_UT, LogExportThread_exportToHtmlPublic_U
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     p->exportToDocPublic("aa", nullptr, XORG);
     EXPECT_EQ(p->m_fileName, "aa");
@@ -376,7 +397,8 @@ TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> jList;
     LOG_MSG_JOURNAL info;
@@ -395,7 +417,8 @@ TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_003)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_APPLICATOIN> jList;
     LOG_MSG_APPLICATOIN info;
@@ -415,7 +438,8 @@ TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_004)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_DPKG> jList;
     LOG_MSG_DPKG info;
@@ -433,7 +457,8 @@ TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_005)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     LOG_MSG_BOOT info;
@@ -451,7 +476,8 @@ TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_006)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     LOG_MSG_BOOT info;
@@ -469,7 +495,8 @@ TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_007)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_XORG> jList;
     LOG_MSG_XORG info;
@@ -487,7 +514,8 @@ TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_008)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_NORMAL> jList;
     LOG_MSG_NORMAL info;
@@ -505,7 +533,8 @@ TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_
 
 TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_009)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_KWIN> jList;
     LOG_MSG_KWIN info;
@@ -523,7 +552,8 @@ TEST(LogExportThread_exportToDocPublic_UT, LogExportThread_exportToDocPublic_UT_
 
 TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     p->exportToXlsPublic("aa", nullptr, XORG);
     EXPECT_EQ(p->m_fileName, "aa");
@@ -536,7 +566,8 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
 
 TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> jList;
     LOG_MSG_JOURNAL info;
@@ -555,7 +586,8 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
 
 TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_003)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_APPLICATOIN> jList;
     LOG_MSG_APPLICATOIN info;
@@ -575,7 +607,8 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
 
 TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_004)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_DPKG> jList;
     LOG_MSG_DPKG info;
@@ -593,7 +626,8 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
 
 TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_005)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     LOG_MSG_BOOT info;
@@ -611,7 +645,8 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
 
 TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_006)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     LOG_MSG_BOOT info;
@@ -629,7 +664,8 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
 
 TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_007)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_XORG> jList;
     LOG_MSG_XORG info;
@@ -647,7 +683,8 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
 
 TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_008)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_NORMAL> jList;
     LOG_MSG_NORMAL info;
@@ -665,7 +702,8 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
 
 TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_009)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_KWIN> jList;
     LOG_MSG_KWIN info;
@@ -683,7 +721,8 @@ TEST(LogExportThread_exportToXlsPublic_UT, LogExportThread_exportToXlsPublic_UT_
 
 TEST(LogExportThread_isProcessing_UT, LogExportThread_isProcessing_UT)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     p->isProcessing();
     p->deleteLater();
@@ -691,7 +730,8 @@ TEST(LogExportThread_isProcessing_UT, LogExportThread_isProcessing_UT)
 
 TEST(LogExportThread_stopImmediately_UT, LogExportThread_stopImmediately_UT)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     p->stopImmediately();
     EXPECT_EQ(p->m_canRunning, false);
@@ -700,7 +740,8 @@ TEST(LogExportThread_stopImmediately_UT, LogExportThread_stopImmediately_UT)
 
 TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QStandardItemModel *p_model = new QStandardItemModel();
     p_model->setHorizontalHeaderLabels(QStringList()
@@ -739,7 +780,8 @@ TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT_
 
 TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QStandardItemModel *p_model = new QStandardItemModel();
     p_model->setHorizontalHeaderLabels(QStringList()
@@ -781,7 +823,8 @@ TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT_
 
 TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT003)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QStandardItemModel *p_model = new QStandardItemModel();
     p_model->setHorizontalHeaderLabels(QStringList()
@@ -843,7 +886,8 @@ INSTANTIATE_TEST_CASE_P(LogApplication, LogExportThread_exportToTxt_JOURNAL_UT, 
 
 TEST_P(LogExportThread_exportToTxt_JOURNAL_UT, LogExportThread_exportToTxt_JOURNAL_UT)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     LogExportThread_exportToTxt_JOURNAL_UT_Param param = GetParam();
     QList<LOG_MSG_JOURNAL> jList;
@@ -871,7 +915,8 @@ TEST_P(LogExportThread_exportToTxt_JOURNAL_UT, LogExportThread_exportToTxt_JOURN
 
 TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_APPLICATOIN> jList;
     for (int i = 0; i < 5; ++i) {
@@ -897,7 +942,8 @@ TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_001)
 
 TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_APPLICATOIN> jList;
     for (int i = 0; i < 5; ++i) {
@@ -923,7 +969,8 @@ TEST(LogExportThread_exportToTxt_APP_UT, LogExportThread_exportToTxt_APP_UT_002)
 
 TEST(LogExportThread_exportToTxt_DPKG_UT, LogExportThread_exportToTxt_DPKG_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_DPKG> jList;
     for (int i = 0; i < 5; ++i) {
@@ -947,7 +994,8 @@ TEST(LogExportThread_exportToTxt_DPKG_UT, LogExportThread_exportToTxt_DPKG_UT_00
 
 TEST(LogExportThread_exportToTxt_DPKG_UT, LogExportThread_exportToTxt_DPKG_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_DPKG> jList;
     for (int i = 0; i < 5; ++i) {
@@ -971,7 +1019,8 @@ TEST(LogExportThread_exportToTxt_DPKG_UT, LogExportThread_exportToTxt_DPKG_UT_00
 
 TEST(LogExportThread_exportToTxt_BOOT_UT, LogExportThread_exportToTxt_BOOT_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     for (int i = 0; i < 5; ++i) {
@@ -994,7 +1043,8 @@ TEST(LogExportThread_exportToTxt_BOOT_UT, LogExportThread_exportToTxt_BOOT_UT_00
 
 TEST(LogExportThread_exportToTxt_BOOT_UT, LogExportThread_exportToTxt_BOOT_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> jList;
     for (int i = 0; i < 5; ++i) {
@@ -1017,7 +1067,8 @@ TEST(LogExportThread_exportToTxt_BOOT_UT, LogExportThread_exportToTxt_BOOT_UT_00
 
 TEST(LogExportThread_exportToTxt_XORG_UT, LogExportThread_exportToTxt_XORG_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_XORG> jList;
     for (int i = 0; i < 5; ++i) {
@@ -1041,7 +1092,8 @@ TEST(LogExportThread_exportToTxt_XORG_UT, LogExportThread_exportToTxt_XORG_UT_00
 
 TEST(LogExportThread_exportToTxt_XORG_UT, LogExportThread_exportToTxt_XORG_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_XORG> jList;
     for (int i = 0; i < 5; ++i) {
@@ -1064,7 +1116,8 @@ TEST(LogExportThread_exportToTxt_XORG_UT, LogExportThread_exportToTxt_XORG_UT_00
 
 TEST(LogExportThread_exportToTxt_NORMAL_UT, LogExportThread_exportToTxt_NORMAL_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_NORMAL> jList;
     for (int i = 0; i < 5; ++i) {
@@ -1089,7 +1142,8 @@ TEST(LogExportThread_exportToTxt_NORMAL_UT, LogExportThread_exportToTxt_NORMAL_U
 
 TEST(LogExportThread_exportToTxt_NORMAL_UT, LogExportThread_exportToTxt_NORMAL_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_NORMAL> jList;
     for (int i = 0; i < 5; ++i) {
@@ -1114,7 +1168,8 @@ TEST(LogExportThread_exportToTxt_NORMAL_UT, LogExportThread_exportToTxt_NORMAL_U
 
 TEST(LogExportThread_exportToTxt_KWIN_UT, LogExportThread_exportToTxt_KWIN_UT_001)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_KWIN> jList;
     for (int i = 0; i < 5; ++i) {
@@ -1136,7 +1191,8 @@ TEST(LogExportThread_exportToTxt_KWIN_UT, LogExportThread_exportToTxt_KWIN_UT_00
 
 TEST(LogExportThread_exportToTxt_KWIN_UT, LogExportThread_exportToTxt_KWIN_UT_002)
 {
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_KWIN> jList;
     for (int i = 0; i < 5; ++i) {
@@ -1160,7 +1216,8 @@ TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT_
 {
     Stub stub;
     stub.set(ADDR(Docx::Document, save), Doc_Document_save);
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QStandardItemModel *p_model = new QStandardItemModel();
     p_model->setHorizontalHeaderLabels(QStringList()
@@ -1201,7 +1258,8 @@ TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT_
 {
     Stub stub;
     stub.set(ADDR(Docx::Document, save), Doc_Document_save);
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QStandardItemModel *p_model = new QStandardItemModel();
     p_model->setHorizontalHeaderLabels(QStringList()
@@ -1245,7 +1303,8 @@ TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT0
 {
     Stub stub;
     stub.set(ADDR(Docx::Document, save), Doc_Document_save);
-    LogExportThread *p = new LogExportThread(nullptr);
+    bool iscomplete = true;
+    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
     EXPECT_NE(p, nullptr);
     QStandardItemModel *p_model = new QStandardItemModel();
     p_model->setHorizontalHeaderLabels(QStringList()

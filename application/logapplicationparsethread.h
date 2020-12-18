@@ -53,19 +53,19 @@ public:
     }
     ~LogApplicationParseThread() override;
     void setParam(APP_FILTERS &iFilter);
-
+    static int thread_count;
 signals:
     /**
-     * @brief appCmdFinished 获取数据结束信号，发出所有日志的list
+     * @brief appFinished 获取数据结束信号
      */
-    void appCmdFinished(QList<LOG_MSG_APPLICATOIN>);
-
+    void appFinished(int index);
+    void appData(int index, QList<LOG_MSG_APPLICATOIN> iDataList);
 public slots:
     void doWork();
 
     void onProcFinished(int ret);
     void stopProccess();
-
+    int getIndex();
 protected:
     void initMap();
     void initProccess();
@@ -98,6 +98,10 @@ private:
      * @brief m_mutex 单例用的锁
      */
     static std::mutex m_mutex;
+    /**
+     * @brief m_threadIndex 当前线程标号
+     */
+    int m_threadCount;
 
 };
 

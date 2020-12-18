@@ -68,7 +68,7 @@ signals:
     /**
      * @brief journalBootFinished 获取数据结束
      */
-    void journalBootFinished();
+    void journalBootFinished(int index);
     /**
      * @brief journaBootlData 把获取到的一部分数据传出去的信号
      * @param index 当前线程的数字标号

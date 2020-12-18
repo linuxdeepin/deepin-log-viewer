@@ -225,7 +225,7 @@ TEST(DisplayContent_createDpkgTable_UT, DisplayContent_createDpkgTable_UT_001)
         item.action = "";
         list.append(item);
     }
-    p->createDpkgTable(list);
+    p->createDpkgTableStart(list);
     delete p;
 }
 
@@ -975,9 +975,9 @@ TEST(DisplayContent_slot_dpkgFinished_UT, DisplayContent_slot_dpkgFinished_UT_00
         list.append(item);
     }
     p->m_flag = DPKG;
-    p->slot_dpkgFinished(list);
+    p->slot_dpkgFinished(p->m_dpkgCurrentIndex);
     p->m_flag = NONE;
-    p->slot_dpkgFinished(list);
+    p->slot_dpkgFinished(0);
     delete p;
 }
 
@@ -996,9 +996,9 @@ TEST(DisplayContent_slot_XorgFinished_UT, DisplayContent_slot_XorgFinished_UT_00
         list.append(item);
     }
     p->m_flag = XORG;
-    p->slot_XorgFinished(list);
+    p->slot_XorgFinished(p->m_xorgCurrentIndex);
     p->m_flag = NONE;
-    p->slot_XorgFinished(list);
+    p->slot_XorgFinished(0);
     p->deleteLater();
 }
 
@@ -1014,9 +1014,9 @@ TEST(DisplayContent_slot_bootFinished_UT, DisplayContent_slot_bootFinished_UT_00
         list.append(item);
     }
     p->m_flag = BOOT;
-    p->slot_bootFinished(list);
+    p->slot_bootFinished(p->m_bootCurrentIndex);
     p->m_flag = NONE;
-    p->slot_bootFinished(list);
+    p->slot_bootFinished(0);
     p->deleteLater();
 }
 TEST(DisplayContent_slot_kernFinished_UT, DisplayContent_slot_kernFinished_UT_001)
@@ -1035,9 +1035,9 @@ TEST(DisplayContent_slot_kernFinished_UT, DisplayContent_slot_kernFinished_UT_00
         list.append(item);
     }
     p->m_flag = KERN;
-    p->slot_kernFinished(list);
+    p->slot_kernFinished(p->m_kernCurrentIndex);
     p->m_flag = NONE;
-    p->slot_kernFinished(list);
+    p->slot_kernFinished(0);
     p->deleteLater();
 }
 TEST(DisplayContent_slot_kwinFinished_UT, DisplayContent_slot_kwinFinished_UT_001)
@@ -1051,9 +1051,9 @@ TEST(DisplayContent_slot_kwinFinished_UT, DisplayContent_slot_kwinFinished_UT_00
         list.append(item);
     }
     p->m_flag = Kwin;
-    p->slot_kwinFinished(list);
+    p->slot_kwinFinished(p->m_kwinCurrentIndex);
     p->m_flag = NONE;
-    p->slot_kwinFinished(list);
+    p->slot_kwinFinished(0);
     p->deleteLater();
 }
 
@@ -1061,7 +1061,7 @@ TEST(DisplayContent_slot_journalBootFinished_UT, DisplayContent_slot_journalBoot
 {
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
-    p->slot_journalBootFinished();
+    p->slot_journalBootFinished(p->m_journalCurrentIndex);
     p->deleteLater();
 }
 
@@ -1176,9 +1176,9 @@ TEST(DisplayContent_slot_applicationFinished_UT, DisplayContent_slot_application
         list.append(item);
     }
     p->m_flag = APP;
-    p->slot_applicationFinished(list);
+    p->slot_applicationFinished(p->m_appCurrentIndex);
     p->m_flag = NONE;
-    p->slot_applicationFinished(list);
+    p->slot_applicationFinished(0);
     p->deleteLater();
 }
 
@@ -1187,9 +1187,9 @@ TEST(DisplayContent_slot_NormalFinished_UT, DisplayContent_NormalFinished_UT_001
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->m_flag = Normal;
-    p->slot_NormalFinished();
+    p->slot_normalFinished(p->m_normalCurrentIndex);
     p->m_flag = NONE;
-    p->slot_NormalFinished();
+    p->slot_normalFinished(0);
     p->deleteLater();
 }
 TEST(DisplayContent_slot_themeChanged_UT, DisplayContent_slot_themeChanged_UT_001)
@@ -1851,9 +1851,9 @@ TEST_P(DisplayContent_filterBoot_UT, DisplayContent_filterBoot_UT)
         item.status = "OK";
         list.append(item);
     }
-    p->bList.append(list);
-    p->filterBoot(filter);
-    EXPECT_EQ(p->currentBootList.size(), 100);
+    QList<LOG_MSG_BOOT> rslist =  p->filterBoot(filter, list);
+
+    EXPECT_EQ(rslist.size(), 100);
     p->deleteLater();
 }
 
@@ -1892,11 +1892,11 @@ TEST_P(DisplayContent_filterNomal_UT, DisplayContent_filterNomal_UT)
         item.eventType = "Boot";
         list.append(item);
     }
-    p->norList.append(list);
-    p->filterNomal(filter);
+
+    QList<LOG_MSG_NORMAL> rslist =  p->filterNomal(filter, list);
     int resultCount = (param.m_isEventTypeFilterEmpty && (!param.m_isMsgFilerEmpty)) ? 0 : 100;
 
-    EXPECT_EQ(p->nortempList.size(), resultCount);
+    EXPECT_EQ(rslist.size(), resultCount);
     p->deleteLater();
 }
 
@@ -1990,7 +1990,7 @@ TEST(DisplayContent_createApplicationTable_UT, DisplayContent_createApplicationT
         item.src = "test_src";
         list.append(item);
     }
-    p->createApplicationTable(list);
+    p->createAppTable(list);
     p->deleteLater();
 }
 

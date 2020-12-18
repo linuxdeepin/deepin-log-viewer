@@ -17,9 +17,14 @@
 #include "logauththread.h"
 #include "utils.h"
 #include "sharedmemorymanager.h"
+#include <wtmpparse.h>
 
 #include <QDebug>
 #include <QDateTime>
+#include <time.h>
+#include <utmp.h>
+#include <utmpx.h>
+
 
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
@@ -114,6 +119,12 @@ void LogAuthThread::stopProccess()
 
 }
 
+int LogAuthThread::getIndex()
+{
+    return  m_threadCount;
+
+}
+
 /**
  * @brief LogAuthThread::run 线程执行虚函数
  */
@@ -139,6 +150,9 @@ void LogAuthThread::run()
     case DPKG:
         handleDkpg();
         break;
+    case Normal:
+        handleNormal();
+        break;
     default:
         break;
     }
@@ -155,7 +169,7 @@ void LogAuthThread::handleBoot()
     QList<LOG_MSG_BOOT> bList;
     QFile file("/var/log/boot.log");  // add by Airy
     if (!file.exists()) {
-        emit bootFinished(bList);
+        emit bootFinished(m_threadCount);
         return;
     }
     if (!m_canRun) {
@@ -173,19 +187,17 @@ void LogAuthThread::handleBoot()
     m_process->waitForFinished(-1);
 
     QByteArray byte =   m_process->readAllStandardOutput();
-    QTextStream stream(&byte);
-    QByteArray encode;
-    stream.setCodec(encode);
-    QString str = stream.readAll();
-    QStringList l = str.split('\n');
-    qDebug() << __FUNCTION__ << "byte" << byte.length();
-    qDebug() << __FUNCTION__ << "str" << str.length();
+    QString tempStr = "";
+    QStringList strList =  QString(Utils::replaceEmptyByteArray(byte)).split('\n', QString::SkipEmptyParts);
 
     //按换行分割
-    for (QString lineStr : str.split('\n')) {
+    for (int i = strList.size() - 1; i >= 0 ; --i)  {
+
+        QString lineStr = strList.at(i);
         if (lineStr.startsWith("/dev"))
             continue;
-
+        //删除颜色格式字符
+        lineStr.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
         // remove Useless characters
         lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
         Utils::replaceColorfulFont(&lineStr);
@@ -197,15 +209,23 @@ void LogAuthThread::handleBoot()
             bMsg.status = retList[1];
             QStringList leftList = retList.mid(3);
             bMsg.msg += leftList.join(" ");
-            bList.insert(0, bMsg);
+            bMsg.msg += tempStr;
+            tempStr.clear();
+            bList.append(bMsg);
+            //每获得500个数据就发出信号给控件加载
+            if (bList.count() % SINGLE_READ_CNT == 0) {
+                emit bootData(m_threadCount, bList);
+                bList.clear();
+            }
         } else {
-            if (bList.size() == 0)
-                continue;
-
-            bList[0].msg += retList.join(" ");
+            tempStr.prepend(" " + lineStr);
         }
     }
-    emit bootFinished(bList);
+    //最后可能有余下不足500的数据
+    if (bList.count() >= 0) {
+        emit bootData(m_threadCount, bList);
+    }
+    emit bootFinished(m_threadCount);
 }
 
 /**
@@ -216,7 +236,7 @@ void LogAuthThread::handleKern()
     QList<LOG_MSG_JOURNAL> kList;
     QFile file("/var/log/kern.log"); // add by Airy
     if (!file.exists()) {
-        emit kernFinished(kList);
+        emit kernFinished(m_threadCount);
         return;
     }
     if (!m_canRun) {
@@ -242,104 +262,88 @@ void LogAuthThread::handleKern()
     //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
     m_process->start("pkexec", QStringList() << "logViewerAuth"
                      //         << "/home/zyc/Documents/tech/同方内核日志没有/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-                     //   << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
+                     //    << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
                      << "/var/log/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-    //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
-    // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
     m_process->waitForFinished(-1);
     qDebug() << " m_process->exitCode() " << m_process->exitCode();
     //有错则传出空数据
     if (m_process->exitCode() != 0) {
-        emit kernFinished(kList);
+        emit kernFinished(m_threadCount);
         return;
     }
     if (!m_canRun) {
         return;
     }
-    QByteArray byte =   m_process->readLine();
-//一行行读，不能直接1readAllStandardOutput，因为日志文本可能很大，有可能超过QByteArray最大大小
-    while (!byte.isNull()) {
-        if (!m_canRun) {
-            return;
-        }
-        QTextStream stream(&byte);
-        if (!m_canRun) {
-            return;
-        }
-        QByteArray encode;
-        if (!m_canRun) {
-            //停止标记量，外部把置false则停止运行
-            return;
-        }
-        stream.setCodec(encode);
-        if (!m_canRun) {
-            return;
-        }
-        QString str = stream.readAll();
-        if (!m_canRun) {
-            return;
-        }
-        QStringList l = str.split('\n');
-        if (!m_canRun) {
-            return;
-        }
-
-        QStringList a = str.split('\n');
-        for (QString str : a) {
-            if (!m_canRun) {
-                return;
-            }
-            LOG_MSG_JOURNAL msg;
-            //删除颜色格式字符
-            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-            QStringList list = str.split(" ", QString::SkipEmptyParts);
-            if (list.size() < 5)
-                continue;
-
-            QStringList timeList;
-            timeList.append(list[0]);
-            timeList.append(list[1]);
-            timeList.append(list[2]);
-            qint64 iTime = formatDateTime(list[0], list[1], list[2]);
-            //对时间筛选
-            if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
-                if (iTime < m_kernFilters.timeFilterBegin || iTime > m_kernFilters.timeFilterEnd)
-                    continue;
-            }
-
-            msg.dateTime = timeList.join(" ");
-            msg.hostName = list[3];
-
-            QStringList tmpList = list[4].split("[");
-            if (tmpList.size() != 2) {
-                msg.daemonName = list[4].split(":")[0];
-            } else {
-                msg.daemonName = list[4].split("[")[0];
-                QString id = list[4].split("[")[1];
-                id.chop(2);
-                msg.daemonId = id;
-            }
-
-            QString msgInfo;
-            for (auto i = 5; i < list.size(); i++) {
-                msgInfo.append(list[i] + " ");
-            }
-            msg.msg = msgInfo;
-
-            //            kList.append(msg);
-            kList.insert(0, msg);
-            if (!m_canRun) {
-                return;
-            }
-
-        }
-        if (!m_canRun) {
-            return;
-        }
-        byte =   m_process->readLine();
+    QByteArray outByte = m_process->readAllStandardOutput();
+    if (!m_canRun) {
+        return;
     }
 
-    emit kernFinished(kList);
+    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+    for (int i = strList.size() - 1; i >= 0 ; --i)  {
+        if (!m_canRun) {
+            return;
+        }
+        QString str = strList.at(i);
+        LOG_MSG_JOURNAL msg;
+        //删除颜色格式字符
+        str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+        QStringList list = str.split(" ", QString::SkipEmptyParts);
+        if (list.size() < 5)
+            continue;
+
+        QStringList timeList;
+        timeList.append(list[0]);
+        timeList.append(list[1]);
+        timeList.append(list[2]);
+        qint64 iTime = formatDateTime(list[0], list[1], list[2]);
+        //对时间筛选
+        if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
+            if (iTime < m_kernFilters.timeFilterBegin || iTime > m_kernFilters.timeFilterEnd)
+                continue;
+        }
+
+        msg.dateTime = timeList.join(" ");
+        msg.hostName = list[3];
+
+        QStringList tmpList = list[4].split("[");
+        if (tmpList.size() != 2) {
+            msg.daemonName = list[4].split(":")[0];
+        } else {
+            msg.daemonName = list[4].split("[")[0];
+            QString id = list[4].split("[")[1];
+            id.chop(2);
+            msg.daemonId = id;
+        }
+
+        QString msgInfo;
+        for (auto i = 5; i < list.size(); i++) {
+            msgInfo.append(list[i] + " ");
+        }
+        msg.msg = msgInfo;
+
+        //            kList.append(msg);
+        kList.append(msg);
+        if (!m_canRun) {
+            return;
+        }
+        //每获得500个数据就发出信号给控件加载
+        if (kList.count() % SINGLE_READ_CNT == 0) {
+            emit kernData(m_threadCount, kList);
+            kList.clear();
+        }
+        if (!m_canRun) {
+            return;
+        }
+
+    }
+    //最后可能有余下不足500的数据
+    if (kList.count() >= 0) {
+        emit kernData(m_threadCount, kList);
+    }
+
+
+    emit kernFinished(m_threadCount);
 
 }
 
@@ -354,7 +358,7 @@ void LogAuthThread::handleKwin()
     }
     QList<LOG_MSG_KWIN> kwinList;
     if (!file.exists()) {
-        emit kwinFinished(kwinList);
+        emit kwinFinished(m_threadCount);
         return;
     }
     if (!m_canRun) {
@@ -370,13 +374,15 @@ void LogAuthThread::handleKwin()
     if (!m_canRun) {
         return;
     }
-    QString output = Utils::replaceEmptyByteArray(outByte);
+
     if (!m_canRun) {
         return;
     }
-    QString filterMsgStr = m_kwinFilters.msg;
-    QString filterMsgStr1 = m_kwinFilters.msg;
-    for (QString str : output.split('\n')) {
+
+    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+
+    for (int i = strList.size() - 1; i >= 0 ; --i)  {
+        QString str = strList.at(i);
         if (!m_canRun) {
             return;
         }
@@ -385,13 +391,22 @@ void LogAuthThread::handleKwin()
         }
         LOG_MSG_KWIN kwinMsg;
         kwinMsg.msg = str;
-        kwinList.insert(0, kwinMsg);
+        kwinList.append(kwinMsg);
+        //每获得500个数据就发出信号给控件加载
+        if (kwinList.count() % SINGLE_READ_CNT == 0) {
+            emit kwinData(m_threadCount, kwinList);
+            kwinList.clear();
+        }
     }
 
     if (!m_canRun) {
         return;
     }
-    emit kwinFinished(kwinList);
+    //最后可能有余下不足500的数据
+    if (kwinList.count() >= 0) {
+        emit kwinData(m_threadCount, kwinList);
+    }
+    emit kwinFinished(m_threadCount);
 }
 
 /**
@@ -405,7 +420,7 @@ void LogAuthThread::handleXorg()
     QList<LOG_MSG_XORG> xList;
     if (!file.exists() || !startFile.exists()) {
         emit proccessError(tr("Log file is empty"));
-        emit xorgFinished(xList);
+        emit xorgFinished(m_threadCount);
         return;
     }
     if (!m_canRun) {
@@ -424,7 +439,7 @@ void LogAuthThread::handleXorg()
     startStr = startStr.split(" ").value(0, "");
     if (startStr.isEmpty()) {
         emit proccessError(tr("Log file is empty"));
-        emit xorgFinished(xList);
+        emit xorgFinished(m_threadCount);
         return;
     }
     if (!m_canRun) {
@@ -460,7 +475,6 @@ void LogAuthThread::handleXorg()
         return;
     }
     QByteArray outByte = m_process->readAllStandardOutput();
-    QString output = Utils::replaceEmptyByteArray(outByte);
     m_process->close();
     if (!m_canRun) {
         return;
@@ -471,20 +485,24 @@ void LogAuthThread::handleXorg()
     if (!m_canRun) {
         return;
     }
-    for (QString str : output.split('\n')) {
+    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+    QString tempStr = "";
+    for (int i = strList.size() - 1; i >= 0 ; --i)  {
+        QString str = strList.at(i);
         if (!m_canRun) {
             return;
         }
+
         //清除颜色格式字符
         str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
 
         if (str.startsWith("[")) {
             QStringList list = str.split("]", QString::SkipEmptyParts);
-            if (list.count() != 2)
+            if (list.count() < 2)
                 continue;
 
             QString timeStr = list[0];
-            QString msgInfo = list[1];
+            QString msgInfo = list.mid(1, list.length() - 1).join("]");
 
             // 把开机时间加上日志记录的毫秒数则为日志记录的时间
             QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
@@ -496,13 +514,18 @@ void LogAuthThread::handleXorg()
             }
             LOG_MSG_XORG msg;
             msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
-            msg.msg = msgInfo;
+            msg.msg = msgInfo + tempStr;
 
-            xList.insert(0, msg);
-        } else {
-            if (xList.length() > 0) {
-                xList[0].msg += str;
+            tempStr.clear();
+            xList.append(msg);
+
+            //每获得500个数据就发出信号给控件加载
+            if (xList.count() % SINGLE_READ_CNT == 0) {
+                emit xorgData(m_threadCount, xList);
+                xList.clear();
             }
+        } else {
+            tempStr.prepend(" " + str);
         }
         if (!m_canRun) {
             return;
@@ -512,7 +535,11 @@ void LogAuthThread::handleXorg()
     if (!m_canRun) {
         return;
     }
-    emit xorgFinished(xList);
+    //最后可能有余下不足500的数据
+    if (xList.count() >= 0) {
+        emit xorgData(m_threadCount, xList);
+    }
+    emit xorgFinished(m_threadCount);
 }
 
 /**
@@ -540,14 +567,15 @@ void LogAuthThread::handleDkpg()
     if (!m_canRun) {
         return;
     }
-    QString output = Utils::replaceEmptyByteArray(outByte);
 
     m_process->close();
     if (!m_canRun) {
         return;
     }
     QList<LOG_MSG_DPKG> dList;
-    for (QString str : output.split('\n')) {
+    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+    for (int i = strList.size() - 1; i >= 0 ; --i)  {
+        QString str = strList.at(i);
         if (!m_canRun) {
             return;
         }
@@ -573,16 +601,115 @@ void LogAuthThread::handleDkpg()
         dpkgLog.msg = info;
 
         //        dList.append(dpkgLog);
-        dList.insert(0, dpkgLog);
+        dList.append(dpkgLog);
         if (!m_canRun) {
             return;
         }
+        //每获得500个数据就发出信号给控件加载
+        if (dList.count() % SINGLE_READ_CNT == 0) {
+            emit dpkgData(m_threadCount, dList);
+            dList.clear();
+        }
+
     }
     if (!m_canRun) {
         return;
     }
+    //最后可能有余下不足500的数据
+    if (dList.count() >= 0) {
+        emit dpkgData(m_threadCount, dList);
+    }
     qDebug() << "dkpg size" << dList.length();
-    emit dpkgFinished(dList);
+    emit dpkgFinished(m_threadCount);
+}
+
+void LogAuthThread::handleNormal()
+{
+    qDebug() << "ogAuthThread::handleNormal()";
+    if (!m_canRun) {
+        emit normalFinished(m_threadCount);
+        return;
+    }
+
+    int ret = -2;
+    struct utmp *utbufp;
+
+    if (wtmp_open(QString(WTMP_FILE).toLatin1().data()) == -1) {
+        printf("open WTMP_FILE file error\n");
+        return;  // exit(1) will exit this application
+    }
+    QList<utmp > normalList;
+    QList<utmp > deadList;
+    QList<LOG_MSG_NORMAL> nList;
+    while ((utbufp = wtmp_next()) != (static_cast<struct utmp *>(nullptr))) {
+        if (utbufp->ut_type != DEAD_PROCESS) {
+            utmp value_ = *utbufp;
+            normalList.append(value_);
+        } else if (utbufp->ut_type == DEAD_PROCESS) {
+            utmp value_ = *utbufp;
+
+            deadList.append(value_);
+        }
+    }
+//    foreach (utmp item, normalList) {
+//        qDebug() << "normalList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+//    }
+//    foreach (utmp item, deadList) {
+//        qDebug() << "deadList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+//    }
+    QString a_name = "~";
+    foreach (utmp value, normalList) {
+        QString strtmp = value.ut_name;
+        //    qDebug() << value.ut_name << value.ut_type;
+        if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
+            //   if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
+            continue;
+        }
+
+        struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
+        LOG_MSG_NORMAL Nmsg;
+        if (value.ut_type == USER_PROCESS) {
+            Nmsg.eventType = "Login";
+            Nmsg.userName = value.ut_name;
+            a_name = Nmsg.userName;
+        } else {
+            Nmsg.eventType = value.ut_name;
+            if (strtmp.compare("reboot") == 0) {
+                Nmsg.eventType = "Boot";
+            }
+            Nmsg.userName = a_name;
+        }
+        QString end_str;
+        if (deadList.length() > 0 && ret != -1)
+            end_str = show_end_time(nodeUTMP.ut_time);
+        else if (ret == -1 && value.ut_type == USER_PROCESS)
+            end_str = "still logged in";
+        else if (ret == -1 && value.ut_type == BOOT_TIME)
+            end_str = "system boot";
+        QString start_str = show_start_time(value.ut_time);
+
+        QString n_time = QDateTime::fromTime_t(static_cast<uint>(value.ut_time)).toString("yyyy-MM-dd hh:mm:ss");
+        end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
+        start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
+        Nmsg.dateTime = n_time;
+        QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
+        if (m_normalFilters.timeFilterEnd > 0 && m_normalFilters.timeFilterBegin > 0) {
+            if (nn_time.toMSecsSinceEpoch() < m_normalFilters.timeFilterBegin || nn_time.toMSecsSinceEpoch() > m_normalFilters.timeFilterEnd) { // add by Airy
+                continue;
+            }
+        }
+
+        Nmsg.msg = start_str + "  ~  " + end_str;
+        printf("\n");
+        nList.insert(0, Nmsg);
+
+    }
+    wtmp_close();
+
+    if (nList.count() >= 0) {
+        emit normalData(m_threadCount, nList);
+    }
+    emit normalFinished(m_threadCount);
 }
 
 /**

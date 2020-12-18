@@ -34,7 +34,7 @@ class LogExportThread : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
-    LogExportThread(QObject *parent = nullptr);
+    LogExportThread(bool &isDataComplete, QObject *parent = nullptr);
     ~LogExportThread();
     /**
      * @brief The RUN_MODE enum 导出类型，用于执行时判断要执行的逻辑
@@ -113,6 +113,7 @@ public:
     void exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
 
     bool isProcessing();
+    void setDataLoadComlete(bool &isComplete);
 public slots:
     // 停止线程
     void stopImmediately();
@@ -210,6 +211,7 @@ private:
     QString m_appName = "";
     //日志等级-显示文本键值对
     QMap<QString, QString> m_levelStrMap;
+    bool &m_allLoadComplete;
 
 
 };
