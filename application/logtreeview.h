@@ -61,6 +61,7 @@ private:
     QTime m_lastTouchTime;
     Qt::FocusReason m_reson;
     int m_ViewPortLineCnt{0};
+    int m_singleRowHeight{-1};
     //LogBaseModel *m_logBaseModel = nullptr;
 };
 

@@ -18,6 +18,7 @@
 #define LOGAUTHTHREAD_H
 
 #include "structdef.h"
+#include "memorypool/memorypool.h"
 
 #include <QProcess>
 #include <QRunnable>
@@ -54,7 +55,25 @@ public:
     void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
     void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
     void setFileterParam(DKPG_FILTERS iFIlters) { m_dkpgFilters = iFIlters; }
-    void setFileterParam(KERN_FILTERS iFIlters) { m_kernFilters = iFIlters; }
+    void setFileterParam(KERN_FILTERS iFIlters)
+    {
+        m_kernFilters = iFIlters;
+
+        //   m_kernFilters.searchstr = "BIOS-e820";
+        m_kernFilters2.searchstr = m_kernFilters.searchstr.toUtf8().data();
+        m_kernFilters2.searchstrlen = m_kernFilters.searchstr.size();
+        m_kernFilters2.timeFilterEnd = m_kernFilters.timeFilterEnd;
+        m_kernFilters2.timeFilterBegin = m_kernFilters.timeFilterBegin;
+    }
+    void setFileterParam(KERN_FILTERS1 iFIlters)
+    {
+        m_kernFilters1 = iFIlters;
+        m_kernFilters1.searchstr = "BIOS-e820";
+        m_kernFilters2.searchstr = m_kernFilters1.searchstr.toUtf8().data();
+
+        m_kernFilters2.timeFilterEnd = m_kernFilters1.timeFilterEnd;
+        m_kernFilters2.timeFilterBegin = m_kernFilters1.timeFilterBegin;
+    }
     void stopProccess();
     /**
      * @brief thread_index 静态成员变量，用来每次构造时标记新的当前线程对象 m_threadIndex
@@ -74,7 +93,7 @@ protected:
     void handleKernNew();
     void close();
     void splitLines();
-    void splitLine(QVector<qint64> *enters, char *ptr, bool progress);
+    void splitLine(QVector<qint64> *entersFilteStart, QVector<qint64> *entersFilteEnd, QVector<qint64> *enters, char *ptr, bool progress);
     void detectTextCodec();
     void setCodec(QTextCodec *codec) {mCodec = codec;}
 signals:
@@ -113,6 +132,8 @@ private:
      * @brief m_kernFilters 内核日志筛选条件
      */
     KERN_FILTERS m_kernFilters;
+    KERN_FILTERS1 m_kernFilters1;
+    KERN_FILTERS2 m_kernFilters2;
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
     //获取数据用的cat命令的process
@@ -131,10 +152,15 @@ private:
     char *mMem{nullptr};
     qint64 mSize{0};
     QVector<qint64> mEnters;
+    // QVector<QPair<qint64, qint64>*> mEntersFilter;
+    QVector<qint64> mEntersFilterStart;
+    QVector<qint64> mEntersFilterEnd;
     int mLineCnt{0};
     QFile *mFile{nullptr};
+    MemoryPool *mp  ;
     int mEnterCharOffset;
     QTextCodec *mCodec;
+
 };
 
 #endif  // LOGAUTHTHREAD_H

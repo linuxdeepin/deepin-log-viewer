@@ -175,8 +175,11 @@ set (APP_CPP_FILES
      wtmpparse.cpp
      fileloader/logfileloader.cpp
      fileloader/logdatacontrol.cpp
+     model/logtreebasemodel.cpp
      fileloader/xorgfileloader.cpp
+    logabstractfactory.cpp
      thread/basedatafilter.cpp
+     memorypool/memorypool.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc

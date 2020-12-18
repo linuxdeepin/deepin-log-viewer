@@ -26,8 +26,8 @@
 #include "utils.h"
 //#include <Xlsx/Workbook.h>
 #include "xlsxwriter.h"
-//#include "WordProcessingMerger.h"
-//#include "WordProcessingCompiler.h"
+#include "WordProcessingMerger.h"
+#include "WordProcessingCompiler.h"
 #include <exception>
 
 #include <DApplication>
@@ -1474,58 +1474,58 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
 
 bool LogExportThread::exportToDocNew(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
-//    QElapsedTimer timer;
-//    timer.start();
-//    try {
-//        DocxFactory::WordProcessingCompiler &l_compiler =
-//            DocxFactory::WordProcessingCompiler::getInstance();
-//        l_compiler.compile(
-//            "~/test_app.docx",
-//            "~/test_app.dfw");
+    QElapsedTimer timer;
+    timer.start();
+    try {
+        DocxFactory::WordProcessingCompiler &l_compiler =
+            DocxFactory::WordProcessingCompiler::getInstance();
+        l_compiler.compile(
+            "~/test_app.docx",
+            "~/test_app.dfw");
 
 
 
-//        DocxFactory:: WordProcessingMerger &l_merger =
-//            DocxFactory:: WordProcessingMerger::getInstance();
-//        l_merger.load(
-//            "~/test_app.dfw");
-//        for (int col = 0; col < labels.count(); ++col) {
-//            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
-//        }
+        DocxFactory:: WordProcessingMerger &l_merger =
+            DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(
+            "~/test_app.dfw");
+        for (int col = 0; col < labels.count(); ++col) {
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+        }
 
-//        l_merger.paste("tableRow");
-//        for (int row = 0; row < 100000; ++row)  {
-//            if (!m_canRunning) {
-//                throw  QString(stopStr);
-//            }
-//            LOG_MSG_APPLICATOIN message = jList.at(100);
-//            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), strTranslate(message.level).toStdString());
-//            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.dateTime.toStdString());
-//            l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), iAppName.toStdString());
-//            l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
-////            l_merger.setClipboardValue("tableRow", QString("column5").toStdString(), strTranslate(message.level).toStdString());
-////            l_merger.setClipboardValue("tableRow", QString("column6").toStdString(), message.dateTime.toStdString());
-////            l_merger.setClipboardValue("tableRow", QString("column7").toStdString(), iAppName.toStdString());
-////            l_merger.setClipboardValue("tableRow", QString("column8").toStdString(), message.msg.toStdString());
-//            l_merger.paste("tableRow");
-//            sigProgress(row + 1, jList.count());
-//        }
-
-
-//        fileName = fileName + "x";
-//        l_merger.save(fileName.toStdString());
+        l_merger.paste("tableRow");
+        for (int row = 0; row < 100000; ++row)  {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_APPLICATOIN message = jList.at(100);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), strTranslate(message.level).toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), iAppName.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
+//            l_merger.setClipboardValue("tableRow", QString("column5").toStdString(), strTranslate(message.level).toStdString());
+//            l_merger.setClipboardValue("tableRow", QString("column6").toStdString(), message.dateTime.toStdString());
+//            l_merger.setClipboardValue("tableRow", QString("column7").toStdString(), iAppName.toStdString());
+//            l_merger.setClipboardValue("tableRow", QString("column8").toStdString(), message.msg.toStdString());
+            l_merger.paste("tableRow");
+            sigProgress(row + 1, jList.count());
+        }
 
 
+        fileName = fileName + "x";
+        l_merger.save(fileName.toStdString());
 
-//        sigProgress(100, 100);
-//        emit sigResult(m_canRunning);
-//        qDebug() << "exportdoc New benchmark rows:" << jList.count() << "time:" << timer.elapsed();
-//        return  true;
-//    } catch (const std::exception &p_exception) {
-//        qDebug() << p_exception.what() ;
-//        emit sigResult(false);
-//        return  false;
-//    }
+
+
+        sigProgress(100, 100);
+        emit sigResult(m_canRunning);
+        qDebug() << "exportdoc New benchmark rows:" << jList.count() << "time:" << timer.elapsed();
+        return  true;
+    } catch (const std::exception &p_exception) {
+        qDebug() << p_exception.what() ;
+        emit sigResult(false);
+        return  false;
+    }
     return true;
 
 }
@@ -2693,59 +2693,59 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
 
 bool LogExportThread::exportToXlsNew(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag)
 {
-//    try {
-//        auto currentXlsRow = 0;
-//        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
-//        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
-//        lxw_format *format = workbook_add_format(workbook);
-//        format_set_bold(format);
-//        for (int col = 0; col < labels.count(); ++col) {
-//            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
-//        }
-//        ++currentXlsRow;
-//        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+    try {
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
+        for (int col = 0; col < labels.count(); ++col) {
+            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
+        }
+        ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
-//        for (int row = 0; row < 100000 ; ++row) {
-//            if (!m_canRunning) {
-//                throw  QString(stopStr);
-//            }
-//            LOG_MSG_JOURNAL message = jList.at(1);
-//            int col = 0;
+        for (int row = 0; row < 100000 ; ++row) {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_JOURNAL message = jList.at(1);
+            int col = 0;
 
-//            if (iFlag == JOURNAL) {
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.level.toStdString().c_str(), NULL);
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonId.toStdString().c_str(), NULL);
-//            } else if (iFlag == KERN) {
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
-//                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
-//            }
+            if (iFlag == JOURNAL) {
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.level.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonId.toStdString().c_str(), NULL);
+            } else if (iFlag == KERN) {
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+            }
 
-//            ++currentXlsRow;
-//            sigProgress(row + 1, jList.count() * 3 + end);
-//        }
+            ++currentXlsRow;
+            sigProgress(row + 1, jList.count() * 3 + end);
+        }
 
 
-//        workbook_close(workbook);
-//        malloc_trim(0);
-//        sigProgress(100, 100);
-//        qDebug() << "export xlsx new";
-//    } catch (QString ErrorStr) {
-//        qDebug() << "Export Stop" << ErrorStr;
-//        emit sigResult(false);
-//        if (ErrorStr != stopStr) {
-//            emit sigError(QString("export error: %1").arg(ErrorStr));
-//        }
-//        return false;
-//    }
-//    emit sigResult(m_canRunning);
-//    return true && m_canRunning;
-    return  true;
+        workbook_close(workbook);
+        malloc_trim(0);
+        sigProgress(100, 100);
+        qDebug() << "export xlsx new";
+    } catch (QString ErrorStr) {
+        qDebug() << "Export Stop" << ErrorStr;
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
+    //  return  true;
 }
 
 

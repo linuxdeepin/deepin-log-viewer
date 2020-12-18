@@ -72,12 +72,16 @@ LogTreeView::LogTreeView(QWidget *parent)
 
 int LogTreeView::singleRowHeight()
 {
+    if (m_singleRowHeight > 0) {
+        return m_singleRowHeight;
+    }
     if (this->model() == nullptr) {
         return -1;
     }
     QModelIndex firstIndex = this->model()->index(0, 0);
     if (firstIndex.isValid()) {
-        return  this->rowHeight(firstIndex);
+        m_singleRowHeight = this->rowHeight(firstIndex);
+        return m_singleRowHeight;
     } else {
         return -1;
     }

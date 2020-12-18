@@ -17,7 +17,7 @@
 #ifndef LOGFILELOADER_H
 #define LOGFILELOADER_H
 #include "common.h"
-
+#include "memorypool/memorypool.h"
 #include <QObject>
 #include <QFile>
 #include <QString>
@@ -30,7 +30,9 @@ struct FILE_ENTER {
     qint64 begin;
     qint64 end;
 };
-//template < typename DataType, typename FilterType >
+
+
+template <typename FilterType >
 class LogFileLoader : public QObject
 {
     // Q_OBJECT
@@ -49,7 +51,7 @@ public:
         , m_isLoadComplete(false)
         , m_curentDataLineRage(0, 0)
     {
-
+        mp = MemoryPoolInit(1024, 1024);
     }
     virtual ~LogFileLoader()
     {
@@ -148,10 +150,14 @@ public slots:
 
         auto *extraEnters = new QVector<qint64>[extraParts];
         auto *extraRets = new std::future<void>[extraParts];
+        auto *extraEntersFilterStart = new QVector<qint64>[extraParts];
+        auto *extraEntersFilterEnd = new QVector<qint64>[extraParts];
         auto *chBackup = new char[extraParts];
         for (int i = 0; i < extraParts; i++) {
             qint64 pos = blockSize * (i + 1);
             QVector<qint64> *enters = &extraEnters[i];
+            QVector<qint64> *entersFilterStart = &extraEntersFilterStart[i];
+            QVector<qint64> *entersFilterEnd = &extraEntersFilterEnd[i];
             enters->clear();
 
             //临时把mMem[pos]修改为0，方便分段处理
@@ -162,11 +168,11 @@ public slots:
             m_fileMem[pos] = 0;
 
             extraRets[i] = async(std::launch::async, [ &, enters] {
-                splitLine(m_dataCur, enters, m_fileMem + pos + 1, false);
+                splitLine(m_dataCur, entersFilterStart, entersFilterEnd, enters, m_fileMem + pos + 1, false);
             });
         }
 
-        splitLine(m_dataCur, &m_enters, m_fileMem, true);//FIXME:extraParts>0的时候进度统计的有问题
+        splitLine(m_dataCur, &mEntersFilterStart, &mEntersFilterEnd, &m_enters, m_fileMem, true); //FIXME:extraParts>0的时候进度统计的有问题
         bool isFirstPage = true;
         for (int i = 0; i < extraParts; i++) {
             extraRets[i].wait();
@@ -188,19 +194,39 @@ public slots:
         delete[] chBackup;
         allFinished();
     }
+    bool getIsFilter(char *iContent)
+    {
+        return  true;
+    }
     void  splitLinesSingle()
     {
     }
-    void splitLine(int &iCur, QVector<qint64> *iEnters, char *ptr, bool isProgress)
+
+    void splitLine(int &iCur, QVector<qint64> *iStartEnters, QVector<qint64> *iEndEnters,  QVector<qint64> *iEnters, char *ptr, bool isProgress)
     {
         qint64 i = 0;
         while (m_canOpenProgress && (ptr = strchr(ptr, '\n')) != nullptr) {
+
+            qint64     start = 0;
+            qint64   startIndex = 0;
+            qint64  currentIndex = ptr - m_fileMem - m_enterCharOffset;
+            if (iEnters->count() > 1) {
+                start = iEnters->last() + 1 + m_enterCharOffset;
+                startIndex = iEnters->last() + 1;
+            }
+            char *content = (char *)MemoryPoolAlloc(mp, currentIndex - start);
+            if (getIsFilter(content)) {
+                iStartEnters->push_back(start);
+                iEndEnters->push_back(currentIndex);
+            }
+            MemoryPoolFree(mp, content);
             iEnters->push_back(ptr - m_fileMem - m_enterCharOffset);
             if (isProgress)
                 ++iCur;
             ++ptr;
         }
     }
+
 
     QString getLine(int from, int to) const
     {
@@ -241,9 +267,16 @@ public slots:
     {
         return m_isLoadComplete;
     }
+    bool getIsValid()
+    {
+        return m_fileMem && (m_lineCnt > 0);
+    }
 public:
     QFile *m_file;
     QVector<qint64> m_enters;
+    QVector<QPair<qint64, qint64>> m_filterEnters;
+    QVector<qint64> mEntersFilterStart;
+    QVector<qint64> mEntersFilterEnd;
     char *m_fileMem;
     qint64 m_size;
     int m_enterCharOffset;
@@ -257,6 +290,7 @@ public:
     QString m_handledFileDir;
     bool m_isLoadComplete;
     QPair<int, int> m_curentDataLineRage;
+    MemoryPool *mp ;
 //    FilterType m_Filter;
 
 };

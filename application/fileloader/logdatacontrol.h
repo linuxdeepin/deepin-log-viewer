@@ -50,22 +50,22 @@ public:
     virtual QStringList loadFileByDir(QString iDir) = 0;
     void releaseAllFiles()
     {
-        foreach (LogFileLoader *item, m_files.values()) {
+        foreach (LogFileLoader<FilterType> *item, m_files.values()) {
             item->deleteLater();
         }
     }
     void addFileLoader(const QString &iFilePath)
     {
-        LogFileLoader *itemLoader = new LogFileLoader(iFilePath);
+        LogFileLoader<FilterType> *itemLoader = new LogFileLoader<FilterType>(iFilePath);
         QThread *itemThread = new QThread;
         itemLoader->moveToThread(itemThread);
         connect(itemThread, &QThread::finished, itemThread, &QThread::deleteLater);
-        connect(itemLoader, &LogFileLoader::destroyed, itemThread, &QThread::quit);
+        connect(itemLoader, &LogFileLoader<FilterType>::destroyed, itemThread, &QThread::quit);
         connect(itemThread, &QThread::finished, itemLoader, SLOT(deleteLater()));
-        connect(this, &LoghDataControl::stopOpenProgress, itemLoader, &LogFileLoader::stopOpenProgress);
-        connect(this, &LoghDataControl::startOpen, itemLoader, &LogFileLoader::openLoadData);
-        connect(itemLoader, &LogFileLoader::firstPageFinished, this, &LoghDataControl::singleDataFirstPageFinished);
-        connect(itemLoader, &LogFileLoader::dataFinished, this, &LoghDataControl::singleDataFinished);
+        connect(this, &LoghDataControl::stopOpenProgress, itemLoader, &LogFileLoader<FilterType>::stopOpenProgress);
+        connect(this, &LoghDataControl::startOpen, itemLoader, &LogFileLoader<FilterType>::openLoadData);
+        connect(itemLoader, &LogFileLoader<FilterType>::firstPageFinished, this, &LoghDataControl::singleDataFirstPageFinished);
+        connect(itemLoader, &LogFileLoader<FilterType>::dataFinished, this, &LoghDataControl::singleDataFinished);
         int key = m_files.size();
         m_files.insert(key, itemLoader);
         m_threads.insert(key, itemThread);
@@ -93,7 +93,7 @@ public slots:
     qint64 getCount()
     {
         qint64 count = 0;
-        foreach (LogFileLoader *file, m_files) {
+        foreach (LogFileLoader<FilterType> *file, m_files) {
             if (file) {
                 count += file->getCount();
             }
@@ -103,7 +103,7 @@ public slots:
     bool getIsComplete()
     {
         bool result = true;
-        foreach (LogFileLoader *file, m_files) {
+        foreach (LogFileLoader<FilterType> *file, m_files) {
             if (file) {
                 result &= file->getIsComplete();
             }
@@ -122,14 +122,14 @@ public slots:
         DataType itemData;
         if (iReset) {
             m_currrentShowFileIndex = 0;
-            foreach (LogFileLoader *itemFile, m_files.values()) {
+            foreach (LogFileLoader<FilterType> *itemFile, m_files.values()) {
                 itemFile->m_curentDataLineRage.first = 0;
                 itemFile->m_curentDataLineRage.second = 0;
             }
         }
         int count = 0;
         for (; m_currrentShowFileIndex < m_files.size(); ++m_currrentShowFileIndex) {
-            LogFileLoader *file = m_files.value(m_currrentShowFileIndex, nullptr);
+            LogFileLoader<FilterType> *file = m_files.value(m_currrentShowFileIndex, nullptr);
             if (!file) {
                 return false ;
             }
@@ -139,16 +139,16 @@ public slots:
 
 
             if (isAdd) {
-                if (file->m_curentDataLineRage.second >= file->m_lineCnt) {
-                    return  false;
+                if (file->m_curentDataLineRage.second >= file->mEntersFilterStart.count()) {
+                    continue;
                 }
             } else {
                 if (file->m_curentDataLineRage.first < 0) {
-                    return false;
+                    continue;
                 }
             }
             if (isAdd) {
-                for (int i = file->m_curentDataLineRage.second ; i < file->m_lineCnt; ++i) {
+                for (int i = file->m_curentDataLineRage.second ; i < file->mEntersFilterStart.count(); ++i) {
                     file->m_curentDataLineRage.second = i;
                     file->m_curentDataLineRage.first ++;
                     if (!getSingleDataFromlineCnt(i, itemData)) {
@@ -219,7 +219,7 @@ public slots:
     }
     FilterType m_Filter;
     QString m_LogDir;
-    QMap<int, LogFileLoader *> m_files;
+    QMap<int, LogFileLoader<FilterType> *> m_files;
     QMap<int, QThread *> m_threads;
     QList<LogIndexData<DataType>> m_currentData;
 

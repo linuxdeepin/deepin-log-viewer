@@ -151,7 +151,7 @@ public slots:
     void slot_NormalFinished();  // add by Airy
 
     void slot_vScrollValueChanged(int valuePixel);
-
+    void slot_vScrollSliderMoved(int Position);
     void slot_searchResult(QString str);
 
     void slot_themeChanged(Dtk::Widget::DApplicationHelper::ColorType colorType);
@@ -323,6 +323,7 @@ private:
     NORMAL_FILTERS m_normalFilter ;
     //上次treeview滚筒条的值
     int m_treeViewLastScrollValue = -1;
+    int m_treeViewLastScrollValuePixel = -1;
     //当前的显示加载状态
     DisplayContent::LOAD_STATE m_state;
     //系统日志上次获取的时间
@@ -335,6 +336,7 @@ private:
     int m_journalCurrentIndex{-1};
     //当前klu启动日志获取进程标记量
     int m_journalBootCurrentIndex{-1};
+
 };
 
 #endif  // DISPLAYCONTENT_H

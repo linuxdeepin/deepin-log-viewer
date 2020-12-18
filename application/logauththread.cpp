@@ -18,12 +18,17 @@
 #include "utils.h"
 #include "sharedmemorymanager.h"
 
+#include <sys/time.h>
 #include <QDebug>
 #include <QDateTime>
 #include <QTextCodec>
-
+#include <stdio.h>
+#include <string.h>
 #include <QtConcurrent>
 #include <future>
+#include "malloc.h"
+#include <QThreadPool>
+#include <QFutureWatcher>
 
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
@@ -39,10 +44,11 @@ LogAuthThread::LogAuthThread(QObject *parent)
 
 {
     //使用线程池启动该线程，跑完自己删自己
-    setAutoDelete(true);
+    //  setAutoDelete(true);
     //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
     thread_count++;
     m_threadCount = thread_count;
+    mp  = MemoryPoolInit(1024 * 20, 1024);
 
 
 }
@@ -55,10 +61,13 @@ LogAuthThread::~LogAuthThread()
     stopProccess();
     if (m_process) {
         //   m_process->kill();
+        close();
         m_process->close();
         m_process->deleteLater();
         m_process = nullptr;
     }
+    MemoryPoolClear(mp);
+    MemoryPoolDestroy(mp);
 
 
 }
@@ -660,6 +669,7 @@ bool LogAuthThread::doReadFileWork()
     mEnters.push_back(-1);//插入“第0行”方便处理。假设第0行的行结束标记在-1字节
 
 
+    detectTextCodec();
     //分割为一行一行；
     mEnterCharOffset = 2;
     auto firstNewLine = strchr(mMem, '\n');
@@ -689,7 +699,6 @@ bool LogAuthThread::doReadFileWork()
 
     mLineCnt = mEnters.size() - 1;
 
-    detectTextCodec();
     LOG_DATA_BASE_INFO *info = new LOG_DATA_BASE_INFO;
     info->mMem = mMem;
     info->mSize = mSize;
@@ -697,9 +706,11 @@ bool LogAuthThread::doReadFileWork()
     info->mEnters = mEnters;
     info->mLineCnt = mLineCnt;
     info->mEnterCharOffset = mEnterCharOffset;
-
+    info->mEntersFilterStart = mEntersFilterStart;
+    info->mEntersFilterEnd = mEntersFilterEnd;
+    info->mFile = mFile;
     kernFinished(info);
-    qDebug() << "doReadFileWork finished-------" << timer.elapsed();;
+    qDebug() << "doReadFileWork finished-------" << timer.elapsed() << mEnters.size();
     return true;
 }
 
@@ -769,7 +780,9 @@ void LogAuthThread::handleKernNew()
 
 void LogAuthThread::close()
 {
+
     if (mFile) {
+        qDebug() << "fileClose";
         mEnters.clear();
         mFile->unmap((uchar *)mMem);
         mFile->close();
@@ -798,7 +811,7 @@ void sumAllListFunc(QList<LOG_MSG_JOURNAL *> *resultList, const QList<LOG_MSG_JO
 }
 void LogAuthThread::splitLines()
 {
-    const qint64 blockSize = 524288000; //500M
+    const qint64 blockSize = 52428800; //500M
     int extraParts = mSize / blockSize;
 
     if (mSize - extraParts * blockSize == 0) {//临界情况，刚好是500M的整数倍
@@ -812,11 +825,19 @@ void LogAuthThread::splitLines()
     m_flag.to = mSize / 100; //按一行100个字符估计总行数
 
     auto *extraEnters = new QVector<qint64>[extraParts];
+    auto *extraEntersFilterStart = new QVector<qint64>[extraParts];
+    auto *extraEntersFilterEnd = new QVector<qint64>[extraParts];
+    auto fileFutureWatchers = new QFutureWatcher<void>[extraParts];
     auto *extraRets = new std::future<void>[extraParts];
+    auto *futures = new QFuture<void>[extraParts];
     auto *chBackup = new char[extraParts];
     for (int i = 0; i < extraParts; i++) {
-        qint64 pos = blockSize * (i + 1);
+        qint64 pos = blockSize * (i);
         QVector<qint64> *enters = &extraEnters[i];
+        QVector<qint64> *entersFilterStart = &extraEntersFilterStart[i];
+        QVector<qint64> *entersFilterEnd = &extraEntersFilterEnd[i];
+        QFutureWatcher<void> *watcher = &fileFutureWatchers[i];
+
         enters->clear();
 
         //临时把mMem[pos]修改为0，方便分段处理
@@ -826,23 +847,115 @@ void LogAuthThread::splitLines()
         }
         mMem[pos] = 0;
 
-        extraRets[i] = async(std::launch::async, [ &, enters] {
-            splitLine(enters, mMem + pos + 1, false);
-        });
-    }
+//        extraRets[i] = async(std::launch::async, [ &, enters] {
+//            splitLine(entersFilterStart, entersFilterEnd, enters, mMem + pos + 1, false);
+//        });
+//&LogAuthThread::splitLine, entersFilterStart, entersFilterEnd, enters, mMem + pos + 1, false
+        futures[i] =  QtConcurrent::run([ = ]() {
 
-    splitLine(&mEnters, mMem, true); //FIXME:extraParts>0的时候进度统计的有问题
+            char     *ptr = mMem + pos + 1;
+            char     *startPtr = ptr;
+            const char *searchStr =  m_kernFilters.searchstr.toStdString().data();
+            while (m_flag.canRun && (ptr = strchr(ptr, '\n')) != nullptr) {
+                qint64     start = startPtr  - mMem - mEnterCharOffset + 1;
+                qint64   startIndex = start;
+                qint64  currentIndex = ptr - mMem - mEnterCharOffset;
+                bool isFilter = true;
+
+                if (enters->count() > 1) {
+                    start = enters->last() + 2 + mEnterCharOffset;
+                    startIndex = enters->last() + 1;
+                }
+//                ;
+
+                char *spilitPStr = nullptr;
+                qint64 len = currentIndex - start;
+                if (len > 0) {
+                    char *pStrRs = (char *)MemoryPoolAlloc(mp, len);
+
+
+
+                    memcpy(pStrRs, ptr + 1, len);
+
+//                char *emptyspilit = " ";
+//                spilitPStr = strtok(pStrRs, emptyspilit);
+//                int strSplitCount = 0;
+
+//                while ((spilitPStr = strtok(nullptr, emptyspilit)) != nullptr) {
+//                    strSplitCount++;
+
+//                }
+                    if (m_kernFilters2.searchstr) {
+
+//                    char *searchStr = (char *)MemoryPoolAlloc(mp, m_kernFilters2.searchstrlen);
+//                    memcpy(searchStr, m_kernFilters2.searchstr, m_kernFilters2.searchstrlen);
+                        char *rs = strstr(pStrRs, searchStr);
+                        //        qDebug() << "m_kernFilters2.searchstr" << searchStr << m_kernFilters.searchstr;
+
+                        if ((rs == nullptr)) {
+                            isFilter &= false;
+                        }
+                        // MemoryPoolFree(mp, searchStr);
+
+                    }
+//                if (m_kernFilters2.searchstr) {
+//                    QString string(pStrRs);
+//                    if (!string.contains(m_kernFilters.searchstr)) {
+//                        isFilter &= false;
+//                    }
+
+//                }
+
+
+//                if (spilitPStr) {
+
+//                    free(spilitPStr);
+//                }
+//                if (emptyspilit) {
+//                    free(emptyspilit);
+//                }
+
+                    if (isFilter) {
+                        entersFilterStart->push_back(startIndex);
+                        entersFilterEnd->push_back(currentIndex);
+                    }
+                    enters->push_back(ptr - mMem - mEnterCharOffset);//定位在\r（如有）或\n上
+                    if (pStrRs) {
+                        MemoryPoolFree(mp, pStrRs);
+                    }
+
+                }
+                if (false)
+                    ++m_flag.cur;
+                ++ptr;
+            }
+
+        });
+        watcher->setFuture(futures[i]);
+//        connect(watcher, &QFutureWatcher<void>::finished, this, [ = ] {
+//            mMem[pos] = chBackup[i];
+//        });
+    }
+// QThreadPool::globalInstance()->waitForDone();
+    splitLine(&mEntersFilterStart, &mEntersFilterEnd, &mEnters, mMem, true); //FIXME:extraParts>0的时候进度统计的有问题
+//    qDebug() << "QThreadPool done";
 
     for (int i = 0; i < extraParts; i++) {
-        extraRets[i].wait();
-
+        //  extraRets[i].wait();
+        futures[i].waitForFinished();
         //恢复mMem[pos]
         qint64 pos = blockSize * (i + 1);
         mMem[pos] = chBackup[i];
 
         //合并结果
         mEnters.append(extraEnters[i]);
+        qDebug() << i << "extraEnters[i]"  << extraEnters[i].count();
+        mEntersFilterStart.append(extraEntersFilterStart[i]);
+        mEntersFilterEnd.append(extraEntersFilterEnd[i]);
         QVector<qint64>().swap(extraEnters[i]);//提前释放内存
+        QVector<qint64>().swap(extraEntersFilterStart[i]);
+        QVector<qint64>().swap(extraEntersFilterEnd[i]);
+        //  malloc_trim(0);
     }
 
     delete[] extraEnters;
@@ -850,9 +963,89 @@ void LogAuthThread::splitLines()
     delete[] chBackup;
 }
 
-void LogAuthThread::splitLine(QVector<qint64> *enters, char *ptr, bool progress)
+void LogAuthThread::splitLine(QVector<qint64> *entersFilteStart, QVector<qint64> *entersFilteEnd,  QVector<qint64> *enters, char *ptr, bool progress)
 {
+    // QByteArray tempByte;
+    //QString tempStr;
+    //  QStringList list ;
+//    qint64 timeS;
+//    qint64 start = 0;
+//    qint64 startIndex = 0;
+//    qint64 currentIndex = 0;
+//    while (m_flag.canRun && (ptr = strchr(ptr, '\n')) != nullptr) {
+////        start = 0;
+////        startIndex = 0;
+////        currentIndex = ptr - mMem - mEnterCharOffset;
+
+
+////        if (enters->size() > 1) {
+////            start = enters->last() + 1 + mEnterCharOffset;
+////            startIndex = enters->last() + 1;
+////        }
+//        {
+//            //   QByteArray ba =  QByteArray::fromRawData(mMem + start, static_cast<int>(currentIndex - start));
+
+////            QString tempStr = mCodec->toUnicode(mMem + start, static_cast<int>(currentIndex - start));
+////            tempStr.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+////            if (!m_kernFilters.searchstr.isEmpty()) {
+////                if (!tempStr.contains(m_kernFilters.searchstr)) {
+////                    continue;
+////                }
+////            }
+////            QStringList list = tempStr.split(" ", QString::SkipEmptyParts);
+////            if (list.size() < 5)
+////                continue;
+////            timeS = formatDateTime(list[0], list[1], list[2]);
+////            if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
+////                if (timeS < m_kernFilters.timeFilterBegin || timeS > m_kernFilters.timeFilterEnd)
+////                    continue;
+////            }
+
+//        }
+////        entersFilteStart->push_back(start);
+////        entersFilteEnd->push_back(currentIndex);
+//        enters->push_back(ptr - mMem - mEnterCharOffset);//定位在\r（如有）或\n上
+//        qDebug() << "kkkkkkkkkkk" << entersFilteEnd->size();
+//        //  malloc_trim(0);
+//        if (progress)
+//            ++m_flag.cur;
+//        ++ptr;
+//    }
     while (m_flag.canRun && (ptr = strchr(ptr, '\n')) != nullptr) {
+        qint64     start = 0;
+        qint64   startIndex = 0;
+        qint64  currentIndex = ptr - mMem - mEnterCharOffset;
+
+
+        if (enters->size() > 1) {
+            start = enters->last() + 1 + mEnterCharOffset;
+            startIndex = enters->last() + 1;
+        }
+
+
+        {
+//            QByteArray ba =  QByteArray::fromRawData(mMem + start, static_cast<int>(currentIndex - start));
+
+//            std::string tempStr = ba.toStdString();
+            //            tempStr.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            //            if (!m_kernFilters.searchstr.isEmpty()) {
+            //                ifextraEnters[i] 0 (!tempStr.contains(m_kernFilters.searchstr)) {
+            //                    continue;
+            //                }
+            //            }
+            //            QStringList list = tempStr.split(" ", QString::SkipEmptyParts);
+            //            if (list.size() < 5)
+            //                continue;
+            //            timeS = formatDateTime(list[0], list[1], list[2]);
+            //            if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
+            //                if (timeS < m_kernFilters.timeFilterBegin || timeS > m_kernFilters.timeFilterEnd)
+            //                    continue;
+            //            }
+
+        }
+
+
+
         enters->push_back(ptr - mMem - mEnterCharOffset);//定位在\r（如有）或\n上
         if (progress)
             ++m_flag.cur;

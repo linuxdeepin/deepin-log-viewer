@@ -69,6 +69,9 @@ struct LOG_DATA_BASE_INFO {
     int mLineCnt{0};
     int mEnterCharOffset;
     QTextCodec *mCodec;
+    QVector<qint64> mEntersFilterStart;
+    QVector<qint64> mEntersFilterEnd;
+    QFile *mFile;
 };
 // add by Airy
 struct LOG_MSG_NORMAL {
@@ -117,6 +120,7 @@ struct NORMAL_FILTERS {
 struct KERN_FILTERS {
     qint64 timeFilterBegin = -1 ;
     qint64 timeFilterEnd = -1;
+    QString searchstr;
 };
 /**
  * @brief The BOOT_FILTERS struct 启动日志筛选条件
@@ -133,6 +137,13 @@ struct KERN_FILTERS1 {
     QString searchstr;
 };
 
+
+struct KERN_FILTERS2 {
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1 ;
+    char *searchstr = nullptr;
+    qint64 searchstrlen = 0;
+};
 
 
 enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };

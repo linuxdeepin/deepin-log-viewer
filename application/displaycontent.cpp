@@ -182,9 +182,9 @@ void DisplayContent::initTableView()
     m_pModel = new QStandardItemModel(this);
     m_treeView->setModel(m_pModel);
     m_kernModel = new LogBaseModel(nullptr, this);
-    KERN_FILTERS1 f;
-    f.searchstr = "574.723232";
-    m_kernModel->setKernFilter(f);
+//    KERN_FILTERS1 f;
+//    f.searchstr = "574.723232";
+//    m_kernModel->setKernFilter(f);
     connect(m_kernModel, &LogBaseModel::updateView, this, &DisplayContent::updateScrollerBar);
 
 
@@ -224,6 +224,8 @@ void DisplayContent::initConnections()
 
     connect(m_treeView->verticalScrollBar(), &QScrollBar::valueChanged, this,
             &DisplayContent::slot_vScrollValueChanged);
+//    connect(m_treeView->verticalScrollBar(), &QScrollBar::sliderMoved, this,
+//            &DisplayContent::slot_vScrollSliderMoved);
 
     connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
             &DisplayContent::slot_themeChanged);
@@ -1736,6 +1738,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
     if (m_treeView->singleRowHeight() < 0) {
         return;
     }
+
+
     //根据当前表格单行行高计算现在滑动了多少项
     int value = valuePixel / m_treeView->singleRowHeight(); // m_treeView->singleRowHeight();
     if (m_treeViewLastScrollValue == value) {
@@ -1824,18 +1828,28 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (!m_kernModel) {
             return;
         }
-        if (valuePixel > m_treeView->verticalScrollBar()->maximum() * 0.75) {
+        if (valuePixel > m_treeView->verticalScrollBar()->maximum() * 0.75 && valuePixel > m_treeViewLastScrollValuePixel) {
             m_kernModel->addPage();
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
             //m_treeView->verticalScrollBar()->setValue((m_treeView->verticalScrollBar()->maximum() - m_treeView->verticalScrollBar()->minimum()) / 4 * 3);
 
-        } else if (valuePixel < m_treeView->verticalScrollBar()->maximum() * 0.25) {
+        } else if (valuePixel == 0 || (valuePixel < m_treeView->verticalScrollBar()->maximum() * 0.25 && valuePixel < m_treeViewLastScrollValuePixel)) {
+//加个返回值，成功了再setvalue
             m_kernModel->reducePage();
+            m_treeView->verticalScrollBar()->setValue(valuePixel + 100);
             // m_treeView->verticalScrollBar()->setValue((m_treeView->verticalScrollBar()->maximum() - m_treeView->verticalScrollBar()->minimum())  / 4);
 
         }
+        m_treeViewLastScrollValuePixel = valuePixel;
+
 
     }
 
+}
+
+void DisplayContent::slot_vScrollSliderMoved(int Position)
+{
+    qDebug() << "slider" << Position;
 }
 
 /**

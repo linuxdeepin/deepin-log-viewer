@@ -8,6 +8,7 @@ class LogBaseModel: public QAbstractTableModel
     Q_OBJECT
 public:
     explicit LogBaseModel(LOG_DATA_BASE_INFO *info = nullptr, QObject *parent = nullptr);
+    virtual ~LogBaseModel();
     int lineCount()  {return m_baseInfo->mLineCnt;}
     int rowCount(const QModelIndex &parent = {}) const override;
     int columnCount(const QModelIndex &parent = {}) const override;
@@ -25,6 +26,7 @@ public:
     void refreshPage(bool isAdd, bool iReset = false);
     bool getKernDataFromlineCnt(int iCount, LOG_MSG_KERN &oItemData);
     QString getLine(int from, int to) const;
+    QString getLineFilter(int iLine) const;
     qint64 getLineStart(int num) const;
     qint64 formatDateTime(QString m, QString d, QString t) const;
 
