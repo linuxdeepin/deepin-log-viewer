@@ -437,12 +437,12 @@
         <location filename="../test/src/displaycontent_test.cpp" line="172"/>
         <location filename="../test/src/displaycontent_test.cpp" line="357"/>
         <location filename="../test/src/displaycontent_test.cpp" line="631"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="707"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="746"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="748"/>
         <location filename="../test/src/logexportthread_test.cpp" line="788"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1167"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1208"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1252"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="831"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1224"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1266"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1311"/>
         <source>Level</source>
         <translation type="unfinished"></translation>
     </message>
@@ -471,12 +471,12 @@
         <location filename="../test/src/displaycontent_test.cpp" line="270"/>
         <location filename="../test/src/displaycontent_test.cpp" line="358"/>
         <location filename="../test/src/displaycontent_test.cpp" line="633"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="708"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="747"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="749"/>
         <location filename="../test/src/logexportthread_test.cpp" line="789"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1168"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1209"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1253"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="832"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1225"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1267"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1312"/>
         <source>Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -496,12 +496,12 @@
         <location filename="../test/src/displaycontent_test.cpp" line="273"/>
         <location filename="../test/src/displaycontent_test.cpp" line="360"/>
         <location filename="../test/src/displaycontent_test.cpp" line="634"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="710"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="749"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="751"/>
         <location filename="../test/src/logexportthread_test.cpp" line="791"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1170"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1211"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1255"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="834"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1227"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1269"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1314"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -530,12 +530,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="730"/>
         <location filename="../test/src/displaycontent_test.cpp" line="359"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="709"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="748"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="750"/>
         <location filename="../test/src/logexportthread_test.cpp" line="790"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1169"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1210"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1254"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="833"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1226"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1268"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1313"/>
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>
