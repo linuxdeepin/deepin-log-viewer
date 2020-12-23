@@ -20,10 +20,11 @@
  */
 
 #include "logexportthread.h"
-#include "document.h"
-#include "table.h"
-#include "xlsxdocument.h"
 #include "utils.h"
+
+#include "xlsxwriter.h"
+#include "WordProcessingMerger.h"
+#include "WordProcessingCompiler.h"
 
 #include <DApplication>
 
@@ -1043,134 +1044,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, Q
     return true && m_canRunning;
 }
 
-/**
- * @brief LogExportThread::exportToDoc导出到日志doc格式函数对QStandardItemModel数据类型的重载
- * @param fileName 导出文件路径全称
- * @param pModel 要导出的数据源，为QStandardItemModel
- * @param flag 导出的日志类型
- * @return 是否导出成功
- */
 
-bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
-{
-#if 1
-    try {
-        //判读啊model指针是为空，为空则不导出
-        if (!pModel) {
-            throw  QString("model is null");
-        }
-        //声明Doc对象,参数为模板文件路径
-        Docx::Document doc(DOCTEMPLATE);
-        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
-        Docx::Table *tab = doc.addTable(pModel->rowCount() + 1, pModel->columnCount());
-        //设置表格内文字内容向左对齐
-        tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
-        //往表头中添加表头描述，表头为第一行，数据则在下面
-        for (int col = 0; col < pModel->columnCount(); ++col) {
-            auto item = pModel->horizontalHeaderItem(col);
-            auto cel = tab->cell(0, col);
-            if (item) {
-                cel->addText(pModel->horizontalHeaderItem(col)->text());
-            }
-        }
-        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
-        int end = static_cast<int>(pModel->rowCount() * 0.1 > 5 ? pModel->rowCount() * 0.1 : 5);
-        //往表格的单元格中添加数据内容
-        //日志类型为应用日志时
-        if (flag == APP) {
-            for (int row = 0; row < pModel->rowCount(); ++row) {
-                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
-                if (!m_canRunning) {
-                    throw  QString(stopStr);
-                }
-                //把数据填入表格单元格中
-                auto cel = tab->cell(row + 1, 0);
-                cel->addText(pModel->item(row, 0)->data(Qt::UserRole + 6).toString());
-                for (int col = 1; col < pModel->columnCount(); ++col) {
-                    if (!m_canRunning) {
-                        throw  QString(stopStr);
-                    }
-                    auto cel = tab->cell(row + 1, col);
-                    cel->addText(pModel->item(row, col)->text());
-                }
-                //导出进度信号
-                sigProgress(row + 1, pModel->rowCount() + end);
-            }
-        } else {
-            for (int row = 0; row < pModel->rowCount(); ++row) {
-                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
-                if (!m_canRunning) {
-                    throw  QString(stopStr);
-                }
-                //把数据填入表格单元格中
-                for (int col = 0; col < pModel->columnCount(); ++col) {
-                    if (!m_canRunning) {
-                        throw  QString(stopStr);
-                    }
-                    auto cel = tab->cell(row + 1, col);
-                    cel->addText(pModel->item(row, col)->text());
-                }
-                //导出进度信号
-                sigProgress(row + 1, pModel->rowCount() + end);
-            }
-        }
-        //保存，把拼好的xml写入文件中
-        doc.save(fileName);
-    } catch (QString ErrorStr) {
-        //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
-        if (!m_canRunning) {
-            Utils::checkAndDeleteDir(m_fileName);
-        }
-        emit sigResult(false);
-        if (ErrorStr != stopStr) {
-            emit sigError(QString("export error: %1").arg(ErrorStr));
-        }
-        return false;
-    }
-#else
-    QTextDocumentWriter writer(fileName);
-    writer.setFormat("odf");
-    QTextDocument *doc = new QTextDocument;
-    QString html;
-    html.append("<!DOCTYPE html>\n");
-    html.append("<html>\n");
-    html.append("<body>\n");
-    html.append("<table border=\"1\">\n");
-    // write title
-    html.append("<tr>");
-    for (int i = 0; i < pModel->columnCount(); ++i) {
-        QString labelInfo = QString("<td>%1</td>").arg(pModel->horizontalHeaderItem(i)->text());
-        html.append(labelInfo.toUtf8().data());
-    }
-    html.append("</tr>");
-    // write contents
-    for (int row = 0; row < pModel->rowCount(); ++row) {
-        html.append("<tr>");
-        for (int col = 0; col < pModel->columnCount(); ++col) {
-            QString info = QString("<td>%1</td>").arg(pModel->item(row, col)->text());
-            html.append(info.toUtf8().data());
-        }
-        html.append("</tr>");
-    }
-    html.append("</table>\n");
-    html.append("</body>\n");
-    html.append("</html>\n");
-    doc->setHtml(html);
-    writer.write(doc);
-#endif
-    //如果取消导出，则删除文件
-    if (!m_canRunning) {
-        Utils::checkAndDeleteDir(m_fileName);
-    }
-    //100%进度
-    sigProgress(100, 100);
-    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
-    Utils::sleep(200);
-    //导出成功，如果此时被停止，则发出导出失败信号
-    emit sigResult(m_canRunning);
-    return true && m_canRunning;
-}
 
 /**
  * @brief LogExportThread::exportToDoc导出到日志doc格式函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
@@ -1183,32 +1057,36 @@ bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, 
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList,
                                   QStringList labels, LOG_FLAG iFlag)
 {
-#if 1
     try {
-        //声明Doc对象,参数为模板文件路径
-        Docx::Document doc(DOCTEMPLATE);
-        Docx::Table *tab = nullptr;
-        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
+        QString tempdir ;
         if (iFlag == JOURNAL) {
-            tab = doc.addTable(jList.count() + 1, 6);
+            tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/6column.dfw";
         } else if (iFlag == KERN) {
-            tab = doc.addTable(jList.count() + 1, 4);
+            tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
         } else {
             qDebug() << "exportToDoc type is Wrong!";
             return false;
         }
+        if (!QFile(tempdir).exists()) {
+            qWarning() << "export docx template is not exisits";
+            return  false;
+        }
+//        if (!QFile(fileName).exists()) {
+//            qWarning() << "export file dir is not exisits";
+//            return  false;
+//        }
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
 
-        //设置表格内文字内容向左对齐
-        tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
+        l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
-            auto cel = tab->cell(0, col);
-            cel->addText(labels.at(col));
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+
         }
+        l_merger.paste("tableRow");
         //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-        //往表格的单元格中添加数据内容
         for (int row = 0; row < jList.count(); ++row) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -1216,26 +1094,32 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
             }
             LOG_MSG_JOURNAL message = jList.at(row);
             //把数据填入表格单元格中
-            int col = 0;
             if (iFlag == JOURNAL) {
-                tab->cell(row + 1, col++)->addText(message.level);
-                tab->cell(row + 1, col++)->addText(message.daemonName);
-                tab->cell(row + 1, col++)->addText(message.dateTime);
-                tab->cell(row + 1, col++)->addText(message.msg);
-                tab->cell(row + 1, col++)->addText(message.hostName);
-                tab->cell(row + 1, col++)->addText(message.daemonId);
+                l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.level.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.daemonName.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), message.dateTime.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column5").toStdString(), message.hostName.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column6").toStdString(), message.daemonId.toStdString());
             } else if (iFlag == KERN) {
-                tab->cell(row + 1, col++)->addText(message.dateTime);
-                tab->cell(row + 1, col++)->addText(message.hostName);
-                tab->cell(row + 1, col++)->addText(message.daemonName);
-                tab->cell(row + 1, col++)->addText(message.msg);
+                l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.dateTime.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.hostName.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), message.daemonName.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
             }
+            l_merger.paste("tableRow");
             //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
-
         //保存，把拼好的xml写入文件中
-        doc.save(fileName);
+        QString fileNamex = fileName + "x";
+
+        QFile rsNameFile(fileName) ;
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
     } catch (QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
@@ -1249,38 +1133,6 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
         }
         return false;
     }
-#else
-    QTextDocumentWriter writer(fileName);
-    writer.setFormat("odf");
-    QTextDocument *doc = new QTextDocument;
-    QString html;
-    html.append("<!DOCTYPE html>\n");
-    html.append("<html>\n");
-    html.append("<body>\n");
-    html.append("<table border=\"1\">\n");
-    QString title = QString(
-                        "<tr><td>时间</td><td>主机名</td><td>守护进程</td><td>进程ID</td><td>级别</td><td>消息</"
-                        "td></tr>");
-    html.append(title.toUtf8().data());
-    for (int i = 0; i < jList.count(); i++) {
-        LOG_MSG_JOURNAL jMsg = jList.at(i);
-        QString info =
-            QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td></tr>")
-            .arg(jMsg.dateTime)
-            .arg(jMsg.hostName)
-            .arg(jMsg.daemonName)
-            .arg(jMsg.daemonId)
-            .arg(jMsg.level)
-            .arg(jMsg.msg);
-        html.append(info.toUtf8().data());
-    }
-
-    html.append("</table>\n");
-    html.append("</body>\n");
-    html.append("</html>\n");
-    doc->setHtml(html);
-    writer.write(doc);
-#endif
     //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
@@ -1296,7 +1148,10 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
 
 /**
  * @brief LogExportThread::exportToDoc导出到日志doc格式配置函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
- * @param fileName 导出文件路径全称
+ * @param fileName 导出文件路径全称        if (!QFile(fileName).exists()) {
+            qWarning() << "export file dir is not exisits";
+            return  false;
+        }
  * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
  * @param labels 表头字符串
  * @param iAppName 导出的应用日志的应用名称
@@ -1304,20 +1159,26 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
  */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
-
     try {
-        //声明Doc对象,参数为模板文件路径
-        Docx::Document doc(DOCTEMPLATE);
-        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 4);
-        //设置表格内文字内容向左对齐
-        tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
-
+//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
+//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
+        QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
+        if (!QFile(tempdir).exists()) {
+            qWarning() << "export docx template is not exisits";
+            return  false;
+        }
+//        if (!QFile(fileName).exists()) {
+//            qWarning() << "export file dir is not exisits";
+//            return  false;
+//        }
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
-            auto cel = tab->cell(0, col);
-            cel->addText(labels.at(col));
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+
         }
+        l_merger.paste("tableRow");
         //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
@@ -1326,46 +1187,49 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
                 throw  QString(stopStr);
             }
             LOG_MSG_APPLICATOIN message = jList.at(row);
-            int col = 0;
-            //把数据填入表格单元格中
-            tab->cell(row + 1, col++)->addText(strTranslate(message.level));
-            tab->cell(row + 1, col++)->addText(message.dateTime);
-            tab->cell(row + 1, col++)->addText(iAppName);
-            tab->cell(row + 1, col++)->addText(message.msg);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), strTranslate(message.level).toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), iAppName.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
+            l_merger.paste("tableRow");
             //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
 
-
         //保存，把拼好的xml写入文件中
-        doc.save(fileName);
+        QString fileNamex = fileName + "x";
+
+        QFile rsNameFile(fileName) ;
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
 
     } catch (QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
+        qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
 
-        qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
         }
-
         return false;
     }
-
     //如果取消导出，则删除文件
     if (!m_canRunning) {
         Utils::checkAndDeleteDir(m_fileName);
     }
-
     //100%进度
     sigProgress(100, 100);
     //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
     Utils::sleep(200);
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
+
     return true && m_canRunning;
 }
 
@@ -1379,39 +1243,50 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     try {
-        //声明Doc对象,参数为模板文件路径
-        Docx::Document doc(DOCTEMPLATE);
-        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 3);
-        //设置表格内文字内容向左对齐
-        tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
-
+//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
+//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
+        QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/3column.dfw";
+        if (!QFile(tempdir).exists()) {
+            qWarning() << "export docx template is not exisits";
+            return  false;
+        }
+//        if (!QFile(fileName).exists()) {
+//            qWarning() << "export file dir is not exisits";
+//            return  false;
+//        }
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
-            auto cel = tab->cell(0, col);
-            cel->addText(labels.at(col));
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+
         }
+        l_merger.paste("tableRow");
         //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-
         for (int row = 0; row < jList.count(); ++row) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_DPKG message = jList.at(row);
-            int col = 0;
-            //把数据填入表格单元格中
-            tab->cell(row + 1, col++)->addText(message.dateTime);
-            tab->cell(row + 1, col++)->addText(message.msg);
-            tab->cell(row + 1, col++)->addText(message.action);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.msg.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), message.action.toStdString());
+            l_merger.paste("tableRow");
             //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
 
-
         //保存，把拼好的xml写入文件中
-        doc.save(fileName);
+        QString fileNamex = fileName + "x";
+
+        QFile rsNameFile(fileName) ;
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
 
     } catch (QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
@@ -1436,6 +1311,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
     Utils::sleep(200);
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
+
     return true && m_canRunning;
 }
 
@@ -1449,37 +1325,48 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     try {
-        //声明Doc对象,参数为模板文件路径
-        Docx::Document doc(DOCTEMPLATE);
-        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 2);
-        //设置表格内文字内容向左对齐
-        tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
-        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
-        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-
+//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
+//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
+        QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/2column.dfw";
+        if (!QFile(tempdir).exists()) {
+            qWarning() << "export docx template is not exisits";
+            return  false;
+        }
+//        if (!QFile(fileName).exists()) {
+//            qWarning() << "export file dir is not exisits";
+//            return  false;
+//        }
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
-            auto cel = tab->cell(0, col);
-            cel->addText(labels.at(col));
-        }
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
 
+        }
+        l_merger.paste("tableRow");
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_BOOT message = jList.at(row);
-            int col = 0;
-            //把数据填入表格单元格中
-            tab->cell(row + 1, col++)->addText(message.status);
-            tab->cell(row + 1, col++)->addText(message.msg);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.status.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.msg.toStdString());
+            l_merger.paste("tableRow");
             //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
         //保存，把拼好的xml写入文件中
-        doc.save(fileName);
+        QString fileNamex = fileName + "x";
 
+        QFile rsNameFile(fileName) ;
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
     } catch (QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
@@ -1516,18 +1403,25 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     try {
-        //声明Doc对象,参数为模板文件路径
-        Docx::Document doc(DOCTEMPLATE);
-        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 2);
-        //设置表格内文字内容向左对齐
-        tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
-
+//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
+//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
+        QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/2column.dfw";
+        if (!QFile(tempdir).exists()) {
+            qWarning() << "export docx template is not exisits";
+            return  false;
+        }
+//        if (!QFile(fileName).exists()) {
+//            qWarning() << "export file dir is not exisits";
+//            return  false;
+//        }
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
-            auto cel = tab->cell(0, col);
-            cel->addText(labels.at(col));
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+
         }
+        l_merger.paste("tableRow");
         //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
@@ -1536,17 +1430,21 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
                 throw  QString(stopStr);
             }
             LOG_MSG_XORG message = jList.at(row);
-            int col = 0;
-            //把数据填入表格单元格中
-            tab->cell(row + 1, col++)->addText(message.dateTime);
-            tab->cell(row + 1, col++)->addText(message.msg);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.msg.toStdString());
+            l_merger.paste("tableRow");
             //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
-
-
         //保存，把拼好的xml写入文件中
-        doc.save(fileName);
+        QString fileNamex = fileName + "x";
+
+        QFile rsNameFile(fileName) ;
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
 
     } catch (QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
@@ -1584,19 +1482,27 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
  */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
-    try {
-        //声明Doc对象,参数为模板文件路径
-        Docx::Document doc(DOCTEMPLATE);
-        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 4);
-        //设置表格内文字内容向左对齐
-        tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
+    try {
+//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
+//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
+        QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
+        if (!QFile(tempdir).exists()) {
+            qWarning() << "export docx template is not exisits";
+            return  false;
+        }
+//        if (!QFile(fileName).exists()) {
+//            qWarning() << "export file dir is not exisits" << fileName;
+//            return  false;
+//        }
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
-            auto cel = tab->cell(0, col);
-            cel->addText(labels.at(col));
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+
         }
+        l_merger.paste("tableRow");
         //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
@@ -1605,19 +1511,23 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
                 throw  QString(stopStr);
             }
             LOG_MSG_NORMAL message = jList.at(row);
-            int col = 0;
-            //把数据填入表格单元格中
-            tab->cell(row + 1, col++)->addText(message.eventType);
-            tab->cell(row + 1, col++)->addText(message.userName);
-            tab->cell(row + 1, col++)->addText(message.dateTime);
-            tab->cell(row + 1, col++)->addText(message.msg);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.eventType.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.userName.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
+            l_merger.paste("tableRow");
             //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
-
-
         //保存，把拼好的xml写入文件中
-        doc.save(fileName);
+        QString fileNamex = fileName + "x";
+
+        QFile rsNameFile(fileName) ;
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
 
     } catch (QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
@@ -1642,6 +1552,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
     Utils::sleep(200);
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
+
     return true && m_canRunning;
 }
 
@@ -1654,19 +1565,24 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
  */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
-    try {
-        //声明Doc对象,参数为模板文件路径
-        Docx::Document doc(DOCTEMPLATE);
-        //添加一个行数为数据的条数+1,列数等于数据字段数的表格
-        Docx::Table *tab = doc.addTable(jList.count() + 1, 1);
-        //设置表格内文字内容向左对齐
-        tab->setAlignment(Docx::WD_TABLE_ALIGNMENT::LEFT);
 
+    try {
+//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
+//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
+        QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
+        if (!QFile(tempdir).exists()) {
+            qWarning() << "export docx template is not exisits";
+            return  false;
+        }
+
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
         for (int col = 0; col < labels.count(); ++col) {
-            auto cel = tab->cell(0, col);
-            cel->addText(labels.at(col));
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+
         }
+        l_merger.paste("tableRow");
         //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
         for (int row = 0; row < jList.count(); ++row) {
@@ -1674,16 +1590,21 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
-            //把数据填入表格单元格中
             LOG_MSG_KWIN message = jList.at(row);
-            int col = 0;
-            tab->cell(row + 1, col++)->addText(message.msg);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.msg.toStdString());
+            l_merger.paste("tableRow");
+            //导出进度信号
             sigProgress(row + 1, jList.count() + end);
         }
-
-
         //保存，把拼好的xml写入文件中
-        doc.save(fileName);
+        QString fileNamex = fileName + "x";
+
+        QFile rsNameFile(fileName) ;
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
 
     } catch (QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
@@ -1708,6 +1629,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
     Utils::sleep(200);
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
+
     return true && m_canRunning;
 }
 
@@ -2348,103 +2270,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
 }
 
 
-/**
- * @brief LogExportThread::exportToXls 导出到日志xlsx格式函数对QStandardItemModel数据类型的重载
- * @param fileName 导出文件路径全称
- * @param pModel 要导出的数据源，为QStandardItemModel
- * @param flag 导出的日志类型
- * @return 是否导出成功
- */
-bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
-{
-    try {
-        //判断model指针是否为空，为空则抛出错误，返回不执行
-        if (!pModel) {
-            throw  QString("model is null");
-        }
-        auto currentXlsRow = 1;
-        //传入控制停止导出逻辑的bool变量
-        QXlsx::Document xlsx(&m_canRunning);
-        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
-        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
-        });
-        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
-        });
-        // 写入表头
-        for (int col = 0; col < pModel->columnCount(); ++col) {
-            auto item = pModel->horizontalHeaderItem(col);
-            if (item) {
-                //设置表头字体加粗
-                QXlsx::Format boldFont;
-                boldFont.setFontBold(true);
-                xlsx.write(currentXlsRow, col + 1, item->text(), boldFont);
-            }
-        }
-        ++currentXlsRow;
-        int end = static_cast<int>(pModel->rowCount() * 0.1 > 5 ? pModel->rowCount() * 0.1 : 5);
-        //应用日志导出内容
-        if (flag == APP) {
-            for (int row = 0; row < pModel->rowCount(); ++row) {
-                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
-                if (!m_canRunning) {
-                    throw  QString(stopStr);
-                }
-                xlsx.write(currentXlsRow, 0 + 1,
-                           pModel->item(row, 0)->data(Qt::UserRole + 6).toString());
-                //根据字段拼出每行的网页内容
-                for (int col = 1; col < pModel->columnCount(); ++col) {
-                    if (!m_canRunning) {
-                        throw  QString(stopStr);
-                    }
-                    xlsx.write(currentXlsRow, col + 1, pModel->item(row, col)->text());
-                }
-                ++currentXlsRow;
 
-                sigProgress(row + 1, pModel->rowCount() * 3 + end);
-            }
-        } else {
-            for (int row = 0; row < pModel->rowCount(); ++row) {
-                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
-                if (!m_canRunning) {
-                    throw  QString(stopStr);
-                }
-                //根据字段拼出每行的网页内容
-                for (int col = 0; col < pModel->columnCount(); ++col) {
-                    if (!m_canRunning) {
-                        throw  QString(stopStr);
-                    }
-                    xlsx.write(currentXlsRow, col + 1, pModel->item(row, col)->text());
-                }
-                ++currentXlsRow;
-
-                //导出进度信号
-                sigProgress(row + 1, pModel->rowCount() * 3 + end);
-
-            }
-        }
-
-        ++currentXlsRow;
-        if (!xlsx.saveAs(fileName)) {
-            throw  QString(stopStr);
-        }
-        sigProgress(100, 100);
-    } catch (QString ErrorStr) {
-        //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
-        emit sigResult(false);
-        if (ErrorStr != stopStr) {
-            emit sigError(QString("export error: %1").arg(ErrorStr));
-        }
-        return false;
-    }
-    //导出成功，如果此时被停止，则发出导出失败信号
-    emit sigResult(m_canRunning);
-    return true && m_canRunning;
-}
 /**
  * @brief LogExportThread::exportToXls导出到日志xlsx格式函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
  * @param fileName 导出文件路径全称
@@ -2457,63 +2283,48 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
                                   QStringList labels, LOG_FLAG iFlag)
 {
     try {
-        auto currentXlsRow = 1;
-        //传入控制停止导出逻辑的bool变量
-        QXlsx::Document xlsx(&m_canRunning);
-        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
-        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
-        });
-        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
-        });
-        // 写入表头
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            //设置表头字体加粗
-            QXlsx::Format boldFont;
-            boldFont.setFontBold(true);
-            xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
+            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
 
-        for (int row = 0; row < jList.count(); ++row) {
-            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+        for (int row = 0; row < jList.count() ; ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
             LOG_MSG_JOURNAL message = jList.at(row);
-            int col = 1;
+            int col = 0;
 
-            //根据字段拼出每行的网页内容,根据情况区分系统日志和内核日志
             if (iFlag == JOURNAL) {
-                xlsx.write(currentXlsRow, col++, message.level);
-                xlsx.write(currentXlsRow, col++, message.daemonName);
-                xlsx.write(currentXlsRow, col++, message.dateTime);
-                xlsx.write(currentXlsRow, col++, message.msg);
-                xlsx.write(currentXlsRow, col++, message.hostName);
-                xlsx.write(currentXlsRow, col++, message.daemonId);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.level.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonId.toStdString().c_str(), NULL);
             } else if (iFlag == KERN) {
-                xlsx.write(currentXlsRow, col++, message.dateTime);
-                xlsx.write(currentXlsRow, col++, message.hostName);
-                xlsx.write(currentXlsRow, col++, message.daemonName);
-                xlsx.write(currentXlsRow, col++, message.msg);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
             }
 
             ++currentXlsRow;
-            //导出进度信号
+            sigProgress(row + 1, jList.count() + end);
+        }
 
-            sigProgress(row + 1, jList.count() * 3 + end);
-        }
-        ++currentXlsRow;
-        if (!xlsx.saveAs(fileName)) {
-            throw  QString(stopStr);
-        }
+
+        workbook_close(workbook);
+        malloc_trim(0);
         sigProgress(100, 100);
+        qDebug() << "export xlsx new";
     } catch (QString ErrorStr) {
-        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2521,9 +2332,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
         }
         return false;
     }
-    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
+
 }
 
 /**
@@ -2536,54 +2347,38 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
  */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
-    QElapsedTimer timer;
-    timer.start();
     try {
-        auto currentXlsRow = 1;
-
-        //传入控制停止导出逻辑的bool变量
-        QXlsx::Document xlsx(&m_canRunning);
-        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
-        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
-        });
-        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
-        });
-        // 写入表头
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            //设置表头字体加粗
-            QXlsx::Format boldFont;
-            boldFont.setFontBold(true);
-            xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
+            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-        for (int row = 0; row < jList.count(); ++row) {
-            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+
+        for (int row = 0; row < jList.count() ; ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
-            //根据字段拼出每行的网页内容
             LOG_MSG_APPLICATOIN message = jList.at(row);
-            int col = 1;
-            xlsx.write(currentXlsRow, col++, strTranslate(message.level));
-            xlsx.write(currentXlsRow, col++, message.dateTime);
-            xlsx.write(currentXlsRow, col++, iAppName);
-            xlsx.write(currentXlsRow, col++, message.msg);
+            int col = 0;
+            worksheet_write_string(worksheet, currentXlsRow, col++, strTranslate(message.level).toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, iAppName.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
             ++currentXlsRow;
-            //导出进度信号
-            sigProgress(row + 1, jList.count() * 3 + end);
+            sigProgress(row + 1, jList.count() + end);
         }
-        ++currentXlsRow;
-        if (!xlsx.saveAs(fileName)) {
-            throw  QString(stopStr);
-        }
+
+
+        workbook_close(workbook);
+        malloc_trim(0);
         sigProgress(100, 100);
+        qDebug() << "export xlsx new";
     } catch (QString ErrorStr) {
-        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2591,9 +2386,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         }
         return false;
     }
-    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
+
 }
 
 /**
@@ -2606,49 +2401,36 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     try {
-        auto currentXlsRow = 1;
-        //传入控制停止导出逻辑的bool变量
-        QXlsx::Document xlsx(&m_canRunning);
-        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
-        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
-        });
-        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
-        });
-        // 写入表头
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            //设置表头字体加粗
-            QXlsx::Format boldFont;
-            boldFont.setFontBold(true);
-            xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
+            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-        for (int row = 0; row < jList.count(); ++row) {
-            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+
+        for (int row = 0; row < jList.count() ; ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
-            //根据字段拼出每行的网页内容
             LOG_MSG_DPKG message = jList.at(row);
-            int col = 1;
-            xlsx.write(currentXlsRow, col++, message.dateTime);
-            xlsx.write(currentXlsRow, col++, message.msg);
-            xlsx.write(currentXlsRow, col++, message.action);
+            int col = 0;
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.action.toStdString().c_str(), NULL);
             ++currentXlsRow;
-            //导出进度信号
-            sigProgress(row + 1, jList.count() * 3 + end);
+            sigProgress(row + 1, jList.count() + end);
         }
-        ++currentXlsRow;
-        if (!xlsx.saveAs(fileName)) {
-            throw  QString(stopStr);
-        }
+
+
+        workbook_close(workbook);
+        malloc_trim(0);
         sigProgress(100, 100);
+        qDebug() << "export xlsx new";
     } catch (QString ErrorStr) {
-        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2656,7 +2438,6 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         }
         return false;
     }
-    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -2671,51 +2452,35 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     try {
-        auto currentXlsRow = 1;
-        //传入控制停止导出逻辑的bool变量
-        QXlsx::Document xlsx(&m_canRunning);
-//        connect(&xlsx, &QXlsx::Document::saveProcess, this, [ = ](int iCurrent, int iTotal) {
-//            sigProgress(iCurrent + iTotal, iTotal * 2);
-//        });
-        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
-        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
-        });
-        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
-        });
-        // 写入表头
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            //设置表头字体加粗
-            QXlsx::Format boldFont;
-            boldFont.setFontBold(true);
-            xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
+            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-        for (int row = 0; row < jList.count(); ++row) {
-            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+
+        for (int row = 0; row < jList.count() ; ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
-            //根据字段拼出每行的网页内容
             LOG_MSG_BOOT message = jList.at(row);
-            int col = 1;
-            xlsx.write(currentXlsRow, col++, message.status);
-            xlsx.write(currentXlsRow, col++, message.msg);
+            int col = 0;
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.status.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
             ++currentXlsRow;
-            //导出进度信号
-            sigProgress(row + 1, jList.count() * 3 + end);
+            sigProgress(row + 1, jList.count() + end);
         }
-        ++currentXlsRow;
-        if (!xlsx.saveAs(fileName)) {
-            throw  QString(stopStr);
-        }
+
+
+        workbook_close(workbook);
+        malloc_trim(0);
         sigProgress(100, 100);
+        qDebug() << "export xlsx new";
     } catch (QString ErrorStr) {
-        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2723,7 +2488,6 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         }
         return false;
     }
-    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -2738,48 +2502,35 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     try {
-        auto currentXlsRow = 1;
-        //传入控制停止导出逻辑的bool变量
-        QXlsx::Document xlsx(&m_canRunning);
-        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
-        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
-        });
-        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
-        });
-        // 写入表头
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            //设置表头字体加粗
-            QXlsx::Format boldFont;
-            boldFont.setFontBold(true);
-            xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
+            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-        for (int row = 0; row < jList.count(); ++row) {
-            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+
+        for (int row = 0; row < jList.count() ; ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
-            //根据字段拼出每行的网页内容
             LOG_MSG_XORG message = jList.at(row);
-            int col = 1;
-            xlsx.write(currentXlsRow, col++, message.dateTime);
-            xlsx.write(currentXlsRow, col++, message.msg);
+            int col = 0;
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
             ++currentXlsRow;
-            //导出进度信号
-            sigProgress(row + 1, jList.count() * 3 + end);
+            sigProgress(row + 1, jList.count() + end);
         }
-        ++currentXlsRow;
-        if (!xlsx.saveAs(fileName)) {
-            throw  QString(stopStr);
-        }
+
+
+        workbook_close(workbook);
+        malloc_trim(0);
         sigProgress(100, 100);
+        qDebug() << "export xlsx new";
     } catch (QString ErrorStr) {
-        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2787,7 +2538,6 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
         }
         return false;
     }
-    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -2802,50 +2552,37 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
     try {
-        auto currentXlsRow = 1;
-        //传入控制停止导出逻辑的bool变量
-        QXlsx::Document xlsx(&m_canRunning);
-        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
-        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
-        });
-        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
-        });
-        // 写入表头
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            //设置表头字体加粗
-            QXlsx::Format boldFont;
-            boldFont.setFontBold(true);
-            xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
+            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-        for (int row = 0; row < jList.count(); ++row) {
-            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+
+        for (int row = 0; row < jList.count() ; ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
-            //根据字段拼出每行的网页内容
             LOG_MSG_NORMAL message = jList.at(row);
-            int col = 1;
-            xlsx.write(currentXlsRow, col++, message.eventType);
-            xlsx.write(currentXlsRow, col++, message.userName);
-            xlsx.write(currentXlsRow, col++, message.dateTime);
-            xlsx.write(currentXlsRow, col++, message.msg);
+            int col = 0;
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.eventType.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.userName.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
             ++currentXlsRow;
-            //导出进度信号
-            sigProgress(row + 1, jList.count() * 3 + end);
+            sigProgress(row + 1, jList.count() + end);
         }
-        ++currentXlsRow;
-        if (!xlsx.saveAs(fileName)) {
-            throw  QString(stopStr);
-        }
+
+
+        workbook_close(workbook);
+        malloc_trim(0);
         sigProgress(100, 100);
+        qDebug() << "export xlsx new";
     } catch (QString ErrorStr) {
-        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2853,8 +2590,6 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
         }
         return false;
     }
-
-    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -2869,48 +2604,34 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
     try {
-        auto currentXlsRow = 1;
-        //传入控制停止导出逻辑的bool变量
-        QXlsx::Document xlsx(&m_canRunning);
-        //连接对象执行进度信号，计算总进度并发出，把进度分成三段
-        connect(&xlsx, &QXlsx::Document::sigProcessAbstractSheet, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal, iTotal * 3 + end);
-        });
-        connect(&xlsx, &QXlsx::Document::sigProcessharedStrings, this, [ = ](int iCurrent, int iTotal) {
-            int end = static_cast<int>(iTotal * 0.1 > 5 ? iTotal * 0.1 : 5);
-            sigProgress(iCurrent + iTotal * 2, iTotal * 3 + end);
-        });
-        // 写入表头
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            QXlsx::Format boldFont;
-            //设置表头字体加粗
-            boldFont.setFontBold(true);
-            xlsx.write(currentXlsRow, col + 1, labels.at(col), boldFont);
+            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
-        for (int row = 0; row < jList.count(); ++row) {
-            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+
+        for (int row = 0; row < jList.count() ; ++row) {
             if (!m_canRunning) {
                 throw  QString(stopStr);
             }
-            //根据字段拼出每行的网页内容
             LOG_MSG_KWIN message = jList.at(row);
-            int col = 1;
-            xlsx.write(currentXlsRow, col++, message.msg);
+            int col = 0;
+            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
             ++currentXlsRow;
-            //导出进度信号
-            sigProgress(row + 1, jList.count() * 3 + end);
+            sigProgress(row + 1, jList.count() + end);
         }
-        ++currentXlsRow;
 
-        if (!xlsx.saveAs(fileName)) {
-            throw  QString(stopStr);
-        }
+
+        workbook_close(workbook);
+        malloc_trim(0);
         sigProgress(100, 100);
+        qDebug() << "export xlsx new";
     } catch (QString ErrorStr) {
-        //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2918,7 +2639,6 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         }
         return false;
     }
-    //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return true && m_canRunning;
 }
@@ -3027,10 +2747,6 @@ void LogExportThread::run()
         exportToHtml(m_fileName, m_kwinList, m_labels);
         break;
     }
-    case DocModel: {
-        exportToDoc(m_fileName, m_pModel, m_flag);
-        break;
-    }
     case DocJOURNAL: {
         exportToDoc(m_fileName, m_jList, m_labels, m_flag);
         break;
@@ -3057,10 +2773,6 @@ void LogExportThread::run()
     }
     case DocKWIN: {
         exportToDoc(m_fileName, m_kwinList, m_labels);
-        break;
-    }
-    case XlsModel: {
-        exportToXls(m_fileName, m_pModel, m_flag);
         break;
     }
     case XlsJOURNAL: {

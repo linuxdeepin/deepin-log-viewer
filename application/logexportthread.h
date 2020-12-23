@@ -150,7 +150,6 @@ private:
     bool exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     bool exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
 
-    bool exportToDoc(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
     bool exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag);
     bool exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName);
     bool exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels);
@@ -168,7 +167,6 @@ private:
     bool exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels);
     bool exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels);
 
-    bool exportToXls(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag);
     bool exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag);
     bool exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName);
     bool exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels);

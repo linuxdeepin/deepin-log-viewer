@@ -104,8 +104,22 @@ find_package(DtkGui REQUIRED)
 find_package(DtkCore REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
 find_package(DFrameworkdbus REQUIRED)
+find_package(RapidJSON)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
+find_package(Boost)
+find_package(ImageMagick COMPONENTS Magick++)
+find_package(ImageMagick COMPONENTS MagickWand)
+find_package(ImageMagick COMPONENTS MagickCore)
+find_package(XercesC)
 
+message("XercesC_FOUND ${XercesC_FOUND}")
+message("ImageMagick_FOUND ${ImageMagick_FOUND}")
+#find_package(Zint)
+#find_package(RapidJSON)
+# ZLIB
+find_package(ZLIB)
+list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+message("zlib version: " ${ZLIB_LIBRARIES})
 #pkg_search_module(DtkWidget REQUIRED dtkwidget)
 #pkg_search_module(DtkGui REQUIRED dtkgui)
 #pkg_search_module(DtkCore REQUIRED dtkcore)
@@ -167,75 +181,8 @@ set (APP_CPP_FILES
 set (APP_QRC_FILES
 assets/resources.qrc
 )
-set (DOCX_CPP_FILES
-    ../3rdparty/docx/document.cpp
-    ../3rdparty/docx/shared.cpp
-    ../3rdparty/docx/text.cpp
-    ../3rdparty/docx/parts/documentpart.cpp
-    ../3rdparty/docx/opc/part.cpp
-    ../3rdparty/docx/opc/packuri.cpp
-    ../3rdparty/docx/opc/opcpackage.cpp
-    ../3rdparty/docx/package.cpp
-    ../3rdparty/docx/opc/parts/corepropertiespart.cpp
-    ../3rdparty/docx/opc/coreproperties.cpp
-    ../3rdparty/docx/opc/oxml.cpp
-    ../3rdparty/docx/opc/constants.cpp
-    ../3rdparty/docx/oxml/parts/oxmldocument.cpp
-    ../3rdparty/docx/oxml/oxmltext.cpp
-    ../3rdparty/docx/table.cpp
-    ../3rdparty/docx/oxml/xmlchemy.cpp
-    ../3rdparty/docx/oxml/oxmltable.cpp
-    ../3rdparty/docx/oxml/oxmlshape.cpp
-    ../3rdparty/docx/shape.cpp
-    ../3rdparty/docx/parts/imagepart.cpp
-    ../3rdparty/docx/image/image.cpp
-    ../3rdparty/docx/opc/physpkgreader.cpp
-    ../3rdparty/docx/opc/packagereader.cpp
-    ../3rdparty/docx/opc/contenttypemap.cpp
-    ../3rdparty/docx/opc/serializedrelationships.cpp
-    ../3rdparty/docx/opc/rel.cpp
-    ../3rdparty/docx/opc/packagewriter.cpp
-    ../3rdparty/docx/opc/physpkgwriter.cpp
-    ../3rdparty/docx/enums/enumtext.cpp
-    ../3rdparty/docx/length.cpp
-    )
-set (XLSX_CPP_FILES
-    ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdocpropscore.cpp
-    ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdocpropsapp.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxrelationships.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxutility.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxsharedstrings.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcontenttypes.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxtheme.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxformat.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxstyles.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxworkbook.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxabstractsheet.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxworksheet.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxchartsheet.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxzipwriter.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdrawing.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxzipreader.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdocument.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcell.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdatavalidation.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcellreference.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcellrange.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxrichstring.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxconditionalformatting.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcolor.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxnumformatparser.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdrawinganchor.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxmediafile.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxabstractooxmlfile.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxchart.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxsimpleooxmlfile.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcellformula.cpp
 
 
-
-
-    )
 set (APP_HEADERS_FILES
    logcollectormain.h
   displaycontent.h
@@ -290,8 +237,26 @@ function(include_sub_directories_recursively root_dir)
     endforeach()
 endfunction()
 
+#--------------------libxlsx源码引入---------------------------------
+file(GLOB LXW_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter/src/*.c)
+file(GLOB_RECURSE LXW_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter/include *.h)
 
+set (MINIZIP_SOURCES
+    ../3rdparty/minizip/ioapi.c
+#../3rdparty/minizip/miniunz.c
+ ../3rdparty/minizip/minizip.c
+../3rdparty/minizip/mztools.c
+../3rdparty/minizip/unzip.c
+../3rdparty/minizip/zip.c
+    )
 
+file(GLOB TMPFILE_SOURCES  ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmpfileplus/*.c)
+ file(GLOB MD5SOURCES   ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5/*.c)
+#---------------------------------------------
+#---------------DOCXFACTORY源码引入----------------------
+file(GLOB_RECURSE DOCXFAC_SOURCES  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.cpp" )
+file(GLOB_RECURSE DOCXFAC_SOURCES_C  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.c" )
+#-----------------------------------------------------
 #target_include_directories(${EXE_NAME}
 #     ${DtkWidget_INCLUDE_DIRS} ${OBJECT_BINARY_DIR})
 
@@ -304,6 +269,7 @@ endfunction()
 
 find_library(ICUIL18N_LIB icui18n)
 find_library(ICUUC_LIB icuuc)
+
 #lupdate start
 set(TS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../translations")
 set(TS_FILES
@@ -319,9 +285,13 @@ endforeach()
 file (GLOB APP_TS_FILES translations/*.ts)
 qt5_create_translation(APP_QM_FILES ${APP_TS_FILES} ${APP_QM_FILES})
 
-add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES})
+add_executable (${EXE_NAME} ${APP_CPP_FILES}  ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES}  ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES} )
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/QtXlsxWriter/src/xlsx")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/include")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/minizip")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmpfileplus")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${DtkWidget_INCLUDE_DIRS})
 include_directories(${DtkCore_INCLUDE_DIRS})
@@ -329,11 +299,30 @@ include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 include_directories( ${DFrameworkDBus_INCLUDE_DIRS})
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS}   ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc)
+include_directories( ${Boost_INCLUDE_DIRS})
+include_directories( ${ZLIB_INCLUDE_DIRS})
+message("ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS}")
+include_directories( ${RapidJSON_INCLUDE_DIRS})
+include_directories(${ImageMagick_INCLUDE_DIRS})
+include_directories(${XercesC_INCLUDE_DIRS})
+
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES}  -lsystemd -licui18n -licuuc  -ldl -fPIC)
 target_link_libraries(${EXE_NAME} ${DtkWidget_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${DtkCore_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${DtkGUI_LIBRARIES})
+#当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
+target_link_libraries(${EXE_NAME} ${ZLIB_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${Boost_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${RapidJSON_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${ImageMagick_LIBRARIES})
+target_link_libraries(${EXE_NAME} ${XercesC_LIBRARIES})
 
+#target_link_libraries(${EXE_NAME} ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a)
+
+#target_link_libraries(${EXE_NAME} ${MINIZIP_LIBRARIES})
+
+#target_link_libraries(${EXE_NAME} ${Zint_LIBRARIES})
+#target_link_libraries(${EXE_NAME} ${RapidJSON_LIBRARIES})
 #include_directories(${Qt5Widgets_LIBRARIES}
 #                                               ${Qt5Core_LIBRARIES}
 #                                              ${Qt5DBus_LIBRARIES}
@@ -353,8 +342,10 @@ target_link_libraries(${EXE_NAME} ${DtkGUI_LIBRARIES})
 #set(CMAKE_INSTALL_PREFIX /usr)
 
 file(GLOB APP_QM_FILES "../translations/*.qm")
+file(GLOB DOCXFAC_TEMPLATE "assets/doc_template/*.dfw")
 install(FILES ${APP_QM_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/translations)
 install(FILES assets/deepin-log-viewer.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
+install(FILES ${DOCXFAC_TEMPLATE} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/DocxTemplate)
 install(FILES assets/com.deepin.pkexec.logViewerAuth.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 install(FILES assets/images/deepin-log-viewer.svg
             DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/scalable/apps/)
