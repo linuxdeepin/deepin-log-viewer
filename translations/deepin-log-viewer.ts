@@ -440,9 +440,6 @@
         <location filename="../test/src/logexportthread_test.cpp" line="748"/>
         <location filename="../test/src/logexportthread_test.cpp" line="788"/>
         <location filename="../test/src/logexportthread_test.cpp" line="831"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1224"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1266"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1311"/>
         <source>Level</source>
         <translation type="unfinished"></translation>
     </message>
@@ -474,9 +471,6 @@
         <location filename="../test/src/logexportthread_test.cpp" line="749"/>
         <location filename="../test/src/logexportthread_test.cpp" line="789"/>
         <location filename="../test/src/logexportthread_test.cpp" line="832"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1225"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1267"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1312"/>
         <source>Date and Time</source>
         <translation type="unfinished"></translation>
     </message>
@@ -499,9 +493,6 @@
         <location filename="../test/src/logexportthread_test.cpp" line="751"/>
         <location filename="../test/src/logexportthread_test.cpp" line="791"/>
         <location filename="../test/src/logexportthread_test.cpp" line="834"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1227"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1269"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1314"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
@@ -533,9 +524,6 @@
         <location filename="../test/src/logexportthread_test.cpp" line="750"/>
         <location filename="../test/src/logexportthread_test.cpp" line="790"/>
         <location filename="../test/src/logexportthread_test.cpp" line="833"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1226"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1268"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="1313"/>
         <source>Source</source>
         <translation type="unfinished"></translation>
     </message>

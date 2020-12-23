@@ -16,7 +16,7 @@
 */
 #include "logexportthread.h"
 #include "structdef.h"
-#include "document.h"
+
 #include "stuballthread.h"
 
 #include <gtest/gtest.h>
@@ -1212,137 +1212,7 @@ TEST(LogExportThread_exportToTxt_KWIN_UT, LogExportThread_exportToTxt_KWIN_UT_00
     p->deleteLater();
 }
 
-TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT_001)
-{
-    Stub stub;
-    stub.set(ADDR(Docx::Document, save), Doc_Document_save);
-    bool iscomplete = true;
-    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
-    EXPECT_NE(p, nullptr);
-    QStandardItemModel *p_model = new QStandardItemModel();
-    p_model->setHorizontalHeaderLabels(QStringList()
-                                       << Dtk::Widget::DApplication::translate("Table", "Level")
-                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
-                                       << Dtk::Widget::DApplication::translate("Table", "Source")
-                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
-    QList<QStandardItem *> items;
-    Dtk::Widget::DStandardItem *item = nullptr;
-    for (int i = 0; i < 5; i++) {
-        items.clear();
-        //int col = 0;
-        item = new Dtk::Widget::DStandardItem;
-        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
-        items << item;
-        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
-        items << item;
-        //        item = new DStandardItem(list[i].src);
-        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
-        items << item;
-        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
-        items << item;
-        p_model->insertRow(p_model->rowCount(), items);
-    }
 
-    p->m_canRunning = true;
-    bool result = p->exportToDoc("", p_model, APP);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
-TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT_002)
-{
-    Stub stub;
-    stub.set(ADDR(Docx::Document, save), Doc_Document_save);
-    bool iscomplete = true;
-    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
-    EXPECT_NE(p, nullptr);
-    QStandardItemModel *p_model = new QStandardItemModel();
-    p_model->setHorizontalHeaderLabels(QStringList()
-                                       << Dtk::Widget::DApplication::translate("Table", "Level")
-                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
-                                       << Dtk::Widget::DApplication::translate("Table", "Source")
-                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
-    QList<QStandardItem *> items;
-    Dtk::Widget::DStandardItem *item = nullptr;
-    for (int i = 0; i < 5; i++) {
-        items.clear();
-        //int col = 0;
-        item = new Dtk::Widget::DStandardItem;
-
-        item->setData(APP_TABLE_DATA);
-        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
-        items << item;
-        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
-        items << item;
-        //        item = new DStandardItem(list[i].src);
-        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
-        items << item;
-        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
-        items << item;
-        p_model->insertRow(p_model->rowCount(), items);
-    }
-    p->m_canRunning = true;
-    bool result = p->exportToDoc("./testExport.doc", p_model, APP);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
-
-TEST(LogExportThread_exportToDoc_Model_UT, LogExportThread_exportToDoc_Model_UT003)
-{
-    Stub stub;
-    stub.set(ADDR(Docx::Document, save), Doc_Document_save);
-    bool iscomplete = true;
-    LogExportThread *p = new LogExportThread(iscomplete, nullptr);
-    EXPECT_NE(p, nullptr);
-    QStandardItemModel *p_model = new QStandardItemModel();
-    p_model->setHorizontalHeaderLabels(QStringList()
-                                       << Dtk::Widget::DApplication::translate("Table", "Level")
-                                       << Dtk::Widget::DApplication::translate("Table", "Date and Time")
-                                       << Dtk::Widget::DApplication::translate("Table", "Source")
-                                       << Dtk::Widget::DApplication::translate("Table", "Info"));
-    QList<QStandardItem *> items;
-    Dtk::Widget::DStandardItem *item = nullptr;
-    for (int i = 0; i < 5; i++) {
-        items.clear();
-        //int col = 0;
-
-        item = new Dtk::Widget::DStandardItem;
-        item->setData(APP_TABLE_DATA);
-        item->setData(QString("test%1").arg(i), Log_Item_SPACE::levelRole);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
-        items << item;
-        item = new Dtk::Widget::DStandardItem("2000-10-10 10:10:10");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
-        items << item;
-        //        item = new DStandardItem(list[i].src);
-        item = new Dtk::Widget::DStandardItem("deepinlogviewer");
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
-        items << item;
-        item = new Dtk::Widget::DStandardItem(QString("testmsg%1").arg(i));
-        item->setData(APP_TABLE_DATA);
-        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
-        items << item;
-        p_model->insertRow(p_model->rowCount(), items);
-    }
-    p->m_canRunning = true;
-    bool result = p->exportToDoc("./testExport.doc", p_model, JOURNAL);
-    EXPECT_EQ(result, true);
-    p->deleteLater();
-}
 
 class LogExportThread_exportToDoc_JOURNAL_UT_Param
 {

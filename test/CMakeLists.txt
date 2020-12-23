@@ -68,7 +68,13 @@ find_package(Qt5Test REQUIRED)
 find_package(DFrameworkdbus REQUIRED)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 add_definitions(${Qt5Test_DEFINITIONS})
-
+find_package(RapidJSON)
+find_package(Boost)
+find_package(ImageMagick COMPONENTS Magick++)
+find_package(ImageMagick COMPONENTS MagickWand)
+find_package(ImageMagick COMPONENTS MagickCore)
+find_package(XercesC)
+find_package(ZLIB)
 #pkg_search_module(DtkWidget REQUIRED dtkwidget)
 #pkg_search_module(DtkGui REQUIRED dtkgui)
 #pkg_search_module(DtkCore REQUIRED dtkcore)
@@ -131,75 +137,8 @@ FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
 )
 
-set (DOCX_CPP_FILES
-    ../3rdparty/docx/document.cpp
-    ../3rdparty/docx/shared.cpp
-    ../3rdparty/docx/text.cpp
-    ../3rdparty/docx/parts/documentpart.cpp
-    ../3rdparty/docx/opc/part.cpp
-    ../3rdparty/docx/opc/packuri.cpp
-    ../3rdparty/docx/opc/opcpackage.cpp
-    ../3rdparty/docx/package.cpp
-    ../3rdparty/docx/opc/parts/corepropertiespart.cpp
-    ../3rdparty/docx/opc/coreproperties.cpp
-    ../3rdparty/docx/opc/oxml.cpp
-    ../3rdparty/docx/opc/constants.cpp
-    ../3rdparty/docx/oxml/parts/oxmldocument.cpp
-    ../3rdparty/docx/oxml/oxmltext.cpp
-    ../3rdparty/docx/table.cpp
-    ../3rdparty/docx/oxml/xmlchemy.cpp
-    ../3rdparty/docx/oxml/oxmltable.cpp
-    ../3rdparty/docx/oxml/oxmlshape.cpp
-    ../3rdparty/docx/shape.cpp
-    ../3rdparty/docx/parts/imagepart.cpp
-    ../3rdparty/docx/image/image.cpp
-    ../3rdparty/docx/opc/physpkgreader.cpp
-    ../3rdparty/docx/opc/packagereader.cpp
-    ../3rdparty/docx/opc/contenttypemap.cpp
-    ../3rdparty/docx/opc/serializedrelationships.cpp
-    ../3rdparty/docx/opc/rel.cpp
-    ../3rdparty/docx/opc/packagewriter.cpp
-    ../3rdparty/docx/opc/physpkgwriter.cpp
-    ../3rdparty/docx/enums/enumtext.cpp
-    ../3rdparty/docx/length.cpp
-    )
-set (XLSX_CPP_FILES
-    ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdocpropscore.cpp
-    ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdocpropsapp.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxrelationships.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxutility.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxsharedstrings.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcontenttypes.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxtheme.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxformat.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxstyles.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxworkbook.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxabstractsheet.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxworksheet.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxchartsheet.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxzipwriter.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdrawing.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxzipreader.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdocument.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcell.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdatavalidation.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcellreference.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcellrange.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxrichstring.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxconditionalformatting.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcolor.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxnumformatparser.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxdrawinganchor.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxmediafile.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxabstractooxmlfile.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxchart.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxsimpleooxmlfile.cpp
-       ../3rdparty/QtXlsxWriter/src/xlsx/xlsxcellformula.cpp
 
 
-
-
-    )
 
 set (TEST_ACCESSIBLE_HEADERS_FILES
      ../application/accessible.h
@@ -246,10 +185,32 @@ endfunction()
 find_library(ICUIL18N_LIB icui18n)
 find_library(ICUUC_LIB icuuc)
 
+#--------------------libxlsx源码引入---------------------------------
+file(GLOB LXW_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter/src/*.c)
+file(GLOB_RECURSE LXW_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter/include *.h)
 
+set (MINIZIP_SOURCES
+    ../3rdparty/minizip/ioapi.c
+#../3rdparty/minizip/miniunz.c
+ ../3rdparty/minizip/minizip.c
+../3rdparty/minizip/mztools.c
+../3rdparty/minizip/unzip.c
+../3rdparty/minizip/zip.c
+    )
 
-include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
-include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/QtXlsxWriter/src/xlsx")
+file(GLOB TMPFILE_SOURCES  ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmpfileplus/*.c)
+ file(GLOB MD5SOURCES   ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5/*.c)
+#---------------------------------------------
+#---------------DOCXFACTORY源码引入----------------------
+file(GLOB_RECURSE DOCXFAC_SOURCES  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.cpp" )
+file(GLOB_RECURSE DOCXFAC_SOURCES_C  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.c" )
+#-----------------------------------------------------
+
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/include")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/minizip")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmpfileplus")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../application")
 include_directories(${DtkWidget_INCLUDE_DIRS})
@@ -259,6 +220,11 @@ include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5TestLib_LIBRARIES})
 include_directories( ${DFrameworkDBus_INCLUDE_DIRS})
+include_directories( ${Boost_INCLUDE_DIRS})
+include_directories( ${ZLIB_INCLUDE_DIRS})
+include_directories( ${RapidJSON_INCLUDE_DIRS})
+include_directories(${ImageMagick_INCLUDE_DIRS})
+include_directories(${XercesC_INCLUDE_DIRS})
 #include_directories(${Qt5Widgets_LIBRARIES}
 #                                               ${Qt5Core_LIBRARIES}
 #                                              ${Qt5DBus_LIBRARIES}
@@ -348,12 +314,17 @@ src/*.cpp
 include_directories(src)
 
 
-add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource})
+add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES}   ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 
 
 
-target_link_libraries(${PROJECT_NAME_TEST}  ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread)
-
+target_link_libraries(${PROJECT_NAME_TEST}  ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
+#当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
+target_link_libraries(${PROJECT_NAME_TEST} ${ZLIB_LIBRARIES})
+target_link_libraries(${PROJECT_NAME_TEST} ${Boost_LIBRARIES})
+target_link_libraries(${PROJECT_NAME_TEST} ${RapidJSON_LIBRARIES})
+target_link_libraries(${PROJECT_NAME_TEST} ${ImageMagick_LIBRARIES})
+target_link_libraries(${PROJECT_NAME_TEST} ${XercesC_LIBRARIES})
 
 
 #------------------------------ 创建'make test'指令---------------------------------------
