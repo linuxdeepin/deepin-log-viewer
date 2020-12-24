@@ -668,7 +668,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_currentType = APP_TREE_DATA;
         this->setAppComboBoxItem();
         this->setSelectorVisible(true, true, false, true, false);
-        emit sigCbxAppIdxChanged(cbx_app->itemData(0, Qt::UserRole + 1).toString());
+        //   emit sigCbxAppIdxChanged(cbx_app->itemData(0, Qt::UserRole + 1).toString());
     } else if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         m_currentType = JOUR_TREE_DATA;
         this->setSelectorVisible(true, false, false, true, false);
