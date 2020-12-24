@@ -317,8 +317,8 @@ void LogAuthThread::handleKern()
         }
 
         QString msgInfo;
-        for (auto i = 5; i < list.size(); i++) {
-            msgInfo.append(list[i] + " ");
+        for (auto k = 5; k < list.size(); k++) {
+            msgInfo.append(list[k] + " ");
         }
         msg.msg = msgInfo;
 

@@ -33,7 +33,7 @@ class logDetailInfoWidget : public Dtk::Widget::DWidget
 {
     Q_OBJECT
 public:
-    logDetailInfoWidget(QWidget *parent = nullptr);
+    explicit logDetailInfoWidget(QWidget *parent = nullptr);
 
     void cleanText();
 

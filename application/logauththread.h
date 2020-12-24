@@ -29,7 +29,7 @@ class LogAuthThread :  public QObject, public QRunnable
 {
     Q_OBJECT
 public:
-    LogAuthThread(QObject *parent = nullptr);
+    explicit LogAuthThread(QObject *parent = nullptr);
     ~LogAuthThread() override;
 
     static LogAuthThread *instance()

@@ -33,7 +33,7 @@ class LogListView ;
 class LogListDelegate : public Dtk::Widget::DStyledItemDelegate
 {
 public:
-    LogListDelegate(LogListView *parent = nullptr);
+    explicit LogListDelegate(LogListView *parent = nullptr);
 protected:
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option,
@@ -49,7 +49,7 @@ class LogListView : public Dtk::Widget::DListView
 {
     Q_OBJECT
 public:
-    LogListView(QWidget *parent = nullptr);
+    explicit LogListView(QWidget *parent = nullptr);
     void initUI();
     void setDefaultSelect();
     void truncateFile(QString path_); //add by Airy for truncate file
