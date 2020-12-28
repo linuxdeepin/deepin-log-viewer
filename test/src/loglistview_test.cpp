@@ -15,6 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "loglistview.h"
+#include "dbusmanager.h"
 
 #include <gtest/gtest.h>
 #include <stub.h>
@@ -25,6 +26,17 @@
 #include <QPaintEvent>
 #include <QToolTip>
 #include <QMenu>
+#include <QAction>
+
+QAction *stub_exec(const QPoint &pos, QAction *at = nullptr){
+    Q_UNUSED(pos);
+    return (new QAction ());
+}
+
+static QString stub_getSystemInfo(){
+    return "klu";
+}
+
 TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
 {
     LogListView *v = new LogListView(nullptr);
@@ -49,7 +61,8 @@ TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
     QStyleOptionViewItem op;
-    p->helpEvent(new QHelpEvent(QEvent::HelpRequest, QPoint(), QPoint()), new QTreeView(), op, QModelIndex());
+    QHelpEvent helpevent(QEvent::ToolTip,QPoint(0,0),QPoint(0,0));
+    p->helpEvent(&helpevent,v,op,QModelIndex());
     p->deleteLater();
 }
 
@@ -71,6 +84,16 @@ TEST(LogListView_Constructor_UT, LogListView_Constructor_UT_001)
 
 TEST(LogListView_initUI_UT, LogListView_initUI_UT_001)
 {
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->initUI();
+    p->deleteLater();
+}
+
+TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(DBusManager,getSystemInfo),stub_getSystemInfo);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->initUI();
@@ -298,4 +321,23 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_focusOutEvent_UT_
     QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusOut, Qt::OtherFocusReason);
     p->focusOutEvent(focusEvent);
     p->deleteLater();
+}
+
+TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_showRightMenu)
+{
+    Stub stub;
+    stub.set((QAction*(QMenu::*)(const QPoint &, QAction *))ADDR(QMenu,exec),stub_exec);
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    p->showRightMenu(QPoint(0,0),false);
+}
+
+TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_paintEvent)
+{
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    QPaintEvent repaint(p->rect());
+    p->paintEvent(&repaint);
 }

@@ -498,3 +498,13 @@ TEST(FilterContent_setExportButtonEnable_UT, FilterContent_setExportButtonEnable
     p->setExportButtonEnable(true);
     p->deleteLater();
 }
+
+TEST(FilterContent_setExportButtonEnable_UT, FilterContent_paintEvent_UT)
+{
+    FilterContent *p = new FilterContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QPaintEvent repaint(p->rect());
+    p->paintEvent(&repaint);
+    p->deleteLater();
+}
+
