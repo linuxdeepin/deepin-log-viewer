@@ -27,6 +27,39 @@ TEST(wtmpparse_wtmp_open_UT, wtmpparse_wtmp_open_UT)
     EXPECT_NE(result, -1);
 }
 
+TEST(wtmpparse_wtmp_next_UT, wtmp_open_back_UT)
+{
+    int result = wtmp_open_back("test_test");
+    EXPECT_EQ(result, -1);
+}
+
+TEST(wtmpparse_wtmp_next_UT, seek_end_UT)
+{
+    int result = seek_end();
+    EXPECT_EQ(result, 0);
+}
+
+TEST(wtmpparse_wtmp_next_UT, wtmp_reload_back_UT)
+{
+    int result = wtmp_reload_back();
+    EXPECT_NE(result, 0);
+}
+
+TEST(wtmpparse_wtmp_next_UT, wtmp_back_UT)
+{
+    struct utmp *test = wtmp_back();
+    EXPECT_EQ(test, nullptr);
+}
+
+TEST(wtmpparse_wtmp_next_UT, show_end_time_UT)
+{
+    show_end_time(233);
+}
+
+TEST(wtmpparse_wtmp_next_UT, show_start_time_UT)
+{
+    show_start_time(233);
+}
 //TEST(wtmpparse_wtmp_reload_UT, wtmpparse_wtmp_reload_UT_001)
 //{
 //    int result = wtmp_reload();

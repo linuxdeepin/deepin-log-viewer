@@ -22,149 +22,224 @@
 #include <QDebug>
 #include <QPaintEvent>
 #include <QPainter>
-TEST(LogTreeView_Constructor_UT, LogTreeView_Constructor_UT_001)
-{
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
 
-    p->deleteLater();
+class LogTreeView_UT : public testing::Test
+{
+public:
+    //添加日志
+    static void SetUpTestCase()
+    {
+        qDebug() << "SetUpTestCase" << endl;
+    }
+    static void TearDownTestCase()
+    {
+        qDebug() << "TearDownTestCase" << endl;
+    }
+    void SetUp() //TEST跑之前会执行SetUp
+    {
+        m_treeView = new LogTreeView();
+        qDebug() << "SetUp" << endl;
+    }
+    void TearDown() //TEST跑完之后会执行TearDown
+    {
+        delete m_treeView;
+    }
+    LogTreeView *m_treeView;
+};
+
+TEST_F(LogTreeView_UT, singleRowHeight_UT)
+{
+    EXPECT_EQ(-1, m_treeView->singleRowHeight());
 }
 
-TEST(LogTreeView_singleRowHeight_UT, LogTreeView_singleRowHeight_UT_001)
+TEST_F(LogTreeView_UT, paintEvent_UT)
 {
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->singleRowHeight();
-    p->deleteLater();
+    QPaintEvent repait(m_treeView->rect());
+    m_treeView->paintEvent(&repait);
 }
 
-TEST(LogTreeView_initUI_UT, LogTreeView_initUI_UT_001)
+//TEST_F(LogTreeView_UT, drawRow_UT)
+//{
+//    QPainter painter;
+//    QStyleOptionViewItem option;
+//    m_treeView->drawRow(&painter, option, QModelIndex());
+//}
+
+TEST_F(LogTreeView_UT, keyPressEvent_UT)
 {
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->initUI();
-    p->deleteLater();
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+    m_treeView->keyPressEvent(&event);
 }
 
-//TEST(LogTreeView_paintEvent_UT, LogTreeView_paintEvent_UT_001)
+TEST_F(LogTreeView_UT, mouseMoveEvent_UT)
+{
+    QMouseEvent moveEvent(QEvent::MouseMove, QPoint(0, 0), QPoint(10, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    m_treeView->m_isPressed = true;
+    m_treeView->mouseMoveEvent(&moveEvent);
+    ;
+}
+
+TEST_F(LogTreeView_UT, mousePressEvent_UT)
+{
+    QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    m_treeView->mousePressEvent(&event);
+}
+
+TEST_F(LogTreeView_UT, mouseReleaseEvent_UT)
+{
+    QMouseEvent event(QEvent::MouseButtonRelease, QPointF(20, 20), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    m_treeView->mouseReleaseEvent(&event);
+}
+
+TEST_F(LogTreeView_UT, Event_UT)
+{
+    QEvent en(QEvent::TouchBegin);
+    m_treeView->event(&en);
+}
+
+//TEST(LogTreeView_Constructor_UT, LogTreeView_Constructor_UT_001)
 //{
 //    LogTreeView *p = new LogTreeView(nullptr);
 //    EXPECT_NE(p, nullptr);
-//    p->paintEvent(new QPaintEvent(p->rect()));
+
 //    p->deleteLater();
 //}
 
-//TEST(LogTreeView_drawRow_UT, LogTreeView_drawRow_UT_001)
+//TEST(LogTreeView_singleRowHeight_UT, LogTreeView_singleRowHeight_UT_001)
 //{
 //    LogTreeView *p = new LogTreeView(nullptr);
 //    EXPECT_NE(p, nullptr);
-//    p->drawRow(new QPainter, QStyleOptionViewItem(), QModelIndex());
+//    p->singleRowHeight();
 //    p->deleteLater();
 //}
 
-class LogTreeView_keyPressEvent_UT_Param
-{
-public:
-    LogTreeView_keyPressEvent_UT_Param(int iKey)
-    {
-        key = iKey;
-    }
-    int key;
-};
+//TEST(LogTreeView_initUI_UT, LogTreeView_initUI_UT_001)
+//{
+//    LogTreeView *p = new LogTreeView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->initUI();
+//    p->deleteLater();
+//}
 
-class LogTreeView_keyPressEvent_UT : public ::testing::TestWithParam<LogTreeView_keyPressEvent_UT_Param>
-{
-};
+////TEST(LogTreeView_paintEvent_UT, LogTreeView_paintEvent_UT_001)
+////{
+////    LogTreeView *p = new LogTreeView(nullptr);
+////    EXPECT_NE(p, nullptr);
+////    p->paintEvent(new QPaintEvent(p->rect()));
+////    p->deleteLater();
+////}
 
-INSTANTIATE_TEST_CASE_P(LogTreeView, LogTreeView_keyPressEvent_UT, ::testing::Values(LogTreeView_keyPressEvent_UT_Param(Qt::Key_Up), LogTreeView_keyPressEvent_UT_Param(Qt::Key_Down), LogTreeView_keyPressEvent_UT_Param(Qt::Key_0)));
+////TEST(LogTreeView_drawRow_UT, LogTreeView_drawRow_UT_001)
+////{
+////    LogTreeView *p = new LogTreeView(nullptr);
+////    EXPECT_NE(p, nullptr);
+////    p->drawRow(new QPainter, QStyleOptionViewItem(), QModelIndex());
+////    p->deleteLater();
+////}
 
-TEST_P(LogTreeView_keyPressEvent_UT, LogTreeView_keyPressEvent_UT_001)
-{
-    LogTreeView_keyPressEvent_UT_Param param = GetParam();
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
+//class LogTreeView_keyPressEvent_UT_Param
+//{
+//public:
+//    LogTreeView_keyPressEvent_UT_Param(int iKey)
+//    {
+//        key = iKey;
+//    }
+//    int key;
+//};
 
-    QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
-    p->keyPressEvent(keyEvent);
-    p->deleteLater();
-}
+//class LogTreeView_keyPressEvent_UT : public ::testing::TestWithParam<LogTreeView_keyPressEvent_UT_Param>
+//{
+//};
 
-class LogTreeView_event_UT_Param
-{
-public:
-    LogTreeView_event_UT_Param(QEvent::Type iKey)
-    {
-        key = iKey;
-    }
-    QEvent::Type key;
-};
+//INSTANTIATE_TEST_CASE_P(LogTreeView, LogTreeView_keyPressEvent_UT, ::testing::Values(LogTreeView_keyPressEvent_UT_Param(Qt::Key_Up), LogTreeView_keyPressEvent_UT_Param(Qt::Key_Down), LogTreeView_keyPressEvent_UT_Param(Qt::Key_0)));
 
-class LogTreeView_event_UT : public ::testing::TestWithParam<LogTreeView_event_UT_Param>
-{
-};
+//TEST_P(LogTreeView_keyPressEvent_UT, LogTreeView_keyPressEvent_UT_001)
+//{
+//    LogTreeView_keyPressEvent_UT_Param param = GetParam();
+//    LogTreeView *p = new LogTreeView(nullptr);
+//    EXPECT_NE(p, nullptr);
 
-INSTANTIATE_TEST_CASE_P(LogTreeView, LogTreeView_event_UT, ::testing::Values(LogTreeView_event_UT_Param(QEvent::TouchBegin), LogTreeView_event_UT_Param(QEvent::Hide)));
+//    QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
+//    p->keyPressEvent(keyEvent);
+//    p->deleteLater();
+//}
 
-TEST_P(LogTreeView_event_UT, LogTreeView_event_UT_001)
-{
-    LogTreeView_event_UT_Param param = GetParam();
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
-    QTouchEvent a(param.key);
-    p->event(&a);
-    p->deleteLater();
-}
+//class LogTreeView_event_UT_Param
+//{
+//public:
+//    LogTreeView_event_UT_Param(QEvent::Type iKey)
+//    {
+//        key = iKey;
+//    }
+//    QEvent::Type key;
+//};
 
-TEST(LogTreeView_mousePressEvent_UT, LogTreeView_mousePressEvent_UT)
-{
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->mousePressEvent(new QMouseEvent(QEvent::MouseButtonPress, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
-    p->deleteLater();
-}
+//class LogTreeView_event_UT : public ::testing::TestWithParam<LogTreeView_event_UT_Param>
+//{
+//};
 
-TEST(LogTreeView_mouseMoveEvent_UT, LogTreeView_mouseMoveEvent_UT_001)
-{
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->m_isPressed = true;
-    p->mouseMoveEvent(new QMouseEvent(QEvent::MouseMove, QPoint(1, 1), Qt::NoButton, Qt::NoButton, Qt::NoModifier));
-    p->deleteLater();
-}
+//INSTANTIATE_TEST_CASE_P(LogTreeView, LogTreeView_event_UT, ::testing::Values(LogTreeView_event_UT_Param(QEvent::TouchBegin), LogTreeView_event_UT_Param(QEvent::Hide)));
 
-TEST(LogTreeView_mouseMoveEvent_UT, LogTreeView_mouseMoveEvent_UT_002)
-{
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->m_isPressed = false;
-    p->mouseMoveEvent(new QMouseEvent(QEvent::MouseMove, QPoint(1, 1), Qt::NoButton, Qt::NoButton, Qt::NoModifier));
-    p->deleteLater();
-}
+//TEST_P(LogTreeView_event_UT, LogTreeView_event_UT_001)
+//{
+//    LogTreeView_event_UT_Param param = GetParam();
+//    LogTreeView *p = new LogTreeView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    QTouchEvent a(param.key);
+//    p->event(&a);
+//    p->deleteLater();
+//}
 
-TEST(LogTreeView_mouseReleaseEvent_UT, LogTreeView_mouseReleaseEvent_UT_001)
-{
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->m_isPressed = false;
-    p->mouseReleaseEvent(new QMouseEvent(QEvent::MouseButtonRelease, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
-    p->deleteLater();
-}
+//TEST(LogTreeView_mousePressEvent_UT, LogTreeView_mousePressEvent_UT)
+//{
+//    LogTreeView *p = new LogTreeView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->mousePressEvent(new QMouseEvent(QEvent::MouseButtonPress, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
+//    p->deleteLater();
+//}
 
-TEST(LogTreeView_mouseReleaseEvent_UT, LogTreeView_mouseReleaseEvent_UT_002)
-{
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->m_isPressed = true;
-    p->mouseReleaseEvent(new QMouseEvent(QEvent::MouseButtonRelease, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
-    p->deleteLater();
-}
+//TEST(LogTreeView_mouseMoveEvent_UT, LogTreeView_mouseMoveEvent_UT_001)
+//{
+//    LogTreeView *p = new LogTreeView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->m_isPressed = true;
+//    p->mouseMoveEvent(new QMouseEvent(QEvent::MouseMove, QPoint(1, 1), Qt::NoButton, Qt::NoButton, Qt::NoModifier));
+//    p->deleteLater();
+//}
 
-TEST(LogTreeView_focusInEvent_UT, LogTreeView_focusInEvent_UT_001)
-{
-    LogTreeView *p = new LogTreeView(nullptr);
-    EXPECT_NE(p, nullptr);
+//TEST(LogTreeView_mouseMoveEvent_UT, LogTreeView_mouseMoveEvent_UT_002)
+//{
+//    LogTreeView *p = new LogTreeView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->m_isPressed = false;
+//    p->mouseMoveEvent(new QMouseEvent(QEvent::MouseMove, QPoint(1, 1), Qt::NoButton, Qt::NoButton, Qt::NoModifier));
+//    p->deleteLater();
+//}
 
-    QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusIn);
-    p->focusInEvent(focusEvent);
-    p->deleteLater();
-}
+//TEST(LogTreeView_mouseReleaseEvent_UT, LogTreeView_mouseReleaseEvent_UT_001)
+//{
+//    LogTreeView *p = new LogTreeView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->m_isPressed = false;
+//    p->mouseReleaseEvent(new QMouseEvent(QEvent::MouseButtonRelease, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
+//    p->deleteLater();
+//}
+
+//TEST(LogTreeView_mouseReleaseEvent_UT, LogTreeView_mouseReleaseEvent_UT_002)
+//{
+//    LogTreeView *p = new LogTreeView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->m_isPressed = true;
+//    p->mouseReleaseEvent(new QMouseEvent(QEvent::MouseButtonRelease, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
+//    p->deleteLater();
+//}
+
+//TEST(LogTreeView_focusInEvent_UT, LogTreeView_focusInEvent_UT_001)
+//{
+//    LogTreeView *p = new LogTreeView(nullptr);
+//    EXPECT_NE(p, nullptr);
+
+//    QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusIn);
+//    p->focusInEvent(focusEvent);
+//    p->deleteLater();
+//}

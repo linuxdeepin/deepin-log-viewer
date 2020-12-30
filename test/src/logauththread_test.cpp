@@ -17,10 +17,12 @@
 #include <gtest/gtest.h>
 #include <stub.h>
 #include "logauththread.h"
+#include "sharedmemorymanager.h"
 
 #include <QDate>
 #include <QDebug>
 #include <QProcess>
+#include <QFile>
 TEST(LogAuthThread_Constructor_UT, LogAuthThread_Constructor_UT)
 {
     LogAuthThread *p = new LogAuthThread(nullptr);
@@ -92,6 +94,20 @@ public:
     LOG_FLAG type;
 };
 
+bool stub_isAttached()
+{
+    return true;
+}
+
+bool stub_exists001()
+{
+    return true;
+}
+
+QByteArray stub_readAllStandardOutput001()
+{
+    return "[20]2[0]-0[7]-03,  [19:19:18.639,dsadj,dasjdajsd,  [adsdas.dasdasd,    [sad, asd. asd  .";
+}
 
 void LogAuthThread_handleBoot_UT_QProcess_start(void *, const QString &program, const QStringList &arguments, QProcess::OpenMode mode = QProcess::ReadWrite)
 {
@@ -104,6 +120,8 @@ TEST(LogAuthThread_handleBoot_UT, LogAuthThread_handleBoot_UT)
     EXPECT_NE(p, nullptr);
     Stub stub;
     stub.set((void (QProcess::*)(const QString &, const QStringList &, QProcess::OpenMode mode))ADDR(QProcess, start), LogAuthThread_handleBoot_UT_QProcess_start);
+    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_exists001);
+    p->m_canRun = true;
     p->handleBoot();
     p->deleteLater();
 }
@@ -114,6 +132,9 @@ TEST(LogAuthThread_handleKern_UT, LogAuthThread_handleKern_UT)
     EXPECT_NE(p, nullptr);
     Stub stub;
     stub.set((void (QProcess::*)(const QString &, const QStringList &, QProcess::OpenMode mode))ADDR(QProcess, start), LogAuthThread_handleBoot_UT_QProcess_start);
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
+    p->m_canRun = true;
     p->handleKern();
     p->deleteLater();
 }
@@ -122,6 +143,10 @@ TEST(LogAuthThread_handleKwin_UT, LogAuthThread_handleKwin_UT)
 {
     LogAuthThread *p = new LogAuthThread(nullptr);
     EXPECT_NE(p, nullptr);
+    Stub stub;
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
+    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_exists001);
+    p->m_canRun = true;
     p->handleKwin();
     p->deleteLater();
 }
@@ -130,7 +155,21 @@ TEST(LogAuthThread_handleXorg_UT, LogAuthThread_handleXorg_UT)
 {
     LogAuthThread *p = new LogAuthThread(nullptr);
     EXPECT_NE(p, nullptr);
+    p->m_canRun = true;
+    Stub stub;
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
     p->handleXorg();
+    p->deleteLater();
+}
+
+TEST(LogAuthThread_handleXorg_UT, LogAuthThread_handleNormal_UT)
+{
+    LogAuthThread *p = new LogAuthThread(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_canRun = true;
+    Stub stub;
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
+    p->handleNormal();
     p->deleteLater();
 }
 
@@ -138,6 +177,9 @@ TEST(LogAuthThread_handleDkpg_UT, LogAuthThread_handleDkpg_UT)
 {
     LogAuthThread *p = new LogAuthThread(nullptr);
     EXPECT_NE(p, nullptr);
+    p->m_canRun = true;
+    Stub stub;
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
     p->handleDkpg();
     p->deleteLater();
 }

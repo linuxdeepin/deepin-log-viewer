@@ -31,6 +31,7 @@ set(LINK_LIBS
 )
 #可访问private
 ADD_COMPILE_OPTIONS(-fno-access-control)
+ADD_COMPILE_OPTIONS(-fno-inline)
 set (PROJECT_NAME_TEST deepin-log-viewer-test)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -295,6 +296,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 FILE(GLOB allTestSource
 src/*.cpp
 common/*.cpp
+
 # src/displaycontent_test.cpp
 #  src/test_main.cpp
 #  src/stuballthread.cpp

@@ -188,6 +188,10 @@ INSTANTIATE_TEST_CASE_P(LogCollectorMain, LogCollectorMain_handleApplicationTabE
                             LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "searchChildEdt", true, "")
                             // LogCollectorMain_handleApplicationTabEventNotify_UT_Param(Qt::Key_Backtab, "", false, "")
                         ));
+QString stub_ObjectName()
+{
+    return QString("logTypeSelectList");
+}
 
 TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_handleApplicationTabEventNotify_UT_001)
 {
@@ -213,5 +217,33 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
 //    EXPECT_EQ(rs, param.result);
 
 //    EXPECT_EQ(p->focusWidget()->objectName(), param.focusObjectName) ;
+    p->deleteLater();
+}
+
+TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_handleApplicationTabEventNotify_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(QObject, objectName), stub_ObjectName);
+    LogCollectorMain_handleApplicationTabEventNotify_UT_Param param = GetParam();
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Backtab, Qt::NoModifier);
+    QWidget *w = nullptr;
+    if (!param.objectName.isEmpty())
+        w = p->titlebar()->findChild<QWidget *>(QString("logTypeSelectList"));
+    p->handleApplicationTabEventNotify(w, keyEvent);
+    //    EXPECT_EQ(rs, param.result);
+
+    //    EXPECT_EQ(p->focusWidget()->objectName(), param.focusObjectName) ;
     p->deleteLater();
 }

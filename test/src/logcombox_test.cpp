@@ -94,3 +94,4 @@ TEST(LogCombox_focusOutEvent_UT, LogCombox_focusOutEvent_UT)
     p->focusOutEvent(e);
     p->deleteLater();
 }
+

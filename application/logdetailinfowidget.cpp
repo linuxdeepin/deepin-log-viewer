@@ -15,7 +15,6 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "logdetailinfowidget.h"
-#include "model/log_sort_filter_proxy_model.h"
 #include <sys/utsname.h>
 #include <DApplication>
 #include <DApplicationHelper>

@@ -19,6 +19,21 @@
 #include "logapplicationhelper.h"
 #include <QDebug>
 
+QByteArray stub_readLine(qint64 maxlen = 0)
+{
+    return "Hidden testX-Deepin-Vendor=deepin";
+}
+
+QByteArray stub_readLine001(qint64 maxlen = 0)
+{
+    return "NotShowIn testX-Deepin-Vendor=deepin";
+}
+
+void stub_parseField(QString path, QString name, bool isDeepin, bool isGeneric,
+                     bool isName)
+{
+}
+
 TEST(LogApplicationHelper_Constructor_UT, LogApplicationHelper_Constructor_UT)
 {
     LogApplicationHelper *p = new LogApplicationHelper(nullptr);
@@ -37,6 +52,28 @@ TEST(LogApplicationHelper_createDesktopFiles_UT, LogApplicationHelper_createDesk
 {
     LogApplicationHelper *p = new LogApplicationHelper(nullptr);
     EXPECT_NE(p, nullptr);
+    p->createDesktopFiles();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_createDesktopFiles_UT, LogApplicationHelper_createDesktopFiles_UT001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    Stub stub;
+    stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), stub_readLine);
+    stub.set(ADDR(LogApplicationHelper, parseField), stub_parseField);
+    p->createDesktopFiles();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_createDesktopFiles_UT, LogApplicationHelper_createDesktopFiles_UT002)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    Stub stub;
+    stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), stub_readLine001);
+    stub.set(ADDR(LogApplicationHelper, parseField), stub_parseField);
     p->createDesktopFiles();
     p->deleteLater();
 }

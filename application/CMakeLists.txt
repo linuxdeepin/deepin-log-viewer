@@ -167,7 +167,6 @@ set (APP_CPP_FILES
      journalbootwork.cpp
      exportprogressdlg.cpp
      logscrollbar.cpp
-     model/log_sort_filter_proxy_model.cpp
      logcombox.cpp
      dbusmanager.cpp
      lognormalbutton.cpp

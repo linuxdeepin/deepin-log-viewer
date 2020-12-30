@@ -86,6 +86,11 @@ INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogApplicationParseThread_doW
                                                                                                           , LogApplicationParseThread_doWork_UT_Param(true, false, false)
                                                                                                          ));
 
+QByteArray stub_readAllStandardOutput()
+{
+    return "2020-07-03, 19:19:18.639,dsadj,dasjdajsd,adsdas.dasdasd,sad,asd.asd.";
+}
+
 TEST_P(LogApplicationParseThread_doWork_UT, LogApplicationParseThread_doWork_UT_001)
 {
     LogApplicationParseThread_doWork_UT_Param param = GetParam();
@@ -96,6 +101,26 @@ TEST_P(LogApplicationParseThread_doWork_UT, LogApplicationParseThread_doWork_UT_
     filter.lvlFilter = param.isLvlEmpty ? LVALL : INF;
     filter.timeFilterBegin = param.isTimeEmpty ? -1 : 0;
     filter.timeFilterEnd = param.isTimeEmpty ? -1 : 2 ^ 10;
+    p->doWork();
+    p->deleteLater();
+}
+
+TEST_P(LogApplicationParseThread_doWork_UT, LogApplicationParseThread_doWork_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput);
+    LogApplicationParseThread_doWork_UT_Param param = GetParam();
+    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
+    EXPECT_NE(p, nullptr);
+    APP_FILTERS filter;
+    filter.path = param.isPathEmpty ? "" : "../sources/dde-calendar.log";
+    filter.lvlFilter = param.isLvlEmpty ? LVALL : INF;
+    filter.timeFilterBegin = param.isTimeEmpty ? -1 : 0;
+    filter.timeFilterEnd = param.isTimeEmpty ? -1 : 2 ^ 10;
+    p->m_AppFiler.path = "test";
+    p->m_AppFiler.timeFilterBegin = 20;
+    p->m_AppFiler.timeFilterEnd = 20;
+    p->m_AppFiler.lvlFilter = LVALL;
     p->doWork();
     p->deleteLater();
 }
@@ -129,4 +154,3 @@ TEST(LogApplicationParseThread_initProccess_UT, LogApplicationParseThread_initPr
     EXPECT_NE(p->m_process, nullptr);
     p->deleteLater();
 }
-

@@ -27,6 +27,8 @@
 #include <QToolTip>
 #include <QMenu>
 #include <QAction>
+#include <QStyle>
+#include <DStyle>
 
 QAction *stub_exec(const QPoint &pos, QAction *at = nullptr){
     Q_UNUSED(pos);
@@ -35,6 +37,32 @@ QAction *stub_exec(const QPoint &pos, QAction *at = nullptr){
 
 static QString stub_getSystemInfo(){
     return "klu";
+}
+
+QVariant stub_data(int arole)
+{
+    Q_UNUSED(arole);
+    return QVariant("test");
+}
+
+bool stub_hasFocus()
+{
+    return true;
+}
+
+bool stub_isValid()
+{
+    return true;
+}
+
+static QRect stub_visualRect(Qt::LayoutDirection direction, const QRect &boundingRect,
+                             const QRect &logicalRect)
+{
+    return QRect(0, 0, 20, 20);
+}
+
+void stub_drawPrimitive(QStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *w = nullptr)
+{
 }
 
 TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
@@ -51,6 +79,10 @@ TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
     QStyleOptionViewItem op;
+    op.state = QStyle::State_HasFocus;
+    v->m_reson = Qt::TabFocusReason;
+    Stub stub;
+    stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
     p->paint(new QPainter, op, QModelIndex());
     p->deleteLater();
 }
@@ -63,6 +95,19 @@ TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
     QStyleOptionViewItem op;
     QHelpEvent helpevent(QEvent::ToolTip,QPoint(0,0),QPoint(0,0));
     p->helpEvent(&helpevent,v,op,QModelIndex());
+    p->deleteLater();
+}
+
+TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_002)
+{
+    LogListView *v = new LogListView(nullptr);
+    LogListDelegate *p = new LogListDelegate(v);
+    EXPECT_NE(p, nullptr);
+    QStyleOptionViewItem op;
+    Stub stub;
+    stub.set(ADDR(QModelIndex, data), stub_data);
+    QHelpEvent helpevent(QEvent::ToolTip, QPoint(0, 0), QPoint(0, 0));
+    p->helpEvent(&helpevent, v, op, QModelIndex());
     p->deleteLater();
 }
 

@@ -23,13 +23,36 @@
 #include <QPainter>
 #include <QEvent>
 #include <QFocusEvent>
+#include <DStyle>
 
-TEST(LogViewHeaderView_Constructor_UT, LogViewHeaderView_Constructor_UT_001)
+class LogViewHeaderView_UT : public testing::Test
 {
-    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
-    EXPECT_NE(p, nullptr);
+public:
+    //添加日志
+    static void SetUpTestCase()
+    {
+        qDebug() << "SetUpTestCase" << endl;
+    }
+    static void TearDownTestCase()
+    {
+        qDebug() << "TearDownTestCase" << endl;
+    }
+    void SetUp() //TEST跑之前会执行SetUp
+    {
+        m_LogViewHeaderView = new LogViewHeaderView(Qt::Vertical);
+        qDebug() << "SetUp" << endl;
+    }
+    void TearDown() //TEST跑完之后会执行TearDown
+    {
+        delete m_LogViewHeaderView;
+    }
+    LogViewHeaderView *m_LogViewHeaderView;
+};
 
-    p->deleteLater();
+
+TEST_F(LogViewHeaderView_UT, LogViewHeaderView_Constructor_UT_001)
+{
+    EXPECT_NE(m_LogViewHeaderView, nullptr);
 }
 
 //TEST(LogViewHeaderView_paintSection_UT, LogViewHeaderView_paintSection_UT_001)
@@ -40,30 +63,27 @@ TEST(LogViewHeaderView_Constructor_UT, LogViewHeaderView_Constructor_UT_001)
 //    p->deleteLater();
 //}
 
-TEST(LogViewHeaderView_focusInEvent_UT, LogViewHeaderView_focusInEvent_UT)
+TEST_F(LogViewHeaderView_UT, LogViewHeaderView_focusInEvent_UT)
 {
-    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
-    EXPECT_NE(p, nullptr);
+    EXPECT_NE(m_LogViewHeaderView, nullptr);
     QFocusEvent *e = new QFocusEvent(QEvent::FocusOut, Qt::ShortcutFocusReason);
-    p->focusInEvent(e);
-    EXPECT_EQ(p->m_reson, Qt::ShortcutFocusReason);
-    p->deleteLater();
+    m_LogViewHeaderView->focusInEvent(e);
+    EXPECT_EQ(m_LogViewHeaderView->m_reson, Qt::ShortcutFocusReason);
 }
 
-//TEST(LogViewHeaderView_paintEvent_UT, LogViewHeaderView_paintEvent_UT_001)
+//TEST_F(LogViewHeaderView_UT, LogViewHeaderView_paintEvent_UT_001)
 //{
-//    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->paintEvent(new QPaintEvent(p->rect()));
-//    p->deleteLater();
+//    Stub stub;
+//    stub.set((int (DStyle::*)(DStyle::PixelMetric, const QStyleOption *, const QWidget *))ADDR(QStyle, pixelMetric), stub_pixelMetric);
+//    EXPECT_NE(m_LogViewHeaderView, nullptr);
+//    QPaintEvent repaint(m_LogViewHeaderView->rect());
+//    m_LogViewHeaderView->paintEvent(&repaint);
 //}
 
-TEST(LogViewHeaderView_sizeHint_UT, LogViewHeaderView_sizeHint_UT_001)
+TEST_F(LogViewHeaderView_UT, LogViewHeaderView_sizeHint_UT_001)
 {
-    LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
-    EXPECT_NE(p, nullptr);
-    p->sizeHint();
-    p->deleteLater();
+    EXPECT_NE(m_LogViewHeaderView, nullptr);
+    m_LogViewHeaderView->sizeHint();
 }
 
 //TEST(LogViewHeaderView_sectionSizeHint_UT, LogViewHeaderView_sectionSizeHint_UT_001)

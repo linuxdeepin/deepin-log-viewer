@@ -36,6 +36,21 @@ TEST(DisplayContent_Constructor_UT, DisplayContent_Constructor_UT_001)
     delete p;
 }
 
+TEST(DisplayContent_Constructor_UT, Dslot_normalData_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    LOG_MSG_NORMAL test;
+    test.msg = "test";
+    test.dateTime = "20201231";
+    test.userName = "user";
+    test.eventType = "type";
+    p->m_flag = Normal;
+    p->m_firstLoadPageData = true;
+    p->slot_normalData(-1, QList<LOG_MSG_NORMAL> {test});
+    delete p;
+}
+
 TEST(DisplayContent_Destructor_UT, DisplayContent_Destructor_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);
@@ -852,7 +867,13 @@ TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelo
     stub.set(ADDR(DisplayContent, generateJournalBootFile), DisplayContent_slot_BtnSelected_UT_generateJournalFile);
     stub.set(ADDR(QModelIndex, data), slot_logCatelogueClicked_ModelIndex_data_Func);
     stub.set(ADDR(QModelIndex, isValid), slot_logCatelogueClicked_ModelIndex_isValid_Func);
+    p->m_flag = KERN;
     p->slot_logCatelogueClicked(QModelIndex());
+    //    p->itemData=QDir::homePath() + "/.kwin.log";
+    //    p->slot_logCatelogueClicked(QModelIndex());
+    //    p->itemData="bootklu";
+    //    p->slot_logCatelogueClicked(QModelIndex());
+
     p->deleteLater();
 }
 

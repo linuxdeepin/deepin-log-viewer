@@ -48,16 +48,16 @@ TEST(LogFileParser_Destructor_UT, LogFileParser_Destructor_UT)
 //    p->deleteLater();
 //}
 
-//TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->parseByJournalBoot(QStringList());
-//    p->deleteLater();
-//}
+TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
+{
+    Stub *stub = new Stub;
+    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub->set(ADDR(QThread, start), QThread_start);
+    LogFileParser *p = new LogFileParser(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->parseByJournalBoot(QStringList() << "test");
+    p->deleteLater();
+}
 
 //TEST(LogFileParser_parseByDpkg_UT, LogFileParser_parseByDpkg_UT)
 //{

@@ -167,18 +167,15 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
 #else
     cg = DPalette::Active;
 #endif
-
     DApplicationHelper *dAppHelper = DApplicationHelper::instance();
     DPalette palette = dAppHelper->applicationPalette();
-
+    painter.setRenderHints(QPainter::Antialiasing);
     DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
-
     QBrush bgBrush(palette.color(cg, DPalette::Base));
 
     QStyleOptionHeader option;
     initStyleOption(&option);
     int radius = style->pixelMetric(DStyle::PM_FrameRadius, &option);
-
     QRect rect = viewport()->rect();
     QRectF clipRect(rect.x(), rect.y(), rect.width(), rect.height() * 2);
     QRectF subRect(rect.x(), rect.y() + rect.height(), rect.width(), rect.height());
@@ -186,9 +183,7 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
     clipPath.addRoundedRect(clipRect, radius, radius);
     subPath.addRect(subRect);
     clipPath = clipPath.subtracted(subPath);
-
     painter.fillPath(clipPath, bgBrush);
-
 
     DHeaderView::paintEvent(event);
     painter.restore();

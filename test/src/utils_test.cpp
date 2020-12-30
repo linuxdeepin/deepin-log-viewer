@@ -22,6 +22,8 @@
 #include <QDebug>
 #include <QSize>
 #include <QPixmap>
+#include <QDir>
+
 TEST(Utils_Destructor_UT, Utils_Destructor_UT)
 {
     Utils *p = new Utils(nullptr);
@@ -98,6 +100,28 @@ class Utils_isErroCommand_UT : public ::testing::TestWithParam<Utils_isErroComma
 
 INSTANTIATE_TEST_CASE_P(Utils, Utils_isErroCommand_UT, ::testing::Values(Utils_isErroCommand_UT_Param("权限", Utils::PermissionError), Utils_isErroCommand_UT_Param("permission", Utils::PermissionError), Utils_isErroCommand_UT_Param("请重试", Utils::RetryError), Utils_isErroCommand_UT_Param("retry", Utils::RetryError), Utils_isErroCommand_UT_Param("", Utils::NoError)));
 
+bool stub_exists()
+{
+    return true;
+}
+
+QStringList stub_entryList(QDir::Filters filters, QDir::SortFlags sort)
+{
+    Q_UNUSED(filters);
+    Q_UNUSED(sort);
+    return QStringList() << "test"
+                         << "test1"
+                         << "test2"
+                         << "test3"
+                         << "test4"
+                         << "test5";
+}
+
+bool stub_isFile()
+{
+    return true;
+}
+
 TEST_P(Utils_isErroCommand_UT, Utils_isErroCommand_UT_001)
 {
     Utils_isErroCommand_UT_Param param = GetParam();
@@ -116,9 +140,23 @@ TEST(Utils_checkAndDeleteDir_UT, Utils_checkAndDeleteDir_UT)
 
 TEST(Utils_deleteDir_UT, Utils_deleteDir_UT)
 {
+    Stub stub;
+    stub.set((bool (QDir::*)() const)ADDR(QDir, exists), stub_exists);
+    stub.set((QStringList(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryList), stub_entryList);
+    stub.set(ADDR(QFileInfo, isFile), stub_isFile);
     bool result = Utils::deleteDir(QString("testdirstr__"));
-    EXPECT_EQ(result, true);
+    EXPECT_EQ(result, false);
 }
+
+//TEST(Utils_deleteDir_UT, Utils_deleteDir_UT_001)
+//{
+//    Stub stub;
+//    stub.set((bool (QDir::*)() const)ADDR(QDir, exists),stub_exists);
+//    stub.set((QStringList (QDir::*)(QDir::Filters,QDir::SortFlags) const)ADDR(QDir,entryList),stub_entryList);
+//    stub.set(ADDR(QFileInfo,isDir),stub_isFile);
+//    bool result = Utils::deleteDir(QString("testdirstr__"));
+//    EXPECT_EQ(result, false);
+//}
 
 TEST(Utils_replaceColorfulFont_UT, Utils_replaceColorfulFont_UT)
 {
