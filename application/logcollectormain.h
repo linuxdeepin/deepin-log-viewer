@@ -43,6 +43,7 @@ class DSplitter;
  */
 class LogCollectorMain : public Dtk::Widget::DMainWindow
 {
+    Q_OBJECT
 public:
     explicit LogCollectorMain(QWidget *parent = nullptr);
     ~LogCollectorMain();
@@ -55,6 +56,7 @@ public:
 public slots:
     void resizeWidthByFilterContentWidth(int iWidth);
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
+    void slotHandleTablet(bool isActive);
     // QWidget interface
 protected:
     void closeEvent(QCloseEvent *event);

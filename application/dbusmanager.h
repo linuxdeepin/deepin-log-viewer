@@ -24,6 +24,8 @@
 
 #include <QObject>
 #include <QVariantMap>
+#include <QDBusInterface>
+
 /**
  * @brief The DBusManager class  dbus接口获取工具类
  */
@@ -32,9 +34,13 @@ class DBusManager : public QObject
     Q_OBJECT
 public:
     explicit DBusManager(QObject *parent = nullptr);
+    ~DBusManager();
     static QString getSystemInfo();
+    static QDBusInterface *TableInterFace();
     static bool isGetedKlu ;
     static QString isklusystemName ;
+
+    static QDBusInterface *m_TabletInterFace;
 
 signals:
 

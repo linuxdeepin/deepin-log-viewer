@@ -19,9 +19,9 @@ set(LINK_LIBS
     Qt5::DBus
     Qt5::Concurrent
     Qt5::Test
-    ${DtkWidget_LIBRARIES}
-    ${DtkCore_LIBRARIES}
-    ${DtkGUI_LIBRARIES}
+    ${DtkWidget5.5_LIBRARIES}
+    ${DtkCore5.5_LIBRARIES}
+    ${DtkGUI5.5_LIBRARIES}
 #${DtkWidget_LDFLAGS}
 #${DtkGui_LDFLAGS}
 #${DtkCore_LDFLAGS}
@@ -61,7 +61,7 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5DBus REQUIRED)
-find_package(DtkWidget REQUIRED)
+find_package(DtkWidget5.5 REQUIRED)
 find_package(DtkGui REQUIRED)
 find_package(DtkCore REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)

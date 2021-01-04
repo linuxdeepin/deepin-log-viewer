@@ -62,7 +62,6 @@ public Q_SLOTS: // METHODS
         argumentList << QVariant::fromValue(flag);
         return asyncCallWithArgumentList(QStringLiteral("getFileInfo"), argumentList);
     }
-
 Q_SIGNALS: // SIGNALS
 };
 

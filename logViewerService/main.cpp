@@ -66,7 +66,6 @@ int main(int argc, char *argv[])
         exit(0x0001);
     }
     LogViewerService service;
-    service.getFileInfo("lpr");
     qDebug() << "systemBus.registerService success" << Dtk::Core::DLogManager::getlogFilePath();
     if (!systemBus.registerObject(LogViewrPath,
                                   &service,
