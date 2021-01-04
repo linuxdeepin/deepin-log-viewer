@@ -52,6 +52,8 @@ public:
     int parseByBoot();
     int parseByKern(KERN_FILTERS &iKernFilter);
     int parseByApp(APP_FILTERS &iAPPFilter);
+    void parseByDnf(DNF_FILTERS iDnfFilter);
+    void parseByDmesg(DMESG_FILTERS iDmesgFilter);
 
     //    void parseByNormal1(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler);  // add by Airy
     int parseByNormal(NORMAL_FILTERS &iNormalFiler);   // add by Airy
@@ -69,10 +71,10 @@ signals:
     void bootData(int index, QList<LOG_MSG_BOOT>);
     void kernFinished(int index);
     void kernData(int index, QList<LOG_MSG_JOURNAL>);
+    void dnfFinished(QList<LOG_MSG_DNF>);
+    void dmesgFinished(QList<LOG_MSG_DMESG>);
     void journalFinished(int index);
-
     void journalBootFinished(int index);
-
     void journalData(int index, QList<LOG_MSG_JOURNAL>);
     void journaBootlData(int index, QList<LOG_MSG_JOURNAL>);
 
@@ -96,6 +98,8 @@ signals:
     void stopApp();
     void stopJournal();
     void stopJournalBoot();
+    void stopDnf();
+    void stopDmesg();
     /**
      * @brief proccessError 获取日志文件失败错误信息传递信号，传递到主界面显示 DMessage tooltip
      * @param iError 错误字符

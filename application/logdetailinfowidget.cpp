@@ -512,5 +512,11 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        index.siblingAtColumn(5).data().toString(),
                        index.siblingAtColumn(2).data().toString(), index,
                        index.siblingAtColumn(3).data().toString());
+    } else if (dataStr.contains(DNF_TABLE_DATA)) {
+        fillDetailInfo("dnf", hostname, "", "", index,
+                       index.siblingAtColumn(2).data().toString());
+    } else if (dataStr.contains(DMESG_TABLE_DATA)) {
+        fillDetailInfo("kernel", hostname, "", index.siblingAtColumn(1).data().toString(), index,
+                       index.siblingAtColumn(2).data().toString());
     }
 }

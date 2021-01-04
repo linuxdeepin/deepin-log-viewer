@@ -23,6 +23,26 @@
 #define STRUCTDEF_H
 #include <QString>
 #include <QDir>
+enum PRIORITY { LVALL = -1,
+                EMER,
+                ALERT,
+                CRI,
+                ERR,
+                WARN,
+                NOTICE,
+                INF,
+                DEB };
+enum DNFPRIORITY { DNFLVALL = -1,
+                   TRACE,
+                   SUBDEBUG,
+                   DDEBUG,
+                   DEBUG,
+                   INFO,
+                   WARNING,
+                   ERROR,
+                   CRITICAL,
+                   SUPERCRITICAL };
+Q_DECLARE_METATYPE(DNFPRIORITY)
 struct LOG_MSG_JOURNAL {
     // include dateTime level type detailInfo...
     QString dateTime;
@@ -39,6 +59,17 @@ struct LOG_MSG_DPKG {
     QString msg;
 };
 
+struct LOG_MSG_DNF {
+    QString dateTime;
+    QString level;
+    QString msg;
+};
+
+struct LOG_MSG_DMESG {
+    QString level;
+    QString dateTime;
+    QString msg;
+};
 struct LOG_MSG_BOOT {
     QString status;
     QString msg;
@@ -90,6 +121,14 @@ struct JOURNAL_FILTERS {
     int timeFilter = -99;
 
 };
+struct DMESG_FILTERS {
+    qint64 timeFilter;
+    PRIORITY levelFilter;
+};
+struct DNF_FILTERS {
+    qint64 timeFilter;
+    DNFPRIORITY levelfilter;
+};
 
 /**
  * @brief The NORMAL_FILTERS struct 开关机日志筛选条件
@@ -114,7 +153,6 @@ struct BOOT_FILTERS {
 
 };
 
-enum PRIORITY { LVALL = -1, EMER, ALERT, CRI, ERR, WARN, NOTICE, INF, DEB };
 /**
  * @brief The FILTER_CONFIG struct 筛选控件中的筛选情况记录结构体
  */
@@ -147,8 +185,10 @@ enum LOG_FLAG {
     Normal,
     Kwin,
     BOOT_KLU,
+    Dnf,
+    Dmesg,
     NONE = 9999
-};  // modified by
+}; // modified by
 // Airy
 namespace Log_Item_SPACE {
 enum LogItemDataRole {
@@ -202,8 +242,20 @@ enum NORMAL_DISPLAY_COLUMN {
 };
 }
 
-
-
+namespace DNF_SPACE {
+enum DNF_DISPLAY_COLUMN {
+    dnfLvlColumn = 0,
+    dnfDateTimeColumn,
+    dnfMsgColumn
+};
+}
+namespace DMESG_SPACE {
+enum DMESG_DISPLAY_COLUMN {
+    dmesgLevelColumn = 0,
+    dmesgDateTimeColumn,
+    dmesgMsgColumn
+};
+}
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"
 #define BOOT_TABLE_DATA "bootItemData"
@@ -213,6 +265,8 @@ enum NORMAL_DISPLAY_COLUMN {
 #define APP_TABLE_DATA "applicationItemData"
 #define LAST_TABLE_DATA "lastItemData"  // add by Airy
 #define KWIN_TABLE_DATA "kwinItemData"
+#define DMESG_TABLE_DATA "dmesgItemData"
+#define DNF_TABLE_DATA "dnfItemData"
 
 #define JOUR_TREE_DATA "journalctl"
 #define BOOT_KLU_TREE_DATA "bootklu"
@@ -223,6 +277,8 @@ enum NORMAL_DISPLAY_COLUMN {
 #define KERN_TREE_DATA "/var/log/kern.log"
 #define APP_TREE_DATA "application"
 #define LAST_TREE_DATA "last"  // add by Airy
+#define DNF_TREE_DATA "/var/log/dnf.log"
+#define DMESG_TREE_DATA "dmesg"
 #define ITEM_DATE_ROLE (Qt::UserRole + 66)
 #define ICONPREFIX "://images/"
 #define ICONLIGHTPREFIX "://images/light/"

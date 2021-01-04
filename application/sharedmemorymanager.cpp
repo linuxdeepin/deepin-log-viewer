@@ -76,7 +76,7 @@ void SharedMemoryManager::init()
     if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
         m_commondM->detach();
     if (!m_commondM->create(sizeof(ShareMemoryInfo))) {     //创建共享内存，大小为size
-        qDebug() << "ShareMemory create error" << m_commondM->key() << QSharedMemory:: SharedMemoryError(m_commondM->error()) << m_commondM->errorString();
+        qWarning() << "ShareMemory create error" << m_commondM->key() << QSharedMemory::SharedMemoryError(m_commondM->error()) << m_commondM->errorString();
         if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
             m_commondM->detach();
         m_commondM->attach();

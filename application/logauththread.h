@@ -20,6 +20,7 @@
 
 #include <QProcess>
 #include <QRunnable>
+#include <QMap>
 
 #include <mutex>
 /**
@@ -45,18 +46,22 @@ public:
         }
         return sin;
     }
-
-    //    QString getStandardOutput();
-    //    QString getStandardError();
+    void initDnfLevelMap();
+    void initLevelMap();
+    QString getStandardOutput();
+    QString getStandardError();
     void setType(LOG_FLAG flag) { m_type = flag; }
     void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
     void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
     void setFileterParam(DKPG_FILTERS iFIlters) { m_dkpgFilters = iFIlters; }
     void setFileterParam(KERN_FILTERS iFIlters) { m_kernFilters = iFIlters; }
     void setFileterParam(NORMAL_FILTERS iFIlters) { m_normalFilters = iFIlters; }
+    void setFileterParam(DNF_FILTERS iFIlters) { m_dnfFilters = iFIlters; }
+    void setFileterParam(DMESG_FILTERS iFIlters) { m_dmesgFilters = iFIlters; }
     void stopProccess();
     void setFilePath(QStringList filePath);
     int getIndex();
+    QString startTime();
     /**
      * @brief thread_index 静态成员变量，用来每次构造时标记新的当前线程对象 m_threadIndex
      */
@@ -70,6 +75,8 @@ protected:
     void handleXorg();
     void handleDkpg();
     void handleNormal();
+    void handleDnf();
+    void handleDmesg();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
     qint64 formatDateTime(QString y, QString t);
@@ -97,6 +104,8 @@ signals:
     void dpkgData(int index, QList<LOG_MSG_DPKG> iDataList);
     void normalFinished(int index);
     void normalData(int index, QList<LOG_MSG_NORMAL> iDataList);
+    void dnfFinished(QList<LOG_MSG_DNF> iKwinList);
+    void dmesgFinished(QList<LOG_MSG_DMESG> iKwinList);
     void proccessError(const QString &iError);
 public slots:
     //    void onFinished(int exitCode);
@@ -148,6 +157,11 @@ private:
     qint64 iTime;
     //所有日志文件路径
     QStringList m_FilePath;
+    DNF_FILTERS m_dnfFilters;
+    DMESG_FILTERS m_dmesgFilters;
+    QMap<int, QString> m_levelMap;
+    QMap<QString, int> m_dnfLevelDict;
+    QMap<QString, QString> m_transDnfDict;
 };
 
 #endif  // LOGAUTHTHREAD_H

@@ -31,6 +31,7 @@
 #include <DApplication>
 #include <DStyle>
 #include <DApplication>
+#include <DSysInfo>
 
 #include <QItemSelectionModel>
 #include <QMargins>
@@ -173,7 +174,9 @@ void LogListView::initUI()
     this->setViewportMargins(10, 10, 10, 0);
     const QMargins ListViweItemMargin(15, 0, 5, 0);
     const QVariant VListViewItemMargin = QVariant::fromValue(ListViweItemMargin);
-
+    Dtk::Core::DSysInfo::UosEdition edition = Dtk::Core::DSysInfo::uosEditionType();
+    //等于服务器行业版或欧拉版(centos)
+    bool isCentos = Dtk::Core::DSysInfo::UosEuler == edition || Dtk::Core::DSysInfo::UosEnterpriseC == edition;
     m_pModel = new QStandardItemModel(this);
     QStandardItem *item = nullptr;
     QString  systemName =   DBusManager::getSystemInfo();
@@ -189,32 +192,27 @@ void LogListView::initUI()
         m_pModel->appendRow(item);
     }
 
-    if (isFileExist("/var/log/kern.log")) {
+    if (isCentos) {
         item = new QStandardItem(QIcon::fromTheme("dp_core"), DApplication::translate("Tree", "Kernel Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Kernel Log"));  // add by Airy for bug 16245
-        item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
+        item->setData(DMESG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Kernel Log");
+        item->setAccessibleText("dmesg Log");
         m_pModel->appendRow(item);
+    } else {
+        if (isFileExist("/var/log/kern.log")) {
+            item = new QStandardItem(QIcon::fromTheme("dp_core"), DApplication::translate("Tree", "Kernel Log"));
+            setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+            item->setToolTip(DApplication::translate("Tree", "Kernel Log")); // add by Airy for bug 16245
+            item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
+            item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+            item->setData(VListViewItemMargin, Dtk::MarginsRole);
+            item->setAccessibleText("Kernel Log");
+            m_pModel->appendRow(item);
+        }
     }
-
-//    if (isFileExist("/var/log/boot.log")) {
-//        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
-//        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
-//        item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
-//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-//        m_pModel->appendRow(item);
-//    } else {
-//        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
-//        item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
-//        item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
-//        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-//        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-//        m_pModel->appendRow(item);
-//    }
     if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU")) {
         item = new QStandardItem(QIcon::fromTheme("dp_start"), DApplication::translate("Tree", "Boot Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
@@ -234,22 +232,27 @@ void LogListView::initUI()
         item->setAccessibleText("Boot Log");
         m_pModel->appendRow(item);
     }
-
-
-
-
-    if (isFileExist("/var/log/dpkg.log")) {
+    if (isCentos) {
         item = new QStandardItem(QIcon::fromTheme("dp_d"), DApplication::translate("Tree", "dpkg Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
-        item->setToolTip(DApplication::translate("Tree", "dpkg Log"));  // add by Airy for bug 16245
-        item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
+        item->setToolTip(DApplication::translate("Tree", "dnf Log"));
+        item->setData(DNF_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("dpkg Log");
+        item->setAccessibleText("dnf Log");
         m_pModel->appendRow(item);
+    } else {
+        if (isFileExist("/var/log/dpkg.log")) {
+            item = new QStandardItem(QIcon::fromTheme("dp_d"), DApplication::translate("Tree", "dpkg Log"));
+            setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+            item->setToolTip(DApplication::translate("Tree", "dpkg Log")); // add by Airy for bug 16245
+            item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
+            item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+            item->setData(VListViewItemMargin, Dtk::MarginsRole);
+            item->setAccessibleText("dpkg Log");
+            m_pModel->appendRow(item);
+        }
     }
-
-
     // if (isFileExist(QDir::homePath() + "/.kwin.log")) {
     //w515是新版本内核的panguv返回值  panguV是老版本
     if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName == "pangu" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU") || systemName.toUpper().contains("PANGU")) {
@@ -362,7 +365,7 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
 void LogListView::truncateFile(QString path_)
 {
     QProcess prc;
-    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA) {
+    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA || path_ == DNF_TREE_DATA || path_ == DMESG_TREE_DATA) {
         prc.start("pkexec", QStringList() << "logViewerTruncate" << path_.append("*"));
     } else {
         QStringList arg;
@@ -409,13 +412,14 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
-
+        if (pathData == DMESG_TREE_DATA) {
+            g_openForder->setEnabled(false);
+        }
         QString dirPath = QDir::homePath();
         QString _path_ = g_path;      //get app path
         QString path = "";
 
-
-        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA) {
+        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA || pathData == DNF_TREE_DATA || pathData == DMESG_TREE_DATA) {
             path = pathData;
         } else if (pathData == APP_TREE_DATA) {
             path = _path_;

@@ -27,6 +27,8 @@
 #include <DGuiApplicationHelper>
 #include "dbusproxy/dldbushandler.h"
 
+#include <DApplication>
+
 #include <QDebug>
 #include <QDateTime>
 #include <time.h>
@@ -53,8 +55,8 @@ LogAuthThread::LogAuthThread(QObject *parent)
     //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
     thread_count++;
     m_threadCount = thread_count;
-
-
+    initDnfLevelMap();
+    initLevelMap();
 }
 
 /**
@@ -69,6 +71,41 @@ LogAuthThread::~LogAuthThread()
     //        m_process->deleteLater();
     //        m_process = nullptr;
     //    }
+}
+void LogAuthThread::initDnfLevelMap()
+{
+    m_dnfLevelDict.insert("TRACE", TRACE);
+    m_dnfLevelDict.insert("SUBDEBUG", DEBUG);
+    m_dnfLevelDict.insert("DDEBUG", DEBUG);
+    m_dnfLevelDict.insert("DEBUG", DEBUG);
+    m_dnfLevelDict.insert("INFO", INFO);
+    m_dnfLevelDict.insert("WARNING", WARNING);
+    m_dnfLevelDict.insert("ERROR", ERROR);
+    m_dnfLevelDict.insert("CRITICAL", CRITICAL);
+    m_dnfLevelDict.insert("SUPERCRITICAL", SUPERCRITICAL);
+
+    m_transDnfDict.insert("TRACE", Dtk::Widget::DApplication::translate("Level", "Trace"));
+    m_transDnfDict.insert("SUBDEBUG", Dtk::Widget::DApplication::translate("Level", "Debug"));
+    m_transDnfDict.insert("DDEBUG", Dtk::Widget::DApplication::translate("Level", "Debug"));
+    m_transDnfDict.insert("DEBUG", Dtk::Widget::DApplication::translate("Level", "Debug"));
+    m_transDnfDict.insert("INFO", Dtk::Widget::DApplication::translate("Level", "Info"));
+    m_transDnfDict.insert("WARNING", Dtk::Widget::DApplication::translate("Level", "Warning"));
+    m_transDnfDict.insert("ERROR", Dtk::Widget::DApplication::translate("Level", "Error"));
+    m_transDnfDict.insert("CRITICAL", Dtk::Widget::DApplication::translate("Level", "Critical"));
+    m_transDnfDict.insert("SUPERCRITICAL", Dtk::Widget::DApplication::translate("Level", "Super critical"));
+}
+
+void LogAuthThread::initLevelMap()
+{
+    m_levelMap.clear();
+    m_levelMap.insert(0, Dtk::Widget::DApplication::translate("Level", "Emergency"));
+    m_levelMap.insert(1, Dtk::Widget::DApplication::translate("Level", "Alert"));
+    m_levelMap.insert(2, Dtk::Widget::DApplication::translate("Level", "Critical"));
+    m_levelMap.insert(3, Dtk::Widget::DApplication::translate("Level", "Error"));
+    m_levelMap.insert(4, Dtk::Widget::DApplication::translate("Level", "Warning"));
+    m_levelMap.insert(5, Dtk::Widget::DApplication::translate("Level", "Notice"));
+    m_levelMap.insert(6, Dtk::Widget::DApplication::translate("Level", "Info"));
+    m_levelMap.insert(7, Dtk::Widget::DApplication::translate("Level", "Debug"));
 }
 
 ///**
@@ -133,7 +170,25 @@ void LogAuthThread::setFilePath(QStringList filePath)
 int LogAuthThread::getIndex()
 {
     return  m_threadCount;
+}
+QString LogAuthThread::startTime()
+{
+    QString startStr = "";
+    QFile startFile("/proc/uptime");
+    if (!startFile.exists()) {
+        return "";
+    }
+    if (startFile.open(QFile::ReadOnly)) {
+        startStr = QString(startFile.readLine());
+        startFile.close();
+    }
 
+    qDebug() << "startStr" << startFile;
+    startStr = startStr.split(" ").value(0, "");
+    if (startStr.isEmpty()) {
+        return "";
+    }
+    return startStr;
 }
 
 /**
@@ -163,6 +218,12 @@ void LogAuthThread::run()
         break;
     case Normal:
         handleNormal();
+        break;
+    case Dnf:
+        handleDnf();
+        break;
+    case Dmesg:
+        handleDmesg();
         break;
     default:
         break;
@@ -782,6 +843,204 @@ void LogAuthThread::handleNormal()
         emit normalData(m_threadCount, nList);
     }
     emit normalFinished(m_threadCount);
+}
+
+void LogAuthThread::handleDnf()
+{
+    QList<LOG_MSG_DNF> dList;
+    for (int i = 0; i < m_FilePath.count(); i++) {
+        if (!m_FilePath.at(i).contains("txt")) {
+            QFile file(m_FilePath.at(i)); // if not,maybe crash
+            if (!file.exists())
+                return;
+        }
+        if (!m_canRun) {
+            return;
+        }
+        QString m_Log = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        QByteArray outByte = m_Log.toUtf8();
+        QString output = Utils::replaceEmptyByteArray(outByte);
+        if (!m_canRun) {
+            return;
+        }
+        //上一次成功筛选出的日志
+        int lastLogAddRow = -99;
+        //上一次增加的换行的日志信息体的行数
+        int lastMsgAddRow = -99;
+        QStringList allLog = output.split('\n');
+        QRegExp ipRegExp = QRegExp("[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([0-9][0-9])\\:([0-5][0-9])\\:([0-5][0-9])Z");
+        // for (QString str : output.split('\n')) {
+        for (int i = 0; i < allLog.count(); ++i) {
+            if (!m_canRun) {
+                return;
+            }
+            QString str = allLog.value(i);
+
+            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList strList = str.split(" ", QString::SkipEmptyParts);
+            if (ipRegExp.exactMatch(strList.value(0, "")) && strList.size() >= 2) {
+            } else {
+                //如果当前行数等于上次筛选插入进结果的日志行数加1(在下一行)或者在上次增加过的为纯信息体的行数的下一行,则认为这一行为上一个日志的信息体
+                if (dList.length() > 0 && ((lastMsgAddRow == i - 1) || (lastLogAddRow == i - 1))) {
+                    if (!str.isEmpty()) {
+                        //上一个日志的信息体如果是空行,不换行并把空行清空
+                        if (dList.first().msg.trimmed().isEmpty()) {
+                            dList.first().msg = "";
+                        } else {
+                            dList.first().msg += "\n";
+                        }
+
+                        dList.first().msg += str;
+                    }
+                    //此行为信息体行
+                    lastMsgAddRow = i;
+                }
+                continue;
+            }
+            QString info;
+            for (auto i = 2; i < strList.size(); i++) {
+                info = info + strList[i] + " ";
+            }
+
+            LOG_MSG_DNF dnfLog;
+
+            QDateTime dt = QDateTime::fromString(strList[0], "yyyy-MM-ddThh:mm:ssZ");
+            if (dt.toMSecsSinceEpoch() < m_dnfFilters.timeFilter)
+                continue;
+            if (m_dnfFilters.levelfilter != DNFLVALL) {
+                if (m_dnfLevelDict.value(strList[1]) != m_dnfFilters.levelfilter)
+                    continue;
+            }
+            dnfLog.dateTime = dt.toString("yyyy-MM-dd hh:mm:ss");
+            dnfLog.level = m_transDnfDict.value(strList[1]);
+            dnfLog.msg = info;
+            dList.insert(0, dnfLog);
+            //此行为日志行
+            //每获得500个数据就发出信号给控件加载
+            lastLogAddRow = i;
+            if (!m_canRun) {
+                return;
+            }
+        }
+    }
+    emit dnfFinished(dList);
+}
+
+void LogAuthThread::handleDmesg()
+{
+    QList<LOG_MSG_DMESG> dmesgList;
+    if (!m_canRun) {
+        return;
+    }
+    QString startStr = startTime();
+    QDateTime curDt = QDateTime::currentDateTime();
+
+    if (startStr.isEmpty()) {
+        emit dmesgFinished(dmesgList);
+        return;
+    }
+    if (!m_canRun) {
+        return;
+    }
+
+    initProccess();
+    //如果共享内存没有初始化绑定好，则无法开始，因为不能开启一个可能无法停止的进程
+    if (!SharedMemoryManager::instance()->isAttached()) {
+        return;
+    }
+    //共享内存对应变量置true，允许进程内部逻辑运行
+    ShareMemoryInfo shareInfo;
+    shareInfo.isStart = true;
+    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+    // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
+    m_process->setProcessChannelMode(QProcess::MergedChannels);
+    m_process->start("pkexec", QStringList() << "logViewerAuth"
+                                             << "dmesg" << SharedMemoryManager::instance()->getRunnableKey());
+    //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
+    // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
+    m_process->waitForFinished(-1);
+    QString errorStr(m_process->readAllStandardError());
+    Utils::CommandErrorType commandErrorType = Utils::isErroCommand(errorStr);
+    if (!m_canRun) {
+        return;
+    }
+    if (commandErrorType != Utils::NoError) {
+        if (commandErrorType == Utils::PermissionError) {
+            emit proccessError(errorStr + "\n" + "Please use 'sudo' run this application");
+            //            DMessageBox::information(nullptr, tr("information"),
+            //                                     errorStr + "\n" + "Please use 'sudo' run this application");
+        } else if (commandErrorType == Utils::RetryError) {
+            emit proccessError("The password is incorrect,please try again");
+            //            DMessageBox::information(nullptr, tr("information"),
+            //                                     "The password is incorrect,please try again");
+        }
+        m_process->close();
+        return;
+    }
+    if (!m_canRun) {
+        return;
+    }
+    QByteArray outByte = m_process->readAllStandardOutput();
+    QByteArray byte = Utils::replaceEmptyByteArray(outByte);
+    QTextStream stream(&byte);
+    QByteArray encode;
+    stream.setCodec(encode);
+    QString output = stream.readAll();
+    QStringList l = QString(byte).split('\n');
+    qDebug() << __FUNCTION__ << "byte" << byte.length();
+    //    qDebug() << __FUNCTION__ << "str" << outByte;
+    m_process->close();
+    if (!m_canRun) {
+        return;
+    }
+    qint64 curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
+    for (QString str : l) {
+        if (!m_canRun) {
+            return;
+        }
+        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+        QRegExp dmesgExp("^\\<([0-7])\\>\\[\\s*[+-]?(0|([1-9]\\d*))(\\.\\d+)?\\](.*)");
+        //启用贪婪匹配
+        dmesgExp.setMinimal(false);
+        int pos = dmesgExp.indexIn(str);
+        // qDebug()  << pos <<  dmesgExp.capturedTexts();    qDebug() << str;
+        if (pos >= 0) {
+            QStringList list = dmesgExp.capturedTexts();
+            if (list.count() < 6)
+                continue;
+            //            if (list.count() > 4) {
+            //                qDebug() << "match wrong" << list;
+            //            }
+
+            QString timeStr = list[3] + list[4];
+            QString msgInfo = list[5].simplified();
+            int levelOrigin = list[1].toInt();
+            // qDebug() << "match wrong" << timeStr << levelOrigin << list;
+            // get time
+            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
+            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
+            if (realDt.toMSecsSinceEpoch() < m_dmesgFilters.timeFilter) // add by Airy
+                continue;
+            if (m_dmesgFilters.levelFilter != LVALL) {
+                if (levelOrigin != m_dmesgFilters.levelFilter)
+                    continue;
+            }
+            LOG_MSG_DMESG msg;
+            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
+            msg.msg = msgInfo;
+            msg.level = m_levelMap.value(levelOrigin);
+            dmesgList.insert(0, msg);
+        } else {
+            if (dmesgList.length() > 0) {
+                dmesgList[0].msg += str;
+            }
+        }
+        if (!m_canRun) {
+            return;
+        }
+    }
+    emit dmesgFinished(dmesgList);
 }
 
 /**

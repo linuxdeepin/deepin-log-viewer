@@ -69,6 +69,8 @@ LogFileParser::LogFileParser(QWidget *parent)
     qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
     qRegisterMetaType<QList<LOG_MSG_BOOT> > ("QList<LOG_MSG_BOOT>");
     qRegisterMetaType<QList<LOG_MSG_NORMAL> > ("QList<LOG_MSG_NORMAL>");
+    qRegisterMetaType<QList<LOG_MSG_DNF>>("QList<LOG_MSG_DNF>");
+    qRegisterMetaType<QList<LOG_MSG_DMESG>>("QList<LOG_MSG_DMESG>");
     qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
 
 }
@@ -500,6 +502,40 @@ int LogFileParser::parseByApp(APP_FILTERS &iAPPFilter)
     return index;
 }
 
+void LogFileParser::parseByDnf(DNF_FILTERS iDnfFilter)
+{
+    stopAllLoad();
+    LogAuthThread *authThread = new LogAuthThread(this);
+    authThread->setType(Dnf);
+    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("dnf");
+    authThread->setFilePath(filePath);
+    authThread->setFileterParam(iDnfFilter);
+    connect(authThread, &LogAuthThread::proccessError, this,
+            &LogFileParser::slog_proccessError, Qt::UniqueConnection);
+    connect(authThread, &LogAuthThread::dnfFinished, this,
+            &LogFileParser::dnfFinished, Qt::UniqueConnection);
+    connect(this, &LogFileParser::stopDnf, authThread,
+            &LogAuthThread::stopProccess);
+    QThreadPool::globalInstance()->start(authThread);
+}
+
+void LogFileParser::parseByDmesg(DMESG_FILTERS iDmesgFilter)
+{
+    stopAllLoad();
+    LogAuthThread *authThread = new LogAuthThread(this);
+    authThread->setType(Dmesg);
+    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("dmesg");
+    authThread->setFilePath(filePath);
+    authThread->setFileterParam(iDmesgFilter);
+    connect(authThread, &LogAuthThread::proccessError, this,
+            &LogFileParser::slog_proccessError, Qt::UniqueConnection);
+    connect(authThread, &LogAuthThread::dmesgFinished, this,
+            &LogFileParser::dmesgFinished, Qt::UniqueConnection);
+    connect(this, &LogFileParser::stopDmesg, authThread,
+            &LogAuthThread::stopProccess);
+    QThreadPool::globalInstance()->start(authThread);
+}
+
 void LogFileParser::createFile(QString output, int count)
 {
 #if 1
@@ -527,6 +563,9 @@ void LogFileParser::stopAllLoad()
     emit stopJournal();
     emit stopJournalBoot();
     emit stopNormal();
+    emit stopDnf();
+    emit stopDmesg();
+    //  QThreadPool::globalInstance()->waitForDone(-1);
     return;
 }
 
