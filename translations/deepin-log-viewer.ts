@@ -385,8 +385,8 @@
 <context>
     <name>LogAuthThread</name>
     <message>
-        <location filename="../application/logauththread.cpp" line="422"/>
-        <location filename="../application/logauththread.cpp" line="441"/>
+        <location filename="../application/logauththread.cpp" line="406"/>
+        <location filename="../application/logauththread.cpp" line="425"/>
         <source>Log file is empty</source>
         <translation type="unfinished"></translation>
     </message>

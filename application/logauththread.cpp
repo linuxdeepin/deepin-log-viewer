@@ -18,6 +18,7 @@
 #include "utils.h"
 #include "sharedmemorymanager.h"
 #include <wtmpparse.h>
+#include "dbusproxy/dldbushandler.h"
 
 #include <QDebug>
 #include <QDateTime>
@@ -175,18 +176,15 @@ void LogAuthThread::handleBoot()
     if (!m_canRun) {
         return;
     }
-    initProccess();
-    m_process->setProcessChannelMode(QProcess::MergedChannels);
+
     //共享内存对应变量置true，允许进程内部逻辑运行
     ShareMemoryInfo   shareInfo ;
     shareInfo.isStart = true;
     SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-    //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-    m_process->start("pkexec", QStringList() << "logViewerAuth"
-                     << "/var/log/boot.log" << SharedMemoryManager::instance()->getRunnableKey());
-    m_process->waitForFinished(-1);
+    //------平板模式取消授权框提权，通过dbus通信守护进程提权---------
+    QString m_Log = DLDBusHandler::instance(this)->readLog("/var/log/boot.log");
 
-    QByteArray byte =   m_process->readAllStandardOutput();
+    QByteArray byte = m_Log.toUtf8();
     QString tempStr = "";
     QStringList strList =  QString(Utils::replaceEmptyByteArray(byte)).split('\n', QString::SkipEmptyParts);
 
@@ -242,15 +240,6 @@ void LogAuthThread::handleKern()
     if (!m_canRun) {
         return;
     }
-    initProccess();
-    if (!m_canRun) {
-        return;
-    }
-    // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
-    m_process->setProcessChannelMode(QProcess::MergedChannels);
-    if (!m_canRun) {
-        return;
-    }
     //如果共享内存没有初始化绑定好，则无法开始，因为不能开启一个可能无法停止的进程
     if (!SharedMemoryManager::instance()->isAttached()) {
         return;
@@ -259,22 +248,17 @@ void LogAuthThread::handleKern()
     ShareMemoryInfo   shareInfo ;
     shareInfo.isStart = true;
     SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-    //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-    m_process->start("pkexec", QStringList() << "logViewerAuth"
-                     //         << "/home/zyc/Documents/tech/同方内核日志没有/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-                     //    << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-                     << "/var/log/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-    m_process->waitForFinished(-1);
-    qDebug() << " m_process->exitCode() " << m_process->exitCode();
+    //------平板模式取消授权框提权，通过dbus通信守护进程提权---------
+    QString m_Log = DLDBusHandler::instance(this)->readLog("/var/log/kern.log");
     //有错则传出空数据
-    if (m_process->exitCode() != 0) {
+    if (DLDBusHandler::instance(this)->exitCode() != 0) {
         emit kernFinished(m_threadCount);
         return;
     }
     if (!m_canRun) {
         return;
     }
-    QByteArray outByte = m_process->readAllStandardOutput();
+    QByteArray outByte = m_Log.toUtf8();
     if (!m_canRun) {
         return;
     }
