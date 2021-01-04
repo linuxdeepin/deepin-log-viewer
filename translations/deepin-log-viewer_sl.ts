@@ -1,35 +1,35 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="sl" version="2.1">
 <context>
     <name>Action</name>
     <message>
         <location filename="../application/loglistview.cpp" line="502"/>
         <source>Display in file manager</source>
-        <translation>Wyświetl w menedżerze plików</translation>
+        <translation>Prikaži v upravitelju datotek</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="503"/>
         <source>Clear log</source>
-        <translation>Wyczyść log</translation>
+        <translation>Izbriši dnevnik</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="504"/>
         <source>Refresh</source>
-        <translation>Odśwież</translation>
+        <translation>Osveži</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="544"/>
         <source>Are you sure you want to clear the log?</source>
-        <translation>Czy na pewno chcesz wyczyścić dziennik?</translation>
+        <translation>Želite res počistiti dnevnik?</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="545"/>
         <source>Cancel</source>
-        <translation>Anuluj</translation>
+        <translation>Prekini</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="546"/>
         <source>Confirm</source>
-        <translation>Potwierdź</translation>
+        <translation>di</translation>
     </message>
 </context>
 <context>
@@ -39,7 +39,7 @@
         <location filename="../application/filtercontent.cpp" line="86"/>
         <location filename="../application/filtercontent.cpp" line="645"/>
         <source>All</source>
-        <translation>Wszystko</translation>
+        <translation>Vse</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="100"/>
@@ -47,7 +47,7 @@
         <location filename="../application/filtercontent.cpp" line="637"/>
         <location filename="../application/filtercontent.cpp" line="646"/>
         <source>Today</source>
-        <translation>Dzisiaj</translation>
+        <translation>Danes</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="108"/>
@@ -55,7 +55,7 @@
         <location filename="../application/filtercontent.cpp" line="638"/>
         <location filename="../application/filtercontent.cpp" line="647"/>
         <source>3 days</source>
-        <translation>3 dni</translation>
+        <translation>3 dnevi</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="117"/>
@@ -63,7 +63,7 @@
         <location filename="../application/filtercontent.cpp" line="639"/>
         <location filename="../application/filtercontent.cpp" line="648"/>
         <source>1 week</source>
-        <translation>1 tydzień</translation>
+        <translation>1 teden</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="126"/>
@@ -71,7 +71,7 @@
         <location filename="../application/filtercontent.cpp" line="640"/>
         <location filename="../application/filtercontent.cpp" line="649"/>
         <source>1 month</source>
-        <translation>1 miesiąc</translation>
+        <translation>1 mesec</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="134"/>
@@ -79,12 +79,12 @@
         <location filename="../application/filtercontent.cpp" line="641"/>
         <location filename="../application/filtercontent.cpp" line="650"/>
         <source>3 months</source>
-        <translation>3 miesiące</translation>
+        <translation>3 meseci</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="245"/>
         <source>Export</source>
-        <translation>Eksport</translation>
+        <translation>Izvozi</translation>
     </message>
 </context>
 <context>
@@ -95,12 +95,12 @@
         <location filename="../application/filtercontent.cpp" line="223"/>
         <location filename="../application/filtercontent.cpp" line="236"/>
         <source>All</source>
-        <translation>Wszystko</translation>
+        <translation>Vse</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="169"/>
         <source>Emergency</source>
-        <translation>Zapasowy</translation>
+        <translation>Nujno</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="170"/>
@@ -111,24 +111,24 @@
         <location filename="../application/filtercontent.cpp" line="171"/>
         <location filename="../application/filtercontent.cpp" line="195"/>
         <source>Critical</source>
-        <translation>Krytyczny</translation>
+        <translation>Kritično</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="172"/>
         <location filename="../application/filtercontent.cpp" line="196"/>
         <source>Error</source>
-        <translation>Błąd</translation>
+        <translation>Napaka</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="173"/>
         <location filename="../application/filtercontent.cpp" line="197"/>
         <source>Warning</source>
-        <translation>Ostrzeżenie</translation>
+        <translation>Opozorilo</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="174"/>
         <source>Notice</source>
-        <translation>Ogłoszenie</translation>
+        <translation>Opomba</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="175"/>
@@ -141,7 +141,7 @@
         <location filename="../application/filtercontent.cpp" line="176"/>
         <location filename="../application/filtercontent.cpp" line="199"/>
         <source>Debug</source>
-        <translation>Debug</translation>
+        <translation>Razhroščevanje</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="194"/>
@@ -156,17 +156,17 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="237"/>
         <source>Login</source>
-        <translation>Login</translation>
+        <translation>Prijava</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="238"/>
         <source>Boot</source>
-        <translation>Boot</translation>
+        <translation>Zagon</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="239"/>
         <source>Shutdown</source>
-        <translation>Zamknij</translation>
+        <translation>Izklop</translation>
     </message>
 </context>
 <context>
@@ -174,7 +174,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1424"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEKST (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>BESEDILO (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -182,12 +182,12 @@
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="43"/>
         <source>Exporting...</source>
-        <translation>Eksportowanie...</translation>
+        <translation>Izvažanje...</translation>
     </message>
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="67"/>
         <source>Cancel</source>
-        <translation>Anuluj</translation>
+        <translation>PrekiniPrekini</translation>
     </message>
 </context>
 <context>
@@ -195,7 +195,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="2634"/>
         <source>Export successful</source>
-        <translation>Eksport powiódł się</translation>
+        <translation>Izvoz je uspel</translation>
     </message>
 </context>
 <context>
@@ -203,7 +203,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1422"/>
         <source>Export File</source>
-        <translation>Eksportuj plik</translation>
+        <translation>Izvozi datoteko</translation>
     </message>
 </context>
 <context>
@@ -213,18 +213,18 @@
         <location filename="../application/filtercontent.cpp" line="635"/>
         <location filename="../application/filtercontent.cpp" line="644"/>
         <source>Period:</source>
-        <translation>Okres:</translation>
+        <translation>Perioda:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="163"/>
         <location filename="../application/filtercontent.cpp" line="188"/>
         <source>Level:  </source>
-        <translation>Poziom:</translation>
+        <translation>Nivo:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="208"/>
         <source>Application list:</source>
-        <translation>Lista aplikacji:</translation>
+        <translation>Seznam programov:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="219"/>
@@ -236,12 +236,12 @@
         <location filename="../application/filtercontent.cpp" line="232"/>
         <location filename="../application/logdetailinfowidget.cpp" line="178"/>
         <source>Event Type:</source>
-        <translation>Typ wydarzenia:</translation>
+        <translation>Vrsta dogodka:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="169"/>
         <source>User:</source>
-        <translation>Użytkownik:</translation>
+        <translation>Uporabnik:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="171"/>
@@ -251,27 +251,27 @@
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="175"/>
         <source>Action:</source>
-        <translation>Akcja:</translation>
+        <translation>Dejanje:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="180"/>
         <source>Username:</source>
-        <translation>Nazwa Użytkownika:</translation>
+        <translation>Uporabniško ime:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="489"/>
         <source>Boot record</source>
-        <translation>Rekord rozruchowy</translation>
+        <translation>Zagonski zapis</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="491"/>
         <source>Shutdown record</source>
-        <translation>Zamknij rekord</translation>
+        <translation>Zapis izklopa</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="494"/>
         <source>Login record</source>
-        <translation>Rekord logowania</translation>
+        <translation>Zapis prijave</translation>
     </message>
 </context>
 <context>
@@ -294,7 +294,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="126"/>
         <location filename="../test/src/journalwork_test.cpp" line="142"/>
         <source>Warning</source>
-        <translation>Ostrzeżenie</translation>
+        <translation>Opozorilo</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="155"/>
@@ -316,7 +316,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="129"/>
         <location filename="../test/src/journalwork_test.cpp" line="145"/>
         <source>Debug</source>
-        <translation>Debug</translation>
+        <translation>Razhroščevanje</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="156"/>
@@ -356,7 +356,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="125"/>
         <location filename="../test/src/journalwork_test.cpp" line="141"/>
         <source>Error</source>
-        <translation>Błąd</translation>
+        <translation>Napaka</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="161"/>
@@ -372,7 +372,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="122"/>
         <location filename="../test/src/journalwork_test.cpp" line="138"/>
         <source>Emergency</source>
-        <translation>Zapasowy</translation>
+        <translation>Nujno</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="162"/>
@@ -388,7 +388,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="123"/>
         <location filename="../test/src/journalwork_test.cpp" line="139"/>
         <source>Alert</source>
-        <translation>Alarm</translation>
+        <translation>Opozorilo</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="163"/>
@@ -406,7 +406,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="124"/>
         <location filename="../test/src/journalwork_test.cpp" line="140"/>
         <source>Critical</source>
-        <translation>Krytyczny</translation>
+        <translation>Kritično</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="166"/>
@@ -422,7 +422,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="127"/>
         <location filename="../test/src/journalwork_test.cpp" line="143"/>
         <source>Notice</source>
-        <translation>Ogłoszenie</translation>
+        <translation>Opomba</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="173"/>
@@ -443,7 +443,7 @@
         <location filename="../application/logauththread.cpp" line="474"/>
         <location filename="../application/logauththread.cpp" line="493"/>
         <source>Log file is empty</source>
-        <translation>Plik dziennika jest pusty</translation>
+        <translation>Datoteka dnevnika je prazna</translation>
     </message>
 </context>
 <context>
@@ -452,12 +452,12 @@
         <location filename="../application/main.cpp" line="80"/>
         <location filename="../application/main.cpp" line="81"/>
         <source>Log Viewer</source>
-        <translation>Przeglądarka dziennika</translation>
+        <translation>Pregledovalnik dnevnika</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="85"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation>Przeglądarka dzienników to przydatne narzędzie do przeglądania dzienników systemowych.</translation>
+        <translation>Pregledovalnik dnevnika je uporabno orodje za pregledovanje sistemskih beležk</translation>
     </message>
 </context>
 <context>
@@ -465,12 +465,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="122"/>
         <source>No search results</source>
-        <translation>Brak wyników wyszukiwania</translation>
+        <translation>Ni rezultatov iskanja</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="92"/>
         <source>Search</source>
-        <translation>Szukaj</translation>
+        <translation>Iskanje</translation>
     </message>
 </context>
 <context>
@@ -493,7 +493,7 @@
         <location filename="../test/src/logexportthread_test.cpp" line="1208"/>
         <location filename="../test/src/logexportthread_test.cpp" line="1252"/>
         <source>Level</source>
-        <translation>Poziom</translation>
+        <translation>Nivo</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="349"/>
@@ -505,7 +505,7 @@
         <location filename="../test/src/displaycontent_test.cpp" line="272"/>
         <location filename="../test/src/displaycontent_test.cpp" line="632"/>
         <source>Process</source>
-        <translation>Proces</translation>
+        <translation>Opravilo</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="350"/>
@@ -529,7 +529,7 @@
         <location filename="../test/src/logexportthread_test.cpp" line="1209"/>
         <location filename="../test/src/logexportthread_test.cpp" line="1253"/>
         <source>Date and Time</source>
-        <translation>Data i godzina</translation>
+        <translation>Datum in čas</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="351"/>
@@ -568,7 +568,7 @@
         <location filename="../test/src/displaycontent_test.cpp" line="271"/>
         <location filename="../test/src/displaycontent_test.cpp" line="635"/>
         <source>User</source>
-        <translation>Użytkownik</translation>
+        <translation>Uporabnik</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="353"/>
@@ -590,12 +590,12 @@
         <location filename="../test/src/logexportthread_test.cpp" line="1210"/>
         <location filename="../test/src/logexportthread_test.cpp" line="1254"/>
         <source>Source</source>
-        <translation>Źródło</translation>
+        <translation>Vir</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2268"/>
         <source>Action</source>
-        <translation>Akcja</translation>
+        <translation>Dejanje</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2307"/>
@@ -605,30 +605,30 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="2430"/>
         <source>Event Type</source>
-        <translation>Typ wydarzenia</translation>
+        <translation>Vrsta dogodka</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2431"/>
         <source>Username</source>
-        <translation>Nazwa użytkownika</translation>
+        <translation>Uporabniško ime</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="757"/>
         <location filename="../application/logexportwidget.cpp" line="90"/>
         <source>Level:</source>
-        <translation>Poziom:</translation>
+        <translation>Nivo:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="758"/>
         <location filename="../application/logexportwidget.cpp" line="91"/>
         <source>Process:</source>
-        <translation>Proces:</translation>
+        <translation>Opravilo:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="759"/>
         <location filename="../application/logexportwidget.cpp" line="92"/>
         <source>Date and Time:</source>
-        <translation>Data i godzina:</translation>
+        <translation>Datum in čas:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="761"/>
@@ -636,19 +636,19 @@
         <location filename="../application/logexportwidget.cpp" line="94"/>
         <location filename="../application/logexportwidget.cpp" line="97"/>
         <source>Info:</source>
-        <translation>Informacje:</translation>
+        <translation>Info:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="762"/>
         <location filename="../application/logexportwidget.cpp" line="95"/>
         <source>Null</source>
-        <translation>Zero</translation>
+        <translation>Null</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="766"/>
         <location filename="../application/logexportwidget.cpp" line="99"/>
         <source>User:</source>
-        <translation>Użytkownik:</translation>
+        <translation>Uporabnik:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="767"/>
@@ -662,7 +662,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="2432"/>
         <source>Date and Time</source>
-        <translation>Data i godzina</translation>
+        <translation>Datum in čas</translation>
     </message>
 </context>
 <context>
@@ -671,7 +671,7 @@
         <location filename="../application/loglistview.cpp" line="183"/>
         <location filename="../application/loglistview.cpp" line="184"/>
         <source>System Log</source>
-        <translation>Dziennik systemu</translation>
+        <translation>Sistemska beležka</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="192"/>
@@ -679,7 +679,7 @@
         <location filename="../application/loglistview.cpp" line="201"/>
         <location filename="../application/loglistview.cpp" line="202"/>
         <source>Kernel Log</source>
-        <translation>Dziennik jądra</translation>
+        <translation>Beležka jedra</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="229"/>
@@ -687,7 +687,7 @@
         <location filename="../application/loglistview.cpp" line="237"/>
         <location filename="../application/loglistview.cpp" line="238"/>
         <source>Boot Log</source>
-        <translation>Dziennik rozruchu</translation>
+        <translation>Zagonska beležka</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="248"/>
@@ -699,31 +699,31 @@
         <location filename="../application/loglistview.cpp" line="257"/>
         <location filename="../application/loglistview.cpp" line="258"/>
         <source>dpkg Log</source>
-        <translation>Dziennik dpkg</translation>
+        <translation>Beležka dpkg</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="279"/>
         <location filename="../application/loglistview.cpp" line="280"/>
         <source>Kwin Log</source>
-        <translation>Dziennik Kwin</translation>
+        <translation>Beležka Kwin</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="287"/>
         <location filename="../application/loglistview.cpp" line="288"/>
         <source>Xorg Log</source>
-        <translation>Dziennik Xorg</translation>
+        <translation>Beležka Xorg</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="298"/>
         <location filename="../application/loglistview.cpp" line="300"/>
         <source>Application Log</source>
-        <translation>Dziennik aplikacji</translation>
+        <translation>Programska beležka</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="310"/>
         <location filename="../application/loglistview.cpp" line="313"/>
         <source>Boot-Shutdown Event</source>
-        <translation>Zdarzenie zamknięcia systemu</translation>
+        <translation>Zagosnki-zaustavitveni dogodek</translation>
     </message>
 </context>
 </TS>

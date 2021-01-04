@@ -180,6 +180,29 @@ void FilterContent::initUI()
     hLayout_lvl->addWidget(cbx_lv, 1);
     hLayout_lvl->setSpacing(6);
     hLayout_all->addLayout(hLayout_lvl);
+
+
+
+
+    QHBoxLayout *hLayout_dnf_lvl = new QHBoxLayout;
+    dnflvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
+    dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    cbx_dnf_lv = new LogCombox(this);
+    cbx_dnf_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
+    // cbx_lv->setMaximumWidth(208);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Super critical"), SUPERCRITICAL);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Critical"), CRITICAL);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Error"), ERROR);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Warning"), WARNING);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Info"), INFO);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Debug"), DEBUG);
+    cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Trace"), TRACE);
+    cbx_dnf_lv->setCurrentIndex(5);
+    hLayout_dnf_lvl->addWidget(dnflvTxt);
+    hLayout_dnf_lvl->addWidget(cbx_dnf_lv, 1);
+    hLayout_dnf_lvl->setSpacing(6);
+    hLayout_all->addLayout(hLayout_dnf_lvl);
     // set all files under ~/.cache/deepin
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
@@ -260,6 +283,7 @@ void FilterContent::initConnections()
 {
     connect(m_btnGroup, SIGNAL(buttonClicked(int)), this, SLOT(slot_buttonClicked(int)));
     connect(exportBtn, &DPushButton::clicked, this, &FilterContent::slot_exportButtonClicked);
+    connect(cbx_dnf_lv, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxDnfLvIdxChanged(int)));
 
     connect(cbx_lv, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxLvIdxChanged(int)));
     connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
@@ -322,7 +346,7 @@ void FilterContent::setAppComboBoxItem()
  * @param typecbx 开关机日志日志种类筛选下拉框是否显示
  */
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
-                                       bool needMove, bool typecbx)
+                                       bool needMove, bool typecbx, bool dnfCbx)
 {
     //    va_list arg_ptr;//定义一个可变参数指针
     //    va_start(arg_ptr,needMove); //设置needMove为最后一个固定参数
@@ -342,7 +366,11 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     appTxt->setVisible(appListCbx);
     cbx_app->setVisible(appListCbx);
 
-
+    dnflvTxt->setVisible(dnfCbx);
+    cbx_dnf_lv->setVisible(dnfCbx);
+    if (cbx_dnf_lv->isVisible()) {
+        cbx_dnf_lv->setCurrentIndex(5);
+    }
 
     typeTxt->setVisible(typecbx);  // add by Airy
     typeCbx->setVisible(typecbx);  // add by Airy
@@ -695,6 +723,12 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(BOOT_KLU_TREE_DATA)) {
         m_currentType = BOOT_KLU_TREE_DATA;
         this->setSelectorVisible(true, false, false, false, false);
+    } else if (itemData.contains(DNF_TREE_DATA)) {
+        this->setSelectorVisible(false, false, false, true, false, false, true);
+        cbx_dnf_lv->setCurrentIndex(5);
+    } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
+        this->setSelectorVisible(true, false, false, true,
+                                 false);
     }
 //    cbx_lv->setFocusReason(Qt::NoFocusReason);
 //    cbx_app->setFocusReason(Qt::NoFocusReason);
@@ -777,6 +811,7 @@ void FilterContent::slot_buttonClicked(int idx)
         if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
                 itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
             cbx_lv->setCurrentIndex(INF + 1);
+            cbx_dnf_lv->setCurrentIndex(5);
         } else {
             emit sigButtonClicked(m_curBtnId, INVALID, m_curTreeIndex);
         }
@@ -869,4 +904,14 @@ void FilterContent::setExportButtonEnable(bool iEnable)
     if (exportBtn) {
         exportBtn->setEnabled(iEnable);
     }
+}
+
+/**
+ * @brief FilterContent::slot_cbxDnfLvIdxChanged dnf日志等级选择下拉框择变化处理槽函数
+ * @param idx 当前选择的选项下标
+ */
+void FilterContent::slot_cbxDnfLvIdxChanged(int idx)
+{
+    Q_UNUSED(idx)
+    emit sigDnfLvlChanged(cbx_dnf_lv->currentData().value<DNFPRIORITY>());
 }

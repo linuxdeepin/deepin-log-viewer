@@ -109,7 +109,15 @@ private:
     void createJournalBootTableForm();
     void insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
 
+    void generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel);
+    void createDnfTable(QList<LOG_MSG_DNF> &list);
 
+    void generateDmesgFile(BUTTONID iDate, PRIORITY iLevel);
+    void createDmesgTable(QList<LOG_MSG_DMESG> &list);
+    void createDnfForm();
+    void createDmesgForm();
+    void insertDmesgTable(QList<LOG_MSG_DMESG> list, int start, int end);
+    void insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end);
     //
 
 signals:
@@ -142,6 +150,8 @@ public slots:
     void slot_bootFinished(QList<LOG_MSG_BOOT> list);
     void slot_kernFinished(QList<LOG_MSG_JOURNAL> list);
     void slot_kwinFinished(QList<LOG_MSG_KWIN> list);
+    void slot_dnfFinished(QList<LOG_MSG_DNF> list);
+    void slot_dmesgFinished(QList<LOG_MSG_DMESG> list);
     void slot_journalFinished();
     void slot_journalBootFinished();
     void slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list);
@@ -157,6 +167,7 @@ public slots:
 
     void slot_getLogtype(int tcbx);  // add by Airy
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
+    void slot_dnfLevel(DNFPRIORITY iLevel);
     //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
     void parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel);
@@ -165,6 +176,8 @@ public slots:
     void parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel);
     QString getIconByname(QString str);
     void setLoadState(LOAD_STATE iState);
     void onExportProgress(int nCur, int nTotal);
@@ -325,6 +338,10 @@ private:
      * @brief m_journalFilter 当前系统日志筛选条件
      */
     JOURNAL_FILTERS m_journalFilter;
+    QList<LOG_MSG_DNF> dnfList, dnfListOrigin; //dnf.log
+    QList<LOG_MSG_DMESG> dmesgList, dmesgListOrigin;//dmesg cmd
+    QMap<QString, QString> m_dnfIconNameMap;
+    DNFPRIORITY m_curDnfLevel {INFO};
     //当前系统日志获取进程标记量
     int m_journalCurrentIndex{-1};
     //当前klu启动日志获取进程标记量

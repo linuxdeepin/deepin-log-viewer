@@ -60,7 +60,7 @@ private:
     void setAppComboBoxItem();
 
     void setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period, bool needMove,
-                            bool typecbx = false);  // modified by Airy
+                            bool typecbx = false, bool dnfCbx = false);  // modified by Airy
     void setSelection(FILTER_CONFIG iConifg);
 
     void setUeButtonSytle();
@@ -103,7 +103,7 @@ signals:
      * @param iWidth 计算宽度
      */
     void sigResizeWidth(int iWidth);
-
+    void sigDnfLvlChanged(DNFPRIORITY iDnf);
 public slots:
     void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_logCatelogueRefresh(const QModelIndex &index);
@@ -114,6 +114,7 @@ public slots:
     void slot_cbxStatusChanged(int idx);
     void slot_cbxLogTypeChanged(int idx);  // add  by Airy
     void setExportButtonEnable(bool iEnable);
+    void slot_cbxDnfLvIdxChanged(int idx);
 
 private:
     /**
@@ -129,9 +130,17 @@ private:
      */
     Dtk::Widget::DLabel *periodLabel;
     /**
+        * @brief dnflvTxt dnf日志等级筛选下拉框前面的提示文字
+        */
+    Dtk::Widget::DLabel *dnflvTxt;
+    /**
      * @brief cbx_lv 日志等级下拉框
      */
     LogCombox *cbx_lv;
+    /**
+     * @brief cbx_dnf_lv dnf日志等级下拉框
+     */
+    LogCombox *cbx_dnf_lv;
     /**
      * @brief appTxt 应用日志筛选下拉框提示文字
      */

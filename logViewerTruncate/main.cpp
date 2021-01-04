@@ -22,12 +22,18 @@ int main(int argc, char *argv[])
     }
     QString fileDirStr = fileList[0];
     qDebug() << fileDirStr;
-    if (fileDirStr != "/var/log/kern.log" && fileDirStr != "/var/log/boot.log" && fileDirStr != "/var/log/dpkg.log" && fileDirStr != "/var/log/Xorg.0.log" && fileDirStr != (QDir::homePath() + "/.kwin.log")) {
+    if (fileDirStr != "/var/log/kern.log" && fileDirStr != "/var/log/boot.log" && fileDirStr != "/var/log/dpkg.log" && fileDirStr != "/var/log/Xorg.0.log" && fileDirStr != (QDir::homePath() + "/.kwin.log") && fileDirStr != "dmesg" && fileDirStr != "/var/log/dnf.log") {
         qDebug() << "log file is not illegal";
         return 0;
     }
     QStringList arg;
-    arg << "-c" << QString("truncate -s 0 %1").arg(fileList[0]);
+    if (fileList[0] == "dmesg") {
+        qDebug() << "dmesg -C";
+        arg << "-c" << "dmesg -C";
+    } else {
+        arg << "-c" << QString("truncate -s 0 %1").arg(fileList[0]);
+    }
+
     QProcess proc;
     proc.start("/bin/bash", arg);
     proc.waitForFinished(-1);

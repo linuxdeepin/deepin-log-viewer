@@ -20,6 +20,7 @@
 
 #include <QProcess>
 #include <QRunnable>
+#include <QMap>
 
 #include <mutex>
 /**
@@ -45,7 +46,8 @@ public:
         }
         return sin;
     }
-
+    void initDnfLevelMap();
+    void initLevelMap();
     QString getStandardOutput();
     QString getStandardError();
     void setType(LOG_FLAG flag) { m_type = flag; }
@@ -53,7 +55,10 @@ public:
     void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
     void setFileterParam(DKPG_FILTERS iFIlters) { m_dkpgFilters = iFIlters; }
     void setFileterParam(KERN_FILTERS iFIlters) { m_kernFilters = iFIlters; }
+    void setFileterParam(DNF_FILTERS iFIlters) { m_dnfFilters = iFIlters; }
+    void setFileterParam(DMESG_FILTERS iFIlters) { m_dmesgFilters = iFIlters; }
     void stopProccess();
+    QString startTime();
     /**
      * @brief thread_index 静态成员变量，用来每次构造时标记新的当前线程对象 m_threadIndex
      */
@@ -66,6 +71,8 @@ protected:
     void handleKwin();
     void handleXorg();
     void handleDkpg();
+    void handleDnf();
+    void handleDmesg();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
 
@@ -76,6 +83,8 @@ signals:
     void kwinFinished(QList<LOG_MSG_KWIN> iKwinList);
     void xorgFinished(QList<LOG_MSG_XORG> iKwinList);
     void dpkgFinished(QList<LOG_MSG_DPKG> iKwinList);
+    void dnfFinished(QList<LOG_MSG_DNF> iKwinList);
+    void dmesgFinished(QList<LOG_MSG_DMESG> iKwinList);
     void proccessError(const QString &iError);
 public slots:
     void onFinished(int exitCode);
@@ -119,6 +128,11 @@ private:
     int m_threadCount;
     //正在执行停止进程的变量，防止重复执行停止逻辑
     bool m_isStopProccess = false;
+    DNF_FILTERS m_dnfFilters;
+    DMESG_FILTERS m_dmesgFilters;
+    QMap<int, QString> m_levelMap;
+    QMap<QString, int> m_dnfLevelDict;
+    QMap<QString, QString> m_transDnfDict;
 };
 
 #endif  // LOGAUTHTHREAD_H

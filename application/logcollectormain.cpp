@@ -50,6 +50,7 @@ DWIDGET_USE_NAMESPACE
 LogCollectorMain::LogCollectorMain(QWidget *parent)
     : DMainWindow(parent)
 {
+    qRegisterMetaType<DNFPRIORITY>("DNFPRIORITY");
     initUI();
     initConnection();
 
@@ -192,7 +193,8 @@ void LogCollectorMain::initConnection()
     //! filter widget
     connect(m_topRightWgt, SIGNAL(sigButtonClicked(int, int, QModelIndex)), m_midRightWgt,
             SLOT(slot_BtnSelected(int, int, QModelIndex)));
-
+    connect(m_topRightWgt, &FilterContent::sigDnfLvlChanged, m_midRightWgt,
+            &DisplayContent::slot_dnfLevel);
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_midRightWgt,
             &DisplayContent::slot_appLogs);
 
