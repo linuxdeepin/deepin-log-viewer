@@ -7,7 +7,7 @@
 %endif
 
 Name:           deepin-log-viewer
-Version:        5.8.0.3
+Version:        5.8.0.29
 Release:        %{specrelease}
 Summary:        Log Viewer is a useful tool for viewing system logs
 License:        GPLv3+
@@ -17,11 +17,17 @@ Source0:        %{name}-%{version}.tar.gz
 BuildRequires: gcc-c++
 BuildRequires: cmake3
 BuildRequires: dtkwidget-devel
+BuildRequires: dtkgui-devel
 BuildRequires: systemd-devel
 BuildRequires: libicu-devel
 BuildRequires: qt5-rpm-macros
 BuildRequires: qt5-qtbase-devel
 BuildRequires: qt5-qttools-devel
+BuildRequires: pkgconfig(dframeworkdbus)
+BuildRequires: gtest-devel
+BuildRequires: gmock-devel
+
+
 
 %description
 Log Viewer is a useful tool for viewing system logs.
