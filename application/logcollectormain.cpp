@@ -59,8 +59,8 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
     //设置最小窗口尺寸
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
     //恢复上次关闭时记录的窗口大小
-    resize(LogSettings::instance()->getConfigWinSize());
-
+    //    resize(LogSettings::instance()->getConfigWinSize());
+    this->showMaximized();
 }
 
 /**
