@@ -59,7 +59,7 @@ popd
 %{_bindir}/logViewerAuth
 %{_bindir}/logViewerTruncate
 %{_datadir}/applications/%{name}.desktop
-%{_datadir}/%{name}/translations/%{name}*
+%{_datadir}/%{name}/translations/*.qm
 %{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 %{_datadir}/polkit-1/actions/*.policy
 
