@@ -291,12 +291,19 @@ void LogAuthThread::handleKern()
         QStringList list = str.split(" ", QString::SkipEmptyParts);
         if (list.size() < 5)
             continue;
-
+        //获取内核年份接口已添加，等待系统接口添加年份改变相关日志
         QStringList timeList;
-        timeList.append(list[0]);
-        timeList.append(list[1]);
-        timeList.append(list[2]);
-        qint64 iTime = formatDateTime(list[0], list[1], list[2]);
+        if (list[0].contains("-")) {
+            timeList.append(list[0]);
+            timeList.append(list[1]);
+            iTime = formatDateTime(list[0], list[1]);
+        } else {
+            timeList.append(list[0]);
+            timeList.append(list[1]);
+            timeList.append(list[2]);
+            iTime = formatDateTime(list[0], list[1], list[2]);
+        }
+
         //对时间筛选
         if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
             if (iTime < m_kernFilters.timeFilterBegin || iTime > m_kernFilters.timeFilterEnd)
@@ -743,7 +750,20 @@ qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
     return dt.toMSecsSinceEpoch();
 }
 
-
+/**
+ * @brief LogAuthThread::formatDateTime 内核日志有年份 格式为2020-01-05 所以需要特殊转换
+ * @param y 年月日
+ * @param t 时间字符串
+ * @return 时间毫秒数
+ */
+qint64 LogAuthThread::formatDateTime(QString y, QString t)
+{
+    //when /var/kern.log have the year
+    QLocale local(QLocale::English, QLocale::UnitedStates);
+    QString tStr = QString("%1 %2").arg(y).arg(t);
+    QDateTime dt = local.toDateTime(tStr, "yyyy-MM-dd hh:mm:ss");
+    return dt.toMSecsSinceEpoch();
+}
 
 void LogAuthThread::onFinished(int exitCode)
 {

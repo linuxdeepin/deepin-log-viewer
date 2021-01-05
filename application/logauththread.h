@@ -71,7 +71,7 @@ protected:
     void handleNormal();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
-
+    qint64 formatDateTime(QString y, QString t);
 
 signals:
     void kernFinished(int index);
@@ -143,6 +143,8 @@ private:
     int m_threadCount;
     //正在执行停止进程的变量，防止重复执行停止逻辑
     bool m_isStopProccess = false;
+    //日志显示时间(毫秒)
+    qint64 iTime;
 };
 
 #endif  // LOGAUTHTHREAD_H
