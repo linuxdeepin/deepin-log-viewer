@@ -464,7 +464,7 @@ int LogFileParser::parseByApp(APP_FILTERS &iAPPFilter)
     stopAllLoad();
     m_isAppLoading = true;
 
-    m_appThread = LogApplicationParseThread::instance();
+    m_appThread = new LogApplicationParseThread(this);
     quitLogAuththread(m_appThread);
 
     disconnect(m_appThread, &LogApplicationParseThread::appFinished, this,
@@ -480,6 +480,8 @@ int LogFileParser::parseByApp(APP_FILTERS &iAPPFilter)
             &LogFileParser::appData);
     connect(this, &LogFileParser::stopApp, m_appThread,
             &LogApplicationParseThread::stopProccess);
+    connect(m_appThread, &LogApplicationParseThread::finished, m_appThread,
+            &QObject::deleteLater);
     m_appThread->start();
     return m_appThread->getIndex();
 }

@@ -25,8 +25,8 @@
 
 DWIDGET_USE_NAMESPACE
 
-std::atomic<LogApplicationParseThread *> LogApplicationParseThread::m_instance;
-std::mutex LogApplicationParseThread::m_mutex;
+//std::atomic<LogApplicationParseThread *> LogApplicationParseThread::m_instance;
+//std::mutex LogApplicationParseThread::m_mutex;
 int LogApplicationParseThread::thread_count = 0;
 /**
  * @brief LogApplicationParseThread::LogApplicationParseThread 构造函数
