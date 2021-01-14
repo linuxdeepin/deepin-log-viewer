@@ -139,7 +139,7 @@ signals:
 public slots:
     void slot_tableItemClicked(const QModelIndex &index);
     void slot_BtnSelected(int btnId, int lId, QModelIndex idx);
-    void slot_appLogs(QString path);
+    void slot_appLogs(int btnId, QString path);
 
     void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_exportClicked();

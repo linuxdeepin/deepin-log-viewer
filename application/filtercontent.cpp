@@ -737,7 +737,7 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
 
         updateDataState();
         //第一次刷新手动发出选项变化信号
-        emit sigCbxAppIdxChanged(cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString());
+        emit sigCbxAppIdxChanged(m_config.value(m_currentType).dateBtn, cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString());
         connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
         // cbx_app->setCurrentText(cuurentText);
         //  qDebug() << "cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString()" << cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString();
@@ -829,7 +829,7 @@ void FilterContent::slot_cbxAppIdxChanged(int idx)
     //变化时改变记录选择选项的数据结构,以便下次还原
     setCurrentConfig(curConfig);
     //发出信号以供数据显示控件刷新数据
-    emit sigCbxAppIdxChanged(path);
+    emit sigCbxAppIdxChanged(curConfig.dateBtn, path);
 }
 
 /**

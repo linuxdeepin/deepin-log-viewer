@@ -1325,10 +1325,11 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
  * @brief DisplayContent::slot_appLogs 根据应用日志应用类型变化触发应用日志获取线程
  * @param path 应用日志的路径
  */
-void DisplayContent::slot_appLogs(QString path)
+void DisplayContent::slot_appLogs(int btnId, QString path)
 {
     appList.clear();
     m_curAppLog = path;
+    m_curBtnId = btnId;
     generateAppFile(path, m_curBtnId, m_curLevel);
 }
 

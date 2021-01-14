@@ -215,7 +215,7 @@ TEST(LogListView_slot_getAppPath_UT, LogListView_slot_getAppPath_UT_002)
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     QString path = "aa";
-    p->slot_getAppPath(path);
+    p->slot_getAppPath(1, path);
     EXPECT_EQ(path, p->g_path);
     p->deleteLater();
 }
