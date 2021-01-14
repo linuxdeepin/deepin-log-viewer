@@ -4,32 +4,32 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="467"/>
+        <location filename="../application/loglistview.cpp" line="468"/>
         <source>Display in file manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="468"/>
+        <location filename="../application/loglistview.cpp" line="469"/>
         <source>Clear log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="469"/>
+        <location filename="../application/loglistview.cpp" line="470"/>
         <source>Refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="507"/>
+        <location filename="../application/loglistview.cpp" line="508"/>
         <source>Are you sure you want to clear the log?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="508"/>
+        <location filename="../application/loglistview.cpp" line="509"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="509"/>
+        <location filename="../application/loglistview.cpp" line="510"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
@@ -39,47 +39,47 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="85"/>
         <location filename="../application/filtercontent.cpp" line="86"/>
-        <location filename="../application/filtercontent.cpp" line="617"/>
+        <location filename="../application/filtercontent.cpp" line="621"/>
         <source>All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="100"/>
         <location filename="../application/filtercontent.cpp" line="101"/>
-        <location filename="../application/filtercontent.cpp" line="609"/>
-        <location filename="../application/filtercontent.cpp" line="618"/>
+        <location filename="../application/filtercontent.cpp" line="613"/>
+        <location filename="../application/filtercontent.cpp" line="622"/>
         <source>Today</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="108"/>
         <location filename="../application/filtercontent.cpp" line="110"/>
-        <location filename="../application/filtercontent.cpp" line="610"/>
-        <location filename="../application/filtercontent.cpp" line="619"/>
+        <location filename="../application/filtercontent.cpp" line="614"/>
+        <location filename="../application/filtercontent.cpp" line="623"/>
         <source>3 days</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="117"/>
         <location filename="../application/filtercontent.cpp" line="119"/>
-        <location filename="../application/filtercontent.cpp" line="611"/>
-        <location filename="../application/filtercontent.cpp" line="620"/>
+        <location filename="../application/filtercontent.cpp" line="615"/>
+        <location filename="../application/filtercontent.cpp" line="624"/>
         <source>1 week</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="126"/>
         <location filename="../application/filtercontent.cpp" line="128"/>
-        <location filename="../application/filtercontent.cpp" line="612"/>
-        <location filename="../application/filtercontent.cpp" line="621"/>
+        <location filename="../application/filtercontent.cpp" line="616"/>
+        <location filename="../application/filtercontent.cpp" line="625"/>
         <source>1 month</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="134"/>
         <location filename="../application/filtercontent.cpp" line="136"/>
-        <location filename="../application/filtercontent.cpp" line="613"/>
-        <location filename="../application/filtercontent.cpp" line="622"/>
+        <location filename="../application/filtercontent.cpp" line="617"/>
+        <location filename="../application/filtercontent.cpp" line="626"/>
         <source>3 months</source>
         <translation type="unfinished"></translation>
     </message>
@@ -158,7 +158,7 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1415"/>
+        <location filename="../application/displaycontent.cpp" line="1416"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -179,7 +179,7 @@
 <context>
     <name>ExportMessage</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="2496"/>
+        <location filename="../application/displaycontent.cpp" line="2497"/>
         <source>Export successful</source>
         <translation type="unfinished"></translation>
     </message>
@@ -187,7 +187,7 @@
 <context>
     <name>File</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1413"/>
+        <location filename="../application/displaycontent.cpp" line="1414"/>
         <source>Export File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -196,8 +196,8 @@
     <name>Label</name>
     <message>
         <location filename="../application/filtercontent.cpp" line="81"/>
-        <location filename="../application/filtercontent.cpp" line="607"/>
-        <location filename="../application/filtercontent.cpp" line="616"/>
+        <location filename="../application/filtercontent.cpp" line="611"/>
+        <location filename="../application/filtercontent.cpp" line="620"/>
         <source>Period:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -475,7 +475,7 @@
         <location filename="../application/displaycontent.cpp" line="880"/>
         <location filename="../application/displaycontent.cpp" line="924"/>
         <location filename="../application/displaycontent.cpp" line="1194"/>
-        <location filename="../application/displaycontent.cpp" line="2879"/>
+        <location filename="../application/displaycontent.cpp" line="2880"/>
         <location filename="../application/logexportthread.cpp" line="1778"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
         <location filename="../test/src/displaycontent_test.cpp" line="190"/>
@@ -525,7 +525,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="2878"/>
+        <location filename="../application/displaycontent.cpp" line="2879"/>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>

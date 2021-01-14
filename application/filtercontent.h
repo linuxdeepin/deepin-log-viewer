@@ -83,7 +83,7 @@ signals:
      * @brief sigCbxAppIdxChanged 应用日志中应用选择下拉框触发信号
      * @param path 当前选择的应用日志文件路径
      */
-    void sigCbxAppIdxChanged(QString path);
+    void sigCbxAppIdxChanged(int btnId, QString path);
     /**
      * @brief sigExportInfo 导出按钮触发信号
      */

@@ -447,8 +447,9 @@ void LogListView::truncateFile(QString path_)
  * @brief LogListView::slot_getAppPath  清空应用日志时，当前显示应用日志的目录由外部提供并赋予成员变量
  * @param path 要设置的当前应用路径
  */
-void LogListView::slot_getAppPath(QString path)
+void LogListView::slot_getAppPath(int id, QString path)
 {
+    Q_UNUSED(id);
     g_path = path;
 }
 

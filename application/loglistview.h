@@ -61,7 +61,7 @@ protected slots:
     void onChangedTheme(Dtk::Widget::DApplicationHelper::ColorType themeType);
 
 public slots:
-    void slot_getAppPath(QString path);  // add by Airy
+    void slot_getAppPath(int id, QString path); // add by Airy
     Qt::FocusReason focusReson();
     void showRightMenu(const QPoint &pos, bool isUsePoint);
     void requestshowRightMenu(const QPoint &pos);
