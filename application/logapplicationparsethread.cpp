@@ -98,84 +98,94 @@ void LogApplicationParseThread::doWork()
         emit appFinished(m_threadCount);
     } else {
         QStringList arg;
-        //使用cat命令获取日志文件的文本
-        arg << "-c" << QString("cat %1").arg(m_AppFiler.path);
-
-        m_process->start("/bin/bash", arg);
-        m_process->waitForFinished(-1);
-        QByteArray byteOutput = m_process->readAllStandardOutput();
-        m_process->close();
-        if (!m_canRun) {
-            return;
-        }
-        //替换截断空字符
-        QStringList strList =  QString(Utils::replaceEmptyByteArray(byteOutput)).split('\n', QString::SkipEmptyParts);
-        for (int i = strList.size() - 1; i >= 0 ; --i)  {
-            QString str = strList.at(i);
+        QFileInfo appFileInfo(m_AppFiler.path);
+        QString appDir = appFileInfo.absolutePath();
+        QString nameFilter = appDir.mid(appDir.lastIndexOf("/") + 1, appDir.size() - 1);
+        QDir dir(appDir);
+        dir.setFilter(QDir::Files | QDir::NoSymLinks); //实现对文件的过滤
+        dir.setNameFilters(QStringList() << nameFilter + ".*"); //设置过滤
+        dir.setSorting(QDir::Time);
+        QFileInfoList fileList = dir.entryInfoList();
+        for (int i = 0; i < fileList.count(); i++) {
+            //使用cat命令获取日志文件的文本
+            arg << "-c" << QString("cat %1").arg(fileList[i].absoluteFilePath());
+            m_process->start("/bin/bash", arg);
+            m_process->waitForFinished(-1);
+            QByteArray byteOutput = m_process->readAllStandardOutput();
+            m_process->close();
+            arg.clear();
             if (!m_canRun) {
                 return;
             }
-            LOG_MSG_APPLICATOIN msg;
-            //删除空白字符
-            str.replace(QRegExp("\\s{2,}"), "");
-            //删除颜色字符
-            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            //替换截断空字符
+            QStringList strList = QString(Utils::replaceEmptyByteArray(byteOutput)).split('\n', QString::SkipEmptyParts);
+            for (int i = strList.size() - 1; i >= 0; --i) {
+                QString str = strList.at(i);
+                if (!m_canRun) {
+                    return;
+                }
+                LOG_MSG_APPLICATOIN msg;
+                //删除空白字符
+                str.replace(QRegExp("\\s{2,}"), "");
+                //删除颜色字符
+                str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
 
-            QStringList list = str.split("]", QString::SkipEmptyParts);
-            //日志格式各字段用[]和空格隔开，有等级 时间 信息体 三个字段，至少应该能分割出三个
-            if (list.count() < 3)
-                continue;
-
-            QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
-            //原始文件时间日期文本为2020-07-03, 19:19:18.639 需要去除,
-            if (dateTime.contains(",")) {
-                dateTime.replace(",", "");
-            }
-            //        if (dateTime.split(".").count() == 2) {
-            //            dateTime = dateTime.split(".")[0];
-            //        }
-
-            // add by Airy
-            // boot maker log can not show
-            if (dateTime.split(".").count() > 2) {
-                list[1] = " " + list[1];
-                QDateTime g_time = QDateTime::fromString(dateTime, "yyyyMMdd.hh:mm:ss.zzz");
-                QString gg_time = g_time.toString("yyyy-MM-dd hh:mm:ss.zzz");
-                dateTime = gg_time;
-            }  // add
-
-            qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
-            //按筛选条件筛选时间段
-            if (m_AppFiler.timeFilterBegin > 0 && m_AppFiler.timeFilterEnd > 0) {
-                if (dt < m_AppFiler.timeFilterBegin || dt > m_AppFiler.timeFilterEnd)
+                QStringList list = str.split("]", QString::SkipEmptyParts);
+                //日志格式各字段用[]和空格隔开，有等级 时间 信息体 三个字段，至少应该能分割出三个
+                if (list.count() < 3)
                     continue;
-            }
 
-            msg.dateTime = dateTime;
-            msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
-            //筛选日志等级
-            if (m_AppFiler.lvlFilter != LVALL) {
-                if (m_levelDict.value(msg.level) != m_AppFiler.lvlFilter)
-                    continue;
-            }
+                QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
+                //原始文件时间日期文本为2020-07-03, 19:19:18.639 需要去除,
+                if (dateTime.contains(",")) {
+                    dateTime.replace(",", "");
+                }
+                //        if (dateTime.split(".").count() == 2) {
+                //            dateTime = dateTime.split(".")[0];
+                //        }
 
-            msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
+                // add by Airy
+                // boot maker log can not show
+                if (dateTime.split(".").count() > 2) {
+                    list[1] = " " + list[1];
+                    QDateTime g_time = QDateTime::fromString(dateTime, "yyyyMMdd.hh:mm:ss.zzz");
+                    QString gg_time = g_time.toString("yyyy-MM-dd hh:mm:ss.zzz");
+                    dateTime = gg_time;
+                } // add
 
-            if (list.count() >= 4) {
-                msg.msg = list.mid(2).join("]");
-            } else {
-                msg.msg = list[2];
-            }
+                qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
+                //按筛选条件筛选时间段
+                if (m_AppFiler.timeFilterBegin > 0 && m_AppFiler.timeFilterEnd > 0) {
+                    if (dt < m_AppFiler.timeFilterBegin || dt > m_AppFiler.timeFilterEnd)
+                        continue;
+                }
 
-            m_appList.append(msg);
-            //每获得500个数据就发出信号给控件加载
-            if (m_appList.count() % SINGLE_READ_CNT == 0) {
-                emit appData(m_threadCount, m_appList);
-                m_appList.clear();
+                msg.dateTime = dateTime;
+                msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
+                //筛选日志等级
+                if (m_AppFiler.lvlFilter != LVALL) {
+                    if (m_levelDict.value(msg.level) != m_AppFiler.lvlFilter)
+                        continue;
+                }
+
+                msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
+
+                if (list.count() >= 4) {
+                    msg.msg = list.mid(2).join("]");
+                } else {
+                    msg.msg = list[2];
+                }
+
+                m_appList.append(msg);
+                //每获得500个数据就发出信号给控件加载
+                if (m_appList.count() % SINGLE_READ_CNT == 0) {
+                    emit appData(m_threadCount, m_appList);
+                    m_appList.clear();
+                }
             }
-        }
-        if (!m_canRun) {
-            return;
+            if (!m_canRun) {
+                return;
+            }
         }
         //最后可能有余下不足500的数据
         if (m_appList.count() >= 0) {

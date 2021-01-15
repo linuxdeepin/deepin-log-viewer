@@ -160,7 +160,9 @@ int LogFileParser::parseByDpkg(DKPG_FILTERS &iDpkgFilter)
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(DPKG);
-
+    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("dpkg");
+    //    const QString&str="/var/log/kern";
+    authThread->setFilePath(filePath);
     authThread->setFileterParam(iDpkgFilter);
     connect(authThread, &LogAuthThread::proccessError, this,
             &LogFileParser::slog_proccessError, Qt::UniqueConnection);
@@ -424,6 +426,10 @@ int LogFileParser::parseByBoot()
     m_isBootLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(BOOT);
+
+    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("boot");
+    //    const QString&str="/var/log/kern";
+    authThread->setFilePath(filePath);
     connect(authThread, &LogAuthThread::bootFinished, this,
             &LogFileParser::bootFinished);
     connect(authThread, &LogAuthThread::bootData, this,
@@ -445,7 +451,13 @@ int LogFileParser::parseByKern(KERN_FILTERS &iKernFilter)
     m_isKernLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(KERN);
+    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("kern");
+    //    qInfo()<<filePath<<"************";
+    //    QStringList filePath=  QStringList()<<"/var/log/kern.log"<<"/var/log/kern.log.1"<<"/var/log/kern.log.2"<<"/var/log/kern.log.3"<<"/var/log/kern.log.4";
+    //    const QString&str="/var/log/kern";
+
     authThread->setFileterParam(iKernFilter);
+    authThread->setFilePath(filePath);
     connect(authThread, &LogAuthThread::kernFinished, this,
             &LogFileParser::kernFinished);
     connect(authThread, &LogAuthThread::kernData, this,

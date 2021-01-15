@@ -56,7 +56,7 @@
 #include "malloc.h"
 DWIDGET_USE_NAMESPACE
 
-#define SINGLE_LOAD 200
+#define SINGLE_LOAD 300
 
 #define LEVEL_WIDTH 80
 #define STATUS_WIDTH 90

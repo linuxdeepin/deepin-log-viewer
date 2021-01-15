@@ -55,6 +55,7 @@ public:
     void setFileterParam(KERN_FILTERS iFIlters) { m_kernFilters = iFIlters; }
     void setFileterParam(NORMAL_FILTERS iFIlters) { m_normalFilters = iFIlters; }
     void stopProccess();
+    void setFilePath(QStringList filePath);
     int getIndex();
     /**
      * @brief thread_index 静态成员变量，用来每次构造时标记新的当前线程对象 m_threadIndex
@@ -145,6 +146,8 @@ private:
     bool m_isStopProccess = false;
     //日志显示时间(毫秒)
     qint64 iTime;
+    //所有日志文件路径
+    QStringList m_FilePath;
 };
 
 #endif  // LOGAUTHTHREAD_H

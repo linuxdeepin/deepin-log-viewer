@@ -133,6 +133,8 @@ FILE(GLOB allSource
        ../application/logsettings.cpp
       ../application/wtmpparse.cpp
       ../application/DebugTimeManager.cpp
+      ../application/dbusproxy/dldbusinterface.cpp
+      ../application/dbusproxy/dldbushandler.cpp
 )
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc

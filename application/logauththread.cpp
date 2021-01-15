@@ -18,6 +18,8 @@
 #include "utils.h"
 #include "sharedmemorymanager.h"
 #include <wtmpparse.h>
+#include <DGuiApplicationHelper>
+#include "dbusproxy/dldbushandler.h"
 
 #include <QDebug>
 #include <QDateTime>
@@ -25,7 +27,7 @@
 #include <utmp.h>
 #include <utmpx.h>
 
-
+DGUI_USE_NAMESPACE
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
 int LogAuthThread::thread_count = 0;
@@ -119,6 +121,11 @@ void LogAuthThread::stopProccess()
 
 }
 
+void LogAuthThread::setFilePath(QStringList filePath)
+{
+    m_FilePath = filePath;
+}
+
 int LogAuthThread::getIndex()
 {
     return  m_threadCount;
@@ -167,58 +174,62 @@ void LogAuthThread::run()
 void LogAuthThread::handleBoot()
 {
     QList<LOG_MSG_BOOT> bList;
-    QFile file("/var/log/boot.log");  // add by Airy
-    if (!file.exists()) {
-        emit bootFinished(m_threadCount);
-        return;
-    }
-    if (!m_canRun) {
-        return;
-    }
-    initProccess();
-    m_process->setProcessChannelMode(QProcess::MergedChannels);
-    //共享内存对应变量置true，允许进程内部逻辑运行
-    ShareMemoryInfo   shareInfo ;
-    shareInfo.isStart = true;
-    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-    //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-    m_process->start("pkexec", QStringList() << "logViewerAuth"
-                     << "/var/log/boot.log" << SharedMemoryManager::instance()->getRunnableKey());
-    m_process->waitForFinished(-1);
-
-    QByteArray byte =   m_process->readAllStandardOutput();
-    QString tempStr = "";
-    QStringList strList =  QString(Utils::replaceEmptyByteArray(byte)).split('\n', QString::SkipEmptyParts);
-
-    //按换行分割
-    for (int i = strList.size() - 1; i >= 0 ; --i)  {
-
-        QString lineStr = strList.at(i);
-        if (lineStr.startsWith("/dev"))
-            continue;
-        //删除颜色格式字符
-        lineStr.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-        // remove Useless characters
-        lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-        Utils::replaceColorfulFont(&lineStr);
-        QStringList retList;
-        LOG_MSG_BOOT bMsg;
-        retList = lineStr.split(" ", QString::SkipEmptyParts);
-        if (lineStr.startsWith("[")) {
-            //如果是以ok/failed开头，则认为是一条记录的开头，否则认为此行为上一条日志的信息体的后续
-            bMsg.status = retList[1];
-            QStringList leftList = retList.mid(3);
-            bMsg.msg += leftList.join(" ");
-            bMsg.msg += tempStr;
-            tempStr.clear();
-            bList.append(bMsg);
-            //每获得500个数据就发出信号给控件加载
-            if (bList.count() % SINGLE_READ_CNT == 0) {
-                emit bootData(m_threadCount, bList);
-                bList.clear();
+    for (int i = 0; i < m_FilePath.count(); i++) {
+        if (!m_FilePath.at(i).contains("txt")) {
+            QFile file(m_FilePath.at(i)); // add by Airy
+            if (!file.exists()) {
+                emit bootFinished(m_threadCount);
+                return;
             }
-        } else {
-            tempStr.prepend(" " + lineStr);
+        }
+        if (!m_canRun) {
+            return;
+        }
+        initProccess();
+        m_process->setProcessChannelMode(QProcess::MergedChannels);
+        //共享内存对应变量置true，允许进程内部逻辑运行
+        ShareMemoryInfo shareInfo;
+        shareInfo.isStart = true;
+        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+        //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+        m_process->start("pkexec", QStringList() << "logViewerAuth"
+                                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+        m_process->waitForFinished(-1);
+
+        QByteArray byte = m_process->readAllStandardOutput();
+        QString tempStr = "";
+        QStringList strList = QString(Utils::replaceEmptyByteArray(byte)).split('\n', QString::SkipEmptyParts);
+
+        //按换行分割
+        //    qInfo()<<strList.size()<<"_________________________";
+        for (int i = strList.size() - 1; i >= 0; --i) {
+            QString lineStr = strList.at(i);
+            if (lineStr.startsWith("/dev"))
+                continue;
+            //删除颜色格式字符
+            lineStr.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            // remove Useless characters
+            lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            Utils::replaceColorfulFont(&lineStr);
+            QStringList retList;
+            LOG_MSG_BOOT bMsg;
+            retList = lineStr.split(" ", QString::SkipEmptyParts);
+            if (lineStr.startsWith("[")) {
+                //如果是以ok/failed开头，则认为是一条记录的开头，否则认为此行为上一条日志的信息体的后续
+                bMsg.status = retList[1];
+                QStringList leftList = retList.mid(3);
+                bMsg.msg += leftList.join(" ");
+                bMsg.msg += tempStr;
+                tempStr.clear();
+                bList.append(bMsg);
+                //每获得500个数据就发出信号给控件加载
+                if (bList.count() % SINGLE_READ_CNT == 0) {
+                    emit bootData(m_threadCount, bList);
+                    bList.clear();
+                }
+            } else {
+                tempStr.prepend(" " + lineStr);
+            }
         }
     }
     //最后可能有余下不足500的数据
@@ -234,124 +245,126 @@ void LogAuthThread::handleBoot()
 void LogAuthThread::handleKern()
 {
     QList<LOG_MSG_JOURNAL> kList;
-    QFile file("/var/log/kern.log"); // add by Airy
-    if (!file.exists()) {
-        emit kernFinished(m_threadCount);
-        return;
-    }
-    if (!m_canRun) {
-        return;
-    }
-    initProccess();
-    if (!m_canRun) {
-        return;
-    }
-    // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
-    m_process->setProcessChannelMode(QProcess::MergedChannels);
-    if (!m_canRun) {
-        return;
-    }
-    //如果共享内存没有初始化绑定好，则无法开始，因为不能开启一个可能无法停止的进程
-    if (!SharedMemoryManager::instance()->isAttached()) {
-        return;
-    }
-    //共享内存对应变量置true，允许进程内部逻辑运行
-    ShareMemoryInfo   shareInfo ;
-    shareInfo.isStart = true;
-    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-    //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-    m_process->start("pkexec", QStringList() << "logViewerAuth"
-                     //         << "/home/zyc/Documents/tech/同方内核日志没有/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-                     //    << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-                     << "/var/log/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-    m_process->waitForFinished(-1);
-    qDebug() << " m_process->exitCode() " << m_process->exitCode();
-    //有错则传出空数据
-    if (m_process->exitCode() != 0) {
-        emit kernFinished(m_threadCount);
-        return;
-    }
-    if (!m_canRun) {
-        return;
-    }
-    QByteArray outByte = m_process->readAllStandardOutput();
-    if (!m_canRun) {
-        return;
-    }
-
-    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
-    for (int i = strList.size() - 1; i >= 0 ; --i)  {
+    //   qDebug()<<m_FilePath<<"+++++++++++++++++++++++++++";
+    for (int i = 0; i < m_FilePath.count(); i++) {
+        //        qInfo()<<m_FilePath.at(i)<<"******************************";
+        if (!m_FilePath.at(i).contains("txt")) {
+            QFile file(m_FilePath.at(i)); // add by Airy
+            if (!file.exists()) {
+                emit kernFinished(m_threadCount);
+                return;
+            }
+        }
         if (!m_canRun) {
             return;
         }
-        QString str = strList.at(i);
-        LOG_MSG_JOURNAL msg;
-        //删除颜色格式字符
-        str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-        QStringList list = str.split(" ", QString::SkipEmptyParts);
-        if (list.size() < 5)
-            continue;
-        //获取内核年份接口已添加，等待系统接口添加年份改变相关日志
-        QStringList timeList;
-        if (list[0].contains("-")) {
-            timeList.append(list[0]);
-            timeList.append(list[1]);
-            iTime = formatDateTime(list[0], list[1]);
-        } else {
-            timeList.append(list[0]);
-            timeList.append(list[1]);
-            timeList.append(list[2]);
-            iTime = formatDateTime(list[0], list[1], list[2]);
+        initProccess();
+        if (!m_canRun) {
+            return;
+        }
+        // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
+        m_process->setProcessChannelMode(QProcess::MergedChannels);
+        if (!m_canRun) {
+            return;
+        }
+        //如果共享内存没有初始化绑定好，则无法开始，因为不能开启一个可能无法停止的进程
+        if (!SharedMemoryManager::instance()->isAttached()) {
+            return;
+        }
+        //共享内存对应变量置true，允许进程内部逻辑运行
+        ShareMemoryInfo shareInfo;
+        shareInfo.isStart = true;
+        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+        //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+        m_process->start("pkexec", QStringList() << "logViewerAuth"
+                                                 //         << "/home/zyc/Documents/tech/同方内核日志没有/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
+                                                 //    << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
+                                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+        m_process->waitForFinished(-1);
+        qDebug() << " m_process->exitCode() " << m_process->exitCode();
+        //有错则传出空数据
+        if (m_process->exitCode() != 0) {
+            emit kernFinished(m_threadCount);
+            return;
+        }
+        if (!m_canRun) {
+            return;
+        }
+        QByteArray outByte = m_process->readAllStandardOutput();
+        if (!m_canRun) {
+            return;
         }
 
-        //对时间筛选
-        if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
-            if (iTime < m_kernFilters.timeFilterBegin || iTime > m_kernFilters.timeFilterEnd)
+        QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+        for (int i = strList.size() - 1; i >= 0; --i) {
+            if (!m_canRun) {
+                return;
+            }
+            QString str = strList.at(i);
+            LOG_MSG_JOURNAL msg;
+            //删除颜色格式字符
+            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            if (list.size() < 5)
                 continue;
-        }
+            //获取内核年份接口已添加，等待系统接口添加年份改变相关日志
+            QStringList timeList;
+            if (list[0].contains("-")) {
+                timeList.append(list[0]);
+                timeList.append(list[1]);
+                iTime = formatDateTime(list[0], list[1]);
+            } else {
+                timeList.append(list[0]);
+                timeList.append(list[1]);
+                timeList.append(list[2]);
+                iTime = formatDateTime(list[0], list[1], list[2]);
+            }
 
-        msg.dateTime = timeList.join(" ");
-        msg.hostName = list[3];
+            //对时间筛选
+            if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
+                if (iTime < m_kernFilters.timeFilterBegin || iTime > m_kernFilters.timeFilterEnd)
+                    continue;
+            }
 
-        QStringList tmpList = list[4].split("[");
-        if (tmpList.size() != 2) {
-            msg.daemonName = list[4].split(":")[0];
-        } else {
-            msg.daemonName = list[4].split("[")[0];
-            QString id = list[4].split("[")[1];
-            id.chop(2);
-            msg.daemonId = id;
-        }
+            msg.dateTime = timeList.join(" ");
+            msg.hostName = list[3];
 
-        QString msgInfo;
-        for (auto k = 5; k < list.size(); k++) {
-            msgInfo.append(list[k] + " ");
-        }
-        msg.msg = msgInfo;
+            QStringList tmpList = list[4].split("[");
+            if (tmpList.size() != 2) {
+                msg.daemonName = list[4].split(":")[0];
+            } else {
+                msg.daemonName = list[4].split("[")[0];
+                QString id = list[4].split("[")[1];
+                id.chop(2);
+                msg.daemonId = id;
+            }
 
-        //            kList.append(msg);
-        kList.append(msg);
-        if (!m_canRun) {
-            return;
-        }
-        //每获得500个数据就发出信号给控件加载
-        if (kList.count() % SINGLE_READ_CNT == 0) {
-            emit kernData(m_threadCount, kList);
-            kList.clear();
-        }
-        if (!m_canRun) {
-            return;
-        }
+            QString msgInfo;
+            for (auto k = 5; k < list.size(); k++) {
+                msgInfo.append(list[k] + " ");
+            }
+            msg.msg = msgInfo;
 
+            //            kList.append(msg);
+            kList.append(msg);
+            if (!m_canRun) {
+                return;
+            }
+            //每获得500个数据就发出信号给控件加载
+            if (kList.count() % SINGLE_READ_CNT == 0) {
+                emit kernData(m_threadCount, kList);
+                kList.clear();
+            }
+            if (!m_canRun) {
+                return;
+            }
+        }
     }
     //最后可能有余下不足500的数据
     if (kList.count() >= 0) {
         emit kernData(m_threadCount, kList);
     }
-
-
     emit kernFinished(m_threadCount);
-
 }
 
 /**
@@ -421,6 +434,11 @@ void LogAuthThread::handleKwin()
  */
 void LogAuthThread::handleXorg()
 {
+    QStringList newList;
+    QStringList oldList;
+    QList<QStringList> totalList;
+    qint64 curDtSecond = 0;
+    qint64 startTimeMsec = 0;
     QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
     //读取现在到本次开机经过的时间，xorg日志文件的时间为从本次开机到日志记录产生时的时间差值
     QFile startFile("/proc/uptime");
@@ -442,7 +460,6 @@ void LogAuthThread::handleXorg()
     if (!m_canRun) {
         return;
     }
-    qDebug() << "startStr" << startFile;
     startStr = startStr.split(" ").value(0, "");
     if (startStr.isEmpty()) {
         emit proccessError(tr("Log file is empty"));
@@ -488,57 +505,132 @@ void LogAuthThread::handleXorg()
     }
     //当前时间减去开机到现在过去的毫秒数则为开机时间
     QDateTime curDt = QDateTime::currentDateTime();
-    qint64 curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
+    curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
     if (!m_canRun) {
         return;
     }
-    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+    newList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+
+    //读取备份/var/log/Xorg.0.log.old日志文件,上一次开关机的Xorg日志文件
+    QFile oldFile("/var/log/Xorg.0.log.old");
+    if (oldFile.exists()) {
+        m_process->start("cat /var/log/Xorg.0.log.old"); // file path is fixed. so write cmd direct
+        m_process->waitForFinished(-1);
+        if (!m_canRun) {
+            return;
+        }
+        QString olderrorStr(m_process->readAllStandardError());
+        if (!m_canRun) {
+            return;
+        }
+        //进程返回输出不是预期的则报错返回
+        Utils::CommandErrorType oldCommandErrorType = Utils::isErroCommand(errorStr);
+        if (!m_canRun) {
+            return;
+        }
+        if (oldCommandErrorType != Utils::NoError) {
+            if (oldCommandErrorType == Utils::PermissionError) {
+                emit proccessError(errorStr + "\n" + "Please use 'sudo' run this application");
+            } else if (oldCommandErrorType == Utils::RetryError) {
+                emit proccessError("The password is incorrect,please try again");
+            }
+            return;
+        }
+        if (!m_canRun) {
+            return;
+        }
+        QByteArray oldOutByte = m_process->readAllStandardOutput();
+        m_process->close();
+        if (!m_canRun) {
+            return;
+        }
+
+        //读取上次开关机时间
+        int ret = -2;
+        struct utmp *utbufp;
+
+        if (wtmp_open(QString(WTMP_FILE).toLatin1().data()) == -1) {
+            printf("open WTMP_FILE file error\n");
+            return; // exit(1) will exit this application
+        }
+        QList<utmp> normalList;
+        QList<utmp> deadList;
+        while ((utbufp = wtmp_next()) != (static_cast<struct utmp *>(nullptr))) {
+            if (utbufp->ut_type != DEAD_PROCESS) {
+                utmp value_ = *utbufp;
+                normalList.append(value_);
+            } else if (utbufp->ut_type == DEAD_PROCESS) {
+                utmp value_ = *utbufp;
+
+                deadList.append(value_);
+            }
+        }
+        QString a_name = "~";
+        QList<utmp> rebootList;
+        foreach (utmp value, normalList) {
+            QString strtmp = value.ut_name;
+            if (strtmp.compare("reboot") == 0) {
+                rebootList.append(value);
+            }
+        }
+        QString n_time = QDateTime::fromTime_t(static_cast<uint>(rebootList.at(rebootList.size() - 2).ut_time)).toString("yyyy-MM-dd hh:mm:ss");
+        QDateTime startTime = QDateTime::fromString(n_time, "yyyy-MM-dd hh:mm:ss");
+        startTimeMsec = startTime.toMSecsSinceEpoch();
+        oldList = QString(Utils::replaceEmptyByteArray(oldOutByte)).split('\n', QString::SkipEmptyParts);
+        wtmp_close();
+    }
+    totalList.append(newList);
+    totalList.append(oldList);
+
     QString tempStr = "";
-    for (int i = strList.size() - 1; i >= 0 ; --i)  {
-        QString str = strList.at(i);
-        if (!m_canRun) {
-            return;
-        }
+    for (int j = 0; j < totalList.count(); j++) {
+        for (int i = totalList.at(j).size() - 1; i >= 0; --i) {
+            QString str = totalList.at(j).at(i);
+            if (!m_canRun) {
+                return;
+            }
+            //清除颜色格式字符
+            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
 
-        //清除颜色格式字符
-        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-
-        if (str.startsWith("[")) {
-            QStringList list = str.split("]", QString::SkipEmptyParts);
-            if (list.count() < 2)
-                continue;
-
-            QString timeStr = list[0];
-            QString msgInfo = list.mid(1, list.length() - 1).join("]");
-
-            // 把开机时间加上日志记录的毫秒数则为日志记录的时间
-            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
-            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
-            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
-            if (m_xorgFilters.timeFilterBegin > 0 && m_xorgFilters.timeFilterEnd > 0) {
-                if (realDt.toMSecsSinceEpoch() < m_xorgFilters.timeFilterBegin || realDt.toMSecsSinceEpoch() > m_xorgFilters.timeFilterEnd)
+            if (str.startsWith("[")) {
+                QStringList list = str.split("]", QString::SkipEmptyParts);
+                if (list.count() < 2)
                     continue;
-            }
-            LOG_MSG_XORG msg;
-            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
-            msg.msg = msgInfo + tempStr;
+                QString timeStr = list[0];
+                QString msgInfo = list.mid(1, list.length() - 1).join("]");
+                // 把开机时间加上日志记录的毫秒数则为日志记录的时间
+                QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+                qint64 realT = 0;
+                if (j == 0) {
+                    realT = curDtSecond + qint64(tStr.toDouble() * 1000);
+                } else {
+                    realT = startTimeMsec + qint64(tStr.toDouble() * 1000);
+                }
+                QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
+                if (m_xorgFilters.timeFilterBegin > 0 && m_xorgFilters.timeFilterEnd > 0) {
+                    if (realDt.toMSecsSinceEpoch() < m_xorgFilters.timeFilterBegin || realDt.toMSecsSinceEpoch() > m_xorgFilters.timeFilterEnd)
+                        continue;
+                }
+                LOG_MSG_XORG msg;
+                msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
+                msg.msg = msgInfo + tempStr;
 
-            tempStr.clear();
-            xList.append(msg);
+                tempStr.clear();
+                xList.append(msg);
 
-            //每获得500个数据就发出信号给控件加载
-            if (xList.count() % SINGLE_READ_CNT == 0) {
-                emit xorgData(m_threadCount, xList);
-                xList.clear();
+                //每获得500个数据就发出信号给控件加载
+                if (xList.count() % SINGLE_READ_CNT == 0) {
+                    emit xorgData(m_threadCount, xList);
+                    xList.clear();
+                }
+            } else {
+                tempStr.prepend(" " + str);
             }
-        } else {
-            tempStr.prepend(" " + str);
-        }
-        if (!m_canRun) {
-            return;
+            if (!m_canRun) {
+                return;
+            }
         }
     }
-    qDebug() << "xorg size" << xList.length();
     if (!m_canRun) {
         return;
     }
@@ -554,79 +646,82 @@ void LogAuthThread::handleXorg()
  */
 void LogAuthThread::handleDkpg()
 {
-
-    QFile file("/var/log/dpkg.log");  // if not,maybe crash
-    if (!file.exists())
-        return;
-    if (!m_canRun) {
-        return;
-    }
-    initProccess();
-    if (!m_canRun) {
-        return;
-    }
-    m_process->start("cat /var/log/dpkg.log");  // file path is fixed. so write cmd direct
-    m_process->waitForFinished(-1);
-    if (!m_canRun) {
-        return;
-    }
-    QByteArray outByte = m_process->readAllStandardOutput();
-    if (!m_canRun) {
-        return;
-    }
-
-    m_process->close();
-    if (!m_canRun) {
-        return;
-    }
     QList<LOG_MSG_DPKG> dList;
-    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
-    for (int i = strList.size() - 1; i >= 0 ; --i)  {
-        QString str = strList.at(i);
+    for (int i = 0; i < m_FilePath.count(); i++) {
+        if (!m_FilePath.at(i).contains("txt")) {
+            QFile file(m_FilePath.at(i)); // if not,maybe crash
+            if (!file.exists())
+                return;
+        }
         if (!m_canRun) {
             return;
         }
-        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-        QStringList strList = str.split(" ", QString::SkipEmptyParts);
-        if (strList.size() < 3)
-            continue;
-
-        QString info;
-        for (auto i = 3; i < strList.size(); i++) {
-            info = info + strList[i] + " ";
+        initProccess();
+        if (!m_canRun) {
+            return;
+        }
+        m_process->start("cat", QStringList() << m_FilePath.at(i)); // file path is fixed. so write cmd direct
+        m_process->waitForFinished(-1);
+        if (!m_canRun) {
+            return;
+        }
+        QByteArray outByte = m_process->readAllStandardOutput();
+        qInfo() << outByte;
+        if (!m_canRun) {
+            return;
         }
 
-        LOG_MSG_DPKG dpkgLog;
-        dpkgLog.dateTime = strList[0] + " " + strList[1];
-        QDateTime dt = QDateTime::fromString(dpkgLog.dateTime, "yyyy-MM-dd hh:mm:ss");
-        //筛选时间
-        if (m_dkpgFilters.timeFilterBegin > 0 && m_dkpgFilters.timeFilterEnd > 0) {
-            if (dt.toMSecsSinceEpoch() < m_dkpgFilters.timeFilterBegin || dt.toMSecsSinceEpoch() > m_dkpgFilters.timeFilterEnd)
+        m_process->close();
+        if (!m_canRun) {
+            return;
+        }
+        QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+        for (int i = strList.size() - 1; i >= 0; --i) {
+            QString str = strList.at(i);
+            if (!m_canRun) {
+                return;
+            }
+            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList strList = str.split(" ", QString::SkipEmptyParts);
+            if (strList.size() < 3)
                 continue;
-        }
-        dpkgLog.action = strList[2];
-        dpkgLog.msg = info;
 
-        //        dList.append(dpkgLog);
-        dList.append(dpkgLog);
-        if (!m_canRun) {
-            return;
-        }
-        //每获得500个数据就发出信号给控件加载
-        if (dList.count() % SINGLE_READ_CNT == 0) {
-            emit dpkgData(m_threadCount, dList);
-            dList.clear();
-        }
+            QString info;
+            for (auto i = 3; i < strList.size(); i++) {
+                info = info + strList[i] + " ";
+            }
 
+            LOG_MSG_DPKG dpkgLog;
+            dpkgLog.dateTime = strList[0] + " " + strList[1];
+            QDateTime dt = QDateTime::fromString(dpkgLog.dateTime, "yyyy-MM-dd hh:mm:ss");
+            //筛选时间
+            if (m_dkpgFilters.timeFilterBegin > 0 && m_dkpgFilters.timeFilterEnd > 0) {
+                if (dt.toMSecsSinceEpoch() < m_dkpgFilters.timeFilterBegin || dt.toMSecsSinceEpoch() > m_dkpgFilters.timeFilterEnd)
+                    continue;
+            }
+            dpkgLog.action = strList[2];
+            dpkgLog.msg = info;
+
+            //        dList.append(dpkgLog);
+            dList.append(dpkgLog);
+            if (!m_canRun) {
+                return;
+            }
+            //每获得500个数据就发出信号给控件加载
+            if (dList.count() % SINGLE_READ_CNT == 0) {
+                emit dpkgData(m_threadCount, dList);
+                dList.clear();
+            }
+            if (!m_canRun) {
+                return;
+            }
+        }
     }
-    if (!m_canRun) {
-        return;
-    }
+
     //最后可能有余下不足500的数据
     if (dList.count() >= 0) {
         emit dpkgData(m_threadCount, dList);
     }
-    qDebug() << "dkpg size" << dList.length();
     emit dpkgFinished(m_threadCount);
 }
 

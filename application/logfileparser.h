@@ -26,10 +26,10 @@
 #include "journalbootwork.h"
 #include "logapplicationparsethread.h"
 #include "logauththread.h"
-#include "structdef.h"
+#include "dbusproxy/dldbushandler.h"
+#include "dbusproxy/dldbusinterface.h"
 
 #include <QMap>
-#include <QObject>
 #include <QThread>
 
 class LogFileParser : public QObject

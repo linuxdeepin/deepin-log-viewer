@@ -145,7 +145,7 @@ message("zlib version: " ${ZLIB_LIBRARIES})
 
 
 set (APP_CPP_FILES
-    main.cpp
+     main.cpp
      filtercontent.cpp
      displaycontent.cpp
      logcollectormain.cpp
@@ -173,6 +173,8 @@ set (APP_CPP_FILES
      logapplication.cpp
      sharedmemorymanager.cpp
      common/collator.cpp
+     dbusproxy/dldbusinterface.cpp
+     dbusproxy/dldbushandler.cpp
      logsettings.cpp
      DebugTimeManager.cpp
      wtmpparse.cpp
@@ -205,6 +207,8 @@ set (APP_HEADERS_FILES
     wtmpparse.h
     model/log_sort_filter_proxy_model.h
     common/collator.h
+    dbusproxy/dldbusinterface.h
+    dbusproxy/dldbushandler.h
     )
 set (TEST_ACCESSIBLE_HEADERS_FILES
      accessible.h
