@@ -16,6 +16,7 @@
 */
 
 #include "logcollectormain.h"
+#include "DebugTimeManager.h"
 #include <stuballthread.h>
 
 #include <gtest/gtest.h>
@@ -26,9 +27,15 @@
 
 #include <QKeyEvent>
 #include <QDebug>
+
+void Log_beginPointLinux(const QString &point, const QString &status){
+
+}
+
 TEST(LogCollectorMain_Constructor_UT, LogCollectorMain_Constructor_UT)
 {
     Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
@@ -46,6 +53,7 @@ TEST(LogCollectorMain_Constructor_UT, LogCollectorMain_Constructor_UT)
 TEST(LogCollectorMain_Destructor_UT, LogCollectorMain_Destructor_UT)
 {
     Stub stub;
+        stub.set(ADDR(DebugTimeManager,beginPointLinux),Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
@@ -63,6 +71,7 @@ TEST(LogCollectorMain_Destructor_UT, LogCollectorMain_Destructor_UT)
 TEST(LogCollectorMain_initUI_UT, LogCollectorMain_initUI_UT)
 {
     Stub stub;
+       stub.set(ADDR(DebugTimeManager,beginPointLinux),Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
@@ -80,6 +89,7 @@ TEST(LogCollectorMain_initUI_UT, LogCollectorMain_initUI_UT)
 TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_001)
 {
     Stub stub;
+       stub.set(ADDR(DebugTimeManager,beginPointLinux),Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
@@ -99,6 +109,7 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_001)
 TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_002)
 {
     Stub stub;
+        stub.set(ADDR(DebugTimeManager,beginPointLinux),Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
@@ -123,6 +134,7 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_002)
 TEST(LogCollectorMain_initConnection_UT, LogCollectorMain_initConnection_UT)
 {
     Stub stub;
+        stub.set(ADDR(DebugTimeManager,beginPointLinux),Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
@@ -141,6 +153,7 @@ TEST(LogCollectorMain_initConnection_UT, LogCollectorMain_initConnection_UT)
 TEST(LogCollectorMain_resizeWidthByFilterContentWidth_UT, LogCollectorMain_resizeWidthByFilterContentWidth_UT)
 {
     Stub stub;
+        stub.set(ADDR(DebugTimeManager,beginPointLinux),Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
@@ -196,6 +209,7 @@ QString stub_ObjectName()
 TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_handleApplicationTabEventNotify_UT_001)
 {
     Stub stub;
+        stub.set(ADDR(DebugTimeManager,beginPointLinux),Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
@@ -223,6 +237,7 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
 TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_handleApplicationTabEventNotify_UT_002)
 {
     Stub stub;
+        stub.set(ADDR(DebugTimeManager,beginPointLinux),Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);

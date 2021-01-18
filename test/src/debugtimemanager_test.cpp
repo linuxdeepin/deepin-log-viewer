@@ -20,8 +20,15 @@
 //#include <stub.h>
 
 //#include <QDebug>
+//#include <QMap>
 
 //#include <gtest/gtest.h>
+
+//template <class Key, class T>
+//bool stub_contains(Key &key){
+//    Q_UNUSED(key);
+//    return  true;
+//}
 
 //class DebugTimeManager_UT : public testing::Test
 //{
@@ -37,19 +44,23 @@
 //    }
 //    void SetUp() //TEST跑之前会执行SetUp
 //    {
-
+//        debugtime=DebugTimeManager::getInstance();
 //        qDebug() << "SetUp" << endl;
 //    }
 //    void TearDown() //TEST跑完之后会执行TearDown
 //    {
 //    }
+//    DebugTimeManager *debugtime;
 
 //};
 
 //TEST_F(DebugTimeManager_UT, clear_UT)
 //{
-//    DebugTimeManager::getInstance()->clear();
-////    m_timeManager->clear();
-////    m_timeManager->beginPointQt("test");
+////    Stub stub;
+////    stub.set(ADDR(QString,contains),);
+////    debugtime->clear();
+////    debugtime->beginPointQt("test");
+////    debugtime->endPointQt("test");
+////    debugtime->endPointLinux("test");
 //    delete DebugTimeManager::getInstance();
 //}

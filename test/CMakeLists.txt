@@ -298,6 +298,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 FILE(GLOB allTestSource
 src/*.cpp
 common/*.cpp
+dbusproxy/*.cpp
 
 # src/displaycontent_test.cpp
 #  src/test_main.cpp

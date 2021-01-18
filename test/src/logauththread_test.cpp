@@ -1,8 +1,8 @@
 /*
 * Copyright (C) 2019 ~ 2020 UnionTech Software Technology Co.,Ltd
 *
-* Author:     zyc <zyc@uniontech.com>
-* Maintainer:  zyc <zyc@uniontech.com>
+* Author:     linxun <linxun@uniontech.com>
+* Maintainer:  linxun <linxun@uniontech.com>
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
@@ -14,226 +14,133 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <gtest/gtest.h>
-#include <stub.h>
+
 #include "logauththread.h"
+#include "structdef.h"
 #include "sharedmemorymanager.h"
+#include "wtmpparse.h"
 
-#include <QDate>
+#include <stub.h>
+
 #include <QDebug>
-#include <QProcess>
-#include <QFile>
-TEST(LogAuthThread_Constructor_UT, LogAuthThread_Constructor_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->deleteLater();
+#include <QDateTime>
+
+#include <gtest/gtest.h>
+bool stub_isAttached(){
+    return  true;
 }
 
-TEST(LogAuthThread_Destructor_UT, LogAuthThread_Destructor_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->~LogAuthThread();
-    EXPECT_EQ(p->m_process, nullptr);
+bool stub_Logexists(){
+    return  true;
 }
 
-TEST(LogAuthThread_getStandardOutput_UT, LogAuthThread_getStandardOutput_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->getStandardOutput();
-    p->deleteLater();
-}
-TEST(LogAuthThread_getStandardError_UT, LogAuthThread_getStandardError_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->getStandardError();
-    p->deleteLater();
+void stub_Logstart(const QString &program, const QStringList &arguments,QIODevice::OpenMode mode){
+
 }
 
-class LogAuthThread_stopProccess_UT_Param
+bool stub_LogwaitForFinished(int msecs){
+    return  true;
+}
+
+void stub_LogsetRunnableTag(ShareMemoryInfo iShareInfo){
+
+}
+
+QByteArray stub_LogreadAllStandardOutput(){
+    return  "2020-11-24 01:57:24 startup archives install \n2020-11-24 01:57:24 install base-passwd:amd64 <none> 3.5.46\n            2021-01-09, 17:04:10.721 [Debug  ] [                                                         0] onTermGetFocus 2";
+}
+
+QByteArray stub_LogreadAllStandardError(){
+    return  "noerror";
+}
+
+void stub_wtmp_close(void)
+{
+}
+
+QString stub_toString(QStringView format)
+{
+    return "20190120";
+}
+
+class LogAuthThread_UT : public testing::Test
 {
 public:
-    LogAuthThread_stopProccess_UT_Param(bool iIsStop, bool iIsProcess)
+    //添加日志
+    static void SetUpTestCase()
     {
-        isStop = iIsStop;
-        isProcess = iIsProcess;
+        qDebug() << "SetUpTestCase" << endl;
     }
-    bool isStop;
-    bool isProcess;
-};
-
-class LogAuthThread_stopProccess_UT : public ::testing::TestWithParam<LogAuthThread_stopProccess_UT_Param>
-{
-};
-
-INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogAuthThread_stopProccess_UT, ::testing::Values(LogAuthThread_stopProccess_UT_Param(false, true), LogAuthThread_stopProccess_UT_Param(true, true), LogAuthThread_stopProccess_UT_Param(true, false)));
-
-TEST_P(LogAuthThread_stopProccess_UT, LogAuthThread_stopProccess_UT_001)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    LogAuthThread_stopProccess_UT_Param param = GetParam();
-    p->m_process = new QProcess();
-    p->m_isStopProccess = param.isStop;
-    p->m_process = param.isProcess ? p->m_process : nullptr;
-    p->stopProccess();
-    p->m_process->deleteLater();
-    p->deleteLater();
-}
-
-class LogAuthThread_run_UT_Param
-{
-public:
-    LogAuthThread_run_UT_Param(LOG_FLAG iType)
+    static void TearDownTestCase()
     {
-        type = iType;
+        qDebug() << "TearDownTestCase" << endl;
     }
-    LOG_FLAG type;
+    void SetUp() //TEST跑之前会执行SetUp
+    {
+        m_logAuthThread=LogAuthThread::instance();
+        qDebug() << "SetUp" << endl;
+    }
+    void TearDown() //TEST跑完之后会执行TearDown
+    {
+
+    }
+    LogAuthThread *m_logAuthThread;
 };
 
-bool stub_isAttached()
+TEST_F(LogAuthThread_UT,LogAuthThread_UT001)
 {
-    return true;
-}
-
-bool stub_exists001()
-{
-    return true;
-}
-
-QByteArray stub_readAllStandardOutput001()
-{
-    return "[20]2[0]-0[7]-03,  [19:19:18.639,dsadj,dasjdajsd,  [adsdas.dasdasd,    [sad, asd. asd  .";
-}
-
-void LogAuthThread_handleBoot_UT_QProcess_start(void *, const QString &program, const QStringList &arguments, QProcess::OpenMode mode = QProcess::ReadWrite)
-{
-    qDebug() << "LogAuthThread_handleBoot_UT_start--";
-}
-
-TEST(LogAuthThread_handleBoot_UT, LogAuthThread_handleBoot_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
     Stub stub;
-    stub.set((void (QProcess::*)(const QString &, const QStringList &, QProcess::OpenMode mode))ADDR(QProcess, start), LogAuthThread_handleBoot_UT_QProcess_start);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_exists001);
-    p->m_canRun = true;
-    p->handleBoot();
-    p->deleteLater();
+    stub.set(ADDR(SharedMemoryManager,isAttached),stub_isAttached);
+    stub.set((bool(QFile::*)()const)ADDR(QFile,exists), stub_Logexists);
+    stub.set((void(QProcess::*)(const QString &, const QStringList &,QIODevice::OpenMode ))ADDR(QProcess,start), stub_Logstart);
+    stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString);
+    stub.set(ADDR(QProcess,waitForFinished),stub_LogwaitForFinished);
+    stub.set(ADDR(QProcess,readAllStandardOutput),stub_LogreadAllStandardOutput);
+    stub.set(ADDR(QProcess,readAllStandardError),stub_LogreadAllStandardError);
+    stub.set(ADDR(SharedMemoryManager,setRunnableTag),stub_LogsetRunnableTag);
+    stub.set(wtmp_close, stub_wtmp_close);
+
+    m_logAuthThread->m_process=new QProcess ();
+    m_logAuthThread->m_isStopProccess=true;
+//    m_logAuthThread->m_type=LOG_FLAG::KERN;
+//    m_logAuthThread->m_FilePath=QStringList()<<"/var/log/kern.log";
+//    m_logAuthThread->run();
+//    m_logAuthThread->m_type=LOG_FLAG::BOOT;
+//    m_logAuthThread->m_FilePath=QStringList()<<"/var/log/boot.log";
+//    m_logAuthThread->run();
+    m_logAuthThread->m_type=LOG_FLAG::DPKG;
+    m_logAuthThread->m_FilePath=QStringList()<<"/var/log/dpkg.log";
+    m_logAuthThread->run();
+    //    m_logAuthThread->m_type=LOG_FLAG::XORG;
+    //    m_logAuthThread->run();
+    //    m_logAuthThread->m_type=LOG_FLAG::Normal;
+    //    m_logAuthThread->run();
+    m_logAuthThread->m_type=LOG_FLAG::Kwin;
+    m_logAuthThread->run();
+
+    KWIN_FILTERS kwin;
+    m_logAuthThread->setFileterParam(kwin);
+    KERN_FILTERS kern;
+    m_logAuthThread->setFileterParam(kern);
+    DKPG_FILTERS dpkg;
+    m_logAuthThread->setFileterParam(dpkg);
+    XORG_FILTERS xorg;
+    m_logAuthThread->setFileterParam(xorg);
+    NORMAL_FILTERS normal;
+    m_logAuthThread->setFileterParam(normal);
+
+    m_logAuthThread->thread_count=1;
+    EXPECT_EQ(m_logAuthThread->getIndex(),1);
+    ASSERT_FALSE(m_logAuthThread->m_canRun);
+    delete LogAuthThread::instance();
+
 }
 
-TEST(LogAuthThread_handleKern_UT, LogAuthThread_handleKern_UT)
+TEST_F(LogAuthThread_UT,LogAuthThread_UT002)
 {
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    Stub stub;
-    stub.set((void (QProcess::*)(const QString &, const QStringList &, QProcess::OpenMode mode))ADDR(QProcess, start), LogAuthThread_handleBoot_UT_QProcess_start);
-    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
-    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
-    p->m_canRun = true;
-    p->handleKern();
-    p->deleteLater();
+
+    m_logAuthThread->m_isStopProccess=false;
 }
 
-TEST(LogAuthThread_handleKwin_UT, LogAuthThread_handleKwin_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    Stub stub;
-    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_exists001);
-    p->m_canRun = true;
-    p->handleKwin();
-    p->deleteLater();
-}
 
-TEST(LogAuthThread_handleXorg_UT, LogAuthThread_handleXorg_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->m_canRun = true;
-    Stub stub;
-    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
-    p->handleXorg();
-    p->deleteLater();
-}
 
-TEST(LogAuthThread_handleXorg_UT, LogAuthThread_handleNormal_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->m_canRun = true;
-    Stub stub;
-    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
-    p->handleNormal();
-    p->deleteLater();
-}
-
-TEST(LogAuthThread_handleDkpg_UT, LogAuthThread_handleDkpg_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->m_canRun = true;
-    Stub stub;
-    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput001);
-    p->handleDkpg();
-    p->deleteLater();
-}
-
-TEST(LogAuthThread_initProccess_UT, LogAuthThread_initProccess_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->initProccess();
-    p->deleteLater();
-}
-
-int yearStub(void *obj)
-{
-    return 2020;
-}
-//TEST(LogAuthThread_formatDateTime_UT, LogAuthThread_formatDateTime_UT)
-//{
-//    LogAuthThread *p = new LogAuthThread(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    Stub stub;
-//    stub.set(ADDR(QDate, year), yearStub);
-//    qint64 result = p->formatDateTime("Oct", "21", "09:50:16");
-//    qint64 standard = 1603245016000;
-//    // EXPECT_EQ(result, standard);
-//    p->deleteLater();
-//}
-
-TEST(LogAuthThread_onFinished_UT, LogAuthThread_onFinished_UT_001)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->m_type = Normal;
-    p->onFinished(0);
-    p->deleteLater();
-}
-
-TEST(LogAuthThread_onFinished_UT, LogAuthThread_onFinished_UT_002)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->initProccess();
-    EXPECT_NE(p->m_process, nullptr);
-    p->m_type = KERN;
-    p->onFinished(0);
-    p->deleteLater();
-}
-
-TEST(LogAuthThread_kernDataRecived_UT, LogAuthThread_kernDataRecived_UT)
-{
-    LogAuthThread *p = new LogAuthThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->initProccess();
-    EXPECT_NE(p->m_process, nullptr);
-    p->kernDataRecived();
-    p->deleteLater();
-}

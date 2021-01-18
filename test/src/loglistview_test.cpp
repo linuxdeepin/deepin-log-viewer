@@ -16,6 +16,7 @@
 */
 #include "loglistview.h"
 #include "dbusmanager.h"
+#include "DebugTimeManager.h"
 
 #include <gtest/gtest.h>
 #include <stub.h>
@@ -65,8 +66,14 @@ void stub_drawPrimitive(QStyle::PrimitiveElement pe, const QStyleOption *opt, QP
 {
 }
 
+void stubbeginPointLinux(const QString &point, const QString &status){
+
+}
+
 TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
@@ -75,13 +82,14 @@ TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
 
 TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
     QStyleOptionViewItem op;
     op.state = QStyle::State_HasFocus;
     v->m_reson = Qt::TabFocusReason;
-    Stub stub;
     stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
     p->paint(new QPainter, op, QModelIndex());
     p->deleteLater();
@@ -89,6 +97,8 @@ TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
 
 TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
@@ -100,11 +110,12 @@ TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
 
 TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_002)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
     QStyleOptionViewItem op;
-    Stub stub;
     stub.set(ADDR(QModelIndex, data), stub_data);
     QHelpEvent helpevent(QEvent::ToolTip, QPoint(0, 0), QPoint(0, 0));
     p->helpEvent(&helpevent, v, op, QModelIndex());
@@ -113,6 +124,8 @@ TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_002)
 
 TEST(LogListDelegate_hideTooltipImmediately_UT, LogListDelegate_hideTooltipImmediately_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
@@ -122,6 +135,8 @@ TEST(LogListDelegate_hideTooltipImmediately_UT, LogListDelegate_hideTooltipImmed
 
 TEST(LogListView_Constructor_UT, LogListView_Constructor_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->deleteLater();
@@ -129,6 +144,8 @@ TEST(LogListView_Constructor_UT, LogListView_Constructor_UT_001)
 
 TEST(LogListView_initUI_UT, LogListView_initUI_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->initUI();
@@ -138,6 +155,7 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_001)
 TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
 {
     Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     stub.set(ADDR(DBusManager,getSystemInfo),stub_getSystemInfo);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -147,6 +165,8 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
 
 TEST(LogListView_setDefaultSelect_UT, LogListView_setDefaultSelectUT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->setDefaultSelect();
@@ -155,6 +175,8 @@ TEST(LogListView_setDefaultSelect_UT, LogListView_setDefaultSelectUT_001)
 
 TEST(LogListView_setCustomFont_UT, LogListView_setCustomFont_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->setCustomFont(nullptr);
@@ -163,6 +185,8 @@ TEST(LogListView_setCustomFont_UT, LogListView_setCustomFont_001)
 
 TEST(LogListView_isFileExist_UT, LogListView_isFileExist_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     bool result = p->isFileExist("");
@@ -172,6 +196,8 @@ TEST(LogListView_isFileExist_UT, LogListView_isFileExist_001)
 
 TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->onChangedTheme(DGuiApplicationHelper::LightType);
@@ -180,6 +206,8 @@ TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_001)
 
 TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_002)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->onChangedTheme(DGuiApplicationHelper::DarkType);
@@ -196,6 +224,8 @@ TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_002)
 
 TEST(LogListView_currentChanged_UT, LogListView_currentChanged_UT_002)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->currentChanged(QModelIndex(), QModelIndex());
@@ -204,6 +234,8 @@ TEST(LogListView_currentChanged_UT, LogListView_currentChanged_UT_002)
 
 TEST(LogListView_truncateFile_UT, LogListView_truncateFile_UT_002)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->truncateFile("");
@@ -212,6 +244,8 @@ TEST(LogListView_truncateFile_UT, LogListView_truncateFile_UT_002)
 
 TEST(LogListView_slot_getAppPath_UT, LogListView_slot_getAppPath_UT_002)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     QString path = "aa";
@@ -222,6 +256,8 @@ TEST(LogListView_slot_getAppPath_UT, LogListView_slot_getAppPath_UT_002)
 
 TEST(LogListView_focusReson_UT, LogListView_focusReson_UT_002)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->focusReson();
@@ -263,6 +299,8 @@ QAction *LogListView_showRightMenu_UT_QMenu_exec_Func(void **p, const QPoint &po
 
 TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     QToolTip::showText(QPoint(), "test", p);
@@ -272,6 +310,8 @@ TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_001)
 
 TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_002)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->mouseMoveEvent(nullptr);
@@ -296,6 +336,8 @@ INSTANTIATE_TEST_CASE_P(LogListView, LogListView_keyPressEvent_UT, ::testing::Va
 
 TEST_P(LogListView_keyPressEvent_UT, LogListView_keyPressEvent_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView_keyPressEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -323,6 +365,8 @@ INSTANTIATE_TEST_CASE_P(LogListView, LogListView_mousePressEvent_UT, ::testing::
 
 TEST_P(LogListView_mousePressEvent_UT, LogListView_mousePressEvent_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView_mousePressEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -349,6 +393,8 @@ INSTANTIATE_TEST_CASE_P(LogListView, LogListView_focusInEvent_UT, ::testing::Val
 
 TEST_P(LogListView_focusInEvent_UT, LogListView_focusInEvent_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView_focusInEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -360,6 +406,8 @@ TEST_P(LogListView_focusInEvent_UT, LogListView_focusInEvent_UT_001)
 
 TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_focusOutEvent_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -371,6 +419,7 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_focusOutEvent_UT_
 TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_showRightMenu)
 {
     Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     stub.set((QAction*(QMenu::*)(const QPoint &, QAction *))ADDR(QMenu,exec),stub_exec);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -380,6 +429,8 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_showRightMenu)
 
 TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_paintEvent)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
 

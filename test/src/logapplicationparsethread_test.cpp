@@ -1,8 +1,8 @@
 /*
 * Copyright (C) 2019 ~ 2020 UnionTech Software Technology Co.,Ltd
 *
-* Author:     zyc <zyc@uniontech.com>
-* Maintainer:  zyc <zyc@uniontech.com>
+* Author:     linxun <linxun@uniontech.com>
+* Maintainer:  linxun <linxun@uniontech.com>
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
@@ -14,143 +14,68 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <gtest/gtest.h>
-#include <stub.h>
+
 #include "logapplicationparsethread.h"
+#include "logfileparser.h"
 #include "structdef.h"
+
+#include <stub.h>
+
 #include <QDebug>
-#include <QProcess>
-TEST(LogApplicationParseThread_Constructor_UT, LogApplicationParseThread_Constructor_UT)
-{
-    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->deleteLater();
+#include <QDir>
+#include <QFileInfo>
+
+#include <gtest/gtest.h>
+
+QFileInfoList stub_entryInfoList(QDir::Filters filters ,QDir::SortFlags sort){
+    QFileInfo fileInfo("test.txt");
+    QList<QFileInfo>m_list{fileInfo};
+    return m_list;
 }
 
-TEST(LogApplicationParseThread_Destructor_UT, LogApplicationParseThread_Destructor_UT_001)
-{
-    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->~LogApplicationParseThread();
-    EXPECT_EQ(p->m_process, nullptr);
-    //  delete  p;
+QStringList stub_split(QChar sep, QString::SplitBehavior behavior,
+                     Qt::CaseSensitivity cs ){
+
+    return  QStringList()<<"t.em,s[.a]da[],m[.s]d,s[t.][,"<<"jsd[sa[dds.,]"<<"ds[ds..,/n"<<"test2.[df,f";
 }
 
-TEST(LogApplicationParseThread_setParam_UT, LogApplicationParseThread_setParam_UT_001)
-{
-    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    APP_FILTERS filter;
-    p->setParam(filter);
-    EXPECT_EQ(p->m_AppFiler.timeFilterBegin, filter.timeFilterBegin);
-    EXPECT_EQ(p->m_AppFiler.timeFilterEnd, filter.timeFilterEnd);
-    EXPECT_EQ(p->m_AppFiler.lvlFilter, filter.lvlFilter);
-    EXPECT_EQ(p->m_AppFiler.path, filter.path);
-    p->deleteLater();
-}
 
-TEST(LogApplicationHelper_stopProccess_UT, LogApplicationHelper_stopProccess_UT)
-{
-    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->m_process = new QProcess();
-    p->stopProccess();
-    EXPECT_EQ(p->m_canRun, false);
-    EXPECT_EQ(p->m_process->isOpen(), false);
-    p->m_process->deleteLater();
-    p->deleteLater();
-}
-
-class LogApplicationParseThread_doWork_UT_Param
+class LogApplicationParseThread_UT : public testing::Test
 {
 public:
-    LogApplicationParseThread_doWork_UT_Param(bool iIsPathEmpty, bool iIsTimeEmpty, bool iIsLvlEmpty)
+    //添加日志
+    static void SetUpTestCase()
     {
-        isPathEmpty = iIsPathEmpty;
-        isTimeEmpty = iIsTimeEmpty;
-        isLvlEmpty = iIsLvlEmpty;
+        qDebug() << "SetUpTestCase" << endl;
     }
-    bool isPathEmpty;
-    bool isTimeEmpty;
-    bool isLvlEmpty;
-
-
+    static void TearDownTestCase()
+    {
+        qDebug() << "TearDownTestCase" << endl;
+    }
+    void SetUp() //TEST跑之前会执行SetUp
+    {
+        m_logAppThread=new LogApplicationParseThread();
+        qDebug() << "SetUp" << endl;
+    }
+    void TearDown() //TEST跑完之后会执行TearDown
+    {
+        m_logAppThread->m_process=new QProcess ();
+        delete  m_logAppThread;
+    }
+    LogApplicationParseThread *m_logAppThread;
 };
 
-class LogApplicationParseThread_doWork_UT : public ::testing::TestWithParam<LogApplicationParseThread_doWork_UT_Param>
+TEST_F(LogApplicationParseThread_UT, LogApplicationParseThread_UT001)
 {
-};
-
-INSTANTIATE_TEST_CASE_P(LogApplicationParseThread, LogApplicationParseThread_doWork_UT, ::testing::Values(LogApplicationParseThread_doWork_UT_Param(false, true, true)
-                                                                                                          , LogApplicationParseThread_doWork_UT_Param(true, true, true)
-                                                                                                          , LogApplicationParseThread_doWork_UT_Param(true, false, false)
-                                                                                                         ));
-
-QByteArray stub_readAllStandardOutput()
-{
-    return "2020-07-03, 19:19:18.639,dsadj,dasjdajsd,adsdas.dasdasd,sad,asd.asd.";
-}
-
-TEST_P(LogApplicationParseThread_doWork_UT, LogApplicationParseThread_doWork_UT_001)
-{
-    LogApplicationParseThread_doWork_UT_Param param = GetParam();
-    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    APP_FILTERS filter;
-    filter.path = param.isPathEmpty ? "" : "../sources/dde-calendar.log";
-    filter.lvlFilter = param.isLvlEmpty ? LVALL : INF;
-    filter.timeFilterBegin = param.isTimeEmpty ? -1 : 0;
-    filter.timeFilterEnd = param.isTimeEmpty ? -1 : 2 ^ 10;
-    p->doWork();
-    p->deleteLater();
-}
-
-TEST_P(LogApplicationParseThread_doWork_UT, LogApplicationParseThread_doWork_UT_002)
-{
+    APP_FILTERS appfilter;
     Stub stub;
-    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput);
-    LogApplicationParseThread_doWork_UT_Param param = GetParam();
-    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    APP_FILTERS filter;
-    filter.path = param.isPathEmpty ? "" : "../sources/dde-calendar.log";
-    filter.lvlFilter = param.isLvlEmpty ? LVALL : INF;
-    filter.timeFilterBegin = param.isTimeEmpty ? -1 : 0;
-    filter.timeFilterEnd = param.isTimeEmpty ? -1 : 2 ^ 10;
-    p->m_AppFiler.path = "test";
-    p->m_AppFiler.timeFilterBegin = 20;
-    p->m_AppFiler.timeFilterEnd = 20;
-    p->m_AppFiler.lvlFilter = LVALL;
-    p->doWork();
-    p->deleteLater();
+    stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters,QDir::SortFlags)const)ADDR(QDir,entryInfoList), stub_entryInfoList);
+    stub.set((QStringList(QString::*)(QChar,QString::SplitBehavior,Qt::CaseSensitivity)const)ADDR(QString,split), stub_split);
+    m_logAppThread->initProccess();
+    m_logAppThread->setParam(appfilter);
+    m_logAppThread->m_AppFiler.path="/home/test";
+    m_logAppThread->doWork();
+    m_logAppThread->run();
+    m_logAppThread->onProcFinished(1);
 }
 
-TEST(LogApplicationParseThread_onProcFinished_UT, LogApplicationParseThread_onProcFinished_UT)
-{
-    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->onProcFinished(0);
-    p->deleteLater();
-}
-
-TEST(LogApplicationParseThread_initMap_UT, LogApplicationParseThread_initMap_UT)
-{
-    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->initMap();
-    EXPECT_EQ(p->m_levelDict.value("Warning"), WARN);
-    EXPECT_EQ(p->m_levelDict.value("Debug"), DEB);
-    EXPECT_EQ(p->m_levelDict.value("Info"), INF);
-    EXPECT_EQ(p->m_levelDict.value("Error"), ERR);
-    p->deleteLater();
-}
-
-
-TEST(LogApplicationParseThread_initProccess_UT, LogApplicationParseThread_initProccess_UT)
-{
-    LogApplicationParseThread *p = new LogApplicationParseThread(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->initProccess();
-    EXPECT_NE(p->m_process, nullptr);
-    p->deleteLater();
-}

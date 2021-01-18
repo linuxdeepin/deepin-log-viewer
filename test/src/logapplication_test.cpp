@@ -17,6 +17,7 @@
 
 #include "logapplication.h"
 #include "logcollectormain.h"
+#include "DebugTimeManager.h"
 #include <stuballthread.h>
 
 #include <gtest/gtest.h>
@@ -32,12 +33,16 @@ TEST(LogApplication_Constructor_UT, LogApplication_Constructor_UT)
     EXPECT_NE(p, nullptr);
     p->deleteLater();
 }
+void stub_beginPointLinux(const QString &point, const QString &status){
 
+}
 TEST(LogApplication_setMainWindow_UT, LogApplication_setMainWindow_UT)
 {
+
     int argc = 0;
     char **argv;
     Stub stub;
+    stub.set(ADDR(DebugTimeManager,beginPointLinux),stub_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);

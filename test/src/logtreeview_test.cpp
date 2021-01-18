@@ -19,9 +19,21 @@
 #include <gtest/gtest.h>
 #include <stub.h>
 
+#include <DStyle>
+
 #include <QDebug>
 #include <QPaintEvent>
 #include <QPainter>
+DWIDGET_USE_NAMESPACE
+
+int stub_pixelMetric002(DStyle::PixelMetric m, const QStyleOption *opt = nullptr, const QWidget *widget = nullptr)
+{
+    return 1;
+}
+
+void stub_drawPrimitive002(DStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *w = nullptr)
+{
+}
 
 class LogTreeView_UT : public testing::Test
 {
@@ -58,12 +70,15 @@ TEST_F(LogTreeView_UT, paintEvent_UT)
     m_treeView->paintEvent(&repait);
 }
 
-//TEST_F(LogTreeView_UT, drawRow_UT)
-//{
-//    QPainter painter;
-//    QStyleOptionViewItem option;
-//    m_treeView->drawRow(&painter, option, QModelIndex());
-//}
+TEST_F(LogTreeView_UT, drawRow_UT)
+{
+    Stub stub;
+    stub.set((int (DStyle::*)(DStyle::PixelMetric, const QStyleOption *, const QWidget *) const)ADDR(DStyle, pixelMetric), stub_pixelMetric002);
+    stub.set((void (DStyle::*)(DStyle::PrimitiveElement, const QStyleOption *, QPainter *, const QWidget *) const)ADDR(DStyle, drawPrimitive), stub_drawPrimitive002);
+    QPainter painter;
+    QStyleOptionViewItem option;
+    m_treeView->drawRow(&painter, option, QModelIndex());
+}
 
 TEST_F(LogTreeView_UT, keyPressEvent_UT)
 {

@@ -20,6 +20,7 @@
 #include "../application/utils.h"
 #include "../application/logexportthread.h"
 #include "stuballthread.h"
+#include "../application/DebugTimeManager.h"
 
 #include <stub.h>
 
@@ -28,6 +29,9 @@
 #include <QFileDialog>
 #include <QPaintEvent>
 #include <QThreadPool>
+#include <QDBusAbstractInterfaceBase>
+
+
 
 TEST(DisplayContent_Constructor_UT, DisplayContent_Constructor_UT_001)
 {
@@ -36,8 +40,14 @@ TEST(DisplayContent_Constructor_UT, DisplayContent_Constructor_UT_001)
     delete p;
 }
 
+void stub_endPointLinux(const QString &point, const QString &status){
+
+}
+
 TEST(DisplayContent_Constructor_UT, Dslot_normalData_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager,endPointLinux),stub_endPointLinux);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     LOG_MSG_NORMAL test;
@@ -816,6 +826,11 @@ bool slot_logCatelogueClicked_ModelIndex_isValid_Func(void *obj)
     return true;
 }
 
+QStringList stub_getFileInfo(const QString &flag){
+    Q_UNUSED(flag);
+    return  QStringList()<<"test";
+}
+
 TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelogueClicked_UT_001)
 {
     DisplayContent_slot_logCatelogueClicked_UT_Param param = GetParam();
@@ -867,6 +882,7 @@ TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelo
     stub.set(ADDR(DisplayContent, generateJournalBootFile), DisplayContent_slot_BtnSelected_UT_generateJournalFile);
     stub.set(ADDR(QModelIndex, data), slot_logCatelogueClicked_ModelIndex_data_Func);
     stub.set(ADDR(QModelIndex, isValid), slot_logCatelogueClicked_ModelIndex_isValid_Func);
+    stub.set(ADDR(DLDBusHandler,getFileInfo),stub_getFileInfo);
     p->m_flag = KERN;
     p->slot_logCatelogueClicked(QModelIndex());
     //    p->itemData=QDir::homePath() + "/.kwin.log";

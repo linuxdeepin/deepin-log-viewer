@@ -173,6 +173,7 @@ void LogAuthThread::run()
  */
 void LogAuthThread::handleBoot()
 {
+    qInfo()<<"**********************************";
     QList<LOG_MSG_BOOT> bList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
@@ -510,7 +511,6 @@ void LogAuthThread::handleXorg()
         return;
     }
     newList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
-
     //读取备份/var/log/Xorg.0.log.old日志文件,上一次开关机的Xorg日志文件
     QFile oldFile("/var/log/Xorg.0.log.old");
     if (oldFile.exists()) {
@@ -544,7 +544,6 @@ void LogAuthThread::handleXorg()
         if (!m_canRun) {
             return;
         }
-
         //读取上次开关机时间
         int ret = -2;
         struct utmp *utbufp;
@@ -581,7 +580,6 @@ void LogAuthThread::handleXorg()
     }
     totalList.append(newList);
     totalList.append(oldList);
-
     QString tempStr = "";
     for (int j = 0; j < totalList.count(); j++) {
         for (int i = totalList.at(j).size() - 1; i >= 0; --i) {
@@ -591,7 +589,6 @@ void LogAuthThread::handleXorg()
             }
             //清除颜色格式字符
             str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-
             if (str.startsWith("[")) {
                 QStringList list = str.split("]", QString::SkipEmptyParts);
                 if (list.count() < 2)
@@ -617,7 +614,6 @@ void LogAuthThread::handleXorg()
 
                 tempStr.clear();
                 xList.append(msg);
-
                 //每获得500个数据就发出信号给控件加载
                 if (xList.count() % SINGLE_READ_CNT == 0) {
                     emit xorgData(m_threadCount, xList);
@@ -670,7 +666,6 @@ void LogAuthThread::handleDkpg()
         if (!m_canRun) {
             return;
         }
-
         m_process->close();
         if (!m_canRun) {
             return;
@@ -894,10 +889,3 @@ void LogAuthThread::kernDataRecived()
 
 }
 
-//void LogAuthThread::onFinishedRead()
-//{
-//    QProcess *process = dynamic_cast<QProcess *>(sender());
-//    QString str = QString(process->readAllStandardOutput());
-//    QStringList l = str.split('\n');
-
-//}
