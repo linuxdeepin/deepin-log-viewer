@@ -63,6 +63,15 @@ QString stub_toString(QStringView format)
     return "20190120";
 }
 
+void stub_setProcessChannelMode(QProcess::ProcessChannelMode mode)
+{
+}
+
+int stub_exitCode()
+{
+    return 0;
+}
+
 class LogAuthThread_UT : public testing::Test
 {
 public:
@@ -99,15 +108,17 @@ TEST_F(LogAuthThread_UT,LogAuthThread_UT001)
     stub.set(ADDR(QProcess,readAllStandardError),stub_LogreadAllStandardError);
     stub.set(ADDR(SharedMemoryManager,setRunnableTag),stub_LogsetRunnableTag);
     stub.set(wtmp_close, stub_wtmp_close);
+    stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
+    stub.set(ADDR(QProcess, exitCode), stub_exitCode);
 
     m_logAuthThread->m_process=new QProcess ();
     m_logAuthThread->m_isStopProccess=true;
-//    m_logAuthThread->m_type=LOG_FLAG::KERN;
-//    m_logAuthThread->m_FilePath=QStringList()<<"/var/log/kern.log";
-//    m_logAuthThread->run();
-//    m_logAuthThread->m_type=LOG_FLAG::BOOT;
-//    m_logAuthThread->m_FilePath=QStringList()<<"/var/log/boot.log";
-//    m_logAuthThread->run();
+    m_logAuthThread->m_type = LOG_FLAG::KERN;
+    m_logAuthThread->m_FilePath = QStringList() << "/var/log/kern.log";
+    m_logAuthThread->run();
+    m_logAuthThread->m_type = LOG_FLAG::BOOT;
+    m_logAuthThread->m_FilePath = QStringList() << "/var/log/boot.log";
+    m_logAuthThread->run();
     m_logAuthThread->m_type=LOG_FLAG::DPKG;
     m_logAuthThread->m_FilePath=QStringList()<<"/var/log/dpkg.log";
     m_logAuthThread->run();

@@ -2611,3 +2611,141 @@ TEST_P(LogExportThread_exportToHtml_JOURNAL_UT, LogExportThread_exportToHtml_JOU
 //    p->run();
 //    p->deleteLater();
 //}
+class LogExportthread_UT : public testing::Test
+{
+public:
+    //添加日志
+    static void SetUpTestCase()
+    {
+        qDebug() << "SetUpTestCase" << endl;
+    }
+    static void TearDownTestCase()
+    {
+        qDebug() << "TearDownTestCase" << endl;
+    }
+    void SetUp() //TEST跑之前会执行SetUp
+    {
+        bool iscomplete = true;
+        exportThread = new LogExportThread(iscomplete);
+        qDebug() << "SetUp" << endl;
+    }
+    void TearDown() //TEST跑完之后会执行TearDown
+    {
+        delete exportThread;
+    }
+    LogExportThread *exportThread;
+};
+
+TEST_F(LogExportthread_UT, LogExportThread001_UT)
+{
+    QStandardItemModel m_model;
+    m_model.appendRow(new QStandardItem());
+    LOG_FLAG flag;
+    struct LOG_MSG_JOURNAL m_journal = {"20190503", "10:02", "uos", "d", "1", "2"};
+    struct LOG_MSG_APPLICATOIN m_app = {"20190503", "10:02", "uos", "d"};
+    struct LOG_MSG_DPKG m_dpkg = {"20190503", "10:02", "uos"};
+    struct LOG_MSG_BOOT m_boot = {"20190503", "10:02"};
+    struct LOG_MSG_XORG m_xorg = {"20190503", "10:02"};
+    struct LOG_MSG_NORMAL m_normal = {"20190503", "10:02", "uos", "d"};
+    struct LOG_MSG_KWIN m_kwin = {"test"};
+    QList<LOG_MSG_JOURNAL> m_List;
+    QList<LOG_MSG_APPLICATOIN> m_appList;
+    QList<LOG_MSG_DPKG> m_dpkgList;
+    QList<LOG_MSG_BOOT> m_bootList;
+    QList<LOG_MSG_XORG> m_xorgList;
+    QList<LOG_MSG_NORMAL> m_normalList;
+    QList<LOG_MSG_KWIN> m_kwinList;
+    m_appList.append(m_app);
+    m_List.append(m_journal);
+    m_dpkgList.append(m_dpkg);
+    m_bootList.append(m_boot);
+    m_xorgList.append(m_xorg);
+    m_normalList.append(m_normal);
+    m_kwinList.append(m_kwin);
+    QString test = "test";
+    exportThread->m_canRunning = true;
+    exportThread->exportToDoc("test", m_List, QStringList() << "test", flag);
+    exportThread->exportToDoc("test", m_appList, QStringList() << "test", test);
+    exportThread->exportToDoc("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_bootList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_xorgList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_normalList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_kwinList, QStringList() << "test");
+
+    //        exportThread->exportToDoc("test",m_List,QStringList()<<"test",test);
+}
+
+TEST_F(LogExportthread_UT, LogExportThread002_UT)
+{
+    QStandardItemModel m_model;
+    m_model.appendRow(new QStandardItem());
+    LOG_FLAG flag;
+    struct LOG_MSG_JOURNAL m_journal = {"20190503", "10:02", "uos", "d", "1", "2"};
+    struct LOG_MSG_APPLICATOIN m_app = {"20190503", "10:02", "uos", "d"};
+    struct LOG_MSG_DPKG m_dpkg = {"20190503", "10:02", "uos"};
+    struct LOG_MSG_BOOT m_boot = {"20190503", "10:02"};
+    struct LOG_MSG_XORG m_xorg = {"20190503", "10:02"};
+    struct LOG_MSG_NORMAL m_normal = {"20190503", "10:02", "uos", "d"};
+    struct LOG_MSG_KWIN m_kwin = {"test"};
+    QList<LOG_MSG_JOURNAL> m_List;
+    QList<LOG_MSG_APPLICATOIN> m_appList;
+    QList<LOG_MSG_DPKG> m_dpkgList;
+    QList<LOG_MSG_BOOT> m_bootList;
+    QList<LOG_MSG_XORG> m_xorgList;
+    QList<LOG_MSG_NORMAL> m_normalList;
+    QList<LOG_MSG_KWIN> m_kwinList;
+    m_appList.append(m_app);
+    m_List.append(m_journal);
+    m_dpkgList.append(m_dpkg);
+    m_bootList.append(m_boot);
+    m_xorgList.append(m_xorg);
+    m_normalList.append(m_normal);
+    m_kwinList.append(m_kwin);
+    QString test = "test";
+    exportThread->m_canRunning = true;
+    exportThread->exportToHtml("test", new QStandardItemModel(), flag);
+    exportThread->exportToHtml("test", m_List, QStringList() << "test", flag);
+    exportThread->exportToHtml("test", m_appList, QStringList() << "test", test);
+    exportThread->exportToHtml("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_bootList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_xorgList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_normalList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_kwinList, QStringList() << "test");
+}
+
+TEST_F(LogExportthread_UT, LogExportThread003_UT)
+{
+    QStandardItemModel m_model;
+    m_model.appendRow(new QStandardItem());
+    LOG_FLAG flag;
+    struct LOG_MSG_JOURNAL m_journal = {"20190503", "10:02", "uos", "d", "1", "2"};
+    struct LOG_MSG_APPLICATOIN m_app = {"20190503", "10:02", "uos", "d"};
+    struct LOG_MSG_DPKG m_dpkg = {"20190503", "10:02", "uos"};
+    struct LOG_MSG_BOOT m_boot = {"20190503", "10:02"};
+    struct LOG_MSG_XORG m_xorg = {"20190503", "10:02"};
+    struct LOG_MSG_NORMAL m_normal = {"20190503", "10:02", "uos", "d"};
+    struct LOG_MSG_KWIN m_kwin = {"test"};
+    QList<LOG_MSG_JOURNAL> m_List;
+    QList<LOG_MSG_APPLICATOIN> m_appList;
+    QList<LOG_MSG_DPKG> m_dpkgList;
+    QList<LOG_MSG_BOOT> m_bootList;
+    QList<LOG_MSG_XORG> m_xorgList;
+    QList<LOG_MSG_NORMAL> m_normalList;
+    QList<LOG_MSG_KWIN> m_kwinList;
+    m_appList.append(m_app);
+    m_List.append(m_journal);
+    m_dpkgList.append(m_dpkg);
+    m_bootList.append(m_boot);
+    m_xorgList.append(m_xorg);
+    m_normalList.append(m_normal);
+    m_kwinList.append(m_kwin);
+    QString test = "test";
+    exportThread->m_canRunning = true;
+    exportThread->exportToXls("test", m_List, QStringList() << "test", flag);
+    exportThread->exportToXls("test", m_appList, QStringList() << "test", test);
+    exportThread->exportToXls("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToXls("test", m_bootList, QStringList() << "test");
+    exportThread->exportToXls("test", m_xorgList, QStringList() << "test");
+    exportThread->exportToXls("test", m_normalList, QStringList() << "test");
+    exportThread->exportToXls("test", m_kwinList, QStringList() << "test");
+}
