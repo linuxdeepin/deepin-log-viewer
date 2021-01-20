@@ -328,20 +328,41 @@ void LogAuthThread::handleKern()
             }
 
             msg.dateTime = timeList.join(" ");
-            msg.hostName = list[3];
-
-            QStringList tmpList = list[4].split("[");
-            if (tmpList.size() != 2) {
-                msg.daemonName = list[4].split(":")[0];
+            QStringList tmpList;
+            if (list[0].contains("-")) {
+                msg.hostName = list[2];
+                tmpList = list[3].split("[");
             } else {
-                msg.daemonName = list[4].split("[")[0];
-                QString id = list[4].split("[")[1];
-                id.chop(2);
-                msg.daemonId = id;
+                msg.hostName = list[3];
+                tmpList = list[4].split("[");
+            }
+	    	
+            int m = 0;
+            //内核日志存在年份，解析用户名和进程id
+            if (list[0].contains("-")) {
+                if (tmpList.size() != 2) {
+                    msg.daemonName = list[3].split(":")[0];
+                } else {
+                    msg.daemonName = list[3].split("[")[0];
+                    QString id = list[3].split("[")[1];
+                    id.chop(2);
+                    msg.daemonId = id;
+                }
+                m = 4;
+            } else {//内核日志不存在年份,解析用户名和进程id
+                if (tmpList.size() != 2) {
+                    msg.daemonName = list[4].split(":")[0];
+                } else {
+                    msg.daemonName = list[4].split("[")[0];
+                    QString id = list[4].split("[")[1];
+                    id.chop(2);
+                    msg.daemonId = id;
+                }
+                m = 5;
             }
 
             QString msgInfo;
-            for (auto k = 5; k < list.size(); k++) {
+            for (int k = m; k < list.size(); k++) {
                 msgInfo.append(list[k] + " ");
             }
             msg.msg = msgInfo;
