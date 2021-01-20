@@ -363,11 +363,20 @@ void LogAuthThread::handleKern()
             if (list.size() < 5)
                 continue;
 
+            qint64 iTime = 0;
+            //获取内核年份接口已添加，等待系统接口添加年份改变相关日志
             QStringList timeList;
-            timeList.append(list[0]);
-            timeList.append(list[1]);
-            timeList.append(list[2]);
-            qint64 iTime = formatDateTime(list[0], list[1], list[2]);
+            if (list[0].contains("-")) {
+                timeList.append(list[0]);
+                timeList.append(list[1]);
+                iTime = formatDateTime(list[0], list[1]);
+            } else {
+                timeList.append(list[0]);
+                timeList.append(list[1]);
+                timeList.append(list[2]);
+                iTime = formatDateTime(list[0], list[1], list[2]);
+            }
+
             //对时间筛选
             if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
                 if (iTime < m_kernFilters.timeFilterBegin || iTime > m_kernFilters.timeFilterEnd)
@@ -375,21 +384,41 @@ void LogAuthThread::handleKern()
             }
 
             msg.dateTime = timeList.join(" ");
-            msg.hostName = list[3];
-
-            QStringList tmpList = list[4].split("[");
-            if (tmpList.size() != 2) {
-                msg.daemonName = list[4].split(":")[0];
+            QStringList tmpList;
+            if (list[0].contains("-")) {
+                msg.hostName = list[2];
+                tmpList = list[3].split("[");
             } else {
-                msg.daemonName = list[4].split("[")[0];
-                QString id = list[4].split("[")[1];
-                id.chop(2);
-                msg.daemonId = id;
+                msg.hostName = list[3];
+                tmpList = list[4].split("[");
+            }
+
+            int m = 0;
+            if (list[0].contains("-")) {
+                if (tmpList.size() != 2) {
+                    msg.daemonName = list[3].split(":")[0];
+                } else {
+                    msg.daemonName = list[3].split("[")[0];
+                    QString id = list[3].split("[")[1];
+                    id.chop(2);
+                    msg.daemonId = id;
+                }
+                m = 4;
+            } else {
+                if (tmpList.size() != 2) {
+                    msg.daemonName = list[4].split(":")[0];
+                } else {
+                    msg.daemonName = list[4].split("[")[0];
+                    QString id = list[4].split("[")[1];
+                    id.chop(2);
+                    msg.daemonId = id;
+                }
+                m = 5;
             }
 
             QString msgInfo;
-            for (auto i = 5; i < list.size(); i++) {
-                msgInfo.append(list[i] + " ");
+            for (int k = m; k < list.size(); k++) {
+                msgInfo.append(list[k] + " ");
             }
             msg.msg = msgInfo;
 
@@ -884,7 +913,20 @@ qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
     return dt.toMSecsSinceEpoch();
 }
 
-
+/**
+ * @brief LogAuthThread::formatDateTime 内核日志有年份 格式为2020-01-05 所以需要特殊转换
+ * @param y 年月日
+ * @param t 时间字符串
+ * @return 时间毫秒数
+ */
+qint64 LogAuthThread::formatDateTime(QString y, QString t)
+{
+    //when /var/kern.log have the year
+    QLocale local(QLocale::English, QLocale::UnitedStates);
+    QString tStr = QString("%1 %2").arg(y).arg(t);
+    QDateTime dt = local.toDateTime(tStr, "yyyy-MM-dd hh:mm:ss");
+    return dt.toMSecsSinceEpoch();
+}
 
 void LogAuthThread::onFinished(int exitCode)
 {

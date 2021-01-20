@@ -75,7 +75,7 @@ protected:
     void handleDmesg();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
-
+    qint64 formatDateTime(QString y, QString t);
 
 signals:
     void kernFinished(QList<LOG_MSG_JOURNAL>);
