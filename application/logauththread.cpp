@@ -196,7 +196,10 @@ void LogAuthThread::handleBoot()
         m_process->start("pkexec", QStringList() << "logViewerAuth"
                                                  << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
         m_process->waitForFinished(-1);
-
+        if (m_process->exitCode() != 0) {
+            emit bootFinished(m_threadCount);
+            return;
+        }
         QByteArray byte = m_process->readAllStandardOutput();
         QString tempStr = "";
         QStringList strList = QString(Utils::replaceEmptyByteArray(byte)).split('\n', QString::SkipEmptyParts);
@@ -683,7 +686,6 @@ void LogAuthThread::handleDkpg()
             return;
         }
         QByteArray outByte = m_process->readAllStandardOutput();
-        qInfo() << outByte;
         if (!m_canRun) {
             return;
         }
