@@ -16,11 +16,11 @@
 */
 #include "dbusmanager.h"
 
-#include <QDBusInterface>
 #include <QDebug>
 
 bool DBusManager::isGetedKlu = false;
 QString DBusManager::isklusystemName = "";
+QDBusInterface *DBusManager::m_TabletInterFace = nullptr;
 /**
  * @brief DBusManager::DBusManager
  * dbus接口获取工具类
@@ -29,6 +29,11 @@ QString DBusManager::isklusystemName = "";
 DBusManager::DBusManager(QObject *parent) : QObject(parent)
 {
 
+}
+
+DBusManager::~DBusManager()
+{
+    delete m_TabletInterFace;
 }
 
 /**
@@ -45,4 +50,14 @@ QString DBusManager::getSystemInfo()
         isGetedKlu = true;
     }
     return  isklusystemName;
+}
+
+/*!
+ * \~chinese \brief DBusManager::TableInterFace 获取虚拟键盘dbus接口
+ * \~chinese \return 虚拟键盘dbus接口
+ */
+QDBusInterface *DBusManager::TableInterFace()
+{
+    m_TabletInterFace = new QDBusInterface("com.deepin.im", "/com/deepin/im", "com.deepin.im", QDBusConnection::sessionBus());
+    return m_TabletInterFace;
 }

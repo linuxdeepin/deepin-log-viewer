@@ -22,6 +22,7 @@
 #include "logcollectormain.h"
 #include "logsettings.h"
 #include "DebugTimeManager.h"
+#include "dbusmanager.h"
 
 #include <DApplication>
 #include <DTitlebar>
@@ -37,6 +38,7 @@
 #include <QList>
 #include <QKeyEvent>
 #include <DAboutDialog>
+#include <QDesktopWidget>
 //958+53+50 976
 
 //日志类型选择器宽度
@@ -235,6 +237,7 @@ void LogCollectorMain::initConnection()
         this->setWindowState(Qt::WindowActive);
         this->activateWindow();
     });
+    connect(DBusManager::TableInterFace(), SIGNAL(imActiveChanged(bool)), this, SLOT(slotHandleTablet(bool)));
 }
 
 /**
@@ -356,6 +359,21 @@ bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *
         }
     }
     return  false;
+}
+
+/*!
+ * \~chinese \brief LogCollectorMain::slotHandleTablet 根据虚拟键盘的触发调整应用大小
+ * \~chinese \param isActive 虚拟键盘显示状态
+ */
+void LogCollectorMain::slotHandleTablet(bool isActive)
+{
+    if (isActive) {
+        QVariant geometry = DBusManager::TableInterFace()->property("geometry");
+        QRect m_rect = geometry.toRect();
+        this->setFixedHeight(DApplication::desktop()->height() - m_rect.height());
+    } else {
+        this->setFixedHeight(DApplication::desktop()->availableGeometry().height());
+    }
 }
 
 void LogCollectorMain::closeEvent(QCloseEvent *event)

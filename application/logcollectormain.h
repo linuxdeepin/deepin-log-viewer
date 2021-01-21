@@ -36,13 +36,13 @@
 #include <QShortcut>
 #include <QSplitter>
 #include <QVBoxLayout>
-
 class DSplitter;
 /**
  * @brief The LogCollectorMain class 主窗口类
  */
 class LogCollectorMain : public Dtk::Widget::DMainWindow
 {
+    Q_OBJECT
 public:
     explicit LogCollectorMain(QWidget *parent = nullptr);
     ~LogCollectorMain();
@@ -55,6 +55,7 @@ public:
 public slots:
     void resizeWidthByFilterContentWidth(int iWidth);
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
+    void slotHandleTablet(bool isActive);
     // QWidget interface
 protected:
     void closeEvent(QCloseEvent *event);
@@ -93,10 +94,6 @@ private:
     // export file          --> Ctrl+E
     QShortcut *m_scExport {nullptr};
     int m_originFilterWidth = 0;
-
-
-
-
 };
 
 #endif  // LOGCOLLECTORMAIN_H
