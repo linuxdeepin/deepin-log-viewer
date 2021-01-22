@@ -146,12 +146,12 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="194"/>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>ئىنتايىن ئېغىر</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="200"/>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>ئىز قوغلاش</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="237"/>
@@ -428,13 +428,13 @@
         <location filename="../application/displaycontent.cpp" line="173"/>
         <location filename="../application/logauththread.cpp" line="78"/>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>ئىز قوغلاش</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="179"/>
         <location filename="../application/logauththread.cpp" line="86"/>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>ئىنتايىن ئېغىر</translation>
     </message>
 </context>
 <context>
@@ -693,7 +693,7 @@
         <location filename="../application/loglistview.cpp" line="248"/>
         <location filename="../application/loglistview.cpp" line="249"/>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>dnf خاتىرىسى</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="257"/>

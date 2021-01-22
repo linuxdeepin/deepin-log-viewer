@@ -17,6 +17,7 @@
 #include "logauththread.h"
 #include "utils.h"
 #include "sharedmemorymanager.h"
+#include "sys/utsname.h"
 #include <wtmpparse.h>
 #include <DGuiApplicationHelper>
 #include "dbusproxy/dldbushandler.h"
@@ -332,14 +333,18 @@ void LogAuthThread::handleKern()
 
             msg.dateTime = timeList.join(" ");
             QStringList tmpList;
+            utsname _utsname;
+            uname(&_utsname);
             if (list[0].contains("-")) {
-                msg.hostName = list[2];
+                // get hostname.
+                msg.hostName = QString(_utsname.nodename);
                 tmpList = list[3].split("[");
             } else {
-                msg.hostName = list[3];
+                // get hostname.
+                msg.hostName = QString(_utsname.nodename);
                 tmpList = list[4].split("[");
             }
-	    	
+
             int m = 0;
             //内核日志存在年份，解析用户名和进程id
             if (list[0].contains("-")) {
