@@ -1,35 +1,35 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="tr" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="hr" version="2.1">
 <context>
     <name>Action</name>
     <message>
         <location filename="../application/loglistview.cpp" line="473"/>
         <source>Display in file manager</source>
-        <translation>Dosya yöneticisinde görüntüle</translation>
+        <translation>Prikaži u upravitelju datotekama</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="474"/>
         <source>Clear log</source>
-        <translation>Günlüğü temizle</translation>
+        <translation>Očisti zapis</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="475"/>
         <source>Refresh</source>
-        <translation>Yenile</translation>
+        <translation>Osvježi</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="513"/>
         <source>Are you sure you want to clear the log?</source>
-        <translation>Günlüğü silmek istediğinizden emin misiniz?</translation>
+        <translation>Jeste li sigurni da želite očistiti zapis?</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="514"/>
         <source>Cancel</source>
-        <translation>İptal</translation>
+        <translation>Otkaži</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="515"/>
         <source>Confirm</source>
-        <translation>Onayla</translation>
+        <translation>Potvrdi</translation>
     </message>
 </context>
 <context>
@@ -39,7 +39,7 @@
         <location filename="../application/filtercontent.cpp" line="86"/>
         <location filename="../application/filtercontent.cpp" line="617"/>
         <source>All</source>
-        <translation>Tümü</translation>
+        <translation>Sve</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="100"/>
@@ -47,7 +47,7 @@
         <location filename="../application/filtercontent.cpp" line="609"/>
         <location filename="../application/filtercontent.cpp" line="618"/>
         <source>Today</source>
-        <translation>Bugün</translation>
+        <translation>Danas</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="108"/>
@@ -55,7 +55,7 @@
         <location filename="../application/filtercontent.cpp" line="610"/>
         <location filename="../application/filtercontent.cpp" line="619"/>
         <source>3 days</source>
-        <translation>3 gün</translation>
+        <translation>3 dana</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="117"/>
@@ -63,7 +63,7 @@
         <location filename="../application/filtercontent.cpp" line="611"/>
         <location filename="../application/filtercontent.cpp" line="620"/>
         <source>1 week</source>
-        <translation>1 hafta</translation>
+        <translation>1 tjedan</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="126"/>
@@ -71,7 +71,7 @@
         <location filename="../application/filtercontent.cpp" line="612"/>
         <location filename="../application/filtercontent.cpp" line="621"/>
         <source>1 month</source>
-        <translation>1 ay</translation>
+        <translation>1 mjesec</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="134"/>
@@ -79,12 +79,12 @@
         <location filename="../application/filtercontent.cpp" line="613"/>
         <location filename="../application/filtercontent.cpp" line="622"/>
         <source>3 months</source>
-        <translation>3 ay</translation>
+        <translation>3 mjeseca</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="222"/>
         <source>Export</source>
-        <translation>Dışa aktar</translation>
+        <translation>Izvezi</translation>
     </message>
 </context>
 <context>
@@ -94,63 +94,63 @@
         <location filename="../application/filtercontent.cpp" line="200"/>
         <location filename="../application/filtercontent.cpp" line="213"/>
         <source>All</source>
-        <translation>Tümü</translation>
+        <translation>Sve</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="169"/>
         <source>Emergency</source>
-        <translation>Acil durum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="170"/>
         <source>Alert</source>
-        <translation>İkaz</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="171"/>
         <source>Critical</source>
-        <translation>Kritik</translation>
+        <translation>Kritično</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="172"/>
         <source>Error</source>
-        <translation>Hata</translation>
+        <translation>Greška</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="173"/>
         <source>Warning</source>
-        <translation>Uyarı</translation>
+        <translation>Upozorenje</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="174"/>
         <source>Notice</source>
-        <translation>Dikkat</translation>
+        <translation>Bilješka</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="175"/>
         <location filename="../application/filtercontent.cpp" line="177"/>
         <source>Info</source>
-        <translation>Bilgi</translation>
+        <translation>Informacije</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="176"/>
         <source>Debug</source>
-        <translation>Hata ayıklama</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="214"/>
         <source>Login</source>
-        <translation>Giriş</translation>
+        <translation>Prijava</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="215"/>
         <source>Boot</source>
-        <translation>Açılış</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="216"/>
         <source>Shutdown</source>
-        <translation>Kapat</translation>
+        <translation>Isključi</translation>
     </message>
 </context>
 <context>
@@ -158,17 +158,17 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1264"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>METİN (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>TEKST (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2299"/>
         <source>Cannot export or create the file</source>
-        <translation>Dosya dışa aktarılamıyor veya oluşturulamıyor</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2300"/>
         <source>OK</source>
-        <translation>TAMAM</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -176,12 +176,12 @@
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="43"/>
         <source>Exporting...</source>
-        <translation>Aktarılıyor...</translation>
+        <translation>Izvozim...</translation>
     </message>
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="67"/>
         <source>Cancel</source>
-        <translation>İptal</translation>
+        <translation>Otkaži</translation>
     </message>
 </context>
 <context>
@@ -189,7 +189,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="2290"/>
         <source>Export successful</source>
-        <translation>Dışa aktarım başarılı</translation>
+        <translation>Izvoz uspješan</translation>
     </message>
 </context>
 <context>
@@ -197,7 +197,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1262"/>
         <source>Export File</source>
-        <translation>Dosyaya Aktar</translation>
+        <translation>Izvezi datoteku</translation>
     </message>
 </context>
 <context>
@@ -207,34 +207,34 @@
         <location filename="../application/filtercontent.cpp" line="607"/>
         <location filename="../application/filtercontent.cpp" line="616"/>
         <source>Period:</source>
-        <translation>Dönem:</translation>
+        <translation>Period:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="163"/>
         <source>Level:  </source>
-        <translation>Seviye:  </translation>
+        <translation>Razina:  </translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="185"/>
         <source>Application list:</source>
-        <translation>Uygulama listesi:</translation>
+        <translation>Lista aplikacija:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="196"/>
         <location filename="../application/logdetailinfowidget.cpp" line="173"/>
         <source>Status:</source>
-        <translation>Durum:</translation>
+        <translation>Status:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="209"/>
         <location filename="../application/logdetailinfowidget.cpp" line="178"/>
         <source>Event Type:</source>
-        <translation>Etkinlik Türü:</translation>
+        <translation>Vrsta događaja:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="169"/>
         <source>User:</source>
-        <translation>Kullanıcı:</translation>
+        <translation>Korisnik:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="171"/>
@@ -244,27 +244,27 @@
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="175"/>
         <source>Action:</source>
-        <translation>Eylem:</translation>
+        <translation>Radnja:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="180"/>
         <source>Username:</source>
-        <translation>Kullanıcı adı:</translation>
+        <translation>Korisničko ime:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="489"/>
         <source>Boot record</source>
-        <translation>Açılış kaydı</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="491"/>
         <source>Shutdown record</source>
-        <translation>Kapatma kaydı</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="494"/>
         <source>Login record</source>
-        <translation>Giriş kaydı</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -284,7 +284,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="126"/>
         <location filename="../test/src/journalwork_test.cpp" line="142"/>
         <source>Warning</source>
-        <translation>Uyarı</translation>
+        <translation>Upozorenje</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="155"/>
@@ -301,7 +301,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="129"/>
         <location filename="../test/src/journalwork_test.cpp" line="145"/>
         <source>Debug</source>
-        <translation>Hata ayıklama</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="156"/>
@@ -318,7 +318,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="128"/>
         <location filename="../test/src/journalwork_test.cpp" line="144"/>
         <source>Info</source>
-        <translation>Bilgi</translation>
+        <translation>Informacije</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="157"/>
@@ -335,7 +335,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="125"/>
         <location filename="../test/src/journalwork_test.cpp" line="141"/>
         <source>Error</source>
-        <translation>Hata</translation>
+        <translation>Greška</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="161"/>
@@ -350,7 +350,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="122"/>
         <location filename="../test/src/journalwork_test.cpp" line="138"/>
         <source>Emergency</source>
-        <translation>Acil durum</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="162"/>
@@ -365,7 +365,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="123"/>
         <location filename="../test/src/journalwork_test.cpp" line="139"/>
         <source>Alert</source>
-        <translation>İkaz</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="163"/>
@@ -380,7 +380,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="124"/>
         <location filename="../test/src/journalwork_test.cpp" line="140"/>
         <source>Critical</source>
-        <translation>Kritik</translation>
+        <translation>Kritično</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="166"/>
@@ -395,7 +395,7 @@
         <location filename="../test/src/journalwork_test.cpp" line="127"/>
         <location filename="../test/src/journalwork_test.cpp" line="143"/>
         <source>Notice</source>
-        <translation>Dikkat</translation>
+        <translation>Bilješka</translation>
     </message>
 </context>
 <context>
@@ -404,7 +404,7 @@
         <location filename="../application/logauththread.cpp" line="407"/>
         <location filename="../application/logauththread.cpp" line="426"/>
         <source>Log file is empty</source>
-        <translation>Günlük dosyası boş</translation>
+        <translation>Datoteka zapisa je prazna</translation>
     </message>
 </context>
 <context>
@@ -413,12 +413,12 @@
         <location filename="../application/main.cpp" line="81"/>
         <location filename="../application/main.cpp" line="82"/>
         <source>Log Viewer</source>
-        <translation>Günlük Görüntüleyici</translation>
+        <translation>Preglednik zapisa</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="86"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation>Günlük Görüntüleyici, sistem günlüklerini görüntülemek için kullanışlı bir araçtır.</translation>
+        <translation>Preglednik zapisa je koristan alat za pregled zapisa sustava.</translation>
     </message>
 </context>
 <context>
@@ -426,12 +426,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="122"/>
         <source>No search results</source>
-        <translation>Arama sonucu bulunamadı</translation>
+        <translation>Nema rezultata pretrage</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="91"/>
         <source>Search</source>
-        <translation>Ara</translation>
+        <translation>Traži</translation>
     </message>
 </context>
 <context>
@@ -452,7 +452,7 @@
         <location filename="../test/src/logexportthread_test.cpp" line="1208"/>
         <location filename="../test/src/logexportthread_test.cpp" line="1252"/>
         <source>Level</source>
-        <translation>Seviye</translation>
+        <translation>Razina</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="338"/>
@@ -464,7 +464,7 @@
         <location filename="../test/src/displaycontent_test.cpp" line="272"/>
         <location filename="../test/src/displaycontent_test.cpp" line="632"/>
         <source>Process</source>
-        <translation>İşlem</translation>
+        <translation>Proces</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="339"/>
@@ -486,7 +486,7 @@
         <location filename="../test/src/logexportthread_test.cpp" line="1209"/>
         <location filename="../test/src/logexportthread_test.cpp" line="1253"/>
         <source>Date and Time</source>
-        <translation>Tarih ve Saat</translation>
+        <translation>Datum i vrijeme</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="340"/>
@@ -511,7 +511,7 @@
         <location filename="../test/src/logexportthread_test.cpp" line="1211"/>
         <location filename="../test/src/logexportthread_test.cpp" line="1255"/>
         <source>Info</source>
-        <translation>Bilgi</translation>
+        <translation>Informacije</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="341"/>
@@ -523,7 +523,7 @@
         <location filename="../test/src/displaycontent_test.cpp" line="271"/>
         <location filename="../test/src/displaycontent_test.cpp" line="635"/>
         <source>User</source>
-        <translation>Kullanıcı</translation>
+        <translation>Korisnik</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="342"/>
@@ -545,45 +545,45 @@
         <location filename="../test/src/logexportthread_test.cpp" line="1210"/>
         <location filename="../test/src/logexportthread_test.cpp" line="1254"/>
         <source>Source</source>
-        <translation>Kaynak</translation>
+        <translation>Izvor</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="1998"/>
         <source>Action</source>
-        <translation>Eylem</translation>
+        <translation>Radnja</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2037"/>
         <source>Status</source>
-        <translation>Durum</translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2160"/>
         <source>Event Type</source>
-        <translation>Etkinlik Türü</translation>
+        <translation>Vrsta događaja</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2161"/>
         <source>Username</source>
-        <translation>Kullanıcı adı</translation>
+        <translation>Korisničko ime</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="689"/>
         <location filename="../application/logexportwidget.cpp" line="90"/>
         <source>Level:</source>
-        <translation>Seviye:</translation>
+        <translation>Razina:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="690"/>
         <location filename="../application/logexportwidget.cpp" line="91"/>
         <source>Process:</source>
-        <translation>İşlem:</translation>
+        <translation>Proces:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="691"/>
         <location filename="../application/logexportwidget.cpp" line="92"/>
         <source>Date and Time:</source>
-        <translation>Tarih ve Saat:</translation>
+        <translation>Datum i vrijeme:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="693"/>
@@ -591,19 +591,19 @@
         <location filename="../application/logexportwidget.cpp" line="94"/>
         <location filename="../application/logexportwidget.cpp" line="97"/>
         <source>Info:</source>
-        <translation>Bilgi:</translation>
+        <translation>Informacije:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="694"/>
         <location filename="../application/logexportwidget.cpp" line="95"/>
         <source>Null</source>
-        <translation>Boş</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="698"/>
         <location filename="../application/logexportwidget.cpp" line="99"/>
         <source>User:</source>
-        <translation>Kullanıcı:</translation>
+        <translation>Korisnik:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="699"/>
@@ -617,7 +617,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="2162"/>
         <source>Date and Time</source>
-        <translation>Tarih ve Saat</translation>
+        <translation>Datum i vrijeme</translation>
     </message>
 </context>
 <context>
@@ -626,13 +626,13 @@
         <location filename="../application/loglistview.cpp" line="179"/>
         <location filename="../application/loglistview.cpp" line="180"/>
         <source>System Log</source>
-        <translation>Sistem Günlüğü</translation>
+        <translation>Zapis sustava</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="189"/>
         <location filename="../application/loglistview.cpp" line="190"/>
         <source>Kernel Log</source>
-        <translation>Çekirdek Günlüğü</translation>
+        <translation>Zapis kernela</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="215"/>
@@ -640,37 +640,37 @@
         <location filename="../application/loglistview.cpp" line="223"/>
         <location filename="../application/loglistview.cpp" line="224"/>
         <source>Boot Log</source>
-        <translation>Açılış Günlüğü</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="236"/>
         <location filename="../application/loglistview.cpp" line="237"/>
         <source>dpkg Log</source>
-        <translation>Dpkg Günlüğü</translation>
+        <translation>dpkg zapis</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="255"/>
         <location filename="../application/loglistview.cpp" line="256"/>
         <source>Kwin Log</source>
-        <translation>Kwin Günlüğü</translation>
+        <translation>Kwin zapis</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="263"/>
         <location filename="../application/loglistview.cpp" line="264"/>
         <source>Xorg Log</source>
-        <translation>Xorg Günlüğü</translation>
+        <translation>Xorg zapis</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="274"/>
         <location filename="../application/loglistview.cpp" line="276"/>
         <source>Application Log</source>
-        <translation>Uygulama Günlüğü</translation>
+        <translation>Zapis aplikacije</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="286"/>
         <location filename="../application/loglistview.cpp" line="289"/>
         <source>Boot-Shutdown Event</source>
-        <translation>Açılış-Kapanış Etkinliği</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

@@ -2451,7 +2451,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     switch (iState) {
     case DATA_LOADING: {
         //如果为正在加载,则不显示主表\搜索为空的提示lable,只显示加载的转圈动画控件,并且禁止导出,导出按钮置灰
-        emit  setExportEnable(false);
+        emit setExportEnable(false);
         m_spinnerWgt->show();
         m_spinnerWgt->spinnerStart();
         break;
