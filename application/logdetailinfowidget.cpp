@@ -476,7 +476,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        index.siblingAtColumn(3).data().toString());
     } else if (dataStr.contains(APP_TABLE_DATA)) {
         fillDetailInfo(name, hostname, "", index.siblingAtColumn(1).data().toString(), index,
-                       index.siblingAtColumn(3).data().toString());
+                       index.siblingAtColumn(3).data(Qt::UserRole + 99).toString());
     } else if (dataStr.contains(LAST_TABLE_DATA)) {
         //        fillDetailInfo("Event", m_pModel->item(index.row(), 0)->text(), "",
         //                       m_pModel->item(index.row(), 2)->text(), QModelIndex(),

@@ -138,7 +138,7 @@ QSize LogViewItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                     const QModelIndex &index) const
 {
     QSize size = QStyledItemDelegate::sizeHint(option, index);
-    size.setHeight(std::max(36, size.height()));
+    size.setHeight(36);
     return size;
 }
 /**

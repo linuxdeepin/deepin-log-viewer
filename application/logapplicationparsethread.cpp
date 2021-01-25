@@ -112,10 +112,11 @@ void LogApplicationParseThread::doWork()
         QStringList strList =  QString(Utils::replaceEmptyByteArray(byteOutput)).split('\n', QString::SkipEmptyParts);
         for (int i = strList.size() - 1; i >= 0 ; --i)  {
             QString str = strList.at(i);
+
+            LOG_MSG_APPLICATOIN msg;
             if (!m_canRun) {
                 return;
             }
-            LOG_MSG_APPLICATOIN msg;
             //删除空白字符
             str.replace(QRegExp("\\s{2,}"), "");
             //删除颜色字符
@@ -162,9 +163,17 @@ void LogApplicationParseThread::doWork()
             msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
 
             if (list.count() >= 4) {
-                msg.msg = list.mid(2).join("]");
+                msg.detailInfo = list.mid(2).join("]");
+                msg.msg = msg.detailInfo;
+                if (msg.detailInfo.size() > 500) {
+                    msg.msg = msg.detailInfo.mid(0, 500);
+                }
             } else {
-                msg.msg = list[2];
+                msg.detailInfo = list[2];
+                msg.msg = msg.detailInfo;
+                if (msg.detailInfo.size() > 500) {
+                    msg.msg = msg.detailInfo.mid(0, 500);
+                }
             }
 
             m_appList.append(msg);

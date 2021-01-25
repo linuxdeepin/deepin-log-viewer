@@ -2,32 +2,32 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="468"/>
+        <location filename="../application/loglistview.cpp" line="473"/>
         <source>Display in file manager</source>
         <translation>Megjelenítés a fájlkezelőben</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="469"/>
+        <location filename="../application/loglistview.cpp" line="474"/>
         <source>Clear log</source>
         <translation>Napló törlése</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="470"/>
+        <location filename="../application/loglistview.cpp" line="475"/>
         <source>Refresh</source>
         <translation>Frissítés</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="508"/>
+        <location filename="../application/loglistview.cpp" line="513"/>
         <source>Are you sure you want to clear the log?</source>
         <translation>Biztosan törölni szeretné a naplót?</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="509"/>
+        <location filename="../application/loglistview.cpp" line="514"/>
         <source>Cancel</source>
         <translation>Mégsem</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="510"/>
+        <location filename="../application/loglistview.cpp" line="515"/>
         <source>Confirm</source>
         <translation>Megerősítés</translation>
     </message>
@@ -35,54 +35,54 @@
 <context>
     <name>Button</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="76"/>
-        <location filename="../application/filtercontent.cpp" line="77"/>
-        <location filename="../application/filtercontent.cpp" line="509"/>
+        <location filename="../application/filtercontent.cpp" line="85"/>
+        <location filename="../application/filtercontent.cpp" line="86"/>
+        <location filename="../application/filtercontent.cpp" line="617"/>
         <source>All</source>
         <translation>Összes</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="92"/>
-        <location filename="../application/filtercontent.cpp" line="93"/>
-        <location filename="../application/filtercontent.cpp" line="501"/>
-        <location filename="../application/filtercontent.cpp" line="510"/>
+        <location filename="../application/filtercontent.cpp" line="100"/>
+        <location filename="../application/filtercontent.cpp" line="101"/>
+        <location filename="../application/filtercontent.cpp" line="609"/>
+        <location filename="../application/filtercontent.cpp" line="618"/>
         <source>Today</source>
         <translation>Ma</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="100"/>
-        <location filename="../application/filtercontent.cpp" line="102"/>
-        <location filename="../application/filtercontent.cpp" line="502"/>
-        <location filename="../application/filtercontent.cpp" line="511"/>
+        <location filename="../application/filtercontent.cpp" line="108"/>
+        <location filename="../application/filtercontent.cpp" line="110"/>
+        <location filename="../application/filtercontent.cpp" line="610"/>
+        <location filename="../application/filtercontent.cpp" line="619"/>
         <source>3 days</source>
         <translation>3 napja</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="109"/>
-        <location filename="../application/filtercontent.cpp" line="111"/>
-        <location filename="../application/filtercontent.cpp" line="503"/>
-        <location filename="../application/filtercontent.cpp" line="512"/>
+        <location filename="../application/filtercontent.cpp" line="117"/>
+        <location filename="../application/filtercontent.cpp" line="119"/>
+        <location filename="../application/filtercontent.cpp" line="611"/>
+        <location filename="../application/filtercontent.cpp" line="620"/>
         <source>1 week</source>
         <translation>1 hete</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="118"/>
-        <location filename="../application/filtercontent.cpp" line="120"/>
-        <location filename="../application/filtercontent.cpp" line="504"/>
-        <location filename="../application/filtercontent.cpp" line="513"/>
+        <location filename="../application/filtercontent.cpp" line="126"/>
+        <location filename="../application/filtercontent.cpp" line="128"/>
+        <location filename="../application/filtercontent.cpp" line="612"/>
+        <location filename="../application/filtercontent.cpp" line="621"/>
         <source>1 month</source>
         <translation>1 hónapja</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="126"/>
-        <location filename="../application/filtercontent.cpp" line="128"/>
-        <location filename="../application/filtercontent.cpp" line="505"/>
-        <location filename="../application/filtercontent.cpp" line="514"/>
+        <location filename="../application/filtercontent.cpp" line="134"/>
+        <location filename="../application/filtercontent.cpp" line="136"/>
+        <location filename="../application/filtercontent.cpp" line="613"/>
+        <location filename="../application/filtercontent.cpp" line="622"/>
         <source>3 months</source>
         <translation>3 hónapja</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="213"/>
+        <location filename="../application/filtercontent.cpp" line="222"/>
         <source>Export</source>
         <translation>Exportálás</translation>
     </message>
@@ -90,65 +90,65 @@
 <context>
     <name>ComboBox</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="160"/>
-        <location filename="../application/filtercontent.cpp" line="191"/>
-        <location filename="../application/filtercontent.cpp" line="204"/>
+        <location filename="../application/filtercontent.cpp" line="168"/>
+        <location filename="../application/filtercontent.cpp" line="200"/>
+        <location filename="../application/filtercontent.cpp" line="213"/>
         <source>All</source>
         <translation>Összes</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="161"/>
+        <location filename="../application/filtercontent.cpp" line="169"/>
         <source>Emergency</source>
         <translation>Vészhelyzet</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="162"/>
+        <location filename="../application/filtercontent.cpp" line="170"/>
         <source>Alert</source>
         <translation>Riasztás</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="163"/>
+        <location filename="../application/filtercontent.cpp" line="171"/>
         <source>Critical</source>
         <translation>Kritikus</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="164"/>
+        <location filename="../application/filtercontent.cpp" line="172"/>
         <source>Error</source>
         <translation>Hiba</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="165"/>
+        <location filename="../application/filtercontent.cpp" line="173"/>
         <source>Warning</source>
         <translation>Figyelmeztetés</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="166"/>
+        <location filename="../application/filtercontent.cpp" line="174"/>
         <source>Notice</source>
         <translation>Értesítés</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="167"/>
-        <location filename="../application/filtercontent.cpp" line="169"/>
+        <location filename="../application/filtercontent.cpp" line="175"/>
+        <location filename="../application/filtercontent.cpp" line="177"/>
         <source>Info</source>
         <translation>Információ</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="168"/>
+        <location filename="../application/filtercontent.cpp" line="176"/>
         <source>Debug</source>
         <translation>Hibakeresés</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="205"/>
+        <location filename="../application/filtercontent.cpp" line="214"/>
         <source>Login</source>
         <translation>Bejelentkezés</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="206"/>
+        <location filename="../application/filtercontent.cpp" line="215"/>
         <source>Boot</source>
         <translation>Rendszerindítás</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="207"/>
+        <location filename="../application/filtercontent.cpp" line="216"/>
         <source>Shutdown</source>
         <translation>Leállítás</translation>
     </message>
@@ -156,20 +156,30 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1006"/>
+        <location filename="../application/displaycontent.cpp" line="1264"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="2299"/>
+        <source>Cannot export or create the file</source>
+        <translation>A fájlt nem lehet exportálni vagy létrehozni</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="2300"/>
+        <source>OK</source>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
     <name>ExportDlg</name>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="22"/>
+        <location filename="../application/exportprogressdlg.cpp" line="43"/>
         <source>Exporting...</source>
         <translation>Exportálás...</translation>
     </message>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="44"/>
+        <location filename="../application/exportprogressdlg.cpp" line="67"/>
         <source>Cancel</source>
         <translation>Mégsem</translation>
     </message>
@@ -177,7 +187,7 @@
 <context>
     <name>ExportMessage</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1859"/>
+        <location filename="../application/displaycontent.cpp" line="2290"/>
         <source>Export successful</source>
         <translation>Exportálás sikeres</translation>
     </message>
@@ -185,7 +195,7 @@
 <context>
     <name>File</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1004"/>
+        <location filename="../application/displaycontent.cpp" line="1262"/>
         <source>Export File</source>
         <translation>Fájl exportálása</translation>
     </message>
@@ -193,66 +203,66 @@
 <context>
     <name>Label</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="72"/>
-        <location filename="../application/filtercontent.cpp" line="499"/>
-        <location filename="../application/filtercontent.cpp" line="508"/>
+        <location filename="../application/filtercontent.cpp" line="81"/>
+        <location filename="../application/filtercontent.cpp" line="607"/>
+        <location filename="../application/filtercontent.cpp" line="616"/>
         <source>Period:</source>
         <translation>Periódus:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="155"/>
+        <location filename="../application/filtercontent.cpp" line="163"/>
         <source>Level:  </source>
         <translation>Szint:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="177"/>
+        <location filename="../application/filtercontent.cpp" line="185"/>
         <source>Application list:</source>
         <translation>Alkalmazás lista:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="187"/>
-        <location filename="../application/logdetailinfowidget.cpp" line="139"/>
+        <location filename="../application/filtercontent.cpp" line="196"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="173"/>
         <source>Status:</source>
         <translation>Állapot:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="200"/>
-        <location filename="../application/logdetailinfowidget.cpp" line="144"/>
+        <location filename="../application/filtercontent.cpp" line="209"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="178"/>
         <source>Event Type:</source>
         <translation>Esemény típusa:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="135"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="169"/>
         <source>User:</source>
         <translation>Felhasználó:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="137"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="171"/>
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="141"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="175"/>
         <source>Action:</source>
         <translation>Művelet:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="146"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="180"/>
         <source>Username:</source>
         <translation>Felhasználónév:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="419"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="489"/>
         <source>Boot record</source>
         <translation>Rendszerindítási rekord</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="421"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="491"/>
         <source>Shutdown record</source>
         <translation>Leállítási rekord</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="424"/>
+        <location filename="../application/logdetailinfowidget.cpp" line="494"/>
         <source>Login record</source>
         <translation>Bejelentkezési rekord</translation>
     </message>
@@ -260,78 +270,130 @@
 <context>
     <name>Level</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="147"/>
-        <location filename="../application/displaycontent.cpp" line="158"/>
-        <location filename="../application/journalbootwork.cpp" line="414"/>
-        <location filename="../application/journalwork.cpp" line="364"/>
-        <location filename="../application/logexportthread.cpp" line="2122"/>
+        <location filename="../application/displaycontent.cpp" line="154"/>
+        <location filename="../application/displaycontent.cpp" line="165"/>
+        <location filename="../application/journalbootwork.cpp" line="479"/>
+        <location filename="../application/journalwork.cpp" line="429"/>
+        <location filename="../application/logexportthread.cpp" line="3026"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="268"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="73"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="82"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="1969"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="126"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="142"/>
+        <location filename="../test/src/journalwork_test.cpp" line="126"/>
+        <location filename="../test/src/journalwork_test.cpp" line="142"/>
         <source>Warning</source>
         <translation>Figyelmeztetés</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="148"/>
-        <location filename="../application/displaycontent.cpp" line="161"/>
-        <location filename="../application/journalbootwork.cpp" line="417"/>
-        <location filename="../application/journalwork.cpp" line="367"/>
-        <location filename="../application/logexportthread.cpp" line="2125"/>
+        <location filename="../application/displaycontent.cpp" line="155"/>
+        <location filename="../application/displaycontent.cpp" line="168"/>
+        <location filename="../application/journalbootwork.cpp" line="482"/>
+        <location filename="../application/journalwork.cpp" line="432"/>
+        <location filename="../application/logexportthread.cpp" line="3029"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="274"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="74"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="85"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="1969"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="129"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="145"/>
+        <location filename="../test/src/journalwork_test.cpp" line="129"/>
+        <location filename="../test/src/journalwork_test.cpp" line="145"/>
         <source>Debug</source>
         <translation>Hibakeresés</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="149"/>
-        <location filename="../application/displaycontent.cpp" line="160"/>
-        <location filename="../application/journalbootwork.cpp" line="416"/>
-        <location filename="../application/journalwork.cpp" line="366"/>
-        <location filename="../application/logexportthread.cpp" line="2124"/>
+        <location filename="../application/displaycontent.cpp" line="156"/>
+        <location filename="../application/displaycontent.cpp" line="167"/>
+        <location filename="../application/journalbootwork.cpp" line="481"/>
+        <location filename="../application/journalwork.cpp" line="431"/>
+        <location filename="../application/logexportthread.cpp" line="3028"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="272"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="75"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="84"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="1969"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="128"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="144"/>
+        <location filename="../test/src/journalwork_test.cpp" line="128"/>
+        <location filename="../test/src/journalwork_test.cpp" line="144"/>
         <source>Info</source>
         <translation>Információ</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="150"/>
         <location filename="../application/displaycontent.cpp" line="157"/>
-        <location filename="../application/journalbootwork.cpp" line="413"/>
-        <location filename="../application/journalwork.cpp" line="363"/>
-        <location filename="../application/logexportthread.cpp" line="2121"/>
+        <location filename="../application/displaycontent.cpp" line="164"/>
+        <location filename="../application/journalbootwork.cpp" line="478"/>
+        <location filename="../application/journalwork.cpp" line="428"/>
+        <location filename="../application/logexportthread.cpp" line="3025"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="266"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="76"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="81"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="1969"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="125"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="141"/>
+        <location filename="../test/src/journalwork_test.cpp" line="125"/>
+        <location filename="../test/src/journalwork_test.cpp" line="141"/>
         <source>Error</source>
         <translation>Hiba</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="154"/>
-        <location filename="../application/journalbootwork.cpp" line="410"/>
-        <location filename="../application/journalwork.cpp" line="360"/>
-        <location filename="../application/logexportthread.cpp" line="2118"/>
+        <location filename="../application/displaycontent.cpp" line="161"/>
+        <location filename="../application/journalbootwork.cpp" line="475"/>
+        <location filename="../application/journalwork.cpp" line="425"/>
+        <location filename="../application/logexportthread.cpp" line="3022"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="260"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="78"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="1969"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="122"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="138"/>
+        <location filename="../test/src/journalwork_test.cpp" line="122"/>
+        <location filename="../test/src/journalwork_test.cpp" line="138"/>
         <source>Emergency</source>
         <translation>Vészhelyzet</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="155"/>
-        <location filename="../application/journalbootwork.cpp" line="411"/>
-        <location filename="../application/journalwork.cpp" line="361"/>
-        <location filename="../application/logexportthread.cpp" line="2119"/>
+        <location filename="../application/displaycontent.cpp" line="162"/>
+        <location filename="../application/journalbootwork.cpp" line="476"/>
+        <location filename="../application/journalwork.cpp" line="426"/>
+        <location filename="../application/logexportthread.cpp" line="3023"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="262"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="79"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="1969"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="123"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="139"/>
+        <location filename="../test/src/journalwork_test.cpp" line="123"/>
+        <location filename="../test/src/journalwork_test.cpp" line="139"/>
         <source>Alert</source>
         <translation>Figyelmeztetés</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="156"/>
-        <location filename="../application/journalbootwork.cpp" line="412"/>
-        <location filename="../application/journalwork.cpp" line="362"/>
-        <location filename="../application/logexportthread.cpp" line="2120"/>
+        <location filename="../application/displaycontent.cpp" line="163"/>
+        <location filename="../application/journalbootwork.cpp" line="477"/>
+        <location filename="../application/journalwork.cpp" line="427"/>
+        <location filename="../application/logexportthread.cpp" line="3024"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="264"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="80"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="1969"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="124"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="140"/>
+        <location filename="../test/src/journalwork_test.cpp" line="124"/>
+        <location filename="../test/src/journalwork_test.cpp" line="140"/>
         <source>Critical</source>
         <translation>Kritikus</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="159"/>
-        <location filename="../application/journalbootwork.cpp" line="415"/>
-        <location filename="../application/journalwork.cpp" line="365"/>
-        <location filename="../application/logexportthread.cpp" line="2123"/>
+        <location filename="../application/displaycontent.cpp" line="166"/>
+        <location filename="../application/journalbootwork.cpp" line="480"/>
+        <location filename="../application/journalwork.cpp" line="430"/>
+        <location filename="../application/logexportthread.cpp" line="3027"/>
         <location filename="../application/model/log_sort_filter_proxy_model.cpp" line="270"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="83"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="1969"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="127"/>
+        <location filename="../test/src/journalbootwork_test.cpp" line="143"/>
+        <location filename="../test/src/journalwork_test.cpp" line="127"/>
+        <location filename="../test/src/journalwork_test.cpp" line="143"/>
         <source>Notice</source>
         <translation>Értesítés</translation>
     </message>
@@ -339,29 +401,22 @@
 <context>
     <name>LogAuthThread</name>
     <message>
-        <location filename="../application/logauththread.cpp" line="340"/>
-        <location filename="../application/logauththread.cpp" line="359"/>
+        <location filename="../application/logauththread.cpp" line="407"/>
+        <location filename="../application/logauththread.cpp" line="426"/>
         <source>Log file is empty</source>
         <translation>A naplófájl üres</translation>
     </message>
 </context>
 <context>
-    <name>LogFileParser</name>
-    <message>
-        <location filename="../application/logfileparser.cpp" line="578"/>
-        <source>information</source>
-        <translation>Információ</translation>
-    </message>
-</context>
-<context>
     <name>Main</name>
     <message>
-        <location filename="../application/main.cpp" line="70"/>
+        <location filename="../application/main.cpp" line="81"/>
+        <location filename="../application/main.cpp" line="82"/>
         <source>Log Viewer</source>
         <translation>Napló Megjelenítő</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="74"/>
+        <location filename="../application/main.cpp" line="86"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translation>A Napló Megjelenítő egy hasznos alkalmazás a rendszer naplók megtekintéséhez.</translation>
     </message>
@@ -369,12 +424,12 @@
 <context>
     <name>SearchBar</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="109"/>
+        <location filename="../application/displaycontent.cpp" line="122"/>
         <source>No search results</source>
         <translation>Nincs keresési eredmény</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="71"/>
+        <location filename="../application/logcollectormain.cpp" line="91"/>
         <source>Search</source>
         <translation>Keresés</translation>
     </message>
@@ -382,132 +437,176 @@
 <context>
     <name>Table</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="296"/>
-        <location filename="../application/displaycontent.cpp" line="509"/>
-        <location filename="../application/displaycontent.cpp" line="809"/>
-        <location filename="../application/logexportthread.cpp" line="1288"/>
+        <location filename="../application/displaycontent.cpp" line="337"/>
+        <location filename="../application/displaycontent.cpp" line="631"/>
+        <location filename="../application/displaycontent.cpp" line="1041"/>
+        <location filename="../application/logexportthread.cpp" line="1894"/>
         <location filename="../application/logexportwidget.cpp" line="543"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="172"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="357"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="631"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="707"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="746"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="788"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1167"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1208"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1252"/>
         <source>Level</source>
         <translation>Szint</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="297"/>
-        <location filename="../application/displaycontent.cpp" line="404"/>
-        <location filename="../application/displaycontent.cpp" line="810"/>
-        <location filename="../application/logexportthread.cpp" line="1289"/>
+        <location filename="../application/displaycontent.cpp" line="338"/>
+        <location filename="../application/displaycontent.cpp" line="506"/>
+        <location filename="../application/displaycontent.cpp" line="1042"/>
+        <location filename="../application/logexportthread.cpp" line="1895"/>
         <location filename="../application/logexportwidget.cpp" line="544"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="173"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="272"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="632"/>
         <source>Process</source>
         <translation>Folyamat</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="298"/>
-        <location filename="../application/displaycontent.cpp" line="402"/>
-        <location filename="../application/displaycontent.cpp" line="510"/>
-        <location filename="../application/displaycontent.cpp" line="811"/>
-        <location filename="../application/displaycontent.cpp" line="1619"/>
-        <location filename="../application/displaycontent.cpp" line="1723"/>
-        <location filename="../application/logexportthread.cpp" line="1291"/>
+        <location filename="../application/displaycontent.cpp" line="339"/>
+        <location filename="../application/displaycontent.cpp" line="504"/>
+        <location filename="../application/displaycontent.cpp" line="632"/>
+        <location filename="../application/displaycontent.cpp" line="1043"/>
+        <location filename="../application/displaycontent.cpp" line="1996"/>
+        <location filename="../application/displaycontent.cpp" line="2124"/>
+        <location filename="../application/logexportthread.cpp" line="1897"/>
         <location filename="../application/logexportwidget.cpp" line="546"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="174"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="270"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="358"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="633"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="708"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="747"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="789"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1168"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1209"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1253"/>
         <source>Date and Time</source>
         <translation>Dátum és Idő</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="299"/>
-        <location filename="../application/displaycontent.cpp" line="405"/>
-        <location filename="../application/displaycontent.cpp" line="512"/>
-        <location filename="../application/displaycontent.cpp" line="812"/>
-        <location filename="../application/displaycontent.cpp" line="1620"/>
-        <location filename="../application/displaycontent.cpp" line="1653"/>
-        <location filename="../application/displaycontent.cpp" line="1724"/>
-        <location filename="../application/displaycontent.cpp" line="1755"/>
-        <location filename="../application/displaycontent.cpp" line="1789"/>
-        <location filename="../application/logexportthread.cpp" line="1292"/>
+        <location filename="../application/displaycontent.cpp" line="340"/>
+        <location filename="../application/displaycontent.cpp" line="507"/>
+        <location filename="../application/displaycontent.cpp" line="634"/>
+        <location filename="../application/displaycontent.cpp" line="1044"/>
+        <location filename="../application/displaycontent.cpp" line="1997"/>
+        <location filename="../application/displaycontent.cpp" line="2038"/>
+        <location filename="../application/displaycontent.cpp" line="2125"/>
+        <location filename="../application/displaycontent.cpp" line="2163"/>
+        <location filename="../application/displaycontent.cpp" line="2206"/>
+        <location filename="../application/logexportthread.cpp" line="1898"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="175"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="273"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="360"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="634"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="710"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="749"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="791"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1170"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1211"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1255"/>
         <source>Info</source>
         <translation>Információ</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="300"/>
-        <location filename="../application/displaycontent.cpp" line="403"/>
-        <location filename="../application/displaycontent.cpp" line="813"/>
-        <location filename="../application/logexportthread.cpp" line="1293"/>
+        <location filename="../application/displaycontent.cpp" line="341"/>
+        <location filename="../application/displaycontent.cpp" line="505"/>
+        <location filename="../application/displaycontent.cpp" line="1045"/>
+        <location filename="../application/logexportthread.cpp" line="1899"/>
         <location filename="../application/logexportwidget.cpp" line="548"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="176"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="271"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="635"/>
         <source>User</source>
         <translation>Felhasználó</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="301"/>
-        <location filename="../application/displaycontent.cpp" line="814"/>
-        <location filename="../application/logexportthread.cpp" line="1294"/>
+        <location filename="../application/displaycontent.cpp" line="342"/>
+        <location filename="../application/displaycontent.cpp" line="1046"/>
+        <location filename="../application/logexportthread.cpp" line="1900"/>
         <location filename="../application/logexportwidget.cpp" line="549"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="177"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="636"/>
         <source>PID</source>
         <translation>PID</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="511"/>
+        <location filename="../application/displaycontent.cpp" line="633"/>
+        <location filename="../test/src/displaycontent_test.cpp" line="359"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="709"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="748"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="790"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1169"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1210"/>
+        <location filename="../test/src/logexportthread_test.cpp" line="1254"/>
         <source>Source</source>
         <translation>Forrás</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1621"/>
+        <location filename="../application/displaycontent.cpp" line="1998"/>
         <source>Action</source>
         <translation>Művelet</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1652"/>
+        <location filename="../application/displaycontent.cpp" line="2037"/>
         <source>Status</source>
         <translation>Állapot</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1752"/>
+        <location filename="../application/displaycontent.cpp" line="2160"/>
         <source>Event Type</source>
         <translation>Esemény típusa:</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1753"/>
+        <location filename="../application/displaycontent.cpp" line="2161"/>
         <source>Username</source>
         <translation>Felhasználónév</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="440"/>
+        <location filename="../application/logexportthread.cpp" line="689"/>
         <location filename="../application/logexportwidget.cpp" line="90"/>
         <source>Level:</source>
         <translation>Szint:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="441"/>
+        <location filename="../application/logexportthread.cpp" line="690"/>
         <location filename="../application/logexportwidget.cpp" line="91"/>
         <source>Process:</source>
         <translation>Folyamat:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="442"/>
+        <location filename="../application/logexportthread.cpp" line="691"/>
         <location filename="../application/logexportwidget.cpp" line="92"/>
         <source>Date and Time:</source>
         <translation>Dátum és Idő:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="444"/>
-        <location filename="../application/logexportthread.cpp" line="447"/>
+        <location filename="../application/logexportthread.cpp" line="693"/>
+        <location filename="../application/logexportthread.cpp" line="696"/>
         <location filename="../application/logexportwidget.cpp" line="94"/>
         <location filename="../application/logexportwidget.cpp" line="97"/>
         <source>Info:</source>
         <translation>Információ:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="445"/>
+        <location filename="../application/logexportthread.cpp" line="694"/>
         <location filename="../application/logexportwidget.cpp" line="95"/>
         <source>Null</source>
         <translation>Nulla</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="449"/>
+        <location filename="../application/logexportthread.cpp" line="698"/>
         <location filename="../application/logexportwidget.cpp" line="99"/>
         <source>User:</source>
         <translation>Felhasználó:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="450"/>
+        <location filename="../application/logexportthread.cpp" line="699"/>
         <location filename="../application/logexportwidget.cpp" line="100"/>
         <source>PID:</source>
         <translation>PID:</translation>
@@ -516,7 +615,7 @@
 <context>
     <name>Tbble</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1754"/>
+        <location filename="../application/displaycontent.cpp" line="2162"/>
         <source>Date and Time</source>
         <translation>Dátum és Idő</translation>
     </message>
@@ -524,52 +623,52 @@
 <context>
     <name>Tree</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="178"/>
         <location filename="../application/loglistview.cpp" line="179"/>
+        <location filename="../application/loglistview.cpp" line="180"/>
         <source>System Log</source>
         <translation>Rendszer napló</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="187"/>
-        <location filename="../application/loglistview.cpp" line="188"/>
+        <location filename="../application/loglistview.cpp" line="189"/>
+        <location filename="../application/loglistview.cpp" line="190"/>
         <source>Kernel Log</source>
         <translation>Kernel napló</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="212"/>
-        <location filename="../application/loglistview.cpp" line="213"/>
-        <location filename="../application/loglistview.cpp" line="219"/>
-        <location filename="../application/loglistview.cpp" line="220"/>
+        <location filename="../application/loglistview.cpp" line="215"/>
+        <location filename="../application/loglistview.cpp" line="216"/>
+        <location filename="../application/loglistview.cpp" line="223"/>
+        <location filename="../application/loglistview.cpp" line="224"/>
         <source>Boot Log</source>
         <translation>Rendszerindítási napló</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="231"/>
-        <location filename="../application/loglistview.cpp" line="232"/>
+        <location filename="../application/loglistview.cpp" line="236"/>
+        <location filename="../application/loglistview.cpp" line="237"/>
         <source>dpkg Log</source>
         <translation>dpkg napló</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="248"/>
-        <location filename="../application/loglistview.cpp" line="249"/>
+        <location filename="../application/loglistview.cpp" line="255"/>
+        <location filename="../application/loglistview.cpp" line="256"/>
         <source>Kwin Log</source>
         <translation>Kwin napló</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="255"/>
-        <location filename="../application/loglistview.cpp" line="256"/>
+        <location filename="../application/loglistview.cpp" line="263"/>
+        <location filename="../application/loglistview.cpp" line="264"/>
         <source>Xorg Log</source>
         <translation>Xorg napló</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="265"/>
-        <location filename="../application/loglistview.cpp" line="267"/>
+        <location filename="../application/loglistview.cpp" line="274"/>
+        <location filename="../application/loglistview.cpp" line="276"/>
         <source>Application Log</source>
         <translation>Alkalmazás napló</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="276"/>
-        <location filename="../application/loglistview.cpp" line="279"/>
+        <location filename="../application/loglistview.cpp" line="286"/>
+        <location filename="../application/loglistview.cpp" line="289"/>
         <source>Boot-Shutdown Event</source>
         <translation>Rendszerindítási-Leállítási esemény</translation>
     </message>

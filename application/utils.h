@@ -40,7 +40,7 @@
 
 #ifndef UTILS_H
 #define UTILS_H
-#define SINGLE_READ_CNT 200
+#define SINGLE_READ_CNT 500
 #include <QObject>
 #include <QHash>
 /**

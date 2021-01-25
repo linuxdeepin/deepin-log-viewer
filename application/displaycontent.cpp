@@ -2318,6 +2318,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
         items << item;
         item = new DStandardItem(list[i].msg);
+        item->setData(iList[i].detailInfo, Qt::UserRole + 99);
         item->setData(APP_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
         items << item;
@@ -2451,7 +2452,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     switch (iState) {
     case DATA_LOADING: {
         //如果为正在加载,则不显示主表\搜索为空的提示lable,只显示加载的转圈动画控件,并且禁止导出,导出按钮置灰
-        emit  setExportEnable(false);
+        emit setExportEnable(false);
         m_spinnerWgt->show();
         m_spinnerWgt->spinnerStart();
         break;
