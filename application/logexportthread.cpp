@@ -1048,6 +1048,13 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, Q
 bool LogExportThread::exportToDoc(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
 #if 1
+    QFile fi(fileName);
+    //判断文件路径是否存在，不存在就返回错误
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         //判读啊model指针是为空，为空则不导出
         if (!pModel) {
@@ -1178,6 +1185,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
                                   QStringList labels, LOG_FLAG iFlag)
 {
 #if 1
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
@@ -1298,7 +1311,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
  */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
-
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
@@ -1372,6 +1390,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
  */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
@@ -1442,6 +1466,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
  */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
@@ -1509,6 +1539,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
  */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
@@ -1578,6 +1614,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
  */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
@@ -1648,6 +1690,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
  */
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         //声明Doc对象,参数为模板文件路径
         Docx::Document doc(DOCTEMPLATE);
@@ -2351,6 +2399,12 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
  */
 bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         //判断model指针是否为空，为空则抛出错误，返回不执行
         if (!pModel) {
@@ -2450,6 +2504,12 @@ bool LogExportThread::exportToXls(QString fileName, QStandardItemModel *pModel, 
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList,
                                   QStringList labels, LOG_FLAG iFlag)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         auto currentXlsRow = 1;
         //传入控制停止导出逻辑的bool变量
@@ -2530,6 +2590,12 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
  */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     QElapsedTimer timer;
     timer.start();
     try {
@@ -2599,6 +2665,12 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
  */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         auto currentXlsRow = 1;
         //传入控制停止导出逻辑的bool变量
@@ -2664,6 +2736,12 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
  */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         auto currentXlsRow = 1;
         //传入控制停止导出逻辑的bool变量
@@ -2731,6 +2809,12 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
  */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         auto currentXlsRow = 1;
         //传入控制停止导出逻辑的bool变量
@@ -2795,6 +2879,12 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
  */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         auto currentXlsRow = 1;
         //传入控制停止导出逻辑的bool变量
@@ -2862,6 +2952,12 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
  */
 bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
 {
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
     try {
         auto currentXlsRow = 1;
         //传入控制停止导出逻辑的bool变量

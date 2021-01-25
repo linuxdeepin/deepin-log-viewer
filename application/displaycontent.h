@@ -35,12 +35,13 @@
 #include <DSpinner>
 #include <DTableView>
 #include <DTextBrowser>
+#include <DDialog>
 
 #include <QStandardItemModel>
 #include <QWidget>
 #include <QDateTime>
 
-
+DWIDGET_USE_NAMESPACE
 class ExportProgressDlg;
 /**
  * @brief The DisplayContent class 主显示数据区域控件,包括数据表格和详情页

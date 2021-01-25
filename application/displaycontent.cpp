@@ -2290,6 +2290,16 @@ void DisplayContent::onExportResult(bool isSuccess)
         DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export successful"));
         qDebug() << "sendMessage"  ;
         PERF_PRINT_END("POINT-04", "");
+    }else {
+        if(!m_exportDlg->isHidden()){
+            m_exportDlg->hide();
+        }
+        //无权限创建文件等由于原因导致文件没创建成功的，显示异常窗口
+        DDialog dialog(this);
+        dialog.setIcon(style()->standardIcon(DStyle::SP_MessageBoxWarning));
+        dialog.setTitle(DApplication::translate("DisplayContent", "Cannot export or create the file"));
+        dialog.addButton(DApplication::translate("DisplayContent", "OK"));
+        dialog.exec();
     }
     //  this->setFocus();
     DApplication::setActiveWindow(this);

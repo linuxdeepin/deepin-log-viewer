@@ -10,9 +10,9 @@ add_subdirectory(application)
 add_subdirectory(logViewerAuth)
 add_subdirectory(logViewerTruncate)
 
-if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
-  add_subdirectory(test)
-endif()
+#if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
+#  add_subdirectory(test)
+#endif()
 
 
 option(PERF_ON "open the info of benchmark" ON)
