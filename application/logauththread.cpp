@@ -174,7 +174,7 @@ void LogAuthThread::run()
  */
 void LogAuthThread::handleBoot()
 {
-    qInfo()<<"**********************************";
+    //    qInfo()<<"**********************************";
     QList<LOG_MSG_BOOT> bList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {

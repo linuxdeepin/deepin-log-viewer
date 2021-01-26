@@ -451,7 +451,6 @@ void DisplayContent::createDpkgTableStart(QList<LOG_MSG_DPKG> &list)
     //    m_treeView->show();
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
-
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
     insertDpkgTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
@@ -658,6 +657,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
     appListOrigin.clear();
     clearAllFilter();
     clearAllDatalist();
+    //    qInfo()<<"1111111";
     setLoadState(DATA_LOADING);
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;

@@ -28,7 +28,7 @@ int wtmp_open(char *filename)
 int wtmp_open_back(char *filename)
 {
     fdWtmp = open(filename, O_RDONLY);
-    qDebug() << "fdWtmp" << fdWtmp;
+    //    qDebug() << "fdWtmp" << fdWtmp;
     bpos = cur_rec = num_recs = 0;
     fpos = lseek(fdWtmp, 0, SEEK_END);
     return fdWtmp;
@@ -36,7 +36,7 @@ int wtmp_open_back(char *filename)
 
 int seek_end(void)
 {
-    qDebug() <<  lseek(0, fdWtmp, SEEK_END);
+    //    qDebug() <<  lseek(0, fdWtmp, SEEK_END);
     return 0;
 }
 

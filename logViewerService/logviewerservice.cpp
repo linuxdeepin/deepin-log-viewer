@@ -90,18 +90,18 @@ QStringList LogViewerService::getFileInfo(const QString &file)
                 fileNamePath.append(fileList[i].absoluteFilePath());
             }
             if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0) {
-                qDebug() << tmpDirPath;
+                //                qDebug() << tmpDirPath;
                 QProcess m_process;
 
                 QString command = "gunzip";
                 QStringList args;
                 args.append("-c");
-                qDebug() << fileList[i].absoluteFilePath();
+                //                qDebug() << fileList[i].absoluteFilePath();
                 args.append(fileList[i].absoluteFilePath());
                 m_process.setStandardOutputFile(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
                 m_process.start(command, args);
                 m_process.waitForFinished(-1);
-                qDebug() << m_process.readAll();
+                //                qDebug() << m_process.readAll();
                 fileNamePath.append(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             }
         }

@@ -121,6 +121,10 @@ void LogApplicationParseThread::doWork()
             QStringList strList = QString(Utils::replaceEmptyByteArray(byteOutput)).split('\n', QString::SkipEmptyParts);
             for (int i = strList.size() - 1; i >= 0; --i) {
                 QString str = strList.at(i);
+                if (str.size() > 10000) {
+                    str = strList.at(i).mid(0, 10000);
+                    str += "...";
+                }
                 if (!m_canRun) {
                     return;
                 }
@@ -129,7 +133,6 @@ void LogApplicationParseThread::doWork()
                 str.replace(QRegExp("\\s{2,}"), "");
                 //删除颜色字符
                 str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-
                 QStringList list = str.split("]", QString::SkipEmptyParts);
                 //日志格式各字段用[]和空格隔开，有等级 时间 信息体 三个字段，至少应该能分割出三个
                 if (list.count() < 3)
@@ -167,9 +170,7 @@ void LogApplicationParseThread::doWork()
                     if (m_levelDict.value(msg.level) != m_AppFiler.lvlFilter)
                         continue;
                 }
-
                 msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
-
                 if (list.count() >= 4) {
                     msg.msg = list.mid(2).join("]");
                 } else {
