@@ -46,12 +46,12 @@ xercesc::DOMDocument* XmlFunc::parseFileToDoc( xercesc::DOMLSParser* p_parser, c
 
 xercesc::DOMDocument* XmlFunc::parseBufToDoc( xercesc::DOMLSParser* p_parser, byte* p_buf, size_t p_bufSize )
 {
-	xercesc::DOMImplementation*	l_impl		= NULL;
-	xercesc::DOMLSInput*		l_input		= NULL;
-	xercesc::MemBufInputSource*	l_memBuf	= NULL;
-	xercesc::DOMDocument*		l_doc		= NULL;
+    xercesc::DOMImplementation *l_impl = nullptr;
+    xercesc::DOMLSInput *l_input = nullptr;
+    xercesc::MemBufInputSource *l_memBuf = nullptr;
+    xercesc::DOMDocument *l_doc = nullptr;
 
-	try
+    try
 	{
 		l_impl		= xercesc::DOMImplementationRegistry::getDOMImplementation( _X( "ls" ) );
 		l_input		= l_impl ->createLSInput();
@@ -295,11 +295,11 @@ bool XmlFunc::getNextTag(
 				p_cursorPos = TAG_UNDEFINED;
 
 		break;
-	}
+    default:
+        break;
+    }
 
-	
-	
-	// move cursor one tag forward
+    // move cursor one tag forward
 
 	if ( p_cursorPos == TAG_BEFORE )
 	{
@@ -315,8 +315,10 @@ bool XmlFunc::getNextTag(
 
 			p_cursorPos = TAG_UNDEFINED;
 			break;
-		}
-	}
+        default:
+            break;
+        }
+    }
 
 	else
 	if ( p_cursorNode ->getNodeType() == xercesc::DOMNode::ELEMENT_NODE
@@ -336,8 +338,10 @@ bool XmlFunc::getNextTag(
 
 			p_cursorPos = TAG_UNDEFINED;
 			break;
-		}
-	}
+        default:
+            break;
+        }
+    }
 
 	else
 	if ( p_cursorNode ->getNodeType() != xercesc::DOMNode::ELEMENT_NODE 
@@ -367,8 +371,10 @@ bool XmlFunc::getNextTag(
 
 					p_cursorPos = TAG_UNDEFINED;
 					break;
-				}
-			}
+                default:
+                    break;
+                }
+            }
 
 			else
 			{
@@ -417,9 +423,11 @@ bool XmlFunc::getNextTag(
 
 			p_stringValue = "";
 			break;
-		}
+        default:
+            break;
+        }
 
-		break;
+        break;
 
 	case xercesc::DOMNode::TEXT_NODE:
 
@@ -430,9 +438,11 @@ bool XmlFunc::getNextTag(
 
 		p_stringValue = "<![CDATA[" + XMLChToUtf8( ( ( xercesc::DOMCharacterData* ) p_cursorNode ) ->getData() ) + "]]>";
 		break;
-	}
+    default:
+        break;
+    }
 
-	if ( p_cursorPos == TAG_AFTER )
+    if ( p_cursorPos == TAG_AFTER )
 		return false;
 
 	return true;
@@ -786,9 +796,9 @@ XMLCh* XmlFunc::ucharToXMLCh( const UChar* p_ustr, size_t p_len )
 		l_pos++;
 	}
 
-	l_xstr[ l_pos ] = NULL;
+    l_xstr[l_pos] = NULL;
 
-	return l_xstr;
+    return l_xstr;
 } // ucharToXMLCh
 
 UChar* XmlFunc::XMLChToUChar( const XMLCh* p_xstr, size_t p_len )
@@ -802,9 +812,9 @@ UChar* XmlFunc::XMLChToUChar( const XMLCh* p_xstr, size_t p_len )
 		l_pos++;
 	}
 
-	l_ustr[ l_pos ] = NULL;
+    l_ustr[l_pos] = NULL;
 
-	return l_ustr;
+    return l_ustr;
 } // XMLChToUChar
 
 size_t XmlFunc::getXMLChLen( const XMLCh* p_xstr )
@@ -846,6 +856,8 @@ void XmlFunc::unindentDocRecurr( const xercesc::DOMElement* p_parentNode )
 					( ( xercesc::DOMNode* ) p_parentNode ) ->removeChild( l_childNode );
 
 				break;
-		}
-	}
+            default:
+                break;
+            }
+    }
 } // unindentDocRecurr

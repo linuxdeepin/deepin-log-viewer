@@ -1265,6 +1265,8 @@ void DocxCompilerItemFile::loadFields()
 
                                 //l_barcodeFields.push_back(l_field);
                                 break;
+                            default:
+                                break;
                             }
 
                         }
@@ -3450,7 +3452,7 @@ void DocxCompilerItemFile::normalizeBookmarksStartEnd()
                                   "http://schemas.openxmlformats.org/wordprocessingml/2006/main", "bookmarkStart,bookmarkEnd",
                                   "", "", ""));
 
-        while (l_cursorNode = (xercesc::DOMElement *) l_cursorDriller ->nextNode()) {
+        while ((l_cursorNode = (xercesc::DOMElement *)l_cursorDriller->nextNode())) {
             if (XmlFunc::XMLChCmp(l_cursorNode ->getLocalName(), _X("bookmarkStart"))) {
                 l_bookmarkId    = StrFunc::strToInt<size_t> (XmlFunc::XMLChToUtf8(l_cursorNode ->getAttribute(Utf8ToXMLCh(m_wordMlPrefix + ":id"))));
                 l_bookmarkName  = StrFunc::lc(XmlFunc::XMLChToUtf8(l_cursorNode ->getAttribute(Utf8ToXMLCh(m_wordMlPrefix + ":name"))));
@@ -3489,8 +3491,6 @@ void DocxCompilerItemFile::normalizeBookmarksStartEnd()
                 l_bookmarkEndNode           = l_cursorNode;
             }
         }
-
-
 
         l_bookmarkIterator = l_bookmarks.begin();
 
@@ -3734,7 +3734,7 @@ void DocxCompilerItemFile::normalizeBookmarksBr()
                               "http://schemas.openxmlformats.org/wordprocessingml/2006/main", "bookmarkStart,bookmarkEnd,br,sectPr,t,tbl,pict,drawing",
                               "", "", ""));
 
-    while (l_cursorNode = (xercesc::DOMElement *) l_cursorDriller ->nextNode()) {
+    while ((l_cursorNode = (xercesc::DOMElement *)l_cursorDriller->nextNode())) {
         if (XmlFunc::XMLChCmp(l_cursorNode ->getLocalName(), _X("bookmarkStart"))) {
             l_bookmarkId        = StrFunc::strToInt<size_t>(XmlFunc::XMLChToUtf8(l_cursorNode ->getAttribute(Utf8ToXMLCh(m_wordMlPrefix + ":id"))));
             l_bookmarkIterator  = m_bookmarksById.find(l_bookmarkId);
@@ -3821,7 +3821,7 @@ void DocxCompilerItemFile::trimItems()
                                   "http://schemas.openxmlformats.org/wordprocessingml/2006/main", "pPr,rPr,tblPr,tblGrid,tblPrEx,trPr,tcPr",
                                   "", "", ""));
 
-        while (l_cursorNode = l_cursorDriller ->nextNode()) {
+        while ((l_cursorNode = l_cursorDriller->nextNode())) {
             if (XmlFunc::XMLChCmp(l_cursorNode ->getLocalName(), _X("tblPr"))) {
                 l_node = XmlFunc::getChildByTagName(
                              l_cursorNode,

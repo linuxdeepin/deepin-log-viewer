@@ -125,18 +125,17 @@ string UnixFunc::getRelativePath( const string& p_sourceDir, const string& p_pat
 
 	i = 0;
 
-	if ( p_sourceDir[0] == '/' && p_path[0] == '/'
-	  || p_sourceDir[0] != '/' && p_path[0] != '/' )
-	{
-		while ( i < l_sourceLen
+    if ((p_sourceDir[0] == '/' && p_path[0] == '/')
+        || (p_sourceDir[0] != '/' && p_path[0] != '/')) {
+        while ( i < l_sourceLen
 			 && i < l_pathLen
 			 && l_sourceDirEntries.getEntry(i) == l_pathEntries.getEntry(i) )
 		{
 			++i;
 		}
-	}
+    }
 
-	if ( i == 0 )
+    if ( i == 0 )
 		l_retVal = p_path;
 
 	else

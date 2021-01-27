@@ -1,0 +1,115 @@
+[common/collator.cpp:10] -> [common/collator.cpp:24]: (style) Variable 'result' is reassigned a value before the old one has been used.
+[logapplicationparsethread.cpp:109] -> [logapplicationparsethread.cpp:122]: (style) Local variable i shadows outer variable
+[logauththread.cpp:424] -> [logauththread.cpp:428]: (warning) Identical condition '!m_canRun', second condition is always false
+[logauththread.cpp:590]: (style) Condition 'utbufp->ut_type==DEAD_PROCESS' is always true
+[logauththread.cpp:773]: (style) Condition 'utbufp->ut_type==DEAD_PROCESS' is always true
+[logauththread.cpp:179] -> [logauththread.cpp:210]: (style) Local variable i shadows outer variable
+[logauththread.cpp:254] -> [logauththread.cpp:304]: (style) Local variable i shadows outer variable
+[logauththread.cpp:675] -> [logauththread.cpp:702]: (style) Local variable i shadows outer variable
+[logauththread.cpp:701] -> [logauththread.cpp:708]: (style) Local variable strList shadows outer variable
+[logauththread.cpp:702] -> [logauththread.cpp:713]: (style) Local variable i shadows outer variable
+[logauththread.cpp:577]: (style) Variable 'ret' is assigned a value that is never used.
+[logexportthread.cpp:1684] -> [logexportthread.cpp:1689]: (style) Local variable info shadows outer variable
+[logexportthread.cpp:644]: (style) Exception should be caught by reference.
+[logexportthread.cpp:733]: (style) Exception should be caught by reference.
+[logexportthread.cpp:785]: (style) Exception should be caught by reference.
+[logexportthread.cpp:835]: (style) Exception should be caught by reference.
+[logexportthread.cpp:884]: (style) Exception should be caught by reference.
+[logexportthread.cpp:933]: (style) Exception should be caught by reference.
+[logexportthread.cpp:984]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1031]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1123]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1209]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1291]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1370]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1449]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1532]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1609]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1717]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1845]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1917]: (style) Exception should be caught by reference.
+[logexportthread.cpp:1986]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2053]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2120]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2191]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2256]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2327]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2381]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2433]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2483]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2533]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2585]: (style) Exception should be caught by reference.
+[logexportthread.cpp:2634]: (style) Exception should be caught by reference.
+[logexportwidget.cpp:247] -> [logexportwidget.cpp:250]: (style) Local variable cel shadows outer variable
+[logexportwidget.cpp:493] -> [logexportwidget.cpp:498]: (style) Local variable info shadows outer variable
+[logexportwidget.cpp:810]: (style) Variable 'currentXlsRow' is modified but its new value is never used.
+[logexportwidget.cpp:849]: (style) Variable 'currentXlsRow' is modified but its new value is never used.
+[logexportwidget.cpp:873]: (style) Variable 'currentXlsRow' is modified but its new value is never used.
+[logexportwidget.cpp:896]: (style) Variable 'currentXlsRow' is modified but its new value is never used.
+[logexportwidget.cpp:918]: (style) Variable 'currentXlsRow' is modified but its new value is never used.
+[logexportwidget.cpp:940]: (style) Variable 'currentXlsRow' is modified but its new value is never used.
+[logexportwidget.cpp:964]: (style) Variable 'currentXlsRow' is modified but its new value is never used.
+[logfileparser.cpp:295]: (style) Condition 'utbufp->ut_type==DEAD_PROCESS' is always true
+[logtableview.h:30]: (style) Class 'LogTableView' has a constructor with 1 argument that is not explicit.
+[logviewitemdelegate.h:38]: (style) Class 'LogViewItemDelegate' has a constructor with 1 argument that is not explicit.
+[accessible.h:71]: (style) Class 'AccessibleQFrame' has a constructor with 1 argument that is not explicit.
+[accessible.h:72]: (style) Class 'AccessibleQWidget' has a constructor with 1 argument that is not explicit.
+[accessible.h:73]: (style) Class 'AccessibleQPushButton' has a constructor with 1 argument that is not explicit.
+[accessible.h:74]: (style) Class 'AccessibleQSlider' has a constructor with 1 argument that is not explicit.
+[accessible.h:75]: (style) Class 'AccessibleQMenu' has a constructor with 1 argument that is not explicit.
+[accessible.h:79]: (style) Class 'AccessibleDFrame' has a constructor with 1 argument that is not explicit.
+[accessible.h:80]: (style) Class 'AccessibleDComboBox' has a constructor with 1 argument that is not explicit.
+[accessible.h:81]: (style) Class 'AccessibleDWidget' has a constructor with 1 argument that is not explicit.
+[accessible.h:82]: (style) Class 'AccessibleDBackgroundGroup' has a constructor with 1 argument that is not explicit.
+[accessible.h:83]: (style) Class 'AccessibleDSwitchButton' has a constructor with 1 argument that is not explicit.
+[accessible.h:84]: (style) Class 'AccessibleDFloatingButton' has a constructor with 1 argument that is not explicit.
+[accessible.h:85]: (style) Class 'AccessibleDSearchEdit' has a constructor with 1 argument that is not explicit.
+[accessible.h:86]: (style) Class 'AccessibleDPushButton' has a constructor with 1 argument that is not explicit.
+[accessible.h:87]: (style) Class 'AccessibleDIconButton' has a constructor with 1 argument that is not explicit.
+[accessible.h:88]: (style) Class 'AccessibleDCheckBox' has a constructor with 1 argument that is not explicit.
+[accessible.h:89]: (style) Class 'AccessibleDCommandLinkButton' has a constructor with 1 argument that is not explicit.
+[accessible.h:90]: (style) Class 'AccessibleDTitlebar' has a constructor with 1 argument that is not explicit.
+[accessible.h:92]: (style) Class 'AccessibleDToolButton' has a constructor with 1 argument that is not explicit.
+[accessible.h:93]: (style) Class 'AccessibleDDialog' has a constructor with 1 argument that is not explicit.
+[accessible.h:94]: (style) Class 'AccessibleDFileDialog' has a constructor with 1 argument that is not explicit.
+[wtmpparse.cpp:181]: (style) Obsolete function 'asctime' called. It is recommended to use 'strftime' instead.
+[wtmpparse.cpp:194]: (style) Obsolete function 'asctime' called. It is recommended to use 'strftime' instead.
+[DebugTimeManager.cpp:22]: (style) The function 'beginPointQt' is never used.
+[logviewitemdelegate.cpp:131]: (style) The function 'createEditor' is never used.
+[logfileparser.cpp:501]: (style) The function 'createFile' is never used.
+[DebugTimeManager.cpp:29]: (style) The function 'endPointQt' is never used.
+[utils.cpp:84]: (style) The function 'getConfigPath' is never used.
+[logcombox.cpp:35]: (style) The function 'getFocusReason' is never used.
+[journalbootwork.cpp:109]: (style) The function 'getPublicIndex' is never used.
+[utils.cpp:72]: (style) The function 'getQssContent' is never used.
+[logauththread.cpp:84]: (style) The function 'getStandardError' is never used.
+[logauththread.cpp:75]: (style) The function 'getStandardOutput' is never used.
+[exportprogressdlg.cpp:104]: (style) The function 'hideEvent' is never used.
+[displaycontent.cpp:1122]: (style) The function 'isAuthProcessAlive' is never used.
+[utils.cpp:92]: (style) The function 'isFontMimeType' is never used.
+[logauththread.cpp:915]: (style) The function 'kernDataRecived' is never used.
+[wtmpparse.cpp:137]: (style) The function 'list_delete' is never used.
+[wtmpparse.cpp:147]: (style) The function 'list_insert' is never used.
+[utils.cpp:134]: (style) The function 'loadFontFamilyFromFiles' is never used.
+[logauththread.cpp:886]: (style) The function 'onFinished' is never used.
+[logapplicationparsethread.cpp:202]: (style) The function 'onProcFinished' is never used.
+[logviewheaderview.cpp:52]: (style) The function 'paintSection' is never used.
+[logfileparser.cpp:275]: (style) The function 'parseByNormal1' is never used.
+[utils.cpp:109]: (style) The function 'renderSVG' is never used.
+[displaycontent.cpp:2857]: (style) The function 'resizeEvent' is never used.
+[logcollectormain.cpp:293]: (style) The function 'resizeWidthByFilterContentWidth' is never used.
+[journalbootwork.cpp:140]: (style) The function 'run' is never used.
+[logviewheaderview.cpp:210]: (style) The function 'sectionSizeHint' is never used.
+[wtmpparse.cpp:37]: (style) The function 'seek_end' is never used.
+[logexportthread.cpp:574]: (style) The function 'setDataLoadComlete' is never used.
+[logcombox.cpp:30]: (style) The function 'setFocusReason' is never used.
+[logperiodbutton.cpp:48]: (style) The function 'setStandardSize' is never used.
+[logdetailinfowidget.cpp:268]: (style) The function 'setTextCustomSize' is never used.
+[wtmpparse.cpp:196]: (style) The function 'show_base_info' is never used.
+[wtmpparse.cpp:111]: (style) The function 'st_list_init' is never used.
+[wtmpparse.cpp:124]: (style) The function 'st_utmp_init' is never used.
+[utils.cpp:104]: (style) The function 'suffixList' is never used.
+[filtercontent.cpp:583]: (style) The function 'updateWordWrap' is never used.
+[wtmpparse.cpp:89]: (style) The function 'wtmp_back' is never used.
+[wtmpparse.cpp:28]: (style) The function 'wtmp_open_back' is never used.
+(information) Cppcheck cannot find all the include files (use --check-config for details)

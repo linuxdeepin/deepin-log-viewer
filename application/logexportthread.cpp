@@ -2554,7 +2554,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
     try {
         auto currentXlsRow = 0;
         lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
-        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
         lxw_format *format = workbook_add_format(workbook);
         format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {

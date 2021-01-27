@@ -404,5 +404,5 @@ time_t TimeFunc::getSecFromEpoch( tm* p_date )
 
 bool TimeFunc::isLeapYear( short p_year )
 {
-	return ( p_year % 400 == 0 || p_year % 100 != 0 && p_year % 4 == 0 );
+    return ((p_year % 400 == 0) || (p_year % 100 != 0 && p_year % 4 == 0));
 } // isLeapYear

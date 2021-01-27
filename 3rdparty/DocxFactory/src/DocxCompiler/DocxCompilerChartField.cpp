@@ -37,12 +37,11 @@ DocxCompilerChartField::ChartType DocxCompilerChartField::getChartType( OpcPart*
 		"http://schemas.openxmlformats.org/drawingml/2006/chart", "areaChart,area3DChart,lineChart,line3DChart,stockChart,radarChart,scatterChart,pieChart,pie3DChart,doughnutChart,barChart,bar3DChart,ofPieChart,surfaceChart,surface3DChart,bubbleChart",
 		"", "", "" ) );
 
-	while ( l_node = l_treeDriller ->nextNode() )
-	{
-		l_types.insert( XmlFunc::XMLChToUtf8( l_node ->getLocalName() ) );
-	}
+    while ((l_node = l_treeDriller->nextNode())) {
+        l_types.insert( XmlFunc::XMLChToUtf8( l_node ->getLocalName() ) );
+    }
 
-	// if ( l_types.find( "stockChart" )		!= l_types.end() )
+    // if ( l_types.find( "stockChart" )		!= l_types.end() )
 	// new office versions have combo charts that have multi chart types but fixed series
 	// and not just stockChart's have multi charts with fixed series
 	if ( l_types.size() > 1 )

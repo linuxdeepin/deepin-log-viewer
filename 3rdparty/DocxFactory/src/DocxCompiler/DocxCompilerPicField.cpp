@@ -24,9 +24,9 @@ void DocxCompilerPicField::getFormat(
 	string&						p_format,
 	map<FieldParam, string>*	p_valueByParam )
 {
- 	map<FieldParam, string>::iterator l_valueByParamIterator;
+    map<FieldParam, string>::iterator l_valueByParamIterator;
 
-	vector<string>	l_wordList;
+    vector<string>	l_wordList;
 	FieldParam		l_param;
 	string			l_value;
 
@@ -161,9 +161,11 @@ void DocxCompilerPicField::getFormat(
 				 l_useSize = l_param;
 
 			break;
-		}
+        default:
+            break;
+        }
 
-		if ( l_useSize == PARAM_UNDEFINED )
+        if ( l_useSize == PARAM_UNDEFINED )
 			 l_useSize =  PARAM_USE_IMAGE_FILE_SIZE;
 	}
 

@@ -574,7 +574,6 @@ void LogAuthThread::handleXorg()
             return;
         }
         //读取上次开关机时间
-        int ret = -2;
         struct utmp *utbufp;
 
         if (wtmp_open(QString(WTMP_FILE).toLatin1().data()) == -1) {

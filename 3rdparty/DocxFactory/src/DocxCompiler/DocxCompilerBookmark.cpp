@@ -101,14 +101,14 @@ void DocxCompilerBookmark::normalize()
 	// if we wanted to use altChunk we would need to replace the entire p.
 	// so the smallest part possible is a p.
 
-	if ( XmlFunc::XMLChCmp( l_startNodePath[ l_commonParent ] ->getLocalName(), _X( "p" ) )
+    if (XmlFunc::XMLChCmp(l_startNodePath[l_commonParent]->getLocalName(), _X("p"))
 
-	// except for boolean fields which can be an r's.
-	 && !( m_name.length() > 7 && m_name.substr( m_name.length() - 7 ) == "_notset"
-	    || m_name.length() > 4 && m_name.substr( m_name.length() - 4 ) == "_yes"
-		|| m_name.length() > 3 && m_name.substr( m_name.length() - 3 ) == "_no" ) )
+        // except for boolean fields which can be an r's.
+        && !((m_name.length() > 7 && m_name.substr(m_name.length() - 7) == "_notset")
+             || (m_name.length() > 4 && m_name.substr(m_name.length() - 4) == "_yes")
+             || (m_name.length() > 3 && m_name.substr(m_name.length() - 3) == "_no")))
 
-		l_commonParent--;
+        l_commonParent--;
 
 	// if the common parent is tr it means the part holds tc's.
 	// if we cut/paste tc's different rows may not have the same number of tc's.

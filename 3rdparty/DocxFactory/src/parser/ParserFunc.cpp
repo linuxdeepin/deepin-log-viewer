@@ -60,14 +60,15 @@ vector<string> ParserFunc::parseWordList( const string& p_str, SpaceHandle p_spa
 				else
 					l_pos += 1;
 			}
-		}
+        }
 
-		else if ( strchr( " \n\r\t*/,:;=<>!|\"'()[]{}", l_ch )  
+        else if ((strchr(" \n\r\t*/,:;=<>!|\"'()[]{}", l_ch)
 
-			|| ( l_ch == '+' || l_ch == '-' || l_ch == '.' ) && ( l_pos + 1 >= l_len || !IS_DIGIT( p_str[ l_pos + 1 ] ) ) )
+                  || (l_ch == '+' || l_ch == '-' || l_ch == '.'))
+                 && (l_pos + 1 >= l_len || !IS_DIGIT(p_str[l_pos + 1])))
 
-		{
-			if ( l_ch == ' ' || l_ch == '\n' || l_ch == '\r' || l_ch == '\t' )
+        {
+            if ( l_ch == ' ' || l_ch == '\n' || l_ch == '\r' || l_ch == '\t' )
 			{
 				switch ( p_space )
 				{
@@ -167,10 +168,10 @@ vector<string> ParserFunc::parseWordList( const string& p_str, SpaceHandle p_spa
 						case '}':	l_openBracketCurly--;	break;
 						}
 
-						if ( l_openBracket < 0 || l_openBracketSquare < 0 || l_openBracketCurly < 0 )
-							throw UnexpectedBracketException( p_str, __FILE__, __LINE__ );
-					
-						if ( l_openBracket == 0 && l_openBracketSquare == 0 && l_openBracketCurly == 0 )
+                        //						if ( l_openBracket < 0 || l_openBracketSquare < 0 || l_openBracketCurly < 0 )
+                        //							throw UnexpectedBracketException( p_str, __FILE__, __LINE__ );
+
+                        if ( l_openBracket == 0 && l_openBracketSquare == 0 && l_openBracketCurly == 0 )
 							break;				
 					}
 
@@ -268,20 +269,18 @@ vector<string> ParserFunc::parseWordList( const string& p_str, SpaceHandle p_spa
 			}
 			l_word		= "";
 			l_separator	= "";
-		}
+        }
 
-		else if ( l_ch == '\\' )
-		{
-			l_word	+= p_str.substr( l_pos, 2 );
+        else if (l_ch == '\\') {
+            l_word	+= p_str.substr( l_pos, 2 );
 			l_pos	+= l_pos + 2;
-		}
+        }
 
-		else
-		{
-			l_word	+= l_ch;
+        else {
+            l_word	+= l_ch;
 			l_pos	+= 1;
-		}	
-	}
+        }
+    }
 
 	if ( !l_word.empty() )
 		l_wordList.push_back( l_word ); 

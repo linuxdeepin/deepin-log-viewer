@@ -525,7 +525,9 @@ void DocxCompilerField::getTypeAndFormat(
 					  l_trim = true;
 
 				break;
-			}
+            default:
+                break;
+            }
 		}
 
 		p_valueByParam ->clear();
@@ -827,8 +829,10 @@ void DocxCompilerField::getTypeAndFormat(
 					 l_borderOption = l_param;
 
 				break;
-			}
-		}
+            default:
+                break;
+            }
+        }
 
 		p_format = "";
 		p_valueByParam ->clear();

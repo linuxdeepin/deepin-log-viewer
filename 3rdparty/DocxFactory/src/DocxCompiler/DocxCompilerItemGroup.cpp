@@ -170,36 +170,33 @@ void DocxCompilerItemGroup::createStripePlaceHoldersByGroup( DocxCompilerItemGro
 			"", "placeholder,tr",
 			"", "", "" ) );
 
-		while ( l_cursorNode = ( xercesc::DOMElement* ) l_cursorDriller ->nextNode() )
-		{
-			if ( l_cursorNode ->getNodeType() == xercesc::DOMNode::ELEMENT_NODE 
+        while ((l_cursorNode = (xercesc::DOMElement *)l_cursorDriller->nextNode())) {
+            if ( l_cursorNode ->getNodeType() == xercesc::DOMNode::ELEMENT_NODE 
 			  && XmlFunc::XMLChCmp( l_cursorNode ->getLocalName(),		_X( "tr" ) )
 			  && XmlFunc::XMLChCmp( l_cursorNode ->getNamespaceURI(),	_X( "http://schemas.openxmlformats.org/wordprocessingml/2006/main" ) ) )
 			{
 				l_tcNode = l_cursorNode ->getFirstChild() ->getNextSibling(); // tblPrEx + trPr
 
-				while ( l_tcNode = l_tcNode ->getNextSibling() )
-				{
-					if ( l_tcNode ->getNodeType() == xercesc::DOMNode::ELEMENT_NODE 
+                while ((l_tcNode = l_tcNode->getNextSibling())) {
+                    if ( l_tcNode ->getNodeType() == xercesc::DOMNode::ELEMENT_NODE 
 					  && XmlFunc::XMLChCmp( l_tcNode ->getLocalName(),		_X( "tc" ) )
 					  && XmlFunc::XMLChCmp( l_tcNode ->getNamespaceURI(),	_X( "http://schemas.openxmlformats.org/wordprocessingml/2006/main" ) ) )
 					{
 						l_tcPrNode = l_tcNode ->getFirstChild();
 
-						l_node	= NULL;
-						l_ok	= false;
+                        l_node = nullptr;
+                        l_ok	= false;
 
-						while ( l_node = XmlFunc::getChildByTagName( l_tcPrNode, l_node, "http://schemas.openxmlformats.org/wordprocessingml/2006/main", "vMerge,hMerge" ) )
-						{
-							l_str = XmlFunc::XMLChToUtf8( l_node ->getAttribute( Utf8ToXMLCh( l_wordMlPrefix + ":val" ) ) );
+                        while ((l_node = XmlFunc::getChildByTagName(l_tcPrNode, l_node, "http://schemas.openxmlformats.org/wordprocessingml/2006/main", "vMerge,hMerge"))) {
+                            l_str = XmlFunc::XMLChToUtf8( l_node ->getAttribute( Utf8ToXMLCh( l_wordMlPrefix + ":val" ) ) );
 							if ( l_str.empty() || StrFunc::lc( l_str ) == "continue" )
 							{
 								l_ok = true;
 								break;
 							}
-						}
+                        }
 
-						if ( l_ok )
+                        if ( l_ok )
 							continue;
 
 						l_shdNode = XmlFunc::getChildByTagName(
@@ -249,9 +246,9 @@ void DocxCompilerItemGroup::createStripePlaceHoldersByGroup( DocxCompilerItemGro
 
 						l_shdNode ->setAttribute( Utf8ToXMLCh( l_wordMlPrefix + ":fill" ), _X( "placeholder" ) );
 					}
-				}
+                }
 
-				l_cursorDriller ->setCurrentNode( l_cursorNode, XmlTreeDriller::CURSOR_AFTER );
+                l_cursorDriller ->setCurrentNode( l_cursorNode, XmlTreeDriller::CURSOR_AFTER );
 			}
 
 			else
@@ -265,8 +262,8 @@ void DocxCompilerItemGroup::createStripePlaceHoldersByGroup( DocxCompilerItemGro
 				if ( !l_itemGroup ->isStriped() )
 					createStripePlaceHoldersByGroup( l_itemGroup );
 			}
-		}
-	}
+        }
+    }
 } // createStripePlaceHoldersByGroup
 
 
@@ -465,39 +462,39 @@ void DocxCompilerItemGroup::setFillItem( DocxCompilerItem* p_fillItem )
 
 				if( l_tcBordersNode )
 				{
-					l_tcBorderNode = XmlFunc::getChildByTagName(
-						l_tcBordersNode,
-						NULL,
-						"http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-						"bottom" );
-				}
+                    l_tcBorderNode = XmlFunc::getChildByTagName(
+                        l_tcBordersNode,
+                        nullptr,
+                        "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+                        "bottom");
+                }
 			}
 
 			if ( l_tcBorderNode )
 			{
-				l_tcNode = NULL;
+                l_tcNode = nullptr;
 
-				while ( l_tcNode = XmlFunc::getChildByTagName(
+                while ( l_tcNode = XmlFunc::getChildByTagName(
 					l_trNodeTemp,
 					l_tcNode,
 					"http://schemas.openxmlformats.org/wordprocessingml/2006/main",
 					"tc" ) )
 				{
-					l_tcBordersNode = XmlFunc::getChildByTagName(
-						l_tcNode ->getFirstChild(),
-						NULL,
-						"http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-						"tcBorders" );
+                    l_tcBordersNode = XmlFunc::getChildByTagName(
+                        l_tcNode->getFirstChild(),
+                        nullptr,
+                        "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+                        "tcBorders");
 
-					if( l_tcBordersNode )
+                    if( l_tcBordersNode )
 					{
-						l_tcBorderNodeTemp = XmlFunc::getChildByTagName(
-							l_tcBordersNode,
-							NULL,
-							"http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-							"top" );
+                        l_tcBorderNodeTemp = XmlFunc::getChildByTagName(
+                            l_tcBordersNode,
+                            nullptr,
+                            "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+                            "top");
 
-						l_attributes = l_tcBorderNodeTemp ->getAttributes();
+                        l_attributes = l_tcBorderNodeTemp ->getAttributes();
 
 						l_len = l_attributes ->getLength();
 						for ( l_pos = l_len - 1; l_pos != -1; l_pos-- )
@@ -583,39 +580,38 @@ void DocxCompilerItemGroup::setFillItem( DocxCompilerItem* p_fillItem )
 
 			if( l_tcBordersNode )
 			{
-				l_tcBorderNode = XmlFunc::getChildByTagName(
-					l_tcBordersNode,
-					NULL,
-					"http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-					"bottom" );
-			}
+                l_tcBorderNode = XmlFunc::getChildByTagName(
+                    l_tcBordersNode,
+                    nullptr,
+                    "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+                    "bottom");
+            }
 		}
 
 		if ( l_tcBorderNode )
 		{
-			l_tcNode = NULL;
+            l_tcNode = nullptr;
 
-			while ( l_tcNode = XmlFunc::getChildByTagName(
-				l_trNodeTemp,
-				l_tcNode,
-				"http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-				"tc" ) )
-			{
-				l_tcBordersNode = XmlFunc::getChildByTagName(
-					l_tcNode ->getFirstChild(),
-					NULL,
-					"http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-					"tcBorders" );
+            while ((l_tcNode = XmlFunc::getChildByTagName(
+                        l_trNodeTemp,
+                        l_tcNode,
+                        "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+                        "tc"))) {
+                l_tcBordersNode = XmlFunc::getChildByTagName(
+                    l_tcNode->getFirstChild(),
+                    nullptr,
+                    "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+                    "tcBorders");
 
-				if( l_tcBordersNode )
+                if( l_tcBordersNode )
 				{
-					l_tcBorderNodeTemp = XmlFunc::getChildByTagName(
-						l_tcBordersNode,
-						NULL,
-						"http://schemas.openxmlformats.org/wordprocessingml/2006/main",
-						"bottom" );
+                    l_tcBorderNodeTemp = XmlFunc::getChildByTagName(
+                        l_tcBordersNode,
+                        nullptr,
+                        "http://schemas.openxmlformats.org/wordprocessingml/2006/main",
+                        "bottom");
 
-					l_attributes = l_tcBorderNodeTemp ->getAttributes();
+                    l_attributes = l_tcBorderNodeTemp ->getAttributes();
 
 					l_len = l_attributes ->getLength();
 					for ( l_pos = l_len - 1; l_pos != -1; l_pos-- )
@@ -633,8 +629,8 @@ void DocxCompilerItemGroup::setFillItem( DocxCompilerItem* p_fillItem )
 						l_tcBorderNodeTemp ->setAttribute( l_attrNode ->getNodeName(), l_attrNode ->getNodeValue() );
 					}
 				}
-			}
-		}
+            }
+        }
 
 		if( p_fillItem ->getSize() > 0.0f )
 			m_fillItemTrCnt = MathFunc::round( p_fillItem ->getSize(), 0 );

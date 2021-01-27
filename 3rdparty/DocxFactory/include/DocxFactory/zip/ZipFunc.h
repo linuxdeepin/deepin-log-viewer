@@ -80,7 +80,7 @@ void ZipFunc::toLittleEndian(T &p_val)
     if (m_littleEndian)
         return;
 
-    reverse((char *) p_val, sizeof(p_val));
+    reverse((char *)p_val, sizeof(p_val));
 
     /*** return value version ***
     if ( m_littleEndian )

@@ -239,11 +239,8 @@ void LogTreeView::keyPressEvent(QKeyEvent *event)
 bool LogTreeView::event(QEvent *e)
 {
     //qDebug() << "11111" << e->type();
-    switch (e->type()) {
-
+    if (e->type() == QEvent::TouchBegin) {
 #if 1
-    case QEvent::TouchBegin: {
-
         QTouchEvent *touchEvent = static_cast<QTouchEvent *>(e);
 
         if (!m_isPressed && touchEvent && touchEvent->device() && touchEvent->device()->type() == QTouchDevice::TouchScreen && touchEvent->touchPointStates() == Qt::TouchPointPressed) {
@@ -259,7 +256,6 @@ bool LogTreeView::event(QEvent *e)
 
             }
         }
-        break;
 
     }
 #endif
@@ -288,7 +284,6 @@ bool LogTreeView::event(QEvent *e)
 //        break;
 //    }
 
-    }
     return  DTreeView::event(e);
 }
 

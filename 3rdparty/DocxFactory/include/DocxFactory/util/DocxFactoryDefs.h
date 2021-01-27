@@ -61,7 +61,7 @@ namespace DocxFactory
 #endif
 
 #define IS_DIGIT( val ) ( val >= '0' && val <= '9' )
-#define IS_HEXDIGIT( val ) ( val >= '0' && val <= '9' || val >= 'A' && val <= 'F' || val >= 'a' && val <= 'f' )
+#define IS_HEXDIGIT(val) ((val >= '0' && val <= '9') || (val >= 'A' && val <= 'F') || (val >= 'a' && val <= 'f'))
 #define IS_LETTER( val ) ( val >= 'A' && val <= 'Z' || val >= 'a' && val <= 'z' )
 #define IS_UPPER( val ) ( val >= 'A' && val <= 'Z' )
 #define IS_LOWER( val ) ( val >= 'a' && val <= 'z' )

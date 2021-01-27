@@ -370,13 +370,12 @@ void OsFunc::copy( const string& p_srcFileName, const string& p_dstFileName )
 
 		l_dstFile = fopen( p_dstFileName.c_str(), "wb" );
 		if ( !l_dstFile ) throw FileNotOpenException( p_dstFileName, __FILE__, __LINE__ );
-	
-		while ( l_size = fread( l_buf, 1, l_bufSize, l_srcFile ) )
-		{
-			fwrite( l_buf, 1, l_size, l_dstFile );
-		}
 
-		fclose( l_srcFile );
+        while ((l_size = fread(l_buf, 1, l_bufSize, l_srcFile))) {
+            fwrite( l_buf, 1, l_size, l_dstFile );
+        }
+
+        fclose( l_srcFile );
 		fclose( l_dstFile );
 	}
 
