@@ -120,15 +120,16 @@ void LogApplicationParseThread::doWork()
             //替换截断空字符
             QStringList strList = QString(Utils::replaceEmptyByteArray(byteOutput)).split('\n', QString::SkipEmptyParts);
             for (int i = strList.size() - 1; i >= 0; --i) {
+                LOG_MSG_APPLICATOIN msg;
                 QString str = strList.at(i);
+                msg.detailInfo = str;
                 if (str.size() > 10000) {
                     str = strList.at(i).mid(0, 10000);
-                    str += "...";
                 }
                 if (!m_canRun) {
                     return;
                 }
-                LOG_MSG_APPLICATOIN msg;
+
                 //删除空白字符
                 str.replace(QRegExp("\\s{2,}"), "");
                 //删除颜色字符

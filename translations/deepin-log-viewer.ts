@@ -187,7 +187,7 @@
 <context>
     <name>ExportMessage</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="2497"/>
+        <location filename="../application/displaycontent.cpp" line="2498"/>
         <source>Export successful</source>
         <translation>Export successful</translation>
     </message>
@@ -483,7 +483,7 @@
         <location filename="../application/displaycontent.cpp" line="880"/>
         <location filename="../application/displaycontent.cpp" line="924"/>
         <location filename="../application/displaycontent.cpp" line="1194"/>
-        <location filename="../application/displaycontent.cpp" line="2880"/>
+        <location filename="../application/displaycontent.cpp" line="2881"/>
         <location filename="../application/logexportthread.cpp" line="1778"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
         <location filename="../test/src/displaycontent_test.cpp" line="200"/>
@@ -533,7 +533,7 @@
         <translation>Action</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="2879"/>
+        <location filename="../application/displaycontent.cpp" line="2880"/>
         <source>Status</source>
         <translation>Status</translation>
     </message>

@@ -2319,6 +2319,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
         items << item;
         item = new DStandardItem(list[i].msg);
         item->setData(APP_TABLE_DATA);
+        item->setData(iList[i].detailInfo, Qt::UserRole + 99);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
         items << item;
         oPModel->insertRow(oPModel->rowCount(), items);
