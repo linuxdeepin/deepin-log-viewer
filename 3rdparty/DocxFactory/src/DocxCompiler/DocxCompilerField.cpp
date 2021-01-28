@@ -281,11 +281,11 @@ void DocxCompilerField::getTypeAndFormat(
 
 						case PARAM_UNDEFINED:
 							goto _paramEnd;
-					}
+                        default:
+                            break;
+                        }
 
-
-
-					_value:
+                    _value:
 					{
 						l_value  = "";
 						l_pos    = i;
@@ -962,7 +962,9 @@ void DocxCompilerField::getTypeAndFormat(
 			p_valueByParam ->insert( make_pair( l_borderOption, "" ) );
 
 		break;
-	}
+    default:
+        break;
+    }
 } // getTypeAndFormat
 
 

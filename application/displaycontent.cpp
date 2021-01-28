@@ -1409,7 +1409,7 @@ void DisplayContent::slot_exportClicked()
         logName = QString("/%1").arg(("New File"));
     }
     QString selectFilter;
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) +  logName + ".txt";
+    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + "sssssssssssssssssssssssssssss是是是是是是是是是是收拾收拾收拾收拾是是是是是是是是是收拾收拾收拾收拾是是是是是是是是是" + ".txt";
     QString fileName = DFileDialog::getSaveFileName(
                            this, DApplication::translate("File", "Export File"),
                            path,

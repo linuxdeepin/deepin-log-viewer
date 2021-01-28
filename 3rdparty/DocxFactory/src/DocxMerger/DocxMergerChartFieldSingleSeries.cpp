@@ -96,7 +96,9 @@ void DocxMergerChartFieldSingleSeries::deserialize( UnzipFile* p_unzipFile )
 	case DocxMergerField::TYPE_TEXT:		m_catAxis = new DocxMergerChartAxisText(); break;
 	case DocxMergerField::TYPE_NUMBER:		m_catAxis = new DocxMergerChartAxisNumber(); break;
 	case DocxMergerField::TYPE_DATE_TIME:	m_catAxis = new DocxMergerChartAxisDateTime(); break;
-	}
+    default:
+        break;
+    }
 } // deserialize
 
 

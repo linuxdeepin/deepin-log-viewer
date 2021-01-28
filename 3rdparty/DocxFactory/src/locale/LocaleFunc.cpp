@@ -1071,6 +1071,8 @@ double LocaleFunc::strToNum(const string &p_str)
                 l_dec = l_dec * 10;
                 l_val = l_val + (l_ch - 48) / l_dec;
                 break;
+            default:
+                break;
             }
 
             if (l_part == SUFFIX)
@@ -1312,6 +1314,8 @@ void LocaleFunc::getNumFormat(const string &p_format, NumFormat *p_numFormat)
                 case NUM_INT    : break;
                 case NUM_DEC    : break;
                 case NUM_SUFFIX : l_suffix += l_ch; break;
+                default:
+                    break;
                 }
             }
 
@@ -1322,6 +1326,8 @@ void LocaleFunc::getNumFormat(const string &p_format, NumFormat *p_numFormat)
                 case NUM_INT    : l_part = NUM_SUFFIX; break;
                 case NUM_DEC    : l_part = NUM_SUFFIX; break;
                 case NUM_SUFFIX : break;
+                default:
+                    break;
                 }
 
                 switch (l_part) {
@@ -1330,10 +1336,14 @@ void LocaleFunc::getNumFormat(const string &p_format, NumFormat *p_numFormat)
                 case NUM_INT    : break;
                 case NUM_DEC    : break;
                 case NUM_SUFFIX : l_suffix += l_ch; break;
+                default:
+                    break;
                 }
 
                 switch (l_part) {
                 case NUM_COLOR  : l_part = NUM_PREFIX; break;
+                default:
+                    break;
                 }
             }
 
@@ -1353,6 +1363,8 @@ void LocaleFunc::getNumFormat(const string &p_format, NumFormat *p_numFormat)
                 case NUM_INT    : break;
                 case NUM_DEC    : l_rightExt++; break;
                 case NUM_SUFFIX : l_suffix += l_ch; break;
+                default:
+                    break;
                 }
             }
 
@@ -1372,6 +1384,8 @@ void LocaleFunc::getNumFormat(const string &p_format, NumFormat *p_numFormat)
                 case NUM_INT    : l_sep = true; break;
                 case NUM_DEC    : break;
                 case NUM_SUFFIX : l_suffix += l_ch; break;
+                default:
+                    break;
                 }
             }
 
@@ -1391,6 +1405,8 @@ void LocaleFunc::getNumFormat(const string &p_format, NumFormat *p_numFormat)
                 case NUM_INT    : l_leftDig++; break;
                 case NUM_DEC    : l_rightDig++; break;
                 case NUM_SUFFIX : l_suffix += l_ch; break;
+                default:
+                    break;
                 }
             }
 
@@ -1410,6 +1426,8 @@ void LocaleFunc::getNumFormat(const string &p_format, NumFormat *p_numFormat)
                 case NUM_INT    : break;
                 case NUM_DEC    : break;
                 case NUM_SUFFIX : l_suffix += l_ch; break;
+                default:
+                    break;
                 }
             }
 
@@ -1429,6 +1447,8 @@ void LocaleFunc::getNumFormat(const string &p_format, NumFormat *p_numFormat)
                 case NUM_INT    : break;
                 case NUM_DEC    : break;
                 case NUM_SUFFIX : l_suffix += l_ch; break;
+                default:
+                    break;
                 }
 
                 if (l_ch == '%' && !l_escape)
@@ -1638,7 +1658,7 @@ pair<double, short> LocaleFunc::strToDateTime(const string &p_str)
                 l_day   = l_val3;
             }
 
-            if (l_year >= 0 && l_year <= 99) {
+            if (l_year <= 99) {
                 if (l_year >= m_yearOffset)
                     l_year += 1900;
                 else
@@ -1730,8 +1750,8 @@ void LocaleFunc::getDateTimeFormat(const string &p_format, list<DateTimeFormat *
     if (!m_initialized)
         initialize();
 
-    DateTimeFormat *l_dateTimeFormat    = NULL;
-    DateTimeFormat *l_hourPtr           = NULL;
+    DateTimeFormat *l_dateTimeFormat = nullptr;
+    DateTimeFormat *l_hourPtr = nullptr;
 
     unsigned short  l_entryLen;
     char            l_entry;

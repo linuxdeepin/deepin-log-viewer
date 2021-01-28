@@ -346,8 +346,10 @@ DocxCompilerPicField::DocxCompilerPicField(
 		case PARAM_USE_PLACE_HOLDER_WIDTH	: m_useSize = USE_PLACE_HOLDER_WIDTH;	break;
 		case PARAM_USE_PLACE_HOLDER_HEIGHT	: m_useSize = USE_PLACE_HOLDER_HEIGHT;	break;
 		case PARAM_USE_PLACE_HOLDER_SIZE	: m_useSize = USE_PLACE_HOLDER_SIZE;	break;
-		}
-	}
+        default:
+            break;
+        }
+    }
 } // c'tor
 
 DocxCompilerPicField::~DocxCompilerPicField()

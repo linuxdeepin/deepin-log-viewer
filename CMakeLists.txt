@@ -12,7 +12,7 @@ add_subdirectory(logViewerTruncate)
 
 add_subdirectory(logViewerService)
 
-add_subdirectory(test)
+add_subdirectory(tests)
 
 
 

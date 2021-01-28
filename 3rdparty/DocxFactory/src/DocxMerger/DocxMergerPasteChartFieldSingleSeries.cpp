@@ -30,9 +30,11 @@ DocxMergerPasteChartFieldSingleSeries::DocxMergerPasteChartFieldSingleSeries( Do
 	case DocxMergerField::TYPE_TEXT:		m_pasteCatAxis = new DocxMergerPasteChartAxisText(); break;
 	case DocxMergerField::TYPE_NUMBER:		m_pasteCatAxis = new DocxMergerPasteChartAxisNumber(); break;
 	case DocxMergerField::TYPE_DATE_TIME:	m_pasteCatAxis = new DocxMergerPasteChartAxisDateTime(); break;
-	}
+    default:
+        break;
+    }
 
-	m_pasteVal = new DocxMergerPasteChartValues();
+    m_pasteVal = new DocxMergerPasteChartValues();
 } // c'tor
 
 DocxMergerPasteChartFieldSingleSeries::~DocxMergerPasteChartFieldSingleSeries()

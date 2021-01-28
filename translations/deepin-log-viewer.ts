@@ -275,13 +275,13 @@
         <location filename="../application/journalbootwork.cpp" line="479"/>
         <location filename="../application/journalwork.cpp" line="429"/>
         <location filename="../application/logexportthread.cpp" line="2656"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="98"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="107"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="2006"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="126"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="142"/>
-        <location filename="../test/src/journalwork_test.cpp" line="126"/>
-        <location filename="../test/src/journalwork_test.cpp" line="142"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="96"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="105"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="1988"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="126"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="142"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="126"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="142"/>
         <source>Warning</source>
         <translation>Warning</translation>
     </message>
@@ -291,13 +291,13 @@
         <location filename="../application/journalbootwork.cpp" line="482"/>
         <location filename="../application/journalwork.cpp" line="432"/>
         <location filename="../application/logexportthread.cpp" line="2659"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="99"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="110"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="2006"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="129"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="145"/>
-        <location filename="../test/src/journalwork_test.cpp" line="129"/>
-        <location filename="../test/src/journalwork_test.cpp" line="145"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="97"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="108"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="1988"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="129"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="145"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="129"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="145"/>
         <source>Debug</source>
         <translation>Debug</translation>
     </message>
@@ -307,13 +307,13 @@
         <location filename="../application/journalbootwork.cpp" line="481"/>
         <location filename="../application/journalwork.cpp" line="431"/>
         <location filename="../application/logexportthread.cpp" line="2658"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="100"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="109"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="2006"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="128"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="144"/>
-        <location filename="../test/src/journalwork_test.cpp" line="128"/>
-        <location filename="../test/src/journalwork_test.cpp" line="144"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="98"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="107"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="1988"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="128"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="144"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="128"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="144"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -323,13 +323,13 @@
         <location filename="../application/journalbootwork.cpp" line="478"/>
         <location filename="../application/journalwork.cpp" line="428"/>
         <location filename="../application/logexportthread.cpp" line="2655"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="101"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="106"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="2006"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="125"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="141"/>
-        <location filename="../test/src/journalwork_test.cpp" line="125"/>
-        <location filename="../test/src/journalwork_test.cpp" line="141"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="99"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="104"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="1988"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="125"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="141"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="125"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="141"/>
         <source>Error</source>
         <translation>Error</translation>
     </message>
@@ -338,12 +338,12 @@
         <location filename="../application/journalbootwork.cpp" line="475"/>
         <location filename="../application/journalwork.cpp" line="425"/>
         <location filename="../application/logexportthread.cpp" line="2652"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="103"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="2006"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="122"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="138"/>
-        <location filename="../test/src/journalwork_test.cpp" line="122"/>
-        <location filename="../test/src/journalwork_test.cpp" line="138"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="101"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="1988"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="122"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="138"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="122"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="138"/>
         <source>Emergency</source>
         <translation>Emergency</translation>
     </message>
@@ -352,12 +352,12 @@
         <location filename="../application/journalbootwork.cpp" line="476"/>
         <location filename="../application/journalwork.cpp" line="426"/>
         <location filename="../application/logexportthread.cpp" line="2653"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="104"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="2006"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="123"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="139"/>
-        <location filename="../test/src/journalwork_test.cpp" line="123"/>
-        <location filename="../test/src/journalwork_test.cpp" line="139"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="102"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="1988"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="123"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="139"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="123"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="139"/>
         <source>Alert</source>
         <translation>Alert</translation>
     </message>
@@ -366,12 +366,12 @@
         <location filename="../application/journalbootwork.cpp" line="477"/>
         <location filename="../application/journalwork.cpp" line="427"/>
         <location filename="../application/logexportthread.cpp" line="2654"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="105"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="2006"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="124"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="140"/>
-        <location filename="../test/src/journalwork_test.cpp" line="124"/>
-        <location filename="../test/src/journalwork_test.cpp" line="140"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="103"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="1988"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="124"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="140"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="124"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="140"/>
         <source>Critical</source>
         <translation>Critical</translation>
     </message>
@@ -380,12 +380,12 @@
         <location filename="../application/journalbootwork.cpp" line="480"/>
         <location filename="../application/journalwork.cpp" line="430"/>
         <location filename="../application/logexportthread.cpp" line="2657"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="108"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="2006"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="127"/>
-        <location filename="../test/src/journalbootwork_test.cpp" line="143"/>
-        <location filename="../test/src/journalwork_test.cpp" line="127"/>
-        <location filename="../test/src/journalwork_test.cpp" line="143"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="106"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="1988"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="127"/>
+        <location filename="../tests/src/journalbootwork_test.cpp" line="143"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="127"/>
+        <location filename="../tests/src/journalwork_test.cpp" line="143"/>
         <source>Notice</source>
         <translation>Notice</translation>
     </message>
@@ -434,12 +434,12 @@
         <location filename="../application/displaycontent.cpp" line="1191"/>
         <location filename="../application/logexportthread.cpp" line="1774"/>
         <location filename="../application/logexportwidget.cpp" line="543"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="197"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="382"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="656"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="748"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="788"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="831"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="194"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="379"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="652"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="748"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="788"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="831"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
@@ -449,9 +449,9 @@
         <location filename="../application/displaycontent.cpp" line="1192"/>
         <location filename="../application/logexportthread.cpp" line="1775"/>
         <location filename="../application/logexportwidget.cpp" line="544"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="198"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="297"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="657"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="195"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="294"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="653"/>
         <source>Process</source>
         <translation>Process</translation>
     </message>
@@ -464,13 +464,13 @@
         <location filename="../application/displaycontent.cpp" line="1193"/>
         <location filename="../application/logexportthread.cpp" line="1777"/>
         <location filename="../application/logexportwidget.cpp" line="546"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="199"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="295"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="383"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="658"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="749"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="789"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="832"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="196"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="292"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="380"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="654"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="749"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="789"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="832"/>
         <source>Date and Time</source>
         <translation>Date and Time</translation>
     </message>
@@ -486,13 +486,13 @@
         <location filename="../application/displaycontent.cpp" line="2881"/>
         <location filename="../application/logexportthread.cpp" line="1778"/>
         <location filename="../application/logexportwidget.cpp" line="547"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="200"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="298"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="385"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="659"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="751"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="791"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="834"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="197"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="295"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="382"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="655"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="751"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="791"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="834"/>
         <source>Info</source>
         <translation>Info</translation>
     </message>
@@ -502,9 +502,9 @@
         <location filename="../application/displaycontent.cpp" line="1195"/>
         <location filename="../application/logexportthread.cpp" line="1779"/>
         <location filename="../application/logexportwidget.cpp" line="548"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="201"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="296"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="660"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="198"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="293"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="656"/>
         <source>User</source>
         <translation>User</translation>
     </message>
@@ -513,17 +513,17 @@
         <location filename="../application/displaycontent.cpp" line="1196"/>
         <location filename="../application/logexportthread.cpp" line="1780"/>
         <location filename="../application/logexportwidget.cpp" line="549"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="202"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="661"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="199"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="657"/>
         <source>PID</source>
         <translation>PID</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="730"/>
-        <location filename="../test/src/displaycontent_test.cpp" line="384"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="750"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="790"/>
-        <location filename="../test/src/logexportthread_test.cpp" line="833"/>
+        <location filename="../tests/src/displaycontent_test.cpp" line="381"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="750"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="790"/>
+        <location filename="../tests/src/logexportthread_test.cpp" line="833"/>
         <source>Source</source>
         <translation>Source</translation>
     </message>

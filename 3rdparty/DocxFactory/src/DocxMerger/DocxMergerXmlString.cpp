@@ -220,6 +220,8 @@ void DocxMergerXmlString::save(DocxMergerPasteFieldGroup *p_pasteFieldGroup)
         (*l_zipFile) << m_str;
 
         break;
+    default:
+        break;
     }
 } // save
 

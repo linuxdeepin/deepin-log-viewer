@@ -333,6 +333,8 @@ void DocxMergerFile::mergeChartFieldByXml(xercesc::DOMElement *p_node, DocxMerge
                                 else if (l_childName == "y")           l_category  = l_str;
                                 else if (l_childName == "size")        l_value     = LocaleFunc::strToNum(l_str);
                                 break;
+                            default:
+                                break;
                             }
                     }
                 }
@@ -564,6 +566,8 @@ void DocxMergerFile::mergeChartFieldByJson(rapidjson::Value *p_value, DocxMerger
                             if (l_childName == "x")           l_series    = JsonFunc::getStr(l_childValue);
                             else if (l_childName == "y")           l_category  = JsonFunc::getStr(l_childValue);
                             else if (l_childName == "size")        l_value     = JsonFunc::getNum(l_childValue);
+                            break;
+                        default:
                             break;
                         }
                 }
@@ -901,6 +905,8 @@ void DocxMergerFile::deserializeFields(UnzipFile *p_unzipFile)
             case DocxMergerChartField::CHART_X_Y_SIZE:      l_field = new DocxMergerChartFieldXYSize();         break;
             }
 
+            break;
+        default:
             break;
         }
 

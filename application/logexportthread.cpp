@@ -2285,11 +2285,11 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
     try {
         auto currentXlsRow = 0;
         lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
-        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
         lxw_format *format = workbook_add_format(workbook);
         format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
@@ -2302,17 +2302,17 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
             int col = 0;
 
             if (iFlag == JOURNAL) {
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.level.toStdString().c_str(), NULL);
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonId.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.level.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.daemonName.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.hostName.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.daemonId.toStdString().c_str(), nullptr);
             } else if (iFlag == KERN) {
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.hostName.toStdString().c_str(), NULL);
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.daemonName.toStdString().c_str(), NULL);
-                worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.hostName.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.daemonName.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
             }
 
             ++currentXlsRow;
@@ -2350,11 +2350,11 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
     try {
         auto currentXlsRow = 0;
         lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
-        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
         lxw_format *format = workbook_add_format(workbook);
         format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
@@ -2365,10 +2365,10 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             }
             LOG_MSG_APPLICATOIN message = jList.at(row);
             int col = 0;
-            worksheet_write_string(worksheet, currentXlsRow, col++, strTranslate(message.level).toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, iAppName.toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), strTranslate(message.level).toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), iAppName.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
             ++currentXlsRow;
             sigProgress(row + 1, jList.count() + end);
         }
@@ -2403,11 +2403,11 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
     try {
         auto currentXlsRow = 0;
         lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
-        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
         lxw_format *format = workbook_add_format(workbook);
         format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
@@ -2418,9 +2418,9 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
             }
             LOG_MSG_DPKG message = jList.at(row);
             int col = 0;
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.action.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.action.toStdString().c_str(), nullptr);
             ++currentXlsRow;
             sigProgress(row + 1, jList.count() + end);
         }
@@ -2454,11 +2454,11 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
     try {
         auto currentXlsRow = 0;
         lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
-        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
         lxw_format *format = workbook_add_format(workbook);
         format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
@@ -2469,8 +2469,8 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
             }
             LOG_MSG_BOOT message = jList.at(row);
             int col = 0;
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.status.toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.status.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
             ++currentXlsRow;
             sigProgress(row + 1, jList.count() + end);
         }
@@ -2504,11 +2504,11 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
     try {
         auto currentXlsRow = 0;
         lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
-        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
         lxw_format *format = workbook_add_format(workbook);
         format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
@@ -2519,8 +2519,8 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
             }
             LOG_MSG_XORG message = jList.at(row);
             int col = 0;
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
             ++currentXlsRow;
             sigProgress(row + 1, jList.count() + end);
         }
@@ -2558,7 +2558,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
         lxw_format *format = workbook_add_format(workbook);
         format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
@@ -2569,10 +2569,10 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
             }
             LOG_MSG_NORMAL message = jList.at(row);
             int col = 0;
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.eventType.toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.userName.toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.dateTime.toStdString().c_str(), NULL);
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.eventType.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.userName.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
             ++currentXlsRow;
             sigProgress(row + 1, jList.count() + end);
         }
@@ -2606,11 +2606,11 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
     try {
         auto currentXlsRow = 0;
         lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
-        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, NULL);
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
         lxw_format *format = workbook_add_format(workbook);
         format_set_bold(format);
         for (int col = 0; col < labels.count(); ++col) {
-            worksheet_write_string(worksheet, currentXlsRow, col, labels.at(col).toStdString().c_str(), format);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
         }
         ++currentXlsRow;
         int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
@@ -2621,7 +2621,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
             }
             LOG_MSG_KWIN message = jList.at(row);
             int col = 0;
-            worksheet_write_string(worksheet, currentXlsRow, col++, message.msg.toStdString().c_str(), NULL);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
             ++currentXlsRow;
             sigProgress(row + 1, jList.count() + end);
         }
