@@ -19,17 +19,15 @@ cd $pathname/tests
 
 mkdir -p coverage
 
+lcov -d ../ -c -o ./coverage/coverage.info
+
 #下面是覆盖率目录操作，正向操作
-extract_info="*/application/*" 
+lcov --extract ./coverage/coverage.info '*/application/*' '*/logViewerAuth/*' '*/logViewerService/*' '*/logViewerTruncate/*' -o ./coverage/coverage.info
+.
+#下面是覆盖率目录操作，反向操作, 只过滤tests
+lcov --remove ./coverage/coverage.info '*/tests/*' -o ./coverage/coverage.info
 
-lcov -d ./coverage -c -o ./coverage/coverage.info
-
-lcov --extract ./coverage/coverage.info $extract_info --output-file  ./coverage/coverage.info
-
-lcov --list-full-path -e ./coverage/coverage.info –o ./coverage/coverage-stripped.info
-
-genhtml -o $result_coverage_dir ./coverage/coverage.info
- 
-lcov -d ./coverage –z
+mkdir ../report
+genhtml -o ../report ./coverage/coverage.info
 
 exit 0
