@@ -363,6 +363,9 @@ install(FILES assets/com.deepin.pkexec.logViewerTruncate.policy DESTINATION ${CM
 
                 # Install files
                 install(TARGETS ${EXE_NAME} DESTINATION bin)
+                install(DIRECTORY assets/deepin-log-viewer
+                                DESTINATION /usr/share/deepin-manual/manual-assets/application/)
+
 
 
 

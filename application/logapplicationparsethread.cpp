@@ -122,10 +122,6 @@ void LogApplicationParseThread::doWork()
             for (int i = strList.size() - 1; i >= 0; --i) {
                 LOG_MSG_APPLICATOIN msg;
                 QString str = strList.at(i);
-                msg.detailInfo = str;
-                if (str.size() > 10000) {
-                    str = strList.at(i).mid(0, 10000);
-                }
                 if (!m_canRun) {
                     return;
                 }
@@ -173,9 +169,17 @@ void LogApplicationParseThread::doWork()
                 }
                 msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
                 if (list.count() >= 4) {
-                    msg.msg = list.mid(2).join("]");
+                    msg.detailInfo = list.mid(2).join("]");
+                    msg.msg = msg.detailInfo;
+                    if (msg.detailInfo.size() > 500) {
+                        msg.msg = msg.detailInfo.mid(0, 500);
+                    }
                 } else {
-                    msg.msg = list[2];
+                    msg.detailInfo = list[2];
+                    msg.msg = msg.detailInfo;
+                    if (msg.detailInfo.size() > 500) {
+                        msg.msg = msg.detailInfo.mid(0, 500);
+                    }
                 }
 
                 m_appList.append(msg);
