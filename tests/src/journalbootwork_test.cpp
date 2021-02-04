@@ -18,6 +18,7 @@
 #include <stub.h>
 #include "journalbootwork.h"
 #include "stuballthread.h"
+#include <systemd/sd-journal.h>
 
 #include <DApplication>
 
@@ -149,3 +150,57 @@ TEST(JournalBootWork_i2str_UT, JournalBootWork_i2str_UT)
 
     p->deleteLater();
 }
+
+int stub_sd_journal_open(sd_journal **ret, int flags)
+{
+    return -1;
+}
+
+int stub_sd_journal_seek_tail(sd_journal *j)
+{
+}
+
+class JournalBootWork_UT : public testing::Test
+{
+public:
+    //添加日志
+    static void SetUpTestCase()
+    {
+        qDebug() << "SetUpTestCase" << endl;
+    }
+    static void TearDownTestCase()
+    {
+        qDebug() << "TearDownTestCase" << endl;
+    }
+    void SetUp() //TEST跑之前会执行SetUp
+    {
+        m_bootWork = new JournalBootWork(nullptr);
+        qDebug() << "SetUp" << endl;
+    }
+    void TearDown() //TEST跑完之后会执行TearDown
+    {
+        delete m_bootWork;
+    }
+    JournalBootWork *m_bootWork;
+};
+
+TEST_F(JournalBootWork_UT, testBootWork_UT)
+{
+    m_bootWork->doWork();
+}
+
+TEST_F(JournalBootWork_UT, testBootWork_UT001)
+{
+    Stub stub;
+    stub.set(sd_journal_open, stub_sd_journal_open);
+    m_bootWork->doWork();
+    m_bootWork->m_canRun = false;
+    m_bootWork->doWork();
+}
+
+//TEST_F(JournalBootWork_UT, testBootWork_UT002)
+//{
+//    Stub stub;
+//    stub.set(sd_journal_seek_tail, stub_sd_journal_seek_tail);
+//    m_bootWork->doWork();
+//}
