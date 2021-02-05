@@ -809,7 +809,6 @@ void DisplayContent::generateNormalFile(int id)
     norList.clear();
     nortempList.clear();
     setLoadState(DATA_LOADING);
-
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
 
@@ -863,6 +862,7 @@ void DisplayContent::generateNormalFile(int id)
         break;
     }
     nortempList = norList;
+    filterNomal(m_normalFilter);
 }
 
 /**
