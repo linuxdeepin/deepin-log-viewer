@@ -70,14 +70,13 @@ public:
      * @param point : 所打的点的名称，固定格式，在打点文档中查看 -- POINT-XX POINT-01
      * @param status : 性能测试的状态，比如测试时文件的大小
      */
-    void beginPointQt(const QString &point, const QString &status = "");
+    //    void beginPointQt(const QString &point, const QString &status = "");
 
     /**
      * @brief endPointQt : 结束打点,Qt
      * @param point : 需要结束的点
      */
-    void endPointQt(const QString &point);
-
+    //    void endPointQt(const QString &point);
 
     /**
      * @brief beginPointLinux : 打点开始,Linux

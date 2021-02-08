@@ -53,16 +53,16 @@ bool stub_hasFocus()
     return true;
 }
 
-bool stub_isValid()
-{
-    return true;
-}
+//bool stub_isValid()
+//{
+//    return true;
+//}
 
-static QRect stub_visualRect(Qt::LayoutDirection direction, const QRect &boundingRect,
-                             const QRect &logicalRect)
-{
-    return QRect(0, 0, 20, 20);
-}
+//static QRect stub_visualRect(Qt::LayoutDirection direction, const QRect &boundingRect,
+//                             const QRect &logicalRect)
+//{
+//    return QRect(0, 0, 20, 20);
+//}
 
 void stub_drawPrimitive(QStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *w = nullptr)
 {
@@ -265,11 +265,11 @@ TEST(LogListView_focusReson_UT, LogListView_focusReson_UT_002)
     p->focusReson();
     p->deleteLater();
 }
-QAction *LogListView_showRightMenu_UT_QMenu_exec_Func(void **p, const QPoint &pos, QAction *at = nullptr)
-{
-    qDebug() << "QMenu exec";
-    return new QAction;
-}
+//QAction *LogListView_showRightMenu_UT_QMenu_exec_Func(void **p, const QPoint &pos, QAction *at = nullptr)
+//{
+//    qDebug() << "QMenu exec";
+//    return new QAction;
+//}
 
 //TEST(LogListView_showRightMenu_UT, LogListView_showRightMenu_UT_001)
 //{
@@ -323,7 +323,7 @@ TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_002)
 class LogListView_keyPressEvent_UT_Param
 {
 public:
-    LogListView_keyPressEvent_UT_Param(int iKey)
+    explicit LogListView_keyPressEvent_UT_Param(int iKey)
     {
         key = iKey;
     }
@@ -352,7 +352,7 @@ TEST_P(LogListView_keyPressEvent_UT, LogListView_keyPressEvent_UT_001)
 class LogListView_mousePressEvent_UT_Param
 {
 public:
-    LogListView_mousePressEvent_UT_Param(Qt::MouseButton iKey)
+    explicit LogListView_mousePressEvent_UT_Param(Qt::MouseButton iKey)
     {
         key = iKey;
     }
@@ -380,7 +380,7 @@ TEST_P(LogListView_mousePressEvent_UT, LogListView_mousePressEvent_UT_001)
 class LogListView_focusInEvent_UT_Param
 {
 public:
-    LogListView_focusInEvent_UT_Param(Qt::FocusReason iReason)
+    explicit LogListView_focusInEvent_UT_Param(Qt::FocusReason iReason)
     {
         reason = iReason;
     }

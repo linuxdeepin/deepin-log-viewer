@@ -49,7 +49,7 @@ TEST(LogNormalButton_Constructor_UT, LogNormalButton_Constructor_UT_003)
 class LogNormalButton_keyPressEvent_UT_Param
 {
 public:
-    LogNormalButton_keyPressEvent_UT_Param(int iKey)
+    explicit LogNormalButton_keyPressEvent_UT_Param(int iKey)
     {
         key = iKey;
     }
@@ -76,7 +76,7 @@ TEST_P(LogNormalButton_keyPressEvent_UT, LogNormalButton_keyPressEvent_UT_001)
 class LogNormalButton_keyReleaseEvent_UT_Param
 {
 public:
-    LogNormalButton_keyReleaseEvent_UT_Param(int iKey)
+    explicit LogNormalButton_keyReleaseEvent_UT_Param(int iKey)
     {
         key = iKey;
     }
@@ -111,7 +111,7 @@ TEST_P(LogNormalButton_keyReleaseEvent_UT, LogNormalButton_keyReleaseEvent_UT_00
 class LogNormalButton_focusInEvent_UT_Param
 {
 public:
-    LogNormalButton_focusInEvent_UT_Param(Qt::FocusReason iReason)
+    explicit LogNormalButton_focusInEvent_UT_Param(Qt::FocusReason iReason)
     {
         reason = iReason;
     }

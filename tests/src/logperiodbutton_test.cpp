@@ -79,7 +79,7 @@ TEST(LogPeriodButton_leaveEvent_UT, LogPeriodButton_leaveEvent_UT_001)
 class LogPeriodButton_focusInEvent_UT_Param
 {
 public:
-    LogPeriodButton_focusInEvent_UT_Param(Qt::FocusReason iReason)
+    explicit LogPeriodButton_focusInEvent_UT_Param(Qt::FocusReason iReason)
     {
         reason = iReason;
     }

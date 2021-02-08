@@ -46,8 +46,8 @@ public:
         return sin;
     }
 
-    QString getStandardOutput();
-    QString getStandardError();
+    //    QString getStandardOutput();
+    //    QString getStandardError();
     void setType(LOG_FLAG flag) { m_type = flag; }
     void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
     void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
@@ -99,8 +99,8 @@ signals:
     void normalData(int index, QList<LOG_MSG_NORMAL> iDataList);
     void proccessError(const QString &iError);
 public slots:
-    void onFinished(int exitCode);
-    void kernDataRecived();
+    //    void onFinished(int exitCode);
+    //    void kernDataRecived();
 private:
 
     QStringList m_list;

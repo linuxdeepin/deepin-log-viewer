@@ -272,88 +272,88 @@ int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
 #include <utmp.h>
 #include <utmpx.h>
 #include <wtmpparse.h>
-void LogFileParser::parseByNormal1(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler)
-{
-    if (m_isNormalLoading) {
-        return;
-    }
-    stopAllLoad();
-    m_isNormalLoading = true;
-    int ret = -2;
-    struct utmp *utbufp;
-    wtmp_next();
-    if (wtmp_open(QString(WTMP_FILE).toLatin1().data()) == -1) {
-        printf("open WTMP_FILE file error\n");
-        return;  // exit(1) will exit this application
-    }
-    QList<utmp > normalList;
-    QList<utmp > deadList;
-    while ((utbufp = wtmp_next()) != (static_cast<struct utmp *>(nullptr))) {
-        if (utbufp->ut_type != DEAD_PROCESS) {
-            utmp value_ = *utbufp;
-            normalList.append(value_);
-        } else if (utbufp->ut_type == DEAD_PROCESS) {
-            utmp value_ = *utbufp;
-
-            deadList.append(value_);
-        }
-    }
-//    foreach (utmp item, normalList) {
-//        qDebug() << "normalList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+//void LogFileParser::parseByNormal1(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler)
+//{
+//    if (m_isNormalLoading) {
+//        return;
 //    }
-//    foreach (utmp item, deadList) {
-//        qDebug() << "deadList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+//    stopAllLoad();
+//    m_isNormalLoading = true;
+//    int ret = -2;
+//    struct utmp *utbufp;
+//    wtmp_next();
+//    if (wtmp_open(QString(WTMP_FILE).toLatin1().data()) == -1) {
+//        printf("open WTMP_FILE file error\n");
+//        return;  // exit(1) will exit this application
 //    }
-    QString a_name = "~";
-    foreach (utmp value, normalList) {
-        QString strtmp = value.ut_name;
-        //    qDebug() << value.ut_name << value.ut_type;
-        if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
-            //   if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
-            continue;
-        }
+//    QList<utmp > normalList;
+//    QList<utmp > deadList;
+//    while ((utbufp = wtmp_next()) != (static_cast<struct utmp *>(nullptr))) {
+//        if (utbufp->ut_type != DEAD_PROCESS) {
+//            utmp value_ = *utbufp;
+//            normalList.append(value_);
+//        } else if (utbufp->ut_type == DEAD_PROCESS) {
+//            utmp value_ = *utbufp;
 
-        struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
-        LOG_MSG_NORMAL Nmsg;
-        if (value.ut_type == USER_PROCESS) {
-            Nmsg.eventType = "Login";
-            Nmsg.userName = value.ut_name;
-            a_name = Nmsg.userName;
-        } else {
-            Nmsg.eventType = value.ut_name;
-            if (strtmp.compare("reboot") == 0) {
-                Nmsg.eventType = "Boot";
-            }
-            Nmsg.userName = a_name;
-        }
-        QString end_str;
-        if (deadList.length() > 0 && ret != -1)
-            end_str = show_end_time(nodeUTMP.ut_time);
-        else if (ret == -1 && value.ut_type == USER_PROCESS)
-            end_str = "still logged in";
-        else if (ret == -1 && value.ut_type == BOOT_TIME)
-            end_str = "system boot";
-        QString start_str = show_start_time(value.ut_time);
+//            deadList.append(value_);
+//        }
+//    }
+////    foreach (utmp item, normalList) {
+////        qDebug() << "normalList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+////    }
+////    foreach (utmp item, deadList) {
+////        qDebug() << "deadList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
+////    }
+//    QString a_name = "~";
+//    foreach (utmp value, normalList) {
+//        QString strtmp = value.ut_name;
+//        //    qDebug() << value.ut_name << value.ut_type;
+//        if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
+//            //   if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
+//            continue;
+//        }
 
-        QString n_time = QDateTime::fromTime_t(static_cast<uint>(value.ut_time)).toString("yyyy-MM-dd hh:mm:ss");
-        end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
-        start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
-        Nmsg.dateTime = n_time;
-        QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
-        if (iNormalFiler.timeFilterEnd > 0 && iNormalFiler.timeFilterBegin > 0) {
-            if (nn_time.toMSecsSinceEpoch() < iNormalFiler.timeFilterBegin || nn_time.toMSecsSinceEpoch() > iNormalFiler.timeFilterEnd) { // add by Airy
-                continue;
-            }
-        }
+//        struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
+//        LOG_MSG_NORMAL Nmsg;
+//        if (value.ut_type == USER_PROCESS) {
+//            Nmsg.eventType = "Login";
+//            Nmsg.userName = value.ut_name;
+//            a_name = Nmsg.userName;
+//        } else {
+//            Nmsg.eventType = value.ut_name;
+//            if (strtmp.compare("reboot") == 0) {
+//                Nmsg.eventType = "Boot";
+//            }
+//            Nmsg.userName = a_name;
+//        }
+//        QString end_str;
+//        if (deadList.length() > 0 && ret != -1)
+//            end_str = show_end_time(nodeUTMP.ut_time);
+//        else if (ret == -1 && value.ut_type == USER_PROCESS)
+//            end_str = "still logged in";
+//        else if (ret == -1 && value.ut_type == BOOT_TIME)
+//            end_str = "system boot";
+//        QString start_str = show_start_time(value.ut_time);
 
-        Nmsg.msg = start_str + "  ~  " + end_str;
-        printf("\n");
-        nList.insert(0, Nmsg);
-    }
-    wtmp_close();
-    m_isNormalLoading = false;
-    emit normalFinished(0);
-}
+//        QString n_time = QDateTime::fromTime_t(static_cast<uint>(value.ut_time)).toString("yyyy-MM-dd hh:mm:ss");
+//        end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
+//        start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
+//        Nmsg.dateTime = n_time;
+//        QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
+//        if (iNormalFiler.timeFilterEnd > 0 && iNormalFiler.timeFilterBegin > 0) {
+//            if (nn_time.toMSecsSinceEpoch() < iNormalFiler.timeFilterBegin || nn_time.toMSecsSinceEpoch() > iNormalFiler.timeFilterEnd) { // add by Airy
+//                continue;
+//            }
+//        }
+
+//        Nmsg.msg = start_str + "  ~  " + end_str;
+//        printf("\n");
+//        nList.insert(0, Nmsg);
+//    }
+//    wtmp_close();
+//    m_isNormalLoading = false;
+//    emit normalFinished(0);
+//}
 
 int LogFileParser::parseByNormal(NORMAL_FILTERS &iNormalFiler)
 {

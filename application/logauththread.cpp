@@ -68,23 +68,23 @@ LogAuthThread::~LogAuthThread()
 
 }
 
-/**
- * @brief LogAuthThread::getStandardOutput 返回m_process执行输出的信息
- * @return m_process执行输出的信息
- */
-QString LogAuthThread::getStandardOutput()
-{
-    return m_output;
-}
+///**
+// * @brief LogAuthThread::getStandardOutput 返回m_process执行输出的信息
+// * @return m_process执行输出的信息
+// */
+//QString LogAuthThread::getStandardOutput()
+//{
+//    return m_output;
+//}
 
 /**
  * @brief LogAuthThread::getStandardError 返回m_process执行输出的错误信息
  * @return m_process执行输出的错误信息
  */
-QString LogAuthThread::getStandardError()
-{
-    return m_error;
-}
+//QString LogAuthThread::getStandardError()
+//{
+//    return m_error;
+//}
 
 /**
  * @brief LogAuthThread::stopProccess 停止日志数据获取进程并销毁
@@ -207,8 +207,8 @@ void LogAuthThread::handleBoot()
 
         //按换行分割
         //    qInfo()<<strList.size()<<"_________________________";
-        for (int i = strList.size() - 1; i >= 0; --i) {
-            QString lineStr = strList.at(i);
+        for (int j = strList.size() - 1; j >= 0; --j) {
+            QString lineStr = strList.at(j);
             if (lineStr.startsWith("/dev"))
                 continue;
             //删除颜色格式字符
@@ -301,11 +301,11 @@ void LogAuthThread::handleKern()
         }
 
         QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
-        for (int i = strList.size() - 1; i >= 0; --i) {
+        for (int j = strList.size() - 1; j >= 0; --j) {
             if (!m_canRun) {
                 return;
             }
-            QString str = strList.at(i);
+            QString str = strList.at(j);
             LOG_MSG_JOURNAL msg;
             //删除颜色格式字符
             str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
@@ -421,10 +421,6 @@ void LogAuthThread::handleKwin()
         return;
     }
     QByteArray outByte = m_process->readAllStandardOutput();
-    if (!m_canRun) {
-        return;
-    }
-
     if (!m_canRun) {
         return;
     }
@@ -588,7 +584,6 @@ void LogAuthThread::handleXorg()
                 normalList.append(value_);
             } else if (utbufp->ut_type == DEAD_PROCESS) {
                 utmp value_ = *utbufp;
-
                 deadList.append(value_);
             }
         }
@@ -698,30 +693,30 @@ void LogAuthThread::handleDkpg()
             return;
         }
         QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
-        for (int i = strList.size() - 1; i >= 0; --i) {
-            QString str = strList.at(i);
+        for (int j = strList.size() - 1; j >= 0; --j) {
+            QString str = strList.at(j);
             if (!m_canRun) {
                 return;
             }
             str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-            QStringList strList = str.split(" ", QString::SkipEmptyParts);
-            if (strList.size() < 3)
+            QStringList m_strList = str.split(" ", QString::SkipEmptyParts);
+            if (m_strList.size() < 3)
                 continue;
 
             QString info;
-            for (auto i = 3; i < strList.size(); i++) {
-                info = info + strList[i] + " ";
+            for (auto k = 3; k < m_strList.size(); k++) {
+                info = info + m_strList[k] + " ";
             }
 
             LOG_MSG_DPKG dpkgLog;
-            dpkgLog.dateTime = strList[0] + " " + strList[1];
+            dpkgLog.dateTime = m_strList[0] + " " + m_strList[1];
             QDateTime dt = QDateTime::fromString(dpkgLog.dateTime, "yyyy-MM-dd hh:mm:ss");
             //筛选时间
             if (m_dkpgFilters.timeFilterBegin > 0 && m_dkpgFilters.timeFilterEnd > 0) {
                 if (dt.toMSecsSinceEpoch() < m_dkpgFilters.timeFilterBegin || dt.toMSecsSinceEpoch() > m_dkpgFilters.timeFilterEnd)
                     continue;
             }
-            dpkgLog.action = strList[2];
+            dpkgLog.action = m_strList[2];
             dpkgLog.msg = info;
 
             //        dList.append(dpkgLog);
@@ -882,37 +877,35 @@ qint64 LogAuthThread::formatDateTime(QString y, QString t)
     return dt.toMSecsSinceEpoch();
 }
 
-void LogAuthThread::onFinished(int exitCode)
-{
-    Q_UNUSED(exitCode)
+//void LogAuthThread::onFinished(int exitCode)
+//{
+//    Q_UNUSED(exitCode)
 
-//    QProcess *process = dynamic_cast<QProcess *>(sender());
-//    if (!process) {
+////    QProcess *process = dynamic_cast<QProcess *>(sender());
+////    if (!process) {
+////        return;
+////    }
+////    if (!process->isOpen()) {
+////        return;
+////    }
+//    if (m_type != KERN && m_type != BOOT) {
 //        return;
 //    }
-//    if (!process->isOpen()) {
-//        return;
-//    }
-    if (m_type != KERN && m_type != BOOT) {
-        return;
-    }
-    QByteArray byte =   m_process->readAllStandardOutput();
-    QTextStream stream(&byte);
-    QByteArray encode;
-    stream.setCodec(encode);
-    QString str = stream.readAll();
-    QStringList l = str.split('\n');
-    qDebug() << __FUNCTION__ << "byte" << byte.length();
-    qDebug() << __FUNCTION__ << "str" << str.length();
-    //  qDebug() << __FUNCTION__ << "str" << str;
+//    QByteArray byte =   m_process->readAllStandardOutput();
+//    QTextStream stream(&byte);
+//    QByteArray encode;
+//    stream.setCodec(encode);
+//    QString str = stream.readAll();
+//    QStringList l = str.split('\n');
+//    qDebug() << __FUNCTION__ << "byte" << byte.length();
+//    qDebug() << __FUNCTION__ << "str" << str.length();
+//    //  qDebug() << __FUNCTION__ << "str" << str;
 
-//    emit cmdFinished(m_type, str);
+////    emit cmdFinished(m_type, str);
 
+//}
 
-}
+//void LogAuthThread::kernDataRecived()
+//{
 
-void LogAuthThread::kernDataRecived()
-{
-
-}
-
+//}

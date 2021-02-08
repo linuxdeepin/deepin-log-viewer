@@ -194,6 +194,7 @@ private:
      * @brief m_currentType 当前日志类型
      */
     QString m_currentType = "";
+    bool isLeval = true;
 };
 
 #endif  // FILTERCONTENT_H

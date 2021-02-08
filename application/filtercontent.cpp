@@ -419,7 +419,8 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
     if (typeCbx->isVisible())
         typeCbx->setCurrentIndex(iConifg.typeCbx);
     m_btnGroup->button(iConifg.dateBtn)->setChecked(true); //add by Airy for bug 19660:period button default setting
-
+    Q_EMIT m_btnGroup->button(iConifg.dateBtn)->click();
+    //    Q_EMIT sigButtonClicked(iConifg.dateBtn,iConifg.levelCbx,QModelIndex());
 }
 
 /**

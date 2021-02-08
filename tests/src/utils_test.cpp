@@ -127,7 +127,7 @@ TEST_P(Utils_isErroCommand_UT, Utils_isErroCommand_UT_001)
     Utils_isErroCommand_UT_Param param = GetParam();
 
     Utils::CommandErrorType resultType = Utils::isErroCommand(param.command);
-    bool compareResult = resultType == param.type;
+    //    bool compareResult = resultType == param.type;
     //    qDebug() << "compareResult" << compareResult << resultType << param.type;
     //    EXPECT_EQ(compareResult, true);
 }

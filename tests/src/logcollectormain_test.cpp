@@ -220,7 +220,7 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
     QWidget *w = nullptr;
     if (!param.objectName.isEmpty())
         w = p->titlebar()->findChild<QWidget *>(param.objectName);
-    bool rs = p->handleApplicationTabEventNotify(w, keyEvent);
+    p->handleApplicationTabEventNotify(w, keyEvent);
     //    EXPECT_EQ(rs, param.result);
 
     //    EXPECT_EQ(p->focusWidget()->objectName(), param.focusObjectName) ;

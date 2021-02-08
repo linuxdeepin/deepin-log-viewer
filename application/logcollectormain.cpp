@@ -218,8 +218,10 @@ void LogCollectorMain::initConnection()
             SLOT(slot_logCatelogueRefresh(const QModelIndex &)));
     connect(m_logCatelogue, &LogListView::sigRefresh, this, [ = ]() { m_searchEdt->clear(); });
     //! treeView widget
+
     connect(m_logCatelogue, SIGNAL(itemChanged(const QModelIndex &)), m_midRightWgt,
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));
+
     //! set tree <==> combobox visible
     connect(m_logCatelogue, SIGNAL(itemChanged(const QModelIndex &)), m_topRightWgt,
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));

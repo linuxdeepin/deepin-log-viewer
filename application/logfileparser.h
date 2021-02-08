@@ -53,7 +53,7 @@ public:
     int parseByKern(KERN_FILTERS &iKernFilter);
     int parseByApp(APP_FILTERS &iAPPFilter);
 
-    void parseByNormal1(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler);  // add by Airy
+    //    void parseByNormal1(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler);  // add by Airy
     int parseByNormal(NORMAL_FILTERS &iNormalFiler);   // add by Airy
 
     int parseByKwin(KWIN_FILTERS iKwinfilter);

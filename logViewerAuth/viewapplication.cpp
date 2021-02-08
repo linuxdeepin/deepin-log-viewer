@@ -79,11 +79,11 @@ ViewApplication::~ViewApplication()
     releaseMemery();
 }
 
-void ViewApplication::dataRecived()
-{
-    m_commondM->detach();
-    m_commondM->deleteLater();
-}
+//void ViewApplication::dataRecived()
+//{
+//    m_commondM->detach();
+//    m_commondM->deleteLater();
+//}
 
 void ViewApplication::releaseMemery()
 {

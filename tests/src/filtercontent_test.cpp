@@ -52,7 +52,7 @@ TEST(FilterContent_initUinitConnections_UT, FilterContent_initUinitConnections_U
 class FilterContent_shortCutExport_UT_Param
 {
 public:
-    FilterContent_shortCutExport_UT_Param(bool iIsExportBtn)
+    explicit FilterContent_shortCutExport_UT_Param(bool iIsExportBtn)
     {
         m_isExportBtn = iIsExportBtn;
     }
@@ -262,7 +262,7 @@ TEST(FilterContent_updateWordWrap_UT, FilterContent_updateWordWrap_UT)
 class FilterContent_updateDataState_UT_Param
 {
 public:
-    FilterContent_updateDataState_UT_Param(bool iNew)
+    explicit FilterContent_updateDataState_UT_Param(bool iNew)
     {
         isNew = iNew;
     }
@@ -304,7 +304,7 @@ TEST(FilterContent_setCurrentConfig_UT, FilterContent_setCurrentConfig_UT)
 class FilterContent_slot_logCatelogueClicked_UT_Param
 {
 public:
-    FilterContent_slot_logCatelogueClicked_UT_Param(bool iIndex)
+    explicit FilterContent_slot_logCatelogueClicked_UT_Param(bool iIndex)
     {
         index = iIndex;
     }
@@ -372,7 +372,7 @@ TEST_P(FilterContent_slot_logCatelogueClicked_UT, FilterContent_slot_logCatelogu
 class FilterContent_slot_logCatelogueRefresh_UT_Param
 {
 public:
-    FilterContent_slot_logCatelogueRefresh_UT_Param(bool iIndex)
+    explicit FilterContent_slot_logCatelogueRefresh_UT_Param(bool iIndex)
     {
         index = iIndex;
     }

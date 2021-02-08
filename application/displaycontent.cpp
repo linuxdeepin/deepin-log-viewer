@@ -1350,7 +1350,6 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     m_currentKwinFilter = {""};
     m_curListIdx = index;
 
-
     clearAllDatalist();
 
     QString itemData = index.data(ITEM_DATE_ROLE).toString();

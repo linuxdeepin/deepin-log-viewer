@@ -571,10 +571,10 @@ bool LogExportThread::isProcessing()
     return m_canRunning;
 }
 
-void LogExportThread::setDataLoadComlete(bool &isComplete)
-{
-    m_allLoadComplete = isComplete;
-}
+//void LogExportThread::setDataLoadComlete(bool &isComplete)
+//{
+//    m_allLoadComplete = isComplete;
+//}
 
 /**
  * @brief LogExportThread::stopImmediately 停止前线程获取数据逻辑
@@ -641,7 +641,7 @@ bool LogExportThread::exportToTxt(QString fileName, QStandardItemModel *pModel, 
                 sigProgress(row + 1, pModel->rowCount());
             }
         }
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -730,7 +730,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
         //设置文件编码为utf8
         out.setCodec(QTextCodec::codecForName("utf-8"));
 
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -782,7 +782,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> j
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -832,7 +832,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DPKG> jList, Q
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -881,7 +881,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_BOOT> jList, Q
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -930,7 +930,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_XORG> jList, Q
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -981,7 +981,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList,
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -1028,7 +1028,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, Q
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -1120,7 +1120,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
         }
         l_merger.save(fileNamex.toStdString());
         QFile(fileNamex).rename(fileName);
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
@@ -1206,7 +1206,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         l_merger.save(fileNamex.toStdString());
         QFile(fileNamex).rename(fileName);
 
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
@@ -1288,7 +1288,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         l_merger.save(fileNamex.toStdString());
         QFile(fileNamex).rename(fileName);
 
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
@@ -1367,7 +1367,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         }
         l_merger.save(fileNamex.toStdString());
         QFile(fileNamex).rename(fileName);
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
@@ -1446,7 +1446,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
         l_merger.save(fileNamex.toStdString());
         QFile(fileNamex).rename(fileName);
 
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
@@ -1529,7 +1529,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
         l_merger.save(fileNamex.toStdString());
         QFile(fileNamex).rename(fileName);
 
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
@@ -1606,7 +1606,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         l_merger.save(fileNamex.toStdString());
         QFile(fileNamex).rename(fileName);
 
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
@@ -1686,8 +1686,8 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
                 html.write(info.toUtf8().data());
 
                 for (int col = 1; col < pModel->columnCount(); ++col) {
-                    QString info = QString("<td>%1</td>").arg(pModel->item(row, col)->text());
-                    html.write(info.toUtf8().data());
+                    QString m_info = QString("<td>%1</td>").arg(pModel->item(row, col)->text());
+                    html.write(m_info.toUtf8().data());
                 }
                 html.write("</tr>");
                 //导出进度信号
@@ -1714,7 +1714,7 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -1842,7 +1842,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -1914,7 +1914,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> 
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -1983,7 +1983,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, 
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -2050,7 +2050,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, 
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -2117,7 +2117,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, 
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -2188,7 +2188,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -2253,7 +2253,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -2324,7 +2324,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
         malloc_trim(0);
         sigProgress(100, 100);
         qDebug() << "export xlsx new";
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2378,7 +2378,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
         malloc_trim(0);
         sigProgress(100, 100);
         qDebug() << "export xlsx new";
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2430,7 +2430,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
         malloc_trim(0);
         sigProgress(100, 100);
         qDebug() << "export xlsx new";
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2480,7 +2480,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
         malloc_trim(0);
         sigProgress(100, 100);
         qDebug() << "export xlsx new";
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2530,7 +2530,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
         malloc_trim(0);
         sigProgress(100, 100);
         qDebug() << "export xlsx new";
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2582,7 +2582,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
         malloc_trim(0);
         sigProgress(100, 100);
         qDebug() << "export xlsx new";
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2631,7 +2631,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
         malloc_trim(0);
         sigProgress(100, 100);
         qDebug() << "export xlsx new";
-    } catch (QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         qDebug() << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {

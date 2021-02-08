@@ -64,10 +64,10 @@ void LogFileParser_parseByKwin(KWIN_FILTERS iKwinfilter)
 {
 }
 
-void QRunnable_run()
-{
-}
+//void QRunnable_run()
+//{
+//}
 
-void Doc_Document_save(const QString &path)
-{
-}
+//void Doc_Document_save(const QString &path)
+//{
+//}

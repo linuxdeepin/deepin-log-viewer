@@ -155,10 +155,10 @@ TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
 //    p->parseByKwin(filter);
 //    p->deleteLater();
 //}
-void LogFileParser_parseByBoot_UT_QThreadPool_start(QRunnable *runnable, int priority = 0)
-{
-    qDebug() << "LogFileParser_parseByBoot_UT_QThreadPool_start--";
-}
+//void LogFileParser_parseByBoot_UT_QThreadPool_start(QRunnable *runnable, int priority = 0)
+//{
+//    qDebug() << "LogFileParser_parseByBoot_UT_QThreadPool_start--";
+//}
 //TEST(LogFileParser_parseByBoot_UT, LogFileParser_parseByBoot_UT)
 //{
 //    LogFileParser *p = new LogFileParser(nullptr);

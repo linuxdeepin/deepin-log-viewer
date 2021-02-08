@@ -27,7 +27,7 @@
 class LogTableView : public Dtk::Widget::DTableView
 {
 public:
-    LogTableView(QWidget *parent = nullptr);
+    explicit LogTableView(QWidget *parent = nullptr);
 
     void focusInEvent(QFocusEvent *event);
 

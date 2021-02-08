@@ -67,7 +67,7 @@ public:
         isKeyPress = iIsKeyPress;
         isKeyTab = iIsKeyTab;
         isMainWindow = iIsMainWindowb;
-        isKeyPress = iIsSucces;
+        isSucces = iIsSucces;
     }
     bool isKeyPress;
     bool isKeyTab;
@@ -110,7 +110,6 @@ TEST_P(LogApplication_notify_UT, LogApplication_notify_UT)
 
     LogApplication *p = new LogApplication(argc, argv);
     EXPECT_NE(p, nullptr);
-    LogCollectorMain *m = new LogCollectorMain(nullptr);
     LogApplication_notify_UT_Param param = GetParam();
     if (param.isKeyPress) {
         int key = param.isKeyTab ? Qt::Key_Tab : Qt::Key_Left;

@@ -109,7 +109,7 @@ TEST(journalWork_getReplaceColorStr_UT, journalWork_getReplaceColorStr_UT)
 TEST(journalWork_getDateTimeFromStamp_UT, journalWork_getDateTimeFromStamp_UT)
 {
     journalWork *p = new journalWork(nullptr);
-    bool rs = p->getDateTimeFromStamp("1603160995838863") == QString("2020-10-20 10:29:55");
+    p->getDateTimeFromStamp("1603160995838863") == QString("2020-10-20 10:29:55");
     //  EXPECT_EQ(rs, true);
     p->deleteLater();
 }

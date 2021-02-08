@@ -210,7 +210,7 @@ TEST(DisplayContent_createJournalTableForm_UT, DisplayContent_createJournalTable
 class DisplayContent_generateDpkgFile_UT_Param
 {
 public:
-    DisplayContent_generateDpkgFile_UT_Param(int id)
+    explicit DisplayContent_generateDpkgFile_UT_Param(int id)
     {
         time = id;
     }
@@ -254,7 +254,7 @@ TEST(DisplayContent_createDpkgTable_UT, DisplayContent_createDpkgTable_UT_001)
 class DisplayContent_generateKernFile_UT_Param
 {
 public:
-    DisplayContent_generateKernFile_UT_Param(int id)
+    explicit DisplayContent_generateKernFile_UT_Param(int id)
     {
         time = id;
     }
@@ -344,7 +344,7 @@ TEST(DisplayContent_insertKernTable_UT, DisplayContent_insertKernTable_UT_001)
 class DisplayContent_generateAppFile_UT_Param
 {
 public:
-    DisplayContent_generateAppFile_UT_Param(int id)
+    explicit DisplayContent_generateAppFile_UT_Param(int id)
     {
         time = id;
     }
@@ -439,7 +439,7 @@ TEST(DisplayContent_createXorgTable_UT, DisplayContent_createXorgTable_UT_001)
 class DisplayContent_generateXorgFile_UT_Param
 {
 public:
-    DisplayContent_generateXorgFile_UT_Param(int id)
+    explicit DisplayContent_generateXorgFile_UT_Param(int id)
     {
         time = id;
     }
@@ -515,7 +515,7 @@ TEST(DisplayContent_createNormalTable_UT, DisplayContent_createNormalTable_UT_00
 class DisplayContent_generateNormalFile_UT_Param
 {
 public:
-    DisplayContent_generateNormalFile_UT_Param(int id)
+    explicit DisplayContent_generateNormalFile_UT_Param(int id)
     {
         time = id;
     }
@@ -565,8 +565,8 @@ class DisplayContent_getAppName_UT_Param
 public:
     DisplayContent_getAppName_UT_Param(const QString &iPath, const QString &iResult)
     {
-        path = iPath;
         rs = iResult;
+        path = iPath;
     }
     QString path;
     QString rs;
@@ -600,7 +600,7 @@ TEST(DisplayContent_isAuthProcessAlive_UT, DisplayContent_isAuthProcessAlive_UT_
 class DisplayContent_generateJournalBootFile_UT_Param
 {
 public:
-    DisplayContent_generateJournalBootFile_UT_Param(int id)
+    explicit DisplayContent_generateJournalBootFile_UT_Param(int id)
     {
         level = id;
     }
@@ -696,7 +696,7 @@ TEST(DisplayContent_slot_tableItemClicked_UT, DisplayContent_slot_tableItemClick
 class DisplayContent_slot_BtnSelected_UT_Param
 {
 public:
-    DisplayContent_slot_BtnSelected_UT_Param(int iIndex)
+    explicit DisplayContent_slot_BtnSelected_UT_Param(int iIndex)
     {
         index = iIndex;
     }
@@ -800,7 +800,7 @@ TEST(DisplayContent_slot_appLogs_UT, DisplayContent_slot_appLogs_UT_001)
 class DisplayContent_slot_logCatelogueClicked_UT_Param
 {
 public:
-    DisplayContent_slot_logCatelogueClicked_UT_Param(int iIndex)
+    explicit DisplayContent_slot_logCatelogueClicked_UT_Param(int iIndex)
     {
         index = iIndex;
     }
@@ -893,7 +893,7 @@ TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelo
 class DisplayContent_slot_exportClicked_UT_Param
 {
 public:
-    DisplayContent_slot_exportClicked_UT_Param(int iIndex)
+    explicit DisplayContent_slot_exportClicked_UT_Param(int iIndex)
     {
         index = iIndex;
     }
@@ -906,20 +906,20 @@ class DisplayContent_slot_exportClicked_UT : public ::testing::TestWithParam<Dis
 
 INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_exportClicked_UT, ::testing::Values(DisplayContent_slot_exportClicked_UT_Param(0), DisplayContent_slot_exportClicked_UT_Param(1), DisplayContent_slot_exportClicked_UT_Param(2), DisplayContent_slot_exportClicked_UT_Param(3), DisplayContent_slot_exportClicked_UT_Param(4), DisplayContent_slot_exportClicked_UT_Param(5), DisplayContent_slot_exportClicked_UT_Param(6), DisplayContent_slot_exportClicked_UT_Param(7), DisplayContent_slot_exportClicked_UT_Param(8), DisplayContent_slot_exportClicked_UT_Param(9)));
 QString slot_exportClicked_ModelIndex_data = "";
-QVariant slot_exportClicked_ModelIndex_data_Func(void *obj, int arole)
-{
-    return QString(slot_exportClicked_ModelIndex_data);
-}
+//QVariant slot_exportClicked_ModelIndex_data_Func(void *obj, int arole)
+//{
+//    return QString(slot_exportClicked_ModelIndex_data);
+//}
 
-QString exportClicked_getSaveFileName(QWidget *parent,
-                                      const QString &caption,
-                                      const QString &dir,
-                                      const QString &filter,
-                                      QString *selectedFilter,
-                                      QFileDialog::Options options)
-{
-    return "./testExport.txt";
-}
+//QString exportClicked_getSaveFileName(QWidget *parent,
+//                                      const QString &caption,
+//                                      const QString &dir,
+//                                      const QString &filter,
+//                                      QString *selectedFilter,
+//                                      QFileDialog::Options options)
+//{
+//    return "./testExport.txt";
+//}
 //TEST_P(DisplayContent_slot_exportClicked_UT, DisplayContent_slot_exportClicked_UT_001)
 //{
 //    DisplayContent_slot_exportClicked_UT_Param param = GetParam();
@@ -1461,7 +1461,7 @@ public:
     DisplayContent_parseListToModel_DPKG_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
     {
         isEmptyList = iIsEmptyList;
-        isEmptyList = iIsEmptyModel;
+        isEmptyModel = iIsEmptyModel;
     }
     bool isEmptyList;
     bool isEmptyModel;
@@ -1499,7 +1499,7 @@ public:
     DisplayContent_parseListToModel_BOOT_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
     {
         isEmptyList = iIsEmptyList;
-        isEmptyList = iIsEmptyModel;
+        isEmptyModel = iIsEmptyModel;
     }
     bool isEmptyList;
     bool isEmptyModel;
@@ -1537,7 +1537,7 @@ public:
     DisplayContent_parseListToModel_APP_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
     {
         isEmptyList = iIsEmptyList;
-        isEmptyList = iIsEmptyModel;
+        isEmptyModel = iIsEmptyModel;
     }
     bool isEmptyList;
     bool isEmptyModel;
@@ -1577,7 +1577,7 @@ public:
     DisplayContent_parseListToModel_XORG_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
     {
         isEmptyList = iIsEmptyList;
-        isEmptyList = iIsEmptyModel;
+        isEmptyModel = iIsEmptyModel;
     }
     bool isEmptyList;
     bool isEmptyModel;
@@ -1615,7 +1615,7 @@ public:
     DisplayContent_parseListToModel_NORMAL_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
     {
         isEmptyList = iIsEmptyList;
-        isEmptyList = iIsEmptyModel;
+        isEmptyModel = iIsEmptyModel;
     }
     bool isEmptyList;
     bool isEmptyModel;
@@ -1655,7 +1655,7 @@ public:
     DisplayContent_parseListToModel_KWIN_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
     {
         isEmptyList = iIsEmptyList;
-        isEmptyList = iIsEmptyModel;
+        isEmptyModel = iIsEmptyModel;
     }
     bool isEmptyList;
     bool isEmptyModel;
@@ -1934,7 +1934,7 @@ public:
     DisplayContent_parseListToModel_JOURNAL_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
     {
         isEmptyList = iIsEmptyList;
-        isEmptyList = iIsEmptyModel;
+        isEmptyModel = iIsEmptyModel;
     }
     bool isEmptyList;
     bool isEmptyModel;
@@ -2016,7 +2016,7 @@ TEST(DisplayContent_createApplicationTable_UT, DisplayContent_createApplicationT
 class DisplayContent_insertApplicationTable_UT_Param
 {
 public:
-    DisplayContent_insertApplicationTable_UT_Param(bool iIsEndMore)
+    explicit DisplayContent_insertApplicationTable_UT_Param(bool iIsEndMore)
     {
         m_isEndMore = iIsEndMore;
     }
@@ -2061,7 +2061,7 @@ TEST_P(DisplayContent_insertApplicationTable_UT, DisplayContent_insertApplicatio
 class DisplayContent_slot_refreshClicked_UT_Param
 {
 public:
-    DisplayContent_slot_refreshClicked_UT_Param(int iIndex)
+    explicit DisplayContent_slot_refreshClicked_UT_Param(int iIndex)
     {
         index = iIndex;
     }

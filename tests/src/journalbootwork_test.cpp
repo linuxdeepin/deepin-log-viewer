@@ -110,7 +110,7 @@ TEST(JournalBootWork_getReplaceColorStr_UT, JournalBootWork_getReplaceColorStr_U
 TEST(JournalBootWork_getDateTimeFromStamp_UT, JournalBootWork_getDateTimeFromStamp_UT)
 {
     JournalBootWork *p = new JournalBootWork(nullptr);
-    bool rs = p->getDateTimeFromStamp("1603160995838863") == QString("2020-10-20 10:29:55");
+    p->getDateTimeFromStamp("1603160995838863") == QString("2020-10-20 10:29:55");
     //  EXPECT_EQ(rs, true);
     p->deleteLater();
 }
@@ -156,9 +156,9 @@ int stub_sd_journal_open(sd_journal **ret, int flags)
     return -1;
 }
 
-int stub_sd_journal_seek_tail(sd_journal *j)
-{
-}
+//int stub_sd_journal_seek_tail(sd_journal *j)
+//{
+//}
 
 class JournalBootWork_UT : public testing::Test
 {

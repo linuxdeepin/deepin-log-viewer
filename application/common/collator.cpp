@@ -7,7 +7,7 @@ std::mutex Collator::m_mutex;
 
 int Collator::compare(const QString &left, const QString &right, bool caseIgnoreCompare) const
 {
-    icu::Collator::EComparisonResult result = icu::Collator::EQUAL;
+    icu::Collator::EComparisonResult result;
 
     // if icu::Collator cannot be initialized, use builtin compare method (builtin method kinda
     // buggy right now)

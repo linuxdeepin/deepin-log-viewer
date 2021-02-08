@@ -119,9 +119,9 @@ void LogApplicationParseThread::doWork()
             }
             //替换截断空字符
             QStringList strList = QString(Utils::replaceEmptyByteArray(byteOutput)).split('\n', QString::SkipEmptyParts);
-            for (int i = strList.size() - 1; i >= 0; --i) {
+            for (int j = strList.size() - 1; j >= 0; --j) {
                 LOG_MSG_APPLICATOIN msg;
-                QString str = strList.at(i);
+                QString str = strList.at(j);
                 if (!m_canRun) {
                     return;
                 }
