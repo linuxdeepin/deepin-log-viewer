@@ -418,7 +418,7 @@
     <message>
         <location filename="../application/main.cpp" line="86"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation>日誌收集工具是一款查看系統日誌的小工具。</translation>
+        <translation>日誌查看器是一款查看系統日誌的小工具。</translation>
     </message>
 </context>
 <context>

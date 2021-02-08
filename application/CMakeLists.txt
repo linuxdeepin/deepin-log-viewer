@@ -317,6 +317,10 @@ endforeach()
 #lupdate end
 
 file (GLOB APP_TS_FILES translations/*.ts)
+#Generate the qm file
+set(APP_TRANS_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/translate_generation.sh")
+execute_process(COMMAND bash ${APP_TRANS_SCRIPT}
+    WORKING_DIRECTORY ${TS_DIR})
 qt5_create_translation(APP_QM_FILES ${APP_TS_FILES} ${APP_QM_FILES})
 
 add_executable (${EXE_NAME} ${APP_CPP_FILES} ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${XLSX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES})
