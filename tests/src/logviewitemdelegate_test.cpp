@@ -26,18 +26,18 @@
 #include <QPainter>
 
 DWIDGET_USE_NAMESPACE
-int stub_pixelMetric001(DStyle::PixelMetric m, const QStyleOption *opt = nullptr, const QWidget *widget = nullptr)
-{
-    return 1;
-}
+//int stub_pixelMetric001(DStyle::PixelMetric m, const QStyleOption *opt = nullptr, const QWidget *widget = nullptr)
+//{
+//    return 1;
+//}
 
-void stub_drawPrimitive001(DStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *w = nullptr)
-{
-}
+//void stub_drawPrimitive001(DStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *w = nullptr)
+//{
+//}
 
-bool stub_isValid001()
-{
-}
+//bool stub_isValid001()
+//{
+//}
 
 //class LogViewItemDelegate_paint_UT : public testing::Test
 //{

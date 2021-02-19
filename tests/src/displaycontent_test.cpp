@@ -564,9 +564,9 @@ class DisplayContent_getAppName_UT_Param
 {
 public:
     DisplayContent_getAppName_UT_Param(const QString &iPath, const QString &iResult)
+        : path(iPath)
+        , rs(iResult)
     {
-        rs = iResult;
-        path = iPath;
     }
     QString path;
     QString rs;
@@ -1091,11 +1091,11 @@ class DisplayContent_slot_journalData_UT_Param
 {
 public:
     DisplayContent_slot_journalData_UT_Param(LOG_FLAG iFlag, bool iIndexEqual, bool iListIsEmpty, bool iFirstLoadPageData)
+        : m_flag(iFlag)
+        , indexEqual(iIndexEqual)
+        , listIsEmpty(iListIsEmpty)
+        , m_firstLoadPageData(iFirstLoadPageData)
     {
-        m_flag = iFlag;
-        indexEqual = iIndexEqual;
-        listIsEmpty = iListIsEmpty;
-        m_firstLoadPageData = iFirstLoadPageData;
     }
     LOG_FLAG m_flag;
     bool indexEqual;
@@ -1140,11 +1140,11 @@ class DisplayContent_slot_journalBootData_UT_Param
 {
 public:
     DisplayContent_slot_journalBootData_UT_Param(LOG_FLAG iFlag, bool iIndexEqual, bool iListIsEmpty, bool iFirstLoadPageData)
+        : m_flag(iFlag)
+        , indexEqual(iIndexEqual)
+        , listIsEmpty(iListIsEmpty)
+        , m_firstLoadPageData(iFirstLoadPageData)
     {
-        m_flag = iFlag;
-        indexEqual = iIndexEqual;
-        listIsEmpty = iListIsEmpty;
-        m_firstLoadPageData = iFirstLoadPageData;
     }
     LOG_FLAG m_flag;
     bool indexEqual;
@@ -1308,10 +1308,10 @@ class DisplayContent_slot_searchResult_UT_Param
 {
 public:
     DisplayContent_slot_searchResult_UT_Param(LOG_FLAG iFlag, bool iIsContains, bool iIsSearchEmpty)
+        : m_flag(iFlag)
+        , isContains(iIsContains)
+        , isSearchEmpty(iIsSearchEmpty)
     {
-        m_flag = iFlag;
-        isContains = iIsContains;
-        isSearchEmpty = iIsSearchEmpty;
     }
     LOG_FLAG m_flag;
     bool isContains;
@@ -1973,9 +1973,9 @@ class DisplayContent_getIconByname_UT_Param
 {
 public:
     DisplayContent_getIconByname_UT_Param(const QString &iKey, const QString &iValue)
+        : key(iKey)
+        , value(iValue)
     {
-        key = iKey;
-        value = iValue;
     }
     QString key;
     QString value;

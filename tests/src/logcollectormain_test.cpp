@@ -172,11 +172,11 @@ class LogCollectorMain_handleApplicationTabEventNotify_UT_Param
 {
 public:
     LogCollectorMain_handleApplicationTabEventNotify_UT_Param(bool iKey, const QString &iObjectName, bool iResult, const QString &iFocusObjectName)
+        : key(iKey)
+        , objectName(iObjectName)
+        , result(iResult)
+        , focusObjectName(iFocusObjectName)
     {
-        key = iKey;
-        objectName = iObjectName;
-        result = iResult;
-        focusObjectName = iFocusObjectName;
     }
     int key;
     QString objectName;

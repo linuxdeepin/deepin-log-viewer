@@ -112,8 +112,8 @@ class LogNormalButton_focusInEvent_UT_Param
 {
 public:
     explicit LogNormalButton_focusInEvent_UT_Param(Qt::FocusReason iReason)
+        : reason(iReason)
     {
-        reason = iReason;
     }
     Qt::FocusReason reason;
 };

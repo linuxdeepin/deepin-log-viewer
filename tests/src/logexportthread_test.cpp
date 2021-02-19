@@ -868,10 +868,10 @@ class LogExportThread_exportToTxt_JOURNAL_UT_Param
 {
 public:
     LogExportThread_exportToTxt_JOURNAL_UT_Param(bool iCanFileRead, LOG_FLAG iFlag, bool iResult)
+        : canFileRead(iCanFileRead)
+        , flag(iFlag)
+        , result(iResult)
     {
-        canFileRead = iCanFileRead;
-        flag = iFlag;
-        result = iResult;
     }
     bool canFileRead;
     LOG_FLAG flag;
@@ -1216,10 +1216,10 @@ class LogExportThread_exportToDoc_JOURNAL_UT_Param
 {
 public:
     LogExportThread_exportToDoc_JOURNAL_UT_Param(bool iCanFileRead, LOG_FLAG iFlag, bool iResult)
+        : canFileRead(iCanFileRead)
+        , flag(iFlag)
+        , result(iResult)
     {
-        canFileRead = iCanFileRead;
-        flag = iFlag;
-        result = iResult;
     }
     bool canFileRead;
     LOG_FLAG flag;
@@ -1695,10 +1695,10 @@ class LogExportThread_exportToHtml_JOURNAL_UT_Param
 {
 public:
     LogExportThread_exportToHtml_JOURNAL_UT_Param(bool iCanFileRead, LOG_FLAG iFlag, bool iResult)
+        : canFileRead(iCanFileRead)
+        , flag(iFlag)
+        , result(iResult)
     {
-        canFileRead = iCanFileRead;
-        flag = iFlag;
-        result = iResult;
     }
     bool canFileRead;
     LOG_FLAG flag;

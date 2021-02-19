@@ -353,8 +353,8 @@ class LogListView_mousePressEvent_UT_Param
 {
 public:
     explicit LogListView_mousePressEvent_UT_Param(Qt::MouseButton iKey)
+        : key(iKey)
     {
-        key = iKey;
     }
     Qt::MouseButton key;
 };
@@ -381,8 +381,8 @@ class LogListView_focusInEvent_UT_Param
 {
 public:
     explicit LogListView_focusInEvent_UT_Param(Qt::FocusReason iReason)
+        : reason(iReason)
     {
-        reason = iReason;
     }
     Qt::FocusReason reason;
 };

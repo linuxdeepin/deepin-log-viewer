@@ -86,9 +86,9 @@ class Utils_isErroCommand_UT_Param
 {
 public:
     Utils_isErroCommand_UT_Param(const QString &iCommand, Utils::CommandErrorType iType)
+        : command(iCommand)
+        , type(iType)
     {
-        command = iCommand;
-        type = iType;
     }
     QString command;
     Utils::CommandErrorType type;

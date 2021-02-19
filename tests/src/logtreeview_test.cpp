@@ -39,14 +39,14 @@ class LogTreeView_UT : public testing::Test
 {
 public:
     //添加日志
-    static void SetUpTestCase()
-    {
-        qDebug() << "SetUpTestCase" << endl;
-    }
-    static void TearDownTestCase()
-    {
-        qDebug() << "TearDownTestCase" << endl;
-    }
+    //    static void SetUpTestCase()
+    //    {
+    //        qDebug() << "SetUpTestCase" << endl;
+    //    }
+    //    static void TearDownTestCase()
+    //    {
+    //        qDebug() << "TearDownTestCase" << endl;
+    //    }
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_treeView = new LogTreeView();
