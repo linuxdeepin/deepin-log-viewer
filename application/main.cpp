@@ -58,19 +58,23 @@ int main(int argc, char *argv[])
     format.setDefaultFormat(format);
     LogApplication a(argc, argv);
 
-    //  wayland环境判断
+    //wayland环境判断
     auto systemEnv = QProcessEnvironment::systemEnvironment();
     QString XDG_SESSION_TYPE = systemEnv.value(QStringLiteral("XDG_SESSION_TYPE"));
     QString WAYLAND_DISPLAY = systemEnv.value(QStringLiteral("WAYLAND_DISPLAY"));
     qDebug() << "XDG_SESSION_TYPE:" << XDG_SESSION_TYPE << "---WAYLAND_DISPLAY:" << WAYLAND_DISPLAY;
     qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
+
     if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                               DGuiApplicationHelper::UserScope)) {
-        qDebug() << "DGuiApplicationHelper::instance()->setSingleInstance";
-        exit(0);
+        qInfo() << "DGuiApplicationHelper::instance()->setSingleInstance";
+        a.activeWindow();
+        return 0;
     }
+
     //高分屏支持
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+    a.setAutoActivateWindows(true);
     a.loadTranslator();
     a.setOrganizationName("deepin");
     a.setApplicationName("deepin-log-viewer");
