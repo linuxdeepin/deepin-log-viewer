@@ -363,6 +363,8 @@ private:
     int m_kwinCurrentIndex{-1};
     int m_appCurrentIndex{-1};
     bool m_isDataLoadComplete{false};
+    //筛选条件
+    QString selectFilter;
 };
 
 #endif  // DISPLAYCONTENT_H

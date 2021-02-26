@@ -21,6 +21,7 @@
 #include "../application/logexportthread.h"
 #include "stuballthread.h"
 #include "../application/DebugTimeManager.h"
+#include "../application/logtreeview.h"
 
 #include <stub.h>
 
@@ -30,6 +31,254 @@
 #include <QPaintEvent>
 #include <QThreadPool>
 #include <QDBusAbstractInterfaceBase>
+#include <QStandardPaths>
+#include <QThreadPool>
+
+class DisplayContentlx_UT : public testing::Test
+{
+public:
+    //添加日志
+    //    static void SetUpTestCase()
+    //    {
+    //        qDebug() << "SetUpTestCase" << endl;
+    //    }
+    //    static void TearDownTestCase()
+    //    {
+    //        qDebug() << "TearDownTestCase" << endl;
+    //    }
+    void SetUp() //TEST跑之前会执行SetUp
+    {
+        m_content = new DisplayContent;
+        qDebug() << "SetUp" << endl;
+    }
+    void TearDown() //TEST跑完之后会执行TearDown
+    {
+        delete m_content;
+    }
+    DisplayContent *m_content;
+};
+
+QString stub_writableLocation(QStandardPaths::StandardLocation type)
+{
+    Q_UNUSED(type);
+    return "test";
+}
+
+QString stub_getSaveFileName(QWidget *parent = nullptr,
+                             const QString &caption = QString(),
+                             const QString &dir = QString(),
+                             const QString &filter = QString(),
+                             QString *selectedFilter = nullptr,
+                             QFileDialog::Options options = QFileDialog::Options())
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(caption);
+    Q_UNUSED(dir);
+    Q_UNUSED(filter);
+    Q_UNUSED(selectedFilter);
+    Q_UNUSED(options);
+    return "/home/Desktop/";
+}
+
+int stub_singleRowHeight()
+{
+    return 20;
+}
+
+void stub_start(QRunnable *runnable, int priority = 0)
+{
+}
+
+TEST_F(DisplayContentlx_UT, exportClicked_UT)
+{
+    Stub stub;
+    m_content->selectFilter = "TEXT (*.txt)";
+    stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QThreadPool, start), stub_start);
+    m_content->m_flag = LOG_FLAG::BOOT;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::APP;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::KERN;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::JOURNAL;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::XORG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::DPKG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Normal;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Kwin;
+    m_content->slot_exportClicked();
+
+    //    stub.set
+}
+
+TEST_F(DisplayContentlx_UT, exportClicked_UT001)
+{
+    Stub stub;
+    m_content->selectFilter = "Html (*.html)";
+    stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QThreadPool, start), stub_start);
+    m_content->m_flag = LOG_FLAG::BOOT;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::APP;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::KERN;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::JOURNAL;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::XORG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::DPKG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Normal;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Kwin;
+    m_content->slot_exportClicked();
+
+    //    stub.set
+}
+
+TEST_F(DisplayContentlx_UT, exportClicked_UT002)
+{
+    Stub stub;
+    m_content->selectFilter = "Doc (*.doc)";
+    stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QThreadPool, start), stub_start);
+    m_content->m_flag = LOG_FLAG::BOOT;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::APP;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::KERN;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::JOURNAL;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::XORG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::DPKG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Normal;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Kwin;
+    m_content->slot_exportClicked();
+
+    //    stub.set
+}
+
+TEST_F(DisplayContentlx_UT, exportClicked_UT003)
+{
+    Stub stub;
+    m_content->selectFilter = "Xls (*.xls)";
+    stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QThreadPool, start), stub_start);
+    m_content->m_flag = LOG_FLAG::BOOT;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::APP;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::KERN;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::JOURNAL;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::XORG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::DPKG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Normal;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Kwin;
+    m_content->slot_exportClicked();
+
+    //    stub.set
+}
+
+TEST_F(DisplayContentlx_UT, exportClicked_UT004)
+{
+    Stub stub;
+    m_content->selectFilter = "Xls (*.xls)";
+    stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QThreadPool, start), stub_start);
+    m_content->m_flag = LOG_FLAG::BOOT;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::APP;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::KERN;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::JOURNAL;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::XORG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::DPKG;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Normal;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Kwin;
+    m_content->slot_exportClicked();
+
+    //    stub.set
+}
+
+TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::JOURNAL;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(0);
+}
+
+TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT002)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::BOOT;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
+
+TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT003)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::BOOT_KLU;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
+
+TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT005)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::APP;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
+
+TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT006)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::XORG;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
+
+TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT007)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::KERN;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
+
+TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT008)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::DPKG;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
 
 TEST(DisplayContent_Constructor_UT, DisplayContent_Constructor_UT_001)
 {
