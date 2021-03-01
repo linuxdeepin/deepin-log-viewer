@@ -216,7 +216,7 @@ void LogCollectorMain::initConnection()
             SLOT(slot_refreshClicked(const QModelIndex &)));  // add by Airy for adding refresh
     connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_topRightWgt,
             SLOT(slot_logCatelogueRefresh(const QModelIndex &)));
-    connect(m_logCatelogue, &LogListView::sigRefresh, this, [ = ]() { m_searchEdt->clear(); });
+    connect(m_logCatelogue, &LogListView::sigRefresh, this, [=]() { m_searchEdt->clearEdit(); });
     //! treeView widget
 
     connect(m_logCatelogue, SIGNAL(itemChanged(const QModelIndex &)), m_midRightWgt,
@@ -227,10 +227,10 @@ void LogCollectorMain::initConnection()
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));
 
     // when item changed clear search text
-    connect(m_logCatelogue, &LogListView::itemChanged, this, [ = ]() { m_searchEdt->clear(); });
-    connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [ = ]() { m_searchEdt->clear(); });
+    connect(m_logCatelogue, &LogListView::itemChanged, this, [=]() { m_searchEdt->clearEdit(); });
+    connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [=]() { m_searchEdt->clearEdit(); });
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this,
-    [ = ]() { m_searchEdt->clear(); });
+            [=]() { m_searchEdt->clearEdit(); });
 }
 
 /**
