@@ -189,7 +189,8 @@ void LogTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options
     auto palette = options.palette;
     QBrush background;
     if (!(index.row() & 1)) {
-        background = palette.color(cg, DPalette::AlternateBase);
+        auto dpa = DApplicationHelper::instance()->palette(this);
+        background = dpa.color(DPalette::ItemBackground);
     } else {
         background = palette.color(cg, DPalette::Base);
     }

@@ -181,7 +181,6 @@ TEST(LogListView_setCustomFont_UT, LogListView_setCustomFont_001)
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
-    p->setCustomFont(nullptr);
     p->deleteLater();
 }
 
@@ -202,7 +201,7 @@ TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_001)
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
-    p->onChangedTheme(DGuiApplicationHelper::LightType);
+    //    p->onChangedTheme(DGuiApplicationHelper::LightType);
     p->deleteLater();
 }
 
@@ -212,7 +211,7 @@ TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_002)
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
-    p->onChangedTheme(DGuiApplicationHelper::DarkType);
+    //    p->onChangedTheme(DGuiApplicationHelper::DarkType);
     p->deleteLater();
 }
 

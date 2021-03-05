@@ -163,12 +163,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="2299"/>
         <source>Cannot export or create the file</source>
-        <translation type="unfinished"/>
+        <translation>फाइल निर्यात या निर्माण विफल</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2300"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>ठीक है</translation>
     </message>
 </context>
 <context>

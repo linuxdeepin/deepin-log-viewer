@@ -54,12 +54,7 @@ public:
     void setDefaultSelect();
     void truncateFile(QString path_); //add by Airy for truncate file
 private:
-    void setCustomFont(QStandardItem *item);
     bool isFileExist(const QString &iFile);
-
-protected slots:
-    void onChangedTheme(Dtk::Widget::DApplicationHelper::ColorType themeType);
-
 public slots:
     void slot_getAppPath(int id, QString path); // add by Airy
     Qt::FocusReason focusReson();
@@ -68,7 +63,6 @@ public slots:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
-    // void contextMenuEvent(QContextMenuEvent *event) override;   //add by Airy
     void mouseMoveEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;

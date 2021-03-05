@@ -163,12 +163,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="2299"/>
         <source>Cannot export or create the file</source>
-        <translation type="unfinished"/>
+        <translation>No es pot exportar ni crear el fitxer.</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2300"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>D&apos;acord</translation>
     </message>
 </context>
 <context>

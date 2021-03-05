@@ -4,7 +4,7 @@
     <message>
         <location filename="../application/loglistview.cpp" line="473"/>
         <source>Display in file manager</source>
-        <translation>在檔案管理員中顯示</translation>
+        <translation>在檔案管理器中顯示</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="474"/>

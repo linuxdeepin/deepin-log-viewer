@@ -47,6 +47,7 @@
 #include <QAbstractButton>
 #define ITEM_HEIGHT 40
 #define ITEM_WIDTH 108
+#define ICON_SIZE 16
 
 #define ICON_DATA (Qt::UserRole + 99)
 
@@ -141,11 +142,11 @@ LogListView::LogListView(QWidget *parent)
     initUI();
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &LogListView::customContextMenuRequested, this, &LogListView::requestshowRightMenu);
-    connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
-            &LogListView::onChangedTheme);
+    //    connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
+    //            &LogListView::onChangedTheme);
     DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
-    onChangedTheme(ct);
-//    setFocusPolicy(Qt::TabFocus);
+    //    onChangedTheme(ct);
+    //    setFocusPolicy(Qt::TabFocus);
 
     m_rightClickTriggerShortCut = new QShortcut(this);
     m_rightClickTriggerShortCut->setKey(Qt::ALT + Qt::Key_M);
@@ -168,7 +169,7 @@ void LogListView::initUI()
     this->setItemDelegate(new LogListDelegate(this));
     this->setItemSpacing(0);
     this->setViewportMargins(10, 10, 10, 0);
-    const QMargins ListViweItemMargin(5, 0, 5, 0);
+    const QMargins ListViweItemMargin(15, 0, 5, 0);
     const QVariant VListViewItemMargin = QVariant::fromValue(ListViweItemMargin);
 
     m_pModel = new QStandardItemModel(this);
@@ -176,7 +177,8 @@ void LogListView::initUI()
     QString  systemName =   DBusManager::getSystemInfo();
     qDebug() << "systemName" << systemName;
     if (isFileExist("/var/log/journal")) {
-        item = new QStandardItem(DApplication::translate("Tree", "System Log"));
+        item = new QStandardItem(QIcon::fromTheme("dp_system"), DApplication::translate("Tree", "System Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "System Log"));  // add by Airy for bug 16245
         item->setData(JOUR_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
@@ -186,7 +188,8 @@ void LogListView::initUI()
     }
 
     if (isFileExist("/var/log/kern.log")) {
-        item = new QStandardItem(DApplication::translate("Tree", "Kernel Log"));
+        item = new QStandardItem(QIcon::fromTheme("dp_core"), DApplication::translate("Tree", "Kernel Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Kernel Log"));  // add by Airy for bug 16245
         item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
@@ -211,8 +214,8 @@ void LogListView::initUI()
 //        m_pModel->appendRow(item);
 //    }
     if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU")) {
-
-        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+        item = new QStandardItem(QIcon::fromTheme("dp_start"), DApplication::translate("Tree", "Boot Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
         item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
@@ -220,7 +223,8 @@ void LogListView::initUI()
         item->setAccessibleText("Boot Klu Log");
         m_pModel->appendRow(item);
     } else {
-        item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
+        item = new QStandardItem(QIcon::fromTheme("dp_start"), DApplication::translate("Tree", "Boot Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
         item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
@@ -233,7 +237,8 @@ void LogListView::initUI()
 
 
     if (isFileExist("/var/log/dpkg.log")) {
-        item = new QStandardItem(DApplication::translate("Tree", "dpkg Log"));
+        item = new QStandardItem(QIcon::fromTheme("dp_d"), DApplication::translate("Tree", "dpkg Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "dpkg Log"));  // add by Airy for bug 16245
         item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
@@ -246,7 +251,8 @@ void LogListView::initUI()
     // if (isFileExist(QDir::homePath() + "/.kwin.log")) {
     //w515是新版本内核的panguv返回值  panguV是老版本
     if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName == "pangu" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU") || systemName.toUpper().contains("PANGU")) {
-        item = new QStandardItem(DApplication::translate("Tree", "Kwin Log"));
+        item = new QStandardItem(QIcon::fromTheme("dp_kwin"), DApplication::translate("Tree", "Kwin Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
         item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
@@ -254,7 +260,8 @@ void LogListView::initUI()
         item->setAccessibleText("dpkg Log");
         m_pModel->appendRow(item);
     } else {
-        item = new QStandardItem(DApplication::translate("Tree", "Xorg Log"));
+        item = new QStandardItem(QIcon::fromTheme("dp_x"), DApplication::translate("Tree", "Xorg Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Xorg Log"));  // add by Airy for bug 16245
         item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
@@ -265,7 +272,8 @@ void LogListView::initUI()
     auto *appHelper = LogApplicationHelper::instance();
     QMap<QString, QString> appMap = appHelper->getMap();
     if (!appMap.isEmpty()) {
-        item = new QStandardItem(DApplication::translate("Tree", "Application Log"));
+        item = new QStandardItem(QIcon::fromTheme("dp_application"), DApplication::translate("Tree", "Application Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(
             DApplication::translate("Tree", "Application Log"));  // add by Airy for bug 16245
         item->setData(APP_TREE_DATA, ITEM_DATE_ROLE);
@@ -277,7 +285,8 @@ void LogListView::initUI()
     }
 // add by Airy
     if (isFileExist("/var/log/wtmp")) {
-        item = new QStandardItem(DApplication::translate("Tree", "Boot-Shutdown Event"));
+        item = new QStandardItem(QIcon::fromTheme("dp_onoff"), DApplication::translate("Tree", "Boot-Shutdown Event"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setData(LAST_TREE_DATA, ITEM_DATE_ROLE);
         item->setToolTip(
             DApplication::translate("Tree", "Boot-Shutdown Event"));  // add by Airy for bug 16245
@@ -300,16 +309,6 @@ void LogListView::setDefaultSelect()
 }
 
 /**
- * @brief LogListView::setCustomFont 设置listview中的图标大小
- * @param item 要设置图标大小的QStandardItem指针
- */
-void LogListView::setCustomFont(QStandardItem *item)
-{
-    Q_UNUSED(item)
-    this->setIconSize(QSize(16, 16));
-}
-
-/**
  * @brief LogListView::isFileExist 判断文件路径是否存在
  * @param iFile 要判断的文件路径字符串
  * @return
@@ -318,56 +317,6 @@ bool LogListView::isFileExist(const QString &iFile)
 {
     QFile file(iFile);
     return file.exists();
-}
-
-/**
- * @brief LogListView::onChangedTheme 主题变化时左侧图标的变化的曹
- * @param themeType 变化的主题
- */
-void LogListView::onChangedTheme(DGuiApplicationHelper::ColorType themeType)
-{
-
-    icon = ((themeType == DGuiApplicationHelper::LightType) ? ICONLIGHTPREFIX : ICONDARKPREFIX);
-
-    QString _itemIcon;
-
-    QModelIndex idx = this->currentIndex();
-
-    QStandardItem *currentItem = m_pModel->itemFromIndex(idx);
-
-    for (auto i = 0; i < m_pModel->rowCount(); i++) {
-        QStandardItem *item = m_pModel->item(i);
-
-        if (item) {
-            setCustomFont(item);
-            if (item->data(ITEM_DATE_ROLE).toString() == JOUR_TREE_DATA) {
-                _itemIcon = icon + "system.svg";
-            } else if (item->data(ITEM_DATE_ROLE).toString() == KERN_TREE_DATA) {
-                _itemIcon = icon + "core.svg";
-
-            } else if (item->data(ITEM_DATE_ROLE).toString() == BOOT_TREE_DATA) {
-                _itemIcon = icon + "start.svg";
-
-            } else if (item->data(ITEM_DATE_ROLE).toString() == DPKG_TREE_DATA) {
-                _itemIcon = icon + "d.svg";
-
-            } else if (item->data(ITEM_DATE_ROLE).toString() == XORG_TREE_DATA) {
-                _itemIcon = icon + "x.svg";
-
-            } else if (item->data(ITEM_DATE_ROLE).toString() == APP_TREE_DATA) {
-                _itemIcon = icon + "application.svg";
-            } else if (item->data(ITEM_DATE_ROLE).toString() == LAST_TREE_DATA) {
-                _itemIcon = icon + "onoff.svg";
-            } else if (item->data(ITEM_DATE_ROLE).toString() == KWIN_TREE_DATA) {
-                _itemIcon = icon + "kwin.svg";
-            }
-            if (currentItem != nullptr && item == currentItem) {
-                _itemIcon.replace(".svg", "_checked.svg");
-            }
-            item->setIcon(QIcon(_itemIcon));
-            item->setData(_itemIcon, ICON_DATA);
-        }
-    }
 }
 
 /**
@@ -397,25 +346,6 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
     PERF_PRINT_BEGIN("POINT-03", "");
     if (current.row() < 0) {
         return;
-    }
-    QStandardItem *currentItem = m_pModel->itemFromIndex(current);
-    if (currentItem) {
-        QString icon = currentItem->data(ICON_DATA).toString();
-        if (icon.isEmpty() == false) {
-            icon.replace(".svg", "_checked.svg");
-            currentItem->setIcon(QIcon(icon));
-            currentItem->setData(icon, ICON_DATA);
-        }
-    }
-
-    QStandardItem *previousItem = m_pModel->itemFromIndex(previous);
-    if (previousItem) {
-        QString icon = previousItem->data(ICON_DATA).toString();
-        if (icon.isEmpty() == false) {
-            icon.replace("_checked", "");
-            previousItem->setIcon(QIcon(icon));
-            previousItem->setData(icon, ICON_DATA);
-        }
     }
 
     emit itemChanged(current);

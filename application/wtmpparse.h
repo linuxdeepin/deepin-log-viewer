@@ -14,6 +14,12 @@
 #define NULLUT ((struct utmp *)NULL)
 #define UTSIZE (sizeof(struct utmp))
 
+static char utmpbuf[NRECS * UTSIZE];
+static int num_recs;
+static int cur_rec;
+static int fdWtmp = -1;
+static int bpos;
+static __off_t fpos;
 struct utmp_list {
     struct utmp value;
     struct utmp_list *next;

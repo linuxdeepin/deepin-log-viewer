@@ -17,13 +17,6 @@
 #include "wtmpparse.h"
 #include <QDebug>
 
-static char utmpbuf[NRECS * UTSIZE];
-static int num_recs;
-static int cur_rec;
-static int fdWtmp = -1;
-static int bpos;
-static __off_t fpos;
-
 int wtmp_open(char *filename)
 {
     fdWtmp = open(filename, O_RDONLY);

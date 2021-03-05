@@ -98,7 +98,7 @@ void logDetailInfoWidget::initUI()
     // init pointer
     m_daemonName = new DLabel(this);
     QFont font;
-    font.setBold(true);
+    font.setWeight(63);
     m_daemonName->setFont(font);
     //设置字号
     DFontSizeManager::instance()->bind(m_daemonName, DFontSizeManager::T5);
