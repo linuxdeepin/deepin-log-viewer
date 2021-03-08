@@ -39,6 +39,6 @@ If run in Qt Creator, you should set [Project][Run Settings] [Run] [Run configur
 ## [Wiki](https://wiki.deepin.org/)
 ## License
 
-Deepin Log Viewer is licensed under [GPLv3](LICENSE).
+Deepin Log Viewer is licensed under [GPLv3](LICENSE) or any later version.
 
 
