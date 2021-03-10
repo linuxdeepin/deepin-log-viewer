@@ -188,7 +188,7 @@ void DisplayContent::initTableView()
  */
 void DisplayContent::initConnections()
 {
-    connect(m_treeView, SIGNAL(clicked(const QModelIndex &)), this,
+    connect(m_treeView, SIGNAL(pressed(const QModelIndex &)), this,
             SLOT(slot_tableItemClicked(const QModelIndex &)));
 
     connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString)),
@@ -1359,22 +1359,18 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         // default level is info so PRIORITY=6
         m_flag = JOURNAL;
-        generateJournalFile(m_curBtnId, m_curLevel);
     } else if (itemData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = DPKG;
-        generateDpkgFile(m_curBtnId);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
         xList.clear();
         m_flag = XORG;
         //        m_logFileParse.parseByXlog(xList);
-        generateXorgFile(m_curBtnId);
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = BOOT;
         generateBootFile();
 
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = KERN;
-        generateKernFile(m_curBtnId);
     } else if (itemData.contains(".cache")) {
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         m_pModel->clear();  // clicked parent node application, clear table contents
@@ -1383,12 +1379,10 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         norList.clear();
         m_flag = Normal;
         //        m_logFileParse.parseByNormal(norList);
-        generateNormalFile(m_curBtnId);
     } else if (itemData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Kwin;
         KWIN_FILTERS filter;
         filter.msg = "";
-        generateKwinFile(filter);
     } else if (itemData.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = BOOT_KLU;
         generateJournalBootFile(m_curLevel);

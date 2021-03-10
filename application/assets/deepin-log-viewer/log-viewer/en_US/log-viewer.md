@@ -1,4 +1,4 @@
-# Log Viewer|../common/deepin_log_viewer_96.svg|
+# Log Viewer|deepin-log-viewer|
 
 ## Overview 
 
@@ -41,37 +41,54 @@ You can run, close or create a shortcut for Log Viewer.
 
  Filtering parameters include **period**, **level**, **status**, **application list** and **event type**.
 
-  - Filtering by period: Filtering in the order of log generating date
-
-    Options include: "All", "Today", "3 days", "1 week", "1 month", and "3 months". Default option is "All".
-
-    Applicable for: "period" is not displayed only for boot logs, other kinds of logs support filtering by period.
-
-  - Filtering by level: filtering by seriousness levels of events
-
-    Options include: "All", "Emergency", "Allert", "Critical", "Error", "Warning", "Notice", "Info"and "Debug". Default option is "Info".
-
-    Applicable for: system logs and application logs
-
-  - Filtering by status: 
-
-    only applicable for boot logs, options include "All", "OK", and "Failed". Default option is "All".
-
-  - Filtering by application list: 
-
-    only applicable for application logs, it's used to filter log files of applications, default option is the first one. 
-
-  - Filtering by event type: 
-
-    only applicable for boot-shutdown events, options include:  "All", "Login", "Reboot", and "Shutdown", the default option is "all".  
-
-    
+<table border="1">
+   <tr>
+    <th>Filtering Type</th>
+ <th>Description </th>
+</tr>
+   <tr>
+    <td>Filtering by period</td>
+    <td>to filter in the order of log generating date
+      <ul>
+          <li>Options include: "All", "Today", "3 days", "1 week", "1 month", and "3 months". Default option is "All".</li>
+          <li>Applicable for: "period" is not displayed only for boot logs, other kinds of logs support filtering by period.</li>
+      </ul>
+ </td>
+</tr>
+   <tr>
+    <td>Filtering by level</td>
+    <td>to filter by seriousness levels of events
+    <ul>
+          <li>Options include: "All", "Emergency", "Alert", "Critical", "Error", "Warning", "Notice", "Info"and "Debug". Default option is "Info".</li>
+          <li>Applicable for: system logs and application logs</li>
+      </ul>
+      <tr>
+    <td>Filtering by status</td>
+    <td>
+    <ul>
+          <li>Options include: "All", "OK", and "Failed". Default option is "All".</li>
+          <li>Applicable for: boot logs only</li>
+      </ul>
+          <tr>
+    <td>Filtering by application list: </td>
+    <td>to filter log files of applications, default option is the first one. 
+        Applicable for: application logs only.  </td>
+              <tr>
+    <td>Filtering by event type</td>
+    <td>
+    <ul>
+          <li>Options include:  "All", "Login", "Reboot", and "Shutdown", the default option is "all".  </li>
+          <li>Applicable for: boot-shutdown events only.</li>
+      </ul>
+ </td>
+   </tr>
+   </table>
 
 ### View Logs
 
 #### System Log
 
-1. On the main interface, click **System Log **. 
+1. On the main interface, click **System Log**. 
 2. You can see a list of system logs which are detailed by "Level", "Process", "Date and Time", and "Info".
 3. Click a log, you can see its particular info below the list, including process, user, PID, time and info.
 
@@ -79,43 +96,47 @@ You can run, close or create a shortcut for Log Viewer.
 
 #### Kernel Log
 
-1. On the main interface, click  **Kernel Log **.
-2. You can see a list of kernel logs which are detailed by "Date and time", "User", "Process" and "Info".
-3. Click a log, you can see its particular info below the list, including time, user, process, and info.
-> ![notes](../common/notes.svg)Notes: To view kernel log, a prompt appears saying **Authentication is required to view the log**, you can input login password to continue viewing.
+1. On the main interface, click  **Kernel Log**.
+2. Input password in the popped up authentication window. 
+3. You can view the status and information of kernel logs.
+4. Click a log, you can see its particular info below the list, including time, user, process, info, etc.
+
+
 
 ![0|kernlog](fig/kernlog.png)
 
 #### Boot Log
 
 1. On the main interface, click **Boot Log**.
-2. You can see a list of boot logs which are detailed by "Status" and "Info".
-3. Click a log, you can see its particular info below the list, including user, status and info.
-> ![notes](../common/notes.svg)Notes: To view boot log, a prompt appears saying **Authentication is required to view the log**, you can input login password to continue viewing.
+2. Input password in the popped up authentication window. 
+3. You can view the status and information of boot logs.
+4. Click a log, you can see its particular info below the list, including user, status,  info, etc.
+
+
 
 ![0|bootlog](fig/bootlog.png)
 
 #### dpkg Log
 
 1. On the main interface, click **dpkg Log**. 
-2. You can see a list of dpkg logs which are detailed by "Date and time" and "Info".
-3. Click a log, you can see its particular info below the list, including user, action, time and info.
+2. You can view time and information of dpkg logs.
+3. Click a log, you can see its particular info below the list, including user, action, time, info, etc.
 
 ![0|dpkglog](fig/dpkglog.png)
 
 #### Xorg Log
 
 1. On the main interface, click **Xorg Log**.
-2. You can see a list of Xorg logs which are detailed by "Date and time" and "Info".
-3. Click a log, you can see its particular info below the list, including user, time and info.
+2. You can view time and information of Xorg logs.
+3. Click a log, you can see its particular info below the list, including user, time, info, etc.
 
 ![0|xorglog](fig/xorglog.png)
 
 #### Application Log
 
-1. On the main interface, click  **Application Log **.
-2. You can see a list of application logs which are detailed by "Level", "Date and Time", "Source" and "Info".
-3. Click a log, you can see its particular info below the list, including user, time info and so on.
+1. On the main interface, click  **Application Log**.
+2. You can view level, time, source and information of application logs.
+3. Click a log, you can see its particular info below the list, including user, time info, etc.
 
 ![0|applog](fig/applog.png)
 
@@ -123,7 +144,7 @@ You can run, close or create a shortcut for Log Viewer.
 #### Boot-Shutdown Event
 
 1. On the main interface, click  **Boot-Shutdown Event**.
-2. You can see a list of boot-shutdown events which are detailed by "Event Type", "Username", "Date and Time", and "Info".
+2. You can view event type, username, time and information of boot-shutdown events.
 3. Click a log, you can see its particular info below the list, including user, time, event type, detailed info and so on.
 ![0|powerevent](fig/powerevent.png)
 
@@ -132,30 +153,31 @@ You can run, close or create a shortcut for Log Viewer.
 You can export logs and save them in format of  txt/doc/xls/html.
 
 1. On the main interface, click **Export**. 
-2. An interface of file manager pops up. Input a file name and select a format. 
-3. Click **Save**. 
+2. An interface of file manager pops up. Select the storing path, input a file name and select a format. 
+3. Click **Save**. When the log file is exported successfully, a hint pops up in the lower part of the interface.
 
+### Refresh
+1. On the interface of File Manager, select a log type in the left panel and right-click.
+2. Select **Refresh** to reload the log and update log list.
 
 
 ### Display in File Manager
 
+**Display in file manager** is only applicable for kernel log, boot log, dpkg log, Xorg log and application log.
+
 1. On the interface of File Manager, select a log type in the left panel and right-click.
 2. Select **Display in file manager**, the folder path of the current log will be opened. 
-
-> ![notes](../common/notes.svg)Notes: **Display in file manager** is only applicable for kernel log, boot log, dpkg log, Xorg log and application log.
 
 ![display](fig/displayinfm.png)
 
 ### Clear Log
 
+**Clear log** is only applicable for kernel log, boot log, dpkg log, Xorg log and application log.
+
 1. On the interface of File Manager, select a log type in the left panel and right-click.
 2. Select **Clear log**, click **Confirm** button in the pop-up window to clear current logs.
 3. If authentication window pops up, please input password to finish the operation.
-> ![notes](../common/notes.svg)Notes: **Clear log** is only applicable for kernel log, boot log, dpkg log, Xorg log and application log.
 
-### Refresh
-1. On the interface of File Manager, select a log type in the left panel and right-click.
-2. Select **Refresh** to reload the log and update log list.
 
 ## Main Menu
 

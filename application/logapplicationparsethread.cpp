@@ -137,7 +137,8 @@ void LogApplicationParseThread::doWork()
                 str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
                 QStringList list = str.split("]", QString::SkipEmptyParts);
                 //日志格式各字段用[]和空格隔开，有等级 时间 信息体 三个字段，至少应该能分割出三个
-                if (list.count() < 3)
+
+                if (list.count() < 3||!list[0].contains("[")||!list[1].contains("["))
                     continue;
 
                 QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
