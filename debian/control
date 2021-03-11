@@ -1,7 +1,7 @@
 Source: deepin-log-viewer
 Section: utils
 Priority: optional
-Maintainer: Packages <deepin@deepin.com>
+Maintainer: LinXun <linxun@uniontech.com>
 Build-Depends: debhelper (>= 11),cmake, pkg-config, qtbase5-dev, qtchooser (>= 55-gc9562a1-1~),qt5-qmake, libdtkwidget-dev, libdtkgui-dev, qtbase5-private-dev, qttools5-dev-tools, libqt5svg5-dev, libsystemd-dev, libicu-dev,qttools5-dev, libdframeworkdbus-dev ,libgtest-dev, libgmock-dev ,libkf5codecs-dev, libzip-dev,libxerces-c-dev ,libboost-dev ,libminizip-dev,libfftw3-3 ,rapidjson-dev ,	libltdl-dev ,libmagickcore-6.q16-dev ,libmagickwand-6.q16-dev ,libmagick++-6.q16-dev ,libgraphicsmagick1-dev ,libxerces-c-dev
 Standards-Version: 4.1.3
 
