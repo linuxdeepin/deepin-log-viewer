@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 
     //命令行参数的解析
     QCommandLineParser cmdParser;
-    cmdParser.setApplicationDescription("deepin-calculator");
+    cmdParser.setApplicationDescription("deepin-log-viewer");
     cmdParser.addHelpOption();
     cmdParser.addVersionOption();
     cmdParser.process(a);
