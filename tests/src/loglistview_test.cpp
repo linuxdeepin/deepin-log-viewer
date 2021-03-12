@@ -72,108 +72,108 @@ void stubbeginPointLinux(const QString &point, const QString &status)
 {
 }
 
-TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *v = new LogListView(nullptr);
-    LogListDelegate *p = new LogListDelegate(v);
-    EXPECT_NE(p, nullptr);
-    p->deleteLater();
-}
+//TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    LogListView *v = new LogListView(nullptr);
+//    LogListDelegate *p = new LogListDelegate(v);
+//    EXPECT_NE(p, nullptr);
+//    p->deleteLater();
+//}
 
-TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *v = new LogListView(nullptr);
-    LogListDelegate *p = new LogListDelegate(v);
-    EXPECT_NE(p, nullptr);
-    QStyleOptionViewItem op;
-    op.state = QStyle::State_HasFocus;
-    v->m_reson = Qt::TabFocusReason;
-    stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
-    p->paint(new QPainter, op, QModelIndex());
-    p->deleteLater();
-}
+//TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    LogListView *v = new LogListView(nullptr);
+//    LogListDelegate *p = new LogListDelegate(v);
+//    EXPECT_NE(p, nullptr);
+//    QStyleOptionViewItem op;
+//    op.state = QStyle::State_HasFocus;
+//    v->m_reson = Qt::TabFocusReason;
+//    stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
+//    p->paint(new QPainter, op, QModelIndex());
+//    p->deleteLater();
+//}
 
-TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *v = new LogListView(nullptr);
-    LogListDelegate *p = new LogListDelegate(v);
-    EXPECT_NE(p, nullptr);
-    QStyleOptionViewItem op;
-    QHelpEvent helpevent(QEvent::ToolTip, QPoint(0, 0), QPoint(0, 0));
-    p->helpEvent(&helpevent, v, op, QModelIndex());
-    p->deleteLater();
-}
+//TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    LogListView *v = new LogListView(nullptr);
+//    LogListDelegate *p = new LogListDelegate(v);
+//    EXPECT_NE(p, nullptr);
+//    QStyleOptionViewItem op;
+//    QHelpEvent helpevent(QEvent::ToolTip, QPoint(0, 0), QPoint(0, 0));
+//    p->helpEvent(&helpevent, v, op, QModelIndex());
+//    p->deleteLater();
+//}
 
-TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_002)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *v = new LogListView(nullptr);
-    LogListDelegate *p = new LogListDelegate(v);
-    EXPECT_NE(p, nullptr);
-    QStyleOptionViewItem op;
-    stub.set(ADDR(QModelIndex, data), stub_data);
-    QHelpEvent helpevent(QEvent::ToolTip, QPoint(0, 0), QPoint(0, 0));
-    p->helpEvent(&helpevent, v, op, QModelIndex());
-    p->deleteLater();
-}
+//TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_002)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    LogListView *v = new LogListView(nullptr);
+//    LogListDelegate *p = new LogListDelegate(v);
+//    EXPECT_NE(p, nullptr);
+//    QStyleOptionViewItem op;
+//    stub.set(ADDR(QModelIndex, data), stub_data);
+//    QHelpEvent helpevent(QEvent::ToolTip, QPoint(0, 0), QPoint(0, 0));
+//    p->helpEvent(&helpevent, v, op, QModelIndex());
+//    p->deleteLater();
+//}
 
-TEST(LogListDelegate_hideTooltipImmediately_UT, LogListDelegate_hideTooltipImmediately_UT_001)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *v = new LogListView(nullptr);
-    LogListDelegate *p = new LogListDelegate(v);
-    EXPECT_NE(p, nullptr);
-    p->hideTooltipImmediately();
-    p->deleteLater();
-}
+//TEST(LogListDelegate_hideTooltipImmediately_UT, LogListDelegate_hideTooltipImmediately_UT_001)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    LogListView *v = new LogListView(nullptr);
+//    LogListDelegate *p = new LogListDelegate(v);
+//    EXPECT_NE(p, nullptr);
+//    p->hideTooltipImmediately();
+//    p->deleteLater();
+//}
 
-TEST(LogListView_Constructor_UT, LogListView_Constructor_UT_001)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *p = new LogListView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->deleteLater();
-}
+//TEST(LogListView_Constructor_UT, LogListView_Constructor_UT_001)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    LogListView *p = new LogListView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->deleteLater();
+//}
 
-TEST(LogListView_initUI_UT, LogListView_initUI_UT_001)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *p = new LogListView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->initUI();
-    p->deleteLater();
-}
+//TEST(LogListView_initUI_UT, LogListView_initUI_UT_001)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    LogListView *p = new LogListView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->initUI();
+//    p->deleteLater();
+//}
 
-TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    stub.set(ADDR(DBusManager, getSystemInfo), stub_getSystemInfo);
-    LogListView *p = new LogListView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->initUI();
-    p->deleteLater();
-}
+//TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    stub.set(ADDR(DBusManager, getSystemInfo), stub_getSystemInfo);
+//    LogListView *p = new LogListView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->initUI();
+//    p->deleteLater();
+//}
 
-TEST(LogListView_setDefaultSelect_UT, LogListView_setDefaultSelectUT_001)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *p = new LogListView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->setDefaultSelect();
-    p->deleteLater();
-}
+//TEST(LogListView_setDefaultSelect_UT, LogListView_setDefaultSelectUT_001)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    LogListView *p = new LogListView(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->setDefaultSelect();
+//    p->deleteLater();
+//}
 
 TEST(LogListView_setCustomFont_UT, LogListView_setCustomFont_001)
 {

@@ -96,16 +96,16 @@ TEST(LogFileParser_Destructor_UT, LogFileParser_Destructor_UT)
 //    p->deleteLater();
 //}
 
-TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
-{
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
-    LogFileParser *p = new LogFileParser(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->parseByJournalBoot(QStringList() << "test");
-    p->deleteLater();
-}
+//TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
+//{
+//    Stub *stub = new Stub;
+//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
+//    stub->set(ADDR(QThread, start), QThread_start);
+//    LogFileParser *p = new LogFileParser(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->parseByJournalBoot(QStringList() << "test");
+//    p->deleteLater();
+//}
 
 //TEST(LogFileParser_parseByDpkg_UT, LogFileParser_parseByDpkg_UT)
 //{
@@ -292,29 +292,29 @@ public:
     LogFileParser *m_parser;
 };
 
-TEST_F(LogFileParser_UT, sLogFileParser_UT001)
-{
-    Stub stub;
-    stub.set(ADDR(QProcess, setProcessChannelMode), stubfileparser_setProcessChannelMode);
-    stub.set(ADDR(QProcess, exitCode), stubfileparser_exitCode);
+//TEST_F(LogFileParser_UT, sLogFileParser_UT001)
+//{
+//    Stub stub;
+//    stub.set(ADDR(QProcess, setProcessChannelMode), stubfileparser_setProcessChannelMode);
+//    stub.set(ADDR(QProcess, exitCode), stubfileparser_exitCode);
 
-    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached001);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_Logexists001);
-    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart001);
-    stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString001);
-    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished001);
-    stub.set(ADDR(QProcess, readAllStandardOutput), stub_LogreadAllStandardOutput001);
-    stub.set(ADDR(QProcess, readAllStandardError), stub_LogreadAllStandardError001);
-    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag001);
-    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
-    stub.set(wtmp_close, stub_wtmp_close001);
+//    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached001);
+//    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_Logexists001);
+//    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart001);
+//    stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString001);
+//    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished001);
+//    stub.set(ADDR(QProcess, readAllStandardOutput), stub_LogreadAllStandardOutput001);
+//    stub.set(ADDR(QProcess, readAllStandardError), stub_LogreadAllStandardError001);
+//    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag001);
+//    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
+//    stub.set(wtmp_close, stub_wtmp_close001);
 
-    struct KWIN_FILTERS fitler = {"test"};
-    m_parser->parseByKwin(fitler);
-    struct KERN_FILTERS kern_fitler;
-    m_parser->parseByKern(kern_fitler);
-    struct DKPG_FILTERS dkpg_fitler;
-    m_parser->parseByDpkg(dkpg_fitler);
-    struct BOOT_FILTERS boot_fitler;
-    m_parser->parseByBoot();
-}
+//    struct KWIN_FILTERS fitler = {"test"};
+//    m_parser->parseByKwin(fitler);
+//    struct KERN_FILTERS kern_fitler;
+//    m_parser->parseByKern(kern_fitler);
+//    struct DKPG_FILTERS dkpg_fitler;
+//    m_parser->parseByDpkg(dkpg_fitler);
+//    struct BOOT_FILTERS boot_fitler;
+//    m_parser->parseByBoot();
+//}
