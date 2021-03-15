@@ -14,22 +14,22 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-//#ifndef DISPLAYCONTENT_TEST_H
-//#define DISPLAYCONTENT_TEST_H
-//#include <gtest/gtest.h>
-//#include <stub.h>
-//#include <QObject>
-//class displaycontent_test : public QObject
-//    , public ::testing::Test
-//{
-//    Q_OBJECT
-//public:
-//    displaycontent_test();
+#ifndef DISPLAYCONTENT_TEST_H
+#define DISPLAYCONTENT_TEST_H
+#include <gtest/gtest.h>
+#include <stub.h>
+#include <QObject>
+class displaycontent_test : public QObject
+    , public ::testing::Test
+{
+    Q_OBJECT
+public:
+    displaycontent_test();
 
-//    // Test interface
-//protected:
-//    void SetUp();
-//    void TearDown();
-//};
+    // Test interface
+protected:
+    void SetUp();
+    void TearDown();
+};
 
-//#endif // DISPLAYCONTENT_TEST_H
+#endif // DISPLAYCONTENT_TEST_H

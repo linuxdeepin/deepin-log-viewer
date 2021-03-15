@@ -35,43 +35,43 @@ TEST(LogCombox_Constructor_UT, LogCombox_Constructor_UT_002)
     p->deleteLater();
 }
 
-//TEST(LogCombox_sizeHint_UT, LogCombox_sizeHint_UT)
-//{
-//    LogIconButton *p = new LogIconButton("aa", nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->sizeHint();
-//    p->deleteLater();
-//}
+TEST(LogCombox_sizeHint_UT, LogCombox_sizeHint_UT)
+{
+    LogIconButton *p = new LogIconButton("aa", nullptr);
+    EXPECT_NE(p, nullptr);
+    p->sizeHint();
+    p->deleteLater();
+}
 
-//TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT)
-//{
-//    LogIconButton *p = new LogIconButton("aa", nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->mousePressEvent(nullptr);
-//    p->deleteLater();
-//}
+TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT)
+{
+    LogIconButton *p = new LogIconButton("aa", nullptr);
+    EXPECT_NE(p, nullptr);
+    p->mousePressEvent(nullptr);
+    p->deleteLater();
+}
 
-//TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT_001)
-//{
-//    LogIconButton *p = new LogIconButton("aa", nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->event(new QEvent(QEvent::QueryWhatsThis));
-//    p->deleteLater();
-//}
+TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT_001)
+{
+    LogIconButton *p = new LogIconButton("aa", nullptr);
+    EXPECT_NE(p, nullptr);
+    p->event(new QEvent(QEvent::QueryWhatsThis));
+    p->deleteLater();
+}
 
-//TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT_002)
-//{
-//    LogIconButton *p = new LogIconButton("aa", nullptr);
-//    EXPECT_NE(p, nullptr);
+TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT_002)
+{
+    LogIconButton *p = new LogIconButton("aa", nullptr);
+    EXPECT_NE(p, nullptr);
 
-//    p->event(new QEvent(QEvent::HoverEnter));
-//    p->deleteLater();
-//}
+    p->event(new QEvent(QEvent::HoverEnter));
+    p->deleteLater();
+}
 
-//TEST(LogCombox_resizeEvent_UT, LogCombox_resizeEvent_UT)
-//{
-//    LogIconButton *p = new LogIconButton("aa", nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->resizeEvent(nullptr);
-//    p->deleteLater();
-//}
+TEST(LogCombox_resizeEvent_UT, LogCombox_resizeEvent_UT)
+{
+    LogIconButton *p = new LogIconButton("aa", nullptr);
+    EXPECT_NE(p, nullptr);
+    p->resizeEvent(nullptr);
+    p->deleteLater();
+}
