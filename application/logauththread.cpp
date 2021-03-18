@@ -63,14 +63,12 @@ LogAuthThread::LogAuthThread(QObject *parent)
 LogAuthThread::~LogAuthThread()
 {
     stopProccess();
-    if (m_process) {
-        //   m_process->kill();
-        m_process->close();
-        m_process->deleteLater();
-        m_process = nullptr;
-    }
-
-
+    //    if (m_process) {
+    //        //   m_process->kill();
+    //        m_process->close();
+    //        m_process->deleteLater();
+    //        m_process = nullptr;
+    //    }
 }
 
 ///**
@@ -119,7 +117,7 @@ void LogAuthThread::stopProccess()
 
     // m_process->close();
 //        delete  m_process;
-//        m_process = nullptr;
+
     //m_process->terminate();
 
     //  m_process->close();
@@ -842,7 +840,7 @@ void LogAuthThread::handleNormal()
 void LogAuthThread::initProccess()
 {
     if (!m_process) {
-        m_process = new QProcess;
+        m_process.reset(new QProcess);
         //connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)), Qt::UniqueConnection);
     }
 }

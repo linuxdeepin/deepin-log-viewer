@@ -9,7 +9,7 @@
     <message>
         <location filename="../application/loglistview.cpp" line="474"/>
         <source>Clear log</source>
-        <translation>Eliminar registros</translation>
+        <translation>Limpiar registro</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="475"/>
@@ -19,7 +19,7 @@
     <message>
         <location filename="../application/loglistview.cpp" line="513"/>
         <source>Are you sure you want to clear the log?</source>
-        <translation>¿Está seguro de querer borrar el registro?</translation>
+        <translation>¿Está seguro de desea limpiar el registro?</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="514"/>
@@ -163,12 +163,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="2299"/>
         <source>Cannot export or create the file</source>
-        <translation type="unfinished"/>
+        <translation>No se puede exportar o crear el archivo</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="2300"/>
         <source>OK</source>
-        <translation type="unfinished"/>
+        <translation>Aceptar</translation>
     </message>
 </context>
 <context>
@@ -413,12 +413,12 @@
         <location filename="../application/main.cpp" line="81"/>
         <location filename="../application/main.cpp" line="82"/>
         <source>Log Viewer</source>
-        <translation>Visor de registro</translation>
+        <translation>Visor de registros</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="86"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation>Visor de registro de Deepin es una herramienta que facilita examinar los registros del sistema.</translation>
+        <translation>Visor de registros de Deepin es una herramienta que facilita examinar los registros del sistema.</translation>
     </message>
 </context>
 <context>
@@ -646,7 +646,7 @@
         <location filename="../application/loglistview.cpp" line="236"/>
         <location filename="../application/loglistview.cpp" line="237"/>
         <source>dpkg Log</source>
-        <translation>Registro dpkg</translation>
+        <translation>Registro de dpkg</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="255"/>

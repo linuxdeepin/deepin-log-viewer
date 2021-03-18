@@ -133,7 +133,7 @@ private:
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
     //获取数据用的cat命令的process
-    QProcess *m_process = nullptr;
+    QScopedPointer<QProcess> m_process;
     /**
      * @brief m_canRun 是否可以继续运行的标记量，用于停止运行线程
      */

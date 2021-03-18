@@ -132,8 +132,9 @@ int LogFileParser::parseByJournal(QStringList arg)
     connect(this, &LogFileParser::stopJournal, work, &journalWork::stopWork);
 
     //QtConcurrent::run(work, &journalWork::doWork);
+    int index = work->getIndex();
     QThreadPool::globalInstance()->start(work);
-    return work->getIndex();
+    return index;
 #endif
 }
 
@@ -151,8 +152,9 @@ int LogFileParser::parseByJournalBoot(QStringList arg)
     connect(this, &LogFileParser::stopJournalBoot, work, &JournalBootWork::stopWork);
 
     //QtConcurrent::run(work, &journalWork::doWork);
+    int index = work->getIndex();
     QThreadPool::globalInstance()->start(work);
-    return work->getIndex();
+    return index;
 }
 
 int LogFileParser::parseByDpkg(DKPG_FILTERS &iDpkgFilter)
@@ -172,10 +174,9 @@ int LogFileParser::parseByDpkg(DKPG_FILTERS &iDpkgFilter)
     connect(authThread, &LogAuthThread::dpkgData, this,
             &LogFileParser::dpkgData, Qt::UniqueConnection);
     connect(this, &LogFileParser::stopDpkg, authThread, &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
     QThreadPool::globalInstance()->start(authThread);
-    //  m_authThread->start();
-    return authThread->getIndex();
-
+    return index;
 }
 
 int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
@@ -191,80 +192,81 @@ int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
     connect(authThread, &LogAuthThread::xorgData, this,
             &LogFileParser::xlogData, Qt::UniqueConnection);
     connect(this, &LogFileParser::stopXlog, authThread, &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
     QThreadPool::globalInstance()->tryStart(authThread);
-    return authThread->getIndex();
-//    if (m_isXlogLoading) {
-//        return;
-//    }
-//    m_isXlogLoading = true;
-//    QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
-//    if (!file.exists())
-//        return;
-//    stopAllLoad();
-//    if (!m_pXlogDataLoader) {
-//        m_pXlogDataLoader = new QProcess(this);
-//    }
-//    m_pXlogDataLoader->start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
-//    m_pXlogDataLoader->waitForFinished(-1);
-//    QString errorStr(m_pXlogDataLoader->readAllStandardError());
-//    Utils::CommandErrorType commandErrorType = Utils::isErroCommand(errorStr);
-//    if (commandErrorType != Utils::NoError) {
-//        if (commandErrorType == Utils::PermissionError) {
-//            DMessageBox::information(nullptr, tr("information"),
-//                                     errorStr + "\n" + "Please use 'sudo' run this application");
-//        } else if (commandErrorType == Utils::RetryError) {
-//            DMessageBox::information(nullptr, tr("information"),
-//                                     "The password is incorrect,please try again");
-//        }
-//        return;
-//    }
+    return index;
+    //    if (m_isXlogLoading) {
+    //        return;
+    //    }
+    //    m_isXlogLoading = true;
+    //    QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
+    //    if (!file.exists())
+    //        return;
+    //    stopAllLoad();
+    //    if (!m_pXlogDataLoader) {
+    //        m_pXlogDataLoader = new QProcess(this);
+    //    }
+    //    m_pXlogDataLoader->start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
+    //    m_pXlogDataLoader->waitForFinished(-1);
+    //    QString errorStr(m_pXlogDataLoader->readAllStandardError());
+    //    Utils::CommandErrorType commandErrorType = Utils::isErroCommand(errorStr);
+    //    if (commandErrorType != Utils::NoError) {
+    //        if (commandErrorType == Utils::PermissionError) {
+    //            DMessageBox::information(nullptr, tr("information"),
+    //                                     errorStr + "\n" + "Please use 'sudo' run this application");
+    //        } else if (commandErrorType == Utils::RetryError) {
+    //            DMessageBox::information(nullptr, tr("information"),
+    //                                     "The password is incorrect,please try again");
+    //        }
+    //        return;
+    //    }
 
-//    QByteArray outByte = m_pXlogDataLoader->readAllStandardOutput();
-//    QString output = Utils::replaceEmptyByteArray(outByte);
-//    m_pXlogDataLoader->close();
-//    QDateTime curDt = QDateTime::currentDateTime();
-//    qint64 curDtSecond = curDt.toMSecsSinceEpoch();
-//    for (QString str : output.split('\n')) {
-//        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+    //    QByteArray outByte = m_pXlogDataLoader->readAllStandardOutput();
+    //    QString output = Utils::replaceEmptyByteArray(outByte);
+    //    m_pXlogDataLoader->close();
+    //    QDateTime curDt = QDateTime::currentDateTime();
+    //    qint64 curDtSecond = curDt.toMSecsSinceEpoch();
+    //    for (QString str : output.split('\n')) {
+    //        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
 
-//        //        if (str.startsWith("[")) {
-//        //            //            xList.append(str);
-//        //            xList.insert(0, str);
-//        //        } else {
-//        //            str += " ";
-//        //            //            xList[xList.size() - 1] += str;
-//        //            xList[0] += str;
-//        //        }
-//        if (str.startsWith("[")) {
-//            QStringList list = str.split("]", QString::SkipEmptyParts);
-//            if (list.count() != 2)
-//                continue;
+    //        //        if (str.startsWith("[")) {
+    //        //            //            xList.append(str);
+    //        //            xList.insert(0, str);
+    //        //        } else {
+    //        //            str += " ";
+    //        //            //            xList[xList.size() - 1] += str;
+    //        //            xList[0] += str;
+    //        //        }
+    //        if (str.startsWith("[")) {
+    //            QStringList list = str.split("]", QString::SkipEmptyParts);
+    //            if (list.count() != 2)
+    //                continue;
 
-//            QString timeStr = list[0];
-//            QString msgInfo = list[1];
+    //            QString timeStr = list[0];
+    //            QString msgInfo = list[1];
 
-//            // get time
-//            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
-//            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
-//            //   qint64 realT =  qint64(tStr.toDouble() * 1000);
-//            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
-//            if (realDt.toMSecsSinceEpoch() < ms)  // add by Airy
-//                continue;
+    //            // get time
+    //            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+    //            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
+    //            //   qint64 realT =  qint64(tStr.toDouble() * 1000);
+    //            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
+    //            if (realDt.toMSecsSinceEpoch() < ms)  // add by Airy
+    //                continue;
 
-//            LOG_MSG_XORG msg;
-//            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
-//            msg.msg = msgInfo;
+    //            LOG_MSG_XORG msg;
+    //            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
+    //            msg.msg = msgInfo;
 
-//            xList.insert(0, msg);
-//        } else {
-//            if (xList.length() > 0) {
-//                xList[0].msg += str;
-//            }
-//        }
-//    }
-//    createFile(output, xList.count());
-//    m_isXlogLoading = false;
-//    emit xlogFinished();
+    //            xList.insert(0, msg);
+    //        } else {
+    //            if (xList.length() > 0) {
+    //                xList[0].msg += str;
+    //            }
+    //        }
+    //    }
+    //    createFile(output, xList.count());
+    //    m_isXlogLoading = false;
+    //    emit xlogFinished();
 
 }
 
@@ -369,8 +371,9 @@ int LogFileParser::parseByNormal(NORMAL_FILTERS &iNormalFiler)
     connect(authThread, &LogAuthThread::normalData, this,
             &LogFileParser::normalData, Qt::UniqueConnection);
     connect(this, &LogFileParser::stopNormal, authThread, &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
     QThreadPool::globalInstance()->tryStart(authThread);
-    return authThread->getIndex();
+    return index;
 }
 
 int LogFileParser::parseByKwin(KWIN_FILTERS iKwinfilter)
@@ -385,8 +388,9 @@ int LogFileParser::parseByKwin(KWIN_FILTERS iKwinfilter)
             &LogFileParser::kwinData);
     connect(this, &LogFileParser::stopKwin, authThread, &LogAuthThread::stopProccess);
 
+    int index = authThread->getIndex();
     QThreadPool::globalInstance()->start(authThread);
-    return authThread->getIndex();
+    return index;
 }
 #if 0
 void LogFileParser::parseByXlog(QStringList &xList)
@@ -437,9 +441,9 @@ int LogFileParser::parseByBoot()
             &LogFileParser::bootData);
     connect(this, &LogFileParser::stopBoot, authThread,
             &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
     QThreadPool::globalInstance()->start(authThread);
-    return authThread->getIndex();
-
+    return index;
 }
 
 int LogFileParser::parseByKern(KERN_FILTERS &iKernFilter)
@@ -465,8 +469,9 @@ int LogFileParser::parseByKern(KERN_FILTERS &iKernFilter)
             &LogFileParser::kernData);
     connect(this, &LogFileParser::stopKern, authThread,
             &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
     QThreadPool::globalInstance()->start(authThread);
-    return authThread->getIndex();
+    return index;
 }
 
 int LogFileParser::parseByApp(APP_FILTERS &iAPPFilter)
@@ -495,8 +500,9 @@ int LogFileParser::parseByApp(APP_FILTERS &iAPPFilter)
             &LogApplicationParseThread::stopProccess);
     connect(m_appThread, &LogApplicationParseThread::finished, m_appThread,
             &QObject::deleteLater);
+    int index = m_appThread->getIndex();
     m_appThread->start();
-    return m_appThread->getIndex();
+    return index;
 }
 
 void LogFileParser::createFile(QString output, int count)

@@ -115,7 +115,7 @@ TEST_F(LogAuthThread_UT, LogAuthThread_UT001)
     stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
     stub.set(ADDR(QProcess, exitCode), stub_exitCode);
 
-    m_logAuthThread->m_process = new QProcess();
+    m_logAuthThread->m_process.reset(new QProcess);
     m_logAuthThread->m_isStopProccess = true;
     m_logAuthThread->m_type = LOG_FLAG::KERN;
     m_logAuthThread->m_FilePath = QStringList() << "/var/log/kern.log";
@@ -150,7 +150,7 @@ TEST_F(LogAuthThread_UT, LogAuthThread_UT001)
     delete LogAuthThread::instance();
 }
 
-TEST_F(LogAuthThread_UT, LogAuthThread_UT002)
-{
-    m_logAuthThread->m_isStopProccess = false;
-}
+//TEST_F(LogAuthThread_UT, LogAuthThread_UT002)
+//{
+//    m_logAuthThread->m_isStopProccess = false;
+//}
