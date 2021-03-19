@@ -233,7 +233,7 @@ void LogTreeView::keyPressEvent(QKeyEvent *event)
 {
     DTreeView::keyPressEvent(event);
     if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down) {
-        emit clicked(this->currentIndex());
+        emit pressed(this->currentIndex());
     }
 }
 
