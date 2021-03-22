@@ -13,8 +13,8 @@
 
 #include "minizip/zip.h"
 
-#include "Magick++.h"
-#include "magick/image.h"
+//#include "Magick++.h"
+//#include "magick/image.h"
 
 #include <cstring>
 
@@ -56,8 +56,8 @@ OpcImageFile::OpcImageFile(
     m_emuWidth          = 0;
     m_emuHeight         = 0;
 
-    if (l_convert)
-        loadImage(true, l_ext);
+    //    if (l_convert)
+    //        loadImage(true, l_ext);
 } // c'tor
 
 OpcImageFile::~OpcImageFile()
@@ -66,105 +66,101 @@ OpcImageFile::~OpcImageFile()
         delete[] m_imageBuf;
 } // d'tor
 
+//void OpcImageFile::loadImage(bool p_convert, const string &p_convertTo /* = "" */)
+//{
+//    Magick::Image  *l_image     = NULL;
+//    Magick::Blob   *l_imageBlob = NULL;
 
+//    string  l_ext;
+//    double  l_width;
+//    double  l_height;
 
-void OpcImageFile::loadImage(bool p_convert, const string &p_convertTo /* = "" */)
-{
-    Magick::Image  *l_image     = NULL;
-    Magick::Blob   *l_imageBlob = NULL;
+//    l_ext = StrFunc::caps(p_convertTo);
 
-    string  l_ext;
-    double  l_width;
-    double  l_height;
+//    if (l_ext.length() > 0
+//            && l_ext[0] == '.')
+//        l_ext = l_ext.substr(1);
 
-    l_ext = StrFunc::caps(p_convertTo);
+//    try {
+//        // if we try to load an image of unsupported format ErrorCorruptImage will be thrown
+//        l_image     = new Magick::Image(m_sourceFullPath);
+//        l_imageBlob = new Magick::Blob();
 
-    if (l_ext.length() > 0
-            && l_ext[0] == '.')
-        l_ext = l_ext.substr(1);
+//        // resolutionUnits() gets undefined value after reading the image (possibly a bug in ImageMagick)
+//        // so we set it with Image::constImage() ->units which gets the correct value
+//        l_image ->resolutionUnits(l_image ->constImage() ->units);
 
-    try {
-        // if we try to load an image of unsupported format ErrorCorruptImage will be thrown
-        l_image     = new Magick::Image(m_sourceFullPath);
-        l_imageBlob = new Magick::Blob();
+//        if (p_convert) {
+//            try {
+//                l_image ->magick(l_ext);
+//                l_image ->write(l_imageBlob);
 
-        // resolutionUnits() gets undefined value after reading the image (possibly a bug in ImageMagick)
-        // so we set it with Image::constImage() ->units which gets the correct value
-        l_image ->resolutionUnits(l_image ->constImage() ->units);
+//                m_converted = true;
+//            }
 
-        if (p_convert) {
-            try {
-                l_image ->magick(l_ext);
-                l_image ->write(l_imageBlob);
+//            catch (...) {
+//                if (l_image)       delete l_image;
+//                if (l_imageBlob)   delete l_imageBlob;
 
-                m_converted = true;
-            }
+//                l_image     = new Magick::Image(m_sourceFullPath);
+//                l_imageBlob = new Magick::Blob();
 
-            catch (...) {
-                if (l_image)       delete l_image;
-                if (l_imageBlob)   delete l_imageBlob;
+//                l_image ->resolutionUnits(l_image ->constImage() ->units);
+//                l_image ->write(l_imageBlob);
+//            }
+//        }
 
-                l_image     = new Magick::Image(m_sourceFullPath);
-                l_imageBlob = new Magick::Blob();
+//        else
+//            l_image ->write(l_imageBlob);
 
-                l_image ->resolutionUnits(l_image ->constImage() ->units);
-                l_image ->write(l_imageBlob);
-            }
-        }
+//        if (m_imageBuf)
+//            delete[] m_imageBuf; // in case loadImage() is called more than once
 
-        else
-            l_image ->write(l_imageBlob);
+//        m_imageBufSize  = l_imageBlob ->length();
+//        m_imageBuf      = new byte[ m_imageBufSize ];
 
-        if (m_imageBuf)
-            delete[] m_imageBuf; // in case loadImage() is called more than once
+//        memcpy(m_imageBuf, l_imageBlob ->data(), m_imageBufSize);
+//        m_imageSource = SOURCE_IMAGE_OBJECT; // mark image as loaded
 
-        m_imageBufSize  = l_imageBlob ->length();
-        m_imageBuf      = new byte[ m_imageBufSize ];
+//        if (l_image ->xResolution() == 0
+//                || l_image ->yResolution() == 0) {
+//            m_emuWidth  = (unsigned int)(l_image ->columns()  * m_emuPerPixel);
+//            m_emuHeight = (unsigned int)(l_image ->rows()     * m_emuPerPixel);
+//        }
 
-        memcpy(m_imageBuf, l_imageBlob ->data(), m_imageBufSize);
-        m_imageSource = SOURCE_IMAGE_OBJECT; // mark image as loaded
+//        else {
+//            // calculate print size (the units are l_image ->resolutionUnits())
+//            l_width     = (double) l_image ->columns() / l_image ->xResolution();
+//            l_height    = (double) l_image ->rows()        / l_image ->yResolution();
 
-        if (l_image ->xResolution() == 0
-                || l_image ->yResolution() == 0) {
-            m_emuWidth  = (unsigned int)(l_image ->columns()  * m_emuPerPixel);
-            m_emuHeight = (unsigned int)(l_image ->rows()     * m_emuPerPixel);
-        }
+//            // multiply by the emu conversion scalar
+//            // according to the resolution units to get emu size
+//            // if resolutionUnits() is undefined we treat it as centimeters
+//            // like image magick does when converting
 
-        else {
-            // calculate print size (the units are l_image ->resolutionUnits())
-            l_width     = (double) l_image ->columns() / l_image ->xResolution();
-            l_height    = (double) l_image ->rows()        / l_image ->yResolution();
+//            if (l_image ->resolutionUnits() == Magick::PixelsPerInchResolution) {
+//                m_emuWidth  = (unsigned int)(l_width  * m_emuPerInch);
+//                m_emuHeight = (unsigned int)(l_height * m_emuPerInch);
+//            }
 
-            // multiply by the emu conversion scalar
-            // according to the resolution units to get emu size
-            // if resolutionUnits() is undefined we treat it as centimeters
-            // like image magick does when converting
+//            else {
+//                m_emuWidth  = (unsigned int)(l_width  * m_emuPerCm);
+//                m_emuHeight = (unsigned int)(l_height * m_emuPerCm);
+//            }
+//        }
 
-            if (l_image ->resolutionUnits() == Magick::PixelsPerInchResolution) {
-                m_emuWidth  = (unsigned int)(l_width  * m_emuPerInch);
-                m_emuHeight = (unsigned int)(l_height * m_emuPerInch);
-            }
+//        delete l_image;
+//        delete l_imageBlob;
+//    }
 
-            else {
-                m_emuWidth  = (unsigned int)(l_width  * m_emuPerCm);
-                m_emuHeight = (unsigned int)(l_height * m_emuPerCm);
-            }
-        }
+//    catch (...) {
+//        if (l_image)       delete      l_image;
+//        if (l_imageBlob)   delete      l_imageBlob;
+//        if (m_imageBuf)    delete[]    m_imageBuf;
 
-        delete l_image;
-        delete l_imageBlob;
-    }
-
-    catch (...) {
-        if (l_image)       delete      l_image;
-        if (l_imageBlob)   delete      l_imageBlob;
-        if (m_imageBuf)    delete[]    m_imageBuf;
-
-        throw;
-    }
-} // loadImage
-
-
+//        throw;
+//    }
+//} // loadImage
 
 void OpcImageFile::save(const string &p_partFullPath)
 {
@@ -213,16 +209,16 @@ unsigned int OpcImageFile::getEmuWidth() const
     // doesn't concern the user of the object, so we cast the const away to call loadImage().
     // the same applies for getEmuHeight().
 
-    if (m_imageSource == SOURCE_EXTERNAL_FILE)
-        ((OpcImageFile *) this) ->loadImage(false);
+    //    if (m_imageSource == SOURCE_EXTERNAL_FILE)
+    //        ((OpcImageFile *) this) ->loadImage(false);
 
     return m_emuWidth;
 } // getPixelWidth
 
 unsigned int OpcImageFile::getEmuHeight() const
 {
-    if (m_imageSource == SOURCE_EXTERNAL_FILE)
-        ((OpcImageFile *) this) ->loadImage(false);
+    //    if (m_imageSource == SOURCE_EXTERNAL_FILE)
+    //        ((OpcImageFile *) this) ->loadImage(false);
 
     return m_emuHeight;
 } // getPixelHeight

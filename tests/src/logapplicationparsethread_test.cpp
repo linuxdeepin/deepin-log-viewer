@@ -68,16 +68,16 @@ public:
     LogApplicationParseThread *m_logAppThread;
 };
 
-TEST_F(LogApplicationParseThread_UT, LogApplicationParseThread_UT001)
-{
-    APP_FILTERS appfilter;
-    Stub stub;
-    stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryInfoList), stub_entryInfoList);
-    stub.set((QStringList(QString::*)(QChar, QString::SplitBehavior, Qt::CaseSensitivity) const)ADDR(QString, split), stub_split);
-    m_logAppThread->initProccess();
-    m_logAppThread->setParam(appfilter);
-    m_logAppThread->m_AppFiler.path = "/home/test";
-    m_logAppThread->doWork();
-    m_logAppThread->run();
-    m_logAppThread->onProcFinished(1);
-}
+//TEST_F(LogApplicationParseThread_UT, LogApplicationParseThread_UT001)
+//{
+//    APP_FILTERS appfilter;
+//    Stub stub;
+//    stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryInfoList), stub_entryInfoList);
+//    stub.set((QStringList(QString::*)(QChar, QString::SplitBehavior, Qt::CaseSensitivity) const)ADDR(QString, split), stub_split);
+//    m_logAppThread->initProccess();
+//    m_logAppThread->setParam(appfilter);
+//    m_logAppThread->m_AppFiler.path = "/home/test";
+//    m_logAppThread->doWork();
+//    m_logAppThread->run();
+//    m_logAppThread->onProcFinished(1);
+//}
