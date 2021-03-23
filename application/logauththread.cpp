@@ -467,7 +467,6 @@ void LogAuthThread::handleXorg()
     QStringList oldList;
     QList<QStringList> totalList;
     qint64 curDtSecond = 0;
-    qint64 startTimeMsec = 0;
     QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
     //读取现在到本次开机经过的时间，xorg日志文件的时间为从本次开机到日志记录产生时的时间差值
     QFile startFile("/proc/uptime");
@@ -540,6 +539,7 @@ void LogAuthThread::handleXorg()
     }
     newList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
     //读取备份/var/log/Xorg.0.log.old日志文件,上一次开关机的Xorg日志文件
+    totalList.append(newList);
     QFile oldFile("/var/log/Xorg.0.log.old");
     if (oldFile.exists()) {
         m_process->start("cat /var/log/Xorg.0.log.old"); // file path is fixed. so write cmd direct
@@ -572,40 +572,10 @@ void LogAuthThread::handleXorg()
         if (!m_canRun) {
             return;
         }
-        //读取上次开关机时间
-        struct utmp *utbufp;
-
-        if (wtmp_open(QString(WTMP_FILE).toLatin1().data()) == -1) {
-            printf("open WTMP_FILE file error\n");
-            return; // exit(1) will exit this application
-        }
-        QList<utmp> normalList;
-        QList<utmp> deadList;
-        while ((utbufp = wtmp_next()) != (static_cast<struct utmp *>(nullptr))) {
-            if (utbufp->ut_type != DEAD_PROCESS) {
-                utmp value_ = *utbufp;
-                normalList.append(value_);
-            } else if (utbufp->ut_type == DEAD_PROCESS) {
-                utmp value_ = *utbufp;
-                deadList.append(value_);
-            }
-        }
-        QString a_name = "~";
-        QList<utmp> rebootList;
-        foreach (utmp value, normalList) {
-            QString strtmp = value.ut_name;
-            if (strtmp.compare("reboot") == 0) {
-                rebootList.append(value);
-            }
-        }
-        QString n_time = QDateTime::fromTime_t(static_cast<uint>(rebootList.at(rebootList.size() - 2).ut_time)).toString("yyyy-MM-dd hh:mm:ss");
-        QDateTime startTime = QDateTime::fromString(n_time, "yyyy-MM-dd hh:mm:ss");
-        startTimeMsec = startTime.toMSecsSinceEpoch();
         oldList = QString(Utils::replaceEmptyByteArray(oldOutByte)).split('\n', QString::SkipEmptyParts);
-        wtmp_close();
+        totalList.append(oldList);
     }
-    totalList.append(newList);
-    totalList.append(oldList);
+
     QString tempStr = "";
     for (int j = 0; j < totalList.count(); j++) {
         for (int i = totalList.at(j).size() - 1; i >= 0; --i) {
@@ -624,11 +594,7 @@ void LogAuthThread::handleXorg()
                 // 把开机时间加上日志记录的毫秒数则为日志记录的时间
                 QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
                 qint64 realT = 0;
-                if (j == 0) {
-                    realT = curDtSecond + qint64(tStr.toDouble() * 1000);
-                } else {
-                    realT = startTimeMsec + qint64(tStr.toDouble() * 1000);
-                }
+                realT = curDtSecond + qint64(tStr.toDouble() * 1000);
                 QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
                 if (m_xorgFilters.timeFilterBegin > 0 && m_xorgFilters.timeFilterEnd > 0) {
                     if (realDt.toMSecsSinceEpoch() < m_xorgFilters.timeFilterBegin || realDt.toMSecsSinceEpoch() > m_xorgFilters.timeFilterEnd)
@@ -637,7 +603,6 @@ void LogAuthThread::handleXorg()
                 LOG_MSG_XORG msg;
                 msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
                 msg.msg = msgInfo + tempStr;
-
                 tempStr.clear();
                 xList.append(msg);
                 //每获得500个数据就发出信号给控件加载
