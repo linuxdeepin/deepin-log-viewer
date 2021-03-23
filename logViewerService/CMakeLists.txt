@@ -17,7 +17,7 @@ set(APP_CONFIG "${APP_RES_DIR}/data/com.deepin.logviewer.conf")
 
 # Find the library
 find_package(PkgConfig REQUIRED)
-find_package(DtkGui REQUIRED)
+find_package(DtkGui5.5 REQUIRED)
 find_package(Qt5 COMPONENTS
     Core
     Widgets
@@ -27,7 +27,7 @@ REQUIRED)
 set(LINK_LIBS
     Qt5::Core
     Qt5::DBus
-    ${DtkCore_LIBRARIES}
+    ${DtkCore5.5_LIBRARIES}
 )
 
 file(GLOB ALL_SOURCES "*.cpp")
@@ -39,10 +39,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_BINARY_DIR}
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${DtkWidget_INCLUDE_DIRS} ${OBJECT_BINARY_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC ${DtkWidget5.5_INCLUDE_DIRS} ${OBJECT_BINARY_DIR})
 target_link_libraries(${PROJECT_NAME}
     ${LINK_LIBS}
-    ${DtkWidget_LIBRARIES}
+    ${DtkWidget5.5_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
 )
 set(CMAKE_INSTALL_PREFIX /usr)

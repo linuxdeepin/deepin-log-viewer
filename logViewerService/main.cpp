@@ -25,7 +25,8 @@
 const QString LogViewrServiceName = "com.deepin.logviewer";
 //service path
 const QString LogViewrPath = "/com/deepin/logviewer";
-
+//service log  path
+const QString LogservicePath = "/var/log";
 int main(int argc, char *argv[])
 {
     //set env otherwise utils excutecmd  excute command failed
@@ -43,6 +44,7 @@ int main(int argc, char *argv[])
     a.setOrganizationName("deepin");
     a.setApplicationName("deepin-logviewr-service");
 
+    Dtk::Core::DLogManager::setlogFilePath(LogservicePath);
     Dtk::Core::DLogManager::registerConsoleAppender();
     Dtk::Core::DLogManager::registerFileAppender();
 

@@ -58,7 +58,6 @@ namespace DocxFactory
 		OpcImageFile( const OpcImageFile& p_other );
 		OpcImageFile operator = ( const OpcImageFile& p_other );
 
-		void loadImage( bool p_convert, const string& p_convertTo = "" );
 
 		OpcPackage*		m_package;
 		OpcImageCache*	m_imageCache;
