@@ -108,19 +108,14 @@ find_package(DFrameworkdbus REQUIRED)
 find_package(RapidJSON)
 pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 find_package(Boost)
-#find_package(ImageMagick COMPONENTS Magick++)
-#find_package(ImageMagick COMPONENTS MagickWand)
-#find_package(ImageMagick COMPONENTS MagickCore)
 find_package(XercesC)
+find_package(ZLIB)
 
 message("XercesC_FOUND ${XercesC_FOUND}")
-#message("ImageMagick_FOUND ${ImageMagick_FOUND}")
-#find_package(Zint)
-#find_package(RapidJSON)
-# ZLIB
-find_package(ZLIB)
-list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
 message("zlib version: " ${ZLIB_LIBRARIES})
+
+list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
+
 #pkg_search_module(DtkWidget REQUIRED dtkwidget)
 #pkg_search_module(DtkGui REQUIRED dtkgui)
 #pkg_search_module(DtkCore REQUIRED dtkcore)
