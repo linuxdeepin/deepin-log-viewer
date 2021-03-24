@@ -42,7 +42,7 @@ LogViewHeaderView::LogViewHeaderView(Qt::Orientation orientation, QWidget *paren
     setSectionResizeMode(QHeaderView::Interactive);
     setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     setFixedHeight(37);
-    setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy(Qt::NoFocus);
 }
 /**
  * @brief LogViewHeaderView::paintSection 绘制表头

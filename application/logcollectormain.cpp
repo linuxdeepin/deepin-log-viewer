@@ -315,37 +315,25 @@ bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *
     if (evt->key() == Qt::Key_Tab) {
         DWindowCloseButton *closebtn = this->titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
         if (obj == this->titlebar()) {
-            m_searchEdt->lineEdit()->setFocus(Qt::TabFocusReason);
-            return  true;
+            return false;
         } else if (obj->objectName() == "searchChildEdt") {
-            titlebar()->setFocus(Qt::TabFocusReason);
-            //titlebar不截获屏蔽掉,因为让他继续往下一menubutton发送tab
-            //  return  true;
+            return false;
         } else if (obj == closebtn) {
             m_logCatelogue->setFocus(Qt::TabFocusReason);
             return  true;
         } else if (obj->objectName() == "mainLogTable") {
-            m_searchEdt->lineEdit()->setFocus(Qt::TabFocusReason);
-            return  true;
-        } /*else if (obj->objectName() == "Dtk::Widget::DAbstractDialogClassWindow") {
-            Dtk::Widget::DAboutDialog *w = qobject_cast<Dtk::Widget::DAboutDialog *>(obj);
-            if (w) {
-                w->setFocus(Qt::TabFocusReason);
-            }
-
-            return  true;
-        }*/
+            return false;
+        }
     } else if (evt->key() == Qt::Key_Backtab) {
         DWindowOptionButton *optionbtn = this->titlebar()->findChild<DWindowOptionButton *>("DTitlebarDWindowOptionButton");
         if (obj->objectName() == "logTypeSelectList") {
             DWindowCloseButton   *closeButton = titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
             if (closeButton) {
-                closeButton->setFocus(Qt::BacktabFocusReason);
+                closeButton->setFocus();
             }
             return  true;
         } else if (obj == optionbtn) {
-            m_searchEdt->lineEdit()->setFocus(Qt::BacktabFocusReason);
-            return  true;
+            return false;
         } else if (obj->objectName() == "searchChildEdt") {
             m_midRightWgt->mainLogTableView()->setFocus(Qt::BacktabFocusReason);
             return  true;
