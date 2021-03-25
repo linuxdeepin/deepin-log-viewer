@@ -415,7 +415,7 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
     }
 
     if (cbx_status->isVisible())
-        cbx_status->setCurrentIndex(iConifg.statusCbx);
+        Q_EMIT cbx_status->currentIndexChanged(iConifg.statusCbx);
     if (typeCbx->isVisible())
         typeCbx->setCurrentIndex(iConifg.typeCbx);
     m_btnGroup->button(iConifg.dateBtn)->setChecked(true); //add by Airy for bug 19660:period button default setting

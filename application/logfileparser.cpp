@@ -423,17 +423,12 @@ void LogFileParser::parseByXlog(QStringList &xList)
 
 int LogFileParser::parseByBoot()
 {
-//    if (m_isBootLoading) {
-//        qDebug() << __FUNCTION__ << m_isBootLoading;
-//        return;
-//    }
     stopAllLoad();
     m_isBootLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(BOOT);
 
     QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("boot");
-    //    const QString&str="/var/log/kern";
     authThread->setFilePath(filePath);
     connect(authThread, &LogAuthThread::bootFinished, this,
             &LogFileParser::bootFinished);

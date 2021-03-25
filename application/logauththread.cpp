@@ -738,12 +738,6 @@ void LogAuthThread::handleNormal()
             deadList.append(value_);
         }
     }
-    //    foreach (utmp item, normalList) {
-    //        qDebug() << "normalList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
-    //    }
-    //    foreach (utmp item, deadList) {
-    //        qDebug() << "deadList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
-    //    }
     QString a_name = "~";
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
