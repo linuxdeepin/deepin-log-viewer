@@ -746,7 +746,6 @@ void LogAuthThread::handleNormal()
             //   if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
             continue;
         }
-
         struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
         LOG_MSG_NORMAL Nmsg;
         if (value.ut_type == USER_PROCESS) {
@@ -768,7 +767,6 @@ void LogAuthThread::handleNormal()
         else if (ret == -1 && value.ut_type == BOOT_TIME)
             end_str = "system boot";
         QString start_str = show_start_time(value.ut_time);
-
         QString n_time = QDateTime::fromTime_t(static_cast<uint>(value.ut_time)).toString("yyyy-MM-dd hh:mm:ss");
         end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
         start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
