@@ -74,9 +74,9 @@ LogCollectorMain::~LogCollectorMain()
         m_searchEdt = nullptr;
     }
     //如果窗体状态不是最大最小状态，则记录此时窗口尺寸到配置文件里，方便下次打开时恢复大小
-    if (windowState() == Qt::WindowNoState) {
-        LogSettings::instance()->saveConfigWinSize(width(), height());
-    }
+    //    if (windowState() == Qt::WindowNoState) {
+    LogSettings::instance()->saveConfigWinSize(width(), height());
+    //    }
 }
 
 /**

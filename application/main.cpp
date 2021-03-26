@@ -90,6 +90,12 @@ int main(int argc, char *argv[])
     LogApplicationHelper::instance();
     QAccessible::installFactory(accessibleFactory);
 
+    QCommandLineParser cmdParser;
+    cmdParser.setApplicationDescription("deepin-log-viewer");
+    cmdParser.addHelpOption();
+    cmdParser.addVersionOption();
+    cmdParser.process(a);
+
     LogCollectorMain w;
     a.setMainWindow(&w);
 
