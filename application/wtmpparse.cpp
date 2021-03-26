@@ -178,10 +178,10 @@ utmp list_get_ele_and_del(QList<utmp > &list, char *value, int &rs)
 char *show_end_time(long timeval)
 {
     struct tm *t;
-    char tt[12] = {0};
+    char tt[256] = {0};
 
     t = localtime(&timeval);
-    strftime(tt, 100, "%R", t);
+    strftime(tt, sizeof(tt) - 1, "%R", t);
     //printf("%s", tt);
     return asctime(t);
 }
@@ -189,12 +189,12 @@ char *show_end_time(long timeval)
 char *show_start_time(long timeval)
 {
     struct tm *t;
-    char tt[32] = {0};
+    char tt[256] = {0};
 
     t = localtime(&timeval);
-    strftime(tt, 100, "%a %b %e %R", t);
-//    printf("%s", tt);
-//    printf(" - ");
+    strftime(tt, sizeof(tt) - 1, "%a %b %e %R", t);
+    //    printf("%s", tt);
+    //    printf(" - ");
 
     return asctime(t);
 }

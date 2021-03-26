@@ -1,1 +1,3 @@
 debian/deepin-log-viewer.1
+debian/logViewerTruncate.1
+debian/logViewerAuth.1

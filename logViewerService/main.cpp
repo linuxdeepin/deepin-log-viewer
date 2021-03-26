@@ -27,8 +27,6 @@
 const QString LogViewrServiceName = "com.deepin.logviewer";
 //service path
 const QString LogViewrPath = "/com/deepin/logviewer";
-//service log  path
-const QString LogservicePath = "/var/log";
 
 int main(int argc, char *argv[])
 {
@@ -47,11 +45,6 @@ int main(int argc, char *argv[])
     a.setOrganizationName("deepin");
     a.setApplicationName("deepin-logviewr-service");
 
-    Dtk::Core::DLogManager::setlogFilePath(LogservicePath);
-    Dtk::Core::DLogManager::registerConsoleAppender();
-    Dtk::Core::DLogManager::registerFileAppender();
-
-    qDebug() << "write log to" << Dtk::Core::DLogManager::getlogFilePath();
     QDBusConnection systemBus = QDBusConnection::systemBus();
     if (!systemBus.registerService(LogViewrServiceName)) {
         qCritical() << "registerService failed:" << systemBus.lastError();
