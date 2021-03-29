@@ -55,6 +55,7 @@
 Q_DECLARE_METATYPE(QMargins)
 
 DWIDGET_USE_NAMESPACE
+
 LogListDelegate::LogListDelegate(LogListView *parent) : DStyledItemDelegate(parent)
 {
 

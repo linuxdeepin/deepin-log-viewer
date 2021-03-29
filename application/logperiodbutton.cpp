@@ -20,10 +20,12 @@
 */
 
 #include "logperiodbutton.h"
+
 #include <DApplicationHelper>
 #include <DPalette>
 #include <DStyle>
 #include <DApplication>
+
 #include <QBrush>
 #include <QPaintEvent>
 #include <QPainter>

@@ -21,7 +21,6 @@
 
 #include "logexportthread.h"
 #include "utils.h"
-
 #include "xlsxwriter.h"
 #include "WordProcessingMerger.h"
 #include "WordProcessingCompiler.h"

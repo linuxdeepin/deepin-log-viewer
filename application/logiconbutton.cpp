@@ -20,10 +20,12 @@
 */
 
 #include "logiconbutton.h"
+
 #include <QEvent>
 #include <QResizeEvent>
 #include <QDebug>
 #define ICON_SIZE 32
+
 LogIconButton::LogIconButton(QWidget *parent)
     : QPushButton(parent)
 {

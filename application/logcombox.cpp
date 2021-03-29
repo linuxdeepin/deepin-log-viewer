@@ -14,13 +14,16 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+
 #include "logcombox.h"
+
 #include <QStylePainter>
 #include <QDebug>
 #include <QKeyEvent>
 
 #include <DStyle>
 #include <DApplication>
+
 LogCombox::LogCombox(QWidget *parent):
     DComboBox(parent)
 {

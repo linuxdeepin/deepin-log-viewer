@@ -19,18 +19,19 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "logviewitemdelegate.h"
+
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DPalette>
 #include <DStyle>
 #include <DStyleHelper>
+
 #include <QDebug>
 #include <QModelIndex>
 #include <QPainter>
 #include <QStyleOptionViewItem>
 #include <QPainterPath>
-
-#include "logviewitemdelegate.h"
 
 DWIDGET_USE_NAMESPACE
 

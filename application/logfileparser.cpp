@@ -27,6 +27,7 @@
 #include "sharedmemorymanager.h"
 #include "utils.h"
 
+#include <DMessageManager>
 
 #include <QDateTime>
 #include <QDebug>
@@ -39,7 +40,6 @@
 #include <QProcess>
 #include <QtConcurrent>
 
-#include <DMessageManager>
 int journalWork::thread_index = 0;
 int JournalBootWork::thread_index = 0;
 DWIDGET_USE_NAMESPACE

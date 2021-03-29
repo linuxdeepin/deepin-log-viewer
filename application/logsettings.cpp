@@ -20,6 +20,7 @@
 */
 
 #include "logsettings.h"
+
 #include <QStandardPaths>
 #include <QApplication>
 #include <QDir>

@@ -20,7 +20,7 @@
 */
 
 #include "logdetailinfowidget.h"
-#include <sys/utsname.h>
+
 #include <DApplication>
 #include <DApplicationHelper>
 #include <DGuiApplicationHelper>
@@ -37,6 +37,7 @@
 #include <QPainterPath>
 
 #include "structdef.h"
+#include <sys/utsname.h>
 
 DWIDGET_USE_NAMESPACE
 

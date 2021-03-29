@@ -18,8 +18,10 @@
 */
 
 #include "logviewerservice.h"
-#include <QCoreApplication>
+
 #include <DLog>
+
+#include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusError>
 
