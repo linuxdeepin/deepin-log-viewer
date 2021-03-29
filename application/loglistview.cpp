@@ -363,11 +363,11 @@ void LogListView::truncateFile(QString path_)
 {
     QProcess prc;
     if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA) {
-        prc.start("pkexec", QStringList() << "logViewerTruncate" << path_);
+        prc.start("pkexec", QStringList() << "logViewerTruncate" << path_.append("*"));
     } else {
-        prc.start("truncate", QStringList() << "-s"
-                  << "0"
-                  << path_);
+        QStringList arg;
+        arg << "-c" << QString("truncate -s 0 %1").arg(path_.append("*"));
+        prc.start("/bin/bash", arg);
     }
 
     prc.waitForFinished();
