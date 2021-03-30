@@ -89,7 +89,7 @@ void LogApplicationHelper::createDesktopFiles()
     QStringList tempDesktopFiles;
     for (QString desktop : fileInfoList) {
         //需要符合以deepin或者dde开头的应用
-        if (desktop.contains("deepin-") || desktop.contains("dde-")) {
+        if (desktop.contains("deepin-") || desktop.contains("dde-") || desktop.contains("org.deepin")) {
             tempDesktopFiles.append(desktop);
         }
     }
@@ -202,7 +202,8 @@ void LogApplicationHelper::createLogFiles()
 //    qDebug() << "m_desktop_files" << m_desktop_files;
 
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
-        QString _name = m_desktop_files[i].split(QDir::separator()).last().section(".", 0, 0);
+        QString desktopName = m_desktop_files[i].split(QDir::separator()).last();
+        QString _name = desktopName.mid(0, desktopName.lastIndexOf("."));
 
         for (auto j = 0; j < m_log_files.count(); ++j) {
             //desktop文件名和日志文件名比较，相同则符合条件
@@ -233,7 +234,7 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
     }
 //   qDebug() << "parseField" << "path" << path << "name" << name << "isDeepin" << isDeepin << "isGeneric" << isGeneric << "isName" << isName;
     // insert map at first, en-en, then repalce transName if has name,
-    m_en_trans_map.insert(name.section(".", 0, 0), name.section(".", 0, 0));  // desktop name
+    m_en_trans_map.insert(name.mid(0, name.lastIndexOf(".")), name.mid(0, name.lastIndexOf("."))); // desktop name
     if (name.contains("shutdown")) {
     }
     while (!fi.atEnd()) {
@@ -269,18 +270,19 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
             // qDebug() << "  if (leftStr.split(_).count() == 2) {" << leftStr << m_current_system_language;
             if (leftStr.contains(m_current_system_language)) {
                 //    qDebug() << " if (leftStr.contains(m_current_system_language)) {";
-                m_en_trans_map.insert(name.section(".", 0, 0), genericName);
+                m_en_trans_map.insert(name.mid(0, name.lastIndexOf(".")), genericName);
+                ;
                 break;
             }
         } else if (leftStr.contains(m_current_system_language.split("_")[0])) {
             // qDebug() << " if (leftStr.contains(m_current_system_language.split(_)[0])) {";
-            m_en_trans_map.insert(name.section(".", 0, 0), genericName);
+            m_en_trans_map.insert(name.mid(0, name.lastIndexOf(".")), genericName);
             break;
         } else if (0 == leftStr.compare("GenericName", Qt::CaseInsensitive) ||
                    0 == leftStr.compare("Name", Qt::CaseInsensitive)) {
             //   qDebug() << " if (0 == leftStr.compare(\"GenericName\", Qt::CaseInsensitive) || 0 == leftStr.compare(\"Name\", Qt::CaseInsensitive)) {";
             // could not find GenericName[...], use GenericName=
-            m_en_trans_map.insert(name.section(".", 0, 0), genericName);  // GenericName=xxxx
+            m_en_trans_map.insert(name.mid(0, name.lastIndexOf(".")), genericName); // GenericName=xxxx
         }
     }
 }
