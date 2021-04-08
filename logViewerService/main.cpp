@@ -45,7 +45,20 @@ int main(int argc, char *argv[])
 
     QCoreApplication a(argc, argv);
     a.setOrganizationName("deepin");
-    a.setApplicationName("deepin-logviewr-service");
+    a.setApplicationName("deepin-log-viewer-service");
+
+    QDir dirCheck;
+    QString LogPath = QString("%1/%2/%3/Log/")
+                          .arg("/var/log")
+                          .arg(qApp->organizationName())
+                          .arg(qApp->applicationName());
+
+    if (!dirCheck.exists(LogPath)) {
+        dirCheck.mkpath(LogPath);
+    }
+    Dtk::Core::DLogManager::setlogFilePath(LogPath);
+    Dtk::Core::DLogManager::registerConsoleAppender();
+    Dtk::Core::DLogManager::registerFileAppender();
 
     QDBusConnection systemBus = QDBusConnection::systemBus();
     if (!systemBus.registerService(LogViewrServiceName)) {
