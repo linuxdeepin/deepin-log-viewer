@@ -123,9 +123,9 @@ TEST_F(LogAuthThread_UT, LogAuthThread_UT001)
     m_logAuthThread->m_type = LOG_FLAG::BOOT;
     m_logAuthThread->m_FilePath = QStringList() << "/var/log/boot.log";
     m_logAuthThread->run();
-    m_logAuthThread->m_type = LOG_FLAG::DPKG;
-    m_logAuthThread->m_FilePath = QStringList() << "/var/log/dpkg.log";
-    m_logAuthThread->run();
+    //    m_logAuthThread->m_type = LOG_FLAG::DPKG;
+    //    m_logAuthThread->m_FilePath = QStringList() << "/var/log/dpkg.log";
+    //    m_logAuthThread->run();
     //    m_logAuthThread->m_type=LOG_FLAG::XORG;
     //    m_logAuthThread->run();
     //    m_logAuthThread->m_type=LOG_FLAG::Normal;

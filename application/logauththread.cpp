@@ -641,20 +641,9 @@ void LogAuthThread::handleDkpg()
         if (!m_canRun) {
             return;
         }
-        initProccess();
-        if (!m_canRun) {
-            return;
-        }
-        m_process->start("cat", QStringList() << m_FilePath.at(i)); // file path is fixed. so write cmd direct
-        m_process->waitForFinished(-1);
-        if (!m_canRun) {
-            return;
-        }
-        QByteArray outByte = m_process->readAllStandardOutput();
-        if (!m_canRun) {
-            return;
-        }
-        m_process->close();
+
+        QString m_Log = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        QByteArray outByte = m_Log.toUtf8();
         if (!m_canRun) {
             return;
         }
