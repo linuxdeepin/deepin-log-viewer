@@ -211,7 +211,7 @@ void LogAuthThread::handleBoot()
         //    qInfo()<<strList.size()<<"_________________________";
         for (int j = strList.size() - 1; j >= 0; --j) {
             QString lineStr = strList.at(j);
-            if (lineStr.startsWith("/dev"))
+            if (lineStr.startsWith("/dev") || lineStr.isEmpty())
                 continue;
             //删除颜色格式字符
             lineStr.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
@@ -221,16 +221,22 @@ void LogAuthThread::handleBoot()
             QStringList retList;
             LOG_MSG_BOOT bMsg;
             retList = lineStr.split(" ", QString::SkipEmptyParts);
-            if (retList[1].compare("OK", Qt::CaseInsensitive) == 0 || retList[1].compare("Failed", Qt::CaseInsensitive) == 0) {
-                //如果是以ok/failed开头，则认为是一条记录的开头，否则认为此行为上一条日志的信息体的后续
-                bMsg.status = retList[1];
-                QStringList leftList = retList.mid(3);
-                bMsg.msg += leftList.join(" ");
-                bList.append(bMsg);
-            } else {
+            if (retList.size() == 1) {
                 bMsg.msg = lineStr.trimmed();
                 bList.append(bMsg);
+            } else {
+                if (retList[1].compare("OK", Qt::CaseInsensitive) == 0 || retList[1].compare("Failed", Qt::CaseInsensitive) == 0) {
+                    //如果是以ok/failed开头，则认为是一条记录的开头，否则认为此行为上一条日志的信息体的后续
+                    bMsg.status = retList[1];
+                    QStringList leftList = retList.mid(3);
+                    bMsg.msg += leftList.join(" ");
+                    bList.append(bMsg);
+                } else {
+                    bMsg.msg = lineStr.trimmed();
+                    bList.append(bMsg);
+                }
             }
+
             //每获得500个数据就发出信号给控件加载
             if (bList.count() % SINGLE_READ_CNT == 0) {
                 emit bootData(m_threadCount, bList);
