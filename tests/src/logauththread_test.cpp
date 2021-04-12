@@ -19,6 +19,7 @@
 #include "structdef.h"
 #include "sharedmemorymanager.h"
 #include "wtmpparse.h"
+#include "dldbushandler.h"
 
 #include <stub.h>
 
@@ -77,6 +78,12 @@ int stub_exitCode()
     return 0;
 }
 
+QString stub_readLog(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return "2021-04-06 13:29:32 install code:amd64 <none> 1.55.0-1617120720";
+}
+
 class LogAuthThread_UT : public testing::Test
 {
 public:
@@ -114,24 +121,30 @@ TEST_F(LogAuthThread_UT, LogAuthThread_UT001)
     stub.set(wtmp_close, stub_wtmp_close);
     stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
     stub.set(ADDR(QProcess, exitCode), stub_exitCode);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_readLog);
 
     m_logAuthThread->m_process.reset(new QProcess);
     m_logAuthThread->m_isStopProccess = true;
     m_logAuthThread->m_type = LOG_FLAG::KERN;
     m_logAuthThread->m_FilePath = QStringList() << "/var/log/kern.log";
     m_logAuthThread->run();
+    m_logAuthThread->m_canRun = true;
     m_logAuthThread->m_type = LOG_FLAG::BOOT;
     m_logAuthThread->m_FilePath = QStringList() << "/var/log/boot.log";
-    m_logAuthThread->run();
-    //    m_logAuthThread->m_type = LOG_FLAG::DPKG;
-    //    m_logAuthThread->m_FilePath = QStringList() << "/var/log/dpkg.log";
-    //    m_logAuthThread->run();
-    //    m_logAuthThread->m_type=LOG_FLAG::XORG;
-    //    m_logAuthThread->run();
-    //    m_logAuthThread->m_type=LOG_FLAG::Normal;
-    //    m_logAuthThread->run();
+    m_logAuthThread->handleBoot();
+    m_logAuthThread->m_FilePath = QStringList() << "/test";
+    m_logAuthThread->handleBoot();
+    m_logAuthThread->m_type = LOG_FLAG::DPKG;
+    m_logAuthThread->m_FilePath = QStringList() << "/var/log/dpkg.log";
+    m_logAuthThread->handleDkpg();
+    m_logAuthThread->m_FilePath = QStringList() << "/test";
+    m_logAuthThread->handleDkpg();
+    m_logAuthThread->m_type = LOG_FLAG::XORG;
+    m_logAuthThread->handleXorg();
+    m_logAuthThread->m_type = LOG_FLAG::Normal;
+    m_logAuthThread->handleNormal();
     m_logAuthThread->m_type = LOG_FLAG::Kwin;
-    m_logAuthThread->run();
+    m_logAuthThread->handleKwin();
 
     KWIN_FILTERS kwin;
     m_logAuthThread->setFileterParam(kwin);
@@ -146,7 +159,6 @@ TEST_F(LogAuthThread_UT, LogAuthThread_UT001)
 
     m_logAuthThread->thread_count = 1;
     EXPECT_EQ(m_logAuthThread->getIndex(), 1);
-    ASSERT_FALSE(m_logAuthThread->m_canRun);
     delete LogAuthThread::instance();
 }
 
