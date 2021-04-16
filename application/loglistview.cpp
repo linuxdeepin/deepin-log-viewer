@@ -468,7 +468,9 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
 
 void LogListView::requestshowRightMenu(const QPoint &pos)
 {
-    showRightMenu(pos, false);
+    if (this->indexAt(pos).isValid()) {
+        showRightMenu(pos, false);
+    }
 }
 
 
