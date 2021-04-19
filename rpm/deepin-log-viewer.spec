@@ -31,7 +31,7 @@ BuildRequires: kf5-kcodecs-devel
 BuildRequires: libzip-devel
 BuildRequires: xerces-c-devel
 BuildRequires: boost-devel
-BuildRequires: libminizip-devel
+BuildRequires: minizip-devel
 BuildRequires: rapidjson-devel
 BuildRequires: libtool-ltdl-devel
 BuildRequires: fftw-libs
@@ -73,6 +73,7 @@ popd
 %{_datadir}/%{name}/translations/*.qm
 %{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 %{_datadir}/polkit-1/actions/*.policy
+%{_datadir}/deepin-manual/manual-assets/application/deepin-log-viewer/log-viewer/*
 
 
 
