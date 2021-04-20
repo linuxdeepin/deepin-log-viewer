@@ -12,8 +12,8 @@
 
 ### 运行日志收集工具
 
-1. 单击任务栏上的 ![deepin_launcher](../common/deepin_launcher.svg) 进入启动器界面。
-2. 上下滚动鼠标滚轮浏览或通过搜索找到 ![deepin_log_viewer](../common/deepin_log_viewer.svg)，单击运行日志收集工具。
+1. 单击任务栏上的启动器图标 ![deepin_launcher](../common/deepin_launcher.svg)，进入启动器界面。
+2. 上下滚动鼠标滚轮浏览或通过搜索，找到 ![deepin_log_viewer](../common/deepin_log_viewer.svg)，单击运行。
 3. 右键单击 ![deepin_log_viewer](../common/deepin_log_viewer.svg)，您可以：
    - 单击 **发送到桌面**，在桌面创建快捷方式。
    - 单击 **发送到任务栏**，将应用程序固定到任务栏。
@@ -22,8 +22,8 @@
 ### 关闭日志收集工具
 
 - 在日志收集工具界面，单击 ![close_icon](../common/close_icon.svg)，退出日志收集工具。
-- 右键单击任务栏上的 ![deepin_log_viewer](../common/deepin_log_viewer.svg) 图标，选择 **关闭所有** 来退出日志收集工具。
-- 在日志收集工具界面单击 ![icon_menu](../common/icon_menu.svg)，选择 **退出** 来退出日志收集工具。
+- 右键单击任务栏上的 ![deepin_log_viewer](../common/deepin_log_viewer.svg) 图标，选择 **关闭所有**，退出日志收集工具。
+- 在日志收集工具界面单击 ![icon_menu](../common/icon_menu.svg)，选择 **退出**，退出日志收集工具。
 
 ## 操作介绍
 
@@ -180,7 +180,7 @@
 
 ### 主题
 
-窗口主题包含浅色主题、深色主题和跟随系统主题。
+窗口主题包含浅色主题、深色主题和系统主题。
 
 1. 在日志收集工具界面，单击 ![icon_menu](../common/icon_menu.svg)。
 2. 选择 **主题**，选择一个主题颜色。

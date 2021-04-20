@@ -12,8 +12,8 @@
 
 ### 運行日誌查看器
 
-1. 單擊任務欄上的 ![deepin_launcher](../common/deepin_launcher.svg) 進入啟動器界面。
-2. 上下滾動鼠標滾輪瀏覽或通過搜索找到 ![deepin_log_viewer](../common/deepin_log_viewer.svg)，單擊運行日誌查看器。
+1. 單擊任務欄上的啟動器圖標  ![deepin_launcher](../common/deepin_launcher.svg)，進入啟動器界面。
+2. 上下滾動鼠標滾輪瀏覽或通過搜索，找到日誌查看器圖標 ![deepin_log_viewer](../common/deepin_log_viewer.svg)，單擊運行。
 3. 右鍵單擊 ![deepin_log_viewer](../common/deepin_log_viewer.svg)，您可以：
    - 單擊 **傳送到桌面**，在桌面創建快捷方式。
    - 單擊 **傳送到任務欄**，將應用程序固定到任務欄。
@@ -22,8 +22,8 @@
 ### 關閉日誌查看器
 
 - 在日誌查看器界面，單擊 ![close_icon](../common/close_icon.svg)，退出日誌查看器。
-- 右鍵單擊任務欄上的 ![deepin_log_viewer](../common/deepin_log_viewer.svg) 圖標，選擇 **關閉所有** 來退出日誌查看器。
-- 在日誌查看器界面單擊 ![icon_menu](../common/icon_menu.svg)，選擇 **退出** 來退出日誌查看器。
+- 在任務欄上單擊 ![deepin_log_viewer](../common/deepin_log_viewer.svg)，選擇 **關閉所有**，退出日誌查看器。
+- 在日誌查看器界面單擊 ![icon_menu](../common/icon_menu.svg)，選擇 **退出**，退出日誌查看器。
 
 ## 操作介紹
 
