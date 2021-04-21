@@ -2136,181 +2136,165 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         return;
     }
     m_treeViewLastScrollValue = value;
+    //算出现在滚动了多少页
+    int rateValue = (value + 25) / SINGLE_LOAD;
     if (m_flag == JOURNAL) {
-        //算出现在滚动了多少页
-        int rate = (value + 25) / SINGLE_LOAD;
         //  qDebug() << "valuePixel:" << valuePixel << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
         //    qDebug() << m_treeView->verticalScrollBar()->height();
         //如果快滚到页底了就加载下一页数据到表格中
-        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag >= rate)
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
                 return;
-
-            int leftCnt = jList.count() - SINGLE_LOAD * rate;
+            int leftCnt = jList.count() - SINGLE_LOAD * rateValue;
             //如果在页尾部则只加载最后一页的数量,否则加载单页全部数量
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            qDebug() << "rate" << rate;
+            qDebug() << "rate" << rateValue;
             //把数据加入model中
-            insertJournalTable(jList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
-            m_limitTag = rate;
+            insertJournalTable(jList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
 
         update();
     } else if (m_flag == BOOT_KLU) {
-
-        int rate = (value + 25) / SINGLE_LOAD;
         //  qDebug() << "valuePixel:" << valuePixel << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
         //    qDebug() << m_treeView->verticalScrollBar()->height();
-        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag >= rate)
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = jBootList.count() - SINGLE_LOAD * rate;
+            int leftCnt = jBootList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
             //        qDebug() << "total count: " << jList.count() << "left count : " << leftCnt
             //                 << " start : " << SINGLE_LOAD * rate << "end: " << end + SINGLE_LOAD
             //                 * rate;
-            qDebug() << "rate" << rate;
-            insertJournalBootTable(jBootList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
-            m_limitTag = rate;
+            qDebug() << "rate" << rateValue;
+            insertJournalBootTable(jBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
 
         update();
     }  else if (m_flag == APP) {
-        int rate = (value + 25) / SINGLE_LOAD;
         //        qDebug() << "value: " << value << "rate: " << rate << "single: " << SINGLE_LOAD;
-        qDebug() << "m_limitTag" << m_limitTag << "rate" << rate;
-        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag >= rate)
+        qDebug() << "m_limitTag" << m_limitTag << "rate" << rateValue;
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = appList.count() - SINGLE_LOAD * rate;
+            int leftCnt = appList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
             //            qDebug() << "total count: " << appList.count() << "left count : " <<
             //            leftCnt
             //                     << " start : " << SINGLE_LOAD * rate << "end: " << end +
             //                     SINGLE_LOAD * rate;
 
-            insertApplicationTable(appList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+            insertApplicationTable(appList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
-            m_limitTag = rate;
+            m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
 
     } else if (m_flag == KERN) {  // modified by Airy for bug 12263
-        int rate = (value + 25) / SINGLE_LOAD;
-
-        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag >= rate)
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = kList.count() - SINGLE_LOAD * rate;
+            int leftCnt = kList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertKernTable(kList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+            insertKernTable(kList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
-            m_limitTag = rate;
+            m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
 
     } else if (m_flag == DPKG) { // modified by Airy for bug 12263
-        int rate = (value + 25) / SINGLE_LOAD;
-
-        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag >= rate)
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = dList.count() - SINGLE_LOAD * rate;
+            int leftCnt = dList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertDpkgTable(dList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+            insertDpkgTable(dList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
-            m_limitTag = rate;
+            m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         } else if (m_flag == Dnf) { // modified by Airy for bug 12263
-            int rate = (value + 25) / SINGLE_LOAD;
-
-            if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-                if (m_limitTag >= rate)
+            if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+                if (m_limitTag >= rateValue)
                     return;
 
-                int leftCnt = dList.count() - SINGLE_LOAD * rate;
+                int leftCnt = dList.count() - SINGLE_LOAD * rateValue;
                 int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-                insertDpkgTable(dList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+                insertDpkgTable(dList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
-                m_limitTag = rate;
+                m_limitTag = rateValue;
                 m_treeView->verticalScrollBar()->setValue(valuePixel);
             }
 
         } else if (m_flag == XORG) {
-            int rate = (value + 25) / SINGLE_LOAD;
-            if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-                if (m_limitTag >= rate)
+            if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+                if (m_limitTag >= rateValue)
                     return;
-                int leftCnt = xList.count() - SINGLE_LOAD * rate;
+                int leftCnt = xList.count() - SINGLE_LOAD * rateValue;
                 int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertXorgTable(xList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
-                m_limitTag = rate;
+                insertXorgTable(xList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+                m_limitTag = rateValue;
                 m_treeView->verticalScrollBar()->setValue(valuePixel);
             }
         } else if (m_flag == BOOT) {
-            int rate = (value + 25) / SINGLE_LOAD;
-            if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-                if (m_limitTag >= rate)
+            if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+                if (m_limitTag >= rateValue)
                     return;
-                int leftCnt = currentBootList.count() - SINGLE_LOAD * rate;
+                int leftCnt = currentBootList.count() - SINGLE_LOAD * rateValue;
                 int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertBootTable(currentBootList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
-                m_limitTag = rate;
+                insertBootTable(currentBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+                m_limitTag = rateValue;
                 m_treeView->verticalScrollBar()->setValue(valuePixel);
             }
         } else if (m_flag == Kwin) {
-            int rate = (value + 25) / SINGLE_LOAD;
-            if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-                if (m_limitTag >= rate)
+            if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+                if (m_limitTag >= rateValue)
                     return;
-                int leftCnt = m_currentKwinList.count() - SINGLE_LOAD * rate;
+                int leftCnt = m_currentKwinList.count() - SINGLE_LOAD * rateValue;
                 int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertKwinTable(m_currentKwinList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
-                m_limitTag = rate;
+                insertKwinTable(m_currentKwinList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+                m_limitTag = rateValue;
                 m_treeView->verticalScrollBar()->setValue(valuePixel);
             }
         } else if (m_flag == Normal) {
-            int rate = (value + 25) / SINGLE_LOAD;
-            if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-                if (m_limitTag >= rate)
+            if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+                if (m_limitTag >= rateValue)
                     return;
-                int leftCnt = nortempList.count() - SINGLE_LOAD * rate;
+                int leftCnt = nortempList.count() - SINGLE_LOAD * rateValue;
                 int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertNormalTable(nortempList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
-                m_limitTag = rate;
+                insertNormalTable(nortempList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+                m_limitTag = rateValue;
                 m_treeView->verticalScrollBar()->setValue(valuePixel);
             }
-            int leftCnt = dnfList.count() - SINGLE_LOAD * rate;
+            int leftCnt = dnfList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertDnfTable(dnfList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
+            insertDnfTable(dnfList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
-            m_limitTag = rate;
+            m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(value);
         }
 
     } else if (m_flag == Dmesg) { // modified by Airy for bug 12263
-        int rate = (value + 25) / SINGLE_LOAD;
-
-        if (value < SINGLE_LOAD * rate - 20 || value < SINGLE_LOAD * rate) {
-            if (m_limitTag >= rate)
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = dmesgList.count() - SINGLE_LOAD * rate;
+            int leftCnt = dmesgList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertDmesgTable(dmesgList, SINGLE_LOAD * rate, SINGLE_LOAD * rate + end);
-            qDebug() << "rate" << rate << value;
-            m_limitTag = rate;
+            insertDmesgTable(dmesgList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            qDebug() << "rate" << rateValue << value;
+            m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(value);
         }
     }

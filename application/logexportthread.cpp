@@ -1138,7 +1138,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DNF> jList, QS
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (QString ErrorStr) {
+    } catch (const QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -1182,7 +1182,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DMESG> jList, 
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (QString ErrorStr) {
+    } catch (const QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -2601,7 +2601,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DNF> jList, Q
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -2664,7 +2664,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DMESG> jList,
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (QString ErrorStr) {
+    } catch (const QString ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();

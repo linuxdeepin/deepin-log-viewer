@@ -783,12 +783,10 @@ void LogAuthThread::handleNormal()
     QList<utmp > deadList;
     QList<LOG_MSG_NORMAL> nList;
     while ((utbufp = wtmp_next()) != (static_cast<struct utmp *>(nullptr))) {
+        utmp value_ = *utbufp;
         if (utbufp->ut_type != DEAD_PROCESS) {
-            utmp value_ = *utbufp;
             normalList.append(value_);
-        } else if (utbufp->ut_type == DEAD_PROCESS) {
-            utmp value_ = *utbufp;
-
+        } else {
             deadList.append(value_);
         }
     }
