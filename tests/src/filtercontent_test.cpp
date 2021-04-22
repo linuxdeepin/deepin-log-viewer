@@ -75,7 +75,7 @@ TEST_P(FilterContent_shortCutExport_UT, FilterContent_shortCutExport_UT)
         p->exportBtn = nullptr;
     }
     p->shortCutExport();
-    p->deleteLater();
+    delete p;
 }
 
 TEST(FilterContent_setAppComboBoxItemUT, FilterContent_setAppComboBoxItem_UT)
@@ -163,7 +163,7 @@ TEST(FilterContent_setUeButtonSytle_UT, FilterContent_setUeButtonSytle_UT)
     EXPECT_NE(p, nullptr);
     p->setUeButtonSytle();
     EXPECT_EQ(p->m_allBtn->isChecked(), true);
-    p->deleteLater();
+    delete p;
 }
 
 class FilterContent_eventFilter_UT_Param
@@ -235,6 +235,9 @@ TEST_P(FilterContent_eventFilter_UT, FilterContent_eventFilter_UT)
             checkCorrect = true;
         }
         EXPECT_EQ(checkCorrect, true);
+        delete keyEvent;
+        wResult->deleteLater();
+        w->deleteLater();
     } else {
         event = new QEvent(QEvent::None);
         p->eventFilter(nullptr, event);

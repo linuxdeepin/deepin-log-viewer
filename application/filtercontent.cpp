@@ -75,9 +75,9 @@ FilterContent::~FilterContent() {}
  */
 void FilterContent::initUI()
 {
-    QVBoxLayout *vLayout = new QVBoxLayout;
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
     // set period info
-    hLayout_period = new QHBoxLayout;
+    hLayout_period = new QHBoxLayout(this);
     periodLabel = new DLabel(DApplication::translate("Label", "Period:"), this);
     periodLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     m_btnGroup = new QButtonGroup(this);
@@ -158,8 +158,8 @@ void FilterContent::initUI()
     hLayout_period->setSpacing(10);
 
     // set level info
-    hLayout_all = new QHBoxLayout;
-    QHBoxLayout *hLayout_lvl = new QHBoxLayout;
+    hLayout_all = new QHBoxLayout(this);
+    QHBoxLayout *hLayout_lvl = new QHBoxLayout(this);
     lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
@@ -212,7 +212,7 @@ void FilterContent::initUI()
     hLayout_all->addLayout(hLayout_app);
 
     // add status item
-    QHBoxLayout *hLayout_status = new QHBoxLayout;
+    QHBoxLayout *hLayout_status = new QHBoxLayout(this);
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
     cbx_status = new LogCombox(this);
     cbx_status->setMinimumWidth(120);
@@ -225,7 +225,7 @@ void FilterContent::initUI()
     hLayout_all->addLayout(hLayout_status);
 
     // add by Airy for adding type item
-    QHBoxLayout *hLayout_type = new QHBoxLayout;
+    QHBoxLayout *hLayout_type = new QHBoxLayout(this);
     typeTxt = new DLabel(DApplication::translate("Label", "Event Type:"), this);
     typeCbx = new LogCombox(this);
     typeCbx->setMinimumWidth(120);

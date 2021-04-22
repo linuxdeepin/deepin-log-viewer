@@ -243,9 +243,7 @@ bool LogTreeView::event(QEvent *e)
     if (e->type() == QEvent::TouchBegin) {
 #if 1
         QTouchEvent *touchEvent = static_cast<QTouchEvent *>(e);
-
         if (!m_isPressed && touchEvent && touchEvent->device() && touchEvent->device()->type() == QTouchDevice::TouchScreen && touchEvent->touchPointStates() == Qt::TouchPointPressed) {
-
             QList<QTouchEvent::TouchPoint> points = touchEvent->touchPoints();
             //dell触摸屏幕只有一个touchpoint 但却能捕获到pinchevent缩放手势?
             //  qDebug() << "11111" << points.count();

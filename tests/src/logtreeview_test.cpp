@@ -106,11 +106,11 @@ TEST_F(LogTreeView_UT, mouseReleaseEvent_UT)
     m_treeView->mouseReleaseEvent(&event);
 }
 
-TEST_F(LogTreeView_UT, Event_UT)
-{
-    QEvent en(QEvent::TouchBegin);
-    m_treeView->event(&en);
-}
+//TEST_F(LogTreeView_UT, Event_UT)
+//{
+//    QEvent en(QEvent::TouchBegin);
+//    m_treeView->event(&en);
+//}
 
 //TEST(LogTreeView_Constructor_UT, LogTreeView_Constructor_UT_001)
 //{

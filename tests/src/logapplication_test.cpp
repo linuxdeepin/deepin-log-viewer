@@ -120,6 +120,7 @@ TEST_P(LogApplication_notify_UT, LogApplication_notify_UT)
     } else {
         QEvent *e = new QEvent(QEvent::None);
         p->notify(nullptr, e);
+        delete e;
     }
 
     p->deleteLater();

@@ -373,7 +373,6 @@ void JournalBootWork::doWork()
             //sleep(100);
             mutex.unlock();;
         }
-        //  delete d;
     }
     //最后可能有余下不足500的数据
     if (logList.count() >= 0) {

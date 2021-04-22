@@ -80,6 +80,7 @@ TEST_F(LogViewHeaderView_UT, LogViewHeaderView_focusInEvent_UT)
     QFocusEvent *e = new QFocusEvent(QEvent::FocusOut, Qt::ShortcutFocusReason);
     m_LogViewHeaderView->focusInEvent(e);
     EXPECT_EQ(m_LogViewHeaderView->m_reson, Qt::ShortcutFocusReason);
+    delete e;
 }
 
 TEST_F(LogViewHeaderView_UT, LogViewHeaderView_paintEvent_UT_001)

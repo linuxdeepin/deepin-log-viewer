@@ -144,7 +144,7 @@ void LogCollectorMain::initUI()
 
     this->setCentralWidget(new DWidget());
 
-    m_hLayout = new QHBoxLayout;
+    m_hLayout = new QHBoxLayout(this);
 
     /** left frame */
     m_logCatelogue = new LogListView();

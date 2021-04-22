@@ -24,6 +24,16 @@
 #include <DApplication>
 
 #include <QDebug>
+int stub_sd_journal_get_data_work(sd_journal *j, const char *field, const void **data, size_t *l)
+{
+    return 0;
+}
+
+QString stub_getReplaceColorStr_work(const char *d)
+{
+    return "testaaaa";
+}
+
 TEST(journalWork_Constructor_UT, journalWork_Constructor_UT_001)
 {
     journalWork *p = new journalWork(nullptr);
@@ -95,6 +105,9 @@ TEST(journalWork_setArg_UT, journalWork_setArg_UT_002)
 TEST(journalWork_doWork_UT, journalWork_doWork_UT)
 {
     journalWork *p = new journalWork(nullptr);
+    Stub stub;
+    stub.set(sd_journal_get_data, stub_sd_journal_get_data_work);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_work);
     p->doWork();
     p->deleteLater();
 }

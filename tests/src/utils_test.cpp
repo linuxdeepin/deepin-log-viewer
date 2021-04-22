@@ -29,6 +29,7 @@ TEST(Utils_Destructor_UT, Utils_Destructor_UT)
     Utils *p = new Utils(nullptr);
     EXPECT_NE(p, nullptr);
     p->~Utils();
+    p->deleteLater();
 }
 
 TEST(Utils_Constructor_UT, Utils_Constructor_UT)

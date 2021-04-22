@@ -94,6 +94,7 @@ TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
     v->m_reson = Qt::TabFocusReason;
     stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
     p->paint(new QPainter, op, QModelIndex());
+    v->deleteLater();
     p->deleteLater();
 }
 
@@ -414,6 +415,7 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_focusOutEvent_UT_
 
     QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusOut, Qt::OtherFocusReason);
     p->focusOutEvent(focusEvent);
+    delete focusEvent;
     p->deleteLater();
 }
 
@@ -426,6 +428,7 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_showRightMenu)
     EXPECT_NE(p, nullptr);
 
     p->showRightMenu(QPoint(0, 0), false);
+    p->deleteLater();
 }
 
 TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_paintEvent)

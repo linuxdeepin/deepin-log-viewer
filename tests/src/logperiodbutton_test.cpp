@@ -26,7 +26,7 @@ TEST(LogPeriodButton_Constructor_UT, LogPeriodButton_Constructor_UT_001)
     LogPeriodButton *p = new LogPeriodButton("", nullptr);
     EXPECT_NE(p, nullptr);
 
-    p->deleteLater();
+    delete p;
 }
 
 TEST(LogPeriodButton_setStandardSize_UT, LogPeriodButton_setStandardSize_UT_001)
@@ -35,7 +35,7 @@ TEST(LogPeriodButton_setStandardSize_UT, LogPeriodButton_setStandardSize_UT_001)
     EXPECT_NE(p, nullptr);
     p->setStandardSize(20);
     EXPECT_EQ(p->m_stahndardWidth, 20);
-    p->deleteLater();
+    delete p;
 }
 
 TEST(LogPeriodButton_getFocusReason_UT, LogPeriodButton_getFocusReason_UT_001)
@@ -43,7 +43,7 @@ TEST(LogPeriodButton_getFocusReason_UT, LogPeriodButton_getFocusReason_UT_001)
     LogPeriodButton *p = new LogPeriodButton("", nullptr);
     EXPECT_NE(p, nullptr);
     p->getFocusReason();
-    p->deleteLater();
+    delete p;
 }
 
 TEST(LogPeriodButton_enterEvent_UT, LogPeriodButton_enterEvent_UT_001)
@@ -53,7 +53,7 @@ TEST(LogPeriodButton_enterEvent_UT, LogPeriodButton_enterEvent_UT_001)
     QEvent *e = new QEvent(QEvent::Enter);
     p->enterEvent(e);
     EXPECT_EQ(p->isEnter, true);
-    p->deleteLater();
+    delete p;
 }
 
 TEST(LogPeriodButton_leaveEvent_UT, LogPeriodButton_leaveEvent_UT_001)
@@ -63,7 +63,7 @@ TEST(LogPeriodButton_leaveEvent_UT, LogPeriodButton_leaveEvent_UT_001)
     QEvent *e = new QEvent(QEvent::Leave);
     p->leaveEvent(e);
     EXPECT_EQ(p->isEnter, false);
-    p->deleteLater();
+    delete p;
 }
 
 //TEST(LogPeriodButton_paintEvent_UT, LogPeriodButton_paintEvent_UT_001)
@@ -100,5 +100,5 @@ TEST_P(LogPeriodButton_focusInEvent_UT, LogPeriodButton_focusInEvent_UT_001)
     p->setChecked(false);
     QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusIn, param.reason);
     p->focusInEvent(focusEvent);
-    p->deleteLater();
+    delete p;
 }

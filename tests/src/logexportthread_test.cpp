@@ -27,6 +27,8 @@
 
 #include <QDebug>
 #include <QIcon>
+#include <iostream>
+#include <../../3rdparty/DocxFactory/include/DocxFactory/WordProcessingMerger/WordProcessingMerger.h>
 TEST(LogExportThread_Constructor_UT, LogExportThread_Constructor_UT)
 {
     bool iscomplete = true;
@@ -775,7 +777,9 @@ TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT_
 
     bool result = p->exportToTxt("", p_model, APP);
     EXPECT_EQ(result, false);
+    delete item;
     p->deleteLater();
+    p_model->deleteLater();
 }
 
 TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT_002)
@@ -818,6 +822,8 @@ TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT_
     p->m_canRunning = true;
     bool result = p->exportToTxt("./testExport.txt", p_model, APP);
     EXPECT_EQ(result, true);
+    delete item;
+    p_model->deleteLater();
     p->deleteLater();
 }
 
@@ -861,6 +867,8 @@ TEST(LogExportThread_exportToTxt_Model_UT, LogExportThread_exportToTxt_Model_UT0
     p->m_canRunning = true;
     bool result = p->exportToTxt("./testExport.txt", p_model, JOURNAL);
     EXPECT_EQ(result, true);
+    delete item;
+    p_model->deleteLater();
     p->deleteLater();
 }
 
@@ -2609,6 +2617,28 @@ TEST_P(LogExportThread_exportToHtml_JOURNAL_UT, LogExportThread_exportToHtml_JOU
 //    p->run();
 //    p->deleteLater();
 //}
+void stub_load(const std::string &p_fileName)
+{
+    Q_UNUSED(p_fileName);
+}
+
+void stub_setClipboardValue(const std::string &p_itemName, const std::string &p_fieldName, const std::string &p_value)
+{
+    Q_UNUSED(p_itemName);
+    Q_UNUSED(p_fieldName);
+    Q_UNUSED(p_value);
+}
+
+void stub_paste(const std::string &p_itemName)
+{
+    Q_UNUSED(p_itemName);
+}
+
+void stub_save(const std::string &p_fileName)
+{
+    Q_UNUSED(p_fileName);
+}
+
 class LogExportthread_UT : public testing::Test
 {
 public:
@@ -2636,6 +2666,11 @@ public:
 
 TEST_F(LogExportthread_UT, LogExportThread001_UT)
 {
+    Stub stub;
+    stub.set(ADDR(DocxFactory::WordProcessingMerger, load), stub_load);
+    stub.set(ADDR(DocxFactory::WordProcessingMerger, paste), stub_paste);
+    stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
+    stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
     QStandardItemModel m_model;
     m_model.appendRow(new QStandardItem());
     LOG_FLAG flag;

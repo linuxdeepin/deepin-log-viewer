@@ -25,6 +25,16 @@
 #include <QDebug>
 #include <QThreadPool>
 #include <QThread>
+
+int stub_sd_journal_get_data_bootwork(sd_journal *j, const char *field, const void **data, size_t *l)
+{
+    return 0;
+}
+
+QString stub_getReplaceColorStr_bootwork(const char *d)
+{
+    return "testaaaa";
+}
 TEST(JournalBootWork_Constructor_UT, JournalBootWork_Constructor_UT_001)
 {
     JournalBootWork *p = new JournalBootWork(nullptr);
@@ -95,6 +105,9 @@ TEST(JournalBootWork_setArg_UT, JournalBootWork_setArg_UT_002)
 
 TEST(JournalBootWork_doWork_UT, JournalBootWork_doWork_UT)
 {
+    Stub stub;
+    stub.set(sd_journal_get_data, stub_sd_journal_get_data_bootwork);
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     JournalBootWork *p = new JournalBootWork(nullptr);
     p->doWork();
     p->deleteLater();
@@ -184,10 +197,10 @@ public:
     JournalBootWork *m_bootWork;
 };
 
-TEST_F(JournalBootWork_UT, testBootWork_UT)
-{
-    m_bootWork->doWork();
-}
+//TEST_F(JournalBootWork_UT, testBootWork_UT)
+//{
+//    m_bootWork->doWork();
+//}
 
 TEST_F(JournalBootWork_UT, testBootWork_UT001)
 {
