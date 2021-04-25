@@ -162,6 +162,7 @@ struct FILTER_CONFIG {
     int statusCbx = 0; //启动日志状态筛选下拉框的值
     int dateBtn = 0; //时间筛选按钮当前选择筛选按钮对应BUTTONID
     int typeCbx = 0;
+    int dnfCbx = 0;
 };
 enum BUTTONID {
     ALL = 0,

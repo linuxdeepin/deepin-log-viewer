@@ -726,6 +726,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_currentType = BOOT_KLU_TREE_DATA;
         this->setSelectorVisible(true, false, false, false, false);
     } else if (itemData.contains(DNF_TREE_DATA)) {
+        m_currentType = DNF_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, false, false, true);
         cbx_dnf_lv->setCurrentIndex(5);
     } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
@@ -915,5 +916,8 @@ void FilterContent::setExportButtonEnable(bool iEnable)
 void FilterContent::slot_cbxDnfLvIdxChanged(int idx)
 {
     Q_UNUSED(idx)
+    FILTER_CONFIG curConfig = m_config.value(m_currentType);
+    curConfig.dnfCbx = idx;
+    setCurrentConfig(curConfig);
     emit sigDnfLvlChanged(cbx_dnf_lv->currentData().value<DNFPRIORITY>());
 }

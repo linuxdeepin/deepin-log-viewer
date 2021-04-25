@@ -186,6 +186,8 @@ int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(XORG);
+    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("Xorg");
+    authThread->setFilePath(filePath);
     authThread->setFileterParam(iXorgFilter);
     connect(authThread, &LogAuthThread::proccessError, this,
             &LogFileParser::slog_proccessError, Qt::UniqueConnection);

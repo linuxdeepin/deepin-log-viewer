@@ -181,7 +181,7 @@ void LogListView::initUI()
     QStandardItem *item = nullptr;
     QString  systemName =   DBusManager::getSystemInfo();
     qDebug() << "systemName" << systemName;
-    if (isFileExist("/var/log/journal")) {
+    if (isFileExist("/var/log/journal") || isCentos) {
         item = new QStandardItem(QIcon::fromTheme("dp_system"), DApplication::translate("Tree", "System Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "System Log"));  // add by Airy for bug 16245
@@ -233,7 +233,7 @@ void LogListView::initUI()
         m_pModel->appendRow(item);
     }
     if (isCentos) {
-        item = new QStandardItem(QIcon::fromTheme("dp_d"), DApplication::translate("Tree", "dpkg Log"));
+        item = new QStandardItem(QIcon::fromTheme("dp_d"), DApplication::translate("Tree", "dnf Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "dnf Log"));
         item->setData(DNF_TREE_DATA, ITEM_DATE_ROLE);
