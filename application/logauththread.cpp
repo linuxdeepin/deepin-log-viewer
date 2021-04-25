@@ -532,115 +532,53 @@ void LogAuthThread::handleXorg()
     QStringList oldList;
     QList<QStringList> totalList;
     qint64 curDtSecond = 0;
-    QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
     //读取现在到本次开机经过的时间，xorg日志文件的时间为从本次开机到日志记录产生时的时间差值
     QFile startFile("/proc/uptime");
     QList<LOG_MSG_XORG> xList;
-    if (!file.exists() || !startFile.exists()) {
-        emit proccessError(tr("Log file is empty"));
-        emit xorgFinished(m_threadCount);
-        return;
-    }
-    if (!m_canRun) {
-        return;
-    }
-    QString startStr = "";
-    if (startFile.open(QFile::ReadOnly)) {
-
-        startStr = QString(startFile.readLine());
-        startFile.close();
-    }
-    if (!m_canRun) {
-        return;
-    }
-    startStr = startStr.split(" ").value(0, "");
-    if (startStr.isEmpty()) {
-        emit proccessError(tr("Log file is empty"));
-        emit xorgFinished(m_threadCount);
-        return;
-    }
-    if (!m_canRun) {
-        return;
-    }
-    initProccess();
-    if (!m_canRun) {
-        return;
-    }
-    m_process->start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
-    m_process->waitForFinished(-1);
-    if (!m_canRun) {
-        return;
-    }
-    QString errorStr(m_process->readAllStandardError());
-    if (!m_canRun) {
-        return;
-    }
-    //进程返回输出不是预期的则报错返回
-    Utils::CommandErrorType commandErrorType = Utils::isErroCommand(errorStr);
-    if (!m_canRun) {
-        return;
-    }
-    if (commandErrorType != Utils::NoError) {
-        if (commandErrorType == Utils::PermissionError) {
-            emit proccessError(errorStr + "\n" + "Please use 'sudo' run this application");
-        } else if (commandErrorType == Utils::RetryError) {
-            emit proccessError("The password is incorrect,please try again");
-        }
-        return;
-    }
-    if (!m_canRun) {
-        return;
-    }
-    QByteArray outByte = m_process->readAllStandardOutput();
-    m_process->close();
-    if (!m_canRun) {
-        return;
-    }
-    //当前时间减去开机到现在过去的毫秒数则为开机时间
-    QDateTime curDt = QDateTime::currentDateTime();
-    curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
-    if (!m_canRun) {
-        return;
-    }
-    newList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
-    //读取备份/var/log/Xorg.0.log.old日志文件,上一次开关机的Xorg日志文件
-    totalList.append(newList);
-    QFile oldFile("/var/log/Xorg.0.log.old");
-    if (oldFile.exists()) {
-        m_process->start("cat /var/log/Xorg.0.log.old"); // file path is fixed. so write cmd direct
-        m_process->waitForFinished(-1);
-        if (!m_canRun) {
-            return;
-        }
-        QString olderrorStr(m_process->readAllStandardError());
-        if (!m_canRun) {
-            return;
-        }
-        //进程返回输出不是预期的则报错返回
-        Utils::CommandErrorType oldCommandErrorType = Utils::isErroCommand(errorStr);
-        if (!m_canRun) {
-            return;
-        }
-        if (oldCommandErrorType != Utils::NoError) {
-            if (oldCommandErrorType == Utils::PermissionError) {
-                emit proccessError(errorStr + "\n" + "Please use 'sudo' run this application");
-            } else if (oldCommandErrorType == Utils::RetryError) {
-                emit proccessError("The password is incorrect,please try again");
+    for (int i = 0; i < m_FilePath.count(); i++) {
+        //        qInfo()<<m_FilePath.at(i)<<"******************************";
+        if (!m_FilePath.at(i).contains("txt")) {
+            QFile file(m_FilePath.at(i)); // add by Airy
+            if (!file.exists() || !startFile.exists()) {
+                emit proccessError(tr("Log file is empty"));
+                emit xorgFinished(m_threadCount);
+                return;
             }
+        }
+        if (!m_canRun) {
+            return;
+        }
+        QString startStr = "";
+        if (startFile.open(QFile::ReadOnly)) {
+            startStr = QString(startFile.readLine());
+            startFile.close();
+        }
+        if (!m_canRun) {
+            return;
+        }
+        startStr = startStr.split(" ").value(0, "");
+        if (startStr.isEmpty()) {
+            emit proccessError(tr("Log file is empty"));
+            emit xorgFinished(m_threadCount);
             return;
         }
         if (!m_canRun) {
             return;
         }
-        QByteArray oldOutByte = m_process->readAllStandardOutput();
-        m_process->close();
+        QString m_Log = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        QByteArray outByte = m_Log.toUtf8();
         if (!m_canRun) {
             return;
         }
-        oldList = QString(Utils::replaceEmptyByteArray(oldOutByte)).split('\n', QString::SkipEmptyParts);
-        totalList.append(oldList);
+        //当前时间减去开机到现在过去的毫秒数则为开机时间
+        QDateTime curDt = QDateTime::currentDateTime();
+        curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
+        if (!m_canRun) {
+            return;
+        }
+        newList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+        totalList.append(newList);
     }
-
     QString tempStr = "";
     for (int j = 0; j < totalList.count(); j++) {
         for (int i = totalList.at(j).size() - 1; i >= 0; --i) {
