@@ -443,6 +443,9 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
         Q_EMIT cbx_status->currentIndexChanged(iConifg.statusCbx);
     if (typeCbx->isVisible())
         typeCbx->setCurrentIndex(iConifg.typeCbx);
+    if (cbx_dnf_lv->isVisible()) {
+        cbx_dnf_lv->setCurrentIndex(iConifg.dnfCbx);
+    }
     m_btnGroup->button(iConifg.dateBtn)->setChecked(true); //add by Airy for bug 19660:period button default setting
     Q_EMIT m_btnGroup->button(iConifg.dateBtn)->click();
     //    Q_EMIT sigButtonClicked(iConifg.dateBtn,iConifg.levelCbx,QModelIndex());
@@ -728,7 +731,6 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(DNF_TREE_DATA)) {
         m_currentType = DNF_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, false, false, true);
-        cbx_dnf_lv->setCurrentIndex(5);
     } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
         this->setSelectorVisible(true, false, false, true,
                                  false);

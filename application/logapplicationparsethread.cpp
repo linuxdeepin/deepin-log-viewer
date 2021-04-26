@@ -21,6 +21,7 @@
 
 #include "logapplicationparsethread.h"
 #include "utils.h"
+#include "dbusproxy/dldbushandler.h"
 
 #include <DMessageBox>
 
@@ -95,30 +96,15 @@ void LogApplicationParseThread::doWork()
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
     m_appList.clear();
-    initProccess();
-
     //connect(m_process, SIGNAL(finished(int)), m_process, SLOT(deleteLater()));
     //因为筛选信息中含有日志文件路径，所以不能为空，否则无法获取
     if (m_AppFiler.path.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
         emit appFinished(m_threadCount);
     } else {
-        QStringList arg;
-        QFileInfo appFileInfo(m_AppFiler.path);
-        QString appDir = appFileInfo.absolutePath();
-        QString nameFilter = appDir.mid(appDir.lastIndexOf("/") + 1, appDir.size() - 1);
-        QDir dir(appDir);
-        dir.setFilter(QDir::Files | QDir::NoSymLinks); //实现对文件的过滤
-        dir.setNameFilters(QStringList() << nameFilter + ".*"); //设置过滤
-        dir.setSorting(QDir::Time);
-        QFileInfoList fileList = dir.entryInfoList();
-        for (int i = 0; i < fileList.count(); i++) {
-            //使用cat命令获取日志文件的文本
-            arg << "-c" << QString("cat %1").arg(fileList[i].absoluteFilePath());
-            m_process->start("/bin/bash", arg);
-            m_process->waitForFinished(-1);
-            QByteArray byteOutput = m_process->readAllStandardOutput();
-            m_process->close();
-            arg.clear();
+        QStringList filePath = DLDBusHandler::instance(this)->getFileInfo(m_AppFiler.path);
+        for (int i = 0; i < filePath.count(); i++) {
+            QString m_Log = DLDBusHandler::instance(this)->readLog(filePath.at(i));
+            QByteArray byteOutput = m_Log.toUtf8();
             if (!m_canRun) {
                 return;
             }
