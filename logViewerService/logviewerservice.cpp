@@ -73,13 +73,27 @@ QStringList LogViewerService::getFileInfo(const QString &file)
         tmpDirPath = tmpDir.path();
     }
     QStringList fileNamePath;
-    QDir dir("/var/log");
+    QString nameFilter;
+    QDir dir;
+    if (file.contains("deepin", Qt::CaseInsensitive) || file.contains("uos", Qt::CaseInsensitive)) {
+        QFileInfo appFileInfo(file);
+        if (!appFileInfo.isFile()) {
+            return QStringList() << "";
+        }
+        QString appDir = appFileInfo.absolutePath();
+        nameFilter = appDir.mid(appDir.lastIndexOf("/") + 1, appDir.size() - 1);
+        dir.setPath(appDir);
+    } else {
+        dir.setPath("/var/log");
+        nameFilter = file;
+    }
     //要判断路径是否存在
     if (!dir.exists()) {
         qWarning() << "it is not true path";
+        return QStringList() << "";
     }
     dir.setFilter(QDir::Files | QDir::NoSymLinks); //实现对文件的过滤
-    dir.setNameFilters(QStringList() << file + ".*"); //设置过滤
+    dir.setNameFilters(QStringList() << nameFilter + ".*"); //设置过滤
     dir.setSorting(QDir::Time);
     QFileInfoList fileList = dir.entryInfoList();
     for (int i = 0; i < fileList.count(); i++) {

@@ -77,7 +77,7 @@ TEST_F(LogApplicationParseThread_UT, LogApplicationParseThread_UT001)
     m_logAppThread->initProccess();
     m_logAppThread->setParam(appfilter);
     m_logAppThread->m_AppFiler.path = "/home/test";
-    m_logAppThread->doWork();
+    //    m_logAppThread->doWork();
     //    m_logAppThread->run();
     m_logAppThread->onProcFinished(1);
 }
