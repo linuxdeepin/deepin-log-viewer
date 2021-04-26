@@ -195,7 +195,6 @@ void FilterContent::initUI()
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Info"), INFO);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Debug"), DEBUG);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Trace"), TRACE);
-    cbx_dnf_lv->setCurrentIndex(5);
     hLayout_dnf_lvl->addWidget(dnflvTxt);
     hLayout_dnf_lvl->addWidget(cbx_dnf_lv, 1);
     hLayout_dnf_lvl->setSpacing(6);
@@ -365,9 +364,6 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 
     dnflvTxt->setVisible(dnfCbx);
     cbx_dnf_lv->setVisible(dnfCbx);
-    if (cbx_dnf_lv->isVisible()) {
-        cbx_dnf_lv->setCurrentIndex(5);
-    }
 
     typeTxt->setVisible(typecbx);  // add by Airy
     typeCbx->setVisible(typecbx);  // add by Airy
