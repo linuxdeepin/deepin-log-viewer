@@ -179,9 +179,6 @@ public slots:
     void slot_vScrollValueChanged(int valuePixel);
 
     void slot_searchResult(QString str);
-
-    void slot_themeChanged(Dtk::Widget::DApplicationHelper::ColorType colorType);
-
     void slot_getLogtype(int tcbx);  // add by Airy
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
     void slot_dnfLevel(DNFPRIORITY iLevel);
@@ -213,7 +210,6 @@ public slots:
     QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
 
 private:
-    void paintEvent(QPaintEvent *event);
     void resizeEvent(QResizeEvent *event);
 
 private:
