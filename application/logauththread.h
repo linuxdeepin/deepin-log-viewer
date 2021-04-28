@@ -139,6 +139,8 @@ private:
      * @brief m_normalFilters 开关机日志筛选条件
      */
     NORMAL_FILTERS  m_normalFilters;
+    DNF_FILTERS m_dnfFilters;
+    DMESG_FILTERS m_dmesgFilters;
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
     //获取数据用的cat命令的process
@@ -157,8 +159,6 @@ private:
     qint64 iTime;
     //所有日志文件路径
     QStringList m_FilePath;
-    DNF_FILTERS m_dnfFilters;
-    DMESG_FILTERS m_dmesgFilters;
     QMap<int, QString> m_levelMap;
     QMap<QString, int> m_dnfLevelDict;
     QMap<QString, QString> m_transDnfDict;
