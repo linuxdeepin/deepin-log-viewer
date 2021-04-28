@@ -29,6 +29,8 @@ class LogApplication: public DApplication
 public:
     LogApplication(int &argc, char **argv);
     void setMainWindow(LogCollectorMain *iMainWindow);
+protected:
+    bool notify(QObject *obj, QEvent *event) Q_DECL_OVERRIDE;
 private:
     //mainwindow指针
     LogCollectorMain *m_mainWindow{nullptr};

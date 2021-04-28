@@ -365,9 +365,16 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
 void LogListView::truncateFile(QString path_)
 {
     QProcess prc;
-    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == XORG_TREE_DATA || path_ == KWIN_TREE_DATA || path_ == DNF_TREE_DATA || path_ == DMESG_TREE_DATA) {
+    if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == KWIN_TREE_DATA ) {
         prc.start("pkexec", QStringList() << "logViewerTruncate" << path_.append("*"));
-    } else {
+    }else if (path_==XORG_TREE_DATA ) {
+        path_="/var/log/Xorg*.log";
+        prc.start("pkexec", QStringList() << "logViewerTruncate" << path_);
+    }else if (path_==DNF_TREE_DATA) {
+        path_="/var/log/dnf*.log*";
+        prc.start("pkexec", QStringList() << "logViewerTruncate" << path_);
+    }
+    else {
         QStringList arg;
         arg << "-c" << QString("truncate -s 0 %1").arg(path_.append("*"));
         prc.start("/bin/bash", arg);
@@ -413,6 +420,7 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             g_openForder->setEnabled(false);
         }
         if (pathData == DMESG_TREE_DATA) {
+            g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
         QString dirPath = QDir::homePath();

@@ -46,3 +46,31 @@ void LogApplication::setMainWindow(LogCollectorMain *iMainWindow)
 {
     m_mainWindow = iMainWindow;
 }
+
+/**
+ * @brief LogApplication::notify 重写全局notify虚函数
+ * @param obj 收到事件的对象
+ * @param evt 事件
+ * @return 是否截获或继续传递
+ */
+bool LogApplication::notify(QObject *obj, QEvent *evt)
+{
+    switch (evt->type()) {
+    case QEvent::KeyPress: {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(evt);
+        //全局截获tab按键事件，调用mainwindow的对应函数去处理tab按键控件间切换
+        if (keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab) {
+            if (m_mainWindow) {
+                bool rs =  m_mainWindow->handleApplicationTabEventNotify(obj, keyEvent);
+                if (rs) {
+                    return rs;
+                }
+            }
+        }
+        break;
+    }
+    default:
+        break;
+    }
+    return  DApplication::notify(obj, evt) ;
+}
