@@ -18,6 +18,7 @@
 #include "logapplicationparsethread.h"
 #include "logfileparser.h"
 #include "structdef.h"
+#include "dbusproxy/dldbushandler.h"
 
 #include <stub.h>
 
@@ -41,6 +42,18 @@ QStringList stub_split(QChar sep, QString::SplitBehavior behavior,
                          << "jsd[sa[dds.,]"
                          << "ds[ds..,/n"
                          << "test2.[df,f";
+}
+
+QString stub_readAppLog(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return "2021-04-06 13:29:32 install code:amd64 <none> 1.55.0-1617120720";
+}
+
+QStringList stub_getAppFileInfo(const QString &flag)
+{
+    Q_UNUSED(flag);
+    return QStringList() << "test";
 }
 
 class LogApplicationParseThread_UT : public testing::Test
@@ -74,10 +87,11 @@ TEST_F(LogApplicationParseThread_UT, LogApplicationParseThread_UT001)
     Stub stub;
     stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryInfoList), stub_entryInfoList);
     stub.set((QStringList(QString::*)(QChar, QString::SplitBehavior, Qt::CaseSensitivity) const)ADDR(QString, split), stub_split);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stub_getAppFileInfo);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_readAppLog);
     m_logAppThread->initProccess();
     m_logAppThread->setParam(appfilter);
     m_logAppThread->m_AppFiler.path = "/home/test";
-    //    m_logAppThread->doWork();
-    //    m_logAppThread->run();
+    m_logAppThread->doWork();
     m_logAppThread->onProcFinished(1);
 }

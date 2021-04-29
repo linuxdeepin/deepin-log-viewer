@@ -145,6 +145,10 @@ TEST_F(LogAuthThread_UT, LogAuthThread_UT001)
     m_logAuthThread->handleNormal();
     m_logAuthThread->m_type = LOG_FLAG::Kwin;
     m_logAuthThread->handleKwin();
+    m_logAuthThread->m_type = LOG_FLAG::Dnf;
+    m_logAuthThread->handleDnf();
+    m_logAuthThread->m_type = LOG_FLAG::Dmesg;
+    m_logAuthThread->handleDmesg();
 
     KWIN_FILTERS kwin;
     m_logAuthThread->setFileterParam(kwin);

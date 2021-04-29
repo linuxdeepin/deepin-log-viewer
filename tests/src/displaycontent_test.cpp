@@ -272,6 +272,20 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT007)
     m_content->slot_vScrollValueChanged(275);
 }
 
+TEST_F(DisplayContentlx_UT, FileParse_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_DNF> list;
+    QStandardItemModel m_model;
+    p->parseListToModel(list, &m_model);
+    QList<LOG_MSG_DMESG> m_list;
+    p->parseListToModel(m_list, &m_model);
+    QList<LOG_MSG_BOOT> m_list1;
+    p->parseListToModel(m_list, &m_model);
+    p->deleteLater();
+}
+
 TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT008)
 {
     Stub stub;
