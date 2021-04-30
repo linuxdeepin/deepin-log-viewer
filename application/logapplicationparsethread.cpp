@@ -96,6 +96,7 @@ void LogApplicationParseThread::doWork()
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
     m_appList.clear();
+    initProccess();
     //connect(m_process, SIGNAL(finished(int)), m_process, SLOT(deleteLater()));
     //因为筛选信息中含有日志文件路径，所以不能为空，否则无法获取
     if (m_AppFiler.path.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
@@ -103,8 +104,14 @@ void LogApplicationParseThread::doWork()
     } else {
         QStringList filePath = DLDBusHandler::instance(this)->getFileInfo(m_AppFiler.path);
         for (int i = 0; i < filePath.count(); i++) {
-            QString m_Log = DLDBusHandler::instance(this)->readLog(filePath.at(i));
-            QByteArray byteOutput = m_Log.toUtf8();
+            //使用cat命令获取日志文件的文本
+            QStringList arg;
+            arg << "-c" << QString("cat %1").arg(filePath[i]);
+            m_process->start("/bin/bash", arg);
+            m_process->waitForFinished(-1);
+            QByteArray byteOutput = m_process->readAllStandardOutput();
+            m_process->close();
+            arg.clear();
             if (!m_canRun) {
                 return;
             }
@@ -127,7 +134,11 @@ void LogApplicationParseThread::doWork()
                 if (list.count() < 3||!list[0].contains("[")||!list[1].contains("["))
                     continue;
 
-                QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
+                QStringList infoList = list[0].split("[", QString::SkipEmptyParts);
+                if (infoList.count() < 2) {
+                    continue;
+                }
+                QString dateTime = infoList[0].trimmed();
                 //原始文件时间日期文本为2020-07-03, 19:19:18.639 需要去除,
                 if (dateTime.contains(",")) {
                     dateTime.replace(",", "");
@@ -153,13 +164,17 @@ void LogApplicationParseThread::doWork()
                 }
 
                 msg.dateTime = dateTime;
-                msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
+                msg.level = infoList[1];
                 //筛选日志等级
                 if (m_AppFiler.lvlFilter != LVALL) {
                     if (m_levelDict.value(msg.level) != m_AppFiler.lvlFilter)
                         continue;
                 }
-                msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
+                QStringList msgList = list[1].split("[", QString::SkipEmptyParts);
+                if (msgList.count() < 2) {
+                    continue;
+                }
+                msg.src = msgList[1];
                 if (list.count() >= 4) {
                     msg.detailInfo = list.mid(2).join("]");
                     msg.msg = msg.detailInfo;

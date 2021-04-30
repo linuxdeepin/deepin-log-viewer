@@ -368,7 +368,7 @@ void LogListView::truncateFile(QString path_)
     if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == KWIN_TREE_DATA ) {
         prc.start("pkexec", QStringList() << "logViewerTruncate" << path_.append("*"));
     }else if (path_==XORG_TREE_DATA ) {
-        path_="/var/log/Xorg*.log";
+        path_ = "/var/log/Xorg*.log*";
         prc.start("pkexec", QStringList() << "logViewerTruncate" << path_);
     }else if (path_==DNF_TREE_DATA) {
         path_="/var/log/dnf*.log*";
