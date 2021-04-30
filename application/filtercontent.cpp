@@ -728,6 +728,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_currentType = DNF_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, false, false, true);
     } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
+        m_currentType = DMESG_TREE_DATA;
         this->setSelectorVisible(true, false, false, true,
                                  false);
     }
