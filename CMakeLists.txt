@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.7)
 
 if (NOT DEFINED VERSION)
-    set(VERSION 1.2.2)
+    set(VERSION 5.8.0.29)
 endif ()
 #这里项目名称绝对不能和编译出的target名称一样
 project(deepin_log_viewer)

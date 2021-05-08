@@ -1,3 +1,11 @@
+deepin-log-viewer (5.8.0.29) UNRELEASED; urgency=medium
+
+  * Non-maintainer upload.
+  * 修改内核日志没有时间问题
+  * 适配扫描管理器
+
+ -- unknown <uos@uos-PC>  Sat, 08 May 2021 14:52:07 +0800
+
 deepin-log-viewer (5.2.0-1) unstable; urgency=medium
 
   * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
