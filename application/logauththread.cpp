@@ -829,10 +829,6 @@ void LogAuthThread::handleDmesg()
     }
 
     initProccess();
-    //如果共享内存没有初始化绑定好，则无法开始，因为不能开启一个可能无法停止的进程
-    if (!SharedMemoryManager::instance()->isAttached()) {
-        return;
-    }
     //共享内存对应变量置true，允许进程内部逻辑运行
     ShareMemoryInfo shareInfo;
     shareInfo.isStart = true;

@@ -149,7 +149,7 @@ TEST_F(LogAuthThread_UT, LogAuthThread_UT001)
     m_logAuthThread->handleDnf();
     m_logAuthThread->m_type = LOG_FLAG::Dmesg;
     m_logAuthThread->handleDmesg();
-
+    m_logAuthThread->formatDateTime("04", "23", "14:25");
     KWIN_FILTERS kwin;
     m_logAuthThread->setFileterParam(kwin);
     KERN_FILTERS kern;
@@ -165,8 +165,3 @@ TEST_F(LogAuthThread_UT, LogAuthThread_UT001)
     EXPECT_EQ(m_logAuthThread->getIndex(), 1);
     delete LogAuthThread::instance();
 }
-
-//TEST_F(LogAuthThread_UT, LogAuthThread_UT002)
-//{
-//    m_logAuthThread->m_isStopProccess = false;
-//}

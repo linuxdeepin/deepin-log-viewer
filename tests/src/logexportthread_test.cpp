@@ -61,6 +61,11 @@ bool stub_open(QFile::OpenMode flags)
     return true;
 }
 
+QString stub_text()
+{
+    return "test";
+}
+
 class LogExportthread_UT : public testing::Test
 {
 public:
@@ -93,7 +98,7 @@ TEST_F(LogExportthread_UT, ExportToText_UT)
     stub.set(ADDR(DocxFactory::WordProcessingMerger, paste), stub_paste);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
     stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_dfwexists);
+    stub.set(ADDR(QStandardItem, text), stub_text);
     QStandardItemModel m_model;
     m_model.appendRow(new QStandardItem());
     LOG_FLAG m_flag = LOG_FLAG::JOURNAL;
@@ -117,6 +122,7 @@ TEST_F(LogExportthread_UT, ExportToText_UT)
     QList<LOG_MSG_DNF> m_dnfList {m_dnf};
     QList<LOG_MSG_DMESG> m_dmesgList {m_dmesg};
     QString str("test");
+    exportThread->m_canRunning = true;
 
     exportThread->exportToTxt("test", &m_model, m_flag);
     exportThread->exportToTxt("test", m_journalList, QStringList() << "test", m_flag);
@@ -203,6 +209,8 @@ TEST_F(LogExportthread_UT, ExportToHtml_UT)
     stub.set(ADDR(DocxFactory::WordProcessingMerger, paste), stub_paste);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
     stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
+    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_dfwexists);
+
     stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_dfwexists);
     QStandardItemModel m_model;
     m_model.appendRow(new QStandardItem());
