@@ -85,17 +85,8 @@ LogFileParser::~LogFileParser()
 int LogFileParser::parseByJournal(QStringList arg)
 {
     stopAllLoad();
-//    if (m_isJournalLoading) {
-//        return;
-//    }
     m_isJournalLoading = true;
-//    if (m_currentJournalWork && m_currentJournalWork->isRunning()) {
-//        m_currentJournalWork->stopWork();
-//        m_currentJournalWork->mutex.unlock();
-//        m_currentJournalWork->quit();
-//        m_currentJournalWork->wait();
 
-//    }
 #if 0
     m_currentJournalWork = journalWork::instance();
 
@@ -133,7 +124,6 @@ int LogFileParser::parseByJournal(QStringList arg)
 
     connect(this, &LogFileParser::stopJournal, work, &journalWork::stopWork);
 
-    //QtConcurrent::run(work, &journalWork::doWork);
     int index = work->getIndex();
     QThreadPool::globalInstance()->start(work);
     return index;
@@ -153,7 +143,6 @@ int LogFileParser::parseByJournalBoot(QStringList arg)
 
     connect(this, &LogFileParser::stopJournalBoot, work, &JournalBootWork::stopWork);
 
-    //QtConcurrent::run(work, &journalWork::doWork);
     int index = work->getIndex();
     QThreadPool::globalInstance()->start(work);
     return index;
@@ -199,79 +188,6 @@ int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
     int index = authThread->getIndex();
     QThreadPool::globalInstance()->tryStart(authThread);
     return index;
-    //    if (m_isXlogLoading) {
-    //        return;
-    //    }
-    //    m_isXlogLoading = true;
-    //    QFile file("/var/log/Xorg.0.log");  // if not,maybe crash
-    //    if (!file.exists())
-    //        return;
-    //    stopAllLoad();
-    //    if (!m_pXlogDataLoader) {
-    //        m_pXlogDataLoader = new QProcess(this);
-    //    }
-    //    m_pXlogDataLoader->start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
-    //    m_pXlogDataLoader->waitForFinished(-1);
-    //    QString errorStr(m_pXlogDataLoader->readAllStandardError());
-    //    Utils::CommandErrorType commandErrorType = Utils::isErroCommand(errorStr);
-    //    if (commandErrorType != Utils::NoError) {
-    //        if (commandErrorType == Utils::PermissionError) {
-    //            DMessageBox::information(nullptr, tr("information"),
-    //                                     errorStr + "\n" + "Please use 'sudo' run this application");
-    //        } else if (commandErrorType == Utils::RetryError) {
-    //            DMessageBox::information(nullptr, tr("information"),
-    //                                     "The password is incorrect,please try again");
-    //        }
-    //        return;
-    //    }
-
-    //    QByteArray outByte = m_pXlogDataLoader->readAllStandardOutput();
-    //    QString output = Utils::replaceEmptyByteArray(outByte);
-    //    m_pXlogDataLoader->close();
-    //    QDateTime curDt = QDateTime::currentDateTime();
-    //    qint64 curDtSecond = curDt.toMSecsSinceEpoch();
-    //    for (QString str : output.split('\n')) {
-    //        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-
-    //        //        if (str.startsWith("[")) {
-    //        //            //            xList.append(str);
-    //        //            xList.insert(0, str);
-    //        //        } else {
-    //        //            str += " ";
-    //        //            //            xList[xList.size() - 1] += str;
-    //        //            xList[0] += str;
-    //        //        }
-    //        if (str.startsWith("[")) {
-    //            QStringList list = str.split("]", QString::SkipEmptyParts);
-    //            if (list.count() != 2)
-    //                continue;
-
-    //            QString timeStr = list[0];
-    //            QString msgInfo = list[1];
-
-    //            // get time
-    //            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
-    //            qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
-    //            //   qint64 realT =  qint64(tStr.toDouble() * 1000);
-    //            QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
-    //            if (realDt.toMSecsSinceEpoch() < ms)  // add by Airy
-    //                continue;
-
-    //            LOG_MSG_XORG msg;
-    //            msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
-    //            msg.msg = msgInfo;
-
-    //            xList.insert(0, msg);
-    //        } else {
-    //            if (xList.length() > 0) {
-    //                xList[0].msg += str;
-    //            }
-    //        }
-    //    }
-    //    createFile(output, xList.count());
-    //    m_isXlogLoading = false;
-    //    emit xlogFinished();
-
 }
 
 // add by Airy
@@ -279,88 +195,6 @@ int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
 #include <utmp.h>
 #include <utmpx.h>
 #include <wtmpparse.h>
-//void LogFileParser::parseByNormal1(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler)
-//{
-//    if (m_isNormalLoading) {
-//        return;
-//    }
-//    stopAllLoad();
-//    m_isNormalLoading = true;
-//    int ret = -2;
-//    struct utmp *utbufp;
-//    wtmp_next();
-//    if (wtmp_open(QString(WTMP_FILE).toLatin1().data()) == -1) {
-//        printf("open WTMP_FILE file error\n");
-//        return;  // exit(1) will exit this application
-//    }
-//    QList<utmp > normalList;
-//    QList<utmp > deadList;
-//    while ((utbufp = wtmp_next()) != (static_cast<struct utmp *>(nullptr))) {
-//        if (utbufp->ut_type != DEAD_PROCESS) {
-//            utmp value_ = *utbufp;
-//            normalList.append(value_);
-//        } else if (utbufp->ut_type == DEAD_PROCESS) {
-//            utmp value_ = *utbufp;
-
-//            deadList.append(value_);
-//        }
-//    }
-////    foreach (utmp item, normalList) {
-////        qDebug() << "normalList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
-////    }
-////    foreach (utmp item, deadList) {
-////        qDebug() << "deadList" << item.ut_name << "line" << item.ut_line  << "type" << item.ut_type << "time" << QDateTime::fromTime_t(item.ut_time).toString("yyyy-MM-dd hh:mm:ss");
-////    }
-//    QString a_name = "~";
-//    foreach (utmp value, normalList) {
-//        QString strtmp = value.ut_name;
-//        //    qDebug() << value.ut_name << value.ut_type;
-//        if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
-//            //   if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
-//            continue;
-//        }
-
-//        struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
-//        LOG_MSG_NORMAL Nmsg;
-//        if (value.ut_type == USER_PROCESS) {
-//            Nmsg.eventType = "Login";
-//            Nmsg.userName = value.ut_name;
-//            a_name = Nmsg.userName;
-//        } else {
-//            Nmsg.eventType = value.ut_name;
-//            if (strtmp.compare("reboot") == 0) {
-//                Nmsg.eventType = "Boot";
-//            }
-//            Nmsg.userName = a_name;
-//        }
-//        QString end_str;
-//        if (deadList.length() > 0 && ret != -1)
-//            end_str = show_end_time(nodeUTMP.ut_time);
-//        else if (ret == -1 && value.ut_type == USER_PROCESS)
-//            end_str = "still logged in";
-//        else if (ret == -1 && value.ut_type == BOOT_TIME)
-//            end_str = "system boot";
-//        QString start_str = show_start_time(value.ut_time);
-
-//        QString n_time = QDateTime::fromTime_t(static_cast<uint>(value.ut_time)).toString("yyyy-MM-dd hh:mm:ss");
-//        end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
-//        start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
-//        Nmsg.dateTime = n_time;
-//        QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
-//        if (iNormalFiler.timeFilterEnd > 0 && iNormalFiler.timeFilterBegin > 0) {
-//            if (nn_time.toMSecsSinceEpoch() < iNormalFiler.timeFilterBegin || nn_time.toMSecsSinceEpoch() > iNormalFiler.timeFilterEnd) { // add by Airy
-//                continue;
-//            }
-//        }
-
-//        Nmsg.msg = start_str + "  ~  " + end_str;
-//        printf("\n");
-//        nList.insert(0, Nmsg);
-//    }
-//    wtmp_close();
-//    m_isNormalLoading = false;
-//    emit normalFinished(0);
-//}
 
 int LogFileParser::parseByNormal(NORMAL_FILTERS &iNormalFiler)
 {
@@ -447,19 +281,11 @@ int LogFileParser::parseByBoot()
 
 int LogFileParser::parseByKern(KERN_FILTERS &iKernFilter)
 {
-//    if (m_isKernLoading) {
-//        return;
-//    }
-
     stopAllLoad();
     m_isKernLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(KERN);
     QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("kern");
-    //    qInfo()<<filePath<<"************";
-    //    QStringList filePath=  QStringList()<<"/var/log/kern.log"<<"/var/log/kern.log.1"<<"/var/log/kern.log.2"<<"/var/log/kern.log.3"<<"/var/log/kern.log.4";
-    //    const QString&str="/var/log/kern";
-
     authThread->setFileterParam(iKernFilter);
     authThread->setFilePath(filePath);
     connect(authThread, &LogAuthThread::kernFinished, this,
@@ -475,9 +301,6 @@ int LogFileParser::parseByKern(KERN_FILTERS &iKernFilter)
 
 int LogFileParser::parseByApp(APP_FILTERS &iAPPFilter)
 {
-//    if (m_isAppLoading) {
-//        return;
-//    }
     stopAllLoad();
     m_isAppLoading = true;
 
@@ -567,7 +390,6 @@ void LogFileParser::stopAllLoad()
     emit stopNormal();
     emit stopDnf();
     emit stopDmesg();
-    //  QThreadPool::globalInstance()->waitForDone(-1);
     return;
 }
 
@@ -576,7 +398,6 @@ void LogFileParser::stopAllLoad()
 void LogFileParser::quitLogAuththread(QThread *iThread)
 {
     if (iThread && iThread->isRunning()) {
-        //  iThread->terminate();
         qDebug() << __FUNCTION__;
         iThread->quit();
         iThread->wait();

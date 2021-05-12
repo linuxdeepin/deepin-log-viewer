@@ -45,6 +45,7 @@ LogNormalButton::LogNormalButton(const QIcon &icon, const QString &text, QWidget
 {
     setFocusPolicy(Qt::StrongFocus);
 }
+
 /**
  * @brief LogNormalButton::keyPressEvent
  * 增加回车触发按钮功能,捕获回车键盘事件发送空格键盘事件
@@ -59,6 +60,7 @@ void LogNormalButton::keyPressEvent(QKeyEvent *event)
     }
     DPushButton::keyPressEvent(event);
 }
+
 /**
  * @brief LogNormalButton::keyReleaseEvent
  * 增加回车触发按钮功能,捕获回车键盘事件发送空格键盘事件
@@ -74,6 +76,7 @@ void LogNormalButton::keyReleaseEvent(QKeyEvent *event)
     }
     DPushButton::keyReleaseEvent(event);
 }
+
 /**
  * @brief LogNormalButton::paintEvent
  * 绘制焦点边框,屏蔽默认绘制事件,只在tabfoucus时绘制边框
@@ -99,6 +102,7 @@ void LogNormalButton::paintEvent(QPaintEvent *e)
     }
 
 }
+
 /**
  * @brief LogNormalButton::focusInEvent
  * 捕获最近一次获得焦点的reason以区分是否为tabfoucs
@@ -111,5 +115,3 @@ void LogNormalButton::focusInEvent(QFocusEvent *event)
     }
     DPushButton::focusInEvent(event);
 }
-
-

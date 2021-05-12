@@ -66,7 +66,6 @@ void LogListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 {
 
     DStyledItemDelegate::paint(painter, option, index);
-    // if (option.state & QStyle::State_HasFocus) {
     LogListView *parentView = qobject_cast<LogListView *>(this->parent());
     if ((option.state & QStyle::State_HasFocus) && parentView && (parentView->focusReson() == Qt::TabFocusReason || parentView->focusReson() == Qt::BacktabFocusReason) && (parentView->hasFocus())) {
         // draw focus
@@ -77,7 +76,6 @@ void LogListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
         rect.setWidth(option.rect.width());
         rect.setHeight(option.rect.height());
 
-        //    QRect backgroundRect = QRect(rect.left() + 10, rect.top(), rect.width() - 20, rect.height());
         if (index.isValid()) {
             QStyleOptionFocusRect o;
             o.QStyleOption::operator=(option);
@@ -104,7 +102,6 @@ bool LogListDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, cons
     QToolTip::hideText();
     if (event->type() == QEvent::ToolTip) {
         const QString tooltip = index.data(Qt::DisplayRole).toString();
-        //qDebug() << __FUNCTION__ << "__now Hover is :__" << tooltip;
         //如果tooltip不为空且合法则显示，否则直接关闭所有tooltip
         if (tooltip.isEmpty() || tooltip == "_split_") {
             hideTooltipImmediately();
@@ -145,11 +142,7 @@ LogListView::LogListView(QWidget *parent)
     initUI();
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &LogListView::customContextMenuRequested, this, &LogListView::requestshowRightMenu);
-    //    connect(DApplicationHelper::instance(), &DApplicationHelper::themeTypeChanged, this,
-    //            &LogListView::onChangedTheme);
     DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
-    //    onChangedTheme(ct);
-    //    setFocusPolicy(Qt::TabFocus);
 
     m_rightClickTriggerShortCut = new QShortcut(this);
     m_rightClickTriggerShortCut->setKey(Qt::ALT + Qt::Key_M);
@@ -253,7 +246,6 @@ void LogListView::initUI()
             m_pModel->appendRow(item);
         }
     }
-    // if (isFileExist(QDir::homePath() + "/.kwin.log")) {
     //w515是新版本内核的panguv返回值  panguV是老版本
     if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName == "pangu" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU") || systemName.toUpper().contains("PANGU")) {
         item = new QStandardItem(QIcon::fromTheme("dp_kwin"), DApplication::translate("Tree", "Kwin Log"));
@@ -480,77 +472,6 @@ void LogListView::requestshowRightMenu(const QPoint &pos)
         showRightMenu(pos, false);
     }
 }
-
-
-/**
- * @author Airy
- * @brief LogListView::contextMenuEvent 显示右键菜单
- * @param event
- */
-//void LogListView::contextMenuEvent(QContextMenuEvent *event)
-//{
-//    Q_UNUSED(event);
-//    QModelIndex idx = this->currentIndex();
-//    QString pathData = idx.data(ITEM_DATE_ROLE).toString();
-//    if (!this->selectionModel()->selectedIndexes().empty()) {
-
-//        g_context = new QMenu(this);
-//        g_openForder = new QAction(/*tr("在文件管理器中显示")*/DApplication::translate("Action", "Display in file manager"), this);
-//        g_clear = new QAction(/*tr("清除日志内容")*/DApplication::translate("Action", "Clear log"), this);
-//        g_refresh = new QAction(/*tr("刷新")*/DApplication::translate("Action", "Refresh"), this);
-
-//        g_context->addAction(g_openForder);
-//        g_context->addAction(g_clear);
-//        g_context->addAction(g_refresh);
-
-//        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA) {
-//            g_clear->setEnabled(false);
-//            g_openForder->setEnabled(false);
-//        }
-
-//        QString dirPath = QDir::homePath();
-//        QString _path_ = g_path;      //get app path
-//        QString path = "";
-
-
-//        if (pathData == KERN_TREE_DATA || pathData == BOOT_TREE_DATA || pathData == DPKG_TREE_DATA || pathData == XORG_TREE_DATA || pathData == KWIN_TREE_DATA) {
-//            path = pathData;
-//        } else if (pathData == APP_TREE_DATA) {
-//            path = _path_;
-//        }
-//        //显示当前日志目录
-//        connect(g_openForder, &QAction::triggered, this, [ = ] {
-//            DDesktopServices::showFileItem(path);
-//        });
-
-//        QModelIndex index = idx;
-//        //刷新逻辑
-//        connect(g_refresh, &QAction::triggered, this, [ = ]() {
-//            emit sigRefresh(index);
-//        });
-
-//        //清除日志逻辑
-//        connect(g_clear, &QAction::triggered, this, [ = ]() {
-
-//            DDialog *dialog = new DDialog(this);
-//            dialog->setWindowFlags(dialog->windowFlags() | Qt::WindowStaysOnTopHint);
-//            dialog->setIcon(QIcon::fromTheme("dialog-warning"));
-//            dialog->setMessage(/*"清除日志内容"*/DApplication::translate("Action", "Are you sure you want to clear the log?"));
-//            dialog->addButton(QString(/*tr("取消")*/DApplication::translate("Action", "Cancel")), false, DDialog::ButtonNormal);
-//            dialog->addButton(QString(/*tr("确定")*/DApplication::translate("Action", "Confirm")), true, DDialog::ButtonRecommend);
-
-//            int Ok = dialog->exec();
-//            if (Ok == DDialog::Accepted) {
-//                truncateFile(path);
-//                emit sigRefresh(index);
-//            }
-//        });
-
-//        this->setContextMenuPolicy(Qt::DefaultContextMenu);
-//        g_context->exec(mapToGlobal(event->pos()));
-
-//    }
-//}
 
 void LogListView::mouseMoveEvent(QMouseEvent *event)
 {

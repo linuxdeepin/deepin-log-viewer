@@ -35,7 +35,6 @@ public:
     QProcess *m_proc;
     QSharedMemory *m_commondM;
 public slots:
-    //    void dataRecived();
     void releaseMemery();
     ShareMemoryInfo getControlInfo();
 

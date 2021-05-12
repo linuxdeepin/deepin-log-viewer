@@ -129,12 +129,6 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     painter->restore();
 }
 
-//QWidget *LogViewItemDelegate::createEditor(QWidget *, const QStyleOptionViewItem &,
-//                                           const QModelIndex &) const
-//{
-//    return nullptr;
-//}
-
 QSize LogViewItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                     const QModelIndex &index) const
 {

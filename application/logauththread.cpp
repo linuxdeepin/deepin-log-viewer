@@ -65,12 +65,6 @@ LogAuthThread::LogAuthThread(QObject *parent)
 LogAuthThread::~LogAuthThread()
 {
     stopProccess();
-    //    if (m_process) {
-    //        //   m_process->kill();
-    //        m_process->close();
-    //        m_process->deleteLater();
-    //        m_process = nullptr;
-    //    }
 }
 void LogAuthThread::initDnfLevelMap()
 {
@@ -108,24 +102,6 @@ void LogAuthThread::initLevelMap()
     m_levelMap.insert(7, Dtk::Widget::DApplication::translate("Level", "Debug"));
 }
 
-///**
-// * @brief LogAuthThread::getStandardOutput 返回m_process执行输出的信息
-// * @return m_process执行输出的信息
-// */
-//QString LogAuthThread::getStandardOutput()
-//{
-//    return m_output;
-//}
-
-/**
- * @brief LogAuthThread::getStandardError 返回m_process执行输出的错误信息
- * @return m_process执行输出的错误信息
- */
-//QString LogAuthThread::getStandardError()
-//{
-//    return m_error;
-//}
-
 /**
  * @brief LogAuthThread::stopProccess 停止日志数据获取进程并销毁
  */
@@ -148,18 +124,6 @@ void LogAuthThread::stopProccess()
         m_process->kill();
 
     }
-
-    // kill(qvariant_cast<pid_t>(m_process->pid()), SIGKILL);
-
-
-    // m_process->close();
-//        delete  m_process;
-
-    //m_process->terminate();
-
-    //  m_process->close();
-    //m_process->waitForFinished(-1);
-
 }
 
 void LogAuthThread::setFilePath(QStringList filePath)
@@ -196,7 +160,6 @@ QString LogAuthThread::startTime()
  */
 void LogAuthThread::run()
 {
-    qDebug() << " LogAuthThread::run-----threadrun" << m_type;
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
     //根据类型成员变量执行对应日志的获取逻辑
@@ -238,7 +201,6 @@ void LogAuthThread::run()
  */
 void LogAuthThread::handleBoot()
 {
-    //    qInfo()<<"**********************************";
     QList<LOG_MSG_BOOT> bList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
@@ -318,9 +280,7 @@ void LogAuthThread::handleBoot()
 void LogAuthThread::handleKern()
 {
     QList<LOG_MSG_JOURNAL> kList;
-    //   qDebug()<<m_FilePath<<"+++++++++++++++++++++++++++";
     for (int i = 0; i < m_FilePath.count(); i++) {
-        //        qInfo()<<m_FilePath.at(i)<<"******************************";
         if (!m_FilePath.at(i).contains("txt")) {
             QFile file(m_FilePath.at(i)); // add by Airy
             if (!file.exists()) {
@@ -335,13 +295,8 @@ void LogAuthThread::handleKern()
         if (!m_canRun) {
             return;
         }
-        // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
         m_process->setProcessChannelMode(QProcess::MergedChannels);
         if (!m_canRun) {
-            return;
-        }
-        //如果共享内存没有初始化绑定好，则无法开始，因为不能开启一个可能无法停止的进程
-        if (!SharedMemoryManager::instance()->isAttached()) {
             return;
         }
         //共享内存对应变量置true，允许进程内部逻辑运行
@@ -350,11 +305,8 @@ void LogAuthThread::handleKern()
         SharedMemoryManager::instance()->setRunnableTag(shareInfo);
         //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
         m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                                 //         << "/home/zyc/Documents/tech/同方内核日志没有/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-                                                 //    << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
                                                  << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
         m_process->waitForFinished(-1);
-        qDebug() << " m_process->exitCode() " << m_process->exitCode();
         //有错则传出空数据
         if (m_process->exitCode() != 0) {
             emit kernFinished(m_threadCount);
@@ -536,7 +488,6 @@ void LogAuthThread::handleXorg()
     QFile startFile("/proc/uptime");
     QList<LOG_MSG_XORG> xList;
     for (int i = 0; i < m_FilePath.count(); i++) {
-        //        qInfo()<<m_FilePath.at(i)<<"******************************";
         if (!m_FilePath.at(i).contains("txt")) {
             QFile file(m_FilePath.at(i)); // add by Airy
             if (!file.exists() || !startFile.exists()) {
@@ -731,9 +682,7 @@ void LogAuthThread::handleNormal()
     QString a_name = "~";
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
-        //    qDebug() << value.ut_name << value.ut_type;
         if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
-            //   if (strtmp.compare("runlevel") == 0) {  // clear the runlevel
             continue;
         }
         struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
@@ -888,12 +837,9 @@ void LogAuthThread::handleDmesg()
     ShareMemoryInfo shareInfo;
     shareInfo.isStart = true;
     SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-    // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
     m_process->setProcessChannelMode(QProcess::MergedChannels);
     m_process->start("pkexec", QStringList() << "logViewerAuth"
                                              << "dmesg" << SharedMemoryManager::instance()->getRunnableKey());
-    //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
-    // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
     m_process->waitForFinished(-1);
     QString errorStr(m_process->readAllStandardError());
     Utils::CommandErrorType commandErrorType = Utils::isErroCommand(errorStr);
@@ -903,12 +849,8 @@ void LogAuthThread::handleDmesg()
     if (commandErrorType != Utils::NoError) {
         if (commandErrorType == Utils::PermissionError) {
             emit proccessError(errorStr + "\n" + "Please use 'sudo' run this application");
-            //            DMessageBox::information(nullptr, tr("information"),
-            //                                     errorStr + "\n" + "Please use 'sudo' run this application");
         } else if (commandErrorType == Utils::RetryError) {
             emit proccessError("The password is incorrect,please try again");
-            //            DMessageBox::information(nullptr, tr("information"),
-            //                                     "The password is incorrect,please try again");
         }
         m_process->close();
         return;
@@ -923,8 +865,6 @@ void LogAuthThread::handleDmesg()
     stream.setCodec(encode);
     QString output = stream.readAll();
     QStringList l = QString(byte).split('\n');
-    qDebug() << __FUNCTION__ << "byte" << byte.length();
-    //    qDebug() << __FUNCTION__ << "str" << outByte;
     m_process->close();
     if (!m_canRun) {
         return;
@@ -939,20 +879,13 @@ void LogAuthThread::handleDmesg()
         //启用贪婪匹配
         dmesgExp.setMinimal(false);
         int pos = dmesgExp.indexIn(str);
-        // qDebug()  << pos <<  dmesgExp.capturedTexts();    qDebug() << str;
         if (pos >= 0) {
             QStringList list = dmesgExp.capturedTexts();
             if (list.count() < 6)
                 continue;
-            //            if (list.count() > 4) {
-            //                qDebug() << "match wrong" << list;
-            //            }
-
             QString timeStr = list[3] + list[4];
             QString msgInfo = list[5].simplified();
             int levelOrigin = list[1].toInt();
-            // qDebug() << "match wrong" << timeStr << levelOrigin << list;
-            // get time
             QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
             qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
             QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
@@ -986,7 +919,6 @@ void LogAuthThread::initProccess()
 {
     if (!m_process) {
         m_process.reset(new QProcess);
-        //connect(m_process, SIGNAL(finished(int)), this, SLOT(onFinished(int)), Qt::UniqueConnection);
     }
 }
 
@@ -999,8 +931,6 @@ void LogAuthThread::initProccess()
  */
 qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
 {
-    //    QDateTime::fromString("9月 24 2019 10:32:34", "MMM d yyyy hh:mm:ss");
-    // default year =2019
     QLocale local(QLocale::English, QLocale::UnitedStates);
 
     QDate curdt = QDate::currentDate();
@@ -1024,36 +954,3 @@ qint64 LogAuthThread::formatDateTime(QString y, QString t)
     QDateTime dt = local.toDateTime(tStr, "yyyy-MM-dd hh:mm:ss");
     return dt.toMSecsSinceEpoch();
 }
-
-//void LogAuthThread::onFinished(int exitCode)
-//{
-//    Q_UNUSED(exitCode)
-
-////    QProcess *process = dynamic_cast<QProcess *>(sender());
-////    if (!process) {
-////        return;
-////    }
-////    if (!process->isOpen()) {
-////        return;
-////    }
-//    if (m_type != KERN && m_type != BOOT) {
-//        return;
-//    }
-//    QByteArray byte =   m_process->readAllStandardOutput();
-//    QTextStream stream(&byte);
-//    QByteArray encode;
-//    stream.setCodec(encode);
-//    QString str = stream.readAll();
-//    QStringList l = str.split('\n');
-//    qDebug() << __FUNCTION__ << "byte" << byte.length();
-//    qDebug() << __FUNCTION__ << "str" << str.length();
-//    //  qDebug() << __FUNCTION__ << "str" << str;
-
-////    emit cmdFinished(m_type, str);
-
-//}
-
-//void LogAuthThread::kernDataRecived()
-//{
-
-//}

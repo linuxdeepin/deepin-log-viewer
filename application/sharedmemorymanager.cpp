@@ -30,6 +30,7 @@ SharedMemoryManager::SharedMemoryManager(QObject *parent)
 {
     init();
 }
+
 void SharedMemoryManager::setRunnableTag(ShareMemoryInfo iShareInfo)
 {
     m_commondM->lock();

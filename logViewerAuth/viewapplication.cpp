@@ -35,21 +35,17 @@
 #include <iostream>
 #include<signal.h>
 
-
-
 ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc, argv)
 {
 
     QCommandLineParser parser;
     parser.process(*this);
     const QStringList fileList = parser.positionalArguments();
-    //    qDebug() << fileList << "***" << fileList.count();
     if (fileList.count() < 2) {
         qDebug() << "less than 2";
         return ;
     }
     QStringList arg;
-    //    "/var/log/boot.log";//开机的时候系统核心去侦测与启动，接下来开始各种核心支援的功能启动等；
     if (fileList[0] == "dmesg") {
         arg << "-c"
             << "dmesg -r";
@@ -65,20 +61,9 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
         m_commondM->detach();          //解除关联
     m_commondM->attach(QSharedMemory::ReadOnly);
 
-
-
-
-    //ShareMemoryInfo   *m_pShareMemoryInfo = static_cast<ShareMemoryInfo *>(m_commondM->data());
-
     connect(m_proc, &QProcess::readyReadStandardOutput, this, [ = ] {
-//        signal(SIGKILL, [](int x)
-//        {
-//            exit(0);
-//        });
-
         if (!getControlInfo().isStart)
         {
-            // qDebug() << "stop-----------";
             m_proc->kill();
             releaseMemery();
             exit(0);
@@ -89,14 +74,6 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     m_proc->start("/bin/bash", arg);
 
     m_proc->waitForFinished(-1);
-    //直接
-
-//    QTextStream stream(&byte);
-//    QByteArray encode;
-//    stream.setCodec(encode);
-//    QString str = stream.readAll();
-    //必须要replace \u0000,不然QByteArray会忽略这以后的内容
-
     m_proc->close();
 }
 
@@ -104,12 +81,6 @@ ViewApplication::~ViewApplication()
 {
     releaseMemery();
 }
-
-//void ViewApplication::dataRecived()
-//{
-//    m_commondM->detach();
-//    m_commondM->deleteLater();
-//}
 
 void ViewApplication::releaseMemery()
 {
@@ -135,5 +106,3 @@ ViewApplication::ShareMemoryInfo ViewApplication::getControlInfo()
     }
     return defaultInfo;
 }
-
-
