@@ -55,7 +55,9 @@ TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT_001)
 {
     LogIconButton *p = new LogIconButton("aa", nullptr);
     EXPECT_NE(p, nullptr);
-    p->event(new QEvent(QEvent::QueryWhatsThis));
+    QEvent *e = new QEvent(QEvent::QueryWhatsThis);
+    p->event(e);
+    delete e;
     p->deleteLater();
 }
 
@@ -63,8 +65,9 @@ TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT_002)
 {
     LogIconButton *p = new LogIconButton("aa", nullptr);
     EXPECT_NE(p, nullptr);
-
-    p->event(new QEvent(QEvent::HoverEnter));
+    QEvent *e = new QEvent(QEvent::HoverEnter);
+    p->event(e);
+    delete e;
     p->deleteLater();
 }
 

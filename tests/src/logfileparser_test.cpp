@@ -68,7 +68,14 @@ void stub_wtmp_close001(void)
 
 QString stub_toString001(QStringView format)
 {
+    Q_UNUSED(format);
     return "20190120";
+}
+
+void stub_start001(QRunnable *runnable, int priority = 0)
+{
+    Q_UNUSED(runnable);
+    Q_UNUSED(priority);
 }
 
 TEST(LogFileParser_Constructor_UT, LogFileParser_Constructor_UT)
@@ -98,9 +105,9 @@ TEST(LogFileParser_Destructor_UT, LogFileParser_Destructor_UT)
 
 TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
 {
-    Stub *stub = new Stub;
-    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-    stub->set(ADDR(QThread, start), QThread_start);
+    Stub stub;
+    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub.set(ADDR(QThread, start), QThread_start);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     p->parseByJournalBoot(QStringList() << "test");
@@ -268,6 +275,12 @@ QStringList stubfileparser_getFileInfo(const QString &flag)
     return QStringList() << "kern.log";
 }
 
+QString stub_FilereadLog(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return "2021-04-06 13:29:32 install code:amd64 <none> 1.55.0-1617120720";
+}
+
 class LogFileParser_UT : public testing::Test
 {
 public:
@@ -308,8 +321,9 @@ TEST_F(LogFileParser_UT, sLogFileParser_UT001)
     stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag001);
     stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
     stub.set(wtmp_close, stub_wtmp_close001);
-
+    stub.set(ADDR(DLDBusHandler, readLog), stub_FilereadLog);
     struct KWIN_FILTERS fitler = {"test"};
+    stub.set(ADDR(QThreadPool, start), stub_start001);
     m_parser->parseByKwin(fitler);
     struct KERN_FILTERS kern_fitler;
     m_parser->parseByKern(kern_fitler);

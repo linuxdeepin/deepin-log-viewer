@@ -55,6 +55,7 @@ TEST(LogCombox_keyPressEvent_UT, LogCombox_keyPressEvent_UT_001)
     EXPECT_NE(p, nullptr);
     QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
     p->keyPressEvent(keyEvent);
+    delete keyEvent;
     delete p;
 }
 
@@ -64,6 +65,7 @@ TEST(LogCombox_keyPressEvent_UT, LogCombox_keyPressEvent_UT_002)
     EXPECT_NE(p, nullptr);
     QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_0, Qt::NoModifier);
     p->keyPressEvent(keyEvent);
+    delete keyEvent;
     delete p;
 }
 
@@ -73,6 +75,7 @@ TEST(LogCombox_focusInEvent_UT, LogCombox_focusInEvent_UT_001)
     EXPECT_NE(p, nullptr);
     QFocusEvent *e = new QFocusEvent(QEvent::FocusIn, Qt::TabFocusReason);
     p->focusInEvent(e);
+    delete e;
     delete p;
 }
 
@@ -82,6 +85,7 @@ TEST(LogCombox_focusInEvent_UT, LogCombox_focusInEvent_UT_002)
     EXPECT_NE(p, nullptr);
     QFocusEvent *e = new QFocusEvent(QEvent::FocusIn, Qt::PopupFocusReason);
     p->focusInEvent(e);
+    delete e;
     delete p;
 }
 
@@ -91,5 +95,6 @@ TEST(LogCombox_focusOutEvent_UT, LogCombox_focusOutEvent_UT)
     EXPECT_NE(p, nullptr);
     QFocusEvent *e = new QFocusEvent(QEvent::FocusOut, Qt::NoFocusReason);
     p->focusOutEvent(e);
+    delete e;
     delete p;
 }

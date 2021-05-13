@@ -241,8 +241,8 @@ TEST_P(FilterContent_eventFilter_UT, FilterContent_eventFilter_UT)
     } else {
         event = new QEvent(QEvent::None);
         p->eventFilter(nullptr, event);
+        delete event;
     }
-
     p->deleteLater();
 }
 

@@ -201,39 +201,39 @@ void logDetailInfoWidget::initUI()
 
     cleanText();
 
-    QVBoxLayout *v = new QVBoxLayout;
+    QVBoxLayout *v = new QVBoxLayout(this);
 
-    QHBoxLayout *h1 = new QHBoxLayout;
+    QHBoxLayout *h1 = new QHBoxLayout(this);
     h1->addWidget(m_daemonName);
     h1->addStretch(1);
     h1->addWidget(m_dateTime);
 
-    QHBoxLayout *h2 = new QHBoxLayout;
+    QHBoxLayout *h2 = new QHBoxLayout(this);
 
-    QHBoxLayout *h21 = new QHBoxLayout;
+    QHBoxLayout *h21 = new QHBoxLayout(this);
     h21->addWidget(m_userLabel);
     h21->addWidget(m_userName, 1);
     h21->setSpacing(0);
-    QHBoxLayout *h22 = new QHBoxLayout;
+    QHBoxLayout *h22 = new QHBoxLayout(this);
     h22->addWidget(m_pidLabel);
     h22->addWidget(m_pid, 1);
     h22->setSpacing(0);
-    QHBoxLayout *h23 = new QHBoxLayout;
+    QHBoxLayout *h23 = new QHBoxLayout(this);
     h23->addWidget(m_statusLabel);
     h23->addWidget(m_status, 1);
     h23->setSpacing(0);
-    QHBoxLayout *h24 = new QHBoxLayout;
+    QHBoxLayout *h24 = new QHBoxLayout(this);
     h24->addWidget(m_actionLabel);
     h24->addWidget(m_action, 1);
     h24->setSpacing(0);
 
     // add by Airy
-    QHBoxLayout *h25 = new QHBoxLayout;
+    QHBoxLayout *h25 = new QHBoxLayout(this);
     h25->addWidget(m_eventLabel);
     h25->addWidget(m_event, 1);
     h25->setSpacing(8);
 
-    QHBoxLayout *h26 = new QHBoxLayout;
+    QHBoxLayout *h26 = new QHBoxLayout(this);
     h26->addWidget(m_nameLabel);
     h26->addWidget(m_name, 1);
     h26->setSpacing(8);

@@ -34,7 +34,7 @@
 QAction *stub_exec(const QPoint &pos, QAction *at = nullptr)
 {
     Q_UNUSED(pos);
-    return (new QAction());
+    return nullptr;
 }
 
 static QString stub_getSystemInfo()
@@ -93,9 +93,10 @@ TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
     op.state = QStyle::State_HasFocus;
     v->m_reson = Qt::TabFocusReason;
     stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
-    p->paint(new QPainter, op, QModelIndex());
+    QPainter painter;
+    p->paint(&painter, op, QModelIndex());
     v->deleteLater();
-    p->deleteLater();
+    delete p;
 }
 
 TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
@@ -403,6 +404,7 @@ TEST_P(LogListView_focusInEvent_UT, LogListView_focusInEvent_UT_001)
 
     QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusIn, param.reason);
     p->focusInEvent(focusEvent);
+    delete focusEvent;
     p->deleteLater();
 }
 
@@ -426,8 +428,8 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_showRightMenu)
     stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_exec);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
-
-    p->showRightMenu(QPoint(0, 0), false);
+    QPoint point(0, 0);
+    p->showRightMenu(point, false);
     p->deleteLater();
 }
 

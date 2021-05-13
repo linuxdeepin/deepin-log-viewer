@@ -53,6 +53,7 @@ TEST(LogPeriodButton_enterEvent_UT, LogPeriodButton_enterEvent_UT_001)
     QEvent *e = new QEvent(QEvent::Enter);
     p->enterEvent(e);
     EXPECT_EQ(p->isEnter, true);
+    delete e;
     delete p;
 }
 
@@ -63,6 +64,7 @@ TEST(LogPeriodButton_leaveEvent_UT, LogPeriodButton_leaveEvent_UT_001)
     QEvent *e = new QEvent(QEvent::Leave);
     p->leaveEvent(e);
     EXPECT_EQ(p->isEnter, false);
+    delete e;
     delete p;
 }
 
@@ -100,5 +102,6 @@ TEST_P(LogPeriodButton_focusInEvent_UT, LogPeriodButton_focusInEvent_UT_001)
     p->setChecked(false);
     QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusIn, param.reason);
     p->focusInEvent(focusEvent);
+    delete focusEvent;
     delete p;
 }

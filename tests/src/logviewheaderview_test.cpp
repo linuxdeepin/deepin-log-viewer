@@ -70,7 +70,8 @@ TEST(LogViewHeaderView_paintSection_UT, LogViewHeaderView_paintSection_UT_001)
     stub.set((void (DStyle::*)(DStyle::PrimitiveElement, const QStyleOption *, QPainter *, const QWidget *) const)ADDR(DStyle, drawPrimitive), stub_drawPrimitive);
     LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
     EXPECT_NE(p, nullptr);
-    p->paintSection(new QPainter, p->rect(), 0);
+    QPainter painter;
+    p->paintSection(&painter, p->rect(), 0);
     p->deleteLater();
 }
 

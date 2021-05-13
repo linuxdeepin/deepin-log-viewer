@@ -132,5 +132,6 @@ TEST_P(LogNormalButton_focusInEvent_UT, LogNormalButton_focusInEvent_UT_001)
 
     QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusIn, param.reason);
     p->focusInEvent(focusEvent);
+    delete focusEvent;
     p->deleteLater();
 }

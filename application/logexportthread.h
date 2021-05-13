@@ -235,9 +235,7 @@ private:
     QString m_appName = "";
     //日志等级-显示文本键值对
     QMap<QString, QString> m_levelStrMap;
-    bool &m_allLoadComplete;
-
-
+    bool m_allLoadComplete;
 };
 
 #endif  // LOGEXPORTTHREAD_H

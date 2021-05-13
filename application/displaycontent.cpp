@@ -1217,6 +1217,7 @@ void DisplayContent::insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int 
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
+    delete item;
 }
 
 void DisplayContent::generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel)

@@ -322,6 +322,7 @@ TEST_F(LogExportthread_UT, ExportRun_UT)
     stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
     stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
     stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_dfwexists);
+
     QStandardItemModel m_model;
     m_model.appendRow(new QStandardItem());
     LOG_FLAG m_flag = LOG_FLAG::JOURNAL;
@@ -347,6 +348,7 @@ TEST_F(LogExportthread_UT, ExportRun_UT)
     QString test = "test";
     exportThread->m_canRunning = false;
     exportThread->m_allLoadComplete = true;
+
     exportThread->m_runMode = LogExportThread::HtmlModel;
     exportThread->run();
     exportThread->m_runMode = LogExportThread::HtmlAPP;

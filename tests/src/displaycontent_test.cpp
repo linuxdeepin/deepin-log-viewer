@@ -497,6 +497,7 @@ TEST_P(DisplayContent_generateDpkgFile_UT, DisplayContent_generateDpkgFile_UT_00
     p->generateDpkgFile(param.time);
     p->deleteLater();
 }
+
 TEST(DisplayContent_createDpkgTable_UT, DisplayContent_createDpkgTable_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);

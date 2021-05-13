@@ -181,7 +181,7 @@ void FilterContent::initUI()
     hLayout_lvl->setSpacing(6);
     hLayout_all->addLayout(hLayout_lvl);
 
-    QHBoxLayout *hLayout_dnf_lvl = new QHBoxLayout;
+    QHBoxLayout *hLayout_dnf_lvl = new QHBoxLayout(this);
     dnflvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
@@ -200,7 +200,7 @@ void FilterContent::initUI()
     hLayout_dnf_lvl->setSpacing(6);
     hLayout_all->addLayout(hLayout_dnf_lvl);
     // set all files under ~/.cache/deepin
-    QHBoxLayout *hLayout_app = new QHBoxLayout;
+    QHBoxLayout *hLayout_app = new QHBoxLayout(this);
     appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
     cbx_app = new LogCombox(this);
 
