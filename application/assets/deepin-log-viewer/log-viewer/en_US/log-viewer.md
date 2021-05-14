@@ -165,7 +165,7 @@ You can export logs and save them in format of  txt/doc/xls/html.
 
 **Display in file manager** is only applicable for kernel log, boot log, dpkg log, Xorg log and application log.
 
-1. On the interface of File Manager, select a log type in the left panel and right-click.
+1. On the interface of Log Viewer, select a log type in the left panel and right-click.
 2. Select **Display in file manager**, the folder path of the current log will be opened. 
 
 ![display](fig/displayinfm.png)
