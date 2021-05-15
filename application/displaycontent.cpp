@@ -2146,20 +2146,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
     } break;
-    case Dnf: {
-        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
-            if (m_limitTag >= rateValue)
-                return;
-
-            int leftCnt = dList.count() - SINGLE_LOAD * rateValue;
-            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-
-            insertDpkgTable(dList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-
-            m_limitTag = rateValue;
-            m_treeView->verticalScrollBar()->setValue(valuePixel);
-        }
-    } break;
     case XORG: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2203,13 +2189,17 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
-        int leftCnt = dnfList.count() - SINGLE_LOAD * rateValue;
-        int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-
-        insertDnfTable(dnfList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-
-        m_limitTag = rateValue;
-        m_treeView->verticalScrollBar()->setValue(value);
+    } break;
+    case Dnf: {
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
+                return;
+            int leftCnt = dnfList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            insertDnfTable(dnfList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
+            m_treeView->verticalScrollBar()->setValue(value);
+        }
     } break;
     case Dmesg: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
