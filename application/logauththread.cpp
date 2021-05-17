@@ -718,7 +718,10 @@ void LogAuthThread::handleNormal()
             a_name = Nmsg.userName;
         } else {
             Nmsg.eventType = value.ut_name;
-            if (strtmp.compare("reboot") == 0) {
+            if (strtmp.compare("Login", Qt::CaseInsensitive) == 0) {
+                Nmsg.eventType = "Login";
+            }
+            if (strtmp.compare("reboot", Qt::CaseInsensitive) == 0) {
                 Nmsg.eventType = "Boot";
             }
             Nmsg.userName = a_name;
