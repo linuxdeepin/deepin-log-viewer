@@ -19,6 +19,8 @@
 		<message xml:lang="tr">Günlüğü temizlemek için kimlik doğrulaması gerekli</message>
 		<description xml:lang="gl_ES">autenticación</description>
 		<message xml:lang="gl_ES">A autenticación é necesaria para limpar o rexistro</message>
+		<description xml:lang="az">kimlik doğrulaması</description>
+		<message xml:lang="az">Jurnalı təmizləmək üçün kimlik doğrulaması tələb olunur</message>
 		<description xml:lang="zh_TW">認證</description>
 		<message xml:lang="zh_TW">清除此日誌需要認證</message>
 		<description xml:lang="zh_CN">认证</description>

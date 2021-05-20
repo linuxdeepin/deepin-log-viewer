@@ -17,6 +17,8 @@
 		<annotate key="org.freedesktop.policykit.exec.allow_gui">true</annotate>
 		<description xml:lang="tr">kimlik doğrulama</description>
 		<message xml:lang="tr">Günlüğü görüntülemek için kimlik doğrulaması gerekli</message>
+		<description xml:lang="az">kimlik doğrulaması</description>
+		<message xml:lang="az">Jurnala baxmaq üçün kimlik doğrulaması tələb olunur</message>
 		<description xml:lang="zh_TW">認證</description>
 		<message xml:lang="zh_TW">查看日誌需要認證</message>
 		<description xml:lang="zh_CN">认证</description>

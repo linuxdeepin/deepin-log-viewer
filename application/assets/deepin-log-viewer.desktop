@@ -12,6 +12,7 @@ X-Deepin-Vendor=deepin
 # Translations:
 # Do not manually modify!
 GenericName[ar]=عارض السجلات
+GenericName[az]=Jurnal icmalı
 GenericName[bo]=ཉིན་ཐོ་འཚོལ་སྡུད་ཡོ་བྱད།
 GenericName[br]=Lenner renabloù
 GenericName[ca]=Visualitzador de registres
@@ -45,6 +46,7 @@ GenericName[zh_CN]=日志收集工具
 GenericName[zh_HK]=日誌查看器
 GenericName[zh_TW]=日誌收集工具
 Name[ar]=عارض سجلات ديبين
+Name[az]=Deepin Jurnala İcmalı
 Name[bo]=གཏིང་ཟབ་ཉིན་ཐོ་འཚུབ་སྡུད་ཡོ་བྱད།
 Name[br]=Lenner renabloù Deepin
 Name[ca]=Visualitzador de registres del Deepin

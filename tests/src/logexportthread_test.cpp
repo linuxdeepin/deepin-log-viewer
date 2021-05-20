@@ -247,7 +247,8 @@ TEST_F(LogExportthread_UT, ExportToHtml_UT)
     exportThread->exportToHtmlPublic("test", m_dnfList, QStringList() << "test");
     exportThread->exportToHtmlPublic("test", m_dmesgList, QStringList() << "test");
 
-    exportThread->exportToHtml("test", new QStandardItemModel(), m_flag);
+    QStandardItemModel model;
+    exportThread->exportToHtml("test", &model, m_flag);
     exportThread->exportToHtml("test", m_journalList, QStringList() << "test", m_flag);
     exportThread->exportToHtml("test", m_appList, QStringList() << "test", test);
     exportThread->exportToHtml("test", m_dpkgList, QStringList() << "test");
