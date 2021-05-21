@@ -790,13 +790,15 @@ void LogAuthThread::handleDnf()
             LOG_MSG_DNF dnfLog;
 
             QDateTime dt = QDateTime::fromString(strList[0], "yyyy-MM-ddThh:mm:ssZ");
+            dt.setTimeSpec(Qt::UTC);
+            QDateTime localdt = dt.toLocalTime();
             if (dt.toMSecsSinceEpoch() < m_dnfFilters.timeFilter)
                 continue;
             if (m_dnfFilters.levelfilter != DNFLVALL) {
                 if (m_dnfLevelDict.value(strList[1]) != m_dnfFilters.levelfilter)
                     continue;
             }
-            dnfLog.dateTime = dt.toString("yyyy-MM-dd hh:mm:ss");
+            dnfLog.dateTime = localdt.toString("yyyy-MM-dd hh:mm:ss");
             dnfLog.level = m_transDnfDict.value(strList[1]);
             dnfLog.msg = info;
             dList.insert(0, dnfLog);
