@@ -730,7 +730,7 @@ void LogAuthThread::handleNormal()
             deadList.append(value_);
         }
     }
-    QString a_name = "~";
+    QString a_name = "root";
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
         //    qDebug() << value.ut_name << value.ut_type;
