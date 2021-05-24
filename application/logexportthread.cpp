@@ -1972,6 +1972,7 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
 
                 for (int col = 1; col < pModel->columnCount(); ++col) {
                     QString m_info = QString("<td>%1</td>").arg(pModel->item(row, col)->text());
+                    htmlEscapeCovert(m_info);
                     html.write(m_info.toUtf8().data());
                 }
                 html.write("</tr>");
@@ -1989,6 +1990,7 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
                 html.write("<tr>");
                 for (int col = 0; col < pModel->columnCount(); ++col) {
                     QString info = QString("<td>%1</td>").arg(pModel->item(row, col)->text());
+                    htmlEscapeCovert(info);
                     html.write(info.toUtf8().data());
                 }
                 html.write("</tr>");
@@ -2072,6 +2074,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
                     throw  QString(stopStr);
                 }
                 LOG_MSG_JOURNAL jMsg = jList.at(i);
+                htmlEscapeCovert(jMsg.msg);
                 //        QString info =
                 //            QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td></tr>")
                 //                .arg(jMsg.dateTime)
@@ -2182,6 +2185,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> 
             }
             //根据字段拼出每行的网页内容
             LOG_MSG_APPLICATOIN jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(strTranslate(jMsg.level));
             html.write(info.toUtf8().data());
@@ -2253,6 +2257,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, 
             }
             //根据字段拼出每行的网页内容
             LOG_MSG_DPKG jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.dateTime);
             html.write(info.toUtf8().data());
@@ -2322,6 +2327,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, 
             }
             //根据字段拼出每行的网页内容
             LOG_MSG_BOOT jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.status);
             html.write(info.toUtf8().data());
@@ -2389,6 +2395,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, 
             }
             //根据字段拼出每行的网页内容
             LOG_MSG_XORG jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.dateTime);
             html.write(info.toUtf8().data());
@@ -2456,6 +2463,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList
             }
             //根据字段拼出每行的网页内容
             LOG_MSG_NORMAL jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.eventType);
             html.write(info.toUtf8().data());
@@ -2527,6 +2535,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
             }
             //根据字段拼出每行的网页内容
             LOG_MSG_KWIN jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.msg);
             html.write(info.toUtf8().data());
@@ -2585,6 +2594,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DNF> jList, Q
             }
             //根据字段拼出每行的网页内容
             LOG_MSG_DNF jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.level);
             html.write(info.toUtf8().data());
@@ -2648,6 +2658,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DMESG> jList,
             }
             //根据字段拼出每行的网页内容
             LOG_MSG_DMESG jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
             QString info = QString("<td>%1</td>").arg(jMsg.level);
             html.write(info.toUtf8().data());
@@ -3164,8 +3175,15 @@ QString LogExportThread::strTranslate(QString &iLevelStr)
     return m_levelStrMap.value(iLevelStr, iLevelStr);
 }
 
-
-
+void LogExportThread::htmlEscapeCovert(QString &htmlMsg)
+{
+    //无法对所有转义字符进行转换，对常用转义字符转换
+    htmlMsg.replace("<", "&lt", Qt::CaseInsensitive);
+    htmlMsg.replace(">", "&gt", Qt::CaseInsensitive);
+    htmlMsg.replace("?", "&iexcl", Qt::CaseInsensitive);
+    htmlMsg.replace("￥", "&yen", Qt::CaseInsensitive);
+    htmlMsg.replace("|", "&brvbar", Qt::CaseInsensitive);
+}
 
 /**
  * @brief LogExportThread::run 线程的run函数，通过配置类型执行相应的导出逻辑
