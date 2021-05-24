@@ -679,7 +679,7 @@ void LogAuthThread::handleNormal()
             deadList.append(value_);
         }
     }
-    QString a_name = "~";
+    QString a_name = "root";
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
         if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
