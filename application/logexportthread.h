@@ -200,6 +200,13 @@ private:
 
     void initMap();
     QString strTranslate(QString &iLevelStr);
+
+    /**
+     * @brief htmlEscapeCovert html转义字符转换
+     * @param htmlMsg html信息
+     */
+    void htmlEscapeCovert(QString &htmlMsg);
+
 private:
     //导出文件路径
     QString m_fileName = "";
