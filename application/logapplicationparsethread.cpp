@@ -178,17 +178,13 @@ void LogApplicationParseThread::doWork()
                 if (list.count() >= 4) {
                     msg.detailInfo = list.mid(2).join("]");
                     msg.msg = msg.detailInfo;
-                    if (msg.detailInfo.size() > 500) {
-                        msg.msg = msg.detailInfo.mid(0, 500);
-                    }
                 } else {
-                    msg.detailInfo = list[2];
+                    msg.detailInfo = list[2].contains("[") ? list[2].append("]") : list[2];
                     msg.msg = msg.detailInfo;
-                    if (msg.detailInfo.size() > 500) {
-                        msg.msg = msg.detailInfo.mid(0, 500);
-                    }
                 }
-
+                if (msg.detailInfo.size() > 500) {
+                    msg.msg = msg.detailInfo.mid(0, 500);
+                }
                 m_appList.append(msg);
                 //每获得500个数据就发出信号给控件加载
                 if (m_appList.count() % SINGLE_READ_CNT == 0) {
