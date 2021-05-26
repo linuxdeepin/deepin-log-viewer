@@ -54,6 +54,11 @@
     </message>
     <message>
         <source>Export</source>
+        <translation type="vanished">निर्यात करें</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <comment>button</comment>
         <translation>निर्यात करें</translation>
     </message>
 </context>

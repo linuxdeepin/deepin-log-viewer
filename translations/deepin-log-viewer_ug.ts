@@ -54,6 +54,11 @@
     </message>
     <message>
         <source>Export</source>
+        <translation type="vanished">چىقىرىش</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <comment>button</comment>
         <translation>چىقىرىش</translation>
     </message>
 </context>

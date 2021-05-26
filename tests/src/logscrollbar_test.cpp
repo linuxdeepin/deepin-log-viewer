@@ -40,8 +40,8 @@ TEST(LogScrollBar_mousePressEvent_UT, LogScrollBar_mousePressEvent_UT_002)
 {
     LogScrollBar *p = new LogScrollBar(Qt::Horizontal, nullptr);
     EXPECT_NE(p, nullptr);
-
-    p->mousePressEvent(new QMouseEvent(QEvent::MouseButtonPress, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
+    QMouseEvent mouseEvent(QEvent::MouseButtonPress, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    p->mousePressEvent(&mouseEvent);
     EXPECT_EQ(p->m_isOnPress, true);
     p->deleteLater();
 }

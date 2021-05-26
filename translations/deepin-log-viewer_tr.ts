@@ -54,6 +54,11 @@
     </message>
     <message>
         <source>Export</source>
+        <translation type="vanished">Dışa aktar</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <comment>button</comment>
         <translation>Dışa aktar</translation>
     </message>
 </context>

@@ -53,7 +53,7 @@ TEST(JournalBootWork_Destructor_UT, JournalBootWork_Destructor_UT_001)
     p->~JournalBootWork();
     EXPECT_EQ(p->logList.isEmpty(), true);
     EXPECT_EQ(p->m_map.isEmpty(), true);
-    //  delete  p;
+    p->deleteLater();
 }
 
 TEST(JournalBootWork_stopWork_UT, JournalBootWork_stopWork_UT_001)

@@ -54,6 +54,11 @@
     </message>
     <message>
         <source>Export</source>
+        <translation type="vanished">Exporteren</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <comment>button</comment>
         <translation>Exporteren</translation>
     </message>
 </context>
@@ -77,7 +82,7 @@
     </message>
     <message>
         <source>Error</source>
-        <translation>Fout</translation>
+        <translation>Foutmelding</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -127,7 +132,7 @@
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation>Bezig met exporteren...</translation>
+        <translation>Bezig met exporteren…</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -215,7 +220,7 @@
     </message>
     <message>
         <source>Error</source>
-        <translation>Fout</translation>
+        <translation>Foutmelding</translation>
     </message>
     <message>
         <source>Emergency</source>

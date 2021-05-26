@@ -54,6 +54,11 @@
     </message>
     <message>
         <source>Export</source>
+        <translation type="vanished">ཕྱིར་འདྲེན།</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <comment>button</comment>
         <translation>ཕྱིར་འདྲེན།</translation>
     </message>
 </context>

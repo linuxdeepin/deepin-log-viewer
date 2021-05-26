@@ -110,8 +110,11 @@ public:
 TEST_F(LogAuthThread_UT, LogAuthThread_UT001)
 {
     Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_Logexists);
+
     stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_Logexists);
     stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart);
     stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString);
     stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished);

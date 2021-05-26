@@ -84,59 +84,21 @@ void FilterContent::initUI()
     //初始化时间筛选按钮部分布局
     m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
     m_allBtn->setToolTip(DApplication::translate("Button", "All"));  // add by Airy for bug 16245
-    // m_allBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
-    //m_allBtn->setMaximumWidth(20);
-//    m_allBtn->setW
-//    QFont standardFont = m_allBtn->font();
-//    standardFont.setPixelSize(16);
-    //  standardFont.set
-    // QFontMetrics(standardFont).width("All") + m_allBtn->contentsMargins().left() + m_allBtn->contentsMargins().right()+m_allBtn->b;
-    // m_allBtn->setMaximumWidth();
-//    m_allBtn->setFixedSize(
-//        QSize(BUTTON_WIDTH_MIN - 4, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
     m_btnGroup->addButton(m_allBtn, 0);
-
-    m_todayBtn =
-        new LogPeriodButton(DApplication::translate("Button", "Today"), this);
+    m_todayBtn = new LogPeriodButton(DApplication::translate("Button", "Today"), this);
     m_todayBtn->setToolTip(DApplication::translate("Button", "Today"));  // add by Airy for bug
-    // 16245
-    // m_todayBtn->setFixedSize(QSize(64 + 10, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //  m_todayBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_todayBtn, 1);
-
-    m_threeDayBtn =
-        new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
-    m_threeDayBtn->setToolTip(
-        DApplication::translate("Button", "3 days"));  // add by Airy for bug 16245
-//    m_threeDayBtn->setFixedSize(
-//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //m_threeDayBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
+    m_threeDayBtn = new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
+    m_threeDayBtn->setToolTip(DApplication::translate("Button", "3 days")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_threeDayBtn, 2);
-
-    m_lastWeekBtn =
-        new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
-    m_lastWeekBtn->setToolTip(
-        DApplication::translate("Button", "1 week"));  // add by Airy for bug 16245
-//    m_lastWeekBtn->setFixedSize(
-//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //  m_lastWeekBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
+    m_lastWeekBtn = new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
+    m_lastWeekBtn->setToolTip(DApplication::translate("Button", "1 week")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_lastWeekBtn, 3);
-
-    m_lastMonthBtn =
-        new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
-    m_lastMonthBtn->setToolTip(
-        DApplication::translate("Button", "1 month"));  // add by Airy for bug 16245
-//    m_lastMonthBtn->setFixedSize(
-//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //  m_lastMonthBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
+    m_lastMonthBtn = new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
+    m_lastMonthBtn->setToolTip(DApplication::translate("Button", "1 month")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_lastMonthBtn, 4);
-    m_threeMonthBtn =
-        new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
-    m_threeMonthBtn->setToolTip(
-        DApplication::translate("Button", "3 months"));  // add by Airy for bug 16245
-//    m_threeMonthBtn->setFixedSize(
-//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //m_threeMonthBtn->setFixdHeight(BUTTON_HEIGHT_MIN);
+    m_threeMonthBtn = new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
+    m_threeMonthBtn->setToolTip(DApplication::translate("Button", "3 months")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_threeMonthBtn, 5);
     //设置初始时间筛选为全部
     setUeButtonSytle();
@@ -175,7 +137,6 @@ void FilterContent::initUI()
                      << DApplication::translate("ComboBox", "Info")
                      << DApplication::translate("ComboBox", "Debug"));
     cbx_lv->setCurrentText(DApplication::translate("ComboBox", "Info"));
-
     hLayout_lvl->addWidget(lvTxt);
     hLayout_lvl->addWidget(cbx_lv, 1);
     hLayout_lvl->setSpacing(6);
@@ -186,7 +147,6 @@ void FilterContent::initUI()
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
     cbx_dnf_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
-    // cbx_lv->setMaximumWidth(208);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Super critical"), SUPERCRITICAL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Critical"), CRITICAL);
@@ -238,24 +198,15 @@ void FilterContent::initUI()
     hLayout_status->setSpacing(6);
     hLayout_all->addLayout(hLayout_type);  // end add
     hLayout_all->addStretch(1);
-    exportBtn = new LogNormalButton(DApplication::translate("Button", "Export"), this);
-    //  exportBtn->setContentsMargins(102, 100, 200, 200);
-    //exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
+    exportBtn = new LogNormalButton(DApplication::translate("Button", "Export", "button"), this);
     exportBtn->setContentsMargins(0, 0, 18, 18);
     exportBtn->setFixedWidth(BUTTON_EXPORT_WIDTH_MIN);
-//    exportBtn->setFocusPolicy(Qt::TabFocus);
     hLayout_all->addWidget(exportBtn);
     // set layout
     vLayout->addLayout(hLayout_period);
     vLayout->addLayout(hLayout_all);
     vLayout->setSpacing(16);
-
     this->setLayout(vLayout);
-//    cbx_lv->setFocusPolicy(Qt::TabFocus);
-//    cbx_app->setFocusPolicy(Qt::TabFocus);
-//    cbx_status->setFocusPolicy(Qt::TabFocus);
-//    typeCbx->setFocusPolicy(Qt::TabFocus);
-    // default application list is not visible
     setSelectorVisible(true, false, false, true, false);
     m_currentType = JOUR_TREE_DATA;
     //设置初始筛选选项
@@ -268,8 +219,6 @@ void FilterContent::initUI()
     m_lastWeekBtn->installEventFilter(this);
     m_lastMonthBtn->installEventFilter(this);
     m_threeMonthBtn->installEventFilter(this);
-
-
 }
 
 /**

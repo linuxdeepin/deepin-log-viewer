@@ -343,8 +343,8 @@ TEST_P(LogListView_keyPressEvent_UT, LogListView_keyPressEvent_UT_001)
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
 
-    QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
-    p->keyPressEvent(keyEvent);
+    QKeyEvent keyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
+    p->keyPressEvent(&keyEvent);
     p->deleteLater();
 }
 
@@ -371,8 +371,8 @@ TEST_P(LogListView_mousePressEvent_UT, LogListView_mousePressEvent_UT_001)
     LogListView_mousePressEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
-    QMouseEvent *keyEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(1, 1), param.key, param.key, Qt::NoModifier);
-    p->mousePressEvent(keyEvent);
+    QMouseEvent keyEvent(QEvent::MouseButtonPress, QPoint(1, 1), param.key, param.key, Qt::NoModifier);
+    p->mousePressEvent(&keyEvent);
     p->deleteLater();
 }
 

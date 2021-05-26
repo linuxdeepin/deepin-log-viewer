@@ -83,6 +83,7 @@ TEST(LogFileParser_Destructor_UT, LogFileParser_Destructor_UT)
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
     p->~LogFileParser();
+    p->deleteLater();
 }
 
 //TEST(LogFileParser_parseByJournal_UT, LogFileParser_parseByJournal_UT)
@@ -295,11 +296,13 @@ public:
 TEST_F(LogFileParser_UT, sLogFileParser_UT001)
 {
     Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_Logexists001);
     stub.set(ADDR(QProcess, setProcessChannelMode), stubfileparser_setProcessChannelMode);
     stub.set(ADDR(QProcess, exitCode), stubfileparser_exitCode);
 
     stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached001);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_Logexists001);
     stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart001);
     stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString001);
     stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished001);
