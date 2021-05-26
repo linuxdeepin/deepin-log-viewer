@@ -93,12 +93,14 @@ TEST(wtmpparse_wtmp_close_UT, wtmpparse_wtmp_close_UT_002)
 
 TEST(wtmpparse_st_list_init_UT, wtmpparse_st_list_init_UT_001)
 {
-    st_list_init();
+    utmp_list *utmListPtr = st_list_init();
+    free(utmListPtr);
 }
 
 TEST(wtmpparse_st_utmp_init_UT, wtmpparse_st_utmp_init_UT_001)
 {
-    st_utmp_init();
+    utmp *utmptr = st_utmp_init();
+    free(utmptr);
 }
 
 TEST(wtmpparse_list_insert_UT, wtmpparse_list_insert_UT_001)

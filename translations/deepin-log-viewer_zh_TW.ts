@@ -54,7 +54,12 @@
     </message>
     <message>
         <source>Export</source>
-        <translation>匯出</translation>
+        <translation type="vanished">匯出</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <comment>button</comment>
+        <translation>匯 出</translation>
     </message>
 </context>
 <context>

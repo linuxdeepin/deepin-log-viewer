@@ -113,10 +113,10 @@ TEST_P(LogApplication_notify_UT, LogApplication_notify_UT)
     LogApplication_notify_UT_Param param = GetParam();
     if (param.isKeyPress) {
         int key = param.isKeyTab ? Qt::Key_Tab : Qt::Key_Left;
-        QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, key, Qt::NoModifier);
+        QKeyEvent keyEvent(QEvent::KeyPress, key, Qt::NoModifier);
         LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result = param.isSucces;
         p->m_mainWindow = param.isMainWindow ? p->m_mainWindow : nullptr;
-        p->notify(nullptr, keyEvent);
+        p->notify(nullptr, &keyEvent);
     } else {
         QEvent *e = new QEvent(QEvent::None);
         p->notify(nullptr, e);

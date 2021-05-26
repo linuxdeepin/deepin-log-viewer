@@ -341,14 +341,14 @@ TEST(DisplayContent_MainLogTableView_UT, DisplayContent_MainLogTableView_UT_001)
     delete p;
 }
 
-TEST(DisplayContent_initUI_UT, DisplayContent_initUI_UT_001)
-{
-    DisplayContent *p = new DisplayContent(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->initUI();
-    EXPECT_NE(p->noResultLabel, nullptr);
-    delete p;
-}
+//TEST(DisplayContent_initUI_UT, DisplayContent_initUI_UT_001)
+//{
+//    DisplayContent *p = new DisplayContent(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->initUI();
+//    EXPECT_NE(p->noResultLabel, nullptr);
+//    delete p;
+//}
 
 TEST(DisplayContent_initMap_UT, DisplayContent_initMap_UT_001)
 {

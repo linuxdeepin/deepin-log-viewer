@@ -67,6 +67,7 @@ TEST(LogCollectorMain_Destructor_UT, LogCollectorMain_Destructor_UT)
     EXPECT_NE(p, nullptr);
     p->~LogCollectorMain();
     EXPECT_EQ(p->m_searchEdt, nullptr);
+    p->deleteLater();
 }
 TEST(LogCollectorMain_initUI_UT, LogCollectorMain_initUI_UT)
 {
@@ -216,14 +217,11 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
 
-    QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
+    QKeyEvent keyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
     QWidget *w = nullptr;
     if (!param.objectName.isEmpty())
         w = p->titlebar()->findChild<QWidget *>(param.objectName);
-    p->handleApplicationTabEventNotify(w, keyEvent);
-    //    EXPECT_EQ(rs, param.result);
-
-    //    EXPECT_EQ(p->focusWidget()->objectName(), param.focusObjectName) ;
+    p->handleApplicationTabEventNotify(w, &keyEvent);
     p->deleteLater();
 }
 
@@ -245,13 +243,10 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
 
-    QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, Qt::Key_Backtab, Qt::NoModifier);
+    QKeyEvent keyEvent(QEvent::KeyPress, Qt::Key_Backtab, Qt::NoModifier);
     QWidget *w = nullptr;
     if (!param.objectName.isEmpty())
         w = p->titlebar()->findChild<QWidget *>(QString("logTypeSelectList"));
-    p->handleApplicationTabEventNotify(w, keyEvent);
-    //    EXPECT_EQ(rs, param.result);
-
-    //    EXPECT_EQ(p->focusWidget()->objectName(), param.focusObjectName) ;
+    p->handleApplicationTabEventNotify(w, &keyEvent);
     p->deleteLater();
 }

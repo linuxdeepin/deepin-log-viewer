@@ -150,11 +150,13 @@ TEST_F(LogExportthread_UT, ExportToText_UT)
 TEST_F(LogExportthread_UT, ExportToDoc_UT)
 {
     Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_dfwexists);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, load), stub_load);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, paste), stub_paste);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
     stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_dfwexists);
     QStandardItemModel m_model;
     m_model.appendRow(new QStandardItem());
     LOG_FLAG m_flag = LOG_FLAG::JOURNAL;
@@ -205,13 +207,13 @@ TEST_F(LogExportthread_UT, ExportToDoc_UT)
 TEST_F(LogExportthread_UT, ExportToHtml_UT)
 {
     Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_dfwexists);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, load), stub_load);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, paste), stub_paste);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
     stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_dfwexists);
-
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_dfwexists);
     QStandardItemModel m_model;
     m_model.appendRow(new QStandardItem());
     LOG_FLAG m_flag = LOG_FLAG::JOURNAL;
@@ -263,11 +265,13 @@ TEST_F(LogExportthread_UT, ExportToHtml_UT)
 TEST_F(LogExportthread_UT, ExportToXls_UT)
 {
     Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_dfwexists);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, load), stub_load);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, paste), stub_paste);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
     stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_dfwexists);
     QStandardItemModel m_model;
     m_model.appendRow(new QStandardItem());
     LOG_FLAG m_flag = LOG_FLAG::JOURNAL;
@@ -318,12 +322,13 @@ TEST_F(LogExportthread_UT, ExportToXls_UT)
 TEST_F(LogExportthread_UT, ExportRun_UT)
 {
     Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_dfwexists);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, load), stub_load);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, paste), stub_paste);
     stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
     stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
-    stub.set((bool (QFile::*)() const)ADDR(QFile, exists), stub_dfwexists);
-
     QStandardItemModel m_model;
     m_model.appendRow(new QStandardItem());
     LOG_FLAG m_flag = LOG_FLAG::JOURNAL;

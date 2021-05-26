@@ -68,8 +68,8 @@ TEST_P(LogNormalButton_keyPressEvent_UT, LogNormalButton_keyPressEvent_UT_001)
     LogNormalButton *p = new LogNormalButton(nullptr);
     EXPECT_NE(p, nullptr);
 
-    QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
-    p->keyPressEvent(keyEvent);
+    QKeyEvent keyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
+    p->keyPressEvent(&keyEvent);
     p->deleteLater();
 }
 
@@ -95,8 +95,8 @@ TEST_P(LogNormalButton_keyReleaseEvent_UT, LogNormalButton_keyReleaseEvent_UT_00
     LogNormalButton *p = new LogNormalButton(nullptr);
     EXPECT_NE(p, nullptr);
 
-    QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
-    p->keyReleaseEvent(keyEvent);
+    QKeyEvent keyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
+    p->keyReleaseEvent(&keyEvent);
     p->deleteLater();
 }
 

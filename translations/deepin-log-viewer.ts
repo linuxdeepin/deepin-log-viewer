@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>Action</name>
     <message>
@@ -56,6 +54,11 @@
     </message>
     <message>
         <source>Export</source>
+        <translation type="vanished">Export</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <comment>button</comment>
         <translation>Export</translation>
     </message>
 </context>

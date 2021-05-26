@@ -1,400 +1,400 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_HK" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="az" version="2.1">
 <context>
     <name>Action</name>
     <message>
         <source>Display in file manager</source>
-        <translation>在檔案管理員中顯示</translation>
+        <translation>Fayl bələdçisində göstərmək</translation>
     </message>
     <message>
         <source>Clear log</source>
-        <translation>清除日誌</translation>
+        <translation>Jurnalı silmək</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>刷新</translation>
+        <translation>Təzələmək</translation>
     </message>
     <message>
         <source>Are you sure you want to clear the log?</source>
-        <translation>您確定要清除該日誌嗎？</translation>
+        <translation>Jurnalı təmizləmək istədiyinizə əminsiniz?</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>İmtina</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation>確定</translation>
+        <translation>Təsdiq etmək</translation>
     </message>
 </context>
 <context>
     <name>Button</name>
     <message>
         <source>All</source>
-        <translation>全部</translation>
+        <translation>Hamısı</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation>今天</translation>
+        <translation>Bugün</translation>
     </message>
     <message>
         <source>3 days</source>
-        <translation>近三天</translation>
+        <translation>3 gün</translation>
     </message>
     <message>
         <source>1 week</source>
-        <translation>近一週</translation>
+        <translation>1 həftə</translation>
     </message>
     <message>
         <source>1 month</source>
-        <translation>近一個月</translation>
+        <translation>1 ay</translation>
     </message>
     <message>
         <source>3 months</source>
-        <translation>近三個月</translation>
+        <translation>3 ay</translation>
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">導出</translation>
+        <translation type="vanished">İxrac</translation>
     </message>
     <message>
         <source>Export</source>
         <comment>button</comment>
-        <translation>導 出</translation>
+        <translation>İxrac</translation>
     </message>
 </context>
 <context>
     <name>ComboBox</name>
     <message>
         <source>All</source>
-        <translation>全部</translation>
+        <translation>Hamısı</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation>緊急</translation>
+        <translation>Gözlənilməz hal </translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation>嚴重警告</translation>
+        <translation>Xəbərdarlıq siqnalı</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation>嚴重</translation>
+        <translation>Kritik</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>錯誤</translation>
+        <translation>Xəta</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation>Xəbərdarlıq</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation>注意</translation>
+        <translation>Bildiriş</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>訊息</translation>
+        <translation>Məlumat</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation>調試</translation>
+        <translation>Xəta sazlama</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation>登錄</translation>
+        <translation>Giriş</translation>
     </message>
     <message>
         <source>Boot</source>
-        <translation>開機</translation>
+        <translation>Önyükləyici</translation>
     </message>
     <message>
         <source>Shutdown</source>
-        <translation>關機</translation>
+        <translation>Söndürmək</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation>非常嚴重</translation>
+        <translation>Super kritik</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation>跟蹤</translation>
+        <translation>İz</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>MƏTN (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation>正在導出...</translation>
+        <translation>İxrac olunur...</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation>İmtina</translation>
     </message>
 </context>
 <context>
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation>導出成功</translation>
+        <translation>İxrac uğurlu oldu</translation>
     </message>
 </context>
 <context>
     <name>File</name>
     <message>
         <source>Export File</source>
-        <translation>導出文件</translation>
+        <translation>Faylı ixrac etmək</translation>
     </message>
 </context>
 <context>
     <name>Label</name>
     <message>
         <source>Period:</source>
-        <translation>週期：</translation>
+        <translation>Dövr:</translation>
     </message>
     <message>
         <source>Level:  </source>
-        <translation>級別：</translation>
+        <translation>Səviyyə:</translation>
     </message>
     <message>
         <source>Application list:</source>
-        <translation>應用列表：</translation>
+        <translation>Tətbiq siyahısı:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation>狀態：</translation>
+        <translation>Vəziyyət:</translation>
     </message>
     <message>
         <source>Event Type:</source>
-        <translation>事件類型：</translation>
+        <translation>Hadisənin növü:</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation>主機名：</translation>
+        <translation>İstifadəçi:</translation>
     </message>
     <message>
         <source>PID:</source>
-        <translation>進程號：</translation>
+        <translation>PID:</translation>
     </message>
     <message>
         <source>Action:</source>
-        <translation>動作：</translation>
+        <translation>Əməl:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation>用戶名：</translation>
+        <translation>İstifadəçi adı:</translation>
     </message>
     <message>
         <source>Boot record</source>
-        <translation>開機記錄</translation>
+        <translation>Ön yüklənmənin yazılması</translation>
     </message>
     <message>
         <source>Shutdown record</source>
-        <translation>關機記錄</translation>
+        <translation>Söndürülmənin yazılması</translation>
     </message>
     <message>
         <source>Login record</source>
-        <translation>登錄訊息</translation>
+        <translation>Girişin yazılması</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation>Xəbərdarlıq</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation>調試</translation>
+        <translation>Xəta sazlama</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>訊息</translation>
+        <translation>Məlumat</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>錯誤</translation>
+        <translation>Xəta</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation>緊急</translation>
+        <translation>Gözlənilməz hal </translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation>嚴重警告</translation>
+        <translation>Xəbərdarlıq siqnalı</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation>嚴重</translation>
+        <translation>Kritik</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation>注意</translation>
+        <translation>Bildiriş</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation>跟蹤</translation>
+        <translation>İz</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation>非常嚴重</translation>
+        <translation>Super kritik</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
         <source>Log file is empty</source>
-        <translation>日誌文件為空</translation>
+        <translation>Jurnal faylı böşdur</translation>
     </message>
 </context>
 <context>
     <name>Main</name>
     <message>
         <source>Log Viewer</source>
-        <translation>日誌查看器</translation>
+        <translation>Jurnal İcmalı</translation>
     </message>
     <message>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation>日誌查看器是一款查看系統日誌的小工具。</translation>
+        <translation>Jurnal İcmalı, sistem jurnallarına baxmaq üçün istifadəsi rahat alətdir.</translation>
     </message>
 </context>
 <context>
     <name>SearchBar</name>
     <message>
         <source>No search results</source>
-        <translation>無搜索結果</translation>
+        <translation>Axtarış nəticələri yoxdur</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation>搜索</translation>
+        <translation>Axtarış</translation>
     </message>
 </context>
 <context>
     <name>Table</name>
     <message>
         <source>Level</source>
-        <translation>級別</translation>
+        <translation>Səviyyə</translation>
     </message>
     <message>
         <source>Process</source>
-        <translation>進程</translation>
+        <translation>Proses</translation>
     </message>
     <message>
         <source>Date and Time</source>
-        <translation>時間</translation>
+        <translation>Tarix və Vaxt</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>訊息</translation>
+        <translation>Məlumat</translation>
     </message>
     <message>
         <source>User</source>
-        <translation>主機名</translation>
+        <translation>İstifadəçi</translation>
     </message>
     <message>
         <source>PID</source>
-        <translation>進程號</translation>
+        <translation>PID</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation>來源</translation>
+        <translation>Mənbə</translation>
     </message>
     <message>
         <source>Action</source>
-        <translation>動作</translation>
+        <translation>Əməl</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation>狀態</translation>
+        <translation>Vəziyyət</translation>
     </message>
     <message>
         <source>Event Type</source>
-        <translation>事件類型</translation>
+        <translation>Hadisənin növü</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation>用戶名</translation>
+        <translation>İstifadəçi adı</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation>級別：</translation>
+        <translation>Səviyyə:</translation>
     </message>
     <message>
         <source>Process:</source>
-        <translation>進程：</translation>
+        <translation>Proses:</translation>
     </message>
     <message>
         <source>Date and Time:</source>
-        <translation>時間：</translation>
+        <translation>Tarix və Vaxt:</translation>
     </message>
     <message>
         <source>Info:</source>
-        <translation>訊息：</translation>
+        <translation>Məlumat:</translation>
     </message>
     <message>
         <source>Null</source>
-        <translation>Null</translation>
+        <translation>Sıfır</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation>主機名：</translation>
+        <translation>İstifadəçi:</translation>
     </message>
     <message>
         <source>PID:</source>
-        <translation>進程號：</translation>
+        <translation>PID:</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
         <source>Date and Time</source>
-        <translation>時間</translation>
+        <translation>Tarix və Vaxt</translation>
     </message>
 </context>
 <context>
     <name>Tree</name>
     <message>
         <source>System Log</source>
-        <translation>系統日誌</translation>
+        <translation>Sistem jurnalı</translation>
     </message>
     <message>
         <source>Kernel Log</source>
-        <translation>內核日誌</translation>
+        <translation>Nüvə jurnalı</translation>
     </message>
     <message>
         <source>Boot Log</source>
-        <translation>啟動日誌</translation>
+        <translation>Önyükləyici jurnalı</translation>
     </message>
     <message>
         <source>dpkg Log</source>
-        <translation>dpkg日誌</translation>
+        <translation>dpkg jurnalı</translation>
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation>kwin日誌</translation>
+        <translation>Kwin jurnalı</translation>
     </message>
     <message>
         <source>Xorg Log</source>
-        <translation>Xorg日誌</translation>
+        <translation>Xorg jurnalı</translation>
     </message>
     <message>
         <source>Application Log</source>
-        <translation>應用日誌</translation>
+        <translation>Tətbiq jurnalı</translation>
     </message>
     <message>
         <source>Boot-Shutdown Event</source>
-        <translation>開關機事件</translation>
+        <translation>Önyükləyici-Söndürmə hadisəsi</translation>
     </message>
     <message>
         <source>dnf Log</source>
-        <translation>dnf日誌</translation>
+        <translation>dnf jurnalı</translation>
     </message>
 </context>
 </TS>
