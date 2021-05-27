@@ -4,7 +4,7 @@ rm -r ../$utdir
 mkdir ../$utdir
 cd ../$utdir
 
-cmake -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j16
 
 workdir=$(cd ../$(dirname $0)/$utdir; pwd)

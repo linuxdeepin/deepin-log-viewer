@@ -126,7 +126,6 @@ void FilterContent::initUI()
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
     cbx_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
-    // cbx_lv->setMaximumWidth(208);
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                      << DApplication::translate("ComboBox", "Emergency")
                      << DApplication::translate("ComboBox", "Alert")
@@ -251,12 +250,6 @@ void FilterContent::shortCutExport()
         emit sigExportInfo();
 }
 
-//void FilterContent::resizeEvent(QResizeEvent *event)
-//{
-//    updateWordWrap();
-//}
-
-
 /**
  * @brief FilterContent::setAppComboBoxItem 刷新应用种类下拉列表
  */
@@ -292,15 +285,6 @@ void FilterContent::setAppComboBoxItem()
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
                                        bool needMove, bool typecbx, bool dnfCbx)
 {
-    //    va_list arg_ptr;//定义一个可变参数指针
-    //    va_start(arg_ptr,needMove); //设置needMove为最后一个固定参数
-    //    bool typecbx = va_arg(arg_ptr,bool); //设置第二个可变参数
-//    bool statushasFoucs = false;
-//    Qt::FocusReason statusComboxFocusReason;
-//    if (cbx_status->hasFocus()) {
-//        statusComboxFocusReason =   cbx_status->getFocusReason();
-//        statushasFoucs = true;
-//    }
     //先不立马更新界面,等全部更新好控件状态后再更新界面,否则会导致界面跳动
     setUpdatesEnabled(false);
     lvTxt->setVisible(lvCbx);
@@ -337,7 +321,6 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     //先不立马更新界面,等全部更新好控件状态后再更新界面,否则会导致界面跳动
     setUpdatesEnabled(true);
 
-    //    va_end(arg_ptr);  //清除可变参数指针
     cbx_lv->setObjectName("level_combox");
     cbx_lv->setAccessibleName("level_combox");
     cbx_app->setObjectName("app_combox");
@@ -346,10 +329,6 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     cbx_status->setAccessibleName("status_combox");
     typeCbx->setObjectName("event_type_combox");
     typeCbx->setAccessibleName("event_type_combox");
-    // exportBtn->setFocus(Qt::MouseFocusReason);
-
-
-
 }
 
 /**
@@ -392,7 +371,6 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
     }
     m_btnGroup->button(iConifg.dateBtn)->setChecked(true); //add by Airy for bug 19660:period button default setting
     Q_EMIT m_btnGroup->button(iConifg.dateBtn)->click();
-    //    Q_EMIT sigButtonClicked(iConifg.dateBtn,iConifg.levelCbx,QModelIndex());
 }
 
 /**
@@ -442,19 +420,6 @@ void FilterContent::paintEvent(QPaintEvent *event)
 
     // Restore the pen
     painter.setPen(oldPen);
-
-//    m_allBtn->setFixedSize(
-//        QSize(BUTTON_WIDTH_MIN - 4, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_todayBtn->setFixedSize(QSize(64 + 10, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_threeDayBtn->setFixedSize(
-//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_lastWeekBtn->setFixedSize(
-//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_lastMonthBtn->setFixedSize(
-//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_threeMonthBtn->setFixedSize(
-//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
 
     DFrame::paintEvent(event);
 }
@@ -556,18 +521,10 @@ void FilterContent::resizeWidth()
 void FilterContent::updateWordWrap()
 {
     int currentWidth = this->rect().width();
-//    int leftMargin = this->contentsMargins().left();
-//    int rightMargin = this->contentsMargins().right();
-//    int layoutWidth = hLayout_period->sizeHint().width();
-    qDebug() << "currentWidth" << currentWidth;
-//    qDebug() << "layoutWidth" << layoutWidth + leftMargin + rightMargin;
-//    qDebug() << "leftMargin" << leftMargin;
-//    qDebug() << "rightMargin" << rightMargin << hLayout_all->count() ;
     setUpdatesEnabled(false);
     //12对应系统16字号，13.5对应系统18字号,15对应系统20字号
     qreal fontSize = m_allBtn->font().pointSizeF();
     int minWidth = -1;
-    qDebug() << fontSize;
     if (fontSize <= 13.5) {
         minWidth = FONT_20_MIN_WIDTH;
     } else {
@@ -575,21 +532,16 @@ void FilterContent::updateWordWrap()
     }
     //判断各字体下能塞下控件的最小宽度
     if ((currentWidth <= minWidth) && (hLayout_period->count() > 9)) {
-        // if (m_allBtn->font().pointSizeF() > 12) {
-        //qDebug() << font().pointSizeF();
         QFont standFont = m_allBtn->font();
         QFont standFontBig = standFont;
         standFont.setPointSizeF(13.5);
-        //standFontBig.setPointSize(14);
         periodLabel->setText(QFontMetrics(periodLabel->font()).elidedText(DApplication::translate("Label", "Period:"), Qt::ElideRight, 1 + QFontMetrics(periodLabel->font()).width(DApplication::translate("Label", "Period:"))));
-        // m_allBtn->setText(QFontMetrics(m_allBtn->font()).elidedText(DApplication::translate("Button", "All"), Qt::ElideRight, 1 +  QFontMetrics(standFontBig).width(DApplication::translate("Button", "All"))));
         m_todayBtn->setText(QFontMetrics(m_todayBtn->font()).elidedText(DApplication::translate("Button", "Today"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "Today"))));
         m_threeDayBtn->setText(QFontMetrics(m_threeDayBtn->font()).elidedText(DApplication::translate("Button", "3 days"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "3 days"))));
         m_lastWeekBtn->setText(QFontMetrics(m_lastWeekBtn->font()).elidedText(DApplication::translate("Button", "1 week"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "1 week"))));
         m_lastMonthBtn->setText(QFontMetrics(m_lastMonthBtn->font()).elidedText(DApplication::translate("Button", "1 month"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "1 month"))));
         m_threeMonthBtn->setText(QFontMetrics(m_threeMonthBtn->font()).elidedText(DApplication::translate("Button", "3 months"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "3 months"))));
     }  else  {
-        // qDebug() << font().pointSizeF();
         periodLabel->setText(DApplication::translate("Label", "Period:"));
         m_allBtn->setText(DApplication::translate("Button", "All"));
         m_todayBtn->setText(DApplication::translate("Button", "Today"));
@@ -597,7 +549,6 @@ void FilterContent::updateWordWrap()
         m_lastWeekBtn->setText(DApplication::translate("Button", "1 week"));
         m_lastMonthBtn->setText(DApplication::translate("Button", "1 month"));
         m_threeMonthBtn->setText(DApplication::translate("Button", "3 months"));
-        // cbx_lv->setMinimumWidth(208);
     }
     setUpdatesEnabled(true);
 }
@@ -645,7 +596,6 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_currentType = APP_TREE_DATA;
         this->setAppComboBoxItem();
         this->setSelectorVisible(true, true, false, true, false);
-        //   emit sigCbxAppIdxChanged(cbx_app->itemData(0, Qt::UserRole + 1).toString());
     } else if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         m_currentType = JOUR_TREE_DATA;
         this->setSelectorVisible(true, false, false, true, false);
@@ -680,11 +630,6 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         this->setSelectorVisible(true, false, false, true,
                                  false);
     }
-//    cbx_lv->setFocusReason(Qt::NoFocusReason);
-//    cbx_app->setFocusReason(Qt::NoFocusReason);
-//    cbx_status->setFocusReason(Qt::NoFocusReason);
-//    typeCbx->setFocusReason(Qt::NoFocusReason);
-    //  cbx_lv->setFocus(Qt::MouseFocusReason);
     updateDataState();
     //必须需要,因为会丢失当前焦点顺序
     LogListView *logList =  qobject_cast<LogListView *>(sender());
@@ -710,7 +655,6 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
     //现在只需处理应用日志刷新时需要刷新应用选择下拉列表的数据
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         //记录当前选择项目以便改变combox内容后可以选择原来的选项刷新
-        //  QString cuurentText = cbx_app->currentText();
         //先disconnect防止改变combox内容时发出currentIndexChanged让主表获取
         disconnect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
         this->setAppComboBoxItem();
@@ -719,8 +663,6 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
         //第一次刷新手动发出选项变化信号
         emit sigCbxAppIdxChanged(m_config.value(m_currentType).dateBtn, cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString());
         connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
-        // cbx_app->setCurrentText(cuurentText);
-        //  qDebug() << "cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString()" << cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString();
     }
 }
 
@@ -734,15 +676,11 @@ void FilterContent::slot_buttonClicked(int idx)
      *        then select any log item, should display current log info.
      *        so comment this judge.
      */
-    //    if (!m_curTreeIndex.isValid())
-    //        return;
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.dateBtn = idx;
     setCurrentConfig(curConfig);
-    // because button has no focus,so focus on label;
-    //有这行,按tab时切不了焦点
-    // lvTxt->setFocus();
+
     switch (idx) {
     case ALL:
     case ONE_DAY:
@@ -756,8 +694,6 @@ void FilterContent::slot_buttonClicked(int idx)
     } break;
     case RESET: {
         m_curBtnId = ALL;
-        //            if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
-        //                itemData.contains(".cache"))
         if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
                 itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
             cbx_lv->setCurrentIndex(INF + 1);
