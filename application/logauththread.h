@@ -59,7 +59,7 @@ public:
     void setFileterParam(DNF_FILTERS iFIlters) { m_dnfFilters = iFIlters; }
     void setFileterParam(DMESG_FILTERS iFIlters) { m_dmesgFilters = iFIlters; }
     void stopProccess();
-    void setFilePath(QStringList filePath);
+    void setFilePath(const QStringList &filePath);
     int getIndex();
     QString startTime();
     /**

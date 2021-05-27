@@ -126,7 +126,7 @@ void LogAuthThread::stopProccess()
     }
 }
 
-void LogAuthThread::setFilePath(QStringList filePath)
+void LogAuthThread::setFilePath(const QStringList &filePath)
 {
     m_FilePath = filePath;
 }
@@ -480,38 +480,17 @@ void LogAuthThread::handleKwin()
  */
 void LogAuthThread::handleXorg()
 {
-    QStringList newList;
-    QStringList oldList;
-    QList<QStringList> totalList;
     qint64 curDtSecond = 0;
-    //读取现在到本次开机经过的时间，xorg日志文件的时间为从本次开机到日志记录产生时的时间差值
-    QFile startFile("/proc/uptime");
+
     QList<LOG_MSG_XORG> xList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
             QFile file(m_FilePath.at(i)); // add by Airy
-            if (!file.exists() || !startFile.exists()) {
+            if (!file.exists()) {
                 emit proccessError(tr("Log file is empty"));
                 emit xorgFinished(m_threadCount);
                 return;
             }
-        }
-        if (!m_canRun) {
-            return;
-        }
-        QString startStr = "";
-        if (startFile.open(QFile::ReadOnly)) {
-            startStr = QString(startFile.readLine());
-            startFile.close();
-        }
-        if (!m_canRun) {
-            return;
-        }
-        startStr = startStr.split(" ").value(0, "");
-        if (startStr.isEmpty()) {
-            emit proccessError(tr("Log file is empty"));
-            emit xorgFinished(m_threadCount);
-            return;
         }
         if (!m_canRun) {
             return;
@@ -521,22 +500,17 @@ void LogAuthThread::handleXorg()
         if (!m_canRun) {
             return;
         }
-        //当前时间减去开机到现在过去的毫秒数则为开机时间
-        QDateTime curDt = QDateTime::currentDateTime();
-        curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
+        //计算文件生成的时间加上文件时间偏移量
+        QFileInfo fileInfo(m_FilePath.at(i));
+        QDateTime creatTime = fileInfo.created();
+        curDtSecond = creatTime.toMSecsSinceEpoch();
         if (!m_canRun) {
             return;
         }
-        newList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
-        totalList.append(newList);
-    }
-    QString tempStr = "";
-    for (int j = 0; j < totalList.count(); j++) {
-        for (int i = totalList.at(j).size() - 1; i >= 0; --i) {
-            QString str = totalList.at(j).at(i);
-            if (!m_canRun) {
-                return;
-            }
+        QStringList fileInfoList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+        QString tempStr = "";
+        for (QStringList::Iterator k = fileInfoList.end() - 1; k != fileInfoList.begin() - 1; --k) {
+            QString &str = *k;
             //清除颜色格式字符
             str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
             if (str.startsWith("[")) {
@@ -545,10 +519,11 @@ void LogAuthThread::handleXorg()
                     continue;
                 QString timeStr = list[0];
                 QString msgInfo = list.mid(1, list.length() - 1).join("]");
-                // 把开机时间加上日志记录的毫秒数则为日志记录的时间
+                // 把文件生成时间加上日志记录的毫秒数则为日志记录的时间
                 QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+                qint64 tStrMesc = qint64(tStr.toDouble() * 1000);
                 qint64 realT = 0;
-                realT = curDtSecond + qint64(tStr.toDouble() * 1000);
+                realT = curDtSecond + tStrMesc;
                 QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
                 if (m_xorgFilters.timeFilterBegin > 0 && m_xorgFilters.timeFilterEnd > 0) {
                     if (realDt.toMSecsSinceEpoch() < m_xorgFilters.timeFilterBegin || realDt.toMSecsSinceEpoch() > m_xorgFilters.timeFilterEnd)
@@ -566,9 +541,6 @@ void LogAuthThread::handleXorg()
                 }
             } else {
                 tempStr.prepend(" " + str);
-            }
-            if (!m_canRun) {
-                return;
             }
         }
     }
