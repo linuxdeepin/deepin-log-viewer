@@ -529,13 +529,13 @@ void LogAuthThread::handleKwin()
 void LogAuthThread::handleXorg()
 {
     qint64 curDtSecond = 0;
-
+    QFile startFile("/proc/uptime");
     QList<LOG_MSG_XORG> xList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         //        qInfo()<<m_FilePath.at(i)<<"******************************";
         if (!m_FilePath.at(i).contains("txt")) {
             QFile file(m_FilePath.at(i)); // add by Airy
-            if (!file.exists()) {
+            if (!file.exists() || !startFile.exists()) {
                 emit proccessError(tr("Log file is empty"));
                 emit xorgFinished(m_threadCount);
                 return;
@@ -544,6 +544,12 @@ void LogAuthThread::handleXorg()
         if (!m_canRun) {
             return;
         }
+        QString startStr = "";
+        if (startFile.open(QFile::ReadOnly)) {
+            startStr = QString(startFile.readLine());
+            startFile.close();
+        }
+
         QString m_Log = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
         QByteArray outByte = m_Log.toUtf8();
         if (!m_canRun) {
@@ -551,8 +557,13 @@ void LogAuthThread::handleXorg()
         }
         //计算文件生成的时间加上文件时间偏移量
         QFileInfo fileInfo(m_FilePath.at(i));
-        QDateTime creatTime = fileInfo.birthTime();
-        curDtSecond = creatTime.toMSecsSinceEpoch();
+        if (i == 0) {
+            QDateTime curDt = QDateTime::currentDateTime();
+            curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
+        } else {
+            QDateTime creatTime = fileInfo.birthTime();
+            curDtSecond = creatTime.toMSecsSinceEpoch();
+        }
         if (!m_canRun) {
             return;
         }
