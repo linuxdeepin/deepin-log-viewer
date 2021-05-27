@@ -121,6 +121,7 @@ TEST(wtmpparse_list_delete_UT, wtmpparse_list_delete_UT)
     list2->value = info;
     list->next = list2;
     list_delete(list);
+    free(list2);
 }
 
 TEST(wtmpparse_list_get_ele_and_del_UT, wtmpparse_list_get_ele_and_del_UT)

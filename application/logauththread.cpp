@@ -529,7 +529,14 @@ void LogAuthThread::handleKwin()
 void LogAuthThread::handleXorg()
 {
     qint64 curDtSecond = 0;
+    //xorg.0.log文件以当前boot的时间加上时间偏移量
     QFile startFile("/proc/uptime");
+    QString startStr = "";
+    if (startFile.open(QFile::ReadOnly)) {
+        startStr = QString(startFile.readLine());
+        startFile.close();
+    }
+    startStr = startStr.split(" ").value(0, "");
     QList<LOG_MSG_XORG> xList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         //        qInfo()<<m_FilePath.at(i)<<"******************************";
@@ -544,18 +551,12 @@ void LogAuthThread::handleXorg()
         if (!m_canRun) {
             return;
         }
-        QString startStr = "";
-        if (startFile.open(QFile::ReadOnly)) {
-            startStr = QString(startFile.readLine());
-            startFile.close();
-        }
-
         QString m_Log = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
         QByteArray outByte = m_Log.toUtf8();
         if (!m_canRun) {
             return;
         }
-        //计算文件生成的时间加上文件时间偏移量
+        //多文件的情况下除了xorg.0.log文件其他文件的时间以文件创建的时间加上时间偏移量
         QFileInfo fileInfo(m_FilePath.at(i));
         if (i == 0) {
             QDateTime curDt = QDateTime::currentDateTime();
