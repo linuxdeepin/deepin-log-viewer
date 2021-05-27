@@ -551,7 +551,7 @@ void LogAuthThread::handleXorg()
         }
         //计算文件生成的时间加上文件时间偏移量
         QFileInfo fileInfo(m_FilePath.at(i));
-        QDateTime creatTime = fileInfo.created();
+        QDateTime creatTime = fileInfo.birthTime();
         curDtSecond = creatTime.toMSecsSinceEpoch();
         if (!m_canRun) {
             return;
