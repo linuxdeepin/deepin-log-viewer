@@ -82,7 +82,7 @@ QString stub_getSaveFileName(QWidget *parent = nullptr,
 
 int stub_singleRowHeight()
 {
-    return 20;
+    return 1;
 }
 
 void stub_start(QRunnable *runnable, int priority = 0)
@@ -91,9 +91,22 @@ void stub_start(QRunnable *runnable, int priority = 0)
     Q_UNUSED(priority);
 }
 
-void parseNull(DNF_FILTERS iDnfFilter)
+void parseDnfNull(DNF_FILTERS iDnfFilter)
 {
     Q_UNUSED(iDnfFilter);
+}
+
+void parseDmesgNull(DMESG_FILTERS iDmesgFilter)
+{
+    Q_UNUSED(iDmesgFilter);
+}
+
+void generateAppFileNull(QString path, int id, int lId, const QString &iSearchStr)
+{
+    Q_UNUSED(path);
+    Q_UNUSED(id);
+    Q_UNUSED(lId);
+    Q_UNUSED(iSearchStr);
 }
 
 TEST_F(DisplayContentlx_UT, exportClicked_UT)
@@ -118,6 +131,8 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT)
     m_content->m_flag = LOG_FLAG::Normal;
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::Kwin;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::NONE;
     m_content->slot_exportClicked();
 
     //    stub.set
@@ -146,6 +161,8 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT001)
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::Kwin;
     m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::NONE;
+    m_content->slot_exportClicked();
 
     //    stub.set
 }
@@ -173,6 +190,8 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT002)
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::Kwin;
     m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::NONE;
+    m_content->slot_exportClicked();
 
     //    stub.set
 }
@@ -199,6 +218,8 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT003)
     m_content->m_flag = LOG_FLAG::Normal;
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::Kwin;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::NONE;
     m_content->slot_exportClicked();
 
     //    stub.set
@@ -236,7 +257,7 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT)
     Stub stub;
     m_content->m_flag = LOG_FLAG::JOURNAL;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
-    m_content->slot_vScrollValueChanged(0);
+    m_content->slot_vScrollValueChanged(275);
 }
 
 TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT002)
@@ -279,6 +300,38 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT007)
     m_content->slot_vScrollValueChanged(275);
 }
 
+TEST_F(DisplayContentlx_UT, DmesgScrollValueChanged_UT)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::Dmesg;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
+
+TEST_F(DisplayContentlx_UT, DnfScrollValueChanged_UT)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::Dnf;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
+
+TEST_F(DisplayContentlx_UT, NormalScrollValueChanged_UT)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::Normal;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
+
+TEST_F(DisplayContentlx_UT, KwinScrollValueChanged_UT)
+{
+    Stub stub;
+    m_content->m_flag = LOG_FLAG::Kwin;
+    stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->slot_vScrollValueChanged(275);
+}
+
 TEST_F(DisplayContentlx_UT, FileParse_UT)
 {
     DisplayContent *p = new DisplayContent(nullptr);
@@ -304,7 +357,7 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT008)
 TEST_F(DisplayContentlx_UT, generateDnfFile_UT)
 {
     Stub stub;
-    stub.set(ADDR(LogFileParser, parseByDnf), parseNull);
+    stub.set(ADDR(LogFileParser, parseByDnf), parseDnfNull);
     m_content->generateDnfFile(BUTTONID::ALL, DNFPRIORITY::DEBUG);
     m_content->generateDnfFile(BUTTONID::ONE_DAY, DNFPRIORITY::DEBUG);
     m_content->generateDnfFile(BUTTONID::THREE_DAYS, DNFPRIORITY::DEBUG);
@@ -312,6 +365,159 @@ TEST_F(DisplayContentlx_UT, generateDnfFile_UT)
     m_content->generateDnfFile(BUTTONID::ONE_MONTH, DNFPRIORITY::DEBUG);
     m_content->generateDnfFile(BUTTONID::THREE_MONTHS, DNFPRIORITY::DEBUG);
     m_content->generateDnfFile(BUTTONID::INVALID, DNFPRIORITY::DEBUG);
+}
+
+TEST_F(DisplayContentlx_UT, createDnfTable_UT)
+{
+    QList<LOG_MSG_DNF> dnfList;
+    LOG_MSG_DNF dnfLog = {"2021-05-21", "DEBUG", "DNF version: 4.2.23"};
+    dnfList.push_back(dnfLog);
+    m_content->createDnfTable(dnfList);
+}
+
+TEST_F(DisplayContentlx_UT, generateDmesgFile_UT)
+{
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByDmesg), parseDmesgNull);
+    m_content->generateDmesgFile(BUTTONID::ALL, PRIORITY::ERR);
+    m_content->generateDmesgFile(BUTTONID::ONE_DAY, PRIORITY::ERR);
+    m_content->generateDmesgFile(BUTTONID::THREE_DAYS, PRIORITY::ERR);
+    m_content->generateDmesgFile(BUTTONID::ONE_WEEK, PRIORITY::ERR);
+    m_content->generateDmesgFile(BUTTONID::ONE_MONTH, PRIORITY::ERR);
+    m_content->generateDmesgFile(BUTTONID::THREE_MONTHS, PRIORITY::ERR);
+    m_content->generateDmesgFile(BUTTONID::INVALID, PRIORITY::ERR);
+}
+
+TEST_F(DisplayContentlx_UT, createDmesgTable_UT)
+{
+    QList<LOG_MSG_DMESG> dmesgList;
+    LOG_MSG_DMESG dmesgLog = {"ERR", "2021-05-21", "DNF version: 4.2.23"};
+    dmesgList.push_back(dmesgLog);
+    m_content->createDmesgTable(dmesgList);
+}
+
+TEST_F(DisplayContentlx_UT, createDnfForm_UT)
+{
+    m_content->createDnfForm();
+}
+
+TEST_F(DisplayContentlx_UT, insertDmesgTable_UT)
+{
+    QList<LOG_MSG_DMESG> dmesgList;
+    LOG_MSG_DMESG dmesgLog = {"ERR", "2021-05-21", "DNF version: 4.2.23"};
+    dmesgList.push_back(dmesgLog);
+    m_content->insertDmesgTable(dmesgList, -1, -1);
+}
+
+TEST_F(DisplayContentlx_UT, insertDnfTable_UT)
+{
+    QList<LOG_MSG_DNF> dnfList;
+    LOG_MSG_DNF dnfLog = {"2021-05-21", "DEBUG", "DNF version: 4.2.23"};
+    dnfList.push_back(dnfLog);
+    m_content->insertDnfTable(dnfList, -1, -1);
+}
+
+TEST_F(DisplayContentlx_UT, slot_tableItemClicked_UT)
+{
+    m_content->slot_tableItemClicked(QModelIndex());
+}
+
+TEST_F(DisplayContentlx_UT, slot_appLogs_UT)
+{
+    Stub stub;
+    stub.set(ADDR(DisplayContent, generateAppFile), generateAppFileNull);
+    m_content->slot_appLogs(1, "~/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log");
+}
+
+TEST_F(DisplayContentlx_UT, slot_dpkgData_UT)
+{
+    QList<LOG_MSG_DPKG> dpkgList;
+    LOG_MSG_DPKG dpkgLog = {"2021-05-21", "DEBUG", "DNF version: 4.2.23"};
+    dpkgList.push_back(dpkgLog);
+    m_content->m_flag = LOG_FLAG::DPKG;
+    m_content->m_firstLoadPageData = true;
+    m_content->slot_dpkgData(-1, dpkgList);
+}
+
+TEST_F(DisplayContentlx_UT, slot_XorgFinished_UT)
+{
+    m_content->m_flag = LOG_FLAG::XORG;
+    m_content->m_firstLoadPageData = true;
+    m_content->slot_XorgFinished(-1);
+}
+
+TEST_F(DisplayContentlx_UT, slot_kernData_UT)
+{
+    QList<LOG_MSG_JOURNAL> kernList;
+    LOG_MSG_JOURNAL kernLog = {"2021-05-21", "UOS", "dde-daemon", "1122", "DEBUG", "DNF version: 4.2.23"};
+    kernList.push_back(kernLog);
+    m_content->m_flag = LOG_FLAG::KERN;
+    m_content->m_firstLoadPageData = true;
+    m_content->slot_kernData(-1, kernList);
+}
+
+TEST_F(DisplayContentlx_UT, slot_kwinData_UT)
+{
+    QList<LOG_MSG_KWIN> kwinList;
+    LOG_MSG_KWIN kwinLog = {"DNF version: 4.2.23"};
+    kwinList.push_back(kwinLog);
+    m_content->m_flag = LOG_FLAG::Kwin;
+    m_content->m_firstLoadPageData = true;
+    m_content->slot_kwinData(-1, kwinList);
+}
+
+TEST_F(DisplayContentlx_UT, slot_bootData_UT)
+{
+    QList<LOG_MSG_BOOT> bootList;
+    LOG_MSG_BOOT bootLog = {"ok", "DNF version: 4.2.23"};
+    bootList.push_back(bootLog);
+    m_content->m_flag = LOG_FLAG::BOOT;
+    m_content->m_firstLoadPageData = true;
+    m_content->slot_bootData(-1, bootList);
+}
+
+TEST_F(DisplayContentlx_UT, slot_journalFinished_UT)
+{
+    m_content->m_flag = LOG_FLAG::JOURNAL;
+    m_content->m_firstLoadPageData = true;
+    m_content->slot_journalFinished(-1);
+}
+
+TEST_F(DisplayContentlx_UT, slot_dnfFinished_UT)
+{
+    QList<LOG_MSG_DNF> dnfList;
+    LOG_MSG_DNF dnfLog = {"ok", "DEBUG", "DNF version: 4.2.23"};
+    dnfList.push_back(dnfLog);
+    m_content->m_flag = LOG_FLAG::Dnf;
+    m_content->m_firstLoadPageData = true;
+    m_content->slot_dnfFinished(dnfList);
+}
+
+TEST_F(DisplayContentlx_UT, slot_dmesgFinished_UT)
+{
+    QList<LOG_MSG_DMESG> dmesgList;
+    LOG_MSG_DMESG dmesgLog = {"DEBUG", "ok", "DNF version: 4.2.23"};
+    dmesgList.push_back(dmesgLog);
+    m_content->m_flag = LOG_FLAG::Dmesg;
+    m_content->m_firstLoadPageData = true;
+    m_content->slot_dmesgFinished(dmesgList);
+}
+
+TEST_F(DisplayContentlx_UT, slot_normalFinished_UT)
+{
+    m_content->m_flag = LOG_FLAG::Normal;
+    m_content->m_firstLoadPageData = true;
+    m_content->slot_normalFinished(-1);
+}
+
+TEST_F(DisplayContentlx_UT, slot_searchResult_UT)
+{
+    m_content->m_flag = LOG_FLAG::Dmesg;
+    m_content->slot_searchResult("test");
+    m_content->m_flag = LOG_FLAG::Dnf;
+    m_content->slot_searchResult("test");
+    m_content->m_flag = LOG_FLAG::NONE;
+    m_content->slot_searchResult("test");
 }
 
 //zyc
