@@ -21,6 +21,8 @@
 
 #include <QPaintEvent>
 #include <QEvent>
+#include <QStandardItemModel>
+#include <QStandardItem>
 
 #include <stub.h>
 #include <gtest/gtest.h>
@@ -100,7 +102,6 @@ TEST_F(FilterContent_UT, eventFilter_UT)
 TEST_F(FilterContent_UT, updateWordWrap_UT)
 {
     m_filter->updateWordWrap();
-
     m_filter->rect().setWidth(500);
     LogPeriodButton btn("test", m_filter);
     m_filter->hLayout_period->addWidget(&btn);
@@ -109,8 +110,29 @@ TEST_F(FilterContent_UT, updateWordWrap_UT)
 
 TEST_F(FilterContent_UT, slot_logCatelogueClicked_UT)
 {
-    QModelIndex modelindex;
-    m_filter->slot_logCatelogueClicked(modelindex);
+    QStandardItemModel m_model;
+    QStandardItem *item;
+
+    for (int i = 0; i < 10; i++) {
+        item = new QStandardItem;
+        m_model.appendRow(item);
+    }
+    m_model.setData(m_model.index(0, 0), QString("application"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(1, 0), QString("journalctl"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(2, 0), QString("/var/log/boot.log"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(3, 0), QString("/var/log/kern.log"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(4, 0), QString("/var/log/dpkg.log"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(5, 0), QString("/var/log/Xorg.0.log"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(6, 0), QString("last"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(7, 0), QString("bootklu"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(8, 0), QString("/var/log/dnf.log"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(9, 0), QString("dmesg"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(10, 0), QString(QDir::homePath() + "/.kwin.log"), Qt::UserRole + 66);
+    for (int i = 0; i < m_model.rowCount(); i++) {
+        QModelIndex modelindex = m_model.index(i, 0, QModelIndex());
+        m_filter->slot_logCatelogueClicked(modelindex);
+    }
+    delete item;
 }
 
 TEST_F(FilterContent_UT, slot_exportButtonClicked_UT)
@@ -126,4 +148,18 @@ TEST_F(FilterContent_UT, slot_cbxLvIdxChanged_UT)
 TEST_F(FilterContent_UT, slot_cbxLogTypeChanged_UT)
 {
     m_filter->slot_cbxLogTypeChanged(2);
+}
+
+TEST_F(FilterContent_UT, slot_logCatelogueRefresh_UT)
+{
+    QStandardItemModel m_model;
+    QStandardItem item;
+    m_model.appendRow(&item);
+    m_model.setData(m_model.index(0, 0), QString("application"), Qt::UserRole + 66);
+    m_filter->slot_logCatelogueRefresh(m_model.index(0, 0));
+}
+
+TEST_F(FilterContent_UT, slot_buttonClicked_UT)
+{
+    m_filter->slot_buttonClicked(BUTTONID::RESET);
 }

@@ -87,6 +87,13 @@ int stub_singleRowHeight()
 
 void stub_start(QRunnable *runnable, int priority = 0)
 {
+    Q_UNUSED(runnable);
+    Q_UNUSED(priority);
+}
+
+void parseNull(DNF_FILTERS iDnfFilter)
+{
+    Q_UNUSED(iDnfFilter);
 }
 
 TEST_F(DisplayContentlx_UT, exportClicked_UT)
@@ -294,6 +301,21 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT008)
     m_content->slot_vScrollValueChanged(275);
 }
 
+TEST_F(DisplayContentlx_UT, generateDnfFile_UT)
+{
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByDnf), parseNull);
+    m_content->generateDnfFile(BUTTONID::ALL, DNFPRIORITY::DEBUG);
+    m_content->generateDnfFile(BUTTONID::ONE_DAY, DNFPRIORITY::DEBUG);
+    m_content->generateDnfFile(BUTTONID::THREE_DAYS, DNFPRIORITY::DEBUG);
+    m_content->generateDnfFile(BUTTONID::ONE_WEEK, DNFPRIORITY::DEBUG);
+    m_content->generateDnfFile(BUTTONID::ONE_MONTH, DNFPRIORITY::DEBUG);
+    m_content->generateDnfFile(BUTTONID::THREE_MONTHS, DNFPRIORITY::DEBUG);
+    m_content->generateDnfFile(BUTTONID::INVALID, DNFPRIORITY::DEBUG);
+}
+
+//zyc
+
 TEST(DisplayContent_Constructor_UT, DisplayContent_Constructor_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);
@@ -322,15 +344,6 @@ TEST(DisplayContent_Constructor_UT, Dslot_normalData_UT_001)
     delete p;
 }
 
-//TEST(DisplayContent_Destructor_UT, DisplayContent_Destructor_UT_001)
-//{
-//    DisplayContent *p = new DisplayContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->~DisplayContent();
-//    EXPECT_EQ(p->m_treeView, nullptr);
-//    EXPECT_EQ(p->m_pModel, nullptr);
-    //  delete  p;
-//}
 
 TEST(DisplayContent_MainLogTableView_UT, DisplayContent_MainLogTableView_UT_001)
 {
