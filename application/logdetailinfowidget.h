@@ -17,14 +17,17 @@
 #ifndef LOGDETAILINFOWIDGET_H
 #define LOGDETAILINFOWIDGET_H
 #include "logiconbutton.h"
+#include "logdetailedit.h"
 
 #include <DHorizontalLine>
 #include <DLabel>
 #include <DWidget>
+#include <DTextBrowser>
 
 #include <QModelIndex>
 #include <QStandardItemModel>
 
+DWIDGET_USE_NAMESPACE
 class QStandardItemModel;
 /**
  * @brief The logDetailInfoWidget class 详情页控件
@@ -66,7 +69,7 @@ private:
     /**
      * @brief m_textBrowser 日志信息显示控件
      */
-    Dtk::Widget::DTextBrowser *m_textBrowser;
+    logDetailEdit *m_textBrowser;
     /**
      * @brief m_hline 中间的分割线
      */

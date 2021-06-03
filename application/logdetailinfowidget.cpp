@@ -49,6 +49,7 @@ DWIDGET_USE_NAMESPACE
  */
 logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
     : DWidget(parent)
+    , m_textBrowser(new logDetailEdit(this))
 {
     initUI();
     //此控件不需要有焦点
@@ -188,7 +189,6 @@ void logDetailInfoWidget::initUI()
 
     m_hline = new DHorizontalLine;
 
-    m_textBrowser = new DTextBrowser(this);
     //不设置nofocus焦点会上到这上面来,可是我们不需要它可以有焦点
     m_textBrowser->setFocusPolicy(Qt::NoFocus);
     DFontSizeManager::instance()->bind(m_textBrowser, DFontSizeManager::T8);
@@ -274,10 +274,6 @@ void logDetailInfoWidget::initUI()
 void logDetailInfoWidget::setTextCustomSize(QWidget *w)
 {
     DFontSizeManager::instance()->bind(w, DFontSizeManager::T8);
-//    QFont font = w->font();
-//    int size = font.pointSize();
-//    font.setPointSize(size);
-//    w->setFont(font);
 }
 
 /**
@@ -316,15 +312,6 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 
     DWidget::paintEvent(event);
 }
-
-
-//bool logDetailInfoWidget::event(QEvent *ev)
-//{
-//    if (ev->type() == QEvent::FontChange) {
-//        setTextCustomSize(m_dateTime);
-//    }
-//    return  false;
-//}
 
 
 /**
