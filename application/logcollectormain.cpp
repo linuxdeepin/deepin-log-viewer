@@ -189,7 +189,13 @@ void LogCollectorMain::initConnection()
     //! search
     connect(m_searchEdt, &DSearchEdit::textChanged, m_midRightWgt,
             &DisplayContent::slot_searchResult);
-
+    connect(m_searchEdt, &DSearchEdit::focusChanged, [](bool isFocus) {
+        if (isFocus) {
+            DApplication::inputMethod()->show();
+        } else {
+            DApplication::inputMethod()->hide();
+        }
+    });
     //! filter widget
     connect(m_topRightWgt, SIGNAL(sigButtonClicked(int, int, QModelIndex)), m_midRightWgt,
             SLOT(slot_BtnSelected(int, int, QModelIndex)));
