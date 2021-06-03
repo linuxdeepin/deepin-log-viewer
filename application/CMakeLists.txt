@@ -174,6 +174,7 @@ set (APP_CPP_FILES
      logsettings.cpp
      DebugTimeManager.cpp
      wtmpparse.cpp
+     logdetailedit.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -200,6 +201,7 @@ set (APP_HEADERS_FILES
     logauththread.h
     logapplicationhelper.h
     logapplicationparsethread.h
+    logdetailedit.h
     wtmpparse.h
     model/log_sort_filter_proxy_model.h
     common/collator.h

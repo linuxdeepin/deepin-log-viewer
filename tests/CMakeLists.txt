@@ -133,6 +133,7 @@ FILE(GLOB allSource
        ../application/logsettings.cpp
       ../application/wtmpparse.cpp
       ../application/DebugTimeManager.cpp
+      ../application/logdetailedit.cpp
       ../application/dbusproxy/dldbusinterface.cpp
       ../application/dbusproxy/dldbushandler.cpp
 )
