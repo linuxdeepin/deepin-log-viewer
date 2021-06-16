@@ -24,6 +24,7 @@
 #include "dbusmanager.h"
 #include "DebugTimeManager.h"
 
+#include <QDesktopWidget>
 #include <DDesktopServices>
 #include <DDialog>
 #include <DDialogButtonBox>
@@ -434,6 +435,9 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
         connect(g_clear, &QAction::triggered, this, [ = ]() {
 
             DDialog *dialog = new DDialog(this);
+            //将清除日志询问框居中显示
+            QDesktopWidget *desktop=DApplication::desktop();
+            dialog->move((desktop->width() - dialog->width())/2, (desktop->height()-dialog->height())/2);
             dialog->setWindowFlags(dialog->windowFlags() | Qt::WindowStaysOnTopHint);
             dialog->setIcon(QIcon::fromTheme("dialog-warning"));
             dialog->setMessage(/*"清除日志内容"*/DApplication::translate("Action", "Are you sure you want to clear the log?"));
