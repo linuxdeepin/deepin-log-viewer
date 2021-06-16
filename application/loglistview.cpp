@@ -31,6 +31,7 @@
 #include <DApplication>
 #include <DStyle>
 #include <DApplication>
+#include <DPaletteHelper>
 
 #include <QItemSelectionModel>
 #include <QMargins>
@@ -327,13 +328,11 @@ bool LogListView::isFileExist(const QString &iFile)
  */
 void LogListView::paintEvent(QPaintEvent *event)
 {
-    DPalette pa = DApplicationHelper::instance()->palette(this);
+    this->setAutoFillBackground(true);
+    DPalette pa = DPaletteHelper::instance()->palette(this);
     pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
     pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
-    this->setPalette(pa);
-    DApplicationHelper::instance()->setPalette(this, pa);
-
-    this->setAutoFillBackground(true);
+    DPaletteHelper::instance()->setPalette(this, pa);
 
     DListView::paintEvent(event);
 }
