@@ -285,15 +285,6 @@ QString stub_FilereadLog(const QString &filePath)
 class LogFileParser_UT : public testing::Test
 {
 public:
-    //添加日志
-    //    static void SetUpTestCase()
-    //    {
-    //        qDebug() << "SetUpTestCase" << endl;
-    //    }
-    //    static void TearDownTestCase()
-    //    {
-    //        qDebug() << "TearDownTestCase" << endl;
-    //    }
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_parser = new LogFileParser();
@@ -334,4 +325,34 @@ TEST_F(LogFileParser_UT, sLogFileParser_UT001)
     m_parser->parseByDpkg(dkpg_fitler);
     struct BOOT_FILTERS boot_fitler;
     m_parser->parseByBoot();
+}
+
+TEST_F(LogFileParser_UT, parseByDnf_UT)
+{
+    Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_Logexists001);
+    stub.set(ADDR(QProcess, setProcessChannelMode), stubfileparser_setProcessChannelMode);
+    stub.set(ADDR(QProcess, exitCode), stubfileparser_exitCode);
+
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached001);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart001);
+    stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString001);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished001);
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_LogreadAllStandardOutput001);
+    stub.set(ADDR(QProcess, readAllStandardError), stub_LogreadAllStandardError001);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag001);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
+    stub.set(ADDR(QThreadPool, start), stub_start001);
+    stub.set(wtmp_close, stub_wtmp_close001);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_FilereadLog);
+    DNF_FILTERS dnfFilter = {10000, DNFPRIORITY::DEBUG};
+    m_parser->parseByDnf(dnfFilter);
+}
+
+
+TEST_F(LogFileParser_UT, createFile_UT)
+{
+    m_parser->createFile("ddd", 1);
 }
