@@ -84,16 +84,6 @@ void FilterContent::initUI()
     //初始化时间筛选按钮部分布局
     m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
     m_allBtn->setToolTip(DApplication::translate("Button", "All"));  // add by Airy for bug 16245
-    // m_allBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
-    //m_allBtn->setMaximumWidth(20);
-//    m_allBtn->setW
-//    QFont standardFont = m_allBtn->font();
-//    standardFont.setPixelSize(16);
-    //  standardFont.set
-    // QFontMetrics(standardFont).width("All") + m_allBtn->contentsMargins().left() + m_allBtn->contentsMargins().right()+m_allBtn->b;
-    // m_allBtn->setMaximumWidth();
-//    m_allBtn->setFixedSize(
-//        QSize(BUTTON_WIDTH_MIN - 4, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
     m_btnGroup->addButton(m_allBtn, 0);
 
     m_todayBtn =
@@ -525,56 +515,56 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
             //左右按钮使焦点和选项变为两边的按钮,第一个按钮往左是最后一个按钮
             if (kev->key() == Qt::Key_Right) {
                 m_todayBtn->click();
-                m_todayBtn->setFocus(Qt::TabFocusReason);
+                m_todayBtn->setFocus(Qt::MouseFocusReason);
             } else if (kev->key() == Qt::Key_Left) {
                 m_threeMonthBtn->click();
-                m_threeMonthBtn->setFocus(Qt::TabFocusReason);
+                m_threeMonthBtn->setFocus(Qt::MouseFocusReason);
             }
         } else if (obj == m_todayBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_threeDayBtn->click();
-                m_threeDayBtn->setFocus(Qt::TabFocusReason);
+                m_threeDayBtn->setFocus(Qt::MouseFocusReason);
             } else if (kev->key() == Qt::Key_Left) {
                 m_allBtn->click();
-                m_allBtn->setFocus(Qt::TabFocusReason);
+                m_allBtn->setFocus(Qt::MouseFocusReason);
             }
         } else if (obj == m_threeDayBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_lastWeekBtn->click();
-                m_lastWeekBtn->setFocus(Qt::TabFocusReason);
+                m_lastWeekBtn->setFocus(Qt::MouseFocusReason);
             } else if (kev->key() == Qt::Key_Left) {
                 m_todayBtn->click();
-                m_todayBtn->setFocus(Qt::TabFocusReason);
+                m_todayBtn->setFocus(Qt::MouseFocusReason);
             }
         } else if (obj == m_lastWeekBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_lastMonthBtn->click();
-                m_lastMonthBtn->setFocus(Qt::TabFocusReason);
+                m_lastMonthBtn->setFocus(Qt::MouseFocusReason);
             } else if (kev->key() == Qt::Key_Left) {
                 m_threeDayBtn->click();
-                m_threeDayBtn->setFocus(Qt::TabFocusReason);
+                m_threeDayBtn->setFocus(Qt::MouseFocusReason);
             }
         } else if (obj == m_lastMonthBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_threeMonthBtn->click();
-                m_threeMonthBtn->setFocus(Qt::TabFocusReason);
+                m_threeMonthBtn->setFocus(Qt::MouseFocusReason);
             } else if (kev->key() == Qt::Key_Left) {
                 m_lastWeekBtn->click();
-                m_lastWeekBtn->setFocus(Qt::TabFocusReason);
+                m_lastWeekBtn->setFocus(Qt::MouseFocusReason);
             }
         }  else if (obj == m_threeMonthBtn) {
             //最后一个按钮往右为第一个按钮,如此循环
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_allBtn->click();
-                m_allBtn->setFocus(Qt::TabFocusReason);
+                m_allBtn->setFocus(Qt::MouseFocusReason);
             } else if (kev->key() == Qt::Key_Left) {
                 m_lastMonthBtn->click();
-                m_lastMonthBtn->setFocus(Qt::TabFocusReason);
+                m_lastMonthBtn->setFocus(Qt::MouseFocusReason);
             }
         }
     }
