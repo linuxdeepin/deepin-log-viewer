@@ -196,7 +196,7 @@ void DisplayContent::initTableView()
  */
 void DisplayContent::initConnections()
 {
-    connect(m_treeView, SIGNAL(clicked(const QModelIndex &)), this,
+    connect(m_treeView, SIGNAL(pressed(const QModelIndex &)), this,
             SLOT(slot_tableItemClicked(const QModelIndex &)));
 
     connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString)),
