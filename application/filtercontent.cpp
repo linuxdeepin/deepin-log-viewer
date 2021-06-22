@@ -89,44 +89,29 @@ void FilterContent::initUI()
     m_todayBtn =
         new LogPeriodButton(DApplication::translate("Button", "Today"), this);
     m_todayBtn->setToolTip(DApplication::translate("Button", "Today"));  // add by Airy for bug
-    // 16245
-    // m_todayBtn->setFixedSize(QSize(64 + 10, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //  m_todayBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_todayBtn, 1);
 
     m_threeDayBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
     m_threeDayBtn->setToolTip(
-        DApplication::translate("Button", "3 days"));  // add by Airy for bug 16245
-//    m_threeDayBtn->setFixedSize(
-//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //m_threeDayBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
+        DApplication::translate("Button", "3 days")); // add by Airy for bug 16245;
     m_btnGroup->addButton(m_threeDayBtn, 2);
 
     m_lastWeekBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
     m_lastWeekBtn->setToolTip(
         DApplication::translate("Button", "1 week"));  // add by Airy for bug 16245
-//    m_lastWeekBtn->setFixedSize(
-//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //  m_lastWeekBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_lastWeekBtn, 3);
 
     m_lastMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
     m_lastMonthBtn->setToolTip(
         DApplication::translate("Button", "1 month"));  // add by Airy for bug 16245
-//    m_lastMonthBtn->setFixedSize(
-//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //  m_lastMonthBtn->setFixedHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_lastMonthBtn, 4);
     m_threeMonthBtn =
         new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
     m_threeMonthBtn->setToolTip(
         DApplication::translate("Button", "3 months"));  // add by Airy for bug 16245
-//    m_threeMonthBtn->setFixedSize(
-//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-    //m_threeMonthBtn->setFixdHeight(BUTTON_HEIGHT_MIN);
     m_btnGroup->addButton(m_threeMonthBtn, 5);
     //设置初始时间筛选为全部
     setUeButtonSytle();
@@ -233,11 +218,8 @@ void FilterContent::initUI()
     hLayout_all->addLayout(hLayout_type);  // end add
     hLayout_all->addStretch(1);
     exportBtn = new LogNormalButton(DApplication::translate("Button", "Export"), this);
-    //  exportBtn->setContentsMargins(102, 100, 200, 200);
-    //exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
     exportBtn->setContentsMargins(0, 0, 18, 18);
     exportBtn->setFixedWidth(BUTTON_EXPORT_WIDTH_MIN);
-//    exportBtn->setFocusPolicy(Qt::TabFocus);
     hLayout_all->addWidget(exportBtn);
     // set layout
     vLayout->addLayout(hLayout_period);
@@ -245,11 +227,6 @@ void FilterContent::initUI()
     vLayout->setSpacing(16);
 
     this->setLayout(vLayout);
-//    cbx_lv->setFocusPolicy(Qt::TabFocus);
-//    cbx_app->setFocusPolicy(Qt::TabFocus);
-//    cbx_status->setFocusPolicy(Qt::TabFocus);
-//    typeCbx->setFocusPolicy(Qt::TabFocus);
-    // default application list is not visible
     setSelectorVisible(true, false, false, true, false);
     m_currentType = JOUR_TREE_DATA;
     //设置初始筛选选项
@@ -297,12 +274,6 @@ void FilterContent::shortCutExport()
         emit sigExportInfo();
 }
 
-//void FilterContent::resizeEvent(QResizeEvent *event)
-//{
-//    updateWordWrap();
-//}
-
-
 /**
  * @brief FilterContent::setAppComboBoxItem 刷新应用种类下拉列表
  */
@@ -338,15 +309,6 @@ void FilterContent::setAppComboBoxItem()
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
                                        bool needMove, bool typecbx, bool dnfCbx)
 {
-    //    va_list arg_ptr;//定义一个可变参数指针
-    //    va_start(arg_ptr,needMove); //设置needMove为最后一个固定参数
-    //    bool typecbx = va_arg(arg_ptr,bool); //设置第二个可变参数
-//    bool statushasFoucs = false;
-//    Qt::FocusReason statusComboxFocusReason;
-//    if (cbx_status->hasFocus()) {
-//        statusComboxFocusReason =   cbx_status->getFocusReason();
-//        statushasFoucs = true;
-//    }
     //先不立马更新界面,等全部更新好控件状态后再更新界面,否则会导致界面跳动
     setUpdatesEnabled(false);
     lvTxt->setVisible(lvCbx);
@@ -395,10 +357,6 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     cbx_status->setAccessibleName("status_combox");
     typeCbx->setObjectName("event_type_combox");
     typeCbx->setAccessibleName("event_type_combox");
-    // exportBtn->setFocus(Qt::MouseFocusReason);
-
-
-
 }
 
 /**
@@ -483,20 +441,6 @@ void FilterContent::paintEvent(QPaintEvent *event)
 
     // Restore the pen
     painter.setPen(oldPen);
-
-//    m_allBtn->setFixedSize(
-//        QSize(BUTTON_WIDTH_MIN - 4, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_todayBtn->setFixedSize(QSize(64 + 10, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_threeDayBtn->setFixedSize(
-//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_lastWeekBtn->setFixedSize(
-//        QSize(78 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_lastMonthBtn->setFixedSize(
-//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    m_threeMonthBtn->setFixedSize(
-//        QSize(92 + 12, BUTTON_HEIGHT_MIN));  // modified by Airy for bug 16245
-//    exportBtn->setFixedSize(QSize(BUTTON_EXPORT_WIDTH_MIN, BUTTON_HEIGHT_MIN));
-
     DFrame::paintEvent(event);
 }
 
@@ -510,62 +454,76 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
 {
     //判断是否为键盘按下事件
     if (event->type() == QEvent::KeyPress) {
+        qInfo() << "11111111";
         if (obj == m_allBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             //左右按钮使焦点和选项变为两边的按钮,第一个按钮往左是最后一个按钮
             if (kev->key() == Qt::Key_Right) {
+                qInfo() << "2222222";
                 m_todayBtn->click();
-                m_todayBtn->setFocus(Qt::MouseFocusReason);
+                m_todayBtn->setFocus();
             } else if (kev->key() == Qt::Key_Left) {
+                qInfo() << "3333333";
                 m_threeMonthBtn->click();
-                m_threeMonthBtn->setFocus(Qt::MouseFocusReason);
+                m_threeMonthBtn->setFocus();
             }
+            return true;
         } else if (obj == m_todayBtn) {
+            qInfo() << "44444444";
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_threeDayBtn->click();
-                m_threeDayBtn->setFocus(Qt::MouseFocusReason);
+                m_threeDayBtn->setFocus();
+                qInfo() << "555555555";
             } else if (kev->key() == Qt::Key_Left) {
                 m_allBtn->click();
-                m_allBtn->setFocus(Qt::MouseFocusReason);
+                m_allBtn->setFocus();
+                qInfo() << "66666666";
             }
+            return true;
         } else if (obj == m_threeDayBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_lastWeekBtn->click();
-                m_lastWeekBtn->setFocus(Qt::MouseFocusReason);
+                m_lastWeekBtn->setFocus();
+                qInfo() << "7777777";
             } else if (kev->key() == Qt::Key_Left) {
                 m_todayBtn->click();
-                m_todayBtn->setFocus(Qt::MouseFocusReason);
+                m_todayBtn->setFocus();
+                qInfo() << "888888888";
             }
+            return true;
         } else if (obj == m_lastWeekBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_lastMonthBtn->click();
-                m_lastMonthBtn->setFocus(Qt::MouseFocusReason);
+                m_lastMonthBtn->setFocus();
             } else if (kev->key() == Qt::Key_Left) {
                 m_threeDayBtn->click();
-                m_threeDayBtn->setFocus(Qt::MouseFocusReason);
+                m_threeDayBtn->setFocus();
             }
+            return true;
         } else if (obj == m_lastMonthBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_threeMonthBtn->click();
-                m_threeMonthBtn->setFocus(Qt::MouseFocusReason);
+                m_threeMonthBtn->setFocus();
             } else if (kev->key() == Qt::Key_Left) {
                 m_lastWeekBtn->click();
-                m_lastWeekBtn->setFocus(Qt::MouseFocusReason);
+                m_lastWeekBtn->setFocus();
             }
+            return true;
         }  else if (obj == m_threeMonthBtn) {
             //最后一个按钮往右为第一个按钮,如此循环
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if (kev->key() == Qt::Key_Right) {
                 m_allBtn->click();
-                m_allBtn->setFocus(Qt::MouseFocusReason);
+                m_allBtn->setFocus();
             } else if (kev->key() == Qt::Key_Left) {
                 m_lastMonthBtn->click();
-                m_lastMonthBtn->setFocus(Qt::MouseFocusReason);
+                m_lastMonthBtn->setFocus();
             }
+            return true;
         }
     }
     return DFrame::eventFilter(obj, event);
