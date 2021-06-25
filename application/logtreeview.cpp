@@ -49,15 +49,6 @@ LogTreeView::LogTreeView(QWidget *parent)
     : DTreeView(parent)
 {
     initUI();
-//    QScroller *sc = QScroller::scroller(this);
-//    QScroller::ScrollerGestureType gesture = QScroller::TouchGesture;
-//    QScrollerProperties porpy = sc->scrollerProperties();
-//    porpy.setScrollMetric(QScrollerProperties::ScrollingCurve, QEasingCurve::OutQuart);
-//    porpy.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
-//    porpy.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
-//    porpy.setScrollMetric(QScrollerProperties::DecelerationFactor, 1);
-//    sc->setScrollerProperties(porpy);
-//    sc->grabGesture(this->viewport(), gesture);
     connect(this->verticalScrollBar(), &QScrollBar::sliderPressed, this, [ = ] {
         if (QScroller::hasScroller(this))
         {
@@ -232,13 +223,12 @@ void LogTreeView::keyPressEvent(QKeyEvent *event)
 {
     DTreeView::keyPressEvent(event);
     if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down) {
-        emit clicked(this->currentIndex());
+        emit pressed(this->currentIndex());
     }
 }
 
 bool LogTreeView::event(QEvent *e)
 {
-    //qDebug() << "11111" << e->type();
     switch (e->type()) {
 
 #if 1
@@ -250,7 +240,6 @@ bool LogTreeView::event(QEvent *e)
 
             QList<QTouchEvent::TouchPoint> points = touchEvent->touchPoints();
             //dell触摸屏幕只有一个touchpoint 但却能捕获到pinchevent缩放手势?
-            //  qDebug() << "11111" << points.count();
             if (points.count() == 1) {
                 QTouchEvent::TouchPoint p = points.at(0);
                 m_lastTouchBeginPos =  p.pos();
@@ -263,31 +252,6 @@ bool LogTreeView::event(QEvent *e)
 
     }
 #endif
-//    case QEvent::TouchUpdate: {
-//        qDebug() << "22222";
-//        break;
-//    }
-//    case QEvent::TouchEnd: {
-//        qDebug() << "33333";
-//        m_isPressed = false;
-//        break;
-//    }
-//    case QEvent::TouchCancel: {
-//        qDebug() << "44444444";
-//        m_isPressed = false;
-//        break;
-//    }
-//    case QEvent::ScrollPrepare: {
-//        QScrollPrepareEvent *touchEvent = static_cast<QScrollPrepareEvent *>(e);
-//        qDebug() << "QEvent::ScrollPrepare" << touchEvent->startPos() << touchEvent->contentPos();
-//        break;
-//    }
-//    case QEvent::Scroll: {
-//        QScrollEvent *touchEvent = static_cast<QScrollEvent *>(e);
-//        qDebug() << "QEvent::Scroll" << touchEvent->contentPos() << touchEvent->scrollState();
-//        break;
-//    }
-
     }
     return  DTreeView::event(e);
 }
@@ -374,12 +338,6 @@ void LogTreeView::mouseMoveEvent(QMouseEvent *event)
 #endif
 
     if (m_isPressed) {
-
-
-//      /  qDebug() <<  m_lastTouchTime.msecsTo(QTime::currentTime());
-//        if (m_lastTouchTime.msecsTo(QTime::currentTime()) < 100) {
-//            return ;
-//        }
         //最小距离为防误触和双向滑动时,只触发横向或者纵向的
         int touchmindistance = 2;
         //最大步进距离是因为原地点按马上放开,则会出现-35~-38的不合理位移,加上每次步进距离没有那么大,所以设置为30
@@ -387,17 +345,13 @@ void LogTreeView::mouseMoveEvent(QMouseEvent *event)
         event->accept();
         double horiDelta = event->pos().x() - m_lastTouchBeginPos.x();
         double vertDelta = event->pos().y() - m_lastTouchBeginPos.y();
-        //  qDebug()  << "horiDelta" << horiDelta << "vertDelta" << vertDelta << "event->pos()" << event->pos() << "m_lastTouchBeginPos" << m_lastTouchBeginPos;
         if (qAbs(horiDelta) > touchmindistance && qAbs(horiDelta) < touchMaxDistance) {
-            //    qDebug()  << "horizontalScrollBar()->value()" << horizontalScrollBar()->value();
             horizontalScrollBar()->setValue(static_cast<int>(horizontalScrollBar()->value() - horiDelta)) ;
         }
 
         if (qAbs(vertDelta) > touchmindistance && !(qAbs(vertDelta) < header()->height() + 2 && qAbs(vertDelta) > header()->height() - 2 && m_lastTouchTime.msecsTo(QTime::currentTime()) < 100)) {
-            //       qDebug()  << "verticalScrollBar()->value()" << verticalScrollBar()->value() << "vertDelta" << vertDelta;
             double svalue = 1;
             if (vertDelta > 0) {
-                //svalue = svalue;
             } else if (vertDelta < 0) {
                 svalue = -svalue;
             } else {
@@ -426,7 +380,6 @@ void LogTreeView::mouseReleaseEvent(QMouseEvent *event)
         return DTreeView::mouseReleaseEvent(event);
 #endif
     if (m_isPressed) {
-        //  qDebug() << "mouseReleaseEvent";
         m_isPressed = false;
         return;
     }
@@ -438,6 +391,4 @@ void LogTreeView::focusInEvent(QFocusEvent *event)
     m_reson = event->reason();
     DTreeView::focusInEvent(event);
 }
-
-
 
