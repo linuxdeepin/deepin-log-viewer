@@ -56,6 +56,7 @@ public:
 private:
     void setCustomFont(QStandardItem *item);
     bool isFileExist(const QString &iFile);
+    QString systemInfo();
 
 protected slots:
     void onChangedTheme(Dtk::Widget::DApplicationHelper::ColorType themeType);

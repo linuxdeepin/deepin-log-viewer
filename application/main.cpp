@@ -47,8 +47,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
     //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了,这个真正有效
     qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
-    QString  systemName =   DBusManager::getSystemInfo();
-    qDebug() << "systemName" << systemName;
     if (Utils::isWayland()) {
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
     }

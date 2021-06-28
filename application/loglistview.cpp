@@ -45,6 +45,7 @@
 #include <QMenu>
 #include <QShortcut>
 #include <QAbstractButton>
+#include <QGSettings/QGSettings>
 #define ITEM_HEIGHT 40
 #define ITEM_WIDTH 108
 
@@ -173,7 +174,7 @@ void LogListView::initUI()
 
     m_pModel = new QStandardItemModel(this);
     QStandardItem *item = nullptr;
-    QString  systemName =   DBusManager::getSystemInfo();
+    QString  systemName = systemInfo();
     if (isFileExist("/var/log/journal")) {
         item = new QStandardItem(DApplication::translate("Tree", "System Log"));
         item->setToolTip(DApplication::translate("Tree", "System Log"));  // add by Airy for bug 16245
@@ -194,7 +195,7 @@ void LogListView::initUI()
         m_pModel->appendRow(item);
     }
 
-    if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU")||systemName.toUpper().contains("KLV")) {
+    if (systemName == "klu" || systemName == "panguv" || systemName == "klv" ||systemName=="panguw"|| systemName=="HuaWei") {
 
         item = new QStandardItem(DApplication::translate("Tree", "Boot Log"));
         item->setToolTip(DApplication::translate("Tree", "Boot Log"));  // add by Airy for bug 16245
@@ -225,7 +226,7 @@ void LogListView::initUI()
     }
 
     //w515是新版本内核的panguv返回值  panguV是老版本
-    if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName == "pangu" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU") || systemName.toUpper().contains("PANGU")||systemName.toUpper().contains("KLV")) {
+    if (systemName == "klu" || systemName == "panguv" || systemName == "klv" || systemName=="panguw"||systemName=="HuaWei") {
         item = new QStandardItem(DApplication::translate("Tree", "Kwin Log"));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
         item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);
@@ -298,6 +299,21 @@ bool LogListView::isFileExist(const QString &iFile)
 {
     QFile file(iFile);
     return file.exists();
+}
+
+/**
+ * @brief LogListView::systemInfo 通过Gsettings获取特殊机型:klv klu panguv panguw HUAWEI
+ */
+QString LogListView::systemInfo()
+{
+    if(!QGSettings::isSchemaInstalled("com.deepin.sysinfo")){
+       return  "";
+    }
+
+    QGSettings Gsetting("com.deepin.sysinfo",QByteArray());
+    if(!Gsetting.keys().contains("pc-name"))
+        return "";
+    return  Gsetting.get("pc-name").toString();
 }
 
 /**
