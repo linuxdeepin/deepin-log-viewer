@@ -311,9 +311,9 @@ QString LogListView::systemInfo()
     }
 
     QGSettings Gsetting("com.deepin.sysinfo",QByteArray());
-    if(!Gsetting.keys().contains("pc-name"))
+    if(!Gsetting.keys().contains("pcName"))
         return "";
-    return  Gsetting.get("pc-name").toString();
+    return  Gsetting.get("pcName").toString();
 }
 
 /**
