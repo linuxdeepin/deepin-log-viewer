@@ -285,23 +285,6 @@ void LogCollectorMain::initShortCut()
 }
 
 /**
- * @brief LogCollectorMain::resizeWidthByFilterContentWidth
- * @param iWidth
- */
-void LogCollectorMain::resizeWidthByFilterContentWidth(int iWidth)
-{
-    int otherWidth = MAINWINDOW_WIDTH - m_originFilterWidth;
-    qDebug() << "otherWidth" << otherWidth << iWidth;
-    int currentWidth = otherWidth + iWidth;
-    int  setedWidth = currentWidth > MAINWINDOW_WIDTH ? currentWidth : MAINWINDOW_WIDTH;
-    //  setMinimumWidth(setedWidth);
-    if (setedWidth <= MAINWINDOW_WIDTH) {
-        // setM
-        //setWidth(setWidth);
-    }
-}
-
-/**
  * @brief LogCollectorMain::handleApplicationTabEventNotify
  * 处理application中notify的tab keyevent ,直接在dapplication中调用
  * 只调整我们需要调整的顺序,其他的默认

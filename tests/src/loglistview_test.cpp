@@ -30,6 +30,7 @@
 #include <QAction>
 #include <QStyle>
 #include <DStyle>
+#include <DSysInfo>
 
 QAction *stub_exec(const QPoint &pos, QAction *at = nullptr)
 {
@@ -51,6 +52,16 @@ QVariant stub_data(int arole)
 bool stub_hasFocus()
 {
     return true;
+}
+
+Dtk::Core::DSysInfo::UosEdition stub_uosProfessEditionType()
+{
+    return Dtk::Core::DSysInfo::UosProfessional;
+}
+
+Dtk::Core::DSysInfo::UosEdition stub_uosEulerEditionType()
+{
+    return Dtk::Core::DSysInfo::UosEuler;
 }
 
 //bool stub_isValid()
@@ -150,6 +161,7 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_001)
 {
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(Dtk::Core::DSysInfo, uosEditionType), stub_uosProfessEditionType);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->initUI();
@@ -161,6 +173,7 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     stub.set(ADDR(DBusManager, getSystemInfo), stub_getSystemInfo);
+    stub.set(ADDR(Dtk::Core::DSysInfo, uosEditionType), stub_uosEulerEditionType);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->initUI();

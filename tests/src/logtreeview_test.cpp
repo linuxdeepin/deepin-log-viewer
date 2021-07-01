@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QScrollBar>
 DWIDGET_USE_NAMESPACE
 
 int stub_pixelMetric002(DStyle::PixelMetric m, const QStyleOption *opt = nullptr, const QWidget *widget = nullptr)
@@ -66,6 +67,7 @@ TEST_F(LogTreeView_UT, singleRowHeight_UT)
 
 TEST_F(LogTreeView_UT, paintEvent_UT)
 {
+    emit m_treeView->verticalScrollBar()->sliderPressed();
     QPaintEvent repait(m_treeView->rect());
     m_treeView->paintEvent(&repait);
 }

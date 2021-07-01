@@ -53,7 +53,6 @@ public:
     void initShortCut();
 
 public slots:
-    void resizeWidthByFilterContentWidth(int iWidth);
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
     // QWidget interface
 protected:

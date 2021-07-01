@@ -231,12 +231,6 @@ void JournalBootWork::doWork()
     sd_id128_t current_id;
     //获取当前最新的正在运行的bootid
     sd_id128_get_boot(&current_id);
-    if ((!m_canRun)) {
-        mutex.unlock();
-        sd_journal_close(j);
-        deleteSd();
-        return;
-    }
     //拼接和把id转成字符串
     sd_id128_to_string(current_id, match + 9);
     if ((!m_canRun)) {
@@ -253,12 +247,6 @@ void JournalBootWork::doWork()
         QString errostr = QString("Failed to add match journal: %1").arg(r);
         qDebug() << errostr;
         emit  journalBootError(errostr);
-        return;
-    }
-    if ((!m_canRun)) {
-        mutex.unlock();
-        sd_journal_close(j);
-        deleteSd();
         return;
     }
     //合并以上两个筛选条件 (等级和bootid)

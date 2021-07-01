@@ -128,6 +128,9 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_002)
     p->m_scExport->deleteLater();
     p->m_scExport = nullptr;
     p->initShortCut();
+    //    p->m_scWndReize->activated();
+    //    p->m_scFindFont->activated();
+    //    p->m_scExport->activated();
     p->deleteLater();
 }
 
@@ -150,24 +153,24 @@ TEST(LogCollectorMain_initConnection_UT, LogCollectorMain_initConnection_UT)
     p->initConnection();
     p->deleteLater();
 }
-TEST(LogCollectorMain_resizeWidthByFilterContentWidth_UT, LogCollectorMain_resizeWidthByFilterContentWidth_UT)
-{
-    Stub stub;
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
-    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
-    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
-    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
-    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
-    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
-    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
-    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
-    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
-    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
-    LogCollectorMain *p = new LogCollectorMain(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->resizeWidthByFilterContentWidth(500);
-    p->deleteLater();
-}
+//TEST(LogCollectorMain_resizeWidthByFilterContentWidth_UT, LogCollectorMain_resizeWidthByFilterContentWidth_UT)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
+//    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+//    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+//    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+//    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+//    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+//    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+//    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+//    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+//    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+//    LogCollectorMain *p = new LogCollectorMain(nullptr);
+//    EXPECT_NE(p, nullptr);
+//    p->resizeWidthByFilterContentWidth(500);
+//    p->deleteLater();
+//}
 
 class LogCollectorMain_handleApplicationTabEventNotify_UT_Param
 {

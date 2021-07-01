@@ -205,8 +205,15 @@ public:
 TEST_F(JournalBootWork_UT, testBootWork_UT001)
 {
     Stub stub;
-    stub.set(sd_journal_open, stub_sd_journal_open);
     m_bootWork->doWork();
+    stub.set(sd_journal_open, stub_sd_journal_open);
+    stub.set(sd_journal_seek_tail, stub_sd_journal_open);
+    stub.set(sd_journal_add_match, stub_sd_journal_open);
+    stub.set(sd_journal_add_conjunction, stub_sd_journal_open);
+    stub.set(sd_journal_get_data, stub_sd_journal_open);
+    m_bootWork->m_arg = QStringList() << "emg"
+                                      << "all";
+
     m_bootWork->m_canRun = false;
     m_bootWork->doWork();
 }
