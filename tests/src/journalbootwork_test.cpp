@@ -205,7 +205,7 @@ public:
 TEST_F(JournalBootWork_UT, testBootWork_UT001)
 {
     Stub stub;
-    m_bootWork->doWork();
+    //    m_bootWork->doWork();
     stub.set(sd_journal_open, stub_sd_journal_open);
     stub.set(sd_journal_seek_tail, stub_sd_journal_open);
     stub.set(sd_journal_add_match, stub_sd_journal_open);

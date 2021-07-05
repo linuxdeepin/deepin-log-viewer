@@ -81,9 +81,15 @@ TEST_F(ut_logDetailEdit_Test, ShowInstallInfoTextEdit_UT_tapGestureTriggered)
     stub.set(ADDR(QGesture, state), state);
 
     while (states <= 4) {
-        m_infoTextEdit->tapGestureTriggered(nullptr);
-        if (states != 2 && states != 4)
-            m_infoTextEdit->tapAndHoldGestureTriggered(nullptr);
+        QTapGesture tap;
+        tap.setPosition(QPointF(10, 10));
+        m_infoTextEdit->tapGestureTriggered(&tap);
+        if (states != 2 && states != 4) {
+            QTapAndHoldGesture tapAndHold;
+            tapAndHold.setPosition(QPointF(10, 10));
+            m_infoTextEdit->tapAndHoldGestureTriggered(&tapAndHold);
+        }
+
         states++;
     }
 }

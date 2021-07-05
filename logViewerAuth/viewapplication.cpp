@@ -57,6 +57,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
 
     m_commondM = new QSharedMemory();
     m_commondM->setKey(fileList[1]);
+    m_commondM->create(sizeof(ShareMemoryInfo));
     if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
         m_commondM->detach();          //解除关联
     m_commondM->attach(QSharedMemory::ReadOnly);

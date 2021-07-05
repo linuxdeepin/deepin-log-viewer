@@ -32,9 +32,7 @@ protected:
     void paintEvent(QPaintEvent *e) override;
     void focusInEvent(QFocusEvent *event)override;
 private:
-    Qt::FocusReason m_reson;
-
-
+    Qt::FocusReason m_reson = Qt::MouseFocusReason;
 };
 
 #endif // LOGNORMALBUTTON_H

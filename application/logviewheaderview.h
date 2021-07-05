@@ -48,7 +48,7 @@ protected:
 
 private:
     int m_spacing {1};
-    Qt::FocusReason m_reson;
+    Qt::FocusReason m_reson = Qt::MouseFocusReason;
 };
 
 #endif  // SYSTEM_SERVICE_TABLE_HEADER_VIEW_H
