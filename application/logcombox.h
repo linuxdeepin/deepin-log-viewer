@@ -33,7 +33,7 @@ protected:
     void focusInEvent(QFocusEvent *event)override;
     void focusOutEvent(QFocusEvent *event)override;
 private:
-    Qt::FocusReason m_reson;
+    Qt::FocusReason m_reson = Qt::MouseFocusReason;
 };
 
 #endif // LOGCOMBOX_H

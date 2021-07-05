@@ -83,7 +83,7 @@ private:
     QString g_path{""};                  // add by Airy
     QShortcut *m_rightClickTriggerShortCut {nullptr};
     //判断是否通过tab获取的焦点
-    Qt::FocusReason m_reson;
+    Qt::FocusReason m_reson = Qt::MouseFocusReason;
 };
 
 #endif  // LOGLISTVIEW_H

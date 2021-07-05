@@ -192,6 +192,7 @@ TEST_F(JournalBootWork_UT, testBootWork_UT)
 TEST_F(JournalBootWork_UT, testBootWork_UT001)
 {
     Stub stub;
+    //    m_bootWork->doWork();
     stub.set(sd_journal_open, stub_sd_journal_open);
     m_bootWork->doWork();
     m_bootWork->m_canRun = false;

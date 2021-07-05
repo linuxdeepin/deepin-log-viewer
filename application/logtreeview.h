@@ -57,7 +57,7 @@ private:
     bool m_isPressed = false;
     QPointF m_lastTouchBeginPos;
     QTime m_lastTouchTime;
-    Qt::FocusReason m_reson;
+    Qt::FocusReason m_reson = Qt::MouseFocusReason;
 };
 
 #endif  // LOGTREEVIEW_H

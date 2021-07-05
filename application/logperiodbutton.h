@@ -38,7 +38,7 @@ protected:
 private:
     bool isEnter {false};
     int m_stahndardWidth = -1;
-    Qt::FocusReason m_reson;
+    Qt::FocusReason m_reson = Qt::MouseFocusReason;
 };
 
 #endif  // LOGPERIODBUTTON_H
