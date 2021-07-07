@@ -25,6 +25,7 @@
 
 #include <QDebug>
 #include <QIcon>
+#include <QFile>
 #include <QStandardItemModel>
 
 #include <iostream>
@@ -56,8 +57,9 @@ bool stub_dfwexists()
     return true;
 }
 
-bool stub_open(QFile::OpenMode flags)
+bool stub_open(void *obj,QFile::OpenMode flags)
 {
+    QFile *o=reinterpret_cast<QFile*>(obj);
     Q_UNUSED(flags);
     return true;
 }
@@ -100,13 +102,14 @@ TEST_F(LogExportthread_UT, ExportToText_UT)
     stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
     stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
     stub.set(ADDR(QStandardItem, text), stub_text);
-    QStandardItemModel model;
+    QStandardItemModel *model=new QStandardItemModel;
     QStandardItem item;
     QList<QStandardItem *> itemList;
     itemList.append(&item);
-    model.appendRow(&item);
-    model.insertColumn(0, itemList);
-    model.setData(model.index(0, 0), QVariant("ddd"), Qt::UserRole + 6);
+    model->appendRow(&item);
+    model->insertColumn(0, itemList);
+    model->setData(model->index(0, 0), QVariant("ddd"), Qt::UserRole + 6);
+
     LOG_FLAG m_flag = LOG_FLAG::JOURNAL;
     struct LOG_MSG_JOURNAL m_journal = {"20190503", "10:02", "uos", "d", "1", "2"};
     struct LOG_MSG_APPLICATOIN m_app = {"20190503", "10:02", "uos", "d"};
@@ -131,22 +134,36 @@ TEST_F(LogExportthread_UT, ExportToText_UT)
     exportThread->m_canRunning = true;
 
     m_flag = LOG_FLAG::APP;
-    exportThread->exportToTxt("test", &model, m_flag);
+    exportThread->exportToTxt("/var/log/kern.log", model, m_flag);
+    exportThread->exportToTxt("test", model, m_flag);
+
     m_flag = LOG_FLAG::JOURNAL;
+    exportThread->exportToTxt("test", model, m_flag);
     exportThread->exportToTxt("test", m_journalList, QStringList() << "test", m_flag);
+    exportThread->exportToTxt("/var/log/kern.log", m_journalList, QStringList() << "test", m_flag);
+
     m_flag = LOG_FLAG::KERN;
-    exportThread->exportToTxt("test", &model, m_flag);
+    exportThread->exportToTxt("test", model, m_flag);
     exportThread->exportToTxt("test", m_journalList, QStringList() << "test", m_flag);
+    exportThread->exportToTxt("/var/log/kern.log", m_appList, QStringList() << "test", str);
     exportThread->exportToTxt("test", m_appList, QStringList() << "test", str);
     exportThread->exportToTxt("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToTxt("/var/log/kern.log", m_dpkgList, QStringList() << "test");
     exportThread->exportToTxt("test", m_bootList, QStringList() << "test");
+    exportThread->exportToTxt("/var/log/kern.log", m_bootList, QStringList() << "test");
     exportThread->exportToTxt("test", m_xorgList, QStringList() << "test");
+    exportThread->exportToTxt("/var/log/kern.log", m_xorgList, QStringList() << "test");
     exportThread->exportToTxt("test", m_normalList, QStringList() << "test");
+    exportThread->exportToTxt("/var/log/kern.log", m_normalList, QStringList() << "test");
     exportThread->exportToTxt("test", m_kwinList, QStringList() << "test");
+    exportThread->exportToTxt("/var/log/kern.log", m_kwinList, QStringList() << "test");
     exportThread->exportToTxt("test", m_dmesgList, QStringList() << "test");
+    exportThread->exportToTxt("/var/log/kern.log", m_dmesgList, QStringList() << "test");
     exportThread->exportToTxt("test", m_dnfList, QStringList() << "test");
+    exportThread->exportToTxt("/var/log/kern.log", m_dnfList, QStringList() << "test");
 
-    exportThread->exportToTxtPublic("test", &model, m_flag);
+
+    exportThread->exportToTxtPublic("test", model, m_flag);
     exportThread->exportToTxtPublic("test", m_journalList, QStringList() << "test", m_flag);
     exportThread->exportToTxtPublic("test", m_appList, QStringList() << "test", str);
     exportThread->exportToTxtPublic("test", m_dpkgList, QStringList() << "test");
@@ -156,6 +173,34 @@ TEST_F(LogExportthread_UT, ExportToText_UT)
     exportThread->exportToTxtPublic("test", m_kwinList, QStringList() << "test");
     exportThread->exportToTxtPublic("test", m_dmesgList, QStringList() << "test");
     exportThread->exportToTxtPublic("test", m_dnfList, QStringList() << "test");
+
+    exportThread->m_canRunning=false;
+    exportThread->exportToTxt("test", m_journalList, QStringList() << "test", m_flag);
+    exportThread->exportToTxt("test", model, m_flag);
+    exportThread->exportToTxt("test", m_appList, QStringList() << "test", str);
+    exportThread->exportToTxt("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_bootList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_xorgList, QStringList() << "test");;
+    exportThread->exportToTxt("test", m_normalList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_kwinList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_dmesgList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_dnfList, QStringList() << "test");
+
+    model=nullptr;
+    exportThread->exportToTxt("test", m_journalList, QStringList() << "test", m_flag);
+    exportThread->exportToTxt("test", model, m_flag);
+    exportThread->exportToTxt("test", m_journalList, QStringList() << "test", m_flag);
+    exportThread->exportToTxt("test", m_appList, QStringList() << "test", str);
+    exportThread->exportToTxt("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_bootList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_xorgList, QStringList() << "test");;
+    exportThread->exportToTxt("test", m_normalList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_kwinList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_dmesgList, QStringList() << "test");
+    exportThread->exportToTxt("test", m_dnfList, QStringList() << "test");
+
+
+    delete  model;
 }
 
 TEST_F(LogExportthread_UT, ExportToDoc_UT)
@@ -213,6 +258,23 @@ TEST_F(LogExportthread_UT, ExportToDoc_UT)
     exportThread->exportToDoc("test", m_kwinList, QStringList() << "test");
     exportThread->exportToDoc("test", m_dmesgList, QStringList() << "test");
     exportThread->exportToDoc("test", m_dnfList, QStringList() << "test");
+
+    m_flag = LOG_FLAG::KERN;
+    exportThread->exportToDoc("test", m_journalList, QStringList() << "test", m_flag);
+    m_flag =LOG_FLAG::BOOT;
+    exportThread->exportToDoc("test", m_journalList, QStringList() << "test", m_flag);
+
+    m_flag =LOG_FLAG::JOURNAL;
+    exportThread->m_canRunning=false;
+    exportThread->exportToDoc("test", m_journalList, QStringList() << "test", m_flag);
+    exportThread->exportToDoc("test", m_appList, QStringList() << "test", test);
+    exportThread->exportToDoc("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_bootList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_xorgList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_normalList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_kwinList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_dmesgList, QStringList() << "test");
+    exportThread->exportToDoc("test", m_dnfList, QStringList() << "test");
 }
 
 TEST_F(LogExportthread_UT, ExportToHtml_UT)
@@ -226,8 +288,8 @@ TEST_F(LogExportthread_UT, ExportToHtml_UT)
     stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
     stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
     stub.set(ADDR(QStandardItem, text), stub_text);
-    QStandardItemModel m_model;
-    m_model.appendRow(new QStandardItem());
+    QStandardItemModel *model=new QStandardItemModel;
+    model->appendRow(new QStandardItem());
     LOG_FLAG m_flag = LOG_FLAG::JOURNAL;
     struct LOG_MSG_JOURNAL m_journal = {"20190503", "10:02", "uos", "d", "1", "2"};
     struct LOG_MSG_APPLICATOIN m_app = {"20190503", "10:02", "uos", "d"};
@@ -250,7 +312,7 @@ TEST_F(LogExportthread_UT, ExportToHtml_UT)
     QList<LOG_MSG_DMESG> m_dmesgList {m_dmesg};
     QString test = "test";
     exportThread->m_canRunning = true;
-    exportThread->exportToHtmlPublic("test", &m_model, m_flag);
+    exportThread->exportToHtmlPublic("test", model, m_flag);
     exportThread->exportToHtmlPublic("test", m_journalList, QStringList() << "test", m_flag);
     exportThread->exportToHtmlPublic("test", m_appList, QStringList() << "test", test);
     exportThread->exportToHtmlPublic("test", m_dpkgList, QStringList() << "test");
@@ -261,20 +323,42 @@ TEST_F(LogExportthread_UT, ExportToHtml_UT)
     exportThread->exportToHtmlPublic("test", m_dnfList, QStringList() << "test");
     exportThread->exportToHtmlPublic("test", m_dmesgList, QStringList() << "test");
 
-    QStandardItemModel model;
+    model->clear();
     QStandardItem item;
     QList<QStandardItem *> itemList;
     itemList.append(&item);
-    model.appendRow(&item);
-    model.insertColumn(0, itemList);
-    model.setData(model.index(0, 0), QVariant("ddd"), Qt::UserRole + 6);
+    model->appendRow(&item);
+    model->insertColumn(0, itemList);
+    model->setData(model->index(0, 0), QVariant("ddd"), Qt::UserRole + 6);
 
     m_flag = LOG_FLAG::APP;
-    exportThread->exportToHtml("test", &model, m_flag);
+     exportThread->exportToHtml("/var/log/kern.log", model, m_flag);
+    exportThread->exportToHtml("test", model, m_flag);
     m_flag = LOG_FLAG::JOURNAL;
-    exportThread->exportToHtml("test", &model, m_flag);
+    exportThread->exportToHtml("test", model, m_flag);
+    exportThread->exportToHtml("/var/log/kern.log", m_journalList, QStringList() << "test", m_flag);
     exportThread->exportToHtml("test", m_journalList, QStringList() << "test", m_flag);
     m_flag = LOG_FLAG::KERN;
+    exportThread->exportToHtml("test", m_journalList, QStringList() << "test", m_flag);
+    exportThread->exportToHtml("/var/log/kern.log", m_appList, QStringList() << "test", test);
+    exportThread->exportToHtml("/var/log/kern.log", m_dpkgList, QStringList() << "test");
+    exportThread->exportToHtml("/var/log/kern.log", m_bootList, QStringList() << "test");
+    exportThread->exportToHtml("/var/log/kern.log", m_xorgList, QStringList() << "test");
+    exportThread->exportToHtml("/var/log/kern.log", m_normalList, QStringList() << "test");
+    exportThread->exportToHtml("/var/log/kern.log", m_kwinList, QStringList() << "test");
+    exportThread->exportToHtml("/var/log/kern.log", m_dnfList, QStringList() << "test");
+    exportThread->exportToHtml("/var/log/kern.log", m_dmesgList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_appList, QStringList() << "test", test);
+    exportThread->exportToHtml("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_bootList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_xorgList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_normalList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_kwinList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_dnfList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_dmesgList, QStringList() << "test");
+
+    exportThread->m_canRunning=false;
+    exportThread->exportToHtml("test", model, m_flag);
     exportThread->exportToHtml("test", m_journalList, QStringList() << "test", m_flag);
     exportThread->exportToHtml("test", m_appList, QStringList() << "test", test);
     exportThread->exportToHtml("test", m_dpkgList, QStringList() << "test");
@@ -284,6 +368,19 @@ TEST_F(LogExportthread_UT, ExportToHtml_UT)
     exportThread->exportToHtml("test", m_kwinList, QStringList() << "test");
     exportThread->exportToHtml("test", m_dnfList, QStringList() << "test");
     exportThread->exportToHtml("test", m_dmesgList, QStringList() << "test");
+
+    model=nullptr;
+    exportThread->exportToHtml("test", model, m_flag);
+    exportThread->exportToHtml("test", m_journalList, QStringList() << "test", m_flag);
+    exportThread->exportToHtml("test", m_appList, QStringList() << "test", test);
+    exportThread->exportToHtml("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_bootList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_xorgList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_normalList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_kwinList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_dnfList, QStringList() << "test");
+    exportThread->exportToHtml("test", m_dmesgList, QStringList() << "test");
+    delete  model;
 }
 
 TEST_F(LogExportthread_UT, ExportToXls_UT)
@@ -332,6 +429,19 @@ TEST_F(LogExportthread_UT, ExportToXls_UT)
     exportThread->exportToXlsPublic("test", m_dnfList, QStringList() << "test");
     exportThread->exportToXlsPublic("test", m_dmesgList, QStringList() << "test");
 
+    exportThread->exportToXls("test", m_journalList, QStringList() << "test", m_flag);
+    m_flag = LOG_FLAG::KERN;
+    exportThread->exportToXls("test", m_journalList, QStringList() << "test", m_flag);
+    exportThread->exportToXls("test", m_appList, QStringList() << "test", test);
+    exportThread->exportToXls("test", m_dpkgList, QStringList() << "test");
+    exportThread->exportToXls("test", m_bootList, QStringList() << "test");
+    exportThread->exportToXls("test", m_xorgList, QStringList() << "test");
+    exportThread->exportToXls("test", m_normalList, QStringList() << "test");
+    exportThread->exportToXls("test", m_kwinList, QStringList() << "test");
+    exportThread->exportToXls("test", m_dnfList, QStringList() << "test");
+    exportThread->exportToXls("test", m_dmesgList, QStringList() << "test");
+
+    exportThread->m_canRunning=false;
     exportThread->exportToXls("test", m_journalList, QStringList() << "test", m_flag);
     exportThread->exportToXls("test", m_appList, QStringList() << "test", test);
     exportThread->exportToXls("test", m_dpkgList, QStringList() << "test");
@@ -459,3 +569,13 @@ TEST_F(LogExportthread_UT, ExportRun_UT)
     exportThread->m_runMode = LogExportThread::XlsJOURNAL;
     exportThread->run();
 }
+
+TEST_F(LogExportthread_UT, stopImmediately_UT){
+    exportThread->stopImmediately();
+    EXPECT_EQ(false,exportThread->m_canRunning);
+}
+
+TEST_F(LogExportthread_UT, isProcessing_UT){
+    exportThread->isProcessing();
+}
+

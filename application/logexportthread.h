@@ -128,7 +128,6 @@ public:
     void exportToXlsPublic(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels);
 
     bool isProcessing();
-    //    void setDataLoadComlete(bool &isComplete);
 public slots:
     // 停止线程
     void stopImmediately();

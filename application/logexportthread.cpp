@@ -637,11 +637,6 @@ bool LogExportThread::isProcessing()
     return m_canRunning;
 }
 
-//void LogExportThread::setDataLoadComlete(bool &isComplete)
-//{
-//    m_allLoadComplete = isComplete;
-//}
-
 /**
  * @brief LogExportThread::stopImmediately 停止前线程获取数据逻辑
  */
@@ -1223,10 +1218,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
             qWarning() << "export docx template is not exisits";
             return  false;
         }
-//        if (!QFile(fileName).exists()) {
-//            qWarning() << "export file dir is not exisits";
-//            return  false;
-//        }
+
         DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
 
 
@@ -1312,17 +1304,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
 {
     try {
-//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
-//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
         if (!QFile(tempdir).exists()) {
             qWarning() << "export docx template is not exisits";
             return  false;
         }
-//        if (!QFile(fileName).exists()) {
-//            qWarning() << "export file dir is not exisits";
-//            return  false;
-//        }
+
         DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
         l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
@@ -1395,17 +1382,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
 {
     try {
-//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
-//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/3column.dfw";
         if (!QFile(tempdir).exists()) {
             qWarning() << "export docx template is not exisits";
             return  false;
         }
-//        if (!QFile(fileName).exists()) {
-//            qWarning() << "export file dir is not exisits";
-//            return  false;
-//        }
+
         DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
         l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
@@ -1477,17 +1459,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
 {
     try {
-//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
-//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/2column.dfw";
         if (!QFile(tempdir).exists()) {
             qWarning() << "export docx template is not exisits";
             return  false;
         }
-//        if (!QFile(fileName).exists()) {
-//            qWarning() << "export file dir is not exisits";
-//            return  false;
-//        }
+
         DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
         l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
@@ -1555,17 +1532,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
 {
     try {
-//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
-//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/2column.dfw";
         if (!QFile(tempdir).exists()) {
             qWarning() << "export docx template is not exisits";
             return  false;
         }
-//        if (!QFile(fileName).exists()) {
-//            qWarning() << "export file dir is not exisits";
-//            return  false;
-//        }
+
         DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
         l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
@@ -1636,17 +1608,12 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
 {
 
     try {
-//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
-//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
         if (!QFile(tempdir).exists()) {
             qWarning() << "export docx template is not exisits";
             return  false;
         }
-//        if (!QFile(fileName).exists()) {
-//            qWarning() << "export file dir is not exisits" << fileName;
-//            return  false;
-//        }
+
         DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
         l_merger.load(tempdir.toStdString());
         //往表头中添加表头描述，表头为第一行，数据则在下面
@@ -1719,8 +1686,6 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
 {
 
     try {
-//        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
-//        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
         if (!QFile(tempdir).exists()) {
             qWarning() << "export docx template is not exisits";
@@ -1788,8 +1753,6 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
 {
     try {
-        //        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
-        //        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
         if (!QFile(tempdir).exists()) {
             qWarning() << "export docx template is not exisits";
@@ -1856,8 +1819,6 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DNF> jList, QS
 bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels)
 {
     try {
-        //        DocxFactory::WordProcessingCompiler &l_compiler = DocxFactory::WordProcessingCompiler::getInstance();
-        //        l_compiler.compile("/home/zyc/Desktop/6column.docx", "/home/zyc/Desktop/6column.dfw");
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
         if (!QFile(tempdir).exists()) {
             qWarning() << "export docx template is not exisits";
@@ -2035,7 +1996,6 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
         return false;
     }
     try {
-
         //写网页头
         html.write("<!DOCTYPE html>\n");
         html.write("<html>\n");
@@ -2045,18 +2005,6 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
         // 写入内容
         //日志类型为系统日志时
         if (flag == JOURNAL) {
-            //    QString title = QString(
-            //        "<tr><td>时间</td><td>主机名</td><td>守护进程</td><td>进程ID</td><td>级别</td><td>消息</"
-            //        "td></tr>");
-            //    QString title = QString("<tr><td>") +
-            //                    QString(DApplication::translate("Table", "Date and Time")) +
-            //                    QString("</td><td>") + QString(DApplication::translate("Table", "User")) +
-            //                    QString("</td><td>") + QString(DApplication::translate("Table", "Daemon"))
-            //                    + QString("</td><td>") + QString(DApplication::translate("Table", "PID"))
-            //                    + QString("</td><td>") + QString(DApplication::translate("Table",
-            //                    "Level")) + QString("</td><td>") +
-            //                    QString(DApplication::translate("Table", "Info")) + QString("</td></tr>");
-            //                    //delete  for bug
             // 写入表头
             QString title = QString("<tr><td>") + QString(DApplication::translate("Table", "Level")) +
                             QString("</td><td>") + QString(DApplication::translate("Table", "Process")) +
@@ -2075,14 +2023,6 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
                 }
                 LOG_MSG_JOURNAL jMsg = jList.at(i);
                 htmlEscapeCovert(jMsg.msg);
-                //        QString info =
-                //            QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td></tr>")
-                //                .arg(jMsg.dateTime)
-                //                .arg(jMsg.hostName)
-                //                .arg(jMsg.daemonName)
-                //                .arg(jMsg.daemonId)
-                //                .arg(jMsg.level)
-                //                .arg(jMsg.msg); //delete for bug
                 //根据字段拼出每行的网页内容
                 QString info =
                     QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td></tr>")
