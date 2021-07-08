@@ -109,6 +109,15 @@ void generateAppFileNull(QString path, int id, int lId, const QString &iSearchSt
     Q_UNUSED(iSearchStr);
 }
 
+qint64 stub_msecsTo(const QDateTime &){
+    return  200;
+}
+
+void stub_generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel){
+    Q_UNUSED(iDate);
+    Q_UNUSED(iLevel);
+}
+
 TEST_F(DisplayContentlx_UT, exportClicked_UT)
 {
     Stub stub;
@@ -133,6 +142,10 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT)
     m_content->m_flag = LOG_FLAG::Kwin;
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::NONE;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dnf;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dmesg;
     m_content->slot_exportClicked();
 
     //    stub.set
@@ -163,6 +176,10 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT001)
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::NONE;
     m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dnf;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dmesg;
+    m_content->slot_exportClicked();
 
     //    stub.set
 }
@@ -191,6 +208,10 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT002)
     m_content->m_flag = LOG_FLAG::Kwin;
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::NONE;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dnf;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dmesg;
     m_content->slot_exportClicked();
 
     //    stub.set
@@ -221,6 +242,10 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT003)
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::NONE;
     m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dnf;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dmesg;
+    m_content->slot_exportClicked();
 
     //    stub.set
 }
@@ -247,6 +272,12 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT004)
     m_content->m_flag = LOG_FLAG::Normal;
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::Kwin;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dnf;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::Dmesg;
+    m_content->slot_exportClicked();
+    m_content->m_flag = LOG_FLAG::BOOT_KLU;
     m_content->slot_exportClicked();
 
     //    stub.set
@@ -365,6 +396,16 @@ TEST_F(DisplayContentlx_UT, generateDnfFile_UT)
     m_content->generateDnfFile(BUTTONID::ONE_MONTH, DNFPRIORITY::DEBUG);
     m_content->generateDnfFile(BUTTONID::THREE_MONTHS, DNFPRIORITY::DEBUG);
     m_content->generateDnfFile(BUTTONID::INVALID, DNFPRIORITY::DEBUG);
+}
+
+TEST_F(DisplayContentlx_UT, generateJournalFile_UT)
+{
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByDnf), parseDnfNull);
+    stub.set(ADDR(QDateTime,msecsTo),stub_msecsTo);
+    m_content->m_journalFilter.timeFilter=0;
+    m_content->m_journalFilter.eventTypeFilter=0;
+    m_content->generateJournalFile(0,0,"" );
 }
 
 TEST_F(DisplayContentlx_UT, createDnfTable_UT)
@@ -519,6 +560,124 @@ TEST_F(DisplayContentlx_UT, slot_searchResult_UT)
     m_content->m_flag = LOG_FLAG::NONE;
     m_content->slot_searchResult("test");
 }
+
+TEST_F(DisplayContentlx_UT, slot_BtnSelected_UT)
+{
+    Stub stub;
+    stub.set(ADDR(DisplayContent, generateDnfFile), stub_generateDnfFile);
+    stub.set(ADDR(DisplayContent, generateDmesgFile), stub_generateDnfFile);
+    QStandardItemModel *model=new QStandardItemModel;
+    QStandardItem *item=new QStandardItem;
+    model->appendRow(item);
+    model->appendRow(item);
+    model->setData(model->index(0,0),"/var/log/dnf.log",Qt::UserRole + 66);
+    model->setData(model->index(1,0),"dmesg",Qt::UserRole + 66);
+    m_content->slot_BtnSelected(0,0,model->index(0,0));
+    m_content->slot_BtnSelected(0,0,model->index(1,0));
+    delete  item;
+    delete  model;
+}
+
+TEST_F(DisplayContentlx_UT, slot_logCatelogueClicked_UT){
+    Stub stub;
+    stub.set(ADDR(DisplayContent, generateDnfFile), stub_generateDnfFile);
+    stub.set(ADDR(DisplayContent, generateDmesgFile), stub_generateDnfFile);
+    QStandardItemModel *model=new QStandardItemModel;
+    QStandardItem *item=new QStandardItem;
+    model->appendRow(item);
+    model->appendRow(item);
+    model->setData(model->index(0,0),"/var/log/dnf.log",Qt::UserRole + 66);
+    model->setData(model->index(1,0),"dmesg",Qt::UserRole + 66);
+    m_content->slot_logCatelogueClicked(model->index(0,0));
+    m_content->slot_logCatelogueClicked(model->index(1,0));
+    m_content->m_curListIdx=model->index(0,0);
+    m_content->m_flag=LOG_FLAG::Dmesg;
+    m_content->slot_logCatelogueClicked(model->index(0,0));
+    delete  item;
+    delete  model;
+}
+
+TEST_F(DisplayContentlx_UT, slot_xorgData_UT){
+    LOG_MSG_XORG xorg={"20210202","test"};
+    QList<LOG_MSG_XORG>listXorg;
+    listXorg.append(xorg);
+    m_content->slot_xorgData(0,listXorg);
+    m_content->m_flag=LOG_FLAG::XORG;
+    m_content->m_xorgCurrentIndex=1;
+    m_content->m_firstLoadPageData=true;
+    m_content->slot_xorgData(1,listXorg);
+}
+
+TEST_F(DisplayContentlx_UT, slot_journalBootFinished_UT){
+    m_content->m_flag=LOG_FLAG::JOURNAL;
+    m_content->m_journalCurrentIndex=1;
+    m_content->slot_journalFinished(1);
+}
+
+
+
+TEST_F(DisplayContentlx_UT, slot_applicationData_UT){
+    LOG_MSG_APPLICATOIN app={"20210202","waring","test","test","test"};
+    QList<LOG_MSG_APPLICATOIN>listApp;
+    listApp.append(app);
+    m_content->m_flag=LOG_FLAG::APP;
+    m_content->m_appCurrentIndex=1;
+    m_content->m_firstLoadPageData=true;
+    m_content->slot_applicationData(1,listApp);
+}
+
+TEST_F(DisplayContentlx_UT, slot_logLoadFailed_UT){
+    m_content->slot_logLoadFailed("error");
+}
+
+TEST_F(DisplayContentlx_UT, filterNomal_UT){
+    NORMAL_FILTERS fiter;
+    LOG_MSG_NORMAL normal={"20210202","waring","test","test"};
+    QList<LOG_MSG_NORMAL>listNormal;
+    listNormal.append(normal);
+    m_content->filterNomal(fiter,listNormal);
+    fiter.eventTypeFilter=1;
+    m_content->filterNomal(fiter,listNormal);
+    fiter.eventTypeFilter=2;
+    m_content->filterNomal(fiter,listNormal);
+    fiter.eventTypeFilter=3;
+    m_content->filterNomal(fiter,listNormal);
+}
+
+TEST_F(DisplayContentlx_UT, slot_refreshClicked_UT){
+
+    Stub stub;
+    stub.set(ADDR(DisplayContent, generateDnfFile), stub_generateDnfFile);
+    stub.set(ADDR(DisplayContent, generateDmesgFile), stub_generateDnfFile);
+    QStandardItemModel *model=new QStandardItemModel;
+    QStandardItem *item=new QStandardItem;
+    model->appendRow(item);
+    model->appendRow(item);
+    model->setData(model->index(0,0),"/var/log/dnf.log",Qt::UserRole + 66);
+    model->setData(model->index(1,0),"dmesg",Qt::UserRole + 66);
+    m_content->slot_refreshClicked(model->index(0,0));
+    m_content->slot_refreshClicked(model->index(1,0));
+    m_content->m_curListIdx=model->index(0,0);
+    m_content->m_flag=LOG_FLAG::Dmesg;
+    m_content->slot_refreshClicked(model->index(0,0));
+    delete  item;
+    delete  model;
+}
+
+TEST_F(DisplayContentlx_UT, filterJournal_UT){
+
+    NORMAL_FILTERS fiter;
+    LOG_MSG_JOURNAL journal={"20210202","waring","test","test","test","test"};
+    QList<LOG_MSG_JOURNAL>listjournal;
+    listjournal.append(journal);
+    m_content->filterJournal("",listjournal);
+    m_content->filterJournal("test",listjournal);
+}
+
+
+
+
+
 
 //zyc
 
@@ -1365,11 +1524,6 @@ TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelo
     stub.set(ADDR(DLDBusHandler, getFileInfo), stub_getFileInfo);
     p->m_flag = KERN;
     p->slot_logCatelogueClicked(QModelIndex());
-    //    p->itemData=QDir::homePath() + "/.kwin.log";
-    //    p->slot_logCatelogueClicked(QModelIndex());
-    //    p->itemData="bootklu";
-    //    p->slot_logCatelogueClicked(QModelIndex());
-
     p->deleteLater();
 }
 
@@ -1389,68 +1543,7 @@ class DisplayContent_slot_exportClicked_UT : public ::testing::TestWithParam<Dis
 
 INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_exportClicked_UT, ::testing::Values(DisplayContent_slot_exportClicked_UT_Param(0), DisplayContent_slot_exportClicked_UT_Param(1), DisplayContent_slot_exportClicked_UT_Param(2), DisplayContent_slot_exportClicked_UT_Param(3), DisplayContent_slot_exportClicked_UT_Param(4), DisplayContent_slot_exportClicked_UT_Param(5), DisplayContent_slot_exportClicked_UT_Param(6), DisplayContent_slot_exportClicked_UT_Param(7), DisplayContent_slot_exportClicked_UT_Param(8), DisplayContent_slot_exportClicked_UT_Param(9)));
 QString slot_exportClicked_ModelIndex_data = "";
-//QVariant slot_exportClicked_ModelIndex_data_Func(void *obj, int arole)
-//{
-//    return QString(slot_exportClicked_ModelIndex_data);
-//}
 
-//QString exportClicked_getSaveFileName(QWidget *parent,
-//                                      const QString &caption,
-//                                      const QString &dir,
-//                                      const QString &filter,
-//                                      QString *selectedFilter,
-//                                      QFileDialog::Options options)
-//{
-//    return "./testExport.txt";
-//}
-//TEST_P(DisplayContent_slot_exportClicked_UT, DisplayContent_slot_exportClicked_UT_001)
-//{
-//    DisplayContent_slot_exportClicked_UT_Param param = GetParam();
-//    DisplayContent *p = new DisplayContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    Stub stub ;
-
-//    switch (param.index) {
-//    case 0:
-
-//        break;
-//    case 1:
-//        slot_exportClicked_ModelIndex_data = DPKG_TREE_DATA;
-//        break;
-//    case 2:
-//        slot_exportClicked_ModelIndex_data = XORG_TREE_DATA;
-//        break;
-//    case 3:
-//        slot_exportClicked_ModelIndex_data = BOOT_TREE_DATA;
-//        break;
-//    case 4:
-//        slot_exportClicked_ModelIndex_data = KERN_TREE_DATA;
-//        break;
-//    case 5:
-//        slot_exportClicked_ModelIndex_data = APP_TREE_DATA;
-//        break;
-//    case 6:
-//        slot_exportClicked_ModelIndex_data = LAST_TREE_DATA;
-//        break;
-//    case 7:
-//        slot_exportClicked_ModelIndex_data = KWIN_TREE_DATA;
-//        break;
-//    case 8:
-//        slot_exportClicked_ModelIndex_data = BOOT_KLU_TREE_DATA;
-//        break;
-//    case 9:
-//        slot_exportClicked_ModelIndex_data = "";
-//        break;
-//    default:
-//        break;
-//    }
-
-//    ;
-
-//    stub.set(ADDR(QFileDialog, getSaveFileName), exportClicked_getSaveFileName);
-//    p->slot_exportClicked();
-//    p->deleteLater();
-//}
 
 TEST(DisplayContent_slot_statusChagned_UT, DisplayContent_slot_statusChagned_UT_001)
 {

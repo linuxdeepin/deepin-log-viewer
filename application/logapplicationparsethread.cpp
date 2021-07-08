@@ -78,7 +78,6 @@ void LogApplicationParseThread::stopProccess()
 {
     m_canRun = false;
     if (m_process && m_process->isOpen()) {
-        // m_process->readAll();
         m_process->kill();
     }
 }
@@ -143,9 +142,6 @@ void LogApplicationParseThread::doWork()
                 if (dateTime.contains(",")) {
                     dateTime.replace(",", "");
                 }
-                //        if (dateTime.split(".").count() == 2) {
-                //            dateTime = dateTime.split(".")[0];
-                //        }
 
                 // add by Airy
                 // boot maker log can not show

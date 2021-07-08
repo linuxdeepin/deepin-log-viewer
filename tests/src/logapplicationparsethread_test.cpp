@@ -56,6 +56,10 @@ QStringList stub_getAppFileInfo(const QString &flag)
     return QStringList() << "test";
 }
 
+QByteArray stub_readAllStandardOutput(){
+    return "2021-03-10, 11:33:23.48.9 [Warning] [                                                         0] QFSFileEngine::open: No file name specified";
+}
+
 class LogApplicationParseThread_UT : public testing::Test
 {
 public:
@@ -86,12 +90,28 @@ TEST_F(LogApplicationParseThread_UT, LogApplicationParseThread_UT001)
     APP_FILTERS appfilter;
     Stub stub;
     stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryInfoList), stub_entryInfoList);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stub_getAppFileInfo);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_readAppLog);
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput);
+    m_logAppThread->initProccess();
+    m_logAppThread->setParam(appfilter);
+    m_logAppThread->m_AppFiler.path = "";
+    m_logAppThread->doWork();
+    m_logAppThread->m_AppFiler.path = "test";
+    m_logAppThread->doWork();
+    m_logAppThread->m_AppFiler.lvlFilter=-1;
+    m_logAppThread->doWork();
+    m_logAppThread->onProcFinished(1);
+}
+
+TEST_F(LogApplicationParseThread_UT, stopProcess_UT)
+{
+    APP_FILTERS appfilter;
+    Stub stub;
+    stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryInfoList), stub_entryInfoList);
     stub.set((QStringList(QString::*)(QChar, QString::SplitBehavior, Qt::CaseSensitivity) const)ADDR(QString, split), stub_split);
     stub.set(ADDR(DLDBusHandler, getFileInfo), stub_getAppFileInfo);
     stub.set(ADDR(DLDBusHandler, readLog), stub_readAppLog);
-    m_logAppThread->initProccess();
-    m_logAppThread->setParam(appfilter);
-    m_logAppThread->m_AppFiler.path = "/home/test";
-    m_logAppThread->doWork();
-    m_logAppThread->onProcFinished(1);
+    m_logAppThread->stopProccess();
+    m_logAppThread->getIndex();
 }

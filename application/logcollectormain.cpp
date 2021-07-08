@@ -88,17 +88,12 @@ void LogCollectorMain::initUI()
     /** add searchEdit */
     m_searchEdt = new DSearchEdit();
 
-    // m_searchEdt->setFocusPolicy(Qt::TabFocus);
     m_searchEdt->setPlaceHolder(DApplication::translate("SearchBar", "Search"));
     m_searchEdt->setMaximumWidth(400);
-    // m_searchEdt->setFocusPolicy(Qt::StrongFocus);
     titlebar()->setCustomWidget(m_searchEdt, true);
     /** add titleBar */
     titlebar()->setIcon(QIcon::fromTheme("deepin-log-viewer"));
     titlebar()->setTitle("");
-    /** menu */
-    //    titlebar()->menu()->addAction(new QAction(tr("help")));
-
 #ifdef SPLITTER_TYPE
 
     //m_hLayout = new QHBoxLayout;
@@ -212,8 +207,6 @@ void LogCollectorMain::initConnection()
     connect(m_midRightWgt, &DisplayContent::setExportEnable, m_topRightWgt,
             &FilterContent::setExportButtonEnable, Qt::DirectConnection);
     //自适应宽度
-//    connect(m_topRightWgt, &FilterContent::sigResizeWidth, this,
-//            &LogCollectorMain::resizeWidthByFilterContentWidth);
     connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_midRightWgt,
             SLOT(slot_refreshClicked(const QModelIndex &)));  // add by Airy for adding refresh
     connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_topRightWgt,
@@ -243,7 +236,6 @@ void LogCollectorMain::initShortCut()
     // Resize Window --> Ctrl+Alt+F
     if (nullptr == m_scWndReize) {
         m_scWndReize = new QShortcut(this);
-        //      m_scWndReize->setKey(tr("Ctrl+Alt+F"));
         m_scWndReize->setKey(Qt::CTRL + Qt::ALT + Qt::Key_F);
         m_scWndReize->setContext(Qt::ApplicationShortcut);
         m_scWndReize->setAutoRepeat(false);
@@ -262,7 +254,6 @@ void LogCollectorMain::initShortCut()
     // Find font --> Ctrl+F
     if (nullptr == m_scFindFont) {
         m_scFindFont = new QShortcut(this);
-        //        m_scFindFont->setKey(tr("Ctrl+F"));
         m_scFindFont->setKey(Qt::CTRL + Qt::Key_F);
         m_scFindFont->setContext(Qt::ApplicationShortcut);
         m_scFindFont->setAutoRepeat(false);
@@ -274,7 +265,6 @@ void LogCollectorMain::initShortCut()
     // export file --> Ctrl+E
     if (nullptr == m_scExport) {
         m_scExport = new QShortcut(this);
-        //        m_scExport->setKey(tr("Ctrl+E"));
         m_scExport->setKey(Qt::CTRL + Qt::Key_E);
         m_scExport->setContext(Qt::ApplicationShortcut);
         m_scExport->setAutoRepeat(false);
@@ -294,9 +284,6 @@ void LogCollectorMain::initShortCut()
  */
 bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt)
 {
-
-//    qDebug() << "handleApplicationTabEventNotify" << obj->objectName() << obj->metaObject()->className() << obj << this->titlebar();
-
     if (evt->key() == Qt::Key_Tab) {
         DWindowCloseButton *closebtn = this->titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
         if (obj == this->titlebar()) {
@@ -332,6 +319,3 @@ void LogCollectorMain::closeEvent(QCloseEvent *event)
     PERF_PRINT_BEGIN("POINT-02", "");
     DMainWindow::closeEvent(event);
 }
-
-
-
