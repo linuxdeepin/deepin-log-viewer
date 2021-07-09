@@ -37,7 +37,7 @@
 
 
 
-ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc, argv)
+ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc, argv),m_commondM(new QSharedMemory())
 {
 
     QCommandLineParser parser;
@@ -54,7 +54,6 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     m_proc = new QProcess(this);
 
 
-    m_commondM = new QSharedMemory();
     m_commondM->setKey(fileList[1]);
     m_commondM->create(sizeof(ShareMemoryInfo));
     if (m_commondM->isAttached())      //检测程序当前是否关联共享内存
