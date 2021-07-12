@@ -383,15 +383,19 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
             }
             //不能直接connect再setCurrentIndex,而是要手动发出改变app的信号让其刷新,让combox自己发的话,如果原来的index是0他不发currentindexChanged信号
         }
-        cbx_app->setCurrentIndex(rsIndex);
+        if (rsIndex == 0) {
+            Q_EMIT cbx_app->currentIndexChanged(0);
+        } else {
+            cbx_app->setCurrentIndex(rsIndex);
+        }
     }
 
     if (cbx_status->isVisible())
-        cbx_status->setCurrentIndex(iConifg.statusCbx);
+        Q_EMIT cbx_status->currentIndexChanged(iConifg.statusCbx);
     if (typeCbx->isVisible())
         typeCbx->setCurrentIndex(iConifg.typeCbx);
     m_btnGroup->button(iConifg.dateBtn)->setChecked(true); //add by Airy for bug 19660:period button default setting
-
+    Q_EMIT m_btnGroup->button(iConifg.dateBtn)->click();
 }
 
 /**
