@@ -356,9 +356,6 @@ void LogAuthThread::handleKern()
             continue;
 
         QStringList timeList;
-        timeList.append(list[0]);
-        timeList.append(list[1]);
-        timeList.append(list[2]);
         qint64 iTime = formatDateTime(list[0], list[1], list[2]);
         //对时间筛选
         if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
