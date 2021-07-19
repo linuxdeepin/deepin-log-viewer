@@ -168,9 +168,11 @@ void LogApplicationParseThread::doWork()
                 }
                 QStringList msgList = list[1].split("[", QString::SkipEmptyParts);
                 if (msgList.count() < 2) {
-                    continue;
+                    msg.src = "";
+                } else {
+                    msg.src = msgList[1];
                 }
-                msg.src = msgList[1];
+
                 if (list.count() >= 4) {
                     msg.detailInfo = list.mid(2).join("]");
                     msg.msg = msg.detailInfo;
