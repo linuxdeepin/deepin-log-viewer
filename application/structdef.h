@@ -63,6 +63,7 @@ struct LOG_MSG_APPLICATOIN {
     QString level;
     QString src;
     QString msg;
+    QString detailInfo;
 };
 
 struct LOG_MSG_XORG {

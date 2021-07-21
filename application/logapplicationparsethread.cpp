@@ -72,7 +72,6 @@ void LogApplicationParseThread::stopProccess()
 {
     m_canRun = false;
     if (m_process && m_process->isOpen()) {
-        // m_process->readAll();
         m_process->kill();
     }
 }
@@ -91,49 +90,50 @@ void LogApplicationParseThread::doWork()
     m_canRun = true;
     m_appList.clear();
     initProccess();
-
     //connect(m_process, SIGNAL(finished(int)), m_process, SLOT(deleteLater()));
     //因为筛选信息中含有日志文件路径，所以不能为空，否则无法获取
     if (m_AppFiler.path.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
         emit appFinished(m_threadCount);
     } else {
-        QStringList arg;
         //使用cat命令获取日志文件的文本
+        QStringList arg;
         arg << "-c" << QString("cat %1").arg(m_AppFiler.path);
-
         m_process->start("/bin/bash", arg);
         m_process->waitForFinished(-1);
         QByteArray byteOutput = m_process->readAllStandardOutput();
         m_process->close();
+        arg.clear();
         if (!m_canRun) {
             return;
         }
         //替换截断空字符
         QStringList strList = QString(Utils::replaceEmptyByteArray(byteOutput)).split('\n', QString::SkipEmptyParts);
         for (int i = strList.size() - 1; i >= 0; --i) {
+            LOG_MSG_APPLICATOIN msg;
             QString str = strList.at(i);
             if (!m_canRun) {
                 return;
             }
-            LOG_MSG_APPLICATOIN msg;
+
             //删除空白字符
             str.replace(QRegExp("\\s{2,}"), "");
             //删除颜色字符
             str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-
             QStringList list = str.split("]", QString::SkipEmptyParts);
             //日志格式各字段用[]和空格隔开，有等级 时间 信息体 三个字段，至少应该能分割出三个
-            if (list.count() < 3)
+
+            if (list.count() < 3 || !list[0].contains("[") || !list[1].contains("["))
                 continue;
 
-            QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
+            QStringList infoList = list[0].split("[", QString::SkipEmptyParts);
+            if (infoList.count() < 2) {
+                continue;
+            }
+            QString dateTime = infoList[0].trimmed();
             //原始文件时间日期文本为2020-07-03, 19:19:18.639 需要去除,
             if (dateTime.contains(",")) {
                 dateTime.replace(",", "");
             }
-            //        if (dateTime.split(".").count() == 2) {
-            //            dateTime = dateTime.split(".")[0];
-            //        }
 
             // add by Airy
             // boot maker log can not show
@@ -142,7 +142,7 @@ void LogApplicationParseThread::doWork()
                 QDateTime g_time = QDateTime::fromString(dateTime, "yyyyMMdd.hh:mm:ss.zzz");
                 QString gg_time = g_time.toString("yyyy-MM-dd hh:mm:ss.zzz");
                 dateTime = gg_time;
-            }  // add
+            } // add
 
             qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
             //按筛选条件筛选时间段
@@ -152,19 +152,25 @@ void LogApplicationParseThread::doWork()
             }
 
             msg.dateTime = dateTime;
-            msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
+            msg.level = infoList[1];
             //筛选日志等级
             if (m_AppFiler.lvlFilter != LVALL) {
                 if (m_levelDict.value(msg.level) != m_AppFiler.lvlFilter)
                     continue;
             }
-
-            msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
+            QStringList msgList = list[1].split("[", QString::SkipEmptyParts);
+            if (msgList.count() < 2) {
+                msg.src = "";
+            } else {
+                msg.src = msgList[1];
+            }
 
             if (list.count() >= 4) {
-                msg.msg = list.mid(2).join("]");
+                msg.detailInfo = list.mid(2).join("]");
+                msg.msg = msg.detailInfo;
             } else {
-                msg.msg = list[2];
+                msg.detailInfo = list[2].contains("[") ? list[2].append("]") : list[2];
+                msg.msg = msg.detailInfo;
             }
 
             m_appList.append(msg);
@@ -184,8 +190,6 @@ void LogApplicationParseThread::doWork()
 
         emit appFinished(m_threadCount);
     }
-
-
 }
 
 void LogApplicationParseThread::onProcFinished(int ret)

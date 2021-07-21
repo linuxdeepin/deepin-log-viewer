@@ -158,6 +158,8 @@ private:
     QMap<int, QString> m_levelMap;
     QMap<QString, int> m_dnfLevelDict;
     QMap<QString, QString> m_transDnfDict;
+    //日志显示时间(毫秒)
+    qint64 iTime;
 };
 
 #endif  // LOGAUTHTHREAD_H

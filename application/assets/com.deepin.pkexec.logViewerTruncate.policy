@@ -69,5 +69,6 @@
 		<message xml:lang="de">Zum Löschen des Protokolls ist eine Authentifizierung erforderlich</message>
 		<description xml:lang="hr">ovjera</description>
 		<message xml:lang="hr">Potrebna je ovjera za čišćenje zapisa</message>
+
 	</action>
 </policyconfig>
