@@ -17,9 +17,15 @@
 #include "logauththread.h"
 #include "utils.h"
 #include "sharedmemorymanager.h"
+#include "dbusproxy/dldbushandler.h"
+#include "sys/utsname.h"
+#include <wtmpparse.h>
 
 #include <QDebug>
 #include <QDateTime>
+#include <time.h>
+#include <utmp.h>
+#include <utmpx.h>
 
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
@@ -50,7 +56,6 @@ LogAuthThread::~LogAuthThread()
 {
     stopProccess();
     if (m_process) {
-        //   m_process->kill();
         m_process->close();
         m_process->deleteLater();
         m_process = nullptr;
@@ -99,18 +104,6 @@ void LogAuthThread::stopProccess()
         m_process->kill();
 
     }
-
-    // kill(qvariant_cast<pid_t>(m_process->pid()), SIGKILL);
-
-
-    // m_process->close();
-//        delete  m_process;
-//        m_process = nullptr;
-    //m_process->terminate();
-
-    //  m_process->close();
-    //m_process->waitForFinished(-1);
-
 }
 
 /**
@@ -161,47 +154,43 @@ void LogAuthThread::handleBoot()
         return;
     }
     initProccess();
-    m_process->setProcessChannelMode(QProcess::MergedChannels);
-    //共享内存对应变量置true，允许进程内部逻辑运行
-    ShareMemoryInfo   shareInfo ;
-    shareInfo.isStart = true;
-    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-    //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-    m_process->start("pkexec", QStringList() << "logViewerAuth"
-                     << "/var/log/boot.log" << SharedMemoryManager::instance()->getRunnableKey());
-    m_process->waitForFinished(-1);
 
-    QByteArray byte =   m_process->readAllStandardOutput();
-    QTextStream stream(&byte);
-    QByteArray encode;
-    stream.setCodec(encode);
-    QString str = stream.readAll();
-    QStringList l = str.split('\n');
-    qDebug() << __FUNCTION__ << "byte" << byte.length();
-    qDebug() << __FUNCTION__ << "str" << str.length();
+    QString m_Log = DLDBusHandler::instance(this)->readLog("/var/log/boot.log");
+    if (DLDBusHandler::instance(this)->exitCode() != 0) {
+        emit bootFinished(bList);
+        return;
+    }
+    QByteArray byte = m_Log.toUtf8();
+    QString tempStr = "";
+    QStringList strList = QString(Utils::replaceEmptyByteArray(byte)).split('\n', QString::SkipEmptyParts);
 
     //按换行分割
-    for (QString lineStr : str.split('\n')) {
-        if (lineStr.startsWith("/dev"))
+    for (int j = strList.size() - 1; j >= 0; --j) {
+        QString lineStr = strList.at(j);
+        if (lineStr.startsWith("/dev") || lineStr.isEmpty())
             continue;
-
+        //删除颜色格式字符
+        lineStr.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
         // remove Useless characters
         lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
         Utils::replaceColorfulFont(&lineStr);
         QStringList retList;
         LOG_MSG_BOOT bMsg;
         retList = lineStr.split(" ", QString::SkipEmptyParts);
-        if (lineStr.startsWith("[")) {
-            //如果是以ok/failed开头，则认为是一条记录的开头，否则认为此行为上一条日志的信息体的后续
-            bMsg.status = retList[1];
-            QStringList leftList = retList.mid(3);
-            bMsg.msg += leftList.join(" ");
-            bList.insert(0, bMsg);
+        if (retList.size() == 1) {
+            bMsg.msg = lineStr.trimmed();
+            bList.append(bMsg);
         } else {
-            if (bList.size() == 0)
-                continue;
-
-            bList[0].msg += retList.join(" ");
+            if (retList[1].compare("OK", Qt::CaseInsensitive) == 0 || retList[1].compare("Failed", Qt::CaseInsensitive) == 0) {
+                //如果是以ok/failed开头，则认为是一条记录的开头，否则认为此行为上一条日志的信息体的后续
+                bMsg.status = retList[1];
+                QStringList leftList = retList.mid(3);
+                bMsg.msg += leftList.join(" ");
+                bList.append(bMsg);
+            } else {
+                bMsg.msg = lineStr.trimmed();
+                bList.append(bMsg);
+            }
         }
     }
     emit bootFinished(bList);
@@ -225,91 +214,76 @@ void LogAuthThread::handleKern()
     if (!m_canRun) {
         return;
     }
-    // connect(proc, &QProcess::readyRead, this, &LogAuthThread::onFinishedRead);
-    m_process->setProcessChannelMode(QProcess::MergedChannels);
-    if (!m_canRun) {
-        return;
-    }
-    //如果共享内存没有初始化绑定好，则无法开始，因为不能开启一个可能无法停止的进程
-    if (!SharedMemoryManager::instance()->isAttached()) {
-        return;
-    }
-    //共享内存对应变量置true，允许进程内部逻辑运行
-    ShareMemoryInfo   shareInfo ;
-    shareInfo.isStart = true;
-    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-    //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-    m_process->start("pkexec", QStringList() << "logViewerAuth"
-                     //         << "/home/zyc/Documents/tech/同方内核日志没有/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-                     //   << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-                     << "/var/log/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-    //proc->start("pkexec", QStringList() << "/bin/bash" << "-c" << QString("cat %1").arg("/var/log/kern.log"));
-    // proc->start("pkexec", QStringList() << QString("cat") << QString("/var/log/kern.log"));
-    m_process->waitForFinished(-1);
-    qDebug() << " m_process->exitCode() " << m_process->exitCode();
+    QString m_Log = DLDBusHandler::instance(this)->readLog("/var/log/kern.log");
+
     //有错则传出空数据
-    if (m_process->exitCode() != 0) {
+    if (DLDBusHandler::instance(this)->exitCode() != 0) {
         emit kernFinished(kList);
         return;
     }
+    QByteArray outByte = m_Log.toUtf8();
     if (!m_canRun) {
         return;
     }
-    QByteArray byte =   m_process->readLine();
-//一行行读，不能直接1readAllStandardOutput，因为日志文本可能很大，有可能超过QByteArray最大大小
-    while (!byte.isNull()) {
-        if (!m_canRun) {
-            return;
-        }
-        QTextStream stream(&byte);
-        if (!m_canRun) {
-            return;
-        }
-        QByteArray encode;
-        if (!m_canRun) {
-            //停止标记量，外部把置false则停止运行
-            return;
-        }
-        stream.setCodec(encode);
-        if (!m_canRun) {
-            return;
-        }
-        QString str = stream.readAll();
-        if (!m_canRun) {
-            return;
-        }
-        QStringList l = str.split('\n');
-        if (!m_canRun) {
-            return;
-        }
+    QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
 
-        QStringList a = str.split('\n');
-        for (QString str : a) {
-            if (!m_canRun) {
-                return;
-            }
-            LOG_MSG_JOURNAL msg;
-            //删除颜色格式字符
-            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-            QStringList list = str.split(" ", QString::SkipEmptyParts);
-            if (list.size() < 5)
-                continue;
-
-            QStringList timeList;
+    for (int j = strList.size() - 1; j >= 0; --j) {
+        if (!m_canRun) {
+            return;
+        }
+        QString str = strList.at(j);
+        LOG_MSG_JOURNAL msg;
+        //删除颜色格式字符
+        str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+        QStringList list = str.split(" ", QString::SkipEmptyParts);
+        if (list.size() < 5)
+            continue;
+        //获取内核年份接口已添加，等待系统接口添加年份改变相关日志
+        QStringList timeList;
+        if (list[0].contains("-")) {
+            timeList.append(list[0]);
+            timeList.append(list[1]);
+            iTime = formatDateTime(list[0], list[1]);
+        } else {
             timeList.append(list[0]);
             timeList.append(list[1]);
             timeList.append(list[2]);
-            qint64 iTime = formatDateTime(list[0], list[1], list[2]);
-            //对时间筛选
-            if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
-                if (iTime < m_kernFilters.timeFilterBegin || iTime > m_kernFilters.timeFilterEnd)
-                    continue;
+            iTime = formatDateTime(list[0], list[1], list[2]);
+        }
+
+        //对时间筛选
+        if (m_kernFilters.timeFilterBegin > 0 && m_kernFilters.timeFilterEnd > 0) {
+            if (iTime < m_kernFilters.timeFilterBegin || iTime > m_kernFilters.timeFilterEnd)
+                continue;
+        }
+
+        msg.dateTime = timeList.join(" ");
+        QStringList tmpList;
+        utsname _utsname;
+        uname(&_utsname);
+        if (list[0].contains("-")) {
+            // get hostname.
+            msg.hostName = QString(_utsname.nodename);
+            tmpList = list[3].split("[");
+        } else {
+            // get hostname.
+            msg.hostName = QString(_utsname.nodename);
+            tmpList = list[4].split("[");
+        }
+
+        int m = 0;
+        //内核日志存在年份，解析用户名和进程id
+        if (list[0].contains("-")) {
+            if (tmpList.size() != 2) {
+                msg.daemonName = list[3].split(":")[0];
+            } else {
+                msg.daemonName = list[3].split("[")[0];
+                QString id = list[3].split("[")[1];
+                id.chop(2);
+                msg.daemonId = id;
             }
-
-            msg.dateTime = timeList.join(" ");
-            msg.hostName = list[3];
-
-            QStringList tmpList = list[4].split("[");
+            m = 4;
+        } else { //内核日志不存在年份,解析用户名和进程id
             if (tmpList.size() != 2) {
                 msg.daemonName = list[4].split(":")[0];
             } else {
@@ -318,28 +292,23 @@ void LogAuthThread::handleKern()
                 id.chop(2);
                 msg.daemonId = id;
             }
-
-            QString msgInfo;
-            for (auto i = 5; i < list.size(); i++) {
-                msgInfo.append(list[i] + " ");
-            }
-            msg.msg = msgInfo;
-
-            //            kList.append(msg);
-            kList.insert(0, msg);
-            if (!m_canRun) {
-                return;
-            }
-
+            m = 5;
         }
+
+        QString msgInfo;
+        for (int k = m; k < list.size(); k++) {
+            msgInfo.append(list[k] + " ");
+        }
+        msg.msg = msgInfo;
+
+        //            kList.append(msg);
+        kList.append(msg);
         if (!m_canRun) {
             return;
         }
-        byte =   m_process->readLine();
     }
 
     emit kernFinished(kList);
-
 }
 
 /**
@@ -615,19 +584,25 @@ qint64 LogAuthThread::formatDateTime(QString m, QString d, QString t)
     return dt.toMSecsSinceEpoch();
 }
 
-
+/**
+ * @brief LogAuthThread::formatDateTime 内核日志有年份 格式为2020-01-05 所以需要特殊转换
+ * @param y 年月日
+ * @param t 时间字符串
+ * @return 时间毫秒数
+ */
+qint64 LogAuthThread::formatDateTime(QString y, QString t)
+{
+    //when /var/kern.log have the year
+    QLocale local(QLocale::English, QLocale::UnitedStates);
+    QString tStr = QString("%1 %2").arg(y).arg(t);
+    QDateTime dt = local.toDateTime(tStr, "yyyy-MM-dd hh:mm:ss");
+    return dt.toMSecsSinceEpoch();
+}
 
 void LogAuthThread::onFinished(int exitCode)
 {
     Q_UNUSED(exitCode)
 
-//    QProcess *process = dynamic_cast<QProcess *>(sender());
-//    if (!process) {
-//        return;
-//    }
-//    if (!process->isOpen()) {
-//        return;
-//    }
     if (m_type != KERN && m_type != BOOT) {
         return;
     }
@@ -639,10 +614,6 @@ void LogAuthThread::onFinished(int exitCode)
     QStringList l = str.split('\n');
     qDebug() << __FUNCTION__ << "byte" << byte.length();
     qDebug() << __FUNCTION__ << "str" << str.length();
-    //  qDebug() << __FUNCTION__ << "str" << str;
-
-//    emit cmdFinished(m_type, str);
-
 
 }
 
@@ -650,11 +621,3 @@ void LogAuthThread::kernDataRecived()
 {
 
 }
-
-//void LogAuthThread::onFinishedRead()
-//{
-//    QProcess *process = dynamic_cast<QProcess *>(sender());
-//    QString str = QString(process->readAllStandardOutput());
-//    QStringList l = str.split('\n');
-
-//}

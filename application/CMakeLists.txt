@@ -166,6 +166,8 @@ set (APP_CPP_FILES
      logsettings.cpp
      DebugTimeManager.cpp
      wtmpparse.cpp
+     dbusproxy/dldbusinterface.cpp
+     dbusproxy/dldbushandler.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc

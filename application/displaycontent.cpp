@@ -136,8 +136,6 @@ void DisplayContent::initUI()
 
     this->setLayout(vLayout);
     setLoadState(DATA_COMPLETE);
-    //    DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
-    //    slot_themeChanged(ct);
     m_exportDlg = new ExportProgressDlg(this);
     m_exportDlg->setAccessibleName("export_dialog");
     m_exportDlg->hide();
@@ -149,8 +147,6 @@ void DisplayContent::initUI()
 void DisplayContent::initMap()
 {
     m_transDict.clear();
-//    m_transDict.insert("Warning", "warning");
-//    m_transDict.insert("Debug", "debug");
     m_transDict.insert("Warning", DApplication::translate("Level", "Warning"));  //add by Airy for bug 19167 and 19161
     m_transDict.insert("Debug", DApplication::translate("Level", "Debug")); //add by Airy for bug 19167 and 19161
     m_transDict.insert("Info", DApplication::translate("Level", "Info"));
