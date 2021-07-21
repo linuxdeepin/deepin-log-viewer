@@ -264,7 +264,7 @@ void LogAuthThread::handleKern()
             return;
         }
         //------平板模式取消授权框提权，通过dbus通信守护进程提权---------
-        QString m_Log = DLDBusHandler::instance(this)->readLog("/var/log/kern.log");
+        QString m_Log = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
         //有错则传出空数据
         if (DLDBusHandler::instance(this)->exitCode() != 0) {
             emit kernFinished(m_threadCount);
