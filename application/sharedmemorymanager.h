@@ -47,7 +47,7 @@ public:
     void releaseMemory();
 
 protected:
-    SharedMemoryManager(QObject *parent = nullptr);
+    explicit SharedMemoryManager(QObject *parent = nullptr);
 
     void init();
 private:

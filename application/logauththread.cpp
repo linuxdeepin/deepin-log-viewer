@@ -144,18 +144,6 @@ void LogAuthThread::stopProccess()
         m_process->kill();
 
     }
-
-    // kill(qvariant_cast<pid_t>(m_process->pid()), SIGKILL);
-
-
-    // m_process->close();
-//        delete  m_process;
-//        m_process = nullptr;
-    //m_process->terminate();
-
-    //  m_process->close();
-    //m_process->waitForFinished(-1);
-
 }
 
 QString LogAuthThread::startTime()
@@ -314,18 +302,12 @@ void LogAuthThread::handleKern()
     if (!m_canRun) {
         return;
     }
-    //如果共享内存没有初始化绑定好，则无法开始，因为不能开启一个可能无法停止的进程
-    if (!SharedMemoryManager::instance()->isAttached()) {
-        return;
-    }
     //共享内存对应变量置true，允许进程内部逻辑运行
     ShareMemoryInfo   shareInfo ;
     shareInfo.isStart = true;
     SharedMemoryManager::instance()->setRunnableTag(shareInfo);
     //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
     m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                             //         << "/home/zyc/Documents/tech/同方内核日志没有/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
-                                             //    << "/home/zyc/Documents/tech/klu内核日志读取崩溃日志/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
                                              << "/var/log/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
     m_process->waitForFinished(-1);
     qDebug() << " m_process->exitCode() " << m_process->exitCode();
