@@ -40,7 +40,6 @@
 #include <QWidget>
 #include <QDateTime>
 
-
 class ExportProgressDlg;
 /**
  * @brief The DisplayContent class 主显示数据区域控件,包括数据表格和详情页
@@ -127,7 +126,6 @@ private:
     void createDmesgForm();
     void insertDmesgTable(QList<LOG_MSG_DMESG> list, int start, int end);
     void insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end);
-    //
 
 signals:
     void loadMoreInfo();
@@ -199,6 +197,7 @@ public slots:
     void onExportFakeCloseDlg();
     void clearAllFilter();
     void clearAllDatalist();
+
     QList<LOG_MSG_BOOT>  filterBoot(BOOT_FILTERS ibootFilter, QList<LOG_MSG_BOOT> &iList);
     QList<LOG_MSG_NORMAL>  filterNomal(NORMAL_FILTERS inormalFilter, QList<LOG_MSG_NORMAL> &iList);
     QList<LOG_MSG_DPKG> filterDpkg(const QString &iSearchStr, QList<LOG_MSG_DPKG> &iList);

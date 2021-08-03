@@ -534,6 +534,7 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     }
 
 }
+
 /**
  * @brief DisplayContent::createJournalTableForm 内核日志表头项目创建和重置
  */
@@ -557,9 +558,7 @@ void DisplayContent::createKernTableForm()
 // modified by Airy for bug  12263
 void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
 {
-    //    m_treeView->show();
     setLoadState(DATA_COMPLETE);
-    //  m_pModel->clear();
 
     m_limitTag = 0;
     int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
@@ -570,15 +569,12 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-
-
 /**
  * @brief DisplayContent::insertKernTable 按分页转换插入内核日志到treeview的model中
  * @param list 当前筛选状态下所有符合条件的内核日志数据结构
  * @param start 分页开始的数组下标
  * @param end 分页结束的数组下标
  */
-// add by Airy for bug
 void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int end)
 {
     QList<LOG_MSG_JOURNAL> midList = list;
@@ -587,6 +583,7 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
     }
     parseListToModel(midList, m_pModel);
 }
+
 /**
  * @brief DisplayContent::insertDpkgTable 按分页转换插入dpkg日志到treeview的model中
  * @param list 当前筛选状态下所有符合条件的内核日志数据结构
@@ -957,6 +954,9 @@ void DisplayContent::generateNormalFile(int id)
     createNormalTableForm();
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());  // get zero time
+    QDateTime dtStart = dt;
+    QDateTime dtEnd = dt;
+    dtEnd.setTime(QTime(23, 59, 59, 999));
 
     switch (id) {
     case ALL:
@@ -965,41 +965,26 @@ void DisplayContent::generateNormalFile(int id)
         m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
         break;
     case ONE_DAY: {
-        QDateTime dtStart = dt;
-        QDateTime dtEnd = dt;
-        dtEnd.setTime(QTime(23, 59, 59, 999));
         m_normalFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
     } break;
     case THREE_DAYS: {
-        QDateTime dtStart = dt;
-        QDateTime dtEnd = dt;
-        dtEnd.setTime(QTime(23, 59, 59, 999));
         m_normalFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex =  m_logFileParse.parseByNormal(m_normalFilter);
     } break;
     case ONE_WEEK: {
-        QDateTime dtStart = dt;
-        QDateTime dtEnd = dt;
-        dtEnd.setTime(QTime(23, 59, 59, 999));
         m_normalFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex =  m_logFileParse.parseByNormal(m_normalFilter);
     } break;
     case ONE_MONTH: {
-        QDateTime dtStart = dt;
-        QDateTime dtEnd = dt;
-        dtEnd.setTime(QTime(23, 59, 59, 999));
         m_normalFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
     } break;
     case THREE_MONTHS: {
-        QDateTime dtStart = dt;
-        QDateTime dtEnd = dt;
-        dtEnd.setTime(QTime(23, 59, 59, 999));
         m_normalFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
@@ -1134,7 +1119,6 @@ void DisplayContent::generateJournalBootFile(int lId, const QString &iSearchStr)
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalLevelColumn, LEVEL_WIDTH);
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalDaemonNameColumn, DEAMON_WIDTH);
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
-
 }
 
 /**
@@ -1456,7 +1440,6 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
         xList.clear();
         m_flag = XORG;
-        //        m_logFileParse.parseByXlog(xList);
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = BOOT;
         generateBootFile();
@@ -1470,7 +1453,6 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
         norList.clear();
         m_flag = Normal;
-        //        m_logFileParse.parseByNormal(norList);
     } else if (itemData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Kwin;
         KWIN_FILTERS filter;
@@ -1755,7 +1737,6 @@ void DisplayContent::slot_statusChagned(QString status)
     currentBootList =   filterBoot(m_bootFilter, bList);
     createBootTableForm();
     createBootTable(currentBootList);
-
 }
 
 /**
@@ -2107,11 +2088,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
 
             int leftCnt = appList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            //            qDebug() << "total count: " << appList.count() << "left count : " <<
-            //            leftCnt
-            //                     << " start : " << SINGLE_LOAD * rate << "end: " << end +
-            //                     SINGLE_LOAD * rate;
-
             insertApplicationTable(appList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
             m_limitTag = rateValue;
@@ -2434,10 +2410,8 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
     int listCount = iList.size();
     for (int i = 0; i < listCount; i++) {
         items.clear();
-        //int col = 0;
         QString CH_str = m_transDict.value(iList[i].level);
         QString lvStr = CH_str.isEmpty() ? iList[i].level : CH_str;
-        //        item = new DStandardItem(lvStr);
         item = new DStandardItem();
         QString iconPath = m_iconPrefix + getIconByname(iList[i].level);
         if (getIconByname(iList[i].level).isEmpty())
@@ -2451,7 +2425,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
         item->setData(APP_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
         items << item;
-        //        item = new DStandardItem(list[i].src);
         item = new DStandardItem(getAppName(m_curAppLog));
         item->setData(APP_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
@@ -2584,10 +2557,8 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemMod
     int listCount = iList.size();
     for (int i = 0; i < listCount; i++) {
         items.clear();
-        //int col = 0;
         QString CH_str = m_transDict.value(iList[i].level);
         QString lvStr = CH_str.isEmpty() ? iList[i].level : CH_str;
-        //        item = new DStandardItem(lvStr);
         item = new DStandardItem();
         QString iconPath = m_iconPrefix + m_dnfIconNameMap.value(iList[i].level);
         if (m_dnfIconNameMap.value(iList[i].level).isEmpty())
@@ -2623,7 +2594,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemM
     for (int i = 0; i < listCount; i++) {
         items.clear();
         item = new DStandardItem();
-        //        qDebug() << "journal level" << logList[i].level;
         QString iconPath = m_iconPrefix + getIconByname(iList[i].level);
 
         if (getIconByname(iList[i].level).isEmpty())
@@ -2714,6 +2684,7 @@ void DisplayContent::onExportResult(bool isSuccess)
     }
     DApplication::setActiveWindow(this);
 }
+
 /**
  * @brief DisplayContent::onExportFakeCloseDlg
  * doc和xls格式导出最后save之前无进度变化先关闭窗口,后续再在导出逻辑里加进度信号
@@ -2964,9 +2935,6 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterJournalBoot(const QString &iSearchS
     return rsList;
 }
 
-
-
-
 /**
  * @brief DisplayContent::onExportProgress 导出时进度显示槽函数,连接导出数据进程
  * @param nCur 当前进行到的count
@@ -3046,8 +3014,6 @@ QString DisplayContent::getIconByname(QString str)
 {
     return m_icon_name_map.value(str);
 }
-
-
 
 void DisplayContent::createBootTableForm()
 {

@@ -122,18 +122,6 @@ void JournalBootWork::setArg(QStringList arg)
         m_arg.append(arg);
 }
 
-
-
-void JournalBootWork::deleteSd()
-{
-
-//    qDebug() << j;
-//    if (j) {
-//        sd_journal_close(j);
-//        j = nullptr;
-//    }
-}
-
 /**
  * @brief JournalBootWork::run 线程执行函数
  */
@@ -158,7 +146,6 @@ void JournalBootWork::doWork()
     //如果线程外部被直接调用stopWork
     if ((!m_canRun)) {
         mutex.unlock();
-        deleteSd();
         return;
     }
 #if 1
@@ -166,7 +153,6 @@ void JournalBootWork::doWork()
     sd_journal *j ;
     if ((!m_canRun)) {
         mutex.unlock();
-        deleteSd();
         return;
     }
     //打开日志文件
@@ -174,7 +160,6 @@ void JournalBootWork::doWork()
     if ((!m_canRun)) {
         mutex.unlock();
         sd_journal_close(j);
-        deleteSd();
         return;
     }
     //r为系统借口返回值，小于0则表示失败，直接返回
@@ -196,10 +181,8 @@ void JournalBootWork::doWork()
     if ((!m_canRun)) {
         mutex.unlock();
         sd_journal_close(j);
-        deleteSd();
         return;
     }
-    //    sd_journal_add_match(j, "PRIORITY=3", 0);
 
     if (!m_arg.isEmpty()) {
         //增加日志等级筛选
@@ -216,16 +199,13 @@ void JournalBootWork::doWork()
     if ((!m_canRun)) {
         mutex.unlock();
         sd_journal_close(j);
-        deleteSd();
         return;
     }
-    //sd_id128_t boot_id = SD_ID128_NULL;
 
     char match[9 + 32 + 1] = "_BOOT_ID=";
     if ((!m_canRun)) {
         mutex.unlock();
         sd_journal_close(j);
-        deleteSd();
         return;
     }
     sd_id128_t current_id;
@@ -236,11 +216,9 @@ void JournalBootWork::doWork()
     if ((!m_canRun)) {
         mutex.unlock();
         sd_journal_close(j);
-        deleteSd();
         return;
     }
     qDebug() << "match" << match;
-    // r = sd_journal_add_match(j, "_BOOT_ID=56896a70f6164e7bb858f52ef72fce30", 0);
     //增加筛选条件
     r = sd_journal_add_match(j, match, sizeof(match) - 1);
     if (r < 0) {
@@ -260,7 +238,6 @@ void JournalBootWork::doWork()
     if ((!m_canRun)) {
         mutex.unlock();
         sd_journal_close(j);
-        deleteSd();
         return;
     }
     int cnt = 0;
@@ -269,16 +246,12 @@ void JournalBootWork::doWork()
         if ((!m_canRun)) {
             mutex.unlock();
             sd_journal_close(j);
-            deleteSd();
             return;
         }
         const char *d;
         size_t l;
 
         LOG_MSG_JOURNAL logMsg;
-
-        //        r = sd_journal_get_data(j, "SYSLOG_TIMESTAMP", (const void **)&d, &l);
-        //        if (r < 0) {
         //获取时间
         r = sd_journal_get_data(j, "_SOURCE_REALTIME_TIMESTAMP", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
@@ -286,7 +259,6 @@ void JournalBootWork::doWork()
             if (r < 0) {
                 continue;
             }
-            //            }
         }
         uint64_t t;
         sd_journal_get_realtime_usec(j, &t);
@@ -369,9 +341,7 @@ void JournalBootWork::doWork()
 
     emit journalBootFinished(m_threadIndex);
     //第一次加载时这个之后的代码都不执行?故放到最后
-    deleteSd();
     sd_journal_close(j);
-    //    emit journalFinished(logList);
 
 #else
     proc = new QProcess;

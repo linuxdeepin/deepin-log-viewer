@@ -26,7 +26,6 @@
 #include <sys/time.h>
 #include <time.h>
 
-
 DebugTimeManager    *DebugTimeManager::s_Instance = nullptr;
 
 DebugTimeManager::DebugTimeManager()
@@ -39,21 +38,6 @@ void DebugTimeManager::clear()
     m_MapPoint.clear();
     m_MapLinuxPoint.clear();
 }
-
-//void DebugTimeManager::beginPointQt(const QString &point, const QString &status)
-//{
-//    PointInfo info;
-//    info.desc = status;
-//    info.time = QDateTime::currentMSecsSinceEpoch();
-//    m_MapPoint.insert(point, info);
-//}
-//void DebugTimeManager::endPointQt(const QString &point)
-//{
-//    if (m_MapPoint.find(point) != m_MapPoint.end()) {
-//        m_MapPoint[point].time = QDateTime::currentMSecsSinceEpoch() - m_MapPoint[point].time;
-//        qDebug() << QString("[GRABPOINT] %1 %2 time=%3ms").arg(point).arg(m_MapPoint[point].desc).arg(m_MapPoint[point].time);
-//    }
-//}
 
 void DebugTimeManager::beginPointLinux(const QString &point, const QString &status)
 {
@@ -68,6 +52,7 @@ void DebugTimeManager::beginPointLinux(const QString &point, const QString &stat
     m_MapLinuxPoint.insert(point, info);
 
 }
+
 void DebugTimeManager::endPointLinux(const QString &point, const QString &status)
 {
     if (m_MapLinuxPoint.contains(point)) {

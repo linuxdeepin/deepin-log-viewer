@@ -69,21 +69,6 @@ void LogApplicationHelper::init()
  */
 void LogApplicationHelper::createDesktopFiles()
 {
-//    QDBusPendingReply<LauncherItemInfoList> reply   = m_DbusLauncher->GetAllItemInfos();
-//    if (reply.isError()) {
-//        qWarning() << "application info from dbus is empty!!";
-//        qWarning() << reply.error();
-//        return;
-//    }
-
-//    const LauncherItemInfoList &datas = reply.value();
-//    qDebug() << " datas.size()" << datas.size();
-//    for (const auto &it : datas) {
-//        qDebug() << "createDesktopFiles" << it.ID << it.Icon << it.Name << it.Path << it.CategoryID << it.TimeInstalled;
-//        if (it.Path.contains("deepin-") ||  it.Path.contains("dde-")) {
-//            //  m_desktop_files.append(it.Path);
-//        }
-//    }
     //在该目录下遍历所有desktop文件
     QString path = "/usr/share/applications";
     QDir dir(path);
@@ -101,8 +86,6 @@ void LogApplicationHelper::createDesktopFiles()
     qDebug() << "  tempDesktopFiles.count()" <<    tempDesktopFiles.count();
     for (QString var : tempDesktopFiles) {
         QString filePath = path + "/" + var;
-        //  QString filePath = var;
-        //  qDebug() << "m_desktop_files filePath" << filePath;
         QFile fi(filePath);
         if (!fi.open(QIODevice::ReadOnly))
             continue;
@@ -204,7 +187,6 @@ void LogApplicationHelper::createLogFiles()
 
     m_log_files = appDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
     qDebug() << " m_log_files.size()" << appDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
-//    qDebug() << "m_desktop_files" << m_desktop_files;
 
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
         QString desktopName = m_desktop_files[i].split(QDir::separator()).last();
@@ -236,8 +218,6 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
     if (!fi.open(QIODevice::ReadOnly)) {
         return;
     }
-//   qDebug() << "parseField" << "path" << path << "name" << name << "isDeepin" << isDeepin << "isGeneric" << isGeneric << "isName" << isName;
-    // insert map at first, en-en, then repalce transName if has name,
     m_en_trans_map.insert(name.mid(0, name.lastIndexOf(".")), name.mid(0, name.lastIndexOf("."))); // desktop name
     if (name.contains("shutdown")) {
     }
@@ -269,22 +249,15 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
 
         QString leftStr = gNameList[0];
         QString genericName = gNameList[1];
-        //  qDebug() << "leftStr" << leftStr;
         if (leftStr.split("_").count() == 2) {
-            // qDebug() << "  if (leftStr.split(_).count() == 2) {" << leftStr << m_current_system_language;
             if (leftStr.contains(m_current_system_language)) {
-                //    qDebug() << " if (leftStr.contains(m_current_system_language)) {";
                 m_en_trans_map.insert(name.mid(0, name.lastIndexOf(".")), genericName);
                 break;
             }
         } else if (leftStr.contains(m_current_system_language.split("_")[0])) {
-            // qDebug() << " if (leftStr.contains(m_current_system_language.split(_)[0])) {";
             m_en_trans_map.insert(name.mid(0, name.lastIndexOf(".")), genericName);
             break;
-        } else if (0 == leftStr.compare("GenericName", Qt::CaseInsensitive) ||
-                   0 == leftStr.compare("Name", Qt::CaseInsensitive)) {
-            //   qDebug() << " if (0 == leftStr.compare(\"GenericName\", Qt::CaseInsensitive) || 0 == leftStr.compare(\"Name\", Qt::CaseInsensitive)) {";
-            // could not find GenericName[...], use GenericName=
+        } else if (0 == leftStr.compare("GenericName", Qt::CaseInsensitive) || 0 == leftStr.compare("Name", Qt::CaseInsensitive)) {
             m_en_trans_map.insert(name.mid(0, name.lastIndexOf(".")), genericName); // GenericName=xxxx
         }
     }
@@ -320,8 +293,6 @@ QString LogApplicationHelper::getLogFile(QString path)
  */
 QMap<QString, QString> LogApplicationHelper::getMap()
 {
-//     qDebug() << "m_en_log_map" << m_en_log_map;
-    // qDebug() << "m_en_trans_map" << m_en_trans_map;
     init();
     QMap<QString, QString>::const_iterator iter = m_en_log_map.constBegin();
     while (iter != m_en_log_map.constEnd()) {

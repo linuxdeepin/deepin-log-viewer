@@ -92,12 +92,8 @@ journalWork::~journalWork()
  */
 void journalWork::stopWork()
 {
-//    if (proc)
-//        proc->kill();
-    //requestInterruption();
     qDebug() << "stopWork";
     m_canRun = false;
-    // deleteSd();
 }
 
 /**
@@ -130,15 +126,6 @@ void journalWork::setArg(QStringList arg)
         m_arg.append(arg);
 }
 
-
-
-void journalWork::deleteSd()
-{
-
-    qDebug() << "deleteSd";
-
-}
-
 /**a
  * @brief journalWork::run 线程执行函数
  */
@@ -161,7 +148,6 @@ void journalWork::doWork()
     mutex.unlock();
     if ((!m_canRun)) {
         mutex.unlock();
-        deleteSd();
         return;
     }
 #if 1
@@ -170,7 +156,6 @@ void journalWork::doWork()
     sd_journal *j ;
     if ((!m_canRun)) {
         mutex.unlock();
-        deleteSd();
         return;
     }
     //打开日志文件
@@ -178,7 +163,6 @@ void journalWork::doWork()
     if ((!m_canRun)) {
         mutex.unlock();
         sd_journal_close(j);
-        deleteSd();
         return;
     }
     //r为系统借口返回值，小于0则表示失败，直接返回
@@ -191,7 +175,6 @@ void journalWork::doWork()
     if ((!m_canRun)) {
         mutex.unlock();
         sd_journal_close(j);
-        deleteSd();
         return;
     }
     //    sd_journal_add_match(j, "PRIORITY=3", 0);
@@ -205,7 +188,6 @@ void journalWork::doWork()
     if ((!m_canRun)) {
         mutex.unlock();
         sd_journal_close(j);
-        deleteSd();
         return;
     }
     int cnt = 0;
@@ -215,16 +197,12 @@ void journalWork::doWork()
         if ((!m_canRun)) {
             mutex.unlock();
             sd_journal_close(j);
-            deleteSd();
             return;
         }
         const char *d;
         size_t l;
 
         LOG_MSG_JOURNAL logMsg;
-
-        //        r = sd_journal_get_data(j, "SYSLOG_TIMESTAMP", (const void **)&d, &l);
-        //        if (r < 0) {
         //获取时间
         r = sd_journal_get_data(j, "_SOURCE_REALTIME_TIMESTAMP", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
@@ -232,7 +210,6 @@ void journalWork::doWork()
             if (r < 0) {
                 continue;
             }
-            //            }
         }
         uint64_t t;
         sd_journal_get_realtime_usec(j, &t);
@@ -306,21 +283,6 @@ void journalWork::doWork()
             //sleep(100);
             mutex.unlock();
         }
-//        cnt++;
-//        mutex.lock();
-//        logList.append(logMsg);
-//        mutex.unlock();
-
-//        if (cnt % 500 == 0) {
-//            mutex.lock();
-//            emit journalFinished();
-//            usleep(100);
-//        }
-//        if (isInterruptionRequested() || (!m_canRun)) {
-//            mutex.unlock();
-//            deleteSd();
-//            return;
-//        }
     }
     //最后可能有余下不足500的数据
     if (logList.count() >= 0) {
@@ -328,13 +290,8 @@ void journalWork::doWork()
     }
 
     emit journalFinished(m_threadIndex);
-//第一次加载时这个之后的代码都不执行?故放到最后
-    deleteSd();
+    //第一次加载时这个之后的代码都不执行?故放到最后
     sd_journal_close(j);
-//    if (logList.count() >= 0)
-//        emit journalFinished();
-
-//    emit journalFinished(logList);
 
 #else
     proc = new QProcess;

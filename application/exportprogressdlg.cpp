@@ -40,7 +40,6 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
 {
     QString titleIcon = ICONPREFIX ;
     setIcon(QIcon::fromTheme("deepin-log-viewer"));
-    //setWindowFlags(windowFlags());
 
     DWidget *pWidget = new DWidget(this);
     QVBoxLayout *pVLayout = new QVBoxLayout();
@@ -71,10 +70,7 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
 
     addButton(DApplication::translate("ExportDlg", "Cancel"), false, DDialog::ButtonNormal);
     getButton(0)->setAccessibleName("export_cancel_btn");
-    // setOnButtonClickedClose(true);
     setModal(true);
-    qDebug() << "this->height()" << this->geometry().height();
-    //  setFixedHeight(120);
 }
 
 /**

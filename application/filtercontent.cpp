@@ -25,6 +25,7 @@
 #include "logapplicationhelper.h"
 #include "logperiodbutton.h"
 #include "loglistview.h"
+#include "structdef.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -45,8 +46,6 @@
 #include <QVBoxLayout>
 #include <QResizeEvent>
 #include <QPainterPath>
-
-#include "structdef.h"
 
 #define BUTTON_WIDTH_MIN 68
 #define BUTTON_HEIGHT_MIN 36

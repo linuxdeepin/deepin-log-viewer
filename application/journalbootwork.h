@@ -61,7 +61,6 @@ public:
 
 
     void setArg(QStringList arg);
-    void deleteSd();
     void run() override;
 
 signals:
