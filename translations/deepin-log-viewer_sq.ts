@@ -145,6 +145,10 @@
         <source>Export successful</source>
         <translation>Eksportim i suksesshëm</translation>
     </message>
+    <message>
+        <source>Export failed</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>File</name>

@@ -19,7 +19,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
     <message>
         <source>Confirm</source>
@@ -136,7 +136,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Storno</translation>
+        <translation>Zrušit</translation>
     </message>
 </context>
 <context>
@@ -144,6 +144,10 @@
     <message>
         <source>Export successful</source>
         <translation>Export úspěšný</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

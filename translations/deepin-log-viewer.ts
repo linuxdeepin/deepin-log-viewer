@@ -145,6 +145,10 @@
         <source>Export successful</source>
         <translation>Export successful</translation>
     </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Export failed</translation>
+    </message>
 </context>
 <context>
     <name>File</name>

@@ -145,6 +145,10 @@
         <source>Export successful</source>
         <translation>내보내기 성공</translation>
     </message>
+    <message>
+        <source>Export failed</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>File</name>

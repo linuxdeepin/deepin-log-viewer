@@ -114,11 +114,11 @@
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>ཚབས་ལྕི་བ།</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>རྗེས་སྙེག</translation>
     </message>
 </context>
 <context>
@@ -144,6 +144,10 @@
     <message>
         <source>Export successful</source>
         <translation>ཕྱིར་འདྲེན་ཐུབ་སོང་།</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -240,11 +244,11 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>རྗེས་སྙེག</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>ཚབས་ལྕི་བ།</translation>
     </message>
 </context>
 <context>
@@ -394,7 +398,7 @@
     </message>
     <message>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>dnfཉིན་ཐོ།</translation>
     </message>
 </context>
 </TS>

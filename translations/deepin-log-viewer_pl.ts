@@ -145,6 +145,10 @@
         <source>Export successful</source>
         <translation>Eksport powiódł się</translation>
     </message>
+    <message>
+        <source>Export failed</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>File</name>

@@ -1474,6 +1474,12 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
  */
 void DisplayContent::slot_exportClicked()
 {
+    LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
+    connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
+    connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
+    connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
+    connect(exportThread, &LogExportThread::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
+
     QString logName;
     if (m_curListIdx.isValid())
         logName = QString("/%1").arg(m_curListIdx.data().toString());
@@ -1487,8 +1493,13 @@ void DisplayContent::slot_exportClicked()
                            path,
                            tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
 
-    if (fileName.isEmpty())
+    //限制当导出文件为空和导出doc和xls时用户改动后缀名导致导出问题，提示导出失败
+    QFileInfo exportFile(fileName);
+    QString selectSuffix = selectFilter.mid(selectFilter.lastIndexOf(".") + 1, selectFilter.size() - selectFilter.lastIndexOf(".") - 2);
+    if (fileName.isEmpty() || (selectSuffix != exportFile.suffix() && (selectSuffix == "doc" || selectSuffix == "xls"))) {
+        emit exportThread->sigResult(false);
         return;
+    }
 
     m_exportDlg->show();
     QStringList labels;
@@ -1497,10 +1508,6 @@ void DisplayContent::slot_exportClicked()
     }
     //根据导出格式判断执行逻辑
     if (selectFilter == "TEXT (*.txt)") {
-        LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
-        connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
-        connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
-        connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
         switch (m_flag) {
         //根据导出日志类型执行正确的导出逻辑
         case JOURNAL:
@@ -1554,10 +1561,6 @@ void DisplayContent::slot_exportClicked()
         }
         QThreadPool::globalInstance()->start(exportThread);
     } else if (selectFilter == "Html (*.html)") {
-        LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
-        connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
-        connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
-        connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(jList.count()));
@@ -1610,12 +1613,6 @@ void DisplayContent::slot_exportClicked()
         }
         QThreadPool::globalInstance()->start(exportThread);
     } else if (selectFilter == "Doc (*.doc)") {
-        LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
-        connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
-        connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
-        connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
-        connect(exportThread, &LogExportThread::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
-
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(jList.count()));
@@ -1668,11 +1665,6 @@ void DisplayContent::slot_exportClicked()
         }
         QThreadPool::globalInstance()->start(exportThread);
     } else if (selectFilter == "Xls (*.xls)") {
-        LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
-        connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
-        connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
-        connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
-        connect(exportThread, &LogExportThread::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jList.count()));
@@ -2673,15 +2665,17 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
 void DisplayContent::onExportResult(bool isSuccess)
 {
     QString titleIcon = ICONPREFIX ;
-    if (isSuccess) {
-
-        if (m_exportDlg && !m_exportDlg->isHidden()) {
-            m_exportDlg->hide();
-        }
-        DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export successful"));
-        qDebug() << "sendMessage"  ;
-        PERF_PRINT_END("POINT-04", "");
+    if (m_exportDlg && !m_exportDlg->isHidden()) {
+        m_exportDlg->hide();
     }
+
+    if (isSuccess) {
+        DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "ok.svg"), DApplication::translate("ExportMessage", "Export successful"));
+
+    } else {
+        DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "warning_info.svg"), DApplication::translate("ExportMessage", "Export failed"));
+    }
+    PERF_PRINT_END("POINT-04", "");
     DApplication::setActiveWindow(this);
 }
 

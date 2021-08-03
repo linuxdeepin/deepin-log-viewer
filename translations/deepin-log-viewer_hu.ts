@@ -145,6 +145,10 @@
         <source>Export successful</source>
         <translation>Exportálás sikeres</translation>
     </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Az exportálás sikertelen</translation>
+    </message>
 </context>
 <context>
     <name>File</name>
