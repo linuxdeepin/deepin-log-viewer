@@ -1496,7 +1496,10 @@ void DisplayContent::slot_exportClicked()
     //限制当导出文件为空和导出doc和xls时用户改动后缀名导致导出问题，提示导出失败
     QFileInfo exportFile(fileName);
     QString selectSuffix = selectFilter.mid(selectFilter.lastIndexOf(".") + 1, selectFilter.size() - selectFilter.lastIndexOf(".") - 2);
-    if (fileName.isEmpty() || (selectSuffix != exportFile.suffix() && (selectSuffix == "doc" || selectSuffix == "xls"))) {
+    if (fileName.isEmpty())
+        return;
+
+    if (selectSuffix != exportFile.suffix() && (selectSuffix == "doc" || selectSuffix == "xls")) {
         emit exportThread->sigResult(false);
         return;
     }
