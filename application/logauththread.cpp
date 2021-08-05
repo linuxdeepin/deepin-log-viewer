@@ -227,8 +227,9 @@ void LogAuthThread::handleBoot()
             emit bootFinished(m_threadCount);
             return;
         }
-        QByteArray byte = m_process->readAllStandardOutput();
-        QStringList strList = QString(Utils::replaceEmptyByteArray(byte)).split('\n', QString::SkipEmptyParts);
+        QString byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        byte.replace('\u0000', "").replace("\x01", "");
+        QStringList strList = byte.split('\n', QString::SkipEmptyParts);
 
         //按换行分割
         //    qInfo()<<strList.size()<<"_________________________";
@@ -315,12 +316,9 @@ void LogAuthThread::handleKern()
         if (!m_canRun) {
             return;
         }
-        QByteArray outByte = m_process->readAllStandardOutput();
-        if (!m_canRun) {
-            return;
-        }
-
-        QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+        QString byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        byte.replace('\u0000', "").replace("\x01", "");
+        QStringList strList = byte.split('\n', QString::SkipEmptyParts);
         for (int j = strList.size() - 1; j >= 0; --j) {
             if (!m_canRun) {
                 return;
