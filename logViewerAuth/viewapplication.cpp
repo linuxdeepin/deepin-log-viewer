@@ -61,18 +61,12 @@ ViewApplication::ViewApplication(int &argc, char **argv)
         m_commondM->detach();          //解除关联
     m_commondM->attach(QSharedMemory::ReadOnly);
 
-    connect(m_proc, &QProcess::readyReadStandardOutput, this, [ = ] {
-        if (!getControlInfo().isStart)
-        {
-            m_proc->kill();
-            releaseMemery();
-            exit(0);
-        }
-        QByteArray byte =   m_proc->readAll();
+    connect(m_proc, &QProcess::readyReadStandardOutput, this, [=] {
+        QByteArray byte = m_proc->readAll();
         std::cout << byte.replace('\u0000', "").data();
     });
     m_proc->start("/bin/bash", arg);
-
+    qInfo() << m_proc->exitCode();
     m_proc->waitForFinished(-1);
     m_proc->close();
 }

@@ -310,7 +310,7 @@ void LogAuthThread::handleKern()
     m_process->start("pkexec", QStringList() << "logViewerAuth"
                                              << "/var/log/kern.log" << SharedMemoryManager::instance()->getRunnableKey());
     m_process->waitForFinished(-1);
-    qDebug() << " m_process->exitCode() " << m_process->exitCode();
+    qInfo() << " m_process->exitCode() " << m_process->exitCode();
     //有错则传出空数据
     if (m_process->exitCode() != 0) {
         emit kernFinished(m_threadCount);
