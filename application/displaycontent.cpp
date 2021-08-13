@@ -1065,9 +1065,7 @@ QString DisplayContent::getAppName(QString filePath)
     }
 
     QString desStr = filePath.section("/", -1);
-    if (desStr.contains(".")) {
-        ret = desStr.section(".", 0, 0);
-    }
+    ret = desStr.mid(0, desStr.lastIndexOf("."));
     return LogApplicationHelper::instance()->transName(ret);
 }
 

@@ -26,8 +26,6 @@
 #include <QFile>
 #include <QLocale>
 
-
-
 std::atomic<LogApplicationHelper *> LogApplicationHelper::m_instance;
 std::mutex LogApplicationHelper::m_mutex;
 
