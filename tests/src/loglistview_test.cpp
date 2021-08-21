@@ -101,23 +101,23 @@ TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
     p->deleteLater();
 }
 
-TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
-{
-    Stub stub;
-    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *v = new LogListView(nullptr);
-    LogListDelegate *p = new LogListDelegate(v);
-    EXPECT_NE(p, nullptr);
-    QStyleOptionViewItem op;
-    op.state = QStyle::State_HasFocus;
-    v->m_reson = Qt::TabFocusReason;
-    stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
-    QPainter painter;
-    p->paint(&painter, op, QModelIndex());
-    v->deleteLater();
-    delete p;
-}
+//TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
+//{
+//    Stub stub;
+//    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+//    LogListView *v = new LogListView(nullptr);
+//    LogListDelegate *p = new LogListDelegate(v);
+//    EXPECT_NE(p, nullptr);
+//    QStyleOptionViewItem op;
+//    op.state = QStyle::State_HasFocus;
+//    v->m_reson = Qt::TabFocusReason;
+//    stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
+//    QPainter painter;
+//    p->paint(&painter, op, QModelIndex());
+//    v->deleteLater();
+//    delete p;
+//}
 
 TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
 {
