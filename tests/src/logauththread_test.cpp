@@ -108,6 +108,18 @@ QString stub_dnfReadLog(const QString &filePath)
     return "2021-05-21T02:08:36Z DEBUG 加载插件：builddep, changelog, \nconfig-manager, copr, debug, debuginfo-install, download, \ngenerate_completion_cache, needs-restarting, playground, repoclosure, repodiff, repograph, repomanage, reposync";
 }
 
+QString stub_BootReadLog(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return "[   10.336791] rc.local[1655]: net.ipv4.tcp_max_syn_backlog = 2048";
+}
+
+QString stub_KernReadLog(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return "Aug 21 13:23:33 uos-PC deepin-deepinid-daemon[2946]: #033[33m[WAR] manager.go:218:#033[0m skip doSync";
+}
+
 QByteArray fileReadLine(qint64 maxlen = 0)
 {
     Q_UNUSED(maxlen);
@@ -308,6 +320,21 @@ TEST_F(LogAuthThread_UT, handleDmesg_UT)
 TEST_F(LogAuthThread_UT, run_UT)
 {
     Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_Logexists);
+
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart);
+    stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished);
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_LogreadAllStandardOutput);
+    stub.set(ADDR(QProcess, readAllStandardError), stub_LogreadAllStandardError);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag);
+    stub.set(wtmp_close, stub_wtmp_close);
+    stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
+    stub.set(ADDR(QProcess, exitCode), stub_exitCode);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_readLog);
     stub.set(ADDR(LogAuthThread, handleDkpg), handleFile);
     stub.set(ADDR(LogAuthThread, handleNormal), handleFile);
     stub.set(ADDR(LogAuthThread, handleDnf), handleFile);
@@ -322,4 +349,60 @@ TEST_F(LogAuthThread_UT, run_UT)
     m_logAuthThread->run();
     m_logAuthThread->m_type = LOG_FLAG::NONE;
     m_logAuthThread->run();
+}
+
+TEST_F(LogAuthThread_UT, handleKern_UT)
+{
+    Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_Logexists);
+
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart);
+    stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished);
+    stub.set(ADDR(QProcess, readAllStandardOutput), dmesgLogreadAllStandardOutput);
+    stub.set(ADDR(QProcess, readAllStandardError), stub_LogreadAllStandardError);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag);
+    stub.set(wtmp_close, stub_wtmp_close);
+    stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
+    stub.set(ADDR(QProcess, exitCode), stub_exitCode);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_KernReadLog);
+    stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), fileReadLine);
+    stub.set(ADDR(QDateTime, toMSecsSinceEpoch), dnfToMSecsSinceEpoch);
+    stub.set(ADDR(QRegExp, indexIn), dmesgIndexIn);
+    stub.set((QString & (QString::*)(const QRegExp &, const QString &)) ADDR(QString, replace), dmesgReplace);
+    stub.set((QStringList(QRegExp::*)())ADDR(QRegExp, capturedTexts), dmesgCapturedTexts);
+    m_logAuthThread->m_FilePath = QStringList() << "/test"
+                                                << "/xorg.old";
+    m_logAuthThread->handleDmesg();
+}
+
+TEST_F(LogAuthThread_UT, handleBoot_UT)
+{
+    Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_Logexists);
+
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart);
+    stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished);
+    stub.set(ADDR(QProcess, readAllStandardOutput), dmesgLogreadAllStandardOutput);
+    stub.set(ADDR(QProcess, readAllStandardError), stub_LogreadAllStandardError);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag);
+    stub.set(wtmp_close, stub_wtmp_close);
+    stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
+    stub.set(ADDR(QProcess, exitCode), stub_exitCode);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_BootReadLog);
+    stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), fileReadLine);
+    stub.set(ADDR(QDateTime, toMSecsSinceEpoch), dnfToMSecsSinceEpoch);
+    stub.set(ADDR(QRegExp, indexIn), dmesgIndexIn);
+    stub.set((QString & (QString::*)(const QRegExp &, const QString &)) ADDR(QString, replace), dmesgReplace);
+    stub.set((QStringList(QRegExp::*)())ADDR(QRegExp, capturedTexts), dmesgCapturedTexts);
+    m_logAuthThread->m_FilePath = QStringList() << "/test"
+                                                << "/xorg.old";
+    m_logAuthThread->handleBoot();
 }

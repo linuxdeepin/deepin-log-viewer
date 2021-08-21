@@ -17,6 +17,7 @@
 #include "loglistview.h"
 #include "dbusmanager.h"
 #include "DebugTimeManager.h"
+#include "dldbushandler.h"
 
 #include <gtest/gtest.h>
 #include <stub.h>
@@ -64,6 +65,12 @@ Dtk::Core::DSysInfo::UosEdition stub_uosEulerEditionType()
     return Dtk::Core::DSysInfo::UosEuler;
 }
 
+QString stub_ListViewreadLog(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return "2021-04-06 13:29:32 install code:amd64 <none> 1.55.0-1617120720";
+}
+
 //bool stub_isValid()
 //{
 //    return true;
@@ -86,6 +93,7 @@ void stubbeginPointLinux(const QString &point, const QString &status)
 TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
@@ -96,6 +104,7 @@ TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
 TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
@@ -113,6 +122,7 @@ TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
 TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
@@ -126,6 +136,7 @@ TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
 TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_002)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
@@ -140,6 +151,7 @@ TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_002)
 TEST(LogListDelegate_hideTooltipImmediately_UT, LogListDelegate_hideTooltipImmediately_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
@@ -151,6 +163,7 @@ TEST(LogListDelegate_hideTooltipImmediately_UT, LogListDelegate_hideTooltipImmed
 TEST(LogListView_Constructor_UT, LogListView_Constructor_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -160,6 +173,7 @@ TEST(LogListView_Constructor_UT, LogListView_Constructor_UT_001)
 TEST(LogListView_initUI_UT, LogListView_initUI_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     stub.set(ADDR(Dtk::Core::DSysInfo, uosEditionType), stub_uosProfessEditionType);
     LogListView *p = new LogListView(nullptr);
@@ -171,6 +185,8 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_001)
 TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     stub.set(ADDR(DBusManager, getSystemInfo), stub_getSystemInfo);
     stub.set(ADDR(Dtk::Core::DSysInfo, uosEditionType), stub_uosEulerEditionType);
@@ -183,6 +199,7 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
 TEST(LogListView_setDefaultSelect_UT, LogListView_setDefaultSelectUT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -193,6 +210,7 @@ TEST(LogListView_setDefaultSelect_UT, LogListView_setDefaultSelectUT_001)
 TEST(LogListView_setCustomFont_UT, LogListView_setCustomFont_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -202,6 +220,7 @@ TEST(LogListView_setCustomFont_UT, LogListView_setCustomFont_001)
 TEST(LogListView_isFileExist_UT, LogListView_isFileExist_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -213,6 +232,8 @@ TEST(LogListView_isFileExist_UT, LogListView_isFileExist_001)
 TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -223,6 +244,8 @@ TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_001)
 TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_002)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -241,6 +264,7 @@ TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_002)
 TEST(LogListView_currentChanged_UT, LogListView_currentChanged_UT_002)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -251,6 +275,7 @@ TEST(LogListView_currentChanged_UT, LogListView_currentChanged_UT_002)
 TEST(LogListView_truncateFile_UT, LogListView_truncateFile_UT_002)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -261,6 +286,7 @@ TEST(LogListView_truncateFile_UT, LogListView_truncateFile_UT_002)
 TEST(LogListView_slot_getAppPath_UT, LogListView_slot_getAppPath_UT_002)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -273,6 +299,7 @@ TEST(LogListView_slot_getAppPath_UT, LogListView_slot_getAppPath_UT_002)
 TEST(LogListView_focusReson_UT, LogListView_focusReson_UT_002)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -316,6 +343,7 @@ TEST(LogListView_focusReson_UT, LogListView_focusReson_UT_002)
 TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -327,6 +355,7 @@ TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_001)
 TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_002)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -353,6 +382,7 @@ INSTANTIATE_TEST_CASE_P(LogListView, LogListView_keyPressEvent_UT, ::testing::Va
 TEST_P(LogListView_keyPressEvent_UT, LogListView_keyPressEvent_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView_keyPressEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
@@ -382,6 +412,7 @@ INSTANTIATE_TEST_CASE_P(LogListView, LogListView_mousePressEvent_UT, ::testing::
 TEST_P(LogListView_mousePressEvent_UT, LogListView_mousePressEvent_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView_mousePressEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
@@ -411,6 +442,7 @@ TEST_P(LogListView_focusInEvent_UT, LogListView_focusInEvent_UT_001)
 {
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     LogListView_focusInEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -424,6 +456,7 @@ TEST_P(LogListView_focusInEvent_UT, LogListView_focusInEvent_UT_001)
 TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_focusOutEvent_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -437,6 +470,7 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_focusOutEvent_UT_
 TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_showRightMenu)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_exec);
     LogListView *p = new LogListView(nullptr);
@@ -449,6 +483,7 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_showRightMenu)
 TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_paintEvent)
 {
     Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);

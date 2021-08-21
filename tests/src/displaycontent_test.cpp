@@ -64,12 +64,12 @@ QString stub_writableLocation(QStandardPaths::StandardLocation type)
     return "test";
 }
 
-QString stub_getSaveFileName(QWidget *parent = nullptr,
-                             const QString &caption = QString(),
-                             const QString &dir = QString(),
-                             const QString &filter = QString(),
-                             QString *selectedFilter = nullptr,
-                             QFileDialog::Options options = QFileDialog::Options())
+QString stub_getSaveDocFileName(QWidget *parent = nullptr,
+                                const QString &caption = QString(),
+                                const QString &dir = QString(),
+                                const QString &filter = QString(),
+                                QString *selectedFilter = nullptr,
+                                QFileDialog::Options options = QFileDialog::Options())
 {
     Q_UNUSED(parent);
     Q_UNUSED(caption);
@@ -77,7 +77,55 @@ QString stub_getSaveFileName(QWidget *parent = nullptr,
     Q_UNUSED(filter);
     Q_UNUSED(selectedFilter);
     Q_UNUSED(options);
-    return "/home/Desktop/";
+    return "/home/Desktop/test.doc";
+}
+
+QString stub_getSaveTxtFileName(QWidget *parent = nullptr,
+                                const QString &caption = QString(),
+                                const QString &dir = QString(),
+                                const QString &filter = QString(),
+                                QString *selectedFilter = nullptr,
+                                QFileDialog::Options options = QFileDialog::Options())
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(caption);
+    Q_UNUSED(dir);
+    Q_UNUSED(filter);
+    Q_UNUSED(selectedFilter);
+    Q_UNUSED(options);
+    return "/home/Desktop/test.txt";
+}
+
+QString stub_getSaveXlsFileName(QWidget *parent = nullptr,
+                                const QString &caption = QString(),
+                                const QString &dir = QString(),
+                                const QString &filter = QString(),
+                                QString *selectedFilter = nullptr,
+                                QFileDialog::Options options = QFileDialog::Options())
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(caption);
+    Q_UNUSED(dir);
+    Q_UNUSED(filter);
+    Q_UNUSED(selectedFilter);
+    Q_UNUSED(options);
+    return "/home/Desktop/test.xls";
+}
+
+QString stub_getSaveHtmlFileName(QWidget *parent = nullptr,
+                                 const QString &caption = QString(),
+                                 const QString &dir = QString(),
+                                 const QString &filter = QString(),
+                                 QString *selectedFilter = nullptr,
+                                 QFileDialog::Options options = QFileDialog::Options())
+{
+    Q_UNUSED(parent);
+    Q_UNUSED(caption);
+    Q_UNUSED(dir);
+    Q_UNUSED(filter);
+    Q_UNUSED(selectedFilter);
+    Q_UNUSED(options);
+    return "/home/Desktop/test.html";
 }
 
 int stub_singleRowHeight()
@@ -123,7 +171,7 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT)
     Stub stub;
     m_content->selectFilter = "TEXT (*.txt)";
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
-    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveTxtFileName);
     stub.set(ADDR(QThreadPool, start), stub_start);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->slot_exportClicked();
@@ -156,7 +204,7 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT001)
     Stub stub;
     m_content->selectFilter = "Html (*.html)";
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
-    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveHtmlFileName);
     stub.set(ADDR(QThreadPool, start), stub_start);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->slot_exportClicked();
@@ -189,7 +237,7 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT002)
     Stub stub;
     m_content->selectFilter = "Doc (*.doc)";
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
-    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveDocFileName);
     stub.set(ADDR(QThreadPool, start), stub_start);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->slot_exportClicked();
@@ -222,7 +270,7 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT003)
     Stub stub;
     m_content->selectFilter = "Xls (*.xls)";
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
-    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveXlsFileName);
     stub.set(ADDR(QThreadPool, start), stub_start);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->slot_exportClicked();
@@ -255,7 +303,7 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT004)
     Stub stub;
     m_content->selectFilter = "Xls (*.xls)";
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
-    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveFileName);
+    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveXlsFileName);
     stub.set(ADDR(QThreadPool, start), stub_start);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->slot_exportClicked();
@@ -1374,9 +1422,15 @@ void DisplayContent_slot_BtnSelected_UT_generateAppFile(QString path, int id, in
 void DisplayContent_slot_BtnSelected_UT_generateXorgFile(int id)
 {
 }
+
 void DisplayContent_slot_BtnSelected_UT_generateKwinFile(KWIN_FILTERS iFilters)
 {
 }
+
+void DisplayContent_slot_BtnSelected_UT_generateBootFile()
+{
+}
+
 TEST_P(DisplayContent_slot_BtnSelected_UT, DisplayContent_slot_BtnSelected_UT_001)
 {
     DisplayContent_slot_BtnSelected_UT_Param param = GetParam();
@@ -1425,6 +1479,7 @@ TEST_P(DisplayContent_slot_BtnSelected_UT, DisplayContent_slot_BtnSelected_UT_00
     stub.set(ADDR(DisplayContent, generateKwinFile), DisplayContent_slot_BtnSelected_UT_generateKwinFile);
     stub.set(ADDR(DisplayContent, generateNormalFile), DisplayContent_slot_BtnSelected_UT_generateXorgFile);
     stub.set(ADDR(DisplayContent, generateJournalBootFile), DisplayContent_slot_BtnSelected_UT_generateJournalFile);
+    stub.set(ADDR(DisplayContent, generateBootFile), DisplayContent_slot_BtnSelected_UT_generateBootFile);
     p->slot_BtnSelected(0, 0, QModelIndex());
     p->deleteLater();
 }
@@ -1519,6 +1574,7 @@ TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelo
     stub.set(ADDR(DisplayContent, generateKwinFile), DisplayContent_slot_BtnSelected_UT_generateKwinFile);
     stub.set(ADDR(DisplayContent, generateNormalFile), DisplayContent_slot_BtnSelected_UT_generateXorgFile);
     stub.set(ADDR(DisplayContent, generateJournalBootFile), DisplayContent_slot_BtnSelected_UT_generateJournalFile);
+    stub.set(ADDR(DisplayContent, generateBootFile), DisplayContent_slot_BtnSelected_UT_generateBootFile);
     stub.set(ADDR(QModelIndex, data), slot_logCatelogueClicked_ModelIndex_data_Func);
     stub.set(ADDR(QModelIndex, isValid), slot_logCatelogueClicked_ModelIndex_isValid_Func);
     stub.set(ADDR(DLDBusHandler, getFileInfo), stub_getFileInfo);
