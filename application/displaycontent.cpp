@@ -1519,7 +1519,6 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
 
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = KERN;
-        generateKernFile(m_curBtnId);
     } else if (itemData.contains(".cache")) {
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         m_pModel->clear();  // clicked parent node application, clear table contents
