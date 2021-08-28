@@ -16,7 +16,7 @@
 */
 #include "logexportthread.h"
 #include "structdef.h"
-#include "stuballthread.h"
+#include "ut_stuballthread.h"
 #include "../../3rdparty/DocxFactory/include/DocxFactory/WordProcessingMerger/WordProcessingMerger.h"
 #include <stub.h>
 

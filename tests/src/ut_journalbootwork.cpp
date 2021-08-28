@@ -14,17 +14,18 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include <gtest/gtest.h>
-#include <stub.h>
 #include "journalbootwork.h"
-#include "stuballthread.h"
-#include <systemd/sd-journal.h>
+#include "ut_stuballthread.h"
+#include <stub.h>
 
 #include <DApplication>
 
 #include <QDebug>
 #include <QThreadPool>
 #include <QThread>
+
+#include <gtest/gtest.h>
+#include <systemd/sd-journal.h>
 
 int stub_sd_journal_get_data_bootwork(sd_journal *j, const char *field, const void **data, size_t *l)
 {

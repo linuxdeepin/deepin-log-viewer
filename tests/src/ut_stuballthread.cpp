@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "stuballthread.h"
+#include "ut_stuballthread.h"
 void QThread_start(QThread::Priority)
 {
     qDebug() << "QThread_start--";

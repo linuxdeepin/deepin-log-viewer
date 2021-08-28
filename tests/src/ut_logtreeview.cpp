@@ -40,14 +40,6 @@ class LogTreeView_UT : public testing::Test
 {
 public:
     //添加日志
-    //    static void SetUpTestCase()
-    //    {
-    //        qDebug() << "SetUpTestCase" << endl;
-    //    }
-    //    static void TearDownTestCase()
-    //    {
-    //        qDebug() << "TearDownTestCase" << endl;
-    //    }
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_treeView = new LogTreeView();
@@ -70,6 +62,7 @@ TEST_F(LogTreeView_UT, paintEvent_UT)
     emit m_treeView->verticalScrollBar()->sliderPressed();
     QPaintEvent repait(m_treeView->rect());
     m_treeView->paintEvent(&repait);
+    EXPECT_NE(m_treeView,nullptr)<<"check the status after paintEvent()";
 }
 
 TEST_F(LogTreeView_UT, drawRow_UT)
@@ -80,12 +73,14 @@ TEST_F(LogTreeView_UT, drawRow_UT)
     QPainter painter;
     QStyleOptionViewItem option;
     m_treeView->drawRow(&painter, option, QModelIndex());
+    EXPECT_NE(m_treeView,nullptr)<<"check the status after drawRow()";
 }
 
 TEST_F(LogTreeView_UT, keyPressEvent_UT)
 {
     QKeyEvent event(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
     m_treeView->keyPressEvent(&event);
+    EXPECT_NE(m_treeView,nullptr)<<"check the status after keyPressEvent()";
 }
 
 TEST_F(LogTreeView_UT, mouseMoveEvent_UT)
@@ -93,19 +88,21 @@ TEST_F(LogTreeView_UT, mouseMoveEvent_UT)
     QMouseEvent moveEvent(QEvent::MouseMove, QPoint(0, 0), QPoint(10, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
     m_treeView->m_isPressed = true;
     m_treeView->mouseMoveEvent(&moveEvent);
-    ;
+    EXPECT_NE(m_treeView,nullptr)<<"check the status after mouseMoveEvent()";
 }
 
 TEST_F(LogTreeView_UT, mousePressEvent_UT)
 {
     QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
     m_treeView->mousePressEvent(&event);
+    EXPECT_NE(m_treeView,nullptr)<<"check the status after mousePressEvent()";
 }
 
 TEST_F(LogTreeView_UT, mouseReleaseEvent_UT)
 {
     QMouseEvent event(QEvent::MouseButtonRelease, QPointF(20, 20), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
     m_treeView->mouseReleaseEvent(&event);
+    EXPECT_NE(m_treeView,nullptr)<<"check the status after mouseReleaseEvent()";
 }
 
 //TEST_F(LogTreeView_UT, Event_UT)

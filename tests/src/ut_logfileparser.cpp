@@ -15,19 +15,20 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "logfileparser.h"
-#include "stuballthread.h"
+#include "ut_stuballthread.h"
 #include "logauththread.h"
 #include "structdef.h"
 #include "sharedmemorymanager.h"
 #include "wtmpparse.h"
 
-#include <gtest/gtest.h>
 #include <stub.h>
 
 #include <QDebug>
 #include <QMessageBox>
 #include <QThreadPool>
 #include <QDateTime>
+
+#include <gtest/gtest.h>
 
 bool stub_isAttached001()
 {
@@ -93,17 +94,6 @@ TEST(LogFileParser_Destructor_UT, LogFileParser_Destructor_UT)
     p->deleteLater();
 }
 
-//TEST(LogFileParser_parseByJournal_UT, LogFileParser_parseByJournal_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->parseByJournal(QStringList());
-//    p->deleteLater();
-//}
-
 TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
 {
     Stub stub;
@@ -115,103 +105,6 @@ TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
     p->deleteLater();
 }
 
-//TEST(LogFileParser_parseByDpkg_UT, LogFileParser_parseByDpkg_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    DKPG_FILTERS filter;
-//    p->parseByDpkg(filter);
-//    p->deleteLater();
-//}
-
-//TEST(LogFileParser_parseByXlog_UT, LogFileParser_parseByXlog_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    XORG_FILTERS filter;
-//    p->parseByXlog(filter);
-//    p->deleteLater();
-//}
-
-//TEST(LogFileParser_parseByNormal, LogFileParser_parseByXlog_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    NORMAL_FILTERS filter;
-//    QList<LOG_MSG_NORMAL> nList;
-//    p->parseByNormal(nList, filter);
-//    p->deleteLater();
-//}
-
-//TEST(LogFileParser_parseByKwin_UT, LogFileParser_parseByKwin_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    KWIN_FILTERS filter;
-//    p->parseByKwin(filter);
-//    p->deleteLater();
-//}
-//void LogFileParser_parseByBoot_UT_QThreadPool_start(QRunnable *runnable, int priority = 0)
-//{
-//    qDebug() << "LogFileParser_parseByBoot_UT_QThreadPool_start--";
-//}
-//TEST(LogFileParser_parseByBoot_UT, LogFileParser_parseByBoot_UT)
-//{
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    p->parseByBoot();
-//    p->deleteLater();
-//}
-
-//TEST(LogFileParser_parseByKern_UT, LogFileParser_parseByKern_UT)
-//{
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    KERN_FILTERS filter;
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    p->parseByKern(filter);
-//    p->deleteLater();
-//}
-
-//TEST(LogFileParser_parseByApp_UT, LogFileParser_parseByApp_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    APP_FILTERS filter;
-//    p->parseByApp(filter);
-//    p->deleteLater();
-//}
-
-//TEST(LogFileParser_createFile_UT, LogFileParser_createFile_UT)
-//{
-//    Stub *stub = new Stub;
-//    stub->set(ADDR(QThreadPool, start), QThreadPool_start);
-//    stub->set(ADDR(QThread, start), QThread_start);
-//    LogFileParser *p = new LogFileParser(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->createFile("", 0);
-//    p->deleteLater();
-//}
 
 TEST(LogFileParser_stopAllLoad_UT, LogFileParser_stopAllLoad_UT)
 {
@@ -305,7 +198,6 @@ TEST_F(LogFileParser_UT, sLogFileParser_UT001)
     stub.set(A_foo, stub_Logexists001);
     stub.set(ADDR(QProcess, setProcessChannelMode), stubfileparser_setProcessChannelMode);
     stub.set(ADDR(QProcess, exitCode), stubfileparser_exitCode);
-
     stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached001);
     stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart001);
     stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString001);
@@ -318,13 +210,17 @@ TEST_F(LogFileParser_UT, sLogFileParser_UT001)
     stub.set(ADDR(DLDBusHandler, readLog), stub_FilereadLog);
     struct KWIN_FILTERS fitler = {"test"};
     stub.set(ADDR(QThreadPool, start), stub_start001);
-    m_parser->parseByKwin(fitler);
+    int index=m_parser->parseByKwin(fitler);
+    EXPECT_EQ(index,2)<<"check the status after LogFileParser()";
     struct KERN_FILTERS kern_fitler;
-    m_parser->parseByKern(kern_fitler);
+    int index1=m_parser->parseByKern(kern_fitler);
+    EXPECT_EQ(index1,3)<<"check the status after LogFileParser()";
     struct DKPG_FILTERS dkpg_fitler;
-    m_parser->parseByDpkg(dkpg_fitler);
+    int index2=m_parser->parseByDpkg(dkpg_fitler);
+    EXPECT_EQ(index2,4)<<"check the status after LogFileParser()";    EXPECT_EQ(index,2)<<"check the status after LogFileParser()";
     struct BOOT_FILTERS boot_fitler;
-    m_parser->parseByBoot();
+    int index3=m_parser->parseByBoot();
+    EXPECT_EQ(index3,5)<<"check the status after LogFileParser()";
 }
 
 TEST_F(LogFileParser_UT, parseByDnf_UT)
@@ -377,6 +273,7 @@ TEST_F(LogFileParser_UT, parseByJournal_UT)
     stub.set(wtmp_close, stub_wtmp_close001);
     stub.set(ADDR(DLDBusHandler, readLog), stub_FilereadLog);
     m_parser->parseByJournal();
+    EXPECT_EQ(m_parser->m_isJournalLoading,true)<<"check the status after parseByJournal()";
 }
 
 TEST_F(LogFileParser_UT, parseByJournalBoot_UT)
@@ -398,5 +295,7 @@ TEST_F(LogFileParser_UT, parseByJournalBoot_UT)
     stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
     stub.set(wtmp_close, stub_wtmp_close001);
     stub.set(ADDR(DLDBusHandler, readLog), stub_FilereadLog);
-    m_parser->parseByJournalBoot();
+    int index=m_parser->parseByJournalBoot();
+    qInfo()<<index;
+    EXPECT_EQ(index,16)<<"check the status after parseByJournalBoot()";
 }

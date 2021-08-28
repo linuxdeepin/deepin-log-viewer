@@ -17,9 +17,7 @@
 
 #include "logcollectormain.h"
 #include "DebugTimeManager.h"
-#include <stuballthread.h>
-
-#include <gtest/gtest.h>
+#include "ut_stuballthread.h"
 #include <stub.h>
 
 #include <DTitlebar>
@@ -27,6 +25,8 @@
 
 #include <QKeyEvent>
 #include <QDebug>
+
+#include <gtest/gtest.h>
 
 void Log_beginPointLinux(const QString &point, const QString &status)
 {

@@ -126,11 +126,7 @@ bool stub_isFile()
 TEST_P(Utils_isErroCommand_UT, Utils_isErroCommand_UT_001)
 {
     Utils_isErroCommand_UT_Param param = GetParam();
-
     Utils::CommandErrorType resultType = Utils::isErroCommand(param.command);
-    //    bool compareResult = resultType == param.type;
-    //    qDebug() << "compareResult" << compareResult << resultType << param.type;
-    //    EXPECT_EQ(compareResult, true);
 }
 
 TEST(Utils_checkAndDeleteDir_UT, Utils_checkAndDeleteDir_UT)
@@ -149,16 +145,6 @@ TEST(Utils_deleteDir_UT, Utils_deleteDir_UT)
     EXPECT_EQ(result, false);
 }
 
-//TEST(Utils_deleteDir_UT, Utils_deleteDir_UT_001)
-//{
-//    Stub stub;
-//    stub.set((bool (QDir::*)() const)ADDR(QDir, exists),stub_exists);
-//    stub.set((QStringList (QDir::*)(QDir::Filters,QDir::SortFlags) const)ADDR(QDir,entryList),stub_entryList);
-//    stub.set(ADDR(QFileInfo,isDir),stub_isFile);
-//    bool result = Utils::deleteDir(QString("testdirstr__"));
-//    EXPECT_EQ(result, false);
-//}
-
 TEST(Utils_replaceColorfulFont_UT, Utils_replaceColorfulFont_UT)
 {
     QString source("12m");
@@ -169,11 +155,6 @@ TEST(Utils_replaceColorfulFont_UT, Utils_replaceColorfulFont_UT)
 
 TEST(Utils_isWayland_UT, Utils_isWayland_UT)
 {
-    Utils::isWayland();
+   bool res= Utils::isWayland();
+   EXPECT_EQ(res, false)<<"check the status after isWayland()";
 }
-
-//TEST(Utils_sleep_UT, Utils_sleep_UT)
-//{
-//    bool result = Utils::sleep(10);
-//    EXPECT_EQ(result, true);
-//}

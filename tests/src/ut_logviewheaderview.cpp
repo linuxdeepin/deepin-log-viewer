@@ -38,14 +38,6 @@ class LogViewHeaderView_UT : public testing::Test
 {
 public:
     //添加日志
-    //    static void SetUpTestCase()
-    //    {
-    //        qDebug() << "SetUpTestCase" << endl;
-    //    }
-    //    static void TearDownTestCase()
-    //    {
-    //        qDebug() << "TearDownTestCase" << endl;
-    //    }
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_LogViewHeaderView = new LogViewHeaderView(Qt::Vertical);
@@ -95,8 +87,9 @@ TEST_F(LogViewHeaderView_UT, LogViewHeaderView_paintEvent_UT_001)
 
 TEST_F(LogViewHeaderView_UT, LogViewHeaderView_sizeHint_UT_001)
 {
+    QSize size= m_LogViewHeaderView->sizeHint();
     EXPECT_NE(m_LogViewHeaderView, nullptr);
-    m_LogViewHeaderView->sizeHint();
+    EXPECT_EQ(size, QSize(640,37))<<"check the status after sizeHint()";
 }
 
 TEST(LogViewHeaderView_sectionSizeHint_UT, LogViewHeaderView_sectionSizeHint_UT_001)

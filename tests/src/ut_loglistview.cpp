@@ -71,17 +71,6 @@ QString stub_ListViewreadLog(const QString &filePath)
     return "2021-04-06 13:29:32 install code:amd64 <none> 1.55.0-1617120720";
 }
 
-//bool stub_isValid()
-//{
-//    return true;
-//}
-
-//static QRect stub_visualRect(Qt::LayoutDirection direction, const QRect &boundingRect,
-//                             const QRect &logicalRect)
-//{
-//    return QRect(0, 0, 20, 20);
-//}
-
 void stub_drawPrimitive(QStyle::PrimitiveElement pe, const QStyleOption *opt, QPainter *p, const QWidget *w = nullptr)
 {
 }
@@ -100,24 +89,6 @@ TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
     EXPECT_NE(p, nullptr);
     p->deleteLater();
 }
-
-//TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
-//{
-//    Stub stub;
-//    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
-//    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-//    LogListView *v = new LogListView(nullptr);
-//    LogListDelegate *p = new LogListDelegate(v);
-//    EXPECT_NE(p, nullptr);
-//    QStyleOptionViewItem op;
-//    op.state = QStyle::State_HasFocus;
-//    v->m_reson = Qt::TabFocusReason;
-//    stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
-//    QPainter painter;
-//    p->paint(&painter, op, QModelIndex());
-//    v->deleteLater();
-//    delete p;
-//}
 
 TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
 {
@@ -207,16 +178,6 @@ TEST(LogListView_setDefaultSelect_UT, LogListView_setDefaultSelectUT_001)
     p->deleteLater();
 }
 
-TEST(LogListView_setCustomFont_UT, LogListView_setCustomFont_001)
-{
-    Stub stub;
-    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *p = new LogListView(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->deleteLater();
-}
-
 TEST(LogListView_isFileExist_UT, LogListView_isFileExist_001)
 {
     Stub stub;
@@ -228,38 +189,6 @@ TEST(LogListView_isFileExist_UT, LogListView_isFileExist_001)
     EXPECT_EQ(result, false);
     p->deleteLater();
 }
-
-TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_001)
-{
-    Stub stub;
-    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
-    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *p = new LogListView(nullptr);
-    EXPECT_NE(p, nullptr);
-    //    p->onChangedTheme(DGuiApplicationHelper::LightType);
-    p->deleteLater();
-}
-
-TEST(LogListView_onChangedTheme_UT, LogListView_onChangedTheme_UT_002)
-{
-    Stub stub;
-    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
-    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
-    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    LogListView *p = new LogListView(nullptr);
-    EXPECT_NE(p, nullptr);
-    //    p->onChangedTheme(DGuiApplicationHelper::DarkType);
-    p->deleteLater();
-}
-
-//TEST(LogListView_paintEvent_UT, LogListView_paintEvent_UT_002)
-//{
-//    LogListView *p = new LogListView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->paintEvent(new QPaintEvent(QRect()));
-//    p->deleteLater();
-//}
 
 TEST(LogListView_currentChanged_UT, LogListView_currentChanged_UT_002)
 {
@@ -306,39 +235,6 @@ TEST(LogListView_focusReson_UT, LogListView_focusReson_UT_002)
     p->focusReson();
     p->deleteLater();
 }
-//QAction *LogListView_showRightMenu_UT_QMenu_exec_Func(void **p, const QPoint &pos, QAction *at = nullptr)
-//{
-//    qDebug() << "QMenu exec";
-//    return new QAction;
-//}
-
-//TEST(LogListView_showRightMenu_UT, LogListView_showRightMenu_UT_001)
-//{
-//    LogListView *p = new LogListView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    Stub *stub = new Stub;
-//    stub->set((QAction * (QMenu::*)(const QPoint & pos, QAction * at))ADDR(QMenu, exec), LogListView_showRightMenu_UT_QMenu_exec_Func);
-//    p->showRightMenu(QPoint(10, 10), true);
-//    p->deleteLater();
-//}
-
-//TEST(LogListView_showRightMenu_UT, LogListView_showRightMenu_UT_002)
-//{
-//    LogListView *p = new LogListView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    Stub *stub = new Stub;
-//    stub->set((QAction * (QMenu::*)(const QPoint & pos, QAction * at))ADDR(QMenu, exec), LogListView_showRightMenu_UT_QMenu_exec_Func);
-//    p->showRightMenu(QPoint(), false);
-//    p->deleteLater();
-//}
-
-//TEST(LogListView_requestshowRightMenu_UT, LogListView_requestshowRightMenu_UT_001)
-//{
-//    LogListView *p = new LogListView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->requestshowRightMenu(QPoint());
-//    p->deleteLater();
-//}
 
 TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_001)
 {

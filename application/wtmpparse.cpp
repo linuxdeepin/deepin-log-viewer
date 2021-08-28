@@ -139,14 +139,14 @@ struct utmp *st_utmp_init(void)
     return stUTMP;
 }
 
-void list_delete(struct utmp_list *list)
+utmp_list * list_delete(struct utmp_list *list)
 {
-    struct utmp_list *pList = list;
-    while (pList->next) {
-        struct utmp_list *p = pList;
-        pList = pList->next;
+    while (list->next) {
+        struct utmp_list *p = list;
+        list = p->next;
         free(p);
     }
+    return list;
 }
 
 void list_insert(QList<utmp *> &plist, struct utmp *value)

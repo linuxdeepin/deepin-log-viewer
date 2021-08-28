@@ -18,13 +18,14 @@
 #include "logapplication.h"
 #include "logcollectormain.h"
 #include "DebugTimeManager.h"
-#include <stuballthread.h>
-
-#include <gtest/gtest.h>
+#include "ut_stuballthread.h"
 #include <stub.h>
 
 #include <QDebug>
 #include <QKeyEvent>
+
+#include <gtest/gtest.h>
+
 TEST(LogApplication_Constructor_UT, LogApplication_Constructor_UT)
 {
     int argc = 0;

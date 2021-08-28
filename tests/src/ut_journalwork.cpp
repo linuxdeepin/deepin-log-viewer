@@ -17,13 +17,14 @@
 
 #include <stub.h>
 #include "journalwork.h"
-#include "stuballthread.h"
-
-#include <gtest/gtest.h>
+#include "ut_stuballthread.h"
 
 #include <DApplication>
 
 #include <QDebug>
+
+#include <gtest/gtest.h>
+
 int stub_sd_journal_get_data_work(sd_journal *j, const char *field, const void **data, size_t *l)
 {
     return 0;

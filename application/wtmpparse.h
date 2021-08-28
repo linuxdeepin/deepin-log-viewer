@@ -58,7 +58,7 @@ struct utmp_list *st_list_init(void);
 
 struct utmp *st_utmp_init(void);
 
-void list_delete(struct utmp_list *list);
+utmp_list * list_delete(struct utmp_list *list);
 
 void list_insert(QList<utmp *> &plist, struct utmp *value);
 

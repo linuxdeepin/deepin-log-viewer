@@ -14,18 +14,19 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#include "displaycontent_test.h"
+#include "ut_displaycontent.h"
 #include "../application/displaycontent.h"
 #include "../application/exportprogressdlg.h"
 #include "../application/utils.h"
 #include "../application/logexportthread.h"
-#include "stuballthread.h"
+#include "ut_stuballthread.h"
 #include "../application/DebugTimeManager.h"
 #include "../application/logtreeview.h"
 
 #include <stub.h>
 
 #include <DApplication>
+
 #include <QDebug>
 #include <QFileDialog>
 #include <QPaintEvent>
