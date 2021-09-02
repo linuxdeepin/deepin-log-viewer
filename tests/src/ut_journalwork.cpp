@@ -126,11 +126,8 @@ TEST(journalWork_getDateTimeFromStamp_UT, journalWork_getDateTimeFromStamp_UT)
 {
     journalWork *p = new journalWork(nullptr);
     EXPECT_NE(p, nullptr);
-    //    QString s_data = "2020-10-20 10:29:55";
     QString s_dataLine = "1603160995838863";
-    //    EXPECT_EQ(p->getDateTimeFromStamp(s_dataLine), s_data) << "check the status after getDateTimeFromStamp()";
-    EXPECT_NE(p->getDateTimeFromStamp(s_dataLine), nullptr) << "check the status after getDateTimeFromStamp()";
-    //  EXPECT_EQ(rs, true);
+    EXPECT_NE(p->getDateTimeFromStamp(s_dataLine), " ") << "check the status after getDateTimeFromStamp()";
     p->deleteLater();
 }
 

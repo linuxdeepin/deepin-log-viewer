@@ -167,6 +167,15 @@ void stub_generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel){
     Q_UNUSED(iLevel);
 }
 
+QString stub_getReplaceColorStr_bootwork(const char *d)
+{
+    return "testaaaa";
+}
+
+void stub_jounalWorkRun(){
+
+}
+
 TEST_F(DisplayContentlx_UT, exportClicked_UT)
 {
     Stub stub;
@@ -174,6 +183,8 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT)
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
     stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveTxtFileName);
     stub.set(ADDR(QThreadPool, start), stub_start);
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::APP;
@@ -922,6 +933,8 @@ TEST_P(DisplayContent_generateJournalFile_UT, DisplayContent_generateJournalFile
 {
     Stub stub;
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent_generateJournalFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -931,6 +944,9 @@ TEST_P(DisplayContent_generateJournalFile_UT, DisplayContent_generateJournalFile
 }
 TEST(DisplayContent_createJournalTableStart_UT, DisplayContent_createJournalTableStart_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> list;
@@ -949,6 +965,9 @@ TEST(DisplayContent_createJournalTableStart_UT, DisplayContent_createJournalTabl
 }
 TEST(DisplayContent_createJournalTableForm_UT, DisplayContent_createJournalTableForm_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -989,6 +1008,8 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateDpkgFile_UT, ::te
 TEST_P(DisplayContent_generateDpkgFile_UT, DisplayContent_generateDpkgFile_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
     DisplayContent_generateDpkgFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
@@ -1000,6 +1021,9 @@ TEST_P(DisplayContent_generateDpkgFile_UT, DisplayContent_generateDpkgFile_UT_00
 
 TEST(DisplayContent_createDpkgTable_UT, DisplayContent_createDpkgTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -1036,11 +1060,15 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateKernFile_UT, ::te
 
 TEST_P(DisplayContent_generateKernFile_UT, DisplayContent_generateKernFile_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, doWork), stub_jounalWorkRun);
+    stub.set(ADDR(JournalBootWork, doWork),stub_jounalWorkRun);
     DisplayContent_generateKernFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     Utils::sleep(200);
-    Stub stub;
     stub.set(ADDR(LogFileParser, parseByKern), parseByKern);
     p->generateKernFile(param.time);
     p->deleteLater();
@@ -1048,6 +1076,9 @@ TEST_P(DisplayContent_generateKernFile_UT, DisplayContent_generateKernFile_UT_00
 
 TEST(DisplayContent_createKernTableForm_UT, DisplayContent_createKernTableForm_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -1069,6 +1100,9 @@ TEST(DisplayContent_createKernTableForm_UT, DisplayContent_createKernTableForm_U
 
 TEST(DisplayContent_createKernTable_UT, DisplayContent_createKernTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> list;
@@ -1088,6 +1122,9 @@ TEST(DisplayContent_createKernTable_UT, DisplayContent_createKernTable_UT_001)
 
 TEST(DisplayContent_insertKernTable_UT, DisplayContent_insertKernTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> list;
@@ -1124,6 +1161,8 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateAppFile_UT, ::tes
 TEST_P(DisplayContent_generateAppFile_UT, DisplayContent_generateAppFile_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     DisplayContent_generateAppFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
@@ -1135,6 +1174,9 @@ TEST_P(DisplayContent_generateAppFile_UT, DisplayContent_generateAppFile_UT_001)
 
 TEST(DisplayContent_createAppTableForm_UT, DisplayContent_createAppTableForm_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -1156,6 +1198,9 @@ TEST(DisplayContent_createAppTableForm_UT, DisplayContent_createAppTableForm_UT_
 
 TEST(DisplayContent_createAppTable_UT, DisplayContent_createAppTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_APPLICATOIN> list;
@@ -1172,6 +1217,9 @@ TEST(DisplayContent_createAppTable_UT, DisplayContent_createAppTable_UT_001)
 }
 TEST(DisplayContent_createBootTable_UT, DisplayContent_createBootTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> list;
@@ -1187,6 +1235,9 @@ TEST(DisplayContent_createBootTable_UT, DisplayContent_createBootTable_UT_001)
 
 TEST(DisplayContent_createXorgTable_UT, DisplayContent_createXorgTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_XORG> list;
@@ -1224,6 +1275,8 @@ void DisplayContent_generateXorgFile_UT_parseByXlog(XORG_FILTERS &iXorgFilter)
 TEST_P(DisplayContent_generateXorgFile_UT, DisplayContent_generateXorgFile_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(LogFileParser, parseByXlog), DisplayContent_generateXorgFile_UT_parseByXlog);
     DisplayContent_generateXorgFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
@@ -1235,6 +1288,9 @@ TEST_P(DisplayContent_generateXorgFile_UT, DisplayContent_generateXorgFile_UT_00
 
 TEST(DisplayContent_creatKwinTable_UT, DisplayContent_creatKwinTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_KWIN> list;
@@ -1250,6 +1306,8 @@ TEST(DisplayContent_creatKwinTable_UT, DisplayContent_creatKwinTable_UT_001)
 TEST(DisplayContent_generateKwinFile_UT, DisplayContent_generateKwinFile_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -1261,6 +1319,9 @@ TEST(DisplayContent_generateKwinFile_UT, DisplayContent_generateKwinFile_UT_001)
 
 TEST(DisplayContent_createNormalTable_UT, DisplayContent_createNormalTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_NORMAL> list;
@@ -1295,6 +1356,8 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateNormalFile_UT, ::
 TEST_P(DisplayContent_generateNormalFile_UT, DisplayContent_generateNormalFile_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
 
     DisplayContent_generateNormalFile_UT_Param param = GetParam();
@@ -1307,6 +1370,9 @@ TEST_P(DisplayContent_generateNormalFile_UT, DisplayContent_generateNormalFile_U
 
 TEST(DisplayContent_insertJournalTable_UT, DisplayContent_insertJournalTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> list;
@@ -1344,6 +1410,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_getAppName_UT, ::testing:
 
 TEST_P(DisplayContent_getAppName_UT, DisplayContent_getAppName_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent_getAppName_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -1355,6 +1424,9 @@ TEST_P(DisplayContent_getAppName_UT, DisplayContent_getAppName_UT_001)
 
 TEST(DisplayContent_isAuthProcessAlive_UT, DisplayContent_isAuthProcessAlive_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->isAuthProcessAlive();
@@ -1380,6 +1452,8 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_generateJournalBootFile_U
 TEST_P(DisplayContent_generateJournalBootFile_UT, DisplayContent_generateJournalBootFile_UT)
 {
     Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
     DisplayContent_generateJournalBootFile_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
@@ -1390,6 +1464,9 @@ TEST_P(DisplayContent_generateJournalBootFile_UT, DisplayContent_generateJournal
 
 TEST(DisplayContent_createJournalBootTableStart_UT, DisplayContent_createJournalBootTableStart_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> list;
@@ -1408,6 +1485,9 @@ TEST(DisplayContent_createJournalBootTableStart_UT, DisplayContent_createJournal
 }
 TEST(DisplayContent_createJournalBootTableForm_UT, DisplayContent_createJournalBootTableForm_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -1431,6 +1511,9 @@ TEST(DisplayContent_createJournalBootTableForm_UT, DisplayContent_createJournalB
 
 TEST(DisplayContent_insertJournalBootTable_UT, DisplayContent_insertJournalBootTable_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> list;
@@ -1450,6 +1533,9 @@ TEST(DisplayContent_insertJournalBootTable_UT, DisplayContent_insertJournalBootT
 
 TEST(DisplayContent_slot_tableItemClicked_UT, DisplayContent_slot_tableItemClicked_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -1507,10 +1593,12 @@ void DisplayContent_slot_BtnSelected_UT_generateBootFile()
 
 TEST_P(DisplayContent_slot_BtnSelected_UT, DisplayContent_slot_BtnSelected_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent_slot_BtnSelected_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
-    Stub stub;
 
     switch (param.index) {
     case 0:
@@ -1561,9 +1649,11 @@ TEST_P(DisplayContent_slot_BtnSelected_UT, DisplayContent_slot_BtnSelected_UT_00
 
 TEST(DisplayContent_slot_appLogs_UT, DisplayContent_slot_appLogs_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
-    Stub stub;
     stub.set(ADDR(DisplayContent, generateAppFile), DisplayContent_slot_BtnSelected_UT_generateAppFile);
     p->slot_appLogs(1, QDir::homePath() + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log");
     p->deleteLater();
@@ -1606,7 +1696,8 @@ TEST_P(DisplayContent_slot_logCatelogueClicked_UT, DisplayContent_slot_logCatelo
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     Stub stub;
-
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     switch (param.index) {
     case 0:
         slot_logCatelogueClicked_ModelIndex_data = JOUR_TREE_DATA;
@@ -1681,6 +1772,8 @@ TEST(DisplayContent_slot_statusChagned_UT, DisplayContent_slot_statusChagned_UT_
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
     p->slot_statusChagned("OK");
@@ -1690,6 +1783,8 @@ TEST(DisplayContent_slot_statusChagned_UT, DisplayContent_slot_statusChagned_UT_
 TEST(DisplayContent_slot_dpkgFinished_UT, DisplayContent_slot_dpkgFinished_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
@@ -1713,6 +1808,8 @@ TEST(DisplayContent_slot_dpkgFinished_UT, DisplayContent_slot_dpkgFinished_UT_00
 TEST(DisplayContent_slot_XorgFinished_UT, DisplayContent_slot_XorgFinished_UT_001)
 {
     Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
@@ -1733,6 +1830,9 @@ TEST(DisplayContent_slot_XorgFinished_UT, DisplayContent_slot_XorgFinished_UT_00
 
 TEST(DisplayContent_slot_bootFinished_UT, DisplayContent_slot_bootFinished_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_BOOT> list;
@@ -1750,6 +1850,9 @@ TEST(DisplayContent_slot_bootFinished_UT, DisplayContent_slot_bootFinished_UT_00
 }
 TEST(DisplayContent_slot_kernFinished_UT, DisplayContent_slot_kernFinished_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_JOURNAL> list;
@@ -1771,6 +1874,9 @@ TEST(DisplayContent_slot_kernFinished_UT, DisplayContent_slot_kernFinished_UT_00
 }
 TEST(DisplayContent_slot_kwinFinished_UT, DisplayContent_slot_kwinFinished_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_KWIN> list;
@@ -1788,6 +1894,9 @@ TEST(DisplayContent_slot_kwinFinished_UT, DisplayContent_slot_kwinFinished_UT_00
 
 TEST(DisplayContent_slot_journalBootFinished_UT, DisplayContent_slot_journalBootFinished_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->slot_journalBootFinished(p->m_journalCurrentIndex);
@@ -1818,6 +1927,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_journalData_UT, ::te
 
 TEST_P(DisplayContent_slot_journalData_UT, DisplayContent_slot_journalData_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent_slot_journalData_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -1867,6 +1979,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_journalBootData_UT, 
 
 TEST_P(DisplayContent_slot_journalBootData_UT, DisplayContent_slot_journalBootData_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent_slot_journalBootData_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -1891,8 +2006,12 @@ TEST_P(DisplayContent_slot_journalBootData_UT, DisplayContent_slot_journalBootDa
     p->slot_journalBootData(index, list);
     p->deleteLater();
 }
+
 TEST(DisplayContent_slot_applicationFinished_UT, DisplayContent_slot_applicationFinished_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     QList<LOG_MSG_APPLICATOIN> list;
@@ -1913,6 +2032,9 @@ TEST(DisplayContent_slot_applicationFinished_UT, DisplayContent_slot_application
 
 TEST(DisplayContent_slot_NormalFinished_UT, DisplayContent_NormalFinished_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->m_flag = Normal;
@@ -1923,6 +2045,9 @@ TEST(DisplayContent_slot_NormalFinished_UT, DisplayContent_NormalFinished_UT_001
 }
 TEST(DisplayContent_slot_themeChanged_UT, DisplayContent_slot_themeChanged_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->deleteLater();
@@ -1930,6 +2055,9 @@ TEST(DisplayContent_slot_themeChanged_UT, DisplayContent_slot_themeChanged_UT_00
 
 TEST(DisplayContent_resizeEvent_UT, DisplayContent_resizeEvent_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->resizeEvent(nullptr);
@@ -1976,6 +2104,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_vScrollValueChanged_
 
 TEST_P(DisplayContent_slot_vScrollValueChanged_UT, DisplayContent_slot_vScrollValueChanged_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent_slot_vScrollValueChanged_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -1997,7 +2128,6 @@ TEST_P(DisplayContent_slot_vScrollValueChanged_UT, DisplayContent_slot_vScrollVa
     } else {
         p->m_limitTag = (valuePixel / DisplayContent_slot_vScrollValueChanged_treeView_singleRowHeight + 25) / 200;
     }
-    Stub stub;
     stub.set(ADDR(LogTreeView, singleRowHeight), DisplayContent_slot_vScrollValueChanged_treeView_singleRowHeight_Func);
     stub.set(ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
@@ -2038,6 +2168,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_searchResult_UT, ::t
 
 TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent_slot_searchResult_UT_Param param = GetParam();
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -2144,7 +2277,6 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
         break;
     }
     DisplayContent_slot_searchResult_QString_contains = param.isContains;
-    Stub stub;
     stub.set((bool (QString::*)(const QString &, Qt::CaseSensitivity) const)ADDR(QString, contains), DisplayContent_slot_searchResult_QString_contains_Func);
     stub.set(ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
@@ -2155,6 +2287,9 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
 
 TEST(DisplayContent_slot_getLogtype_UT, DisplayContent_slot_getLogtype_UT_001)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->slot_getLogtype(0);
@@ -2181,6 +2316,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_DPKG_UT,
 
 TEST_P(DisplayContent_parseListToModel_DPKG_UT, DisplayContent_parseListToModel_DPKG_UT)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_DPKG_UT_Param param = GetParam();
@@ -2219,6 +2357,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_BOOT_UT,
 
 TEST_P(DisplayContent_parseListToModel_BOOT_UT, DisplayContent_parseListToModel_BOOT_UT)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_BOOT_UT_Param param = GetParam();
@@ -2257,6 +2398,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_APP_UT, 
 
 TEST_P(DisplayContent_parseListToModel_APP_UT, DisplayContent_parseListToModel_APP_UT)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_APP_UT_Param param = GetParam();
@@ -2297,6 +2441,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_XORG_UT,
 
 TEST_P(DisplayContent_parseListToModel_XORG_UT, DisplayContent_parseListToModel_XORG_UT)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_XORG_UT_Param param = GetParam();
@@ -2335,6 +2482,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_NORMAL_U
 
 TEST_P(DisplayContent_parseListToModel_NORMAL_UT, DisplayContent_parseListToModel_NORMAL_UT)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_NORMAL_UT_Param param = GetParam();
@@ -2375,6 +2525,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_KWIN_UT,
 
 TEST_P(DisplayContent_parseListToModel_KWIN_UT, DisplayContent_parseListToModel_KWIN_UT)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_parseListToModel_KWIN_UT_Param param = GetParam();
@@ -2433,6 +2586,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_setLoadState_UT, ::testin
 
 TEST_P(DisplayContent_setLoadState_UT, DisplayContent_setLoadState_UT)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_setLoadState_UT_Param param = GetParam();
@@ -2471,6 +2627,9 @@ INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_onExportResult_UT, ::test
 #include "exportprogressdlg.h"
 TEST_P(DisplayContent_onExportResult_UT, DisplayContent_onExportResult_UT)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     DisplayContent_onExportResult_UT_Param param = GetParam();
@@ -2485,6 +2644,9 @@ TEST_P(DisplayContent_onExportResult_UT, DisplayContent_onExportResult_UT)
 
 TEST(DisplayContent_onExportFakeCloseDlg_UT, DisplayContent_onExportFakeCloseDlg_UT)
 {
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->m_exportDlg->show();

@@ -18,6 +18,7 @@
 #include "filtercontent.h"
 #include "logperiodbutton.h"
 #include "structdef.h"
+#include "logcombox.h"
 
 #include <QPaintEvent>
 #include <QEvent>
@@ -59,11 +60,14 @@ public:
 TEST_F(FilterContent_UT, shortCutExport_UT)
 {
     m_filter->shortCutExport();
+    EXPECT_NE(m_filter, nullptr)<<"check the status after shortCutExport()";
+    EXPECT_NE(m_filter->exportBtn, nullptr)<<"check the status after shortCutExport()";
 }
 
 TEST_F(FilterContent_UT, setAppComboBoxItem_UT)
 {
     m_filter->setAppComboBoxItem();
+    EXPECT_NE(m_filter->cbx_app,nullptr)<<"check the status after setAppComboBoxItem()";
 }
 
 TEST_F(FilterContent_UT, setSelection_UT)
@@ -72,12 +76,15 @@ TEST_F(FilterContent_UT, setSelection_UT)
     stub.set(ADDR(QWidget, isVisible), setSelection_IsVisible);
     FILTER_CONFIG fitler;
     m_filter->setSelection(fitler);
+    EXPECT_NE(m_filter->cbx_app,nullptr)<<"check the status after setSelection()";
+    EXPECT_NE(m_filter->cbx_lv,nullptr)<<"check the status after setSelection()";
 }
 
 TEST_F(FilterContent_UT, paintEvent_UT)
 {
     QPaintEvent repaint(m_filter->rect());
     m_filter->paintEvent(&repaint);
+    EXPECT_NE(m_filter, nullptr)<<"check the status after paintEvent()";
 }
 
 TEST_F(FilterContent_UT, eventFilter_UT)
@@ -97,6 +104,7 @@ TEST_F(FilterContent_UT, eventFilter_UT)
     m_filter->eventFilter(m_filter->m_lastWeekBtn, &keyLeftEvent);
     m_filter->eventFilter(m_filter->m_lastMonthBtn, &keyLeftEvent);
     m_filter->eventFilter(m_filter->m_threeMonthBtn, &keyLeftEvent);
+    EXPECT_NE(m_filter, nullptr)<<"check the status after paintEvent()";
 }
 
 TEST_F(FilterContent_UT, updateWordWrap_UT)
@@ -106,6 +114,7 @@ TEST_F(FilterContent_UT, updateWordWrap_UT)
     LogPeriodButton btn("test", m_filter);
     m_filter->hLayout_period->addWidget(&btn);
     m_filter->updateWordWrap();
+    EXPECT_NE(m_filter, nullptr)<<"check the status after updateWordWrap()";
 }
 
 TEST_F(FilterContent_UT, slot_logCatelogueClicked_UT)
@@ -131,6 +140,7 @@ TEST_F(FilterContent_UT, slot_logCatelogueClicked_UT)
     for (int i = 0; i < m_model.rowCount(); i++) {
         QModelIndex modelindex = m_model.index(i, 0, QModelIndex());
         m_filter->slot_logCatelogueClicked(modelindex);
+        EXPECT_EQ(m_filter->m_curTreeIndex, modelindex)<<"check the status after slot_logCatelogueClicked()";
     }
     delete item;
 }
@@ -138,16 +148,19 @@ TEST_F(FilterContent_UT, slot_logCatelogueClicked_UT)
 TEST_F(FilterContent_UT, slot_exportButtonClicked_UT)
 {
     m_filter->slot_exportButtonClicked();
+    EXPECT_NE(m_filter, nullptr)<<"check the status after slot_exportButtonClicked()";
 }
 
 TEST_F(FilterContent_UT, slot_cbxLvIdxChanged_UT)
 {
     m_filter->slot_cbxLvIdxChanged(2);
+    EXPECT_EQ(m_filter->m_curLvCbxId, 1)<<"check the status after slot_cbxLvIdxChanged()";
 }
 
 TEST_F(FilterContent_UT, slot_cbxLogTypeChanged_UT)
 {
     m_filter->slot_cbxLogTypeChanged(2);
+    EXPECT_NE(m_filter, nullptr)<<"check the status after slot_cbxLogTypeChanged()";
 }
 
 TEST_F(FilterContent_UT, slot_logCatelogueRefresh_UT)
@@ -157,9 +170,11 @@ TEST_F(FilterContent_UT, slot_logCatelogueRefresh_UT)
     m_model.appendRow(&item);
     m_model.setData(m_model.index(0, 0), QString("application"), Qt::UserRole + 66);
     m_filter->slot_logCatelogueRefresh(m_model.index(0, 0));
+    EXPECT_NE(m_filter->cbx_app,nullptr)<<"check the status after slot_logCatelogueRefresh()";
 }
 
 TEST_F(FilterContent_UT, slot_buttonClicked_UT)
 {
     m_filter->slot_buttonClicked(BUTTONID::RESET);
+    EXPECT_EQ(m_filter->m_curBtnId,ALL)<<"check the status after slot_buttonClicked()";
 }

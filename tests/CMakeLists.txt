@@ -196,19 +196,3 @@ target_link_libraries(${PROJECT_NAME_TEST} ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${RapidJSON_LIBRARIES})
 #target_link_libraries(${PROJECT_NAME_TEST} ${ImageMagick_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${XercesC_LIBRARIES})
-
-
-#------------------------------ 创建'make test'指令---------------------------------------
-add_custom_target(test
-)
-
-
-add_custom_command(TARGET test
-    COMMAND echo " =================== CREAT LCOV REPROT BEGIN ==================== "
-    COMMAND ${CMAKE_BINARY_DIR}/tests/${PROJECT_NAME_TEST}
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-)
-
-# debian 会自动执行 make test
-#'make test'命令依赖与我们的测试程序
-add_dependencies(test ${PROJECT_NAME_TEST})

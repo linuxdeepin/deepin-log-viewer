@@ -27,12 +27,12 @@
 #include <gtest/gtest.h>
 #include <systemd/sd-journal.h>
 
-int stub_sd_journal_get_data_bootwork(sd_journal *j, const char *field, const void **data, size_t *l)
+int stub_sd_journal_get_data_bootwork001(sd_journal *j, const char *field, const void **data, size_t *l)
 {
     return 0;
 }
 
-QString stub_getReplaceColorStr_bootwork(const char *d)
+QString stub_getReplaceColorStr_bootwork001(const char *d)
 {
     return "testaaaa";
 }
@@ -107,10 +107,11 @@ TEST(JournalBootWork_setArg_UT, JournalBootWork_setArg_UT_002)
 TEST(JournalBootWork_doWork_UT, JournalBootWork_doWork_UT)
 {
     Stub stub;
-    stub.set(sd_journal_get_data, stub_sd_journal_get_data_bootwork);
-    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(sd_journal_get_data, stub_sd_journal_get_data_bootwork001);
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork001);
     JournalBootWork *p = new JournalBootWork(nullptr);
     p->doWork();
+    EXPECT_NE(p, nullptr);
     p->deleteLater();
 }
 
@@ -177,9 +178,6 @@ int stub_sd_journal_open(sd_journal **ret, int flags)
     return -1;
 }
 
-//int stub_sd_journal_seek_tail(sd_journal *j)
-//{
-//}
 
 class JournalBootWork_UT : public testing::Test
 {
@@ -205,30 +203,17 @@ public:
     JournalBootWork *m_bootWork;
 };
 
-//TEST_F(JournalBootWork_UT, testBootWork_UT)
-//{
-//    m_bootWork->doWork();
-//}
 
 TEST_F(JournalBootWork_UT, testBootWork_UT001)
 {
     Stub stub;
-    //    m_bootWork->doWork();
     stub.set(sd_journal_open, stub_sd_journal_open);
     stub.set(sd_journal_seek_tail, stub_sd_journal_open);
     stub.set(sd_journal_add_match, stub_sd_journal_open);
     stub.set(sd_journal_add_conjunction, stub_sd_journal_open);
     stub.set(sd_journal_get_data, stub_sd_journal_open);
-    m_bootWork->m_arg = QStringList() << "emg"
-                                      << "all";
-
-    m_bootWork->m_canRun = false;
+    m_bootWork->m_arg = QStringList() << "emg"<< "all";
     m_bootWork->doWork();
+    EXPECT_EQ(m_bootWork->m_canRun, true);
+    EXPECT_EQ(m_bootWork->logList.count(), 0);
 }
-
-//TEST_F(JournalBootWork_UT, testBootWork_UT002)
-//{
-//    Stub stub;
-//    stub.set(sd_journal_seek_tail, stub_sd_journal_seek_tail);
-//    m_bootWork->doWork();
-//}

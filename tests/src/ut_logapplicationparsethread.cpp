@@ -79,39 +79,60 @@ public:
     }
     void TearDown() //TEST跑完之后会执行TearDown
     {
-        m_logAppThread->m_process = new QProcess();
         delete m_logAppThread;
     }
     LogApplicationParseThread *m_logAppThread;
 };
 
-TEST_F(LogApplicationParseThread_UT, LogApplicationParseThread_UT001)
-{
+TEST_F(LogApplicationParseThread_UT, UT_InitProccess_001){
+    m_logAppThread->initProccess();
+    EXPECT_NE(m_logAppThread, nullptr);
+    EXPECT_NE(m_logAppThread->m_process, nullptr);
+}
+
+TEST_F(LogApplicationParseThread_UT, UT_OnProcFinished_001){
+    m_logAppThread->onProcFinished(1);
+    EXPECT_NE(m_logAppThread, nullptr);
+}
+
+TEST_F(LogApplicationParseThread_UT, UT_SetParam_001){
     APP_FILTERS appfilter;
+    m_logAppThread->setParam(appfilter);
+    EXPECT_NE(m_logAppThread, nullptr);
+    EXPECT_EQ(m_logAppThread->m_AppFiler.path, appfilter.path);
+}
+
+TEST_F(LogApplicationParseThread_UT, UT_DoWork_001)
+{
     Stub stub;
     stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryInfoList), stub_entryInfoList);
     stub.set(ADDR(DLDBusHandler, getFileInfo), stub_getAppFileInfo);
     stub.set(ADDR(DLDBusHandler, readLog), stub_readAppLog);
     stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput);
-    m_logAppThread->initProccess();
-    m_logAppThread->setParam(appfilter);
+    EXPECT_NE(m_logAppThread, nullptr);
     m_logAppThread->m_AppFiler.path = "";
     m_logAppThread->doWork();
     m_logAppThread->m_AppFiler.path = "test";
     m_logAppThread->doWork();
     m_logAppThread->m_AppFiler.lvlFilter=-1;
     m_logAppThread->doWork();
-    m_logAppThread->onProcFinished(1);
+    EXPECT_NE(m_logAppThread->m_process, nullptr);
+    EXPECT_EQ(m_logAppThread->m_appList.count(),1);
 }
 
 TEST_F(LogApplicationParseThread_UT, stopProcess_UT)
 {
-    APP_FILTERS appfilter;
     Stub stub;
     stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryInfoList), stub_entryInfoList);
     stub.set((QStringList(QString::*)(QChar, QString::SplitBehavior, Qt::CaseSensitivity) const)ADDR(QString, split), stub_split);
     stub.set(ADDR(DLDBusHandler, getFileInfo), stub_getAppFileInfo);
     stub.set(ADDR(DLDBusHandler, readLog), stub_readAppLog);
     m_logAppThread->stopProccess();
-    m_logAppThread->getIndex();
+    EXPECT_EQ(m_logAppThread->m_process, nullptr);
+
+}
+
+TEST_F(LogApplicationParseThread_UT, UT_GetIndex_001){
+    int index= m_logAppThread->getIndex();
+    EXPECT_EQ(index, 6);
 }

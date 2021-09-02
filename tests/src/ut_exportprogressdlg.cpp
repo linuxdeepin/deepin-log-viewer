@@ -14,12 +14,13 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#include <gtest/gtest.h>
-#include <stub.h>
 #include "exportprogressdlg.h"
 
 #include <QDebug>
+
+#include <gtest/gtest.h>
+#include <stub.h>
+
 TEST(ExportProgressDlg_Constructor_UT, ExportProgressDlg_Constructor_UT)
 {
     ExportProgressDlg *p = new ExportProgressDlg(nullptr);
