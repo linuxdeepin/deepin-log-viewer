@@ -35,8 +35,9 @@ TEST(LogCombox_setFocusReason_UT, LogCombox_setFocusReason_UT)
 {
     LogCombox *p = new LogCombox(nullptr);
     EXPECT_NE(p, nullptr);
-    p->setFocusReason(Qt::TabFocusReason);
-    EXPECT_EQ(p->m_reson, Qt::TabFocusReason);
+    Qt::FocusReason iReson = Qt::TabFocusReason;
+    p->setFocusReason(iReson);
+    EXPECT_EQ(p->m_reson, iReson) << "check the status after setFocusReason()";
     delete p;
 }
 
@@ -44,8 +45,9 @@ TEST(LogCombox_getFocusReason_UT, LogCombox_getFocusReason_UT)
 {
     LogCombox *p = new LogCombox(nullptr);
     EXPECT_NE(p, nullptr);
-    p->setFocusReason(Qt::TabFocusReason);
-    EXPECT_EQ(p->getFocusReason(), Qt::TabFocusReason);
+    Qt::FocusReason iReson = Qt::TabFocusReason;
+    p->setFocusReason(iReson);
+    EXPECT_EQ(p->getFocusReason(), iReson) << "check the status after getFocusReason()";
     delete p;
 }
 

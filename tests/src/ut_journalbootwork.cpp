@@ -117,6 +117,7 @@ TEST(JournalBootWork_doWork_UT, JournalBootWork_doWork_UT)
 TEST(JournalBootWork_getReplaceColorStr_UT, JournalBootWork_getReplaceColorStr_UT)
 {
     JournalBootWork *p = new JournalBootWork(nullptr);
+    EXPECT_NE(p, nullptr);
     EXPECT_EQ(p->getReplaceColorStr("\033[40;37m"), "");
     p->deleteLater();
 }
@@ -124,7 +125,11 @@ TEST(JournalBootWork_getReplaceColorStr_UT, JournalBootWork_getReplaceColorStr_U
 TEST(JournalBootWork_getDateTimeFromStamp_UT, JournalBootWork_getDateTimeFromStamp_UT)
 {
     JournalBootWork *p = new JournalBootWork(nullptr);
-    p->getDateTimeFromStamp("1603160995838863") == QString("2020-10-20 10:29:55");
+    EXPECT_NE(p, nullptr);
+//    QString s_data = "2020-10-20 10:29:55";
+    QString s_dataLine = "1603160995838863";
+//    EXPECT_EQ(p->getDateTimeFromStamp(s_dataLine), s_data) << "check the status after getDateTimeFromStamp()";
+    EXPECT_NE(p->getDateTimeFromStamp(s_dataLine), nullptr) << "check the status after getDateTimeFromStamp()";
     //  EXPECT_EQ(rs, true);
     p->deleteLater();
 }
@@ -132,6 +137,7 @@ TEST(JournalBootWork_getDateTimeFromStamp_UT, JournalBootWork_getDateTimeFromSta
 TEST(JournalBootWork_initMap_UT, JournalBootWork_initMap_UT)
 {
     JournalBootWork *p = new JournalBootWork(nullptr);
+    EXPECT_NE(p, nullptr);
     p->initMap();
     QMap<int, QString> map;
     map.insert(0, Dtk::Widget::DApplication::translate("Level", "Emergency"));
@@ -149,6 +155,7 @@ TEST(JournalBootWork_initMap_UT, JournalBootWork_initMap_UT)
 TEST(JournalBootWork_i2str_UT, JournalBootWork_i2str_UT)
 {
     JournalBootWork *p = new JournalBootWork(nullptr);
+    EXPECT_NE(p, nullptr);
     QMap<int, QString> map;
     map.insert(0, Dtk::Widget::DApplication::translate("Level", "Emergency"));
     map.insert(1, Dtk::Widget::DApplication::translate("Level", "Alert"));

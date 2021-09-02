@@ -106,6 +106,7 @@ TEST(journalWork_setArg_UT, journalWork_setArg_UT_002)
 TEST(journalWork_doWork_UT, journalWork_doWork_UT)
 {
     journalWork *p = new journalWork(nullptr);
+    EXPECT_NE(p, nullptr);
     Stub stub;
     stub.set(sd_journal_get_data, stub_sd_journal_get_data_work);
     stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_work);
@@ -116,6 +117,7 @@ TEST(journalWork_doWork_UT, journalWork_doWork_UT)
 TEST(journalWork_getReplaceColorStr_UT, journalWork_getReplaceColorStr_UT)
 {
     journalWork *p = new journalWork(nullptr);
+    EXPECT_NE(p, nullptr);
     EXPECT_EQ(p->getReplaceColorStr("\033[40;37m"), "");
     p->deleteLater();
 }
@@ -123,7 +125,11 @@ TEST(journalWork_getReplaceColorStr_UT, journalWork_getReplaceColorStr_UT)
 TEST(journalWork_getDateTimeFromStamp_UT, journalWork_getDateTimeFromStamp_UT)
 {
     journalWork *p = new journalWork(nullptr);
-    p->getDateTimeFromStamp("1603160995838863") == QString("2020-10-20 10:29:55");
+    EXPECT_NE(p, nullptr);
+    //    QString s_data = "2020-10-20 10:29:55";
+    QString s_dataLine = "1603160995838863";
+    //    EXPECT_EQ(p->getDateTimeFromStamp(s_dataLine), s_data) << "check the status after getDateTimeFromStamp()";
+    EXPECT_NE(p->getDateTimeFromStamp(s_dataLine), nullptr) << "check the status after getDateTimeFromStamp()";
     //  EXPECT_EQ(rs, true);
     p->deleteLater();
 }
@@ -131,6 +137,7 @@ TEST(journalWork_getDateTimeFromStamp_UT, journalWork_getDateTimeFromStamp_UT)
 TEST(journalWork_initMap_UT, journalWork_initMap_UT)
 {
     journalWork *p = new journalWork(nullptr);
+    EXPECT_NE(p, nullptr);
     p->initMap();
     QMap<int, QString> map;
     map.insert(0, Dtk::Widget::DApplication::translate("Level", "Emergency"));
@@ -148,6 +155,7 @@ TEST(journalWork_initMap_UT, journalWork_initMap_UT)
 TEST(journalWork_i2str_UT, journalWork_i2str_UT)
 {
     journalWork *p = new journalWork(nullptr);
+    EXPECT_NE(p, nullptr);
     QMap<int, QString> map;
     map.insert(0, Dtk::Widget::DApplication::translate("Level", "Emergency"));
     map.insert(1, Dtk::Widget::DApplication::translate("Level", "Alert"));
