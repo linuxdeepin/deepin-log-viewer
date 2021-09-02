@@ -196,8 +196,11 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT)
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::Dmesg;
     m_content->slot_exportClicked();
+    EXPECT_EQ(m_content->selectFilter, "TEXT (*.txt)")<<"check the status after slot_exportClicked()";
+    EXPECT_NE(m_content, nullptr)<<"check the status after slot_exportClicked()";
+    EXPECT_NE(m_content->m_exportDlg, nullptr)<<"check the status after slot_exportClicked()";
 
-    //    stub.set
+
 }
 
 TEST_F(DisplayContentlx_UT, exportClicked_UT001)
@@ -229,8 +232,9 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT001)
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::Dmesg;
     m_content->slot_exportClicked();
-
-    //    stub.set
+    EXPECT_EQ(m_content->selectFilter, "Html (*.html)")<<"check the status after slot_exportClicked()";
+    EXPECT_NE(m_content, nullptr)<<"check the status after slot_exportClicked()";
+    EXPECT_NE(m_content->m_exportDlg, nullptr)<<"check the status after slot_exportClicked()";
 }
 
 TEST_F(DisplayContentlx_UT, exportClicked_UT002)
@@ -262,8 +266,9 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT002)
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::Dmesg;
     m_content->slot_exportClicked();
-
-    //    stub.set
+    EXPECT_EQ(m_content->selectFilter, "Doc (*.doc)")<<"check the status after slot_exportClicked()";
+    EXPECT_NE(m_content, nullptr)<<"check the status after slot_exportClicked()";
+    EXPECT_NE(m_content->m_exportDlg, nullptr)<<"check the status after slot_exportClicked()";
 }
 
 TEST_F(DisplayContentlx_UT, exportClicked_UT003)
@@ -295,41 +300,9 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT003)
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::Dmesg;
     m_content->slot_exportClicked();
-
-    //    stub.set
-}
-
-TEST_F(DisplayContentlx_UT, exportClicked_UT004)
-{
-    Stub stub;
-    m_content->selectFilter = "Xls (*.xls)";
-    stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
-    stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveXlsFileName);
-    stub.set(ADDR(QThreadPool, start), stub_start);
-    m_content->m_flag = LOG_FLAG::BOOT;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::APP;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::KERN;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::JOURNAL;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::XORG;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::DPKG;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::Normal;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::Kwin;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::Dnf;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::Dmesg;
-    m_content->slot_exportClicked();
-    m_content->m_flag = LOG_FLAG::BOOT_KLU;
-    m_content->slot_exportClicked();
-
-    //    stub.set
+    EXPECT_EQ(m_content->selectFilter, "Xls (*.xls)")<<"check the status after slot_exportClicked()";
+    EXPECT_NE(m_content, nullptr)<<"check the status after slot_exportClicked()";
+    EXPECT_NE(m_content->m_exportDlg, nullptr)<<"check the status after slot_exportClicked()";
 }
 
 TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT)
@@ -338,6 +311,10 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT)
     m_content->m_flag = LOG_FLAG::JOURNAL;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::JOURNAL)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT002)
@@ -346,6 +323,10 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT002)
     m_content->m_flag = LOG_FLAG::BOOT;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::BOOT)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT003)
@@ -354,6 +335,10 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT003)
     m_content->m_flag = LOG_FLAG::BOOT_KLU;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::BOOT_KLU)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT005)
@@ -362,6 +347,10 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT005)
     m_content->m_flag = LOG_FLAG::APP;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::APP)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT006)
@@ -370,6 +359,10 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT006)
     m_content->m_flag = LOG_FLAG::XORG;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::XORG)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT007)
@@ -378,6 +371,10 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT007)
     m_content->m_flag = LOG_FLAG::KERN;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::KERN)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, DmesgScrollValueChanged_UT)
@@ -386,6 +383,10 @@ TEST_F(DisplayContentlx_UT, DmesgScrollValueChanged_UT)
     m_content->m_flag = LOG_FLAG::Dmesg;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dmesg)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, DnfScrollValueChanged_UT)
@@ -394,6 +395,10 @@ TEST_F(DisplayContentlx_UT, DnfScrollValueChanged_UT)
     m_content->m_flag = LOG_FLAG::Dnf;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dnf)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, NormalScrollValueChanged_UT)
@@ -402,6 +407,10 @@ TEST_F(DisplayContentlx_UT, NormalScrollValueChanged_UT)
     m_content->m_flag = LOG_FLAG::Normal;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Normal)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, KwinScrollValueChanged_UT)
@@ -410,20 +419,10 @@ TEST_F(DisplayContentlx_UT, KwinScrollValueChanged_UT)
     m_content->m_flag = LOG_FLAG::Kwin;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
-}
-
-TEST_F(DisplayContentlx_UT, FileParse_UT)
-{
-    DisplayContent *p = new DisplayContent(nullptr);
-    EXPECT_NE(p, nullptr);
-    QList<LOG_MSG_DNF> list;
-    QStandardItemModel m_model;
-    p->parseListToModel(list, &m_model);
-    QList<LOG_MSG_DMESG> m_list;
-    p->parseListToModel(m_list, &m_model);
-    QList<LOG_MSG_BOOT> m_list1;
-    p->parseListToModel(m_list, &m_model);
-    p->deleteLater();
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Kwin)<<"check the status after slot_vScrollValueChanged()";
 }
 
 TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT008)
@@ -432,6 +431,27 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT008)
     m_content->m_flag = LOG_FLAG::DPKG;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
     m_content->slot_vScrollValueChanged(275);
+    EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_limitTag, 1)<<"check the status after slot_vScrollValueChanged()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::DPKG)<<"check the status after slot_vScrollValueChanged()";
+}
+
+TEST_F(DisplayContentlx_UT, FileParse_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    QList<LOG_MSG_DNF> list;
+    QStandardItemModel m_model;
+    p->parseListToModel(list, &m_model);
+    QList<LOG_MSG_DMESG> m_list;
+    p->parseListToModel(m_list, &m_model);
+    QList<LOG_MSG_BOOT> m_list1;
+    p->parseListToModel(m_list, &m_model);
+    EXPECT_NE(p, nullptr);
+    EXPECT_NE(p->m_transDict.count(),0)<<"check the status after parseListToModel()";
+    EXPECT_NE(p->m_iconPrefix.count(),0)<<"check the status after parseListToModel()";
+    EXPECT_NE(p->m_dnfIconNameMap.count(),0)<<"check the status after parseListToModel()";
+    p->deleteLater();
 }
 
 TEST_F(DisplayContentlx_UT, generateDnfFile_UT)
@@ -445,7 +465,9 @@ TEST_F(DisplayContentlx_UT, generateDnfFile_UT)
     m_content->generateDnfFile(BUTTONID::ONE_MONTH, DNFPRIORITY::DEBUG);
     m_content->generateDnfFile(BUTTONID::THREE_MONTHS, DNFPRIORITY::DEBUG);
     m_content->generateDnfFile(BUTTONID::INVALID, DNFPRIORITY::DEBUG);
+    EXPECT_NE(m_content, nullptr);
 }
+
 
 TEST_F(DisplayContentlx_UT, generateJournalFile_UT)
 {
@@ -455,6 +477,9 @@ TEST_F(DisplayContentlx_UT, generateJournalFile_UT)
     m_content->m_journalFilter.timeFilter=0;
     m_content->m_journalFilter.eventTypeFilter=0;
     m_content->generateJournalFile(0,0,"" );
+    EXPECT_NE(strlen(m_content->m_lastJournalGetTime.toString().toLatin1()),0)<<"check the status after generateJournalFile()";
+    EXPECT_EQ(m_content->m_journalFilter.timeFilter, 0)<<"check the status after generateJournalFile()";
+    EXPECT_EQ(m_content->m_journalFilter.eventTypeFilter, 0)<<"check the status after generateJournalFile()";
 }
 
 TEST_F(DisplayContentlx_UT, createDnfTable_UT)
@@ -463,6 +488,8 @@ TEST_F(DisplayContentlx_UT, createDnfTable_UT)
     LOG_MSG_DNF dnfLog = {"2021-05-21", "DEBUG", "DNF version: 4.2.23"};
     dnfList.push_back(dnfLog);
     m_content->createDnfTable(dnfList);
+    EXPECT_EQ(m_content->m_limitTag, 0)<<"check the status after createDnfTable()";
+    EXPECT_NE(m_content->m_pModel, nullptr)<<"check the status after createDnfTable()";
 }
 
 TEST_F(DisplayContentlx_UT, generateDmesgFile_UT)
@@ -476,6 +503,7 @@ TEST_F(DisplayContentlx_UT, generateDmesgFile_UT)
     m_content->generateDmesgFile(BUTTONID::ONE_MONTH, PRIORITY::ERR);
     m_content->generateDmesgFile(BUTTONID::THREE_MONTHS, PRIORITY::ERR);
     m_content->generateDmesgFile(BUTTONID::INVALID, PRIORITY::ERR);
+    EXPECT_NE(m_content, nullptr);
 }
 
 TEST_F(DisplayContentlx_UT, createDmesgTable_UT)
@@ -484,11 +512,15 @@ TEST_F(DisplayContentlx_UT, createDmesgTable_UT)
     LOG_MSG_DMESG dmesgLog = {"ERR", "2021-05-21", "DNF version: 4.2.23"};
     dmesgList.push_back(dmesgLog);
     m_content->createDmesgTable(dmesgList);
+    EXPECT_EQ(m_content->m_limitTag, 0)<<"check the status after createDmesgTable()";
+    EXPECT_NE(m_content->m_pModel, nullptr)<<"check the status after createDmesgTable()";
 }
 
 TEST_F(DisplayContentlx_UT, createDnfForm_UT)
 {
     m_content->createDnfForm();
+    EXPECT_NE(m_content->m_pModel, nullptr)<<"check the status after createDnfForm()";
+    EXPECT_EQ(m_content->m_pModel->rowCount(), 0)<<"check the status after createDnfForm()";
 }
 
 TEST_F(DisplayContentlx_UT, insertDmesgTable_UT)
@@ -497,6 +529,7 @@ TEST_F(DisplayContentlx_UT, insertDmesgTable_UT)
     LOG_MSG_DMESG dmesgLog = {"ERR", "2021-05-21", "DNF version: 4.2.23"};
     dmesgList.push_back(dmesgLog);
     m_content->insertDmesgTable(dmesgList, -1, -1);
+    EXPECT_NE(m_content, nullptr);
 }
 
 TEST_F(DisplayContentlx_UT, insertDnfTable_UT)
@@ -505,11 +538,14 @@ TEST_F(DisplayContentlx_UT, insertDnfTable_UT)
     LOG_MSG_DNF dnfLog = {"2021-05-21", "DEBUG", "DNF version: 4.2.23"};
     dnfList.push_back(dnfLog);
     m_content->insertDnfTable(dnfList, -1, -1);
+    EXPECT_NE(m_content, nullptr);
 }
 
 TEST_F(DisplayContentlx_UT, slot_tableItemClicked_UT)
 {
     m_content->slot_tableItemClicked(QModelIndex());
+    EXPECT_NE(m_content, nullptr);
+    EXPECT_EQ(m_content->m_pModel->rowCount(), 0)<<"check the status after slot_tableItemClicked()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_appLogs_UT)
@@ -517,6 +553,10 @@ TEST_F(DisplayContentlx_UT, slot_appLogs_UT)
     Stub stub;
     stub.set(ADDR(DisplayContent, generateAppFile), generateAppFileNull);
     m_content->slot_appLogs(1, "~/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log");
+    EXPECT_NE(m_content, nullptr);
+    EXPECT_EQ(m_content->appList.size(), 0)<<"check the status after slot_appLogs()";
+    EXPECT_EQ(m_content->m_curBtnId, 1)<<"check the status after slot_appLogs()";
+    EXPECT_EQ(m_content->m_curAppLog,"~/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log")<<"check the status after slot_appLogs()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_dpkgData_UT)
@@ -527,6 +567,8 @@ TEST_F(DisplayContentlx_UT, slot_dpkgData_UT)
     m_content->m_flag = LOG_FLAG::DPKG;
     m_content->m_firstLoadPageData = true;
     m_content->slot_dpkgData(-1, dpkgList);
+    EXPECT_NE(m_content->dListOrigin.size(), 0)<<"check the status after slot_dpkgData()";
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::DPKG)<<"check the status after slot_dpkgData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_XorgFinished_UT)
@@ -534,6 +576,8 @@ TEST_F(DisplayContentlx_UT, slot_XorgFinished_UT)
     m_content->m_flag = LOG_FLAG::XORG;
     m_content->m_firstLoadPageData = true;
     m_content->slot_XorgFinished(-1);
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::XORG)<<"check the status after slot_XorgFinished()";
+    EXPECT_EQ(m_content->m_isDataLoadComplete, true)<<"check the status after slot_XorgFinished()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_kernData_UT)
@@ -544,6 +588,8 @@ TEST_F(DisplayContentlx_UT, slot_kernData_UT)
     m_content->m_flag = LOG_FLAG::KERN;
     m_content->m_firstLoadPageData = true;
     m_content->slot_kernData(-1, kernList);
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::KERN)<<"check the status after slot_kernData()";
+    EXPECT_NE(m_content->kListOrigin.size(),0)<<"check the status after slot_kernData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_kwinData_UT)
@@ -554,6 +600,8 @@ TEST_F(DisplayContentlx_UT, slot_kwinData_UT)
     m_content->m_flag = LOG_FLAG::Kwin;
     m_content->m_firstLoadPageData = true;
     m_content->slot_kwinData(-1, kwinList);
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Kwin)<<"check the status after slot_kwinData()";
+    EXPECT_NE(m_content->m_kwinList.size(),0)<<"check the status after slot_kwinData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_bootData_UT)
@@ -564,6 +612,8 @@ TEST_F(DisplayContentlx_UT, slot_bootData_UT)
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->m_firstLoadPageData = true;
     m_content->slot_bootData(-1, bootList);
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::BOOT)<<"check the status after slot_bootData()";
+    EXPECT_NE(m_content->bList.size(), 0)<<"check the status after slot_bootData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_journalFinished_UT)
@@ -571,6 +621,8 @@ TEST_F(DisplayContentlx_UT, slot_journalFinished_UT)
     m_content->m_flag = LOG_FLAG::JOURNAL;
     m_content->m_firstLoadPageData = true;
     m_content->slot_journalFinished(-1);
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::JOURNAL)<<"check the status after slot_journalFinished()";
+    EXPECT_EQ(m_content->m_isDataLoadComplete, true)<<"check the status after slot_journalFinished()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_dnfFinished_UT)
@@ -581,6 +633,8 @@ TEST_F(DisplayContentlx_UT, slot_dnfFinished_UT)
     m_content->m_flag = LOG_FLAG::Dnf;
     m_content->m_firstLoadPageData = true;
     m_content->slot_dnfFinished(dnfList);
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dnf)<<"check the status after slot_dnfFinished()";
+    EXPECT_EQ(m_content->dnfList.size(), 1)<<"check the status after slot_dnfFinished()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_dmesgFinished_UT)
@@ -591,6 +645,8 @@ TEST_F(DisplayContentlx_UT, slot_dmesgFinished_UT)
     m_content->m_flag = LOG_FLAG::Dmesg;
     m_content->m_firstLoadPageData = true;
     m_content->slot_dmesgFinished(dmesgList);
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dmesg)<<"check the status after slot_dmesgFinished()";
+    EXPECT_EQ(m_content->dmesgList.size(), 1)<<"check the status after slot_dmesgFinished()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_normalFinished_UT)
@@ -598,16 +654,22 @@ TEST_F(DisplayContentlx_UT, slot_normalFinished_UT)
     m_content->m_flag = LOG_FLAG::Normal;
     m_content->m_firstLoadPageData = true;
     m_content->slot_normalFinished(-1);
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Normal)<<"check the status after slot_normalFinished()";
+    EXPECT_EQ(m_content->nortempList.size(), 0)<<"check the status after slot_normalFinished()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_searchResult_UT)
 {
     m_content->m_flag = LOG_FLAG::Dmesg;
     m_content->slot_searchResult("test");
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dmesg)<<"check the status after  slot_searchResult()";
     m_content->m_flag = LOG_FLAG::Dnf;
     m_content->slot_searchResult("test");
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dnf)<<"check the status after  slot_searchResult()";
     m_content->m_flag = LOG_FLAG::NONE;
     m_content->slot_searchResult("test");
+    EXPECT_EQ(m_content->m_flag, LOG_FLAG::NONE)<<"check the status after  slot_searchResult()";
+    EXPECT_EQ(m_content->m_currentSearchStr, "test")<<"check the status after  slot_searchResult()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_BtnSelected_UT)
@@ -623,6 +685,8 @@ TEST_F(DisplayContentlx_UT, slot_BtnSelected_UT)
     model->setData(model->index(1,0),"dmesg",Qt::UserRole + 66);
     m_content->slot_BtnSelected(0,0,model->index(0,0));
     m_content->slot_BtnSelected(0,0,model->index(1,0));
+    EXPECT_EQ(m_content->m_curLevel, 0)<<"check the status after  slot_BtnSelected()";
+    EXPECT_EQ(m_content-> m_curBtnId, 0)<<"check the status after  slot_BtnSelected()";
     delete  item;
     delete  model;
 }
@@ -639,9 +703,12 @@ TEST_F(DisplayContentlx_UT, slot_logCatelogueClicked_UT){
     model->setData(model->index(1,0),"dmesg",Qt::UserRole + 66);
     m_content->slot_logCatelogueClicked(model->index(0,0));
     m_content->slot_logCatelogueClicked(model->index(1,0));
+    EXPECT_EQ(sizeof(m_content->m_currentKwinFilter), 8)<<"check the status after  slot_logCatelogueClicked()";
+    EXPECT_EQ(m_content->m_curListIdx,model->index(1,0))<<"check the status after  slot_logCatelogueClicked()";
     m_content->m_curListIdx=model->index(0,0);
     m_content->m_flag=LOG_FLAG::Dmesg;
     m_content->slot_logCatelogueClicked(model->index(0,0));
+    EXPECT_EQ(m_content->m_curListIdx,model->index(0,0))<<"check the status after  slot_logCatelogueClicked()";
     delete  item;
     delete  model;
 }
@@ -655,12 +722,16 @@ TEST_F(DisplayContentlx_UT, slot_xorgData_UT){
     m_content->m_xorgCurrentIndex=1;
     m_content->m_firstLoadPageData=true;
     m_content->slot_xorgData(1,listXorg);
+    EXPECT_EQ(m_content->m_flag,LOG_FLAG::XORG)<<"check the status after  slot_xorgData()";
+    EXPECT_NE(m_content->xListOrigin.size(), 0)<<"check the status after  slot_xorgData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_journalBootFinished_UT){
     m_content->m_flag=LOG_FLAG::JOURNAL;
     m_content->m_journalCurrentIndex=1;
     m_content->slot_journalFinished(1);
+    EXPECT_EQ(m_content->m_flag,LOG_FLAG::JOURNAL)<<"check the status after  slot_journalBootFinished()";
+    EXPECT_EQ(m_content->m_isDataLoadComplete, true)<<"check the status after  slot_journalBootFinished()";
 }
 
 
@@ -673,10 +744,13 @@ TEST_F(DisplayContentlx_UT, slot_applicationData_UT){
     m_content->m_appCurrentIndex=1;
     m_content->m_firstLoadPageData=true;
     m_content->slot_applicationData(1,listApp);
+    EXPECT_EQ(m_content->m_flag,LOG_FLAG::APP)<<"check the status after slot_applicationData()";
+    EXPECT_NE(m_content->appListOrigin.size(),0)<<"check the status after slot_applicationData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_logLoadFailed_UT){
     m_content->slot_logLoadFailed("error");
+    EXPECT_NE(m_content,nullptr)<<"check the status after slot_logLoadFailed()";
 }
 
 TEST_F(DisplayContentlx_UT, filterNomal_UT){
@@ -691,6 +765,7 @@ TEST_F(DisplayContentlx_UT, filterNomal_UT){
     m_content->filterNomal(fiter,listNormal);
     fiter.eventTypeFilter=3;
     m_content->filterNomal(fiter,listNormal);
+    EXPECT_NE(m_content,nullptr)<<"check the status after filterNomal()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_refreshClicked_UT){
@@ -709,6 +784,7 @@ TEST_F(DisplayContentlx_UT, slot_refreshClicked_UT){
     m_content->m_curListIdx=model->index(0,0);
     m_content->m_flag=LOG_FLAG::Dmesg;
     m_content->slot_refreshClicked(model->index(0,0));
+    EXPECT_EQ(m_content->m_curListIdx,model->index(0,0))<<"check the status after slot_refreshClicked()";
     delete  item;
     delete  model;
 }
@@ -719,7 +795,12 @@ TEST_F(DisplayContentlx_UT, filterJournal_UT){
     LOG_MSG_JOURNAL journal={"20210202","waring","test","test","test","test"};
     QList<LOG_MSG_JOURNAL>listjournal;
     listjournal.append(journal);
-    m_content->filterJournal("",listjournal);
+    QList<LOG_MSG_JOURNAL> list= m_content->filterJournal("",listjournal);
+    EXPECT_EQ(list.at(0).daemonId,"test")<<"check the status after filterJournal()";
+    EXPECT_EQ(list.at(0).daemonName,"test")<<"check the status after filterJournal()";
+    EXPECT_EQ(list.at(0).dateTime,"20210202")<<"check the status after filterJournal()";
+    EXPECT_EQ(list.at(0).level,"test")<<"check the status after filterJournal()";
+    EXPECT_EQ(list.at(0).msg,"test")<<"check the status after filterJournal()";
     m_content->filterJournal("test",listjournal);
 }
 
@@ -755,6 +836,7 @@ TEST(DisplayContent_Constructor_UT, Dslot_normalData_UT_001)
     p->m_flag = Normal;
     p->m_firstLoadPageData = true;
     p->slot_normalData(-1, QList<LOG_MSG_NORMAL> {test});
+    EXPECT_EQ(p->m_flag,LOG_FLAG::Normal)<<"check the status after slot_normalData()";
     delete p;
 }
 
@@ -767,15 +849,6 @@ TEST(DisplayContent_MainLogTableView_UT, DisplayContent_MainLogTableView_UT_001)
     EXPECT_NE(t, nullptr);
     delete p;
 }
-
-//TEST(DisplayContent_initUI_UT, DisplayContent_initUI_UT_001)
-//{
-//    DisplayContent *p = new DisplayContent(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->initUI();
-//    EXPECT_NE(p->noResultLabel, nullptr);
-//    delete p;
-//}
 
 TEST(DisplayContent_initMap_UT, DisplayContent_initMap_UT_001)
 {
@@ -1482,6 +1555,7 @@ TEST_P(DisplayContent_slot_BtnSelected_UT, DisplayContent_slot_BtnSelected_UT_00
     stub.set(ADDR(DisplayContent, generateJournalBootFile), DisplayContent_slot_BtnSelected_UT_generateJournalFile);
     stub.set(ADDR(DisplayContent, generateBootFile), DisplayContent_slot_BtnSelected_UT_generateBootFile);
     p->slot_BtnSelected(0, 0, QModelIndex());
+
     p->deleteLater();
 }
 
@@ -2642,6 +2716,8 @@ TEST(DisplayContent_createApplicationTable_UT, DisplayContent_createApplicationT
         list.append(item);
     }
     p->createAppTable(list);
+    EXPECT_EQ(p->m_limitTag, 0);
+    EXPECT_NE(p->m_pModel,nullptr);
     p->deleteLater();
 }
 
@@ -2687,6 +2763,7 @@ TEST_P(DisplayContent_insertApplicationTable_UT, DisplayContent_insertApplicatio
         end = 0;
     }
     p->insertApplicationTable(list, start, end);
+    EXPECT_NE(p->m_pModel,nullptr)<<"check the status after insertApplicationTable()";
     p->deleteLater();
 }
 
@@ -2769,6 +2846,7 @@ TEST_P(DisplayContent_slot_refreshClicked_UT, DisplayContent_slot_refreshClicked
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     p->slot_refreshClicked(QModelIndex());
+    EXPECT_EQ(p->m_curListIdx,QModelIndex())<<"check the status after slot_refreshClicked()";
     p->deleteLater();
 }
 

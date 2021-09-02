@@ -57,16 +57,14 @@ TEST(wtmpparse_wtmp_next_UT, wtmp_back_UT)
 TEST(wtmpparse_wtmp_next_UT, show_end_time_UT)
 {
     const char *endTime= show_end_time(233);
-    std::string str(endTime);
-//    EXPECT_EQ(str, "Thu Jan  1 08:03:53 1970\n")<<"check the status after show_end_time(233)";
+    EXPECT_NE(strlen(endTime), 0)<<"check the status after show_end_time(233)";
 
 }
 
 TEST(wtmpparse_wtmp_next_UT, show_start_time_UT)
 {
     const char * startTime= show_start_time(233);
-    std::string str(startTime);
-//    EXPECT_EQ(str, "Thu Jan  1 08:03:53 1970\n")<<"check the status after show_start_time(233)";
+    EXPECT_NE(strlen(startTime), 0)<<"check the status after show_start_time(233)";
 }
 
 TEST(wtmpparse_wtmp_next_UT, wtmpparse_wtmp_next_UT_001)
