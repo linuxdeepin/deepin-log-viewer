@@ -77,7 +77,7 @@ void LogApplicationHelper::createDesktopFiles()
     QStringList tempDesktopFiles;
     for (QString desktop : fileInfoList) {
         //需要符合以deepin或者dde开头的应用
-        if (desktop.contains("deepin-") || desktop.contains("dde-") || desktop.contains("org.deepin")) {
+        if (desktop.contains("deepin-") || desktop.contains("dde-") || desktop.contains("org.deepin")||desktop.contains("com.deepin")) {
             tempDesktopFiles.append(desktop);
         }
     }
