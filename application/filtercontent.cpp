@@ -663,6 +663,10 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
         emit sigCbxAppIdxChanged(m_config.value(m_currentType).dateBtn, cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString());
         connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
     }
+
+    if(itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)){
+        Q_EMIT cbx_status->currentIndexChanged(m_config.value(m_currentType).statusCbx);
+    }
 }
 
 /**
