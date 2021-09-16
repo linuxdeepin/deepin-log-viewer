@@ -9,7 +9,7 @@
 		<message>Authentication is required to clear the log</message>
 		<icon_name />
 		<defaults>
-			<allow_any>no</allow_any>
+			<allow_any>auth_admin_keep</allow_any>
 			<allow_inactive>no</allow_inactive>
 			<allow_active>auth_admin_keep</allow_active>
 		</defaults>
@@ -39,6 +39,8 @@
 		<message xml:lang="sr">Идентификација је неопходана да обришете записник</message>
 		<description xml:lang="pt">autenticação</description>
 		<message xml:lang="pt">É necessária a autenticação para limpar o registo</message>
+		<description xml:lang="ms">pengesahihan</description>
+		<message xml:lang="ms">Pengesahihan diperlukan untuk mengosongkan log</message>
 		<description xml:lang="fr">authentification</description>
 		<message xml:lang="fr">L'authentification est requise pour effacer le journal</message>
 		<description xml:lang="ru">Аутентификация</description>
@@ -69,6 +71,5 @@
 		<message xml:lang="de">Zum Löschen des Protokolls ist eine Authentifizierung erforderlich</message>
 		<description xml:lang="hr">ovjera</description>
 		<message xml:lang="hr">Potrebna je ovjera za čišćenje zapisa</message>
-
 	</action>
 </policyconfig>
