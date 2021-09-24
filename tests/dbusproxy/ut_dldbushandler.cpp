@@ -59,10 +59,10 @@ public:
     LogFileParser m_fileparser;
 };
 
-TEST_F(DlDbushandler_UT, Compare_UT)
-{
-    Stub stub;
-    stub.set(ADDR(QDBusAbstractInterface, asyncCallWithArgumentList), stub_asyncCallWithArgumentList);
-    m_handler->quit();
-    m_handler->readLog("Test");
-}
+//TEST_F(DlDbushandler_UT, Compare_UT)
+//{
+//    Stub stub;
+//    stub.set(ADDR(QDBusAbstractInterface, asyncCallWithArgumentList), stub_asyncCallWithArgumentList);
+//    m_handler->quit();
+//    m_handler->readLog("Test");
+//}
