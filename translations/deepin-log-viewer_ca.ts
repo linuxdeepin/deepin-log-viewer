@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Ha fallat l&apos;exportació.</translation>
     </message>
 </context>
 <context>

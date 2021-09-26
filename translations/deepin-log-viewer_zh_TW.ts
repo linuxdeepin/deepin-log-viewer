@@ -143,7 +143,7 @@
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation>導出成功</translation>
+        <translation>匯出成功</translation>
     </message>
     <message>
         <source>Export failed</source>

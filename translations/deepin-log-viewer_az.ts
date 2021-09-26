@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>İxrac baş tutmadı</translation>
     </message>
 </context>
 <context>

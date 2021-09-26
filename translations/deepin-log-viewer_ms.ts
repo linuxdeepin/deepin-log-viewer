@@ -3,27 +3,27 @@
     <name>Action</name>
     <message>
         <source>Display in file manager</source>
-        <translation type="unfinished"/>
+        <translation>Papar dalam pengurus fail</translation>
     </message>
     <message>
         <source>Clear log</source>
-        <translation type="unfinished"/>
+        <translation>Kosongkan log</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>Segar semula</translation>
     </message>
     <message>
         <source>Are you sure you want to clear the log?</source>
-        <translation type="unfinished"/>
+        <translation>Anda pasti mahu mengosongkan log?</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Batal</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Sahkan</translation>
     </message>
 </context>
 <context>
@@ -114,11 +114,11 @@
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Super kritikal</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Jejak</translation>
     </message>
 </context>
 <context>
@@ -132,18 +132,22 @@
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>Mengeksport...</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Batal</translation>
     </message>
 </context>
 <context>
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>Berjaya dieksport</translation>
+    </message>
+    <message>
+        <source>Export failed</source>
+        <translation>Eksport gagal</translation>
     </message>
 </context>
 <context>
@@ -161,7 +165,7 @@
     </message>
     <message>
         <source>Level:  </source>
-        <translation type="unfinished"/>
+        <translation>Aras:</translation>
     </message>
     <message>
         <source>Application list:</source>
@@ -240,18 +244,18 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Jejak</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Super kritikal</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
         <source>Log file is empty</source>
-        <translation type="unfinished"/>
+        <translation>Fail log kosong</translation>
     </message>
 </context>
 <context>
@@ -378,7 +382,7 @@
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation type="unfinished"/>
+        <translation>Log Kwin</translation>
     </message>
     <message>
         <source>Xorg Log</source>
@@ -394,7 +398,7 @@
     </message>
     <message>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>Log dnf</translation>
     </message>
 </context>
 </TS>

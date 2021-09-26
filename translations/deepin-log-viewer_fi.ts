@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Vienti epäonnistui</translation>
     </message>
 </context>
 <context>

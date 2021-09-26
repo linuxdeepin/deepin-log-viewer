@@ -114,11 +114,11 @@
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Bardzo krytyczny</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Ślad</translation>
     </message>
 </context>
 <context>
@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Błąd eksportu</translation>
     </message>
 </context>
 <context>
@@ -244,11 +244,11 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Ślad</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Bardzo krytyczny</translation>
     </message>
 </context>
 <context>
@@ -398,7 +398,7 @@
     </message>
     <message>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>Dziennik dpkg</translation>
     </message>
 </context>
 </TS>

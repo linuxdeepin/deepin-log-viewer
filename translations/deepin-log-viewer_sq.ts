@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Eksportimi dështoi</translation>
     </message>
 </context>
 <context>

@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>འདོན་མི་ཐུབ།</translation>
     </message>
 </context>
 <context>

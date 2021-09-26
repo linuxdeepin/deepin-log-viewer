@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>निर्यात विफल</translation>
     </message>
 </context>
 <context>
