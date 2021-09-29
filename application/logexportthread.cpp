@@ -3130,11 +3130,8 @@ void LogExportThread::htmlEscapeCovert(QString &htmlMsg)
  */
 void LogExportThread::run()
 {
-    qDebug() << " LogExportThread::run()threadrun";
+    qInfo() << " LogExportThread::run()threadrun";
     sigProgress(0, 100);
-    while (!m_allLoadComplete) {
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-    }
     switch (m_runMode) {
     case TxtModel: {
         exportToTxt(m_fileName, m_pModel, m_flag);
