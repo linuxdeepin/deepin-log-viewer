@@ -680,6 +680,10 @@ void LogAuthThread::handleNormal()
             }
             Nmsg.userName = a_name;
         }
+        if(Nmsg.eventType.compare("Login",Qt::CaseInsensitive)==0){
+           Nmsg.eventType="Login";
+        }
+
         QString end_str;
         if (deadList.length() > 0 && ret != -1)
             end_str = show_end_time(nodeUTMP.ut_time);
