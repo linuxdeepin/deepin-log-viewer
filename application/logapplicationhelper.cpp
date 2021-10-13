@@ -87,7 +87,6 @@ void LogApplicationHelper::createDesktopFiles()
         QFile fi(filePath);
         if (!fi.open(QIODevice::ReadOnly))
             continue;
-
         bool isDeepin = false;
         bool isGeneric = false;
         bool isName = false;
@@ -117,13 +116,12 @@ void LogApplicationHelper::createDesktopFiles()
             QString currentDesktop(qgetenv("XDG_CURRENT_DESKTOP"));
             if (lineStr.startsWith("OnlyShowIn")) {
                 bool isHide = true;
-                QStringList onlyShowInList = lineStr.split("=", QString::SkipEmptyParts).value(1, "").replace("'", "").replace("\"", "").split("; ", QString::SkipEmptyParts);
-                foreach (QString item, onlyShowInList) {
-                    if (item == currentDesktop) {
+                QString onlyShowValue= lineStr.split("=", QString::SkipEmptyParts).value(1, "");
+                    if (onlyShowValue.contains(currentDesktop)) {
                         isHide = false;
-                        break;
+                        continue;
                     }
-                }
+
                 if (isHide) {
                     canDisplay = false;
                 }
