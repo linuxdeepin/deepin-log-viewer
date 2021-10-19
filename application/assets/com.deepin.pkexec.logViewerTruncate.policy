@@ -41,6 +41,8 @@
 		<message xml:lang="sr">Идентификација је неопходана да обришете записник</message>
 		<description xml:lang="pt">autenticação</description>
 		<message xml:lang="pt">É necessária a autenticação para limpar o registo</message>
+		<description xml:lang="ms">pengesahihan</description>
+		<message xml:lang="ms">Pengesahihan diperlukan untuk mengosongkan log</message>
 		<description xml:lang="fr">authentification</description>
 		<message xml:lang="fr">L'authentification est requise pour effacer le journal</message>
 		<description xml:lang="ru">Аутентификация</description>

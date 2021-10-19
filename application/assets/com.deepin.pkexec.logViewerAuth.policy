@@ -39,6 +39,8 @@
 		<message xml:lang="sr">Идентификација је неопходана за преглед записника</message>
 		<description xml:lang="pt">autenticação</description>
 		<message xml:lang="pt">É necessária autenticação para visualizar o registo</message>
+		<description xml:lang="ms">pengesahihan</description>
+		<message xml:lang="ms">Pengesahihan diperlukan untuk melihat log</message>
 		<description xml:lang="fr">authentification</description>
 		<message xml:lang="fr">L'authentification est requise pour voir les journaux</message>
 		<description xml:lang="ru">Аутентификация</description>
