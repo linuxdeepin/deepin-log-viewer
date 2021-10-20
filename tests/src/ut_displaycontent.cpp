@@ -180,7 +180,7 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT)
     m_content->selectFilter = "TEXT (*.txt)";
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
     stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveTxtFileName);
-    stub.set(ADDR(QThreadPool, start), stub_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start);
     stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     m_content->m_flag = LOG_FLAG::BOOT;
@@ -218,7 +218,7 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT001)
     m_content->selectFilter = "Html (*.html)";
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
     stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveHtmlFileName);
-    stub.set(ADDR(QThreadPool, start), stub_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::APP;
@@ -252,7 +252,7 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT002)
     m_content->selectFilter = "Doc (*.doc)";
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
     stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveDocFileName);
-    stub.set(ADDR(QThreadPool, start), stub_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::APP;
@@ -286,7 +286,7 @@ TEST_F(DisplayContentlx_UT, exportClicked_UT003)
     m_content->selectFilter = "Xls (*.xls)";
     stub.set(ADDR(QStandardPaths, writableLocation), stub_writableLocation);
     stub.set(ADDR(QFileDialog, getSaveFileName), stub_getSaveXlsFileName);
-    stub.set(ADDR(QThreadPool, start), stub_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->slot_exportClicked();
     m_content->m_flag = LOG_FLAG::APP;
@@ -1772,7 +1772,7 @@ TEST(DisplayContent_slot_statusChagned_UT, DisplayContent_slot_statusChagned_UT_
     Stub stub;
     stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
     p->slot_statusChagned("OK");
     p->deleteLater();
@@ -1783,7 +1783,7 @@ TEST(DisplayContent_slot_dpkgFinished_UT, DisplayContent_slot_dpkgFinished_UT_00
     Stub stub;
     stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
+       stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -1808,7 +1808,7 @@ TEST(DisplayContent_slot_XorgFinished_UT, DisplayContent_slot_XorgFinished_UT_00
     Stub stub;
     stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
@@ -2127,7 +2127,7 @@ TEST_P(DisplayContent_slot_vScrollValueChanged_UT, DisplayContent_slot_vScrollVa
         p->m_limitTag = (valuePixel / DisplayContent_slot_vScrollValueChanged_treeView_singleRowHeight + 25) / 200;
     }
     stub.set(ADDR(LogTreeView, singleRowHeight), DisplayContent_slot_vScrollValueChanged_treeView_singleRowHeight_Func);
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
     if (!param.isLastHeight) {
         p->m_treeViewLastScrollValue = valuePixel;
@@ -2276,7 +2276,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
     }
     DisplayContent_slot_searchResult_QString_contains = param.isContains;
     stub.set((bool (QString::*)(const QString &, Qt::CaseSensitivity) const)ADDR(QString, contains), DisplayContent_slot_searchResult_QString_contains_Func);
-    stub.set(ADDR(QThreadPool, start), QThreadPool_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
     QString searchstr = param.isSearchEmpty ? "" : "testsearchstr";
     p->slot_searchResult(searchstr);
