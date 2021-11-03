@@ -157,7 +157,6 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
 {
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
-    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     stub.set(ADDR(DBusManager, getSystemInfo), stub_getSystemInfo);
     stub.set(ADDR(Dtk::Core::DSysInfo, uosEditionType), stub_uosEulerEditionType);
