@@ -100,7 +100,6 @@ FILE(GLOB allSource
      ../application/logsearchedit.cpp
      ../application/logapplication.cpp
      ../application/sharedmemorymanager.cpp
-     ../application/common/collator.cpp
      ../application/logsettings.cpp
      ../application/wtmpparse.cpp
      ../application/DebugTimeManager.cpp
@@ -111,11 +110,6 @@ FILE(GLOB allSource
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
 )
-
-set (TEST_ACCESSIBLE_HEADERS_FILES
-     ../application/accessible.h
-     ../application/accessibledefine.h
-    )
 
 # 5. 头文件
 # 5.1. 定义函数，用于递归添加头文件
@@ -185,7 +179,7 @@ dbusproxy/*.cpp
 include_directories(src)
 
 
-add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES}   ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
+add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 
 
 

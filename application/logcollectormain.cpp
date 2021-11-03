@@ -144,7 +144,6 @@ void LogCollectorMain::initUI()
     /** left frame */
     m_logCatelogue = new LogListView();
     m_logCatelogue->setObjectName("logTypeSelectList");
-    m_logCatelogue->setAccessibleName("logTypeSelectList");
     m_hLayout->addWidget(m_logCatelogue, 1);
     m_logCatelogue->setFixedWidth(160);
     m_vLayout = new QVBoxLayout;
@@ -164,9 +163,7 @@ void LogCollectorMain::initUI()
 
     this->centralWidget()->setLayout(m_hLayout);
     m_searchEdt->setObjectName("searchEdt");
-    m_searchEdt->setAccessibleName("searchEdt");
     m_searchEdt->lineEdit()->setObjectName("searchChildEdt");
-    m_searchEdt->lineEdit()->setAccessibleName("searchChildEdt");
     m_topRightWgt->setObjectName("FilterContent");
     m_midRightWgt->setObjectName("DisplayContent");
     titlebar()->setObjectName("titlebar");

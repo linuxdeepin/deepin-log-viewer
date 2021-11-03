@@ -129,7 +129,6 @@ void DisplayContent::initUI()
     this->setLayout(vLayout);
     setLoadState(DATA_COMPLETE);
     m_exportDlg = new ExportProgressDlg(this);
-    m_exportDlg->setAccessibleName("export_dialog");
     m_exportDlg->hide();
 }
 
@@ -174,7 +173,6 @@ void DisplayContent::initTableView()
 {
     m_treeView = new LogTreeView(this);
     m_treeView->setObjectName("mainLogTable");
-    m_treeView->setAccessibleName("main_log_table");
     m_pModel = new QStandardItemModel(this);
     m_treeView->setModel(m_pModel);
 }

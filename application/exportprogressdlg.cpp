@@ -58,7 +58,6 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     pVLayout->addLayout(pVLayouttxt);
     //进度条设置初始化
     m_pExportProgressBar = new DProgressBar(this);
-    m_pExportProgressBar->setAccessibleName("export_progressbar");
     m_pExportProgressBar->setTextVisible(false);
     m_pExportProgressBar->setMaximumHeight(8);
     m_pExportProgressBar->setRange(0, 100);
@@ -69,7 +68,6 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     addContent(pWidget);
 
     addButton(DApplication::translate("ExportDlg", "Cancel"), false, DDialog::ButtonNormal);
-    getButton(0)->setAccessibleName("export_cancel_btn");
     setModal(true);
 }
 

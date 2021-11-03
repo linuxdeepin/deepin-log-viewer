@@ -321,13 +321,9 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     setUpdatesEnabled(true);
 
     cbx_lv->setObjectName("level_combox");
-    cbx_lv->setAccessibleName("level_combox");
     cbx_app->setObjectName("app_combox");
-    cbx_app->setAccessibleName("app_combox");
     cbx_status->setObjectName("status_combox");
-    cbx_status->setAccessibleName("status_combox");
     typeCbx->setObjectName("event_type_combox");
-    typeCbx->setAccessibleName("event_type_combox");
 }
 
 /**

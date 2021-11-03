@@ -894,7 +894,6 @@ TEST(DisplayContent_initTableView_UT, DisplayContent_initTableView_UT_001)
     EXPECT_NE(p->m_pModel, nullptr);
     EXPECT_EQ(p->m_treeView->model(), p->m_pModel);
     EXPECT_EQ(p->m_treeView->objectName(), "mainLogTable");
-    EXPECT_EQ(p->m_treeView->accessibleName(), "main_log_table");
     delete p;
 }
 

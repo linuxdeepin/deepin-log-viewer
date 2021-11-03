@@ -23,7 +23,6 @@
 #include "logcollectormain.h"
 #include "logapplication.h"
 #include "environments.h"
-#include "accessible.h"
 #include "dbusmanager.h"
 #include "utils.h"
 #include "DebugTimeManager.h"
@@ -96,7 +95,6 @@ int main(int argc, char *argv[])
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
     LogApplicationHelper::instance();
-    QAccessible::installFactory(accessibleFactory);
 
     //命令行参数的解析
     QCommandLineParser cmdParser;

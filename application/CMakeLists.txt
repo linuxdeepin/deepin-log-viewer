@@ -168,7 +168,6 @@ set (APP_CPP_FILES
      lognormalbutton.cpp
      logapplication.cpp
      sharedmemorymanager.cpp
-     common/collator.cpp
      dbusproxy/dldbusinterface.cpp
      dbusproxy/dldbushandler.cpp
      logsettings.cpp
@@ -204,23 +203,9 @@ set (APP_HEADERS_FILES
     logdetailedit.h
     wtmpparse.h
     model/log_sort_filter_proxy_model.h
-    common/collator.h
     dbusproxy/dldbusinterface.h
     dbusproxy/dldbushandler.h
     )
-set (TEST_ACCESSIBLE_HEADERS_FILES
-     accessible.h
-     accessibledefine.h
-    )
-#include_directories(${DtkWidget_INCLUDE_DIRS})
-#include_directories(${DtkGui_INCLUDE_DIRS})
-#include_directories(${DtkCore_INCLUDE_DIRS})
-#include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})
-#include_directories(${Qt5Xml_LIBRARIES})
-#include_directories(${Qt5Core_LIBRARIES})
-#include_directories(${Qt5Widgets_LIBRARIES})
-
-
 
 # 5. 头文件
 # 5.1. 定义函数，用于递归添加头文件
@@ -291,7 +276,7 @@ execute_process(COMMAND bash ${APP_TRANS_SCRIPT}
     WORKING_DIRECTORY ${TS_DIR})
 qt5_create_translation(APP_QM_FILES ${APP_TS_FILES} ${APP_QM_FILES})
 
-add_executable (${EXE_NAME} ${APP_CPP_FILES}  ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES}  ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES} )
+add_executable (${EXE_NAME} ${APP_CPP_FILES}  ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${APP_QM_FILES}  ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES} )
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/include")
