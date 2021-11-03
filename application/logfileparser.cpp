@@ -114,7 +114,7 @@ int LogFileParser::parseByJournal(QStringList arg)
 #endif
 #if 1
     emit stopJournal();
-    journalWork *work = new journalWork();
+    journalWork *work = new journalWork(this);
 
     work->setArg(arg);
     auto a = connect(work, &journalWork::journalFinished, this, &LogFileParser::journalFinished,
@@ -133,7 +133,7 @@ int LogFileParser::parseByJournal(QStringList arg)
 int LogFileParser::parseByJournalBoot(QStringList arg)
 {
     stopAllLoad();
-    JournalBootWork *work = new JournalBootWork();
+    JournalBootWork *work = new JournalBootWork(this);
 
     work->setArg(arg);
     auto a = connect(work, &JournalBootWork::journalBootFinished, this, &LogFileParser::journalBootFinished,
