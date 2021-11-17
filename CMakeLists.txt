@@ -13,10 +13,4 @@ add_subdirectory(logViewerTruncate)
 add_subdirectory(logViewerService)
 
 add_subdirectory(tests)
-#安全测试加固编译参数
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
-
 option(PERF_ON "open the info of benchmark" ON)
