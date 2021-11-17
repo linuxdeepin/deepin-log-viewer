@@ -32,6 +32,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#$
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
 #添加-fno-inline编译选项，禁止内联，能获取到函数地址，可以对内联函数进行打桩
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-inline")
+#安全测试加固编译参数
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
 #-ldtkwidget -ldtkgui -ldtkcore
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "sw_64")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mieee")
