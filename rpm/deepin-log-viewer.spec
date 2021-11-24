@@ -35,6 +35,8 @@ BuildRequires: minizip-devel
 BuildRequires: rapidjson-devel
 BuildRequires: libtool-ltdl-devel
 BuildRequires: fftw-libs
+BuildRequires: libasan5
+
 
 
 
