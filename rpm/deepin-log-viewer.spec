@@ -36,6 +36,8 @@ BuildRequires: rapidjson-devel
 BuildRequires: libtool-ltdl-devel
 BuildRequires: fftw-libs
 BuildRequires: libasan
+BuildRequires: libubsan
+BuildRequires: libtsan
 
 
 
