@@ -118,7 +118,7 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Ablaufverfolgung</translation>
     </message>
 </context>
 <context>
@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Exportieren fehlgeschlagen</translation>
     </message>
 </context>
 <context>
@@ -244,7 +244,7 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Ablaufverfolgung</translation>
     </message>
     <message>
         <source>Super critical</source>
