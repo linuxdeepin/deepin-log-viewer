@@ -26,8 +26,6 @@
 #include <sys/time.h>
 #include <time.h>
 
-DebugTimeManager    *DebugTimeManager::s_Instance = nullptr;
-
 DebugTimeManager::DebugTimeManager()
 {
 

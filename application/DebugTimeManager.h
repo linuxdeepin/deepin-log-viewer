@@ -55,10 +55,8 @@ public:
      */
     static DebugTimeManager *getInstance()
     {
-        if (!s_Instance) {
-            s_Instance = new DebugTimeManager();
-        }
-        return s_Instance;
+        static DebugTimeManager m_manager;
+        return  &m_manager;
     }
 
     /**
@@ -103,7 +101,6 @@ protected:
 
 
 private:
-    static DebugTimeManager    *s_Instance;      //<! singal install
     QMap<QString, PointInfo>    m_MapPoint;      //<! 保存所打的点
     QMap<QString, PointInfoLinux>    m_MapLinuxPoint;      //<! 保存所打的点
 
