@@ -1472,6 +1472,7 @@ void DisplayContent::slot_exportClicked()
 {
     LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
     connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
+    connect(m_exportDlg, &ExportProgressDlg::buttonClicked, exportThread, &LogExportThread::stopImmediately);
     connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
     connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
     connect(exportThread, &LogExportThread::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);

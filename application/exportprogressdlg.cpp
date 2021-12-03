@@ -100,7 +100,7 @@ void ExportProgressDlg::updateProgressBarValue(int curValue)
  * @brief ExportProgressDlg::hideEvent 隐藏时清空进度条进度并发出取消信号
  * @param event 隐藏事件
  */
-void ExportProgressDlg::hideEvent(QHideEvent *event)
+void ExportProgressDlg::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event)
     m_pExportProgressBar->setValue(m_pExportProgressBar->minimum());
