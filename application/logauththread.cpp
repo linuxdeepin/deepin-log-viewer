@@ -733,17 +733,17 @@ void LogAuthThread::handleDnf()
         QStringList allLog = output.split('\n');
         //dnf日志数据结构
         LOG_MSG_DNF dnfLog;
+        //多行多余信息
+        QString multiLine;
         //开启贪婪匹配，解析dnf全部字段:日期+事件+等级+主要内容
-        QRegularExpression re("^(\\d{4}-\\d[0-2]-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d)\\S*\\s*(\\w*)\\s*(.*)$");
-
-        for (int i = 0; i < allLog.count(); ++i) {
+        QRegularExpression re("^(\\d{4}-[0-2]\\d-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d)\\S*\\s*(\\w*)\\s*(.*)$");
+        for (int i = allLog.size() - 1; i >= 0; --i) {
             if (!m_canRun) {
                 return;
             }
             QString str = allLog.value(i);
             QRegularExpressionMatch match = re.match(str);
             bool matchRes = match.hasMatch();
-
             if (matchRes) {
                 //时间搜索条件
                 QDateTime dt = QDateTime::fromString(match.captured(1) + match.captured(2), "yyyy-MM-ddhh:mm:ss");
@@ -753,19 +753,18 @@ void LogAuthThread::handleDnf()
                 //不满足条件的情况下继续搜索
                 if (dt.toMSecsSinceEpoch() < m_dnfFilters.timeFilter || (m_dnfFilters.levelfilter != DNFLVALL && m_dnfLevelDict.value(logLevel) != m_dnfFilters.levelfilter))
                     continue;
-
                 //记录日志等级，时间和主体信息
                 dnfLog.level = m_transDnfDict.value(logLevel);
                 dnfLog.dateTime = localdt.toString("yyyy-MM-dd hh:mm:ss");
-                dnfLog.msg = match.captured(4);
-                dList.insert(0, dnfLog);
+                dnfLog.msg = match.captured(4) + multiLine;
+                dList.append(dnfLog);
+                multiLine.clear();
             } else {
                 //如果不匹配，认为是多条信息，添加换行符，在前一条信息后添加信息。
                 if (!str.trimmed().isEmpty() && !dList.isEmpty()) {
-                    dList.first().msg += "\n" + str;
+                    multiLine.push_front("\n" + str);
                 }
             }
-
             if (!m_canRun) {
                 return;
             }
