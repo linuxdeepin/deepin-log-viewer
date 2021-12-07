@@ -728,69 +728,44 @@ void LogAuthThread::handleDnf()
         if (!m_canRun) {
             return;
         }
-        QString m_Log = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
-        QByteArray outByte = m_Log.toUtf8();
+        QByteArray outByte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i)).toUtf8();
         QString output = Utils::replaceEmptyByteArray(outByte);
-        if (!m_canRun) {
-            return;
-        }
-        //上一次成功筛选出的日志
-        int lastLogAddRow = -99;
-        //上一次增加的换行的日志信息体的行数
-        int lastMsgAddRow = -99;
         QStringList allLog = output.split('\n');
-        QRegExp ipRegExp = QRegExp("[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([0-9][0-9])\\:([0-5][0-9])\\:([0-5][0-9])Z");
-        // for (QString str : output.split('\n')) {
+        //dnf日志数据结构
+        LOG_MSG_DNF dnfLog;
+        //开启贪婪匹配，解析dnf全部字段:日期+事件+等级+主要内容
+        QRegularExpression re("^(\\d{4}-\\d[0-2]-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d)\\S*\\s*(\\w*)\\s*(.*)$");
+
         for (int i = 0; i < allLog.count(); ++i) {
             if (!m_canRun) {
                 return;
             }
             QString str = allLog.value(i);
+            QRegularExpressionMatch match = re.match(str);
+            bool matchRes = match.hasMatch();
 
-            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-            QStringList strList = str.split(" ", QString::SkipEmptyParts);
-            if (ipRegExp.exactMatch(strList.value(0, "")) && strList.size() >= 2) {
-            } else {
-                //如果当前行数等于上次筛选插入进结果的日志行数加1(在下一行)或者在上次增加过的为纯信息体的行数的下一行,则认为这一行为上一个日志的信息体
-                if (dList.length() > 0 && ((lastMsgAddRow == i - 1) || (lastLogAddRow == i - 1))) {
-                    if (!str.isEmpty()) {
-                        //上一个日志的信息体如果是空行,不换行并把空行清空
-                        if (dList.first().msg.trimmed().isEmpty()) {
-                            dList.first().msg = "";
-                        } else {
-                            dList.first().msg += "\n";
-                        }
-
-                        dList.first().msg += str;
-                    }
-                    //此行为信息体行
-                    lastMsgAddRow = i;
-                }
-                continue;
-            }
-            QString info;
-            for (auto i = 2; i < strList.size(); i++) {
-                info = info + strList[i] + " ";
-            }
-
-            LOG_MSG_DNF dnfLog;
-
-            QDateTime dt = QDateTime::fromString(strList[0], "yyyy-MM-ddThh:mm:ssZ");
-            dt.setTimeSpec(Qt::UTC);
-            QDateTime localdt = dt.toLocalTime();
-            if (dt.toMSecsSinceEpoch() < m_dnfFilters.timeFilter)
-                continue;
-            if (m_dnfFilters.levelfilter != DNFLVALL) {
-                if (m_dnfLevelDict.value(strList[1]) != m_dnfFilters.levelfilter)
+            if (matchRes) {
+                //时间搜索条件
+                QDateTime dt = QDateTime::fromString(match.captured(1) + match.captured(2), "yyyy-MM-ddhh:mm:ss");
+                QDateTime localdt = dt.toLocalTime();
+                //日志等级筛选条件
+                QString logLevel = match.captured(3);
+                //不满足条件的情况下继续搜索
+                if (dt.toMSecsSinceEpoch() < m_dnfFilters.timeFilter || (m_dnfFilters.levelfilter != DNFLVALL && m_dnfLevelDict.value(logLevel) != m_dnfFilters.levelfilter))
                     continue;
+
+                //记录日志等级，时间和主体信息
+                dnfLog.level = m_transDnfDict.value(logLevel);
+                dnfLog.dateTime = localdt.toString("yyyy-MM-dd hh:mm:ss");
+                dnfLog.msg = match.captured(4);
+                dList.insert(0, dnfLog);
+            } else {
+                //如果不匹配，认为是多条信息，添加换行符，在前一条信息后添加信息。
+                if (!str.trimmed().isEmpty() && !dList.isEmpty()) {
+                    dList.first().msg += "\n" + str;
+                }
             }
-            dnfLog.dateTime = localdt.toString("yyyy-MM-dd hh:mm:ss");
-            dnfLog.level = m_transDnfDict.value(strList[1]);
-            dnfLog.msg = info;
-            dList.insert(0, dnfLog);
-            //此行为日志行
-            //每获得500个数据就发出信号给控件加载
-            lastLogAddRow = i;
+
             if (!m_canRun) {
                 return;
             }

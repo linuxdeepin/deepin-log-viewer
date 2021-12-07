@@ -1458,10 +1458,8 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         generateJournalBootFile(m_curLevel);
     } else if (itemData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dnf;
-        generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
     } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dmesg;
-        generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     }
 }
 
