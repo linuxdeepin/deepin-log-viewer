@@ -664,7 +664,7 @@ void LogAuthThread::handleNormal()
     QString a_name = "root";
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
-        if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
+        if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS||value.ut_time <=0) { // clear the runlevel
             continue;
         }
         struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
