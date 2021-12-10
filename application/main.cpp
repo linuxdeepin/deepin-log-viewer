@@ -35,6 +35,7 @@
 
 #include <QDateTime>
 #include <QSurfaceFormat>
+#include <QDebug>
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 

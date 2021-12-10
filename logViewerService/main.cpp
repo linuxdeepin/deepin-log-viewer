@@ -24,6 +24,7 @@
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusError>
+#include <QDebug>
 
 //service name
 const QString LogViewrServiceName = "com.deepin.logviewer";

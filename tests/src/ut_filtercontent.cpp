@@ -24,6 +24,7 @@
 #include <QEvent>
 #include <QStandardItemModel>
 #include <QStandardItem>
+#include <QDebug>
 
 #include <stub.h>
 #include <gtest/gtest.h>

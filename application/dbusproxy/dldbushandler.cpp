@@ -19,6 +19,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dldbushandler.h"
+#include <QDebug>
 
 DLDBusHandler *DLDBusHandler::m_statichandeler = nullptr;
 
