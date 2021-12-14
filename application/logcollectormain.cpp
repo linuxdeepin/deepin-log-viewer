@@ -221,8 +221,13 @@ void LogCollectorMain::initConnection()
     // when item changed clear search text
     connect(m_logCatelogue, &LogListView::itemChanged, this, [=]() { m_searchEdt->clearEdit(); });
     connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [=]() { m_searchEdt->clearEdit(); });
-    connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this,
-            [=]() { m_searchEdt->clearEdit(); });
+    connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this, [=]() { m_searchEdt->clearEdit(); });
+    //dnf日志下拉框选项切换清空搜索栏
+    connect(m_topRightWgt, &FilterContent::sigDnfLvlChanged, this, [=]() { m_searchEdt->clearEdit(); });
+    //启动日志下拉框选项切换清空搜索栏
+    connect(m_topRightWgt, &FilterContent::sigStatusChanged, this, [=]() { m_searchEdt->clearEdit(); });
+    //开关机日志下拉框选项切换清空搜索栏
+    connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, this, [=]() { m_searchEdt->clearEdit(); });
 }
 
 /**
