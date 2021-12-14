@@ -111,7 +111,7 @@ void LogApplicationParseThread::doWork()
             QString output = Utils::replaceEmptyByteArray(outByte);
             QStringList strList = QString(output ).split('\n', QString::SkipEmptyParts);
             //开启贪婪匹配
-            QRegularExpression re("^(\\d{4}-[0-2]\\d-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d)[^A-Za-z]*([A-Za-z]*)[^\\[]*[^\\]]*\\]*\\s*(.*)$");
+            QRegularExpression re("^(\\d{4}-[0-2]\\d-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d.\\d*)[^A-Za-z]*([A-Za-z]*)[^\\[]*[^\\]]*\\]*\\s*(.*)$");
 
             for (int j = strList.size() - 1; j >= 0; --j) {
                 if (!m_canRun) {
