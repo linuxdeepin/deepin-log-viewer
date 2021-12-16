@@ -1497,16 +1497,11 @@ void DisplayContent::slot_exportClicked()
     if (fileName.isEmpty())
         return;
 
-    if (selectSuffix != exportSuffix && (selectSuffix == "doc" || selectSuffix == "xls")) {
-
-        if(exportSuffix.isEmpty()||(exportSuffix!="txt"&&exportSuffix!="html"&&exportSuffix!="doc"&&exportSuffix!="xls")){
-            fileName.append(".").append(selectSuffix);
-        }else {
-            emit exportThread->sigResult(false);
-            return;
-        }
-
+    //用户修改后缀名后添加默认的后缀
+    if (selectSuffix != exportSuffix) {
+        fileName.append(".").append(selectSuffix);
     }
+
 
     m_exportDlg->show();
     QStringList labels;
