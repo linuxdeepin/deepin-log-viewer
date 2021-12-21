@@ -57,7 +57,8 @@ int main(int argc, char *argv[])
     if (!dirCheck.exists(LogPath)) {
         dirCheck.mkpath(LogPath);
     }
-    Dtk::Core::DLogManager::setlogFilePath(LogPath);
+    QString serviceLogPath=LogPath+QString("deepin-log-viewer-service.log");
+    Dtk::Core::DLogManager::setlogFilePath(serviceLogPath);
     Dtk::Core::DLogManager::registerConsoleAppender();
     Dtk::Core::DLogManager::registerFileAppender();
 
@@ -67,7 +68,8 @@ int main(int argc, char *argv[])
         exit(0x0001);
     }
     LogViewerService service;
-    service.getFileInfo("lpr");
+    //service.getFileInfo("lpr");
+    //service.readLog("/etc/apt/sources.list");
     qDebug() << "systemBus.registerService success" << Dtk::Core::DLogManager::getlogFilePath();
     if (!systemBus.registerObject(LogViewrPath,
                                   &service,

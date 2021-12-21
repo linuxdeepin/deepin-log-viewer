@@ -4,6 +4,7 @@
     <method name="readLog">
       <arg type="s" direction="out"/>
       <arg name="filePath" type="s" direction="in"/>
+      <arg name="homePath" type="s" direction="in"/>
     </method>
     <method name="exitCode">
       <arg type="i" direction="out"/>

@@ -20,6 +20,7 @@
 */
 #include "dldbushandler.h"
 #include <QDebug>
+#include <QStandardPaths>
 
 DLDBusHandler *DLDBusHandler::m_statichandeler = nullptr;
 
@@ -57,7 +58,8 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
  */
 QString DLDBusHandler::readLog(const QString &filePath)
 {
-    return m_dbus->readLog(filePath);
+    QString homePath=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    return m_dbus->readLog(filePath,homePath);
 }
 
 /*!
