@@ -113,7 +113,6 @@ void logDetailInfoWidget::initUI()
     DFontSizeManager::instance()->bind(m_dateTime, DFontSizeManager::T8);
     DPalette pa = DApplicationHelper::instance()->palette(m_dateTime);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_dateTime->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_dateTime, pa);
 
     m_userName = new DLabel(this);
@@ -121,7 +120,6 @@ void logDetailInfoWidget::initUI()
     m_userName->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_userName);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_userName->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_userName, pa);
 
     m_pid = new DLabel(this);
@@ -129,7 +127,6 @@ void logDetailInfoWidget::initUI()
     m_pid->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_pid);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_pid->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_pid, pa);
 
     m_action = new DLabel(this);
@@ -137,7 +134,6 @@ void logDetailInfoWidget::initUI()
     m_action->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_action);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_status->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_action, pa);
 
     m_status = new DLabel(this);
@@ -145,14 +141,12 @@ void logDetailInfoWidget::initUI()
     m_status->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_status);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_status->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_status, pa);
 
     m_level = new LogIconButton(this);
     DFontSizeManager::instance()->bind(m_level, DFontSizeManager::T8);
     pa = DApplicationHelper::instance()->palette(m_level);
     pa.setBrush(DPalette::ButtonText, pa.color(DPalette::TextTips));
-    //    m_level->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_level, pa);
 
     // add by Airy
@@ -161,7 +155,6 @@ void logDetailInfoWidget::initUI()
     m_event->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_event);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_status->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_event, pa);
 
     m_name = new DLabel(this);
@@ -169,7 +162,6 @@ void logDetailInfoWidget::initUI()
     m_name->setMinimumWidth(LABEL_MIN_WIDTH);
     pa = DApplicationHelper::instance()->palette(m_name);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    //    m_status->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_name, pa);  // end
 
     m_userLabel = new DLabel(DApplication::translate("Label", "User:"), this);
@@ -194,7 +186,6 @@ void logDetailInfoWidget::initUI()
     DFontSizeManager::instance()->bind(m_textBrowser, DFontSizeManager::T8);
     pa = DApplicationHelper::instance()->palette(m_textBrowser);
     pa.setBrush(DPalette::Text, pa.color(DPalette::TextTips));
-    //    m_textBrowser->setPalette(pa);
     DApplicationHelper::instance()->setPalette(m_textBrowser, pa);
     m_textBrowser->setFrameShape(QFrame::NoFrame);
     m_textBrowser->viewport()->setAutoFillBackground(false);

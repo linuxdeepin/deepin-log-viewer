@@ -54,35 +54,33 @@ public:
 
 public slots:
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
-    // QWidget interface
 protected:
     void closeEvent(QCloseEvent *event);
 private:
     /**
      * @brief m_searchEdt titlebar上的搜索框
      */
-    Dtk::Widget::DSearchEdit *m_searchEdt;
+    Dtk::Widget::DSearchEdit *m_searchEdt {nullptr};
     /**
      * @brief m_topRightWgt 筛选控件
      */
-    FilterContent *m_topRightWgt;
-    //    LogTreeView *m_treeView;
+    FilterContent *m_topRightWgt {nullptr};
     /**
      * @brief m_logCatelogue  日志类型选择器
      */
-    LogListView *m_logCatelogue;
+    LogListView *m_logCatelogue {nullptr};
     /**
      * @brief m_midRightWgt 数据展示控件，包括表格和详情页
      */
-    DisplayContent *m_midRightWgt;
+    DisplayContent *m_midRightWgt {nullptr};
     /**
      * @brief m_hLayout 主layout,用来放m_logCatelogue和m_vLayout
      */
-    QHBoxLayout *m_hLayout;
+    QHBoxLayout *m_hLayout {nullptr};
     /**
      * @brief m_vLayout 用来放置m_midRightWgt和m_topRightWgt
      */
-    QVBoxLayout *m_vLayout;
+    QVBoxLayout *m_vLayout {nullptr};
 
     Dtk::Widget::DSplitter *m_hSplitter;
     // Resize Window      --> Ctrl+Alt+F

@@ -54,8 +54,6 @@ public:
     int parseByApp(APP_FILTERS &iAPPFilter);
     void parseByDnf(DNF_FILTERS iDnfFilter);
     void parseByDmesg(DMESG_FILTERS iDmesgFilter);
-
-    //    void parseByNormal1(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler);  // add by Airy
     int parseByNormal(NORMAL_FILTERS &iNormalFiler);   // add by Airy
 
     int parseByKwin(KWIN_FILTERS iKwinfilter);
