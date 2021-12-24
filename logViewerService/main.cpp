@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     }
     LogViewerService service;
     //service.getFileInfo("lpr");
-    //service.readLog("/etc/apt/sources.list");
+    //service.readLog("etc/apt/sources.list");
     qDebug() << "systemBus.registerService success" << Dtk::Core::DLogManager::getlogFilePath();
     if (!systemBus.registerObject(LogViewrPath,
                                   &service,

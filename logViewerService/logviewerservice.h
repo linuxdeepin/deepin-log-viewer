@@ -39,7 +39,7 @@ public:
 Q_SIGNALS:
 
 public Q_SLOTS:
-    Q_SCRIPTABLE QString readLog(const QString &filePath,const QString &homePath=" ");
+    Q_SCRIPTABLE QString readLog(const QString &filePath);
     Q_SCRIPTABLE int exitCode();
     Q_SCRIPTABLE void quit();
     Q_SCRIPTABLE QStringList getFileInfo(const QString &file);

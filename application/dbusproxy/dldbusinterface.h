@@ -44,10 +44,10 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("exitCode"), argumentList);
     }
 
-    inline QDBusPendingReply<QString> readLog(const QString &filePath,const QString &homePath=" ")
+    inline QDBusPendingReply<QString> readLog(const QString &filePath)
     {
         QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(filePath)<<QVariant::fromValue(homePath);
+        argumentList << QVariant::fromValue(filePath);
         return asyncCallWithArgumentList(QStringLiteral("readLog"), argumentList);
     }
 

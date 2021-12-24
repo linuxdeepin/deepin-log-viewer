@@ -34,10 +34,10 @@ LogViewerService::LogViewerService(QObject *parent)
  * \~chinese \param filePath 文件路径
  * \~chinese \return 读取的日志
  */
-QString LogViewerService::readLog(const QString &filePath,const QString &homePath)
+QString LogViewerService::readLog(const QString &filePath)
 {
     //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
-    if(!filePath.startsWith("/var/log/")&&!filePath.startsWith(homePath)&&!filePath.startsWith("/tmp"))
+    if ((!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp") && !filePath.startsWith("/home")) || filePath.contains(".."))
         return  " ";
 
 

@@ -58,8 +58,7 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
  */
 QString DLDBusHandler::readLog(const QString &filePath)
 {
-    QString homePath=QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-    return m_dbus->readLog(filePath,homePath);
+    return m_dbus->readLog(filePath);
 }
 
 /*!
