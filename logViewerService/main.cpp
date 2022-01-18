@@ -18,6 +18,7 @@
 */
 
 #include "logviewerservice.h"
+#include "logviewerwatcher.h"
 
 #include <DLog>
 
@@ -67,6 +68,7 @@ int main(int argc, char *argv[])
         qCritical() << "registerService failed:" << systemBus.lastError();
         exit(0x0001);
     }
+    LogViewerWatcher watcher;
     LogViewerService service;
     //service.getFileInfo("lpr");
     //service.readLog("etc/apt/sources.list");
