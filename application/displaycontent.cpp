@@ -1664,7 +1664,7 @@ void DisplayContent::slot_exportClicked()
             break;
         }
         QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter.contains("Xls (*.xls)")) {
+    } else if (selectFilter.contains("(*.xls)")) {
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jList.count()));
