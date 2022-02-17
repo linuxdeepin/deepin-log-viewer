@@ -1491,7 +1491,7 @@ void DisplayContent::slot_exportClicked()
     //限制当导出文件为空和导出doc和xls时用户改动后缀名导致导出问题，提示导出失败
     QFileInfo exportFile(fileName);
 
-    QString exportSuffix=exportFile.suffix();
+    QString exportSuffix = exportFile.suffix();
     QString selectSuffix = selectFilter.mid(selectFilter.lastIndexOf(".") + 1, selectFilter.size() - selectFilter.lastIndexOf(".") - 2);
     if (fileName.isEmpty())
         return;
@@ -1507,7 +1507,7 @@ void DisplayContent::slot_exportClicked()
         labels.append(m_pModel->horizontalHeaderItem(col)->text());
     }
     //根据导出格式判断执行逻辑
-    if (selectFilter == "TEXT (*.txt)") {
+    if (selectFilter.contains("(*.txt)")) {
         switch (m_flag) {
         //根据导出日志类型执行正确的导出逻辑
         case JOURNAL:
@@ -1560,7 +1560,7 @@ void DisplayContent::slot_exportClicked()
             break;
         }
         QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter == "Html (*.html)") {
+    } else if (selectFilter.contains("(*.html)")) {
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(jList.count()));
@@ -1612,7 +1612,7 @@ void DisplayContent::slot_exportClicked()
             break;
         }
         QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter == "Doc (*.doc)") {
+    } else if (selectFilter.contains("(*.doc)")) {
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(jList.count()));
@@ -1664,7 +1664,7 @@ void DisplayContent::slot_exportClicked()
             break;
         }
         QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter == "Xls (*.xls)") {
+    } else if (selectFilter.contains("Xls (*.xls)")) {
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jList.count()));
