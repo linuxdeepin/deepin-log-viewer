@@ -75,13 +75,17 @@ void LogApplicationHelper::createDesktopFiles()
 
     QStringList fileInfoList = dir.entryList(QDir::Files | QDir::NoDotAndDotDot);
     QStringList tempDesktopFiles;
+    QStringList regStr {"deepin-", "dde-", "org.deepin", "com.deepin", "uos-"};
     for (QString desktop : fileInfoList) {
         //需要符合以deepin或者dde开头的应用
-        if (desktop.contains("deepin-") || desktop.contains("dde-") || desktop.contains("org.deepin")||desktop.contains("com.deepin")) {
-            tempDesktopFiles.append(desktop);
+        for (auto &it : regStr) {
+            if (desktop.contains(it)) {
+                tempDesktopFiles.append(desktop);
+                break;
+            }
         }
     }
-    qDebug() << "  tempDesktopFiles.count()" <<    tempDesktopFiles.count();
+    qDebug() << "  tempDesktopFiles.count()" << tempDesktopFiles.count();
     for (QString var : tempDesktopFiles) {
         QString filePath = path + "/" + var;
         QFile fi(filePath);
@@ -116,11 +120,11 @@ void LogApplicationHelper::createDesktopFiles()
             QString currentDesktop(qgetenv("XDG_CURRENT_DESKTOP"));
             if (lineStr.startsWith("OnlyShowIn")) {
                 bool isHide = true;
-                QString onlyShowValue= lineStr.split("=", QString::SkipEmptyParts).value(1, "");
-                    if (onlyShowValue.contains(currentDesktop)) {
-                        isHide = false;
-                        continue;
-                    }
+                QString onlyShowValue = lineStr.split("=", QString::SkipEmptyParts).value(1, "");
+                if (onlyShowValue.contains(currentDesktop)) {
+                    isHide = false;
+                    continue;
+                }
 
                 if (isHide) {
                     canDisplay = false;
@@ -163,7 +167,7 @@ void LogApplicationHelper::createDesktopFiles()
             parseField(filePath, var.split(QDir::separator()).last(), isDeepin, isGeneric, isName);
         }
     }
-    qDebug() << "  m_desktop_files.count()" <<    m_desktop_files.count();
+    qDebug() << "  m_desktop_files.count()" << m_desktop_files.count();
 }
 
 /**
