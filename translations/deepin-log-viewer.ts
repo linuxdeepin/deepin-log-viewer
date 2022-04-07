@@ -403,4 +403,27 @@
         <translation>dnf Log</translation>
     </message>
 </context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>10 min</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

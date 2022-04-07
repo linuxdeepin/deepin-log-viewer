@@ -30,12 +30,14 @@
 #include <DSearchEdit>
 #include <DSplitter>
 #include <DTreeView>
-
+#include <DSettings>
 
 #include <QHBoxLayout>
 #include <QShortcut>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <QTimer>
+DCORE_USE_NAMESPACE
 
 class DSplitter;
 /**
@@ -51,11 +53,15 @@ public:
     void initConnection();
     void initSettings();
     void initShortCut();
+    void initTitlebarExtensions();
 
 public slots:
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
+    void switchRefreshActionTriggered(QAction *action);
+
 protected:
     void closeEvent(QCloseEvent *event);
+
 private:
     /**
      * @brief m_searchEdt titlebar上的搜索框
@@ -91,9 +97,9 @@ private:
     QShortcut *m_scExport {nullptr};
     int m_originFilterWidth = 0;
 
-
-
-
+    QList<QAction *> m_refreshActions;
+    QTimer *m_refreshTimer {nullptr};
+    DSettings *m_settings {nullptr};
 };
 
-#endif  // LOGCOLLECTORMAIN_H
+#endif // LOGCOLLECTORMAIN_H

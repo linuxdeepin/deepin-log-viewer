@@ -22,6 +22,8 @@
 #include "logcollectormain.h"
 #include "logsettings.h"
 #include "DebugTimeManager.h"
+#include "utils.h"
+#include <qsettingbackend.h>
 
 #include <DApplication>
 #include <DTitlebar>
@@ -36,13 +38,15 @@
 #include <QSizePolicy>
 #include <QList>
 #include <QKeyEvent>
+
 #include <DAboutDialog>
 //958+53+50 976
-
 //日志类型选择器宽度
 #define LEFT_LIST_WIDTH 200
 DWIDGET_USE_NAMESPACE
 
+//刷新间隔
+static const QString refreshIntervalKey = "base.RefreshInterval";
 /**
  * @brief LogCollectorMain::LogCollectorMain 构造函数
  * @param parent 父对象
@@ -61,7 +65,6 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
     //恢复上次关闭时记录的窗口大小
     resize(LogSettings::instance()->getConfigWinSize());
-
 }
 
 /**
@@ -167,10 +170,89 @@ void LogCollectorMain::initUI()
     m_topRightWgt->setObjectName("FilterContent");
     m_midRightWgt->setObjectName("DisplayContent");
     titlebar()->setObjectName("titlebar");
-
+    initTitlebarExtensions();
 #endif
 
     m_originFilterWidth = m_topRightWgt->geometry().width();
+}
+
+void LogCollectorMain::initTitlebarExtensions()
+{
+    DMenu *menu = new DMenu(DApplication::translate("titlebar", "Refresh interval"), titlebar());
+    m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "10 sec")));
+    m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "1 min")));
+    m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "10 min")));
+    m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "No refresh")));
+
+    QActionGroup *group = new QActionGroup(menu);
+    for (auto &it : m_refreshActions) {
+        it->setCheckable(true);
+        group->addAction(it);
+    }
+
+    QObject::connect(group, &QActionGroup::triggered,
+                     this, &LogCollectorMain::switchRefreshActionTriggered);
+    titlebar()->menu()->addMenu(menu);
+    //获取配置
+    initSettings();
+    //设置刷新频率
+    QVariant var = m_settings->getOption(refreshIntervalKey);
+    if (!var.isNull()) {
+        int index = var.toInt();
+        m_refreshActions[index]->setChecked(true);
+        m_refreshActions[index]->triggered(true);
+    }
+}
+
+void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
+{
+    int index = m_refreshActions.indexOf(action);
+    int timeInterval = 0;
+    switch (index) {
+    case 0:
+        timeInterval = 10 * 1000; //10秒刷新
+        break;
+    case 1:
+        timeInterval = 60 * 1000; //1分钟刷新
+        break;
+    case 2:
+        timeInterval = 10 * 60 * 1000; //10分钟刷新
+        break;
+    default:
+        break;
+    }
+    //先停止刷新
+    if (m_refreshTimer && m_refreshTimer->isActive()) {
+        m_refreshTimer->stop();
+    }
+    //开启定时器刷新
+    if (timeInterval > 0) {
+        if (nullptr == m_refreshTimer) {
+            m_refreshTimer = new QTimer(this);
+            connect(m_refreshTimer, &QTimer::timeout, this, [=] {
+                //触发刷新信号
+                emit m_logCatelogue->sigRefresh(m_logCatelogue->currentIndex());
+            });
+        }
+        m_refreshTimer->start(timeInterval);
+    }
+    //同步刷新配置参数
+    if (m_settings && index >= 0) {
+        m_settings->setOption(refreshIntervalKey, index);
+        m_settings->sync();
+    }
+}
+
+void LogCollectorMain::initSettings()
+{
+    m_settings = DSettings::fromJsonFile(":/deepin-log-viewer-setting.json");
+    QString configpath = Utils::getConfigPath();
+    QDir dir(configpath);
+    if (!dir.exists()) {
+        dir.mkpath(configpath);
+    };
+    auto backend = new QSettingBackend(dir.filePath("config.conf"), m_settings);
+    m_settings->setBackend(backend);
 }
 
 /**
@@ -197,15 +279,15 @@ void LogCollectorMain::initConnection()
             &DisplayContent::slot_statusChagned);
 
     connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, m_midRightWgt,
-            &DisplayContent::slot_getLogtype);  // add by Airy
+            &DisplayContent::slot_getLogtype); // add by Airy
 
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_logCatelogue,
-            &LogListView::slot_getAppPath);  // add by Airy for getting app path
+            &LogListView::slot_getAppPath); // add by Airy for getting app path
     connect(m_midRightWgt, &DisplayContent::setExportEnable, m_topRightWgt,
             &FilterContent::setExportButtonEnable, Qt::DirectConnection);
     //自适应宽度
     connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_midRightWgt,
-            SLOT(slot_refreshClicked(const QModelIndex &)));  // add by Airy for adding refresh
+            SLOT(slot_refreshClicked(const QModelIndex &))); // add by Airy for adding refresh
     connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_topRightWgt,
             SLOT(slot_logCatelogueRefresh(const QModelIndex &)));
     connect(m_logCatelogue, &LogListView::sigRefresh, this, [=]() { m_searchEdt->clearEdit(); });
@@ -243,11 +325,9 @@ void LogCollectorMain::initShortCut()
         m_scWndReize->setAutoRepeat(false);
 
         connect(m_scWndReize, &QShortcut::activated, this, [this] {
-            if (this->windowState() & Qt::WindowMaximized)
-            {
+            if (this->windowState() & Qt::WindowMaximized) {
                 this->showNormal();
-            } else if (this->windowState() == Qt::WindowNoState)
-            {
+            } else if (this->windowState() == Qt::WindowNoState) {
                 this->showMaximized();
             }
         });
@@ -294,26 +374,26 @@ bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *
             return false;
         } else if (obj == closebtn) {
             m_logCatelogue->setFocus(Qt::TabFocusReason);
-            return  true;
+            return true;
         } else if (obj->objectName() == "mainLogTable") {
             return false;
         }
     } else if (evt->key() == Qt::Key_Backtab) {
         DWindowOptionButton *optionbtn = this->titlebar()->findChild<DWindowOptionButton *>("DTitlebarDWindowOptionButton");
         if (obj->objectName() == "logTypeSelectList") {
-            DWindowCloseButton   *closeButton = titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
+            DWindowCloseButton *closeButton = titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
             if (closeButton) {
                 closeButton->setFocus();
             }
-            return  true;
+            return true;
         } else if (obj == optionbtn) {
             return false;
         } else if (obj->objectName() == "searchChildEdt") {
             m_midRightWgt->mainLogTableView()->setFocus(Qt::BacktabFocusReason);
-            return  true;
+            return true;
         }
     }
-    return  false;
+    return false;
 }
 
 void LogCollectorMain::closeEvent(QCloseEvent *event)
