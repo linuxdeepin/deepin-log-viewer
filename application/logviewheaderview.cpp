@@ -103,14 +103,12 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     forground.setColor(palette.color(cg, DPalette::Text));
     // 绘制文字
     QRect textRect;
-    if (sortIndicatorSection() == logicalIndex) {
+    if (logicalIndex == m_sortColumn) {
         textRect = {contentRect.x() + margin, contentRect.y(), contentRect.width() - margin * 3 - 8,
-                    contentRect.height()
-                   };
+                    contentRect.height()};
     } else {
         textRect = {contentRect.x() + margin, contentRect.y(), contentRect.width() - margin,
-                    contentRect.height()
-                   };
+                    contentRect.height()};
     }
     if (!model()) {
         return;
@@ -127,13 +125,12 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     } else {
         painter->drawText(textRect, static_cast<int>(align), title);
     }
-
-    if (isSortIndicatorShown() && logicalIndex == sortIndicatorSection()) {
+    if (logicalIndex == m_sortColumn) {
         // 绘制排序的箭头图标（8×5）
         QRect sortIndicator(textRect.x() + textRect.width() + margin,
-                            textRect.y() + (textRect.height() - 5) / 2, 8, 5);
+                            textRect.y() + (textRect.height() - 5) / 2, 8, 10);
         option.rect = sortIndicator;
-        if (sortIndicatorOrder() == Qt::DescendingOrder) {
+        if (m_sortOrder == Qt::DescendingOrder) {
             style->drawPrimitive(DStyle::PE_IndicatorArrowDown, &option, painter, this);
         } else if (sortIndicatorOrder() == Qt::AscendingOrder) {
             style->drawPrimitive(DStyle::PE_IndicatorArrowUp, &option, painter, this);
@@ -196,7 +193,6 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
         o.rect = style->visualRect(layoutDirection(), rect, focusRect);
         style->drawPrimitive(DStyle::PE_FrameFocusRect, &o, &painter);
     }
-
 }
 
 QSize LogViewHeaderView::sizeHint() const
@@ -220,7 +216,7 @@ int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
         return -1;
     }
     QString buf = model()->headerData(logicalIndex, Qt::Horizontal, Qt::DisplayRole).toString();
-    if (sortIndicatorSection() == logicalIndex) {
+    if (m_sortColumn == logicalIndex) {
         return fm.width(buf) + margin * 3 + 8;
     } else {
         return fm.width(buf) + margin * 2;

@@ -21,7 +21,7 @@
 
 #ifndef DISPLAYCONTENT_H
 #define DISPLAYCONTENT_H
-#include "filtercontent.h"  //add by Airy
+#include "filtercontent.h" //add by Airy
 #include "logdetailinfowidget.h"
 #include "logfileparser.h"
 #include "logiconbutton.h"
@@ -41,6 +41,7 @@
 #include <QDateTime>
 
 class ExportProgressDlg;
+class ViewSortfilter;
 /**
  * @brief The DisplayContent class 主显示数据区域控件,包括数据表格和详情页
  */
@@ -56,6 +57,7 @@ class DisplayContent : public Dtk::Widget::DWidget
         DATA_LOADING_K, //内核日志正在加载
         DATA_NO_SEARCH_RESULT, //搜索无记录
     };
+
 public:
     explicit DisplayContent(QWidget *parent = nullptr);
     ~DisplayContent();
@@ -89,20 +91,20 @@ private:
 
     void createXorgTableForm();
     void createXorgTable(QList<LOG_MSG_XORG> &list);
-    void generateXorgFile(int id);  // add by Airy for peroid
+    void generateXorgFile(int id); // add by Airy for peroid
 
     void createKwinTableForm();
     void creatKwinTable(QList<LOG_MSG_KWIN> &list);
     void generateKwinFile(KWIN_FILTERS iFilters);
 
     void createNormalTableForm();
-    void createNormalTable(QList<LOG_MSG_NORMAL> &list);  // add by Airy
-    void generateNormalFile(int id);                      // add by Airy for peroid
+    void createNormalTable(QList<LOG_MSG_NORMAL> &list); // add by Airy
+    void generateNormalFile(int id); // add by Airy for peroid
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
     void insertKernTable(QList<LOG_MSG_JOURNAL> list, int start,
-                         int end);  // add by Airy for bug 12263
+                         int end); // add by Airy for bug 12263
     void insertDpkgTable(QList<LOG_MSG_DPKG> list, int start, int end);
     void insertXorgTable(QList<LOG_MSG_XORG> list, int start, int end);
     void insertBootTable(QList<LOG_MSG_BOOT> list, int start, int end);
@@ -177,9 +179,10 @@ public slots:
     void slot_vScrollValueChanged(int valuePixel);
 
     void slot_searchResult(QString str);
-    void slot_getLogtype(int tcbx);  // add by Airy
+    void slot_getLogtype(int tcbx); // add by Airy
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
     void slot_dnfLevel(DNFPRIORITY iLevel);
+    void slot_viewHeadClicked(int index);
     //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
     void parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel);
@@ -198,8 +201,8 @@ public slots:
     void clearAllFilter();
     void clearAllDatalist();
 
-    QList<LOG_MSG_BOOT>  filterBoot(BOOT_FILTERS ibootFilter, QList<LOG_MSG_BOOT> &iList);
-    QList<LOG_MSG_NORMAL>  filterNomal(NORMAL_FILTERS inormalFilter, QList<LOG_MSG_NORMAL> &iList);
+    QList<LOG_MSG_BOOT> filterBoot(BOOT_FILTERS ibootFilter, QList<LOG_MSG_BOOT> &iList);
+    QList<LOG_MSG_NORMAL> filterNomal(NORMAL_FILTERS inormalFilter, QList<LOG_MSG_NORMAL> &iList);
     QList<LOG_MSG_DPKG> filterDpkg(const QString &iSearchStr, QList<LOG_MSG_DPKG> &iList);
     QList<LOG_MSG_JOURNAL> filterKern(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_MSG_XORG> filterXorg(const QString &iSearchStr, QList<LOG_MSG_XORG> &iList);
@@ -210,6 +213,9 @@ public slots:
 
 private:
     void resizeEvent(QResizeEvent *event);
+    void setSortColumn(int column);
+    void updateSort();
+    QDateTime getTimeFromString(const QString &time);
 
 private:
     /**
@@ -238,7 +244,7 @@ private:
     /**
      * @brief m_spinnerWgt_K 加载内核日志数据时转轮控件
      */
-    LogSpinnerWidget *m_spinnerWgt_K;  // add by Airy
+    LogSpinnerWidget *m_spinnerWgt_K; // add by Airy
     /**
      * @brief m_curAppLog 当前选中的应用的日志文件路径
      */
@@ -333,13 +339,13 @@ private:
      */
     QMap<QString, QString> m_icon_name_map;
     //当前搜索关键字
-    QString m_currentSearchStr{""};
+    QString m_currentSearchStr {""};
     /**
      * @brief m_currentKwinFilter kwin日志当前筛选条件
      */
     KWIN_FILTERS m_currentKwinFilter;
     //导出进度条弹框
-    ExportProgressDlg *m_exportDlg{nullptr};
+    ExportProgressDlg *m_exportDlg {nullptr};
     //是否为第一次加载完成后收到数据,journalctl获取方式专用
     bool m_firstLoadPageData = false;
     //启动日志当前筛选条件
@@ -347,13 +353,13 @@ private:
     /**
      * @brief m_normalFilter 开关机日志当前筛选条件
      */
-    NORMAL_FILTERS m_normalFilter ;
+    NORMAL_FILTERS m_normalFilter;
     //上次treeview滚筒条的值
     int m_treeViewLastScrollValue = -1;
     //当前的显示加载状态
     DisplayContent::LOAD_STATE m_state;
     //系统日志上次获取的时间
-    QDateTime m_lastJournalGetTime{QDateTime::fromTime_t(0)};
+    QDateTime m_lastJournalGetTime {QDateTime::fromTime_t(0)};
     /**
      * @brief m_journalFilter 当前系统日志筛选条件
      */
@@ -363,20 +369,24 @@ private:
     QMap<QString, QString> m_dnfIconNameMap;
     DNFPRIORITY m_curDnfLevel {INFO};
     //当前系统日志获取进程标记量
-    int m_journalCurrentIndex{-1};
+    int m_journalCurrentIndex {-1};
     //当前klu启动日志获取进程标记量
-    int m_journalBootCurrentIndex{-1};
+    int m_journalBootCurrentIndex {-1};
     //当前启动日志获取进程标记量
-    int m_bootCurrentIndex{-1};
-    int m_dpkgCurrentIndex{-1};
-    int m_kernCurrentIndex{-1};
-    int m_normalCurrentIndex{-1};
-    int m_xorgCurrentIndex{-1};
-    int m_kwinCurrentIndex{-1};
-    int m_appCurrentIndex{-1};
-    bool m_isDataLoadComplete{false};
+    int m_bootCurrentIndex {-1};
+    int m_dpkgCurrentIndex {-1};
+    int m_kernCurrentIndex {-1};
+    int m_normalCurrentIndex {-1};
+    int m_xorgCurrentIndex {-1};
+    int m_kwinCurrentIndex {-1};
+    int m_appCurrentIndex {-1};
+    bool m_isDataLoadComplete {false};
     //筛选条件
     QString selectFilter;
+    //排序列
+    int m_sortColumn {-1};
+    ViewSortfilter *m_sortData {nullptr};
+    bool m_ascendingOrder {false};
 };
 
-#endif  // DISPLAYCONTENT_H
+#endif // DISPLAYCONTENT_H

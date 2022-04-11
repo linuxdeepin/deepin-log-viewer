@@ -185,6 +185,7 @@ set (APP_CPP_FILES
      DebugTimeManager.cpp
      wtmpparse.cpp
      logdetailedit.cpp
+     viewsortfilter.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -216,6 +217,7 @@ set (APP_HEADERS_FILES
     model/log_sort_filter_proxy_model.h
     dbusproxy/dldbusinterface.h
     dbusproxy/dldbushandler.h
+    viewsortfilter.h
     )
 
 # 5. 头文件

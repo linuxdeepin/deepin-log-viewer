@@ -39,16 +39,20 @@ public:
 
     inline int getSpacing() const { return m_spacing; }
     inline void setSpacing(int spacing) { m_spacing = spacing; }
+    void setSortColumn(int column) { m_sortColumn = column; }
+    void setSortOrder(Qt::SortOrder sortOrder) { m_sortOrder = sortOrder; }
 
 protected:
     void paintEvent(QPaintEvent *e) override;
     virtual void paintSection(QPainter *painter, const QRect &rect,
                               int logicalIndex) const override;
-    void focusInEvent(QFocusEvent *event)override;
+    void focusInEvent(QFocusEvent *event) override;
 
 private:
     int m_spacing {1};
+    int m_sortColumn {-1};
+    Qt::SortOrder m_sortOrder {Qt::AscendingOrder};
     Qt::FocusReason m_reson = Qt::MouseFocusReason;
 };
 
-#endif  // SYSTEM_SERVICE_TABLE_HEADER_VIEW_H
+#endif // SYSTEM_SERVICE_TABLE_HEADER_VIEW_H

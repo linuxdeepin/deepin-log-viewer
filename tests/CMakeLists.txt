@@ -111,6 +111,7 @@ FILE(GLOB allSource
      ../application/logdetailedit.cpp
      ../application/dbusproxy/dldbusinterface.cpp
      ../application/dbusproxy/dldbushandler.cpp
+     ../application/viewsortfilter.cpp
 )
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
