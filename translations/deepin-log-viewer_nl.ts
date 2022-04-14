@@ -401,4 +401,39 @@
         <translation>dnf-logboek</translation>
     </message>
 </context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Periodiek herladen</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 sec.</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 min.</translation>
+    </message>
+    <message>
+        <source>10 min</source>
+        <translation>10 min.</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Niet herladen</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Alles exporteren</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Systeemlogboeken</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
 </TS>

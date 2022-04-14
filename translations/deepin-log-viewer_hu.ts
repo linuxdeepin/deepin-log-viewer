@@ -401,4 +401,39 @@
         <translation>dnf napló</translation>
     </message>
 </context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Frissítési gyakoriság</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 másodperc</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 perc</translation>
+    </message>
+    <message>
+        <source>10 min</source>
+        <translation>10 perc</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Nincs frissítés</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Összes exportálása</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Rendszer naplók</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>Frissítés most</translation>
+    </message>
+</context>
 </TS>

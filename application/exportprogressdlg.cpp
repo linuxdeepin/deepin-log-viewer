@@ -38,7 +38,7 @@
 ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     : DDialog(parent)
 {
-    QString titleIcon = ICONPREFIX ;
+    QString titleIcon = ICONPREFIX;
     setIcon(QIcon::fromTheme("deepin-log-viewer"));
 
     DWidget *pWidget = new DWidget(this);

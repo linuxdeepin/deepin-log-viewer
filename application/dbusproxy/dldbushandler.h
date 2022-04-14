@@ -32,9 +32,10 @@ public:
     static DLDBusHandler *instance(QObject *parent = nullptr);
     ~DLDBusHandler();
     QString readLog(const QString &filePath);
-    QStringList getFileInfo(const QString &flag);
+    QStringList getFileInfo(const QString &flag, bool unzip = true);
     int exitCode();
     void quit();
+    bool exportLog(const QString &outDir, const QString &in, bool isFile);
 
 private:
     explicit DLDBusHandler(QObject *parent = nullptr);

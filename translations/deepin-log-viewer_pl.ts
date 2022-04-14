@@ -401,4 +401,39 @@
         <translation>Dziennik dpkg</translation>
     </message>
 </context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Częstotliwość odświeżania</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 sekund</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 minuta</translation>
+    </message>
+    <message>
+        <source>10 min</source>
+        <translation>10 minut</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Nie odświeżaj</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Eksportuj wszystko</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Logi systemowe</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
 </TS>

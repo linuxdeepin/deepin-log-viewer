@@ -121,6 +121,7 @@ pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
+find_package(PolkitQt5-1)
 
 message("XercesC_FOUND ${XercesC_FOUND}")
 message("zlib version: " ${ZLIB_LIBRARIES})
@@ -186,6 +187,7 @@ set (APP_CPP_FILES
      wtmpparse.cpp
      logdetailedit.cpp
      viewsortfilter.cpp
+     logallexportthread.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -218,6 +220,7 @@ set (APP_HEADERS_FILES
     dbusproxy/dldbusinterface.h
     dbusproxy/dldbushandler.h
     viewsortfilter.h
+    logallexportthread.h
     )
 
 # 5. 头文件
@@ -320,6 +323,8 @@ target_link_libraries(${EXE_NAME} ${Boost_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${RapidJSON_LIBRARIES})
 #target_link_libraries(${EXE_NAME} ${ImageMagick_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${XercesC_LIBRARIES})
+target_link_libraries(${EXE_NAME} PolkitQt5-1::Agent)
+
 
 #target_link_libraries(${EXE_NAME} ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a)
 
@@ -357,10 +362,10 @@ install(FILES assets/com.deepin.pkexec.logViewerAuth.policy
                     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 install(FILES assets/com.deepin.pkexec.logViewerTruncate.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 
-                # Install files
-                install(TARGETS ${EXE_NAME} DESTINATION bin)
-                install(DIRECTORY assets/deepin-log-viewer
-                                DESTINATION /usr/share/deepin-manual/manual-assets/application/)
+# Install files
+install(TARGETS ${EXE_NAME} DESTINATION bin)
+install(DIRECTORY assets/deepin-log-viewer
+                DESTINATION /usr/share/deepin-manual/manual-assets/application/)
 
 
 

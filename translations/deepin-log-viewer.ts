@@ -425,5 +425,17 @@
         <source>No refresh</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Export All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

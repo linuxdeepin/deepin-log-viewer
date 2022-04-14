@@ -37,6 +37,9 @@
 #include <QFontDatabase>
 #include <QProcessEnvironment>
 #include <QTime>
+#include <polkit-qt5-1/PolkitQt1/Authority>
+using namespace PolkitQt1;
+
 QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
 
@@ -64,17 +67,17 @@ QString Utils::getQssContent(const QString &filePath)
 QString Utils::getConfigPath()
 {
     QDir dir(QDir(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first())
-             .filePath(qApp->organizationName()));
+                 .filePath(qApp->organizationName()));
 
     return dir.filePath(qApp->applicationName());
 }
 
 bool Utils::isFontMimeType(const QString &filePath)
 {
-    const QString mimeName = QMimeDatabase().mimeTypeForFile(filePath).name();;
+    const QString mimeName = QMimeDatabase().mimeTypeForFile(filePath).name();
+    ;
 
-    if (mimeName.startsWith("font/") ||
-            mimeName.startsWith("application/x-font")) {
+    if (mimeName.startsWith("font/") || mimeName.startsWith("application/x-font")) {
         return true;
     }
 
@@ -136,7 +139,6 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
     return fontFamilyName;
 }
 
-
 /**
  * @brief Utils::replaceEmptyByteArray 替换从qproccess获取的日志信息的字符中的空字符串 替换 \u0000,不然QByteArray会忽略这以后的内容
  * @param iReplaceStr要替换的字符串
@@ -173,7 +175,7 @@ bool Utils::checkAndDeleteDir(const QString &iFilePath)
         return true;
     } else if (tempFileInfo.isFile()) {
         QFile deleteFile(iFilePath);
-        return  deleteFile.remove();
+        return deleteFile.remove();
     }
     return false;
 }
@@ -242,4 +244,27 @@ bool Utils::sleep(unsigned int msec)
     }
 
     return true;
+}
+
+QString Utils::mkMutiDir(const QString &path)
+{
+    QDir dir(path);
+    if (path.isEmpty() || dir.exists()) {
+        return path;
+    }
+    QString parentDir = mkMutiDir(path.mid(0, path.lastIndexOf('/')));
+    QString dirname = path.mid(path.lastIndexOf('/') + 1);
+    QDir parentPath(parentDir);
+    if (!dirname.isEmpty())
+        parentPath.mkpath(dirname);
+    return parentDir + "/" + dirname;
+}
+
+bool Utils::checkAuthorization(const QString &actionId, qint64 applicationPid)
+{
+    Authority::Result result;
+
+    result = Authority::instance()->checkAuthorizationSync(actionId, UnixProcessSubject(applicationPid),
+                                                           Authority::AllowUserInteraction);
+    return result == Authority::Yes ? true : false;
 }

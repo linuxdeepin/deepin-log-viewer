@@ -23,6 +23,9 @@
 #include "logsettings.h"
 #include "DebugTimeManager.h"
 #include "utils.h"
+#include "logallexportthread.h"
+#include "exportprogressdlg.h"
+
 #include <qsettingbackend.h>
 
 #include <DApplication>
@@ -40,6 +43,8 @@
 #include <QKeyEvent>
 
 #include <DAboutDialog>
+#include <DFileDialog>
+
 //958+53+50 976
 //日志类型选择器宽度
 #define LEFT_LIST_WIDTH 200
@@ -171,6 +176,7 @@ void LogCollectorMain::initUI()
     m_midRightWgt->setObjectName("DisplayContent");
     titlebar()->setObjectName("titlebar");
     initTitlebarExtensions();
+
 #endif
 
     m_originFilterWidth = m_topRightWgt->geometry().width();
@@ -202,6 +208,27 @@ void LogCollectorMain::initTitlebarExtensions()
         m_refreshActions[index]->setChecked(true);
         m_refreshActions[index]->triggered(true);
     }
+    DWidget *widget = new DWidget;
+    QHBoxLayout *layout = new QHBoxLayout(widget);
+    m_exportAllBtn = new DIconButton(widget);
+    m_exportAllBtn->setFixedSize(QSize(36, 36));
+    m_exportAllBtn->setIcon(QIcon::fromTheme("export"));
+    m_exportAllBtn->setIconSize(QSize(36, 36));
+    m_exportAllBtn->setToolTip(qApp->translate("titlebar", "Export All"));
+    m_refreshBtn = new DIconButton(widget);
+    m_refreshBtn->setIcon(QIcon::fromTheme("refresh"));
+    m_refreshBtn->setFixedSize(QSize(36, 36));
+    m_refreshBtn->setIconSize(QSize(36, 36));
+    m_refreshBtn->setToolTip(qApp->translate("titlebar", "Refresh Now"));
+    layout->addSpacing(115);
+    layout->addWidget(m_exportAllBtn);
+    layout->addSpacing(2);
+    layout->addWidget(m_refreshBtn);
+    titlebar()->addWidget(widget, Qt::AlignLeft);
+    connect(m_refreshBtn, &QPushButton::clicked, this, [=] {
+        emit m_logCatelogue->sigRefresh(m_logCatelogue->currentIndex());
+    });
+    connect(m_exportAllBtn, &QPushButton::clicked, this, &LogCollectorMain::exportAllLogs);
 }
 
 void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
@@ -249,12 +276,53 @@ void LogCollectorMain::initSettings()
     QString configpath = Utils::getConfigPath();
     QDir dir(configpath);
     if (!dir.exists()) {
-        dir.mkpath(configpath);
+        Utils::mkMutiDir(configpath);
     };
     auto backend = new QSettingBackend(dir.filePath("config.conf"), m_settings);
     m_settings->setBackend(backend);
 }
 
+void LogCollectorMain::exportAllLogs()
+{
+    static bool authorization = false;
+    if (false == authorization) {
+        if (!Utils::checkAuthorization("com.deepin.pkexec.logViewerAuth.exportLogs", qApp->applicationPid())) {
+            return;
+        }
+        authorization = true;
+    }
+    static QString defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    static QString fileFullPath = defaultDir + "/" + qApp->translate("titlebar", "System Logs") + ".zip";
+    QString newPath = DFileDialog::getSaveFileName(this, "", fileFullPath, "*.zip");
+    if (newPath.isEmpty()) {
+        return;
+    }
+    //添加文件后缀
+    if (!newPath.endsWith(".zip")) {
+        newPath += ".zip";
+    }
+
+    if (m_exportDlg == nullptr) {
+        m_exportDlg = new ExportProgressDlg(this);
+        DLDBusHandler::instance(this);
+    }
+
+    LogAllExportThread *thread = new LogAllExportThread(m_logCatelogue->getLogTypes(), newPath);
+    thread->setAutoDelete(true);
+    connect(thread, &LogAllExportThread::updateTolProcess, this, [=](int tol) {
+        m_exportDlg->setProgressBarRange(0, tol);
+    });
+    connect(thread, &LogAllExportThread::updatecurrentProcess, this, [=](int cur) {
+        m_exportDlg->updateProgressBarValue(cur);
+    });
+    connect(thread, &LogAllExportThread::exportFinsh, this, [=](bool ret) {
+        m_exportDlg->close();
+        m_midRightWgt->onExportResult(ret);
+    });
+    QThreadPool::globalInstance()->start(thread);
+    m_exportDlg->exec();
+    thread->slot_cancelExport();
+}
 /**
  * @brief LogCollectorMain::initConnection 连接信号槽
  */

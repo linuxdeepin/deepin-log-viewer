@@ -39,9 +39,9 @@ public:
      * QProccess命令返回日志的过程中如果发生报错的类型
      */
     enum CommandErrorType {
-        NoError = 0x0000,//无错误，预备，一般不用
-        PermissionError = 0x0001,//权限问题
-        RetryError = 0x0002//返回请重试的情况
+        NoError = 0x0000, //无错误，预备，一般不用
+        PermissionError = 0x0001, //权限问题
+        RetryError = 0x0002 //返回请重试的情况
     };
     static QHash<QString, QPixmap> m_imgCacheHash;
     static QHash<QString, QString> m_fontNameCache;
@@ -59,7 +59,10 @@ public:
     static void replaceColorfulFont(QString *iStr);
     static bool isWayland();
     static bool sleep(unsigned int msec);
+    //创建多级文件夹
+    static QString mkMutiDir(const QString &path);
+    //授权框
+    static bool checkAuthorization(const QString &actionId, qint64 applicationPid);
 };
-
 
 #endif

@@ -40,6 +40,7 @@
 DCORE_USE_NAMESPACE
 
 class DSplitter;
+class ExportProgressDlg;
 /**
  * @brief The LogCollectorMain class 主窗口类
  */
@@ -54,7 +55,7 @@ public:
     void initSettings();
     void initShortCut();
     void initTitlebarExtensions();
-
+    void exportAllLogs();
 public slots:
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
     void switchRefreshActionTriggered(QAction *action);
@@ -100,6 +101,10 @@ private:
     QList<QAction *> m_refreshActions;
     QTimer *m_refreshTimer {nullptr};
     DSettings *m_settings {nullptr};
+
+    DIconButton *m_refreshBtn {nullptr};
+    DIconButton *m_exportAllBtn {nullptr};
+    ExportProgressDlg *m_exportDlg {nullptr};
 };
 
 #endif // LOGCOLLECTORMAIN_H

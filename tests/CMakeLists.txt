@@ -112,6 +112,7 @@ FILE(GLOB allSource
      ../application/dbusproxy/dldbusinterface.cpp
      ../application/dbusproxy/dldbushandler.cpp
      ../application/viewsortfilter.cpp
+     ../application/logallexportthread.cpp
 )
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
@@ -176,7 +177,7 @@ include_directories( ${RapidJSON_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
-
+find_package(PolkitQt5-1)
 FILE(GLOB allTestSource
 src/*.cpp
 common/*.cpp
@@ -196,3 +197,4 @@ target_link_libraries(${PROJECT_NAME_TEST} ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${RapidJSON_LIBRARIES})
 #target_link_libraries(${PROJECT_NAME_TEST} ${ImageMagick_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${XercesC_LIBRARIES})
+target_link_libraries(${PROJECT_NAME_TEST} PolkitQt5-1::Agent)
