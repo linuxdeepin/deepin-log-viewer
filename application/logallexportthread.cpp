@@ -74,7 +74,7 @@ void LogAllExportThread::run()
             if (m_cancel) {
                 files.clear();
                 commands.clear();
-                emit exportFinsh();
+                emit exportFinsh(false);
                 return;
             }
         }
