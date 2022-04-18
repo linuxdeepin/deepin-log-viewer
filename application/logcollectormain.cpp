@@ -187,7 +187,7 @@ void LogCollectorMain::initTitlebarExtensions()
     DMenu *menu = new DMenu(DApplication::translate("titlebar", "Refresh interval"), titlebar());
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "10 sec")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "1 min")));
-    m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "10 min")));
+    m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "5 min")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "No refresh")));
 
     QActionGroup *group = new QActionGroup(menu);
@@ -243,7 +243,7 @@ void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
         timeInterval = 60 * 1000; //1分钟刷新
         break;
     case 2:
-        timeInterval = 10 * 60 * 1000; //10分钟刷新
+        timeInterval = 5 * 60 * 1000; //5分钟刷新
         break;
     default:
         break;

@@ -416,8 +416,8 @@
         <translation>1 min.</translation>
     </message>
     <message>
-        <source>10 min</source>
-        <translation>10 min.</translation>
+        <source>5 min</source>
+        <translation>5 min.</translation>
     </message>
     <message>
         <source>No refresh</source>

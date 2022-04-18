@@ -418,7 +418,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>10 min</source>
+        <source>5 min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

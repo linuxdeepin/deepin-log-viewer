@@ -416,8 +416,8 @@
         <translation>1 perc</translation>
     </message>
     <message>
-        <source>10 min</source>
-        <translation>10 perc</translation>
+        <source>5 min</source>
+        <translation>5 perc</translation>
     </message>
     <message>
         <source>No refresh</source>

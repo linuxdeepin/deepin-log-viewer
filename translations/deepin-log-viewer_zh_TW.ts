@@ -416,8 +416,8 @@
         <translation>每1分鐘</translation>
     </message>
     <message>
-        <source>10 min</source>
-        <translation>每10分鐘</translation>
+        <source>5 min</source>
+        <translation>每5分鐘</translation>
     </message>
     <message>
         <source>No refresh</source>
