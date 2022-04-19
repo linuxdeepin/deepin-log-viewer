@@ -3185,7 +3185,6 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
 
     m_curListIdx = index;
 
-    clearAllDatalist();
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty())
         return;
@@ -3208,7 +3207,9 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         m_flag = KERN;
         generateKernFile(m_curBtnId);
     } else if (itemData.contains(".cache")) {
+        clearAllDatalist();
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
+        clearAllDatalist();
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
         norList.clear();
         m_flag = Normal;
