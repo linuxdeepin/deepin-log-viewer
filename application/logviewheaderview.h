@@ -33,6 +33,7 @@ class LogViewHeaderView : public DHeaderView
 {
 public:
     LogViewHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
+    ~LogViewHeaderView();
 
     QSize sizeHint() const override;
     int sectionSizeHint(int logicalIndex) const;
@@ -53,6 +54,7 @@ private:
     int m_sortColumn {-1};
     Qt::SortOrder m_sortOrder {Qt::AscendingOrder};
     Qt::FocusReason m_reson = Qt::MouseFocusReason;
+    QStyleOptionHeader *m_option {nullptr};
 };
 
 #endif // SYSTEM_SERVICE_TABLE_HEADER_VIEW_H
