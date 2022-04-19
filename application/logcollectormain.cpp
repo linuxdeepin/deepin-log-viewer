@@ -358,7 +358,8 @@ void LogCollectorMain::initConnection()
             SLOT(slot_refreshClicked(const QModelIndex &))); // add by Airy for adding refresh
     connect(m_logCatelogue, SIGNAL(sigRefresh(const QModelIndex &)), m_topRightWgt,
             SLOT(slot_logCatelogueRefresh(const QModelIndex &)));
-    connect(m_logCatelogue, &LogListView::sigRefresh, this, [=]() { m_searchEdt->clearEdit(); });
+
+    connect(m_logCatelogue, &LogListView::sigRefresh, this, &LogCollectorMain::slotClearInfoandFocus);
     //! treeView widget
 
     connect(m_logCatelogue, SIGNAL(itemChanged(const QModelIndex &)), m_midRightWgt,
@@ -369,15 +370,22 @@ void LogCollectorMain::initConnection()
             SLOT(slot_logCatelogueClicked(const QModelIndex &)));
 
     // when item changed clear search text
-    connect(m_logCatelogue, &LogListView::itemChanged, this, [=]() { m_searchEdt->clearEdit(); });
-    connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, [=]() { m_searchEdt->clearEdit(); });
-    connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this, [=]() { m_searchEdt->clearEdit(); });
+    connect(m_logCatelogue, &LogListView::itemChanged, this, &LogCollectorMain::slotClearInfoandFocus);
+    connect(m_topRightWgt, &FilterContent::sigButtonClicked, this, &LogCollectorMain::slotClearInfoandFocus);
+    connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, this, &LogCollectorMain::slotClearInfoandFocus);
+
     //dnf日志下拉框选项切换清空搜索栏
-    connect(m_topRightWgt, &FilterContent::sigDnfLvlChanged, this, [=]() { m_searchEdt->clearEdit(); });
+    connect(m_topRightWgt, &FilterContent::sigDnfLvlChanged, this, &LogCollectorMain::slotClearInfoandFocus);
     //启动日志下拉框选项切换清空搜索栏
-    connect(m_topRightWgt, &FilterContent::sigStatusChanged, this, [=]() { m_searchEdt->clearEdit(); });
+    connect(m_topRightWgt, &FilterContent::sigStatusChanged, this, &LogCollectorMain::slotClearInfoandFocus);
     //开关机日志下拉框选项切换清空搜索栏
-    connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, this, [=]() { m_searchEdt->clearEdit(); });
+    connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, this, &LogCollectorMain::slotClearInfoandFocus);
+}
+
+void LogCollectorMain::slotClearInfoandFocus()
+{
+    m_searchEdt->clearEdit();
+    titlebar()->setFocus();
 }
 
 /**

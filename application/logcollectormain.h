@@ -60,6 +60,11 @@ public slots:
     bool handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt);
     void switchRefreshActionTriggered(QAction *action);
 
+    /**
+     * @brief slotClearInfoandFocus  清空检索信息和设置焦点到标题上
+     */
+    void slotClearInfoandFocus();
+
 protected:
     void closeEvent(QCloseEvent *event);
 
