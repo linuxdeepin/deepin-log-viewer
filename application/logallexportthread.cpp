@@ -91,7 +91,7 @@ void LogAllExportThread::run()
         return;
     }
 
-    int tolProcess = files.size() + commands.size() + 2;
+    int tolProcess = files.size() + commands.size() + 10;
     int currentProcess = 1;
     emit updateTolProcess(tolProcess);
     QString tmpPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/tmp/";
@@ -124,8 +124,8 @@ void LogAllExportThread::run()
         QStringList arg = {"-c"};
         arg.append(QString("zip tmp.zip *.*;mv tmp.zip '%1'").arg(m_outfile));
         procss.start("/bin/bash", arg);
-        procss.waitForFinished();
-        currentProcess += 2;
+        procss.waitForFinished(-1);
+        currentProcess += 9;
         emit updatecurrentProcess(currentProcess);
     }
     //删除临时目录
