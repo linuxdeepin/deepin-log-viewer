@@ -225,7 +225,8 @@ void LogCollectorMain::initTitlebarExtensions()
     layout->addSpacing(2);
     layout->addWidget(m_refreshBtn);
     titlebar()->addWidget(widget, Qt::AlignLeft);
-    connect(m_refreshBtn, &QPushButton::clicked, this, [=] {
+    connect(m_refreshBtn, &QPushButton::clicked, this, [ = ] {
+        m_midRightWgt->setSortState(false);
         emit m_logCatelogue->sigRefresh(m_logCatelogue->currentIndex());
     });
     connect(m_exportAllBtn, &QPushButton::clicked, this, &LogCollectorMain::exportAllLogs);
@@ -258,6 +259,7 @@ void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
             m_refreshTimer = new QTimer(this);
             connect(m_refreshTimer, &QTimer::timeout, this, [=] {
                 //触发刷新信号
+                m_midRightWgt->setSortState(false);
                 emit m_logCatelogue->sigRefresh(m_logCatelogue->currentIndex());
             });
         }

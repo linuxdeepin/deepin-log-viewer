@@ -204,6 +204,12 @@ void DisplayContent::updateSort()
     }
 }
 
+void DisplayContent::setSortState(bool value)
+{
+    m_ascendingOrder = value;
+}
+
+
 QDateTime DisplayContent::getTimeFromString(const QString &time)
 {
     static QStringList timeFormats {"yyyy-MM-dd hh:mm:ss.zzz", "yyyy-MM-dd hh:mm:ss"};

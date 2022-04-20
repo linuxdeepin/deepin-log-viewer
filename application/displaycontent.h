@@ -63,6 +63,12 @@ public:
     ~DisplayContent();
     LogTreeView *mainLogTableView();
 
+    /**
+     * @brief setSortState 点击刷新和自动刷新时设置排序为默认排序的状态
+     * @param value
+     */
+    void setSortState(bool value);
+
 private:
     void initUI();
     void initMap();
