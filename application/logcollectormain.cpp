@@ -306,7 +306,8 @@ void LogCollectorMain::exportAllLogs()
         m_exportDlg = new ExportProgressDlg(this);
         DLDBusHandler::instance(this);
     }
-
+    //导出是否完成
+    bool exportcomplete = false;
     LogAllExportThread *thread = new LogAllExportThread(m_logCatelogue->getLogTypes(), newPath);
     thread->setAutoDelete(true);
     connect(thread, &LogAllExportThread::updateTolProcess, this, [=](int tol) {
@@ -315,13 +316,16 @@ void LogCollectorMain::exportAllLogs()
     connect(thread, &LogAllExportThread::updatecurrentProcess, this, [=](int cur) {
         m_exportDlg->updateProgressBarValue(cur);
     });
-    connect(thread, &LogAllExportThread::exportFinsh, this, [=](bool ret) {
+    connect(thread, &LogAllExportThread::exportFinsh, this, [&exportcomplete, this](bool ret) {
+        exportcomplete = true;
         m_exportDlg->close();
         m_midRightWgt->onExportResult(ret);
     });
     QThreadPool::globalInstance()->start(thread);
     m_exportDlg->exec();
-    thread->slot_cancelExport();
+    if (!exportcomplete) {
+        thread->slot_cancelExport();
+    }
 }
 /**
  * @brief LogCollectorMain::initConnection 连接信号槽
