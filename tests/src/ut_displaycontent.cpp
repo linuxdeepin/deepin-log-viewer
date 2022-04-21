@@ -891,8 +891,8 @@ TEST(DisplayContent_initTableView_UT, DisplayContent_initTableView_UT_001)
     EXPECT_NE(p, nullptr);
     p->initTableView();
     EXPECT_NE(p->m_treeView, nullptr);
-    EXPECT_NE(p->m_pModel, nullptr);
-    EXPECT_EQ(p->m_treeView->model(), p->m_pModel);
+    EXPECT_TRUE(p->m_pModel);
+    EXPECT_TRUE(p->m_sortData);
     EXPECT_EQ(p->m_treeView->objectName(), "mainLogTable");
     delete p;
 }
