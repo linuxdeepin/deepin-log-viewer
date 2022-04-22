@@ -33,15 +33,13 @@ class LogViewHeaderView : public DHeaderView
 {
 public:
     LogViewHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
-    ~LogViewHeaderView();
+    ~LogViewHeaderView() override;
 
     QSize sizeHint() const override;
     int sectionSizeHint(int logicalIndex) const;
 
     inline int getSpacing() const { return m_spacing; }
     inline void setSpacing(int spacing) { m_spacing = spacing; }
-    void setSortColumn(int column) { m_sortColumn = column; }
-    void setSortOrder(Qt::SortOrder sortOrder) { m_sortOrder = sortOrder; }
 
 protected:
     void paintEvent(QPaintEvent *e) override;
@@ -51,8 +49,6 @@ protected:
 
 private:
     int m_spacing {1};
-    int m_sortColumn {-1};
-    Qt::SortOrder m_sortOrder {Qt::AscendingOrder};
     Qt::FocusReason m_reson = Qt::MouseFocusReason;
     QStyleOptionHeader *m_option {nullptr};
 };

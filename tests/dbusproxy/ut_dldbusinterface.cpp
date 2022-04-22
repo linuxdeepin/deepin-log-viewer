@@ -50,6 +50,8 @@ public:
 TEST_F(DlDbusinterface_UT, Compare_UT)
 {
     m_interface->exitCode();
+    m_interface->exportLog("path", "path1", false);
+    m_interface->getFileInfo("path", false);
     m_interface->quit();
     m_interface->readLog("Test");
 }

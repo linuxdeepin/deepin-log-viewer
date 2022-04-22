@@ -111,7 +111,7 @@ FILE(GLOB allSource
      ../application/logdetailedit.cpp
      ../application/dbusproxy/dldbusinterface.cpp
      ../application/dbusproxy/dldbushandler.cpp
-     ../application/viewsortfilter.cpp
+#     ../application/viewsortfilter.cpp
      ../application/logallexportthread.cpp
 )
 FILE(GLOB qrcFiles

@@ -26,8 +26,6 @@
 #include "exportprogressdlg.h"
 #include "utils.h"
 #include "DebugTimeManager.h"
-#include "logviewheaderview.h"
-#include "viewsortfilter.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -173,140 +171,9 @@ void DisplayContent::initTableView()
     m_treeView = new LogTreeView(this);
     m_treeView->setObjectName("mainLogTable");
     m_pModel = new QStandardItemModel(this);
-    m_sortData = new ViewSortfilter(this);
-    m_sortData->setSourceModel(m_pModel);
-    m_treeView->setModel(m_sortData);
-    m_sortData->setDynamicSortFilter(false);
-    m_treeView->header()->setSectionsClickable(true);
-    //m_treeView->setSortingEnabled(true);
-    connect(m_treeView->header(), &QHeaderView::sectionPressed, this, &DisplayContent::slot_viewHeadClicked);
+    m_treeView->setModel(m_pModel);
 }
 
-void DisplayContent::setSortColumn(int column)
-{
-    m_sortColumn = column;
-    LogViewHeaderView *headView = static_cast<LogViewHeaderView *>(m_treeView->header());
-    if (nullptr != headView) {
-        headView->setSortColumn(column);
-        headView->update();
-    }
-}
-
-void DisplayContent::updateSort()
-{
-    if (-1 != m_sortColumn) {
-        LogViewHeaderView *headView = static_cast<LogViewHeaderView *>(m_treeView->header());
-        Qt::SortOrder order = m_ascendingOrder ? Qt::AscendingOrder : Qt::DescendingOrder;
-        if (nullptr != headView) {
-            headView->setSortOrder(order);
-        }
-        m_sortData->sort(m_sortColumn, order);
-    }
-}
-
-void DisplayContent::setSortState(bool value)
-{
-    m_ascendingOrder = value;
-}
-
-
-QDateTime DisplayContent::getTimeFromString(const QString &time)
-{
-    static QStringList timeFormats {"yyyy-MM-dd hh:mm:ss.zzz", "yyyy-MM-dd hh:mm:ss"};
-    QDateTime dateTime;
-    for (auto &it : timeFormats) {
-        dateTime = QDateTime::fromString(time, it);
-        if (dateTime.isValid()) {
-            break;
-        }
-    }
-    return dateTime;
-}
-
-void DisplayContent::slot_viewHeadClicked(int index)
-{
-    if (index == m_sortColumn) {
-        m_ascendingOrder = !m_ascendingOrder;
-        //应用启动只加载了部分数据，倒序时需要加载全部日志
-        if (m_ascendingOrder) {
-            int listCount = 0;
-            int rowCount = m_sortData->rowCount();
-            switch (m_flag) {
-            case JOURNAL: {
-                listCount = jList.count();
-                if (rowCount != listCount) {
-                    insertJournalTable(jList, rowCount, listCount);
-                }
-                break;
-            case BOOT_KLU:
-                listCount = jBootList.count();
-                if (rowCount != listCount) {
-                    insertJournalBootTable(jBootList, rowCount, listCount);
-                }
-                break;
-            case APP:
-                listCount = appList.count();
-                if (rowCount != listCount) {
-                    insertApplicationTable(appList, rowCount, listCount);
-                };
-                break;
-            case KERN:
-                listCount = kList.count();
-                if (rowCount != listCount) {
-                    insertKernTable(kList, rowCount, listCount);
-                }
-                break;
-            case DPKG:
-                listCount = dList.count();
-                if (rowCount != listCount) {
-                    insertDpkgTable(dList, rowCount, listCount);
-                };
-                break;
-            case XORG:
-                listCount = xList.count();
-                if (rowCount != listCount) {
-                    insertXorgTable(xList, rowCount, listCount);
-                }
-                break;
-            case BOOT:
-                listCount = currentBootList.count();
-                if (rowCount != listCount) {
-                    insertBootTable(currentBootList, rowCount, listCount);
-                }
-                break;
-            case Kwin:
-                listCount = m_currentKwinList.count();
-                if (rowCount != listCount) {
-                    insertKwinTable(m_currentKwinList, rowCount, listCount);
-                }
-                break;
-            case Normal:
-                listCount = nortempList.count();
-                if (rowCount != listCount) {
-                    insertNormalTable(nortempList, rowCount, listCount);
-                }
-                break;
-            case Dnf:
-                listCount = dnfList.count();
-                if (rowCount != listCount) {
-                    insertDnfTable(dnfList, rowCount, listCount);
-                }
-                break;
-            case Dmesg:
-                listCount = dmesgList.count();
-                if (rowCount != listCount) {
-                    insertDmesgTable(dmesgList, rowCount, listCount);
-                }
-                break;
-            default:
-                break;
-            }
-            }
-            qDebug() << "tol item count:" << listCount;
-        }
-        updateSort();
-    }
-}
 /**
  * @brief DisplayContent::initConnections 初始化槽函数信号连接
  */
@@ -389,9 +256,8 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         qDebug() << "repeat refrsh journal too fast!";
         QItemSelectionModel *p = m_treeView->selectionModel();
         if (p)
-            p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-        slot_tableItemClicked(m_sortData->index(0, 0));
-        setSortColumn(2);
+            p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+        slot_tableItemClicked(m_pModel->index(0, 0));
         return;
     }
     m_lastJournalGetTime = QDateTime::currentDateTime();
@@ -472,8 +338,8 @@ void DisplayContent::createJournalTableStart(QList<LOG_MSG_JOURNAL> &list)
     insertJournalTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 /**
@@ -493,8 +359,6 @@ void DisplayContent::createJournalTableForm()
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
     m_treeView->setColumnWidth(2, DATETIME_WIDTH);
-    setSortColumn(2);
-    emit m_treeView->header()->sectionClicked(2);
 }
 
 /**
@@ -578,8 +442,8 @@ void DisplayContent::createDpkgTableStart(QList<LOG_MSG_DPKG> &list)
     insertDpkgTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::createDpkgTableForm()
@@ -592,7 +456,6 @@ void DisplayContent::createDpkgTableForm()
                                         << DApplication::translate("Table", "Date and Time")
                                         << DApplication::translate("Table", "Info")
                                         << DApplication::translate("Table", "Action"));
-    setSortColumn(0);
 }
 
 /**
@@ -677,7 +540,6 @@ void DisplayContent::createKernTableForm()
     m_treeView->setColumnWidth(0, DATETIME_WIDTH - 30);
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
-    setSortColumn(0);
 }
 
 /**
@@ -694,8 +556,8 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
     insertKernTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 /**
@@ -851,7 +713,6 @@ void DisplayContent::createAppTableForm()
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
     m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
     m_treeView->setColumnWidth(2, DEAMON_WIDTH);
-    setSortColumn(1);
 }
 
 /**
@@ -866,8 +727,8 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
     insertApplicationTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 /**
@@ -883,8 +744,8 @@ void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
     insertBootTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::generateBootFile()
@@ -908,7 +769,6 @@ void DisplayContent::createXorgTableForm()
                                         << DApplication::translate("Table", "Date and Time")
                                         << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, DATETIME_WIDTH + 20);
-    setSortColumn(0);
 }
 
 /**
@@ -923,8 +783,8 @@ void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
     insertXorgTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 /**
@@ -1013,8 +873,8 @@ void DisplayContent::creatKwinTable(QList<LOG_MSG_KWIN> &list)
     insertKwinTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 /**
@@ -1047,7 +907,6 @@ void DisplayContent::createNormalTableForm()
     m_treeView->setColumnWidth(1, DATETIME_WIDTH);
     m_treeView->setColumnWidth(2, DATETIME_WIDTH);
     m_treeView->setColumnWidth(3, DATETIME_WIDTH);
-    setSortColumn(2);
 }
 
 /**
@@ -1063,8 +922,8 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
     insertNormalTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 /**
@@ -1153,7 +1012,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
         items << item;
         item = new DStandardItem(logList[i].dateTime);
         item->setData(JOUR_TABLE_DATA);
-        item->setData(getTimeFromString(logList[i].dateTime), Qt::UserRole + 2);
+//        item->setData(getTimeFromString(logList[i].dateTime), Qt::UserRole + 2);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
         items << item;
         item = new DStandardItem(logList[i].msg);
@@ -1270,15 +1129,14 @@ void DisplayContent::createJournalBootTableForm()
     m_pModel->clear();
     m_pModel->setHorizontalHeaderLabels(
         QStringList() << DApplication::translate("Table", "Level")
-                      << DApplication::translate("Table", "Process") // modified by Airy
-                      << DApplication::translate("Table", "Date and Time")
-                      << DApplication::translate("Table", "Info")
-                      << DApplication::translate("Table", "User")
-                      << DApplication::translate("Table", "PID"));
+        << DApplication::translate("Table", "Process") // modified by Airy
+        << DApplication::translate("Table", "Date and Time")
+        << DApplication::translate("Table", "Info")
+        << DApplication::translate("Table", "User")
+        << DApplication::translate("Table", "PID"));
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
     m_treeView->setColumnWidth(2, DATETIME_WIDTH);
-    setSortColumn(2);
 }
 
 /**
@@ -1307,7 +1165,6 @@ void DisplayContent::insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int 
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
         items << item;
         item = new DStandardItem(logList[i].dateTime);
-        item->setData(getTimeFromString(logList[i].dateTime), Qt::UserRole + 2);
         item->setData(BOOT_KLU_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
         items << item;
@@ -1330,8 +1187,8 @@ void DisplayContent::insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int 
 
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
     delete item;
 }
 
@@ -1378,8 +1235,8 @@ void DisplayContent::createDnfTable(QList<LOG_MSG_DNF> &list)
     insertDnfTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::generateDmesgFile(BUTTONID iDate, PRIORITY iLevel)
@@ -1425,8 +1282,8 @@ void DisplayContent::createDmesgTable(QList<LOG_MSG_DMESG> &list)
     insertDmesgTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
-        p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
-    slot_tableItemClicked(m_sortData->index(0, 0));
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
 void DisplayContent::createDnfForm()
@@ -1439,7 +1296,6 @@ void DisplayContent::createDnfForm()
     m_treeView->setColumnWidth(DNF_SPACE::dnfLvlColumn, LEVEL_WIDTH);
     m_treeView->setColumnWidth(DNF_SPACE::dnfDateTimeColumn, DATETIME_WIDTH);
     m_treeView->hideColumn(3);
-    setSortColumn(1);
 }
 
 void DisplayContent::createDmesgForm()
@@ -1452,7 +1308,6 @@ void DisplayContent::createDmesgForm()
     m_treeView->setColumnWidth(DMESG_SPACE::dmesgLevelColumn, LEVEL_WIDTH);
     m_treeView->setColumnWidth(DMESG_SPACE::dmesgDateTimeColumn, DATETIME_WIDTH);
     m_treeView->hideColumn(3);
-    setSortColumn(1);
 }
 
 void DisplayContent::insertDmesgTable(QList<LOG_MSG_DMESG> list, int start, int end)
@@ -1491,17 +1346,15 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 {
     qDebug() << QString("Button %1 clicked\n combobox: level is %2, cbxIdx is %3 tree %4 node!!")
-                    .arg(btnId)
-                    .arg(lId)
-                    .arg(lId + 1)
-                    .arg(idx.data(ITEM_DATE_ROLE).toString());
+             .arg(btnId)
+             .arg(lId)
+             .arg(lId + 1)
+             .arg(idx.data(ITEM_DATE_ROLE).toString());
 
     m_detailWgt->cleanText();
 
     m_curLevel = lId; // m_curLevel equal combobox index-1;
     m_curBtnId = btnId;
-    setSortColumn(-1);
-    m_ascendingOrder = false;
 
     QString treeData = idx.data(ITEM_DATE_ROLE).toString();
     if (treeData.isEmpty())
@@ -1882,7 +1735,6 @@ void DisplayContent::slot_dpkgFinished(int index)
         setLoadState(DATA_COMPLETE);
         createDpkgTableStart(dList);
     }
-    updateSort();
 }
 
 void DisplayContent::slot_dpkgData(int index, QList<LOG_MSG_DPKG> list)
@@ -1897,7 +1749,6 @@ void DisplayContent::slot_dpkgData(int index, QList<LOG_MSG_DPKG> list)
         createDpkgTableStart(dList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=dpkg");
-        updateSort();
     }
 }
 
@@ -1913,7 +1764,6 @@ void DisplayContent::slot_XorgFinished(int index)
         setLoadState(DATA_COMPLETE);
         createXorgTable(xList);
     }
-    updateSort();
 }
 
 void DisplayContent::slot_xorgData(int index, QList<LOG_MSG_XORG> list)
@@ -1927,7 +1777,6 @@ void DisplayContent::slot_xorgData(int index, QList<LOG_MSG_XORG> list)
         createXorgTable(xList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=xorg");
-        updateSort();
     }
 }
 
@@ -1943,7 +1792,6 @@ void DisplayContent::slot_bootFinished(int index)
         setLoadState(DATA_COMPLETE);
         createBootTable(currentBootList);
     }
-    updateSort();
 }
 
 void DisplayContent::slot_bootData(int index, QList<LOG_MSG_BOOT> list)
@@ -1959,7 +1807,6 @@ void DisplayContent::slot_bootData(int index, QList<LOG_MSG_BOOT> list)
         createBootTable(currentBootList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=boot");
-        updateSort();
     }
 }
 
@@ -1976,7 +1823,6 @@ void DisplayContent::slot_kernFinished(int index)
         setLoadState(DATA_COMPLETE);
         createKernTable(kList);
     }
-    updateSort();
 }
 
 void DisplayContent::slot_kernData(int index, QList<LOG_MSG_JOURNAL> list)
@@ -1991,7 +1837,6 @@ void DisplayContent::slot_kernData(int index, QList<LOG_MSG_JOURNAL> list)
         createKernTable(kList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=kern");
-        updateSort();
     }
 }
 
@@ -2008,7 +1853,6 @@ void DisplayContent::slot_kwinFinished(int index)
         setLoadState(DATA_COMPLETE);
         creatKwinTable(m_currentKwinList);
     }
-    updateSort();
 }
 
 void DisplayContent::slot_kwinData(int index, QList<LOG_MSG_KWIN> list)
@@ -2021,7 +1865,6 @@ void DisplayContent::slot_kwinData(int index, QList<LOG_MSG_KWIN> list)
         creatKwinTable(m_currentKwinList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=kwin");
-        updateSort();
     }
 }
 
@@ -2034,7 +1877,6 @@ void DisplayContent::slot_journalFinished(int index)
         setLoadState(DATA_COMPLETE);
         createJournalTableStart(jList);
     }
-    updateSort();
 }
 
 void DisplayContent::slot_dnfFinished(QList<LOG_MSG_DNF> list)
@@ -2045,7 +1887,6 @@ void DisplayContent::slot_dnfFinished(QList<LOG_MSG_DNF> list)
     dnfListOrigin = list;
     createDnfTable(dnfList);
     PERF_PRINT_END("POINT-03", "type=dnf");
-    updateSort();
 }
 
 void DisplayContent::slot_dmesgFinished(QList<LOG_MSG_DMESG> list)
@@ -2056,7 +1897,6 @@ void DisplayContent::slot_dmesgFinished(QList<LOG_MSG_DMESG> list)
     dmesgListOrigin = list;
     createDmesgTable(dmesgList);
     PERF_PRINT_END("POINT-03", "type=dmesg");
-    updateSort();
 }
 
 /**
@@ -2077,7 +1917,6 @@ void DisplayContent::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-01", "");
         PERF_PRINT_END("POINT-03", "type=system");
-        updateSort();
     }
 }
 
@@ -2090,7 +1929,6 @@ void DisplayContent::slot_journalBootFinished(int index)
         setLoadState(DATA_COMPLETE);
         createJournalBootTableStart(jBootList);
     }
-    updateSort();
 }
 
 /**
@@ -2109,7 +1947,6 @@ void DisplayContent::slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list
         createJournalBootTableStart(jBootList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=boot_klu");
-        updateSort();
     }
 }
 
@@ -2125,7 +1962,6 @@ void DisplayContent::slot_applicationFinished(int index)
         setLoadState(DATA_COMPLETE);
         createAppTable(appList);
     }
-    updateSort();
 }
 
 void DisplayContent::slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> list)
@@ -2139,7 +1975,6 @@ void DisplayContent::slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> 
         createAppTable(appList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=application");
-        updateSort();
     }
 }
 
@@ -2152,7 +1987,6 @@ void DisplayContent::slot_normalFinished(int index)
         setLoadState(DATA_COMPLETE);
         createNormalTable(nortempList);
     }
-    updateSort();
 }
 
 void DisplayContent::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
@@ -2166,13 +2000,7 @@ void DisplayContent::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
         createNormalTable(nortempList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=on_off");
-        updateSort();
     }
-}
-
-void DisplayContent::slot_normalSort()
-{
-    updateSort();
 }
 
 
@@ -2213,14 +2041,12 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             if (m_limitTag >= rateValue)
                 return;
 
-            if (m_sortData->rowCount() != jList.count()) {
-                int leftCnt = jList.count() - SINGLE_LOAD * rateValue;
-                //如果在页尾部则只加载最后一页的数量,否则加载单页全部数量
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                qDebug() << "rate" << rateValue;
-                //把数据加入model中
-                insertJournalTable(jList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            int leftCnt = jList.count() - SINGLE_LOAD * rateValue;
+            //如果在页尾部则只加载最后一页的数量,否则加载单页全部数量
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            qDebug() << "rate" << rateValue;
+            //把数据加入model中
+            insertJournalTable(jList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
@@ -2231,13 +2057,11 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != jBootList.count()) {
-                int leftCnt = jBootList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            int leftCnt = jBootList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-                qDebug() << "rate" << rateValue;
-                insertJournalBootTable(jBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            qDebug() << "rate" << rateValue;
+            insertJournalBootTable(jBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2246,11 +2070,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != appList.count()) {
-                int leftCnt = appList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertApplicationTable(appList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            int leftCnt = appList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            insertApplicationTable(appList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2259,12 +2081,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != kList.count()) {
-                int leftCnt = kList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            int leftCnt = kList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-                insertKernTable(kList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            insertKernTable(kList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2273,12 +2093,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != dList.count()) {
-                int leftCnt = dList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            int leftCnt = dList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-                insertDpkgTable(dList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            insertDpkgTable(dList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
@@ -2288,11 +2106,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != xList.count()) {
-                int leftCnt = xList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertXorgTable(xList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            int leftCnt = xList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            insertXorgTable(xList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2301,11 +2117,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != currentBootList.count()) {
-                int leftCnt = currentBootList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertBootTable(currentBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            int leftCnt = currentBootList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            insertBootTable(currentBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2314,11 +2128,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != m_currentKwinList.count()) {
-                int leftCnt = m_currentKwinList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertKwinTable(m_currentKwinList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            int leftCnt = m_currentKwinList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            insertKwinTable(m_currentKwinList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2327,11 +2139,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != nortempList.count()) {
-                int leftCnt = nortempList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertNormalTable(nortempList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            int leftCnt = nortempList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            insertNormalTable(nortempList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2340,11 +2150,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != dnfList.count()) {
-                int leftCnt = dnfList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-                insertDnfTable(dnfList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            int leftCnt = dnfList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            insertDnfTable(dnfList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(value);
         }
@@ -2353,12 +2161,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            if (m_sortData->rowCount() != dmesgList.count()) {
-                int leftCnt = dmesgList.count() - SINGLE_LOAD * rateValue;
-                int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+            int leftCnt = dmesgList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-                insertDmesgTable(dmesgList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            }
+            insertDmesgTable(dmesgList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(value);
         }
@@ -2513,7 +2319,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemMo
     for (int i = 0; i < list.size(); i++) {
         items.clear();
         item = new DStandardItem(list[i].dateTime);
-        item->setData(getTimeFromString(iList[i].dateTime), Qt::UserRole + 2);
         item->setData(DPKG_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
         items << item;
@@ -2596,7 +2401,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
         items << item;
         item = new DStandardItem(iList[i].dateTime);
         item->setData(APP_TABLE_DATA);
-        item->setData(getTimeFromString(iList[i].dateTime), Qt::UserRole + 2);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
         items << item;
         item = new DStandardItem(getAppName(m_curAppLog));
@@ -2635,7 +2439,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemMo
         items.clear();
         item = new DStandardItem(iList[i].dateTime);
         item->setData(XORG_TABLE_DATA);
-        item->setData(getTimeFromString(iList[i].dateTime), Qt::UserRole + 2);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
         items << item;
         item = new DStandardItem(iList[i].msg);
@@ -2676,7 +2479,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItem
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
         items << item;
         item = new DStandardItem(iList[i].dateTime);
-        item->setData(getTimeFromString(iList[i].dateTime), Qt::UserRole + 2);
         item->setData(LAST_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
         items << item;
@@ -2745,7 +2547,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemMod
         items << item;
         item = new DStandardItem(iList[i].dateTime);
         item->setData(DNF_TABLE_DATA);
-        item->setData(getTimeFromString(iList[i].dateTime), Qt::UserRole + 2);
         items << item;
         item = new DStandardItem(iList[i].msg);
         item->setData(DNF_TABLE_DATA);
@@ -2781,7 +2582,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemM
         items << item;
         item = new DStandardItem(iList[i].dateTime);
         item->setData(DMESG_TABLE_DATA);
-        item->setData(getTimeFromString(iList[i].dateTime), Qt::UserRole + 2);
         items << item;
         item = new DStandardItem(iList[i].msg);
         item->setData(DMESG_TABLE_DATA);
@@ -3126,7 +2926,6 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardIte
         items.clear();
         item = new DStandardItem(iList[i].dateTime);
         item->setData(KERN_TABLE_DATA);
-        item->setData(getTimeFromString(iList[i].dateTime), Qt::UserRole + 2);
         items << item;
         item = new DStandardItem(iList[i].hostName);
         item->setData(KERN_TABLE_DATA);

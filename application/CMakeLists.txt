@@ -186,7 +186,7 @@ set (APP_CPP_FILES
      DebugTimeManager.cpp
      wtmpparse.cpp
      logdetailedit.cpp
-     viewsortfilter.cpp
+#     viewsortfilter.cpp
      logallexportthread.cpp
     )
 set (APP_QRC_FILES
@@ -219,7 +219,7 @@ set (APP_HEADERS_FILES
     model/log_sort_filter_proxy_model.h
     dbusproxy/dldbusinterface.h
     dbusproxy/dldbushandler.h
-    viewsortfilter.h
+#    viewsortfilter.h
     logallexportthread.h
     )
 

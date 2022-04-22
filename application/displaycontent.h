@@ -41,7 +41,6 @@
 #include <QDateTime>
 
 class ExportProgressDlg;
-class ViewSortfilter;
 /**
  * @brief The DisplayContent class 主显示数据区域控件,包括数据表格和详情页
  */
@@ -62,12 +61,6 @@ public:
     explicit DisplayContent(QWidget *parent = nullptr);
     ~DisplayContent();
     LogTreeView *mainLogTableView();
-
-    /**
-     * @brief setSortState 点击刷新和自动刷新时设置排序为默认排序的状态
-     * @param value
-     */
-    void setSortState(bool value);
 
 private:
     void initUI();
@@ -181,11 +174,6 @@ public slots:
     void slot_normalFinished(int index);
     void slot_normalData(int index, QList<LOG_MSG_NORMAL> list);
 
-    /**
-     * @brief slot_normalSort 切换选项时恢复默认排序
-     */
-    void slot_normalSort();
-
     void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
 
@@ -193,7 +181,6 @@ public slots:
     void slot_getLogtype(int tcbx); // add by Airy
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
     void slot_dnfLevel(DNFPRIORITY iLevel);
-    void slot_viewHeadClicked(int index);
     //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
     void parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel);
@@ -224,9 +211,6 @@ public slots:
 
 private:
     void resizeEvent(QResizeEvent *event);
-    void setSortColumn(int column);
-    void updateSort();
-    QDateTime getTimeFromString(const QString &time);
 
 private:
     /**
@@ -394,10 +378,6 @@ private:
     bool m_isDataLoadComplete {false};
     //筛选条件
     QString selectFilter;
-    //排序列
-    int m_sortColumn {-1};
-    ViewSortfilter *m_sortData {nullptr};
-    bool m_ascendingOrder {false};
 };
 
 #endif // DISPLAYCONTENT_H

@@ -111,12 +111,14 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     forground.setColor(palette.color(cg, DPalette::Text));
     // 绘制文字
     QRect textRect;
-    if (logicalIndex == m_sortColumn) {
+    if (logicalIndex == sortIndicatorSection()) {
         textRect = {contentRect.x() + margin, contentRect.y(), contentRect.width() - margin * 3 - 8,
-                    contentRect.height()};
+                    contentRect.height()
+                   };
     } else {
         textRect = {contentRect.x() + margin, contentRect.y(), contentRect.width() - margin,
-                    contentRect.height()};
+                    contentRect.height()
+                   };
     }
     if (!model()) {
         return;
@@ -133,12 +135,12 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     } else {
         painter->drawText(textRect, static_cast<int>(align), title);
     }
-    if (logicalIndex == m_sortColumn) {
+    if (isSortIndicatorShown() && logicalIndex == sortIndicatorSection()) {
         // 绘制排序的箭头图标（8×5）
         QRect sortIndicator(textRect.x() + textRect.width() + margin,
                             textRect.y() + (textRect.height() - 5) / 2, 8, 10);
         m_option->rect = sortIndicator;
-        if (m_sortOrder == Qt::DescendingOrder) {
+        if (sortIndicatorOrder() == Qt::DescendingOrder) {
             style->drawPrimitive(DStyle::PE_IndicatorArrowDown, m_option, painter, this);
         } else if (sortIndicatorOrder() == Qt::AscendingOrder) {
             style->drawPrimitive(DStyle::PE_IndicatorArrowUp, m_option, painter, this);
@@ -225,7 +227,7 @@ int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
         return -1;
     }
     QString buf = model()->headerData(logicalIndex, Qt::Horizontal, Qt::DisplayRole).toString();
-    if (m_sortColumn == logicalIndex) {
+    if (sortIndicatorSection() == logicalIndex) {
         return fm.width(buf) + margin * 3 + 8;
     } else {
         return fm.width(buf) + margin * 2;
