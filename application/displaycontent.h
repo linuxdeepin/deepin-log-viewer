@@ -181,6 +181,11 @@ public slots:
     void slot_normalFinished(int index);
     void slot_normalData(int index, QList<LOG_MSG_NORMAL> list);
 
+    /**
+     * @brief slot_normalSort 切换选项时恢复默认排序
+     */
+    void slot_normalSort();
+
     void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
 

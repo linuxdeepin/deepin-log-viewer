@@ -391,6 +391,7 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         if (p)
             p->select(m_sortData->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
         slot_tableItemClicked(m_sortData->index(0, 0));
+        setSortColumn(2);
         return;
     }
     m_lastJournalGetTime = QDateTime::currentDateTime();
@@ -2168,6 +2169,12 @@ void DisplayContent::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
         updateSort();
     }
 }
+
+void DisplayContent::slot_normalSort()
+{
+    updateSort();
+}
+
 
 /**
  * @brief DisplayContent::slot_logLoadFailed 数据获取失败槽函数，显示错误提示框

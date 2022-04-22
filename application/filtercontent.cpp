@@ -609,7 +609,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     if (itemData.isEmpty()) {
         return;
     }
-
+    setLeftButtonState(true);
     m_curTreeIndex = index;
     //根据日志种类改变布局
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
@@ -672,6 +672,7 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
     if (itemData.isEmpty()) {
         return;
     }
+    setLeftButtonState(true);
     //现在只需处理应用日志刷新时需要刷新应用选择下拉列表的数据
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         //记录当前选择项目以便改变combox内容后可以选择原来的选项刷新
@@ -748,6 +749,7 @@ void FilterContent::slot_exportButtonClicked()
  */
 void FilterContent::slot_cbxLvIdxChanged(int idx)
 {
+    setChangedcomboxstate(true);
     m_curLvCbxId = idx - 1;
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.levelCbx = idx;
@@ -763,6 +765,7 @@ void FilterContent::slot_cbxLvIdxChanged(int idx)
  */
 void FilterContent::slot_cbxAppIdxChanged(int idx)
 {
+    setChangedcomboxstate(!getLeftButtonState());
     QString path = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     qDebug() << "apppath" << path;
@@ -779,6 +782,7 @@ void FilterContent::slot_cbxAppIdxChanged(int idx)
  */
 void FilterContent::slot_cbxStatusChanged(int idx)
 {
+    setChangedcomboxstate(!getLeftButtonState());
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.statusCbx = idx;
     //变化时改变记录选择选项的数据结构,以便下次还原
@@ -798,6 +802,7 @@ void FilterContent::slot_cbxStatusChanged(int idx)
  */
 void FilterContent::slot_cbxLogTypeChanged(int idx)
 {
+    setChangedcomboxstate(true);
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.typeCbx = idx;
     setCurrentConfig(curConfig);
@@ -823,8 +828,29 @@ void FilterContent::setExportButtonEnable(bool iEnable)
 void FilterContent::slot_cbxDnfLvIdxChanged(int idx)
 {
     Q_UNUSED(idx)
+    setChangedcomboxstate(!getLeftButtonState());
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.dnfCbx = idx;
     setCurrentConfig(curConfig);
     emit sigDnfLvlChanged(cbx_dnf_lv->currentData().value<DNFPRIORITY>());
+}
+
+bool FilterContent::getLeftButtonState()
+{
+    return m_bIsClickLeftlistButton;
+}
+
+bool FilterContent::getChangedcomboxstate()
+{
+    return m_bIsCombox;
+}
+
+void FilterContent::setLeftButtonState(bool value)
+{
+    m_bIsClickLeftlistButton = value;
+}
+
+void FilterContent::setChangedcomboxstate(bool value)
+{
+    m_bIsCombox = value;
 }

@@ -226,7 +226,10 @@ void LogCollectorMain::initTitlebarExtensions()
     layout->addWidget(m_refreshBtn);
     titlebar()->addWidget(widget, Qt::AlignLeft);
     connect(m_refreshBtn, &QPushButton::clicked, this, [ = ] {
+        //设置排序等相关状态
         m_midRightWgt->setSortState(false);
+        m_topRightWgt->setLeftButtonState(true);
+        m_topRightWgt->setChangedcomboxstate(false);
         emit m_logCatelogue->sigRefresh(m_logCatelogue->currentIndex());
     });
     connect(m_exportAllBtn, &QPushButton::clicked, this, &LogCollectorMain::exportAllLogs);
@@ -257,9 +260,12 @@ void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
     if (timeInterval > 0) {
         if (nullptr == m_refreshTimer) {
             m_refreshTimer = new QTimer(this);
-            connect(m_refreshTimer, &QTimer::timeout, this, [=] {
-                //触发刷新信号
+            connect(m_refreshTimer, &QTimer::timeout, this, [ = ] {
+                //设置排序等相关状态
                 m_midRightWgt->setSortState(false);
+                m_topRightWgt->setLeftButtonState(true);
+                m_topRightWgt->setChangedcomboxstate(false);
+                //触发刷新信号
                 emit m_logCatelogue->sigRefresh(m_logCatelogue->currentIndex());
             });
         }
@@ -386,12 +392,20 @@ void LogCollectorMain::initConnection()
     connect(m_topRightWgt, &FilterContent::sigStatusChanged, this, &LogCollectorMain::slotClearInfoandFocus);
     //开关机日志下拉框选项切换清空搜索栏
     connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, this, &LogCollectorMain::slotClearInfoandFocus);
+
+    //日志开关机下来选项切换时需要单独设置默认排序
+    connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, m_midRightWgt, &DisplayContent::slot_normalSort);
 }
 
 void LogCollectorMain::slotClearInfoandFocus()
 {
     m_searchEdt->clearEdit();
-    titlebar()->setFocus();
+    m_midRightWgt->setSortState(false);
+    if (!m_topRightWgt->getChangedcomboxstate() && m_topRightWgt->getLeftButtonState()) {
+        m_topRightWgt->setLeftButtonState(false);
+    } else if (m_topRightWgt->getChangedcomboxstate()) {
+        titlebar()->setFocus();
+    }
 }
 
 /**
