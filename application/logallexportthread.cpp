@@ -38,8 +38,8 @@ void LogAllExportThread::run()
         return;
     }
 
-    static QStringList files;
-    static QStringList commands;
+    QStringList files;
+    QStringList commands;
 
     if (files.isEmpty() && commands.isEmpty()) {
         //获取所有文件
