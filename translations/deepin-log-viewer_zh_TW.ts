@@ -132,7 +132,7 @@
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation>正在導出...</translation>
+        <translation>正在匯出...</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -405,7 +405,7 @@
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation>刷新頻率</translation>
+        <translation>重新整理頻率</translation>
     </message>
     <message>
         <source>10 sec</source>
@@ -421,11 +421,11 @@
     </message>
     <message>
         <source>No refresh</source>
-        <translation>不刷新</translation>
+        <translation>不重新整理</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation>全部導出</translation>
+        <translation>全部匯出</translation>
     </message>
     <message>
         <source>System Logs</source>
@@ -433,7 +433,7 @@
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation>立即刷新</translation>
+        <translation>立即重新整理</translation>
     </message>
 </context>
 </TS>

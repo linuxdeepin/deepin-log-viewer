@@ -401,4 +401,39 @@
         <translation>dnf-Protokoll</translation>
     </message>
 </context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Auffrischungsintervall</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 Sek.</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 Min.</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation>5 Min.</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Kein auffrischen</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Alles exportieren</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Systemprotokolle</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>Jetzt auffrischen</translation>
+    </message>
+</context>
 </TS>
