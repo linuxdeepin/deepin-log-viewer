@@ -263,6 +263,7 @@ void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
                 m_topRightWgt->setChangedcomboxstate(false);
                 //触发刷新信号
                 emit m_logCatelogue->sigRefresh(m_logCatelogue->currentIndex());
+                m_logCatelogue->setFocus();
             });
         }
         m_refreshTimer->start(timeInterval);
