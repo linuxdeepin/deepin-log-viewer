@@ -193,7 +193,7 @@ Click the "Refresh Now" button ![icon](../common/refresh.svg) on the title bar, 
 
 ## Main Menu
 
-In the main menu, you can switch themes, view help manual, and so on.
+In the main menu, you can [set refresh intervals](#Auto Refresh), switch themes, view help manual, and so on.
 
 ### Theme
 
