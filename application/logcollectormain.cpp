@@ -397,7 +397,7 @@ void LogCollectorMain::slotClearInfoandFocus()
     if (!m_topRightWgt->getChangedcomboxstate() && m_topRightWgt->getLeftButtonState()) {
         m_topRightWgt->setLeftButtonState(false);
     } else if (m_topRightWgt->getChangedcomboxstate()) {
-        titlebar()->setFocus();
+        m_logCatelogue->setFocus();
     }
 }
 
