@@ -50,6 +50,11 @@ private:
     QProcess m_process;
     QString tmpDirPath;
     QMap<QString, QString> m_commands;
+    /**
+     * @brief isValidInvoker 检验调研者是否是日志
+     * @return
+     */
+    bool isValidInvoker();
 };
 
 #endif // LOGVIEWERSERVICE_H
