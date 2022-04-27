@@ -21,9 +21,14 @@
 
 #include "logviewerservice.h"
 
+#include <QStringList>
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusConnectionInterface>
 #include <QCoreApplication>
 #include <QDebug>
-
+#include <unistd.h>
+const QStringList ValidInvokerExePathList1 = {"/usr/bin/deepin-log-viewer"};
 LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
 {
@@ -37,8 +42,8 @@ LogViewerService::LogViewerService(QObject *parent)
 QString LogViewerService::readLog(const QString &filePath)
 {
     //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
-    if ((!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp") && !filePath.startsWith("/home")) || filePath.contains(".."))
-        return  " ";
+    if ((!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp") && !filePath.startsWith("/home")) || filePath.contains("..") || !isValidInvoker())
+        return " ";
 
     m_process.start("cat", QStringList() << filePath);
     m_process.waitForFinished(-1);
@@ -122,4 +127,35 @@ QStringList LogViewerService::getFileInfo(const QString &file)
     }
     //       qInfo()<<fileNamePath.count()<<fileNamePath<<"******************************";
     return fileNamePath;
+}
+
+bool LogViewerService::isValidInvoker()
+{
+    bool valid = false;
+    QDBusConnection conn = connection();
+    QDBusMessage msg = message();
+
+    //判断是否存在执行路径
+    uint pid = conn.interface()->servicePid(msg.service()).value();
+    QFileInfo f(QString("/proc/%1/exe").arg(pid));
+    if (!f.exists()) {
+        valid = false;
+    } else {
+        valid = true;
+    }
+
+    //是否存在于可调用者名单中
+    QString invokerPath = f.canonicalFilePath();
+    if (valid)
+        valid = ValidInvokerExePathList1.contains(invokerPath);
+
+    //非法调用
+    if (!valid) {
+        sendErrorReply(QDBusError::ErrorType::Failed,
+                       QString("(pid: %1)[%2] is not allowed to configrate firewall")
+                       .arg(pid)
+                       .arg((invokerPath)));
+        return false;
+    }
+    return true;
 }

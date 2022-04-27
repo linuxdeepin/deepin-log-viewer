@@ -45,6 +45,11 @@ public Q_SLOTS:
     Q_SCRIPTABLE QStringList getFileInfo(const QString &file);
 
 private:
+    /**
+     * @brief isValidInvoker 检验调用者进程
+     * @return
+     */
+    bool isValidInvoker();
     QTemporaryDir tmpDir;
     QProcess m_process;
     QString tmpDirPath;
