@@ -184,7 +184,8 @@ void LogCollectorMain::initUI()
 
 void LogCollectorMain::initTitlebarExtensions()
 {
-    DMenu *menu = new DMenu(DApplication::translate("titlebar", "Refresh interval"), titlebar());
+    DMenu *refreshMenu = new DMenu(this);
+    DMenu *menu = new DMenu(DApplication::translate("titlebar", "Refresh interval"), refreshMenu);
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "10 sec")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "1 min")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "5 min")));
@@ -198,7 +199,8 @@ void LogCollectorMain::initTitlebarExtensions()
 
     QObject::connect(group, &QActionGroup::triggered,
                      this, &LogCollectorMain::switchRefreshActionTriggered);
-    titlebar()->menu()->addMenu(menu);
+    refreshMenu->addMenu(menu);
+    titlebar()->setMenu(refreshMenu);
     //获取配置
     initSettings();
     //设置刷新频率
@@ -315,10 +317,10 @@ void LogCollectorMain::exportAllLogs()
     bool exportcomplete = false;
     LogAllExportThread *thread = new LogAllExportThread(m_logCatelogue->getLogTypes(), newPath);
     thread->setAutoDelete(true);
-    connect(thread, &LogAllExportThread::updateTolProcess, this, [=](int tol) {
+    connect(thread, &LogAllExportThread::updateTolProcess, this, [ = ](int tol) {
         m_exportDlg->setProgressBarRange(0, tol);
     });
-    connect(thread, &LogAllExportThread::updatecurrentProcess, this, [=](int cur) {
+    connect(thread, &LogAllExportThread::updatecurrentProcess, this, [ = ](int cur) {
         m_exportDlg->updateProgressBarValue(cur);
     });
     connect(thread, &LogAllExportThread::exportFinsh, this, [&exportcomplete, this](bool ret) {
@@ -414,9 +416,11 @@ void LogCollectorMain::initShortCut()
         m_scWndReize->setAutoRepeat(false);
 
         connect(m_scWndReize, &QShortcut::activated, this, [this] {
-            if (this->windowState() & Qt::WindowMaximized) {
+            if (this->windowState() & Qt::WindowMaximized)
+            {
                 this->showNormal();
-            } else if (this->windowState() == Qt::WindowNoState) {
+            } else if (this->windowState() == Qt::WindowNoState)
+            {
                 this->showMaximized();
             }
         });
