@@ -39,9 +39,10 @@ void Log_beginPointLinux(const QString &point, const QString &status)
     Q_UNUSED(status);
 }
 
-void LogCollectorMain_QThreadPool_start()
+void LogCollectorMain_QThreadPool_start(QRunnable *runnable, int priority = 0)
 {
-
+    Q_UNUSED(runnable);
+    Q_UNUSED(priority);
 }
 
 static bool LogCollectorMain_checkAuthorization_false(const QString &actionId, qint64 applicationPid)
@@ -374,7 +375,8 @@ TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_002)
     ASSERT_TRUE(p);
     stub.set(ADDR(Utils, checkAuthorization), LogCollectorMain_checkAuthorization_true);
     stub.set(ADDR(QFileDialog, getSaveFileName), LogCollectorMain_QString);
-    stub.set(ADDR(QThreadPool, start), LogCollectorMain_QThreadPool_start);
+//    stub.set(ADDR(QThreadPool, start), LogCollectorMain_QThreadPool_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), LogCollectorMain_QThreadPool_start);
 
     typedef  int (*fptr2)(DDialog *);
     fptr2 test1 = (fptr2)(&DDialog::exec);
