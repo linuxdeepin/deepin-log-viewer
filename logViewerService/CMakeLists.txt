@@ -4,7 +4,7 @@ if (NOT DEFINED VERSION)
     set(VERSION 1.2.2)
 endif ()
 #这里项目名称绝对不能和编译出的target名称一样
-project(logViewerService)
+project(log-view-service)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
