@@ -83,6 +83,9 @@ popd
 
 
 %changelog
+* Mon May 16 2022 liuxinping <liuxinping@uniontech.com> - 5.8.34-1
+- fixed security vulnerabilities
+
 * Mon Apr 19 2021 zhangdingwen <zhangdingwen@uniontech.com> - 5.9.1.1-1
 - init spec for euler
 
