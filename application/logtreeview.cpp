@@ -37,10 +37,10 @@
 #include <QScrollBar>
 #include <QKeyEvent>
 #include <QScroller>
-#include <private/qflickgesture_p.h>
+//#include <private/qflickgesture_p.h>
 #include <QEasingCurve>
-#include <private/qguiapplication_p.h>
-#include <qpa/qplatformtheme.h>
+//#include <private/qguiapplication_p.h>
+//#include <qpa/qplatformtheme.h>
 #include <QTouchEvent>
 #include <QPainterPath>
 DWIDGET_USE_NAMESPACE
@@ -57,7 +57,7 @@ LogTreeView::LogTreeView(QWidget *parent)
         }
     });
     this->setAttribute(Qt::WA_AcceptTouchEvents);
-    touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
+//    touchTapDistance = QGuiApplicationPrivate::platformTheme()->themeHint(QPlatformTheme::TouchDoubleTapDistance).toInt();
 }
 
 int LogTreeView::singleRowHeight()

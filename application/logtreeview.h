@@ -53,7 +53,7 @@ private:
     // QPlatformTheme::TouchDoubleTapDistance 的值时认为触发触屏滚动
     QPoint lastTouchBeginPos;
     QModelIndex mouseLastPressedIndex;
-    int touchTapDistance = -1;
+//    int touchTapDistance = -1;
     bool m_isPressed = false;
     QPointF m_lastTouchBeginPos;
     QTime m_lastTouchTime;
