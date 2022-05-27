@@ -662,6 +662,7 @@ void LogAuthThread::handleNormal()
         }
     }
     QString a_name = "root";
+    QLocale locale = QLocale::English;
     foreach (utmp value, normalList) {
         QString strtmp = value.ut_name;
         if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS||value.ut_time <=0) { // clear the runlevel
@@ -685,16 +686,22 @@ void LogAuthThread::handleNormal()
         }
 
         QString end_str;
+        QString strFormat = "ddd MMM dd hh:mm:ss yyyy";
         if (deadList.length() > 0 && ret != -1)
-            end_str = show_end_time(nodeUTMP.ut_time);
+//            end_str = show_end_time(nodeUTMP.ut_time);
+            //修改时间格式转换方法，采用QDateTime 转换
+            end_str = locale.toString(QDateTime::fromTime_t(static_cast<uint>(nodeUTMP.ut_time)), strFormat);
         else if (ret == -1 && value.ut_type == USER_PROCESS)
             end_str = "still logged in";
         else if (ret == -1 && value.ut_type == BOOT_TIME)
             end_str = "system boot";
-        QString start_str = show_start_time(value.ut_time);
+
+//        QString start_str = show_start_time(value.ut_time);
+        //修改时间格式转换方法，采用QDateTime 转换
+        QString start_str = locale.toString(QDateTime::fromTime_t(static_cast<uint>(value.ut_time)), strFormat);
         QString n_time = QDateTime::fromTime_t(static_cast<uint>(value.ut_time)).toString("yyyy-MM-dd hh:mm:ss");
-        end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
-        start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
+//        end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
+//        start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
         Nmsg.dateTime = n_time;
         QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
         if (m_normalFilters.timeFilterEnd > 0 && m_normalFilters.timeFilterBegin > 0) {
