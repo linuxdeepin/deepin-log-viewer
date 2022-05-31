@@ -31,6 +31,7 @@
 #include <DSplitter>
 #include <DTreeView>
 #include <DSettings>
+#include <qsettingbackend.h>
 
 #include <QHBoxLayout>
 #include <QShortcut>
@@ -110,6 +111,8 @@ private:
     DIconButton *m_refreshBtn {nullptr};
     DIconButton *m_exportAllBtn {nullptr};
     ExportProgressDlg *m_exportDlg {nullptr};
+
+    QSettingBackend  *m_backend {nullptr};
 };
 
 #endif // LOGCOLLECTORMAIN_H

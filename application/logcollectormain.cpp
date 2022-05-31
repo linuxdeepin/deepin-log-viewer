@@ -26,8 +26,6 @@
 #include "logallexportthread.h"
 #include "exportprogressdlg.h"
 
-#include <qsettingbackend.h>
-
 #include <DApplication>
 #include <DTitlebar>
 #include <DWindowOptionButton>
@@ -81,6 +79,11 @@ LogCollectorMain::~LogCollectorMain()
     if (m_searchEdt) {
         delete m_searchEdt;
         m_searchEdt = nullptr;
+    }
+
+    if (m_backend) {
+        delete m_backend;
+        m_backend = nullptr;
     }
     //如果窗体状态不是最大最小状态，则记录此时窗口尺寸到配置文件里，方便下次打开时恢复大小
     if (windowState() == Qt::WindowNoState) {
@@ -285,8 +288,8 @@ void LogCollectorMain::initSettings()
     if (!dir.exists()) {
         Utils::mkMutiDir(configpath);
     };
-    auto backend = new QSettingBackend(dir.filePath("config.conf"), m_settings);
-    m_settings->setBackend(backend);
+    m_backend = new QSettingBackend(dir.filePath("config.conf"), m_settings);
+    m_settings->setBackend(m_backend);
 }
 
 void LogCollectorMain::exportAllLogs()
