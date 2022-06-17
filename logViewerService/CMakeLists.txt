@@ -25,7 +25,11 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
 set(APP_RES_DIR "assets")
 set(APP_SERVICE "${APP_RES_DIR}/data/com.deepin.logviewer.service")
 set(APP_CONFIG "${APP_RES_DIR}/data/com.deepin.logviewer.conf")
-
+#安全测试加固编译参数
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
 # Find the library
 find_package(PkgConfig REQUIRED)
 find_package(DtkGui REQUIRED)

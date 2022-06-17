@@ -6,6 +6,7 @@ endif ()
 
 project(logViewerTruncate)
 set (EXE_NAME logViewerTruncate)
+
 set(LINK_LIBS
     Qt5::Core
 )

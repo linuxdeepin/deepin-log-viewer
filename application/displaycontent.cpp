@@ -1493,6 +1493,7 @@ void DisplayContent::slot_exportClicked()
         fileName.append(".").append(selectSuffix);
     }
 
+
     m_exportDlg->show();
     QStringList labels;
     for (int col = 0; col < m_pModel->columnCount(); ++col) {
