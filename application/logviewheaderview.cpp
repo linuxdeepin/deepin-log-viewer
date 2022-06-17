@@ -37,12 +37,21 @@ static const int kSpacingMargin = 4;
 LogViewHeaderView::LogViewHeaderView(Qt::Orientation orientation, QWidget *parent)
     : DHeaderView(orientation, parent)
 {
+    m_option = new QStyleOptionHeader;
     viewport()->setAutoFillBackground(false);
     setStretchLastSection(true);
     setSectionResizeMode(QHeaderView::Interactive);
     setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     setFixedHeight(37);
     setFocusPolicy(Qt::NoFocus);
+}
+
+LogViewHeaderView::~LogViewHeaderView()
+{
+    if (m_option != nullptr) {
+        delete m_option;
+        m_option = nullptr;
+    }
 }
 /**
  * @brief LogViewHeaderView::paintSection 绘制表头
@@ -73,9 +82,8 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
 
     DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
 
-    QStyleOptionHeader option;
-    initStyleOption(&option);
-    int margin = style->pixelMetric(DStyle::PM_ContentsMargins, &option);
+    initStyleOption(m_option);
+    int margin = style->pixelMetric(DStyle::PM_ContentsMargins, m_option);
 
     // title
     QRect contentRect(rect.x(), rect.y(), rect.width(), rect.height() - m_spacing);
@@ -103,7 +111,7 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     forground.setColor(palette.color(cg, DPalette::Text));
     // 绘制文字
     QRect textRect;
-    if (sortIndicatorSection() == logicalIndex) {
+    if (logicalIndex == sortIndicatorSection()) {
         textRect = {contentRect.x() + margin, contentRect.y(), contentRect.width() - margin * 3 - 8,
                     contentRect.height()
                    };
@@ -127,16 +135,15 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     } else {
         painter->drawText(textRect, static_cast<int>(align), title);
     }
-
     if (isSortIndicatorShown() && logicalIndex == sortIndicatorSection()) {
         // 绘制排序的箭头图标（8×5）
         QRect sortIndicator(textRect.x() + textRect.width() + margin,
-                            textRect.y() + (textRect.height() - 5) / 2, 8, 5);
-        option.rect = sortIndicator;
+                            textRect.y() + (textRect.height() - 5) / 2, 8, 10);
+        m_option->rect = sortIndicator;
         if (sortIndicatorOrder() == Qt::DescendingOrder) {
-            style->drawPrimitive(DStyle::PE_IndicatorArrowDown, &option, painter, this);
+            style->drawPrimitive(DStyle::PE_IndicatorArrowDown, m_option, painter, this);
         } else if (sortIndicatorOrder() == Qt::AscendingOrder) {
-            style->drawPrimitive(DStyle::PE_IndicatorArrowUp, &option, painter, this);
+            style->drawPrimitive(DStyle::PE_IndicatorArrowUp, m_option, painter, this);
         }
     }
     painter->restore();
@@ -147,6 +154,7 @@ void LogViewHeaderView::focusInEvent(QFocusEvent *event)
     m_reson = event->reason();
     DHeaderView::focusInEvent(event);
 }
+
 /**
  * @brief LogViewHeaderView::paintEvent 在paintEvent里绘制背景
  * @param event
@@ -196,7 +204,6 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
         o.rect = style->visualRect(layoutDirection(), rect, focusRect);
         style->drawPrimitive(DStyle::PE_FrameFocusRect, &o, &painter);
     }
-
 }
 
 QSize LogViewHeaderView::sizeHint() const

@@ -34,6 +34,7 @@
 #include <time.h>
 #include <utmp.h>
 #include <utmpx.h>
+#include <algorithm>
 
 DGUI_USE_NAMESPACE
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
@@ -48,7 +49,6 @@ LogAuthThread::LogAuthThread(QObject *parent)
     :  QObject(parent)
     , QRunnable()
     , m_type(NONE)
-
 {
     //使用线程池启动该线程，跑完自己删自己
     setAutoDelete(true);
@@ -122,8 +122,7 @@ void LogAuthThread::stopProccess()
     SharedMemoryManager::instance()->setRunnableTag(shareInfo);
     if (m_process) {
         m_process->kill();
-
-    }
+   }
 }
 
 void LogAuthThread::setFilePath(const QStringList &filePath)
@@ -637,76 +636,80 @@ void LogAuthThread::handleDkpg()
 
 void LogAuthThread::handleNormal()
 {
-    qDebug() << "ogAuthThread::handleNormal()";
+    qDebug() << "logAuthThread::handleNormal()";
     if (!m_canRun) {
         emit normalFinished(m_threadCount);
         return;
     }
 
-    int ret = -2;
     struct utmp *utbufp;
-
     if (wtmp_open(QString(WTMP_FILE).toLatin1().data()) == -1) {
         printf("open WTMP_FILE file error\n");
         return;  // exit(1) will exit this application
     }
-    QList<utmp > normalList;
-    QList<utmp > deadList;
+
+    NormalInfoTime();
+
+    if (!m_canRun) {
+        return;
+    }
+
+    int count1 = 0;
+    QString a_name = "root";
+    QLocale locale = QLocale::English;
     QList<LOG_MSG_NORMAL> nList;
     while ((utbufp = wtmp_next()) != (static_cast<struct utmp *>(nullptr))) {
-        utmp value_ = *utbufp;
-        if (utbufp->ut_type != DEAD_PROCESS) {
-            normalList.append(value_);
-        } else {
-            deadList.append(value_);
+        if (!m_canRun) {
+            return;
         }
-    }
-    QString a_name = "root";
-    foreach (utmp value, normalList) {
-        QString strtmp = value.ut_name;
-        if (strtmp.compare("runlevel") == 0 || (value.ut_type == RUN_LVL && strtmp != "shutdown") || value.ut_type == INIT_PROCESS) { // clear the runlevel
-            continue;
-        }
-        struct utmp nodeUTMP   = list_get_ele_and_del(deadList, value.ut_line, ret);
-        LOG_MSG_NORMAL Nmsg;
-        if (value.ut_type == USER_PROCESS) {
-            Nmsg.eventType = "Login";
-            Nmsg.userName = value.ut_name;
-            a_name = Nmsg.userName;
-        } else {
-            Nmsg.eventType = value.ut_name;
-            if (strtmp.compare("reboot") == 0) {
-                Nmsg.eventType = "Boot";
-            }
-            Nmsg.userName = a_name;
-        }
-        if(Nmsg.eventType.compare("Login",Qt::CaseInsensitive)==0){
-           Nmsg.eventType="Login";
-        }
-
-        QString end_str;
-        if (deadList.length() > 0 && ret != -1)
-            end_str = show_end_time(nodeUTMP.ut_time);
-        else if (ret == -1 && value.ut_type == USER_PROCESS)
-            end_str = "still logged in";
-        else if (ret == -1 && value.ut_type == BOOT_TIME)
-            end_str = "system boot";
-        QString start_str = show_start_time(value.ut_time);
-        QString n_time = QDateTime::fromTime_t(static_cast<uint>(value.ut_time)).toString("yyyy-MM-dd hh:mm:ss");
-        end_str = end_str.remove(QChar('\n'), Qt::CaseInsensitive);
-        start_str = start_str.remove(QChar('\n'), Qt::CaseInsensitive);
-        Nmsg.dateTime = n_time;
-        QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
-        if (m_normalFilters.timeFilterEnd > 0 && m_normalFilters.timeFilterBegin > 0) {
-            if (nn_time.toMSecsSinceEpoch() < m_normalFilters.timeFilterBegin || nn_time.toMSecsSinceEpoch() > m_normalFilters.timeFilterEnd) { // add by Airy
+        if (utbufp->ut_type == RUN_LVL || utbufp->ut_type == BOOT_TIME || utbufp->ut_type == USER_PROCESS) {
+            QString strtmp = utbufp->ut_name;
+            if (strtmp.compare("runlevel") == 0 || (utbufp->ut_type == RUN_LVL && strtmp != "shutdown") || utbufp->ut_type == INIT_PROCESS || utbufp->ut_time <= 0) { // clear the runlevel
                 continue;
             }
+
+            LOG_MSG_NORMAL Nmsg;
+            if (utbufp->ut_type == USER_PROCESS) {
+                Nmsg.eventType = "Login";
+                Nmsg.userName = utbufp->ut_name;
+                a_name = Nmsg.userName;
+            } else {
+                Nmsg.eventType = utbufp->ut_name;
+                if (strtmp.compare("reboot") == 0) {
+                    Nmsg.eventType = "Boot";
+                }
+                Nmsg.userName = a_name;
+            }
+            if (Nmsg.eventType.compare("Login", Qt::CaseInsensitive) == 0) {
+                Nmsg.eventType = "Login";
+            }
+
+            QString end_str;
+            QString strFormat = "ddd MMM dd hh:mm";
+
+            //修改时间格式转换方法，采用QDateTime 转换
+            QString start_str = locale.toString(QDateTime::fromTime_t(static_cast<uint>(utbufp->ut_time)), strFormat);
+            //截止时间解析
+            if (Nmsg.eventType == "Login" || Nmsg.eventType == "Boot") {
+                if (count1 <= TimeList.length() - 1) {
+                    Nmsg.msg = TimeList[count1];
+                    count1++;
+                }
+            } else {
+                Nmsg.msg = start_str + "  -  " + end_str;
+            }
+
+            QString n_time = QDateTime::fromTime_t(static_cast<uint>(utbufp->ut_time)).toString("yyyy-MM-dd hh:mm:ss");
+            Nmsg.dateTime = n_time;
+            QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
+            if (m_normalFilters.timeFilterEnd > 0 && m_normalFilters.timeFilterBegin > 0) {
+                if (nn_time.toMSecsSinceEpoch() < m_normalFilters.timeFilterBegin || nn_time.toMSecsSinceEpoch() > m_normalFilters.timeFilterEnd) { // add by Airy
+                    continue;
+                }
+            }
+            //last -f /var/log/wtmp
+            nList.insert(0, Nmsg);
         }
-
-        Nmsg.msg = start_str + "  ~  " + end_str;
-        printf("\n");
-        nList.insert(0, Nmsg);
-
     }
     wtmp_close();
 
@@ -716,61 +719,116 @@ void LogAuthThread::handleNormal()
     emit normalFinished(m_threadCount);
 }
 
+void LogAuthThread::NormalInfoTime()
+{
+    if (!m_canRun) {
+        return;
+    }
+    initProccess();
+
+    if (!m_canRun) {
+        return;
+    }
+    //共享内存对应变量置true，允许进程内部逻辑运行
+    ShareMemoryInfo shareInfo;
+    shareInfo.isStart = true;
+    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+    m_process->setProcessChannelMode(QProcess::MergedChannels);
+    m_process->start("last -f /var/log/wtmp");
+    m_process->waitForFinished(-1);
+    QByteArray outByte = m_process->readAllStandardOutput();
+    QByteArray byte = Utils::replaceEmptyByteArray(outByte);
+    QTextStream stream(&byte);
+    QByteArray encode;
+    stream.setCodec(encode);
+    QString output = stream.readAll();
+    QStringList l = QString(byte).split('\n');
+    m_process->close();
+    TimeList.clear();
+    if (!m_canRun) {
+        return;
+    }
+    for (QString str : l) {
+        if (!m_canRun) {
+            return;
+        }
+        if (str == "") continue;
+        QString list = str.simplified();
+        if (list == "") continue;
+        int spacepos = list.indexOf(" ");
+        QString name = list.left(spacepos);
+        int spacepos2 = list.indexOf(" ", spacepos + 1);
+        int spacepos3 = list.indexOf(" ", spacepos2 + 1);
+        QString time1 = list.mid(spacepos3 + 1);
+        int spacepos4 = list.indexOf(" ", spacepos3 + 1);
+        QString time2 = list.mid(spacepos4 + 1);
+
+        if (name == "wtmp") continue;
+        if (name != "reboot" && name != "wtmp") {
+            TimeList << time1;
+        } else  if (name == "reboot") {
+            TimeList << time2;
+        }
+    }
+    std::reverse(TimeList.begin(), TimeList.end());
+}
+
+
 void LogAuthThread::handleDnf()
 {
     QList<LOG_MSG_DNF> dList;
-       for (int i = 0; i < m_FilePath.count(); i++) {
-           if (!m_FilePath.at(i).contains("txt")) {
-               QFile file(m_FilePath.at(i)); // if not,maybe crash
-               if (!file.exists())
-                   return;
-           }
-           if (!m_canRun) {
-               return;
-           }
-           QByteArray outByte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i)).toUtf8();
-           QString output = Utils::replaceEmptyByteArray(outByte);
-           QStringList allLog = output.split('\n');
-           //dnf日志数据结构
-           LOG_MSG_DNF dnfLog;
-           //多行多余信息
-           QString multiLine;
-           //开启贪婪匹配，解析dnf全部字段:日期+事件+等级+主要内容
-           QRegularExpression re("^(\\d{4}-[0-2]\\d-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d)\\S*\\s*(\\w*)\\s*(.*)$");
-           for (int i = allLog.size() - 1; i >= 0; --i) {
-               if (!m_canRun) {
-                   return;
-               }
-               QString str = allLog.value(i);
-               QRegularExpressionMatch match = re.match(str);
-               bool matchRes = match.hasMatch();
-               if (matchRes) {
-                   //时间搜索条件
-                   QDateTime dt = QDateTime::fromString(match.captured(1) + match.captured(2), "yyyy-MM-ddhh:mm:ss");
-                   QDateTime localdt = dt.toLocalTime();
-                   //日志等级筛选条件
-                   QString logLevel = match.captured(3);
-                   //不满足条件的情况下继续搜索
-                   if (dt.toMSecsSinceEpoch() < m_dnfFilters.timeFilter || (m_dnfFilters.levelfilter != DNFLVALL && m_dnfLevelDict.value(logLevel) != m_dnfFilters.levelfilter))
-                       continue;
-                   //记录日志等级，时间和主体信息
-                   dnfLog.level = m_transDnfDict.value(logLevel);
-                   dnfLog.dateTime = localdt.toString("yyyy-MM-dd hh:mm:ss");
-                   dnfLog.msg = match.captured(4) + multiLine;
-                   dList.append(dnfLog);
-                   multiLine.clear();
-               } else {
-                   //如果不匹配，认为是多条信息，添加换行符，在前一条信息后添加信息。
-                   if (!str.trimmed().isEmpty() && !dList.isEmpty()) {
-                       multiLine.push_front("\n" + str);
-                   }
-               }
-               if (!m_canRun) {
-                   return;
-               }
-           }
-       }
-       emit dnfFinished(dList);
+    for (int i = 0; i < m_FilePath.count(); i++) {
+        if (!m_FilePath.at(i).contains("txt")) {
+            QFile file(m_FilePath.at(i)); // if not,maybe crash
+            if (!file.exists())
+                return;
+        }
+        if (!m_canRun) {
+            return;
+        }
+        QByteArray outByte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i)).toUtf8();
+        QString output = Utils::replaceEmptyByteArray(outByte);
+        QStringList allLog = output.split('\n');
+        //dnf日志数据结构
+        LOG_MSG_DNF dnfLog;
+        //多行多余信息
+        QString multiLine;
+        //开启贪婪匹配，解析dnf全部字段:日期+事件+等级+主要内容
+        QRegularExpression re("^(\\d{4}-[0-2]\\d-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d)\\S*\\s*(\\w*)\\s*(.*)$");
+        for (int i = allLog.size() - 1; i >= 0; --i) {
+            if (!m_canRun) {
+                return;
+            }
+            QString str = allLog.value(i);
+            QRegularExpressionMatch match = re.match(str);
+            bool matchRes = match.hasMatch();
+            if (matchRes) {
+                //时间搜索条件
+                QDateTime dt = QDateTime::fromString(match.captured(1) + match.captured(2), "yyyy-MM-ddhh:mm:ss");
+                QDateTime localdt = dt.toLocalTime();
+                //日志等级筛选条件
+                QString logLevel = match.captured(3);
+                //不满足条件的情况下继续搜索
+                if (dt.toMSecsSinceEpoch() < m_dnfFilters.timeFilter || (m_dnfFilters.levelfilter != DNFLVALL && m_dnfLevelDict.value(logLevel) != m_dnfFilters.levelfilter))
+                    continue;
+                //记录日志等级，时间和主体信息
+                dnfLog.level = m_transDnfDict.value(logLevel);
+                dnfLog.dateTime = localdt.toString("yyyy-MM-dd hh:mm:ss");
+                dnfLog.msg = match.captured(4) + multiLine;
+                dList.append(dnfLog);
+                multiLine.clear();
+            } else {
+                //如果不匹配，认为是多条信息，添加换行符，在前一条信息后添加信息。
+                if (!str.trimmed().isEmpty() && !dList.isEmpty()) {
+                    multiLine.push_front("\n" + str);
+                }
+            }
+            if (!m_canRun) {
+                return;
+            }
+        }
+    }
+    emit dnfFinished(dList);
 }
 
 void LogAuthThread::handleDmesg()

@@ -18,12 +18,14 @@
 */
 
 #include "logviewerservice.h"
+#include "logviewerwatcher.h"
 
 #include <DLog>
 
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusError>
+#include <QDebug>
 
 //service name
 const QString LogViewrServiceName = "com.deepin.logviewer";
@@ -56,7 +58,8 @@ int main(int argc, char *argv[])
     if (!dirCheck.exists(LogPath)) {
         dirCheck.mkpath(LogPath);
     }
-    Dtk::Core::DLogManager::setlogFilePath(LogPath);
+    QString serviceLogPath=LogPath+QString("deepin-log-viewer-service.log");
+    Dtk::Core::DLogManager::setlogFilePath(serviceLogPath);
     Dtk::Core::DLogManager::registerConsoleAppender();
     Dtk::Core::DLogManager::registerFileAppender();
 
@@ -65,8 +68,10 @@ int main(int argc, char *argv[])
         qCritical() << "registerService failed:" << systemBus.lastError();
         exit(0x0001);
     }
+    LogViewerWatcher watcher;
     LogViewerService service;
-    service.getFileInfo("lpr");
+    //service.getFileInfo("lpr");
+    //service.readLog("etc/apt/sources.list");
     qDebug() << "systemBus.registerService success" << Dtk::Core::DLogManager::getlogFilePath();
     if (!systemBus.registerObject(LogViewrPath,
                                   &service,

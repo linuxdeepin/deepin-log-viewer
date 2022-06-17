@@ -100,3 +100,14 @@ TEST(LogCombox_focusOutEvent_UT, LogCombox_focusOutEvent_UT)
     delete e;
     delete p;
 }
+
+TEST(LogCombox_paintEvent_UT, LogCombox_paintEvent_UT_001)
+{
+    LogCombox *p = new LogCombox(nullptr);
+    EXPECT_NE(p, nullptr);
+    QRect rect(100, 100, 100, 100);
+    QPaintEvent *e = new QPaintEvent(rect);
+    p->paintEvent(e);
+    delete e;
+    delete p;
+}

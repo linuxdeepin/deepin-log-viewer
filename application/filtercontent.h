@@ -51,6 +51,30 @@ public:
     void initConnections();
 
     void shortCutExport();
+
+    /**
+     * @brief getLeftButtonState 获取是否点击左侧列表按钮状态
+     * @return true 点击，false 没有点击
+     */
+    bool getLeftButtonState();
+
+    /**
+     * @brief setLeftButtonState 设置是否点击左侧列表按钮状态
+     * @param value
+     */
+    void setLeftButtonState(bool value);
+
+    /**
+     * @brief getChangedcomboxstate 获取是否切换下拉选项
+     * @return true 是，false 不是
+     */
+    bool getChangedcomboxstate();
+
+    /**
+     * @brief setChangedcomboxstate 设置是否切换的下拉选项
+     * @param value
+     */
+    void setChangedcomboxstate(bool value);
 protected:
     //  void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
@@ -204,6 +228,8 @@ private:
      */
     QString m_currentType = "";
     bool isLeval = true;
+    bool m_bIsClickLeftlistButton = false;
+    bool m_bIsCombox = false;
 };
 
 #endif  // FILTERCONTENT_H

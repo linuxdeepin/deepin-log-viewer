@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="hu" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="hu">
 <context>
     <name>Action</name>
     <message>
@@ -399,6 +399,41 @@
     <message>
         <source>dnf Log</source>
         <translation>dnf napló</translation>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Frissítési gyakoriság</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 másodperc</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 perc</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation>5 perc</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Nincs frissítés</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Összes exportálása</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Rendszer naplók</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>Frissítés most</translation>
     </message>
 </context>
 </TS>

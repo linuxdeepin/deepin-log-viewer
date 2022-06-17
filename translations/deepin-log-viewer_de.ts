@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="de">
 <context>
     <name>Action</name>
     <message>
@@ -118,7 +118,7 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Ablaufverfolgung</translation>
     </message>
 </context>
 <context>
@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Exportieren fehlgeschlagen</translation>
     </message>
 </context>
 <context>
@@ -244,7 +244,7 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Ablaufverfolgung</translation>
     </message>
     <message>
         <source>Super critical</source>
@@ -399,6 +399,41 @@
     <message>
         <source>dnf Log</source>
         <translation>dnf-Protokoll</translation>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Auffrischungsintervall</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 Sek.</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 Min.</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation>5 Min.</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Kein auffrischen</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Alles exportieren</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Systemprotokolle</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>Jetzt auffrischen</translation>
     </message>
 </context>
 </TS>

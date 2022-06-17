@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="uk" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="uk">
 <context>
     <name>Action</name>
     <message>
@@ -399,6 +399,41 @@
     <message>
         <source>dnf Log</source>
         <translation>Журнал dnf</translation>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Інтервал оновлення</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 сек.</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 хв.</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation>5 хв.</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Без оновлення</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Експортувати усе</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Журнал системи</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>Оновити зараз</translation>
     </message>
 </context>
 </TS>

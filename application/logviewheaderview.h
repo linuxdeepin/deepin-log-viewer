@@ -33,6 +33,7 @@ class LogViewHeaderView : public DHeaderView
 {
 public:
     LogViewHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
+    ~LogViewHeaderView() override;
 
     QSize sizeHint() const override;
     int sectionSizeHint(int logicalIndex) const;
@@ -44,11 +45,12 @@ protected:
     void paintEvent(QPaintEvent *e) override;
     virtual void paintSection(QPainter *painter, const QRect &rect,
                               int logicalIndex) const override;
-    void focusInEvent(QFocusEvent *event)override;
+    void focusInEvent(QFocusEvent *event) override;
 
 private:
     int m_spacing {1};
     Qt::FocusReason m_reson = Qt::MouseFocusReason;
+    QStyleOptionHeader *m_option {nullptr};
 };
 
-#endif  // SYSTEM_SERVICE_TABLE_HEADER_VIEW_H
+#endif // SYSTEM_SERVICE_TABLE_HEADER_VIEW_H

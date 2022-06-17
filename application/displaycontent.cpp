@@ -73,8 +73,6 @@ DisplayContent::DisplayContent(QWidget *parent)
     initUI();
     initMap();
     initConnections();
-
-
 }
 
 /**
@@ -90,9 +88,8 @@ DisplayContent::~DisplayContent()
  */
 LogTreeView *DisplayContent::mainLogTableView()
 {
-    return  m_treeView;
+    return m_treeView;
 }
-
 
 /**
  * @brief DisplayContent::initUI 初始化布局及界面
@@ -129,7 +126,6 @@ void DisplayContent::initUI()
     this->setLayout(vLayout);
     setLoadState(DATA_COMPLETE);
     m_exportDlg = new ExportProgressDlg(this);
-    m_exportDlg->setAccessibleName("export_dialog");
     m_exportDlg->hide();
 }
 
@@ -139,7 +135,7 @@ void DisplayContent::initUI()
 void DisplayContent::initMap()
 {
     m_transDict.clear();
-    m_transDict.insert("Warning", DApplication::translate("Level", "Warning"));  //add by Airy for bug 19167 and 19161
+    m_transDict.insert("Warning", DApplication::translate("Level", "Warning")); //add by Airy for bug 19167 and 19161
     m_transDict.insert("Debug", DApplication::translate("Level", "Debug")); //add by Airy for bug 19167 and 19161
     m_transDict.insert("Info", DApplication::translate("Level", "Info"));
     m_transDict.insert("Error", DApplication::translate("Level", "Error"));
@@ -174,7 +170,6 @@ void DisplayContent::initTableView()
 {
     m_treeView = new LogTreeView(this);
     m_treeView->setObjectName("mainLogTable");
-    m_treeView->setAccessibleName("main_log_table");
     m_pModel = new QStandardItemModel(this);
     m_treeView->setModel(m_pModel);
 }
@@ -223,7 +218,6 @@ void DisplayContent::initConnections()
             Qt::QueuedConnection);
     connect(&m_logFileParse, &LogFileParser::kwinData, this, &DisplayContent::slot_kwinData,
             Qt::QueuedConnection);
-
 
     connect(&m_logFileParse, &LogFileParser::normalData, this, &DisplayContent::slot_normalData,
             Qt::QueuedConnection);
@@ -288,42 +282,42 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     }
     switch (id) {
     case ALL: {
-        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_DAY: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_DAYS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addDays(-2).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addDays(-6).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex =   m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     } break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addMonths(-1).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex =    m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     } break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addMonths(-3).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex =  m_logFileParse.parseByJournal(arg);
+        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     } break;
     default:
         break;
@@ -331,7 +325,6 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalLevelColumn, LEVEL_WIDTH);
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalDaemonNameColumn, DEAMON_WIDTH);
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
-
 }
 /**
  * @brief DisplayContent::createJournalTableStart 获取系统日志完成时第一次加载数据的第一页到treeview中
@@ -358,15 +351,14 @@ void DisplayContent::createJournalTableForm()
 
     m_pModel->setHorizontalHeaderLabels(
         QStringList() << DApplication::translate("Table", "Level")
-        << DApplication::translate("Table", "Process")  // modified by Airy
-        << DApplication::translate("Table", "Date and Time")
-        << DApplication::translate("Table", "Info")
-        << DApplication::translate("Table", "User")
-        << DApplication::translate("Table", "PID"));
+                      << DApplication::translate("Table", "Process") // modified by Airy
+                      << DApplication::translate("Table", "Date and Time")
+                      << DApplication::translate("Table", "Info")
+                      << DApplication::translate("Table", "User")
+                      << DApplication::translate("Table", "PID"));
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
     m_treeView->setColumnWidth(2, DATETIME_WIDTH);
-
 }
 
 /**
@@ -386,8 +378,8 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
     QDateTime dt = QDateTime::currentDateTime();
-    dt.setTime(QTime());  // get zero time
-    DKPG_FILTERS  dpkgFilter;
+    dt.setTime(QTime()); // get zero time
+    DKPG_FILTERS dpkgFilter;
 
     switch (id) {
     case ALL:
@@ -407,7 +399,7 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         dpkgFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_dpkgCurrentIndex =  m_logFileParse.parseByDpkg(dpkgFilter);
+        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
     } break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
@@ -415,7 +407,7 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         dpkgFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_dpkgCurrentIndex =  m_logFileParse.parseByDpkg(dpkgFilter);
+        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
     } break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
@@ -423,7 +415,7 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         dpkgFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_dpkgCurrentIndex =  m_logFileParse.parseByDpkg(dpkgFilter);
+        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
     } break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
@@ -431,7 +423,7 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         dpkgFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_dpkgCurrentIndex =  m_logFileParse.parseByDpkg(dpkgFilter);
+        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
     } break;
     default:
         break;
@@ -483,7 +475,7 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     setLoadState(DATA_LOADING);
     createKernTableForm();
     QDateTime dt = QDateTime::currentDateTime();
-    dt.setTime(QTime());  // get zero time
+    dt.setTime(QTime()); // get zero time
     KERN_FILTERS kernFilter;
     switch (id) {
     case ALL:
@@ -503,7 +495,7 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         kernFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_kernCurrentIndex =  m_logFileParse.parseByKern(kernFilter);
+        m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
     } break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
@@ -519,7 +511,7 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         kernFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_kernCurrentIndex =  m_logFileParse.parseByKern(kernFilter);
+        m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
     } break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
@@ -532,7 +524,6 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     default:
         break;
     }
-
 }
 
 /**
@@ -653,9 +644,9 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
     QDateTime dt = QDateTime::currentDateTime();
-    dt.setTime(QTime());  // get zero time
+    dt.setTime(QTime()); // get zero time
     createAppTableForm();
-    APP_FILTERS  appFilter;
+    APP_FILTERS appFilter;
     appFilter.path = path;
     appFilter.lvlFilter = lId;
     switch (id) {
@@ -668,7 +659,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
         dtEnd.setTime(QTime(23, 59, 59, 999));
         appFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex =  m_logFileParse.parseByApp(appFilter);
+        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
     } break;
     case THREE_DAYS: {
         QDateTime dtStart = dt;
@@ -676,7 +667,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
         dtEnd.setTime(QTime(23, 59, 59, 999));
         appFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex =  m_logFileParse.parseByApp(appFilter);
+        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
 
     } break;
     case ONE_WEEK: {
@@ -685,7 +676,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
         dtEnd.setTime(QTime(23, 59, 59, 999));
         appFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex =   m_logFileParse.parseByApp(appFilter);
+        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
     } break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
@@ -693,7 +684,7 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
         dtEnd.setTime(QTime(23, 59, 59, 999));
         appFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex =  m_logFileParse.parseByApp(appFilter);
+        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
     } break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
@@ -701,12 +692,11 @@ void DisplayContent::generateAppFile(QString path, int id, int lId, const QStrin
         dtEnd.setTime(QTime(23, 59, 59, 999));
         appFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex =   m_logFileParse.parseByApp(appFilter);
+        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
     } break;
     default:
         break;
     }
-
 }
 
 /**
@@ -811,7 +801,7 @@ void DisplayContent::generateXorgFile(int id)
     QDateTime dt = QDateTime::currentDateTime();
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
-    dt.setTime(QTime());  // get zero time
+    dt.setTime(QTime()); // get zero time
     createXorgTableForm();
     XORG_FILTERS xorgFilter;
     switch (id) {
@@ -840,7 +830,7 @@ void DisplayContent::generateXorgFile(int id)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         xorgFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_xorgCurrentIndex =   m_logFileParse.parseByXlog(xorgFilter);
+        m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
     } break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
@@ -848,7 +838,7 @@ void DisplayContent::generateXorgFile(int id)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         xorgFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_xorgCurrentIndex =   m_logFileParse.parseByXlog(xorgFilter);
+        m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
     } break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
@@ -856,7 +846,7 @@ void DisplayContent::generateXorgFile(int id)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         xorgFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_xorgCurrentIndex =  m_logFileParse.parseByXlog(xorgFilter);
+        m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
     } break;
     default:
         break;
@@ -936,7 +926,6 @@ void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
-
 /**
  * @brief DisplayContent::generateNormalFile 触发获取开关机日志数据线程
  * @param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
@@ -953,7 +942,7 @@ void DisplayContent::generateNormalFile(int id)
     m_isDataLoadComplete = false;
     createNormalTableForm();
     QDateTime dt = QDateTime::currentDateTime();
-    dt.setTime(QTime());  // get zero time
+    dt.setTime(QTime()); // get zero time
     QDateTime dtStart = dt;
     QDateTime dtEnd = dt;
     dtEnd.setTime(QTime(23, 59, 59, 999));
@@ -972,12 +961,12 @@ void DisplayContent::generateNormalFile(int id)
     case THREE_DAYS: {
         m_normalFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_normalCurrentIndex =  m_logFileParse.parseByNormal(m_normalFilter);
+        m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
     } break;
     case ONE_WEEK: {
         m_normalFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_normalCurrentIndex =  m_logFileParse.parseByNormal(m_normalFilter);
+        m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
     } break;
     case ONE_MONTH: {
         m_normalFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
@@ -1023,6 +1012,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
         items << item;
         item = new DStandardItem(logList[i].dateTime);
         item->setData(JOUR_TABLE_DATA);
+//        item->setData(getTimeFromString(logList[i].dateTime), Qt::UserRole + 2);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
         items << item;
         item = new DStandardItem(logList[i].msg);
@@ -1139,7 +1129,7 @@ void DisplayContent::createJournalBootTableForm()
     m_pModel->clear();
     m_pModel->setHorizontalHeaderLabels(
         QStringList() << DApplication::translate("Table", "Level")
-        << DApplication::translate("Table", "Process")  // modified by Airy
+        << DApplication::translate("Table", "Process") // modified by Airy
         << DApplication::translate("Table", "Date and Time")
         << DApplication::translate("Table", "Info")
         << DApplication::translate("Table", "User")
@@ -1363,7 +1353,7 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 
     m_detailWgt->cleanText();
 
-    m_curLevel = lId;  // m_curLevel equal combobox index-1;
+    m_curLevel = lId; // m_curLevel equal combobox index-1;
     m_curBtnId = btnId;
 
     QString treeData = idx.data(ITEM_DATE_ROLE).toString();
@@ -1374,7 +1364,7 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         generateJournalFile(btnId, m_curLevel);
     } else if (treeData.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
         generateJournalBootFile(m_curLevel);
-    }  else if (treeData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
+    } else if (treeData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
         generateDpkgFile(btnId);
     } else if (treeData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
         generateKernFile(btnId);
@@ -1384,9 +1374,9 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         if (!m_curAppLog.isEmpty()) {
             generateAppFile(m_curAppLog, btnId, m_curLevel);
         }
-    } else if (treeData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
+    } else if (treeData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) { // add by Airy
         generateXorgFile(btnId);
-    } else if (treeData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
+    } else if (treeData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) { // add by Airy
         generateNormalFile(btnId);
     } else if (treeData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
         generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
@@ -1446,7 +1436,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_flag = KERN;
     } else if (itemData.contains(".cache")) {
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
-        m_pModel->clear();  // clicked parent node application, clear table contents
+        m_pModel->clear(); // clicked parent node application, clear table contents
         m_flag = APP;
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
         norList.clear();
@@ -1472,6 +1462,7 @@ void DisplayContent::slot_exportClicked()
 {
     LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
     connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
+    connect(m_exportDlg, &ExportProgressDlg::buttonClicked, exportThread, &LogExportThread::stopImmediately);
     connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
     connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
     connect(exportThread, &LogExportThread::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
@@ -1485,14 +1476,14 @@ void DisplayContent::slot_exportClicked()
 
     QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
     QString fileName = DFileDialog::getSaveFileName(
-                           this, DApplication::translate("File", "Export File"),
-                           path,
-                           tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
+        this, DApplication::translate("File", "Export File"),
+        path,
+        tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
 
     //限制当导出文件为空和导出doc和xls时用户改动后缀名导致导出问题，提示导出失败
     QFileInfo exportFile(fileName);
 
-    QString exportSuffix=exportFile.suffix();
+    QString exportSuffix = exportFile.suffix();
     QString selectSuffix = selectFilter.mid(selectFilter.lastIndexOf(".") + 1, selectFilter.size() - selectFilter.lastIndexOf(".") - 2);
     if (fileName.isEmpty())
         return;
@@ -1509,7 +1500,7 @@ void DisplayContent::slot_exportClicked()
         labels.append(m_pModel->horizontalHeaderItem(col)->text());
     }
     //根据导出格式判断执行逻辑
-    if (selectFilter == "TEXT (*.txt)") {
+    if (selectFilter.contains("(*.txt)")) {
         switch (m_flag) {
         //根据导出日志类型执行正确的导出逻辑
         case JOURNAL:
@@ -1562,7 +1553,7 @@ void DisplayContent::slot_exportClicked()
             break;
         }
         QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter == "Html (*.html)") {
+    } else if (selectFilter.contains("(*.html)")) {
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(jList.count()));
@@ -1614,7 +1605,7 @@ void DisplayContent::slot_exportClicked()
             break;
         }
         QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter == "Doc (*.doc)") {
+    } else if (selectFilter.contains("(*.doc)")) {
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(jList.count()));
@@ -1666,7 +1657,7 @@ void DisplayContent::slot_exportClicked()
             break;
         }
         QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter == "Xls (*.xls)") {
+    } else if (selectFilter.contains("(*.xls)")) {
         switch (m_flag) {
         case JOURNAL:
             PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jList.count()));
@@ -1728,7 +1719,7 @@ void DisplayContent::slot_exportClicked()
 void DisplayContent::slot_statusChagned(QString status)
 {
     m_bootFilter.statusFilter = status;
-    currentBootList =   filterBoot(m_bootFilter, bList);
+    currentBootList = filterBoot(m_bootFilter, bList);
     createBootTableForm();
     createBootTable(currentBootList);
 }
@@ -2020,7 +2011,7 @@ void DisplayContent::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
  */
 void DisplayContent::slot_logLoadFailed(const QString &iError)
 {
-    QString titleIcon = ICONPREFIX ;
+    QString titleIcon = ICONPREFIX;
     DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "warning_info.svg"), iError);
 }
 
@@ -2050,12 +2041,14 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
+
             int leftCnt = jList.count() - SINGLE_LOAD * rateValue;
             //如果在页尾部则只加载最后一页的数量,否则加载单页全部数量
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
             qDebug() << "rate" << rateValue;
             //把数据加入model中
             insertJournalTable(jList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2065,7 +2058,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-
             int leftCnt = jBootList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
@@ -2079,11 +2071,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-
             int leftCnt = appList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
             insertApplicationTable(appList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2092,12 +2082,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-
             int leftCnt = kList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
             insertKernTable(kList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2106,7 +2094,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-
             int leftCnt = dList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
@@ -2175,12 +2162,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-
             int leftCnt = dmesgList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
             insertDmesgTable(dmesgList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
-            qDebug() << "rate" << rateValue << value;
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(value);
         }
@@ -2197,8 +2182,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
 void DisplayContent::slot_searchResult(QString str)
 {
     qDebug() << QString("search: %1  treeIndex: %2")
-             .arg(str)
-             .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
+                    .arg(str)
+                    .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
     m_currentSearchStr = str;
     if (m_flag == NONE)
         return;
@@ -2207,14 +2192,14 @@ void DisplayContent::slot_searchResult(QString str)
     case JOURNAL: {
         jList = jListOrigin;
         jList.clear();
-        jList =   filterJournal(m_currentSearchStr, jListOrigin);
+        jList = filterJournal(m_currentSearchStr, jListOrigin);
         //清空model和分页重新加载
         createJournalTableForm();
         createJournalTableStart(jList);
     } break;
     case BOOT_KLU: {
         jBootList.clear();
-        jBootList =   filterJournalBoot(m_currentSearchStr, jBootListOrigin);
+        jBootList = filterJournalBoot(m_currentSearchStr, jBootListOrigin);
         createJournalBootTableForm();
         createJournalBootTableStart(jBootList);
     } break;
@@ -2225,7 +2210,7 @@ void DisplayContent::slot_searchResult(QString str)
     } break;
     case BOOT: {
         m_bootFilter.searchstr = m_currentSearchStr;
-        currentBootList =  filterBoot(m_bootFilter, bList);
+        currentBootList = filterBoot(m_bootFilter, bList);
         createBootTableForm();
         createBootTable(currentBootList);
     } break;
@@ -2252,7 +2237,7 @@ void DisplayContent::slot_searchResult(QString str)
         nortempList = filterNomal(m_normalFilter, norList);
         createNormalTableForm();
         createNormalTable(nortempList);
-    } break;  // add by Airy
+    } break; // add by Airy
     case Kwin: {
         m_currentKwinList.clear();
         m_currentKwinList = filterKwin(m_currentSearchStr, m_kwinList);
@@ -2637,12 +2622,12 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     case DATA_COMPLETE: {
         //如果为加载完成,则只显示主表,导出按钮置可用
         m_treeView->show();
-        emit  setExportEnable(true);
+        emit setExportEnable(true);
         break;
     }
     case DATA_LOADING_K: {
         //如果为内核正在加载,则不显示主表\搜索为空的提示lable,只显示加载的转圈动画控件,并且禁止导出,导出按钮置灰
-        emit  setExportEnable(false);
+        emit setExportEnable(false);
         m_spinnerWgt_K->show();
         m_spinnerWgt_K->spinnerStart();
         break;
@@ -2652,12 +2637,11 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         m_treeView->show();
         noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noResultLabel->show();
-        emit  setExportEnable(true);
+        emit setExportEnable(true);
         break;
     }
     }
     this->update();
-
 }
 
 /**
@@ -2666,7 +2650,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
  */
 void DisplayContent::onExportResult(bool isSuccess)
 {
-    QString titleIcon = ICONPREFIX ;
+    QString titleIcon = ICONPREFIX;
     if (m_exportDlg && !m_exportDlg->isHidden()) {
         m_exportDlg->hide();
     }
@@ -2731,7 +2715,6 @@ void DisplayContent::clearAllDatalist()
     dnfList.clear();
     dnfListOrigin.clear();
     malloc_trim(0);
-
 }
 
 QList<LOG_MSG_BOOT> DisplayContent::filterBoot(BOOT_FILTERS ibootFilter, QList<LOG_MSG_BOOT> &iList)
@@ -2747,13 +2730,12 @@ QList<LOG_MSG_BOOT> DisplayContent::filterBoot(BOOT_FILTERS ibootFilter, QList<L
             qDebug() << "xxx" << msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive) << "--" << msg.msg;
             if ((_statusStr.compare(ibootFilter.statusFilter, Qt::CaseInsensitive) != 0) && !isStatusFilterEmpty)
                 continue;
-            if ((msg.status.contains(ibootFilter.searchstr, Qt::CaseInsensitive)) ||
-                    (msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive))) {
+            if ((msg.status.contains(ibootFilter.searchstr, Qt::CaseInsensitive)) || (msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive))) {
                 rsList.append(iList[i]);
             }
         }
     }
-    return  rsList;
+    return rsList;
 }
 
 QList<LOG_MSG_NORMAL> DisplayContent::filterNomal(NORMAL_FILTERS inormalFilter, QList<LOG_MSG_NORMAL> &iList)
@@ -2766,33 +2748,22 @@ QList<LOG_MSG_NORMAL> DisplayContent::filterNomal(NORMAL_FILTERS inormalFilter, 
     if (0 == tcbx) {
         for (auto i = 0; i < iList.size(); i++) {
             LOG_MSG_NORMAL msg = iList.at(i);
-            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
+            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
                 rsList.append(msg);
             }
         }
     } else if (1 == tcbx) {
         for (auto i = 0; i < iList.size(); i++) {
             LOG_MSG_NORMAL msg = iList.at(i);
-            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
-                if (msg.eventType.compare("Boot", Qt::CaseInsensitive) != 0 &&
-                        msg.eventType.compare("shutdown", Qt::CaseInsensitive) != 0 &&
-                        msg.eventType.compare("runlevel", Qt::CaseInsensitive) != 0)
+            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
+                if (msg.eventType.compare("Boot", Qt::CaseInsensitive) != 0 && msg.eventType.compare("shutdown", Qt::CaseInsensitive) != 0 && msg.eventType.compare("runlevel", Qt::CaseInsensitive) != 0)
                     rsList.append(msg);
             }
         }
     } else if (2 == tcbx) {
         for (auto i = 0; i < iList.size(); i++) {
             LOG_MSG_NORMAL msg = iList.at(i);
-            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
+            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
                 if (iList[i].eventType.compare("Boot", Qt::CaseInsensitive) == 0)
                     rsList.append(iList[i]);
             }
@@ -2800,10 +2771,7 @@ QList<LOG_MSG_NORMAL> DisplayContent::filterNomal(NORMAL_FILTERS inormalFilter, 
     } else if (3 == tcbx) {
         for (auto i = 0; i < iList.size(); i++) {
             LOG_MSG_NORMAL msg = iList.at(i);
-            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) ||
-                    msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
+            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
                 if (iList[i].eventType.compare("shutdown", Qt::CaseInsensitive) == 0)
                     rsList.append(iList[i]);
             }
@@ -2821,8 +2789,7 @@ QList<LOG_MSG_DPKG> DisplayContent::filterDpkg(const QString &iSearchStr, QList<
 
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_DPKG msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.msg.contains(iSearchStr, Qt::CaseInsensitive)) {
+        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive)) {
             rsList.append(msg);
         }
     }
@@ -2837,10 +2804,7 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterKern(const QString &iSearchStr, QLi
     }
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_JOURNAL msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.msg.contains(iSearchStr, Qt::CaseInsensitive)) {
+        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive)) {
             rsList.append(msg);
         }
     }
@@ -2855,8 +2819,7 @@ QList<LOG_MSG_XORG> DisplayContent::filterXorg(const QString &iSearchStr, QList<
     }
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_XORG msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
+        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
     return rsList;
@@ -2884,10 +2847,7 @@ QList<LOG_MSG_APPLICATOIN> DisplayContent::filterApp(const QString &iSearchStr, 
     }
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_APPLICATOIN msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.level.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.src.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
+        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.src.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
     return rsList;
@@ -2901,12 +2861,7 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterJournal(const QString &iSearchStr, 
     }
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_JOURNAL msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.level.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
+        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
     return rsList;
@@ -2920,12 +2875,7 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterJournalBoot(const QString &iSearchS
     }
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_JOURNAL msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.level.contains(iSearchStr, Qt::CaseInsensitive) ||
-                msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
+        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
     return rsList;
@@ -3016,7 +2966,7 @@ void DisplayContent::createBootTableForm()
     m_pModel->clear();
     m_pModel->setColumnCount(2);
     m_pModel->setHorizontalHeaderLabels(QStringList() << DApplication::translate("Table", "Status")
-                                        << DApplication::translate("Table", "Info"));
+                                                      << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, STATUS_WIDTH);
 }
 
@@ -3033,7 +2983,6 @@ void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int
         midList = midList.mid(start, end - start);
     }
     parseListToModel(midList, m_pModel);
-
 }
 
 /**
@@ -3049,7 +2998,6 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
 
     m_curListIdx = index;
 
-    clearAllDatalist();
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty())
         return;
@@ -3072,7 +3020,9 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         m_flag = KERN;
         generateKernFile(m_curBtnId);
     } else if (itemData.contains(".cache")) {
+        clearAllDatalist();
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
+        clearAllDatalist();
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
         norList.clear();
         m_flag = Normal;
@@ -3093,8 +3043,7 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     }
 
-    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
-            !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {  // modified by Airy
+    if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) || !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) { // modified by Airy
     }
 }
 

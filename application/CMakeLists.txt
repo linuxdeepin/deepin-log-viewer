@@ -40,6 +40,17 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#$
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--as-need -fPIE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++11")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
+#安全测试加固编译参数
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
+
+if(CMAKE_COVERAGE_ARG STREQUAL "CMAKE_COVERAGE_ARG_ON")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -fprofile-arcs -ftest-coverage")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -fprofile-arcs -ftest-coverage")
+endif()
+
 set(APP_RES_DIR "assets")
 #安全测试加固编译参数
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
@@ -113,6 +124,7 @@ pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
+find_package(PolkitQt5-1)
 
 message("XercesC_FOUND ${XercesC_FOUND}")
 message("zlib version: " ${ZLIB_LIBRARIES})
@@ -171,13 +183,14 @@ set (APP_CPP_FILES
      lognormalbutton.cpp
      logapplication.cpp
      sharedmemorymanager.cpp
-     common/collator.cpp
      dbusproxy/dldbusinterface.cpp
      dbusproxy/dldbushandler.cpp
      logsettings.cpp
      DebugTimeManager.cpp
      wtmpparse.cpp
      logdetailedit.cpp
+#     viewsortfilter.cpp
+     logallexportthread.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -207,23 +220,11 @@ set (APP_HEADERS_FILES
     logdetailedit.h
     wtmpparse.h
     model/log_sort_filter_proxy_model.h
-    common/collator.h
     dbusproxy/dldbusinterface.h
     dbusproxy/dldbushandler.h
+#    viewsortfilter.h
+    logallexportthread.h
     )
-set (TEST_ACCESSIBLE_HEADERS_FILES
-     accessible.h
-     accessibledefine.h
-    )
-#include_directories(${DtkWidget_INCLUDE_DIRS})
-#include_directories(${DtkGui_INCLUDE_DIRS})
-#include_directories(${DtkCore_INCLUDE_DIRS})
-#include_directories(${Qt5Gui_PRIVATE_INCLUDE_DIRS})
-#include_directories(${Qt5Xml_LIBRARIES})
-#include_directories(${Qt5Core_LIBRARIES})
-#include_directories(${Qt5Widgets_LIBRARIES})
-
-
 
 # 5. 头文件
 # 5.1. 定义函数，用于递归添加头文件
@@ -294,7 +295,7 @@ execute_process(COMMAND bash ${APP_TRANS_SCRIPT}
     WORKING_DIRECTORY ${TS_DIR})
 qt5_create_translation(APP_QM_FILES ${APP_TS_FILES} ${APP_QM_FILES})
 
-add_executable (${EXE_NAME} ${APP_CPP_FILES}  ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES}  ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES} )
+add_executable (${EXE_NAME} ${APP_CPP_FILES}  ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${APP_QM_FILES}  ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES} )
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/include")
@@ -325,6 +326,8 @@ target_link_libraries(${EXE_NAME} ${Boost_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${RapidJSON_LIBRARIES})
 #target_link_libraries(${EXE_NAME} ${ImageMagick_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${XercesC_LIBRARIES})
+target_link_libraries(${EXE_NAME} PolkitQt5-1::Agent)
+
 
 #target_link_libraries(${EXE_NAME} ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a)
 
@@ -362,10 +365,10 @@ install(FILES assets/com.deepin.pkexec.logViewerAuth.policy
                     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 install(FILES assets/com.deepin.pkexec.logViewerTruncate.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 
-                # Install files
-                install(TARGETS ${EXE_NAME} DESTINATION bin)
-                install(DIRECTORY assets/deepin-log-viewer
-                                DESTINATION /usr/share/deepin-manual/manual-assets/application/)
+# Install files
+install(TARGETS ${EXE_NAME} DESTINATION bin)
+install(DIRECTORY assets/deepin-log-viewer
+                DESTINATION /usr/share/deepin-manual/manual-assets/application/)
 
 
 

@@ -38,7 +38,7 @@ signals:
      */
     void sigCloseBtnClicked();
 protected:
-    void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
+    void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
 
 private:
     /**

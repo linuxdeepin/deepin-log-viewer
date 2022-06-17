@@ -23,7 +23,6 @@
 #include "logcollectormain.h"
 #include "logapplication.h"
 #include "environments.h"
-#include "accessible.h"
 #include "dbusmanager.h"
 #include "utils.h"
 #include "DebugTimeManager.h"
@@ -36,6 +35,7 @@
 
 #include <QDateTime>
 #include <QSurfaceFormat>
+#include <QDebug>
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
@@ -88,15 +88,12 @@ int main(int argc, char *argv[])
     a.setWindowIcon(QIcon::fromTheme("deepin-log-viewer"));
     a.setProductName(DApplication::translate("Main", "Log Viewer"));
     a.setApplicationDisplayName(DApplication::translate("Main", "Log Viewer"));
-    //  a.setAttribute(Qt::AA_SynthesizeTouchForUnhandledMouseEvents, 0);
-    //a.setAttribute(Qt::AA_SynthesizeMouseForUnhandledTouchEvents, 0);
     a.setApplicationDescription(
         DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
     DApplicationSettings settings;
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
     LogApplicationHelper::instance();
-    QAccessible::installFactory(accessibleFactory);
 
     //命令行参数的解析
     QCommandLineParser cmdParser;

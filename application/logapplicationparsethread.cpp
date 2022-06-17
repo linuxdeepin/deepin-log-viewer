@@ -103,55 +103,31 @@ void LogApplicationParseThread::doWork()
     } else {
         QStringList filePath = DLDBusHandler::instance(this)->getFileInfo(m_AppFiler.path);
         for (int i = 0; i < filePath.count(); i++) {
-            //使用cat命令获取日志文件的文本
-            QStringList arg;
-            arg << "-c" << QString("cat %1").arg(filePath[i]);
-            m_process->start("/bin/bash", arg);
-            m_process->waitForFinished(-1);
-            QByteArray byteOutput = m_process->readAllStandardOutput();
-            m_process->close();
-            arg.clear();
             if (!m_canRun) {
                 return;
             }
-            //替换截断空字符
-            QStringList strList = QString(Utils::replaceEmptyByteArray(byteOutput)).split('\n', QString::SkipEmptyParts);
+            //按行解析
+            QByteArray outByte = DLDBusHandler::instance(this)->readLog(filePath[i]).toUtf8();
+            QString output = Utils::replaceEmptyByteArray(outByte);
+            QStringList strList = QString(output ).split('\n', QString::SkipEmptyParts);
+            //开启贪婪匹配
+            QRegularExpression re("^(\\d{4}-[0-2]\\d-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d.\\d*)[^A-Za-z]*([A-Za-z]*)[^\\[]*[^\\]]*\\]*\\s*(.*)$");
+
             for (int j = strList.size() - 1; j >= 0; --j) {
-                LOG_MSG_APPLICATOIN msg;
-                QString str = strList.at(j);
                 if (!m_canRun) {
                     return;
                 }
+                LOG_MSG_APPLICATOIN msg;
+                QString str =strList[j];
 
-                //删除空白字符
-                str.replace(QRegExp("\\s{2,}"), "");
-                //删除颜色字符
-                str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-                QStringList list = str.split("]", QString::SkipEmptyParts);
-                //日志格式各字段用[]和空格隔开，有等级 时间 信息体 三个字段，至少应该能分割出三个
-
-                if (list.count() < 3||!list[0].contains("[")||!list[1].contains("["))
-                    continue;
-
-                QStringList infoList = list[0].split("[", QString::SkipEmptyParts);
-                if (infoList.count() < 2) {
+                QRegularExpressionMatch match = re.match(str);
+                bool matchRes = match.hasMatch();
+                if(!matchRes){
+                    qWarning()<<"not match ，Format problem";
                     continue;
                 }
-                QString dateTime = infoList[0].trimmed();
-                //原始文件时间日期文本为2020-07-03, 19:19:18.639 需要去除,
-                if (dateTime.contains(",")) {
-                    dateTime.replace(",", "");
-                }
 
-                // add by Airy
-                // boot maker log can not show
-                if (dateTime.split(".").count() > 2) {
-                    list[1] = " " + list[1];
-                    QDateTime g_time = QDateTime::fromString(dateTime, "yyyyMMdd.hh:mm:ss.zzz");
-                    QString gg_time = g_time.toString("yyyy-MM-dd hh:mm:ss.zzz");
-                    dateTime = gg_time;
-                } // add
-
+                QString dateTime = match.captured(1)+" "+match.captured(2);
                 qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
                 //按筛选条件筛选时间段
                 if (m_AppFiler.timeFilterBegin > 0 && m_AppFiler.timeFilterEnd > 0) {
@@ -160,26 +136,17 @@ void LogApplicationParseThread::doWork()
                 }
 
                 msg.dateTime = dateTime;
-                msg.level = infoList[1];
+                msg.level = match.captured(3);
                 //筛选日志等级
                 if (m_AppFiler.lvlFilter != LVALL) {
                     if (m_levelDict.value(msg.level) != m_AppFiler.lvlFilter)
                         continue;
                 }
-                QStringList msgList = list[1].split("[", QString::SkipEmptyParts);
-                if (msgList.count() < 2) {
-                    msg.src = "";
-                } else {
-                    msg.src = msgList[1];
-                }
+                //获取信息
+                msg.msg=match.captured(4);
+                msg.detailInfo=match.captured(4);
 
-                if (list.count() >= 4) {
-                    msg.detailInfo = list.mid(2).join("]");
-                    msg.msg = msg.detailInfo;
-                } else {
-                    msg.detailInfo = list[2].contains("[") ? list[2].append("]") : list[2];
-                    msg.msg = msg.detailInfo;
-                }
+                //如果日志太长就显示一部分
                 if (msg.detailInfo.size() > 500) {
                     msg.msg = msg.detailInfo.mid(0, 500);
                 }

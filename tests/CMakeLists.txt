@@ -32,6 +32,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#$
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
 #添加-fno-inline编译选项，禁止内联，能获取到函数地址，可以对内联函数进行打桩
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-inline")
+#安全测试加固编译参数
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
 #-ldtkwidget -ldtkgui -ldtkcore
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "sw_64")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mieee")
@@ -105,22 +110,18 @@ FILE(GLOB allSource
      ../application/logsearchedit.cpp
      ../application/logapplication.cpp
      ../application/sharedmemorymanager.cpp
-     ../application/common/collator.cpp
      ../application/logsettings.cpp
      ../application/wtmpparse.cpp
      ../application/DebugTimeManager.cpp
      ../application/logdetailedit.cpp
      ../application/dbusproxy/dldbusinterface.cpp
      ../application/dbusproxy/dldbushandler.cpp
+#     ../application/viewsortfilter.cpp
+     ../application/logallexportthread.cpp
 )
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
 )
-
-set (TEST_ACCESSIBLE_HEADERS_FILES
-     ../application/accessible.h
-     ../application/accessibledefine.h
-    )
 
 # 5. 头文件
 # 5.1. 定义函数，用于递归添加头文件
@@ -181,7 +182,7 @@ include_directories( ${RapidJSON_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
-
+find_package(PolkitQt5-1)
 FILE(GLOB allTestSource
 src/*.cpp
 common/*.cpp
@@ -190,7 +191,7 @@ dbusproxy/*.cpp
 include_directories(src)
 
 
-add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES}   ${TEST_ACCESSIBLE_HEADERS_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
+add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 
 
 
@@ -201,3 +202,4 @@ target_link_libraries(${PROJECT_NAME_TEST} ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${RapidJSON_LIBRARIES})
 #target_link_libraries(${PROJECT_NAME_TEST} ${ImageMagick_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${XercesC_LIBRARIES})
+target_link_libraries(${PROJECT_NAME_TEST} PolkitQt5-1::Agent)

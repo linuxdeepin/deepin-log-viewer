@@ -23,10 +23,20 @@
 
 #include <QCoreApplication>
 #include <QDebug>
+#include <QStringList>
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusConnectionInterface>
+
+const QStringList ValidInvokerExePathList1 = {"/usr/bin/deepin-log-viewer"};
 
 LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
 {
+    m_commands.insert("dmesg", "dmesg -r");
+    m_commands.insert("last", "last -x");
+    m_commands.insert("journalctl_system", "journalctl -r");
+    m_commands.insert("journalctl_boot", "journalctl -b -r");
 }
 
 /*!
@@ -37,12 +47,11 @@ LogViewerService::LogViewerService(QObject *parent)
 QString LogViewerService::readLog(const QString &filePath)
 {
     //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
-    if ((!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp") && !filePath.startsWith("/home")) || filePath.contains(".."))
-        return  " ";
-
+    if ((!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp") && !filePath.startsWith("/home")) || filePath.contains("..") || !isValidInvoker())  {
+        return " ";
+    }
     m_process.start("cat", QStringList() << filePath);
     m_process.waitForFinished(-1);
-
     QByteArray byte = m_process.readAllStandardOutput();
     return QString::fromUtf8(byte);
 }
@@ -70,7 +79,7 @@ void LogViewerService::quit()
  * \~chinese \param file 日志文件的类型
  * \~chinese \return 所有日志文件路径列表
  */
-QStringList LogViewerService::getFileInfo(const QString &file)
+QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 {
     int fileNum = 0;
     if (tmpDir.isValid()) {
@@ -103,7 +112,7 @@ QStringList LogViewerService::getFileInfo(const QString &file)
     for (int i = 0; i < fileList.count(); i++) {
         if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) != 0) {
             fileNamePath.append(fileList[i].absoluteFilePath());
-        } else {
+        } else if (unzip) {
             //                qDebug() << tmpDirPath;
             QProcess m_process;
 
@@ -122,4 +131,76 @@ QStringList LogViewerService::getFileInfo(const QString &file)
     }
     //       qInfo()<<fileNamePath.count()<<fileNamePath<<"******************************";
     return fileNamePath;
+}
+
+bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
+{
+    if (outDir.isEmpty() || in.isEmpty()) {
+        return false;
+    }
+    QString outFullPath = "";
+    QStringList arg = {"-c", ""};
+    if (isFile) {
+        //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
+        if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home")) || in.contains("..")) {
+            return false;
+        }
+        QFileInfo filein(in);
+        if (!filein.isFile()) {
+            qInfo() << "in not file:" << in;
+            return false;
+        }
+        outFullPath = outDir + filein.fileName();
+        //复制文件
+        arg[1].append(QString("cp %1 %2;").arg(in, outDir));
+    } else {
+        auto it = m_commands.find(in);
+        if (it == m_commands.end()) {
+            qInfo() << "unknown command:" << in;
+            return false;
+        }
+        outFullPath = outDir + in + ".txt";
+        //结果重定向到文件
+        arg[1].append(QString("%1 >& %2;").arg(it.value(), outFullPath));
+    }
+    //设置文件权限
+    arg[1].append(QString("chmod 777 %1;").arg(outFullPath));
+    QProcess process;
+    process.start("/bin/bash", arg);
+    if (!process.waitForFinished()) {
+        qInfo() << "command error:" << arg;
+        return false;
+    }
+    return true;
+}
+
+bool LogViewerService::isValidInvoker()
+{
+    bool valid = false;
+    QDBusConnection conn = connection();
+    QDBusMessage msg = message();
+
+    //判断是否存在执行路径
+    uint pid = conn.interface()->servicePid(msg.service()).value();
+    QFileInfo f(QString("/proc/%1/exe").arg(pid));
+    if (!f.exists()) {
+        valid = false;
+    } else {
+        valid = true;
+    }
+
+    //是否存在于可调用者名单中
+    QString invokerPath = f.canonicalFilePath();
+    if (valid)
+        valid = ValidInvokerExePathList1.contains(invokerPath);
+
+    //非法调用
+    if (!valid) {
+        sendErrorReply(QDBusError::ErrorType::Failed,
+                       QString("(pid: %1)[%2] is not allowed to configrate firewall")
+                       .arg(pid)
+                       .arg((invokerPath)));
+        return false;
+    }
+    return true;
 }

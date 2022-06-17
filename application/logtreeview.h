@@ -41,7 +41,6 @@ protected:
                  const QModelIndex &index) const override;
     void keyPressEvent(QKeyEvent *event) override;
     bool event(QEvent *e) override;
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event)override;
@@ -53,7 +52,7 @@ private:
     // QPlatformTheme::TouchDoubleTapDistance 的值时认为触发触屏滚动
     QPoint lastTouchBeginPos;
     QModelIndex mouseLastPressedIndex;
-    int touchTapDistance = -1;
+//    int touchTapDistance = -1;
     bool m_isPressed = false;
     QPointF m_lastTouchBeginPos;
     QTime m_lastTouchTime;

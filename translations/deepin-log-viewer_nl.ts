@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="nl" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="nl">
 <context>
     <name>Action</name>
     <message>
@@ -399,6 +399,41 @@
     <message>
         <source>dnf Log</source>
         <translation>dnf-logboek</translation>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Periodiek herladen</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 sec.</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 min.</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation>5 min.</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Niet herladen</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Alles exporteren</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Systeemlogboeken</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

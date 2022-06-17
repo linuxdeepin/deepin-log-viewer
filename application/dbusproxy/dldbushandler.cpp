@@ -19,6 +19,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "dldbushandler.h"
+#include <QDebug>
+#include <QStandardPaths>
 
 DLDBusHandler *DLDBusHandler::m_statichandeler = nullptr;
 
@@ -76,9 +78,9 @@ void DLDBusHandler::quit()
     m_dbus->quit();
 }
 
-QStringList DLDBusHandler::getFileInfo(const QString &flag)
+QStringList DLDBusHandler::getFileInfo(const QString &flag, bool unzip)
 {
-    QDBusPendingReply<QStringList> reply = m_dbus->getFileInfo(flag);
+    QDBusPendingReply<QStringList> reply = m_dbus->getFileInfo(flag, unzip);
     reply.waitForFinished();
     if (reply.isError()) {
         qDebug() << reply.error().message();
@@ -86,4 +88,9 @@ QStringList DLDBusHandler::getFileInfo(const QString &flag)
         filePath = reply.value();
     }
     return filePath;
+}
+
+bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isFile)
+{
+    return m_dbus->exportLog(outDir, in, isFile);
 }

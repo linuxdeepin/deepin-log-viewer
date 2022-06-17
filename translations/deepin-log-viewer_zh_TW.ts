@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_TW" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_TW">
 <context>
     <name>Action</name>
     <message>
@@ -132,7 +132,7 @@
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation>正在導出...</translation>
+        <translation>正在匯出...</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -399,6 +399,41 @@
     <message>
         <source>dnf Log</source>
         <translation>dnf日誌</translation>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>重新整理頻率</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>每10秒</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>每1分鐘</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation>每5分鐘</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>不重新整理</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>全部匯出</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>系統全部日誌</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>立即重新整理</translation>
     </message>
 </context>
 </TS>

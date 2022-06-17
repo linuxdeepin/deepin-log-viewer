@@ -18,18 +18,67 @@
 #include "logcollectormain.h"
 #include "DebugTimeManager.h"
 #include "ut_stuballthread.h"
+#include "logapplication.h"
+#include "utils.h"
 #include <stub.h>
 
 #include <DTitlebar>
 #include <DWindowCloseButton>
+#include <DDialog>
+#include <QFileDialog>
 
 #include <QKeyEvent>
 #include <QDebug>
+#include <QList>
 
 #include <gtest/gtest.h>
 
 void Log_beginPointLinux(const QString &point, const QString &status)
 {
+    Q_UNUSED(point);
+    Q_UNUSED(status);
+}
+
+void LogCollectorMain_QThreadPool_start(QRunnable *runnable, int priority = 0)
+{
+    Q_UNUSED(runnable);
+    Q_UNUSED(priority);
+}
+
+static bool LogCollectorMain_checkAuthorization_false(const QString &actionId, qint64 applicationPid)
+{
+    Q_UNUSED(actionId);
+    Q_UNUSED(applicationPid);
+    return false;
+}
+
+static bool LogCollectorMain_checkAuthorization_true(const QString &actionId, qint64 applicationPid)
+{
+    Q_UNUSED(actionId);
+    Q_UNUSED(applicationPid);
+    return true;
+}
+
+static QString LogCollectorMain_QString()
+{
+    return "true";
+}
+
+int LogCollectorMain_int()
+{
+    return 2;
+}
+
+int LogCollectorMain_int_exec()
+{
+    return 0;
+}
+
+bool LogCollectorMain_notify(QObject *obj, QEvent *event)
+{
+    Q_UNUSED(obj);
+    Q_UNUSED(event);
+    return false;
 }
 
 TEST(LogCollectorMain_Constructor_UT, LogCollectorMain_Constructor_UT)
@@ -253,3 +302,112 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
     p->handleApplicationTabEventNotify(w, &keyEvent);
     p->deleteLater();
 }
+
+TEST(LogCollectorMain_switchRefreshActionTriggered_UT, LogCollectorMain_switchRefreshActionTriggered_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+
+    typedef  bool (*fptr)(LogApplication *);
+    fptr test = (fptr)(&LogApplication::notify);
+    stub.set(test, LogCollectorMain_notify);
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    ASSERT_TRUE(p);
+    QAction *action = new QAction(qApp->translate("titlebar", "5 min"));
+    stub.set(ADDR(QList<QAction *>, indexOf), LogCollectorMain_int);
+    p->switchRefreshActionTriggered(action);
+    if (p->m_refreshTimer && p->m_refreshTimer->isActive()) {
+        p->m_refreshTimer->stop();
+    }
+    delete action;
+    p->deleteLater();
+}
+
+TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    typedef  bool (*fptr)(LogApplication *);
+    fptr test = (fptr)(&LogApplication::notify);
+    stub.set(test, LogCollectorMain_notify);
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    ASSERT_TRUE(p);
+    stub.set(ADDR(Utils, checkAuthorization), LogCollectorMain_checkAuthorization_false);
+    p->exportAllLogs();
+    p->deleteLater();
+}
+
+TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    typedef  bool (*fptr)(LogApplication *);
+    fptr test = (fptr)(&LogApplication::notify);
+    stub.set(test, LogCollectorMain_notify);
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    ASSERT_TRUE(p);
+    stub.set(ADDR(Utils, checkAuthorization), LogCollectorMain_checkAuthorization_true);
+    stub.set(ADDR(QFileDialog, getSaveFileName), LogCollectorMain_QString);
+//    stub.set(ADDR(QThreadPool, start), LogCollectorMain_QThreadPool_start);
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), LogCollectorMain_QThreadPool_start);
+
+    typedef  int (*fptr2)(DDialog *);
+    fptr2 test1 = (fptr2)(&DDialog::exec);
+    stub.set(test1, LogCollectorMain_int_exec);
+    p->exportAllLogs();
+    p->deleteLater();
+}
+
+TEST(LogCollectorMain_closeEvent_UT, LogCollectorMain_closeEvent_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    typedef  bool (*fptr)(LogApplication *);
+    fptr test = (fptr)(&LogApplication::notify);
+    stub.set(test, LogCollectorMain_notify);
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    ASSERT_TRUE(p);
+    QCloseEvent *event = new QCloseEvent();
+    ASSERT_TRUE(event);
+    p->closeEvent(event);
+    delete event;
+    p->deleteLater();
+}
+
+

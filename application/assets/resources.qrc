@@ -25,5 +25,10 @@
         <file>icons/deepin/builtin/light/texts/dp_system_7px.svg</file>
         <file>icons/deepin/builtin/light/texts/dp_x_7px.svg</file>
         <file>images/deepin-log-viewer.svg</file>
+        <file>deepin-log-viewer-setting.json</file>
+        <file>icons/deepin/builtin/dark/texts/export_32px.svg</file>
+        <file>icons/deepin/builtin/dark/texts/refresh_32px.svg</file>
+        <file>icons/deepin/builtin/light/texts/export_32px.svg</file>
+        <file>icons/deepin/builtin/light/texts/refresh_32px.svg</file>
     </qresource>
 </RCC>

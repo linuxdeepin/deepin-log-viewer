@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>Action</name>
     <message>
@@ -399,6 +399,41 @@
     <message>
         <source>dnf Log</source>
         <translation>dnf日志</translation>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>刷新频率</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>每10秒</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>每1分钟</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation>每5分钟</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>不刷新</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>全部导出</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>系统全部日志</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>立即刷新</translation>
     </message>
 </context>
 </TS>

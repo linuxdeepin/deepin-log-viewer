@@ -40,7 +40,6 @@ BuildRequires: fftw-libs
 
 
 
-
 %description
 Log Viewer is a useful tool for viewing system logs.
 
@@ -75,7 +74,8 @@ popd
 %{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 %{_datadir}/polkit-1/actions/*.policy
 %{_datadir}/deepin-manual/manual-assets/application/deepin-log-viewer/log-viewer/*
-/usr/lib/deepin-daemon/logViewerService
+
+/usr/lib/deepin-daemon/log-view-service
 /usr/share/dbus-1/system-services/com.deepin.logviewer.service
 /usr/share/dbus-1/system.d/com.deepin.logviewer.conf
 %{_datadir}/%{name}/DocxTemplate/*.dfw

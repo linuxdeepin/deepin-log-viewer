@@ -37,8 +37,8 @@
     // br x9 
     // addr 
     #define REPLACE_FAR(t, fn, fn_stub)\
-        ((uint32_t*)fn)[0] = 0x58000040 | 9;\
-        ((uint32_t*)fn)[1] = 0xd61f0120 | (9 << 5);\
+        ((int*)fn)[0] = 0x58000040 | 9;\
+        ((int*)fn)[1] = 0xd61f0120 | (9 << 5);\
         *(long long *)(fn + 8) = (long long )fn_stub;\
         CACHEFLUSH((char *)fn, CODESIZE);
     #define REPLACE_NEAR(t, fn, fn_stub) REPLACE_FAR(t, fn, fn_stub)
@@ -48,8 +48,8 @@
     #define CODESIZE_MAX CODESIZE
     // ldr pc, [pc, #-4]
     #define REPLACE_FAR(t, fn, fn_stub)\
-        ((uint32_t*)fn)[0] = 0xe51ff004;\
-        ((uint32_t*)fn)[1] = (uint32_t)fn_stub;\
+        ((int*)fn)[0] = 0xe51ff004;\
+        ((int*)fn)[1] = (int)fn_stub;\
         CACHEFLUSH((char *)fn, CODESIZE);
     #define REPLACE_NEAR(t, fn, fn_stub) REPLACE_FAR(t, fn, fn_stub)
 #elif defined(__thumb__) || defined(_M_THUMB)

@@ -533,3 +533,161 @@ TEST_F(LogAuthThread_UT, UT_Run_001)
     EXPECT_NE(m_logAuthThread,nullptr);
     EXPECT_EQ(m_logAuthThread->m_canRun,false);
 }
+
+TEST(LogAuthThread_initDnfLevelMap_UT, LogAuthThread_initDnfLevelMap_UT_001)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->initDnfLevelMap();
+    EXPECT_TRUE(p->m_dnfLevelDict.size());
+    EXPECT_TRUE(p->m_transDnfDict.size());
+    delete p;
+}
+
+TEST(LogAuthThread_initLevelMap_UT, LogAuthThread_initLevelMap_UT_001)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->initLevelMap();
+    EXPECT_TRUE(p->m_levelMap.size());
+    delete p;
+}
+
+TEST(LogAuthThread_stopProccess_UT, LogAuthThread_stopProccess_UT_001)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_isStopProccess = false;
+    p->stopProccess();
+    EXPECT_TRUE(p->m_isStopProccess);
+    EXPECT_FALSE(p->m_canRun);
+    delete p;
+}
+
+TEST(LogAuthThread_setFilePath_UT, LogAuthThread_setFilePath_UT_001)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    QStringList list;
+    list << "test" << "test2";
+    p->setFilePath(list);
+    EXPECT_EQ(p->m_FilePath, list);
+    delete p;
+}
+
+TEST(LogAuthThread_getIndex_UT, LogAuthThread_getIndex_UT_001)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_threadCount = 0;
+    p->getIndex();
+    EXPECT_EQ(p->getIndex(), p->m_threadCount);
+    delete p;
+}
+
+TEST(LogAuthThread_startTime_UT, LogAuthThread_startTime_UT_001)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->startTime();
+    delete p;
+}
+
+TEST(LogAuthThread_run_UT, LogAuthThread_run_UT_001)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_type = LOG_FLAG::KERN;
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleKern), handleFile);
+    p->run();
+    EXPECT_FALSE(p->m_canRun);
+    delete p;
+}
+
+TEST(LogAuthThread_run_UT, LogAuthThread_run_UT_002)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_type = LOG_FLAG::BOOT;
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleBoot), handleFile);
+    p->run();
+    EXPECT_FALSE(p->m_canRun);
+    delete p;
+}
+
+TEST(LogAuthThread_run_UT, LogAuthThread_run_UT_003)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_type = LOG_FLAG::Kwin;
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleKwin), handleFile);
+    p->run();
+    EXPECT_FALSE(p->m_canRun);
+    delete p;
+}
+
+TEST(LogAuthThread_run_UT, LogAuthThread_run_UT_004)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_type = LOG_FLAG::XORG;
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleXorg), handleFile);
+    p->run();
+    EXPECT_FALSE(p->m_canRun);
+    delete p;
+}
+
+TEST(LogAuthThread_run_UT, LogAuthThread_run_UT_005)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_type = LOG_FLAG::DPKG;
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleDkpg), handleFile);
+    p->run();
+    EXPECT_FALSE(p->m_canRun);
+    delete p;
+}
+
+TEST(LogAuthThread_run_UT, LogAuthThread_run_UT_006)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_type = LOG_FLAG::Normal;
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleNormal), handleFile);
+    p->run();
+    EXPECT_FALSE(p->m_canRun);
+    delete p;
+}
+
+TEST(LogAuthThread_run_UT, LogAuthThread_run_UT_007)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_type = LOG_FLAG::Dnf;
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleDnf), handleFile);
+    p->run();
+    EXPECT_FALSE(p->m_canRun);
+    delete p;
+}
+
+TEST(LogAuthThread_run_UT, LogAuthThread_run_UT_008)
+{
+    LogAuthThread *p = new LogAuthThread();
+    ASSERT_TRUE(p);
+    p->m_type = LOG_FLAG::Dmesg;
+    Stub stub;
+    stub.set(ADDR(LogAuthThread, handleDmesg), handleFile);
+    p->run();
+    EXPECT_FALSE(p->m_canRun);
+    delete p;
+}
+
+
+

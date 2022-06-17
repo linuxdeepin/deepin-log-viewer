@@ -4,7 +4,7 @@
 
 Log viewer is a tool that collects logs generated when an application is running, for example, logs generated when operating system and applications start up and run. You can do trouble-shooting and solve problems quickly by analyzing logs. 
 
-![0|homepage](fig/homepage.png)
+
 
 ## Guide
 
@@ -35,7 +35,7 @@ You can run, close or create a shortcut for Log Viewer.
 2. Input keywords. And the results are displayed after input. 
 3. Click ![close_icon](../common/close_icon.svg) to clear up current searching.
 
-![0|search](fig/search.png)
+
 
 ### Filter
 
@@ -90,16 +90,16 @@ You can run, close or create a shortcut for Log Viewer.
 
 1. On the main interface, click **System Log**. 
 2. You can see a list of system logs which are detailed by "Level", "Process", "Date and Time", and "Info".
-3. Click a log, you can see its particular info below the list, including process, user, PID, time and info.
+3. Click a log, you can see its particular info below the list, including process, time, user, PID, level and info.
 
 ![0|rsyslog](fig/rsyslog.png)
 
 #### Kernel Log
 
 1. On the main interface, click  **Kernel Log**.
-2. Input password in the popped up authentication window. 
+2. Input login password in the pop-up authentication window. 
 3. You can view the status and information of kernel logs.
-4. Click a log, you can see its particular info below the list, including time, user, process, info, etc.
+4. Click a log, you can see its particular info below the list, including process, time, user and info.
 
 
 
@@ -110,7 +110,7 @@ You can run, close or create a shortcut for Log Viewer.
 1. On the main interface, click **Boot Log**.
 2. Input password in the popped up authentication window. 
 3. You can view the status and information of boot logs.
-4. Click a log, you can see its particular info below the list, including user, status,  info, etc.
+4. Click a log, you can see its particular info below the list, including user, status and info.
 
 
 
@@ -120,7 +120,7 @@ You can run, close or create a shortcut for Log Viewer.
 
 1. On the main interface, click **dpkg Log**. 
 2. You can view time and information of dpkg logs.
-3. Click a log, you can see its particular info below the list, including user, action, time, info, etc.
+3. Click a log, you can see its particular info below the list, including time, user, action and info.
 
 ![0|dpkglog](fig/dpkglog.png)
 
@@ -128,7 +128,7 @@ You can run, close or create a shortcut for Log Viewer.
 
 1. On the main interface, click **Xorg Log**.
 2. You can view time and information of Xorg logs.
-3. Click a log, you can see its particular info below the list, including user, time, info, etc.
+3. Click a log, you can see its particular info below the list, including user, time and info.
 
 ![0|xorglog](fig/xorglog.png)
 
@@ -136,7 +136,7 @@ You can run, close or create a shortcut for Log Viewer.
 
 1. On the main interface, click  **Application Log**.
 2. You can view level, time, source and information of application logs.
-3. Click a log, you can see its particular info below the list, including user, time info, etc.
+3. Click a log, you can see its particular info below the list, including source, user, time, level and info.
 
 ![0|applog](fig/applog.png)
 
@@ -145,20 +145,32 @@ You can run, close or create a shortcut for Log Viewer.
 
 1. On the main interface, click  **Boot-Shutdown Event**.
 2. You can view event type, username, time and information of boot-shutdown events.
-3. Click a log, you can see its particular info below the list, including user, time, event type, detailed info and so on.
+3. Click a log, you can see its particular info below the list, including user, time, event type, username and info.
 ![0|powerevent](fig/powerevent.png)
 
-### Export
+### Export Logs
 
-You can export logs and save them in format of  txt/doc/xls/html.
+You can export logs to local computer so as to help you analyze, locate and solve problems.
 
-1. On the main interface, click **Export**. 
-2. An interface of file manager pops up. Select the storing path, input a file name and select a format. 
-3. Click **Save**. When the log file is exported successfully, a hint pops up in the lower part of the interface.
+1. Select a log type and click **Export** in the upper right corner. 
+2. Input login password in the pop-up authentication window (if any) and click **Confirm**.
+3. Select the storing path in the pop-up window, and click **Save**.
+
+>![icon](../common/notes.svg) Notes: you can also click the "Export All" button ![icon](../common/export.svg) on the title bar to export system logs, kernel logs, boot logs, dpkg logs, Xorg logs, application logs and logs of boot-shutdown events as well.
 
 ### Refresh
-1. On the interface of File Manager, select a log type in the left panel and right-click.
-2. Select **Refresh** to reload the log and update log list.
+
+You can refresh the logs manually and automatically. For auto refresh, you can set the frequency.
+
+#### Manual Refresh
+
+Click the "Refresh Now" button ![icon](../common/refresh.svg) on the title bar, or right-click on a log type and select **Refresh** to reload the log list.
+
+#### Auto Refresh
+
+1. Click ![icon_menu](../common/icon_menu.svg) > **Refresh interval** in the main interface.
+2. Select a proper refresh interval from **10 sec**, **1 min**, and **5 min**. Or select **No refresh** to stop auto refreshing.
+
 
 
 ### Display in File Manager
@@ -181,7 +193,7 @@ You can export logs and save them in format of  txt/doc/xls/html.
 
 ## Main Menu
 
-In the main menu, you can switch themes, view help manual, and so on.
+In the main menu, you can [set refresh intervals](#Auto Refresh), switch themes, view help manual, and so on.
 
 ### Theme
 

@@ -75,6 +75,10 @@ protected:
     void handleXorg();
     void handleDkpg();
     void handleNormal();
+    /**
+     * @brief NormalInfoTime 开关机事件信息段解析
+     */
+    void NormalInfoTime();
     void handleDnf();
     void handleDmesg();
     void initProccess();
@@ -162,6 +166,7 @@ private:
     QMap<int, QString> m_levelMap;
     QMap<QString, int> m_dnfLevelDict;
     QMap<QString, QString> m_transDnfDict;
+    QStringList TimeList;
 };
 
 #endif  // LOGAUTHTHREAD_H

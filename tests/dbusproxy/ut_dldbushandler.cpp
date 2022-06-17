@@ -19,50 +19,41 @@
 #include "logfileparser.h"
 
 #include <stub.h>
-
 #include <QDebug>
-
 #include <gtest/gtest.h>
 
-QDBusPendingCall stub_asyncCallWithArgumentList(const QString &method,
-                                                const QList<QVariant> &args)
+
+TEST(UT_DLDBusHandler_readLog, UT_DLDBusHandler_readLog_001)
 {
-    Q_UNUSED(method);
-    Q_UNUSED(args);
-    //    message.createReply(QStringList()<<"test");
-    QDBusPendingReply<QStringList> reply;
-    return reply;
+    DLDBusHandler *DLDbus = new DLDBusHandler();
+    ASSERT_TRUE(DLDbus);
+    DLDbus->readLog("test");
+    delete DLDbus;
 }
 
-class DlDbushandler_UT : public testing::Test
+TEST(UT_DLDBusHandler_exitCode, UT_DLDBusHandler_exitCode_001)
 {
-public:
-    //添加日志
-    static void SetUpTestCase()
-    {
-        qDebug() << "SetUpTestCase" << endl;
-    }
-    static void TearDownTestCase()
-    {
-        qDebug() << "TearDownTestCase" << endl;
-    }
-    void SetUp() //TEST跑之前会执行SetUp
-    {
-        m_handler = DLDBusHandler::instance(&m_fileparser);
-        qDebug() << "SetUp" << endl;
-    }
-    void TearDown() //TEST跑完之后会执行TearDown
-    {
-        delete m_handler;
-    }
-    DLDBusHandler *m_handler;
-    LogFileParser m_fileparser;
-};
+    DLDBusHandler *DLDbus = new DLDBusHandler();
+    ASSERT_TRUE(DLDbus);
+    DLDbus->exitCode();
+    delete DLDbus;
+}
 
-//TEST_F(DlDbushandler_UT, Compare_UT)
-//{
-//    Stub stub;
-//    stub.set(ADDR(QDBusAbstractInterface, asyncCallWithArgumentList), stub_asyncCallWithArgumentList);
-//    m_handler->quit();
-//    m_handler->readLog("Test");
-//}
+TEST(UT_DLDBusHandler_quit, UT_DLDBusHandler_quit_001)
+{
+    DLDBusHandler *DLDbus = new DLDBusHandler();
+    ASSERT_TRUE(DLDbus);
+    DLDbus->quit();
+    delete DLDbus;
+}
+
+
+TEST(UT_DLDBusHandler_exportLog, UT_DLDBusHandler_exportLog_001)
+{
+    DLDBusHandler *DLDbus = new DLDBusHandler();
+    ASSERT_TRUE(DLDbus);
+    DLDbus->exportLog("path", "path1", false);
+    delete DLDbus;
+}
+
+

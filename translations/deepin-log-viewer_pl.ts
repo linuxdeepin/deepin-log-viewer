@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="pl">
 <context>
     <name>Action</name>
     <message>
@@ -399,6 +399,41 @@
     <message>
         <source>dnf Log</source>
         <translation>Dziennik dpkg</translation>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Częstotliwość odświeżania</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 sekund</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 minuta</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation>5 minut</translation>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Nie odświeżaj</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Eksportuj wszystko</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Logi systemowe</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

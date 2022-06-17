@@ -123,12 +123,12 @@ TEST_P(ExportProgressDlg_updateProgressBarValue_UT, ExportProgressDlg_updateProg
     p->deleteLater();
 }
 
-TEST(ExportProgressDlg_hideEvent_UT, ExportProgressDlg_hideEvent_UT)
+TEST(ExportProgressDlg_closeEvent_UT, ExportProgressDlg_closeEvent_UT)
 {
     ExportProgressDlg *p = new ExportProgressDlg(nullptr);
     EXPECT_NE(p, nullptr);
 
-    p->hideEvent(nullptr);
+    p->closeEvent(nullptr);
     EXPECT_EQ(p->m_pExportProgressBar->value(), p->m_pExportProgressBar->minimum());
     p->deleteLater();
 }
