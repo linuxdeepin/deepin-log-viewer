@@ -350,15 +350,11 @@ void LogAuthThread::handleKern()
 
             msg.dateTime = timeList.join(" ");
             QStringList tmpList;
-            utsname _utsname;
-            uname(&_utsname);
             if (list[0].contains("-")) {
-                // get hostname.
-                msg.hostName = QString(_utsname.nodename);
+                msg.hostName = list[2];
                 tmpList = list[3].split("[");
             } else {
-                // get hostname.
-                msg.hostName = QString(_utsname.nodename);
+                msg.hostName = list[3];
                 tmpList = list[4].split("[");
             }
 

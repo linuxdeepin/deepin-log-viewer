@@ -53,6 +53,16 @@ QString LogViewerService::readLog(const QString &filePath)
     m_process.start("cat", QStringList() << filePath);
     m_process.waitForFinished(-1);
     QByteArray byte = m_process.readAllStandardOutput();
+
+    //QByteArray -> QString 如果遇到0x00，会导致转换终止
+    //replace("\x00", "")和replace("\u0000", "")无效
+    for(int i = 0;i != byte.size();++i) {
+        if(byte.at(i) == 0x00) {
+            byte.remove(i, 1);
+            i--;
+        }
+    }
+
     return QString::fromUtf8(byte);
 }
 
