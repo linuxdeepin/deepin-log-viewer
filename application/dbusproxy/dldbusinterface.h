@@ -71,6 +71,20 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("readLog"), argumentList);
     }
 
+    inline QDBusPendingReply<QString> openLogStream(const QString &filePath)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(filePath);
+        return asyncCallWithArgumentList(QStringLiteral("openLogStream"), argumentList);
+    }
+
+    inline QDBusPendingReply<QString> readLogInStream(const QString &token)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(token);
+        return asyncCallWithArgumentList(QStringLiteral("readLogInStream"), argumentList);
+    }
+
 Q_SIGNALS: // SIGNALS
 };
 

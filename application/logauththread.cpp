@@ -315,7 +315,19 @@ void LogAuthThread::handleKern()
         if (!m_canRun) {
             return;
         }
-        QString byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+
+        auto token = DLDBusHandler::instance(this)->openLogStream(m_FilePath.at(i));
+        QString byte;
+        while(1) {
+            auto temp = DLDBusHandler::instance(this)->readLogInStream(token);
+
+            if(temp.isEmpty()) {
+                break;
+            }
+
+            byte += temp;
+        }
+
         byte.replace('\u0000', "").replace("\x01", "");
         QStringList strList = byte.split('\n', QString::SkipEmptyParts);
         for (int j = strList.size() - 1; j >= 0; --j) {

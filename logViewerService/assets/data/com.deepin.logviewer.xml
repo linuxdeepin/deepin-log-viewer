@@ -11,15 +11,23 @@
     <method name="quit">
     </method>
     <method name="exportLog"> 
-    <arg type="b" direction="out"/>
-    <arg name="outDir" type="s" direction="in"/>
-    <arg name="in" type="s" direction="in"/>
-    <arg name="isFile" type="b" direction="in"/>
+      <arg type="b" direction="out"/>
+      <arg name="outDir" type="s" direction="in"/>
+      <arg name="in" type="s" direction="in"/>
+      <arg name="isFile" type="b" direction="in"/>
     </method>
     <method name="getFileInfo"> 
-    <arg type="as" direction="out"/>
-    <arg name="file" type="s" direction="in"/>
-    <arg name="unzip" type="b" direction="in"/>
+      <arg type="as" direction="out"/>
+      <arg name="file" type="s" direction="in"/>
+      <arg name="unzip" type="b" direction="in"/>
+    </method>
+    <method name="openLogStream">
+      <arg type="s" direction="out"/>
+      <arg name="filePath" type="s" direction="in"/>
+    </method>
+    <method name="readLogInStream">
+      <arg type="s" direction="out"/>
+      <arg name="token" type="s" direction="in"/>
     </method>
   </interface>
 </node>

@@ -61,6 +61,16 @@ QString DLDBusHandler::readLog(const QString &filePath)
     return m_dbus->readLog(filePath);
 }
 
+QString DLDBusHandler::openLogStream(const QString &filePath)
+{
+    return m_dbus->openLogStream(filePath);
+}
+
+QString DLDBusHandler::readLogInStream(const QString &token)
+{
+    return m_dbus->readLogInStream(token);
+}
+
 /*!
  * \~chinese \brief DLDBusHandler::exitCode 返回进程状态
  * \~chinese \return 进程返回值
