@@ -24,6 +24,8 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QStringList>
+#include <QCryptographicHash>
+#include <QTextStream>
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusConnectionInterface>
@@ -37,6 +39,15 @@ LogViewerService::LogViewerService(QObject *parent)
     m_commands.insert("last", "last -x");
     m_commands.insert("journalctl_system", "journalctl -r");
     m_commands.insert("journalctl_boot", "journalctl -b -r");
+}
+
+LogViewerService::~LogViewerService()
+{
+    if(!m_logMap.isEmpty()) {
+        for(auto eachPair : m_logMap) {
+            delete eachPair.second;
+        }
+    }
 }
 
 /*!
@@ -64,6 +75,64 @@ QString LogViewerService::readLog(const QString &filePath)
     }
 
     return QString::fromUtf8(byte);
+}
+
+/*!
+ * \~chinese \brief LogViewerService::openLogStream 打开一个日志文件的流式读取通道
+ * \~chinese \param filePath 文件路径
+ * \~chinese \return 通道token，返回空时表示文件路径无效
+ */
+QString LogViewerService::openLogStream(const QString &filePath)
+{
+    QString result = readLog(filePath);
+    if(result == " ") {
+        return "";
+    }
+
+    QString token = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Md5).toHex();
+
+    auto stream = new QTextStream;
+
+    m_logMap[token] = std::make_pair(result, stream);
+    stream->setString(&(m_logMap[token].first), QIODevice::ReadOnly);
+
+    return token;
+}
+
+/*!
+ * \~chinese \brief LogViewerService::readLogInStream 从刚刚打开的传输通道中读取日志数据
+ * \~chinese \param token 通道token
+ * \~chinese \return 读取的日志，返回为空的时候表示读取结束或token无效
+ */
+QString LogViewerService::readLogInStream(const QString &token)
+{
+    if(!m_logMap.contains(token)) {
+        return "";
+    }
+
+    auto stream = m_logMap[token].second;
+
+    QString result;
+    constexpr int maxReadSize = 10 * 1024 * 1024;
+    while (1) {
+        auto data = stream->readLine();
+        if(data.isEmpty()) {
+            break;
+        }
+
+        result += data + '\n';
+
+        if(result.size() > maxReadSize) {
+            break;
+        }
+    }
+
+    if(result.isEmpty()) {
+        delete m_logMap[token].second;
+        m_logMap.remove(token);
+    }
+
+    return result;
 }
 
 /*!

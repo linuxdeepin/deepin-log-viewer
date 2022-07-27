@@ -28,6 +28,8 @@
 #include <QProcess>
 #include <QTemporaryDir>
 
+class QTextStream;
+
 class LogViewerService : public QObject
     , protected QDBusContext
 {
@@ -35,6 +37,7 @@ class LogViewerService : public QObject
     Q_CLASSINFO("D-Bus Interface", "com.deepin.logviewer")
 public:
     explicit LogViewerService(QObject *parent = nullptr);
+    ~LogViewerService();
 
 Q_SIGNALS:
 
@@ -44,12 +47,15 @@ public Q_SLOTS:
     Q_SCRIPTABLE void quit();
     Q_SCRIPTABLE QStringList getFileInfo(const QString &file, bool unzip = true);
     Q_SCRIPTABLE bool exportLog(const QString &outDir, const QString &in, bool isFile);
+    Q_SCRIPTABLE QString openLogStream(const QString &filePath);
+    Q_SCRIPTABLE QString readLogInStream(const QString &token);
 
 private:
     QTemporaryDir tmpDir;
     QProcess m_process;
     QString tmpDirPath;
     QMap<QString, QString> m_commands;
+    QMap<QString, std::pair<QString, QTextStream*>> m_logMap;
     /**
      * @brief isValidInvoker 检验调研者是否是日志
      * @return

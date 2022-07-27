@@ -108,6 +108,20 @@ QString stub_dnfReadLog(const QString &filePath)
     return "2021-05-21T02:08:36Z DEBUG 加载插件：builddep, changelog, \nconfig-manager, copr, debug, debuginfo-install, download, \ngenerate_completion_cache, needs-restarting, playground, repoclosure, repodiff, repograph, repomanage, reposync";
 }
 
+QString stub_dnfReadStream(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    static int i = 0;
+    QString result;
+    if(i % 2 == 0) {
+        result = "2021-05-21T02:08:36Z DEBUG 加载插件：builddep, changelog, \nconfig-manager, copr, debug, debuginfo-install, download, \ngenerate_completion_cache, needs-restarting, playground, repoclosure, repodiff, repograph, repomanage, reposync";
+    } else {
+        result = "";
+    }
+    ++i;
+    return result;
+}
+
 QString stub_BootReadLog(const QString &filePath)
 {
     Q_UNUSED(filePath);
@@ -333,7 +347,8 @@ TEST_F(LogAuthThread_UT, UT_HandleKern_001)
     stub.set(wtmp_close, stub_wtmp_close);
     stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
     stub.set(ADDR(QProcess, exitCode), stub_exitCode);
-    stub.set(ADDR(DLDBusHandler, readLog), stub_dnfReadLog);
+    stub.set(ADDR(DLDBusHandler, openLogStream), stub_dnfReadLog);
+    stub.set(ADDR(DLDBusHandler, readLogInStream), stub_dnfReadStream);
     stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), fileReadLine);
     stub.set(ADDR(QDateTime, toMSecsSinceEpoch), dnfToMSecsSinceEpoch);
     stub.set(ADDR(QRegExp, indexIn), dmesgIndexIn);

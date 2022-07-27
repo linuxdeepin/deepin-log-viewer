@@ -36,6 +36,8 @@ public:
     int exitCode();
     void quit();
     bool exportLog(const QString &outDir, const QString &in, bool isFile);
+    QString openLogStream(const QString &filePath);
+    QString readLogInStream(const QString &token);
 
 private:
     explicit DLDBusHandler(QObject *parent = nullptr);
