@@ -25,6 +25,7 @@
 #include "environments.h"
 #include "dbusmanager.h"
 #include "utils.h"
+#include "eventlogutils.h"
 #include "DebugTimeManager.h"
 
 #include <DApplication>
@@ -42,8 +43,8 @@ DCORE_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     //在root下或者非deepin/uos环境下运行不会发生异常，需要加上XDG_CURRENT_DESKTOP=Deepin环境变量；
-    if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")){
-       setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
+    if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")) {
+        setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
     }
 
     PERF_PRINT_BEGIN("POINT-01", "");
@@ -105,6 +106,13 @@ int main(int argc, char *argv[])
     LogCollectorMain w;
     a.setMainWindow(&w);
 
+    //埋点记录启动数据
+    QJsonObject objStartEvent{
+        {"tid", Eventlogutils::StartUp},
+        {"vsersion", VERSION},
+        {"mode", 1},
+    };
+    Eventlogutils::GetInstance()->writeLogs(objStartEvent);
 
     w.show();
     Dtk::Widget::moveToCenter(&w);
