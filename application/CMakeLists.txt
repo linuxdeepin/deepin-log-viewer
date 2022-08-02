@@ -191,6 +191,7 @@ set (APP_CPP_FILES
      logdetailedit.cpp
 #     viewsortfilter.cpp
      logallexportthread.cpp
+     eventlogutils.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -224,6 +225,7 @@ set (APP_HEADERS_FILES
     dbusproxy/dldbushandler.h
 #    viewsortfilter.h
     logallexportthread.h
+    eventlogutils.h
     )
 
 # 5. 头文件
