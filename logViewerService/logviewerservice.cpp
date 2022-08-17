@@ -214,7 +214,8 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
-    if (outDir.isEmpty() || in.isEmpty()) {
+    QFileInfo outDirInfo(outDir);
+    if (!outDirInfo.isDir() || in.isEmpty()) {
         return false;
     }
     QString outFullPath = "";
