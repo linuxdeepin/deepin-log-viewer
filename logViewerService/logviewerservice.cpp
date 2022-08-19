@@ -214,9 +214,17 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
-    if (outDir.isEmpty() || in.isEmpty()) {
+    QFileInfo outDirInfo;
+    if(!outDir.endsWith("/")) {
+        outDirInfo.setFile(outDir + "/");
+    } else {
+        outDirInfo.setFile(outDir);
+    }
+
+    if (!outDirInfo.isDir() || in.isEmpty()) {
         return false;
     }
+
     QString outFullPath = "";
     QStringList arg = {"-c", ""};
     if (isFile) {
@@ -229,21 +237,21 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             qInfo() << "in not file:" << in;
             return false;
         }
-        outFullPath = outDir + filein.fileName();
+        outFullPath = outDirInfo.absoluteFilePath() + filein.fileName();
         //复制文件
-        arg[1].append(QString("cp %1 %2;").arg(in, outDir));
+        arg[1].append(QString("cp %1 \"%2\";").arg(in, outDirInfo.absoluteFilePath()));
     } else {
         auto it = m_commands.find(in);
         if (it == m_commands.end()) {
             qInfo() << "unknown command:" << in;
             return false;
         }
-        outFullPath = outDir + in + ".txt";
+        outFullPath = outDirInfo.absoluteFilePath() + in + ".txt";
         //结果重定向到文件
-        arg[1].append(QString("%1 >& %2;").arg(it.value(), outFullPath));
+        arg[1].append(QString("%1 >& \"%2\";").arg(it.value(), outFullPath));
     }
     //设置文件权限
-    arg[1].append(QString("chmod 777 %1;").arg(outFullPath));
+    arg[1].append(QString("chmod 777 \"%1\";").arg(outFullPath));
     QProcess process;
     process.start("/bin/bash", arg);
     if (!process.waitForFinished()) {
