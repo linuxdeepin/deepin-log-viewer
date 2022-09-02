@@ -285,7 +285,7 @@ int LogFileParser::parseByKern(KERN_FILTERS &iKernFilter)
     m_isKernLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(KERN);
-    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("kern");
+    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("kern", false);
     authThread->setFileterParam(iKernFilter);
     authThread->setFilePath(filePath);
     connect(authThread, &LogAuthThread::kernFinished, this,

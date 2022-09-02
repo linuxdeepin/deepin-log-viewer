@@ -316,7 +316,18 @@ void LogAuthThread::handleKern()
             return;
         }
 
-        auto token = DLDBusHandler::instance(this)->openLogStream(m_FilePath.at(i));
+        //如果是压缩文件，对其解压缩
+        QString filePath = m_FilePath.at(i);
+        if(QString::compare(QFileInfo(filePath).suffix(), "gz", Qt::CaseInsensitive) == 0){
+            QStringList filePathList = DLDBusHandler::instance(this)->getFileInfo(filePath);
+            if(filePathList.size()){
+                filePath = filePathList.at(0);
+            }else {
+                filePath = "";
+            }
+        }
+
+        auto token = DLDBusHandler::instance(this)->openLogStream(filePath);
         QString byte;
         while(1) {
             auto temp = DLDBusHandler::instance(this)->readLogInStream(token);
