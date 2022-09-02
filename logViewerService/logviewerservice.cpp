@@ -189,9 +189,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
     dir.setSorting(QDir::Time);
     QFileInfoList fileList = dir.entryInfoList();
     for (int i = 0; i < fileList.count(); i++) {
-        if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) != 0) {
-            fileNamePath.append(fileList[i].absoluteFilePath());
-        } else if (unzip) {
+        if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
             //                qDebug() << tmpDirPath;
             QProcess m_process;
 
@@ -206,6 +204,9 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
             //                qDebug() << m_process.readAll();
             fileNamePath.append(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             fileNum++;
+        }
+        else {
+            fileNamePath.append(fileList[i].absoluteFilePath());
         }
     }
     //       qInfo()<<fileNamePath.count()<<fileNamePath<<"******************************";
