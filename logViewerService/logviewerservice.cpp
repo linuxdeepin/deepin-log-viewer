@@ -215,6 +215,10 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
+    if(!isValidInvoker()) { //非法调用
+        return false;
+    }
+
     QFileInfo outDirInfo;
     if(!outDir.endsWith("/")) {
         outDirInfo.setFile(outDir + "/");
