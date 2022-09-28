@@ -4,6 +4,9 @@ if (NOT DEFINED VERSION)
     set(VERSION 1.2.2)
 endif ()
 configure_file(../application/environments.h.in environments.h @ONLY)
+find_package(DtkWidget REQUIRED)
+find_package(DtkGui REQUIRED)
+find_package(DtkCore REQUIRED)
 set(LINK_LIBS
     Qt5::Core
     Qt5::Widgets
@@ -16,6 +19,7 @@ set(LINK_LIBS
     ${DtkCore_LIBRARIES}
     ${DtkGUI_LIBRARIES}
 )
+
 #可访问private
 ADD_COMPILE_OPTIONS(-fno-access-control)
 ADD_COMPILE_OPTIONS(-fno-inline)
