@@ -12,6 +12,7 @@
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusConnectionInterface>
+#include <QStandardPaths>
 
 const QStringList ValidInvokerExePathList1 = QStandardPaths::locateAll(QStandardPaths::ApplicationsLocation, "deepin-log-viewer");
 
