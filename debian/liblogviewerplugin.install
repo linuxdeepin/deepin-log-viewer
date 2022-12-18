@@ -1,0 +1,3 @@
+usr/lib/*/liblogviewerplugin.so.*
+usr/lib/*/liblogviewerplugin.so
+#usr/share/liblogviewerplugin/translations/*.qm

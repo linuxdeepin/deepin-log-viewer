@@ -14,3 +14,25 @@ Description:Log Viewer is a useful tool for viewing system logs.
  applications start up and run. You can do trouble-shooting and solve
  problems quickly by analyzing logs.
 Recommends: uos-reporter, deepin-event-log    
+
+Package: liblogviewerplugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Conflicts:
+ liblog-viewer-plugin
+Replaces:
+ liblog-viewer-plugin
+Recommends: libqt5libqgtk2
+Description: Log Viewer Plugin library.
+ Deepin Log Viewer Plugin library.
+
+Package: liblogviewerplugin-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, liblogviewerplugin(=${binary:Version})
+Conflicts:
+ liblog-viewer-plugin-dev
+Replaces:
+ liblog-viewer-plugin-dev
+Recommends: libqt5libqgtk2
+Description: Log Viewer Plugin library development headers.
+ Deepin Log Viewer Plugin library development headers.

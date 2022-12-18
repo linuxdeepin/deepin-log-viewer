@@ -13,4 +13,5 @@ add_subdirectory(logViewerTruncate)
 add_subdirectory(logViewerService)
 
 add_subdirectory(tests)
+add_subdirectory(liblogviewerplugin)
 option(PERF_ON "open the info of benchmark" ON)
