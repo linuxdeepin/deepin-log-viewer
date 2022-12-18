@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
+
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}/bin
 liblogviewerplugin=${prefix}/@CMAKE_INSTALL_LIBDIR@
