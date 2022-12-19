@@ -24,6 +24,7 @@ set(LINK_LIBS
 ADD_COMPILE_OPTIONS(-fno-access-control)
 ADD_COMPILE_OPTIONS(-fno-inline)
 set (PROJECT_NAME_TEST deepin-log-viewer-test)
+set (PROJECT_NAME_PLUGIN_TEST deepin-log-viewer-plugin-test)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -61,6 +62,16 @@ if(CMAKE_SAFETYTEST STREQUAL "CMAKE_SAFETYTEST_ARG_ON")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fsanitize=undefined,address -O2")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=undefined,address -O2")
 endif()
+
+#不显示未使用的函数告警
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-function")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-function")
+#不显示未使用的变量告警
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-variable")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-variable")
+#不显示已赋值但未使用的变量告警
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-variable")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-unused-but-set-variable")
 
 configure_file(../application/config.h.in config.h @ONLY)
 add_definitions(-DUSE_POLKIT -DENABLE_INACTIVE_DISPLAY)
@@ -126,6 +137,15 @@ FILE(GLOB allSource
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
 )
+FILE(GLOB allTestSource
+    src/*.cpp
+    common/*.cpp
+    dbusproxy/*.cpp
+)
+FILE(GLOB allPluginTestSource
+    src/ut_main.cpp
+    ut_logviewerplugin/*.cpp
+)
 
 # 5. 头文件
 # 5.1. 定义函数，用于递归添加头文件
@@ -159,12 +179,15 @@ set (MINIZIP_SOURCES
     )
 
 file(GLOB TMPFILE_SOURCES  ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmpfileplus/*.c)
- file(GLOB MD5SOURCES   ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5/*.c)
-#---------------------------------------------
+file(GLOB MD5SOURCES   ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5/*.c)
 #---------------DOCXFACTORY源码引入----------------------
 file(GLOB_RECURSE DOCXFAC_SOURCES  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.cpp" )
 file(GLOB_RECURSE DOCXFAC_SOURCES_C  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.c" )
 #-----------------------------------------------------
+#--------------------liblogviewerplugin源码引入---------------------------------
+file(GLOB_RECURSE LVP_SOURCES "../liblogviewerplugin/src/*.cpp") #GLOB_RECURSE递归搜索
+file(GLOB_RECURSE LVP_HEADERS "../liblogviewerplugin/src/*.h") #GLOB_RECURSE递归搜索
+#---------------------------------------------
 
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/include")
@@ -173,6 +196,7 @@ include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/min
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmpfileplus")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../application")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../liblogviewerplugin")
 include_directories(${DtkWidget_INCLUDE_DIRS})
 include_directories(${DtkCore_INCLUDE_DIRS})
 include_directories(${DtkGui_INCLUDE_DIRS})
@@ -187,19 +211,13 @@ include_directories(${XercesC_INCLUDE_DIRS})
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 find_package(PolkitQt5-1)
-FILE(GLOB allTestSource
-src/*.cpp
-common/*.cpp
-dbusproxy/*.cpp
-)
 include_directories(src)
 
-
 add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
+#添加插件单元测试进程
+add_executable (${PROJECT_NAME_PLUGIN_TEST} ${allPluginTestSource} ${LVP_HEADERS} ${LVP_SOURCES})
 
-
-
-target_link_libraries(${PROJECT_NAME_TEST}  ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
+target_link_libraries(${PROJECT_NAME_TEST} ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
 #当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
 target_link_libraries(${PROJECT_NAME_TEST} ${ZLIB_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${Boost_LIBRARIES})
@@ -207,3 +225,7 @@ target_link_libraries(${PROJECT_NAME_TEST} ${RapidJSON_LIBRARIES})
 #target_link_libraries(${PROJECT_NAME_TEST} ${ImageMagick_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${XercesC_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} PolkitQt5-1::Agent)
+
+target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
+target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} PolkitQt5-1::Agent)
+

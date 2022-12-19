@@ -1,0 +1,5 @@
+usr/include/liblogviewerplugin/*.h
+usr/include/liblogviewerplugin/plugininterfaces/*.h
+usr/include/liblogviewerplugin/plugins/*.h
+usr/lib/*/pkgconfig/liblogviewerplugin.pc
+
