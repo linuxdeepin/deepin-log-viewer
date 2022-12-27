@@ -5,21 +5,19 @@
 #ifndef LOGVIEWERPLUGIN_H
 #define LOGVIEWERPLUGIN_H
 
-#include "../structdef.h"
-#include "../private/logfileparser.h"
-#include "../private/exportprogressdlg.h"
+#include "../application/structdef.h"
+#include "../application/logfileparser.h"
+#include "../application/exportprogressdlg.h"
 #include "../plugininterfaces/logviewerplugininterface.h"
 
 #include <QObject>
 
 class LogViewerPlugin : public QObject, public LogViewerPluginInterface
-//class LogViewerPlugin : public QObject
 {
     Q_OBJECT
 
     //Q_PLUGIN_METADATA(IID "com.deepin.logviewer.LogViewerPlugin" FILE "LogViewerPlugin.json")
     Q_PLUGIN_METADATA(IID "com.deepin.logviewer.LogViewerPlugin")
-    //Q_PLUGIN_METADATA(IID LogViewerPluginInterface_iid)
     Q_INTERFACES(LogViewerPluginInterface)
     /**
      * @brief The LOAD_STATE enum 主表部分的显示状态
@@ -31,37 +29,87 @@ class LogViewerPlugin : public QObject, public LogViewerPluginInterface
         DATA_NO_SEARCH_RESULT, //搜索无记录
     };
 public:
-    //ImgViewerType:图片展示类型, savePath:缩略图保存位置，customTopToolbar:自定义标题栏，nullptr的时候使用内置方案
     explicit LogViewerPlugin();
     ~LogViewerPlugin() override;
 
-    /**
-     * @brief generateAppFile 获取系统应用日志的数据
-     * @param path 要获取的某一个应用的日志的日志文件路径
-     * @param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
-     * @param lId 等级筛选id,对应PRIORITY枚举,直接传入获取系统接口,-1表示全部等级不筛选,
-     * @param iSearchStr 搜索关键字,现阶段不用,保留参数
-     */
-    void generateAppFile(const QString &path, int id, int lId, const QString &iSearchStr) override;
-    //void generateAppFile(const QString &path, int id, int lId, const QString &iSearchStr);
+
+    //generateAppFile 获取系统应用日志的数据
+    //param path 要获取的某一个应用的日志的日志文件路径
+    //param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
+    //param lId 等级筛选id,对应PRIORITY枚举,直接传入获取系统接口,-1表示全部等级不筛选,
+    //param iSearchStr 搜索关键字,现阶段不用,保留参数
+    void generateAppFile(const QString &path, BUTTONID id, PRIORITY lId, const QString &iSearchStr = "") override;
+
+    // exportAppLogFile 导出应用日志
+    // param: path 导出路径
+    // param: period 周期，枚举类型，具体值对应周期下拉框选项
+    // param: Level 级别，级别，具体值对应级别下拉框选项
+    // param: appid 自研应用id，用于导出指定应用的日志，若为空，什么都不做，返回false（例：导出相册的日志信息，传入deepin-album即可）
+    // return：true 导出成功， false 导出失败
+    bool exportAppLogFile(const QString &path, BUTTONID period, PRIORITY level, const QString &appid) override;
 signals:
     //应用日志数据读取结束信号
     void sigAppFinished(int index) override;
-    //void sigAppFinished(int index);
-    //应用日志数据
+    //应用日志数据信号
     void sigAppData(int index, QList<LOG_MSG_APPLICATOIN> iDataList) override;
-    //void sigAppData(int index, QList<LOG_MSG_APPLICATOIN> iDataList);
+    //应用日志导出完成信号
+    void sigExportResult(bool isSuccess);
+
+public slots:
+    //应用日志数据读取结束槽
+    void slot_appFinished(int index);
+    //应用日志数据槽
+    void slot_appData(int index, QList<LOG_MSG_APPLICATOIN> list);
+    //应用日志导出完成槽
+    void slot_exportResult(bool isSuccess);
 
 protected:
     void clearAllFilter();
     void clearAllDatalist();
     void initConnections();
+    //筛选应用日志
+    QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList);
+    /**
+     * @brief getAppName 获取当前选择的应用的日志路径对应的日志名称
+     * @param filePath  当前选择的应用的日志路径
+     * @return 对应的日志名称
+     */
+    QString getAppName(const QString &filePath);
+    //导出日志
+    //path:导出路径
+    void exportLogFile(QString path);
 
 private:
+    /**
+     * @brief m_treeView 主数据表控件件
+     */
+    //LogTreeView *m_treeView;
+    /**
+     * @brief m_pModel 主数据表的model
+     */
+    //QStandardItemModel *m_pModel;
+
+    //分割布局
+    //Dtk::Widget::DSplitter *m_splitter;
+
+    //详情页控件
+    //logDetailInfoWidget *m_detailWgt {nullptr};
+    //搜索无结果时显示无搜索结果提示的label
+    //Dtk::Widget::DLabel *noResultLabel {nullptr};
+    //当前选中的日志类型的index
+    //QModelIndex m_curListIdx;
     //日志等级的显示文本和代码内文本的转换map
     QMap<QString, QString> m_transDict;
     //分页加载时,当前加载到的页数
     int m_limitTag {0};
+    /**
+     * @brief m_spinnerWgt 加载数据时转轮控件
+     */
+    //LogSpinnerWidget *m_spinnerWgt;
+    /**
+     * @brief m_spinnerWgt_K 加载内核日志数据时转轮控件
+     */
+    //LogSpinnerWidget *m_spinnerWgt_K; // add by Airy
     /**
      * @brief m_curAppLog 当前选中的应用的日志文件路径
      */
@@ -155,6 +203,7 @@ private:
      * @brief m_icon_name_map 日志等级对应图标资源文件名的map
      */
     QMap<QString, QString> m_icon_name_map;
+
     //当前搜索关键字
     QString m_currentSearchStr {""};
     /**
@@ -174,7 +223,7 @@ private:
     //上次treeview滚筒条的值
     int m_treeViewLastScrollValue = -1;
     //当前的显示加载状态
-    LOAD_STATE m_state;
+    //DisplayContent::LOAD_STATE m_state;
     //系统日志上次获取的时间
     QDateTime m_lastJournalGetTime {QDateTime::fromTime_t(0)};
     /**
@@ -197,6 +246,7 @@ private:
     int m_xorgCurrentIndex {-1};
     int m_kwinCurrentIndex {-1};
     int m_appCurrentIndex {-1};
+    int m_OOCCurrentIndex {-1};
     bool m_isDataLoadComplete {false};
     //筛选条件
     QString selectFilter;
