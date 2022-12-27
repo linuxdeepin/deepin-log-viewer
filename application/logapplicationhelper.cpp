@@ -292,7 +292,12 @@ QMap<QString, QString> LogApplicationHelper::getMap()
  * @param str 应用包名
  * @return 显示文本
  */
-QString LogApplicationHelper::transName(QString str)
+QString LogApplicationHelper::transName(const QString &str)
 {
     return m_en_trans_map.value(str);
+}
+
+QString LogApplicationHelper::getPathByAppId(const QString &str)
+{
+    return m_en_log_map.value(str);
 }

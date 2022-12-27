@@ -6,7 +6,8 @@
 #include "utils.h"
 #include "sharedmemorymanager.h"
 #include "sys/utsname.h"
-#include <wtmpparse.h>
+#include "wtmpparse.h"
+
 #include <DGuiApplicationHelper>
 #include "dbusproxy/dldbushandler.h"
 
