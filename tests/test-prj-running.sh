@@ -13,6 +13,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_SAFETYTEST_ARG="CMAKE_SAFETYTEST_ARG_ON" 
 make -j8
 #生成asan日志和ut测试xml结果
 ./tests/deepin-log-viewer-test --gtest_output=xml:./report/report_deepin-log-viewer.xml
+./tests/deepin-log-viewer-plugin-test --gtest_output=xml:./report/report_deepin-log-viewer-plugin.xml
 
 workdir=$(cd ../$(dirname $0)/$builddir; pwd)
 

@@ -40,7 +40,11 @@ public:
 
     QMap<QString, QString> getMap();
 
-    QString transName(QString str);
+    //根据包名获得显示名称
+    QString transName(const QString &str);
+
+    //根据包名获得路径
+    QString getPathByAppId(const QString &str);
 
 private:
     explicit LogApplicationHelper(QObject *parent = nullptr);

@@ -7,7 +7,6 @@ set(TARGET_NAME logviewerplugin)
 set(CMD_NAME logviewerplugin)
 
 #设置编译参数
-set(COMPILE_OPTIONS -std=c++11)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -82,13 +81,46 @@ find_package(PolkitQt5-1)
 aux_source_directory(logviewerplugin allSources)
 
 #需要打开的头文件
-FILE (GLOB allHeaders "*.h" "*/*.h" "*/*/*.h" "*/*/*/*.h")
+FILE (GLOB allHeaders
+    "*.h"
+    "*/*.h"
+    "*/*/*.h"
+    "*/*/*/*.h"
+    "../application/dbusproxy/dldbusinterface.h"
+    "../application/dbusproxy/dldbushandler.h"
+    "../application/exportprogressdlg.h"
+    "../application/journalbootwork.h"
+    "../application/journalwork.h"
+    "../application/logapplicationparsethread.h"
+    "../application/logoocfileparsethread.h"
+    "../application/logexportthread.h"
+    "../application/logauththread.h"
+    "../application/logfileparser.h"
+    "../application/sharedmemorymanager.h"
+    "../application/utils.h"
+    "../application/wtmpparse.h"
+    "../application/structdef.h"
+    )
 #需要打开的代码文件
 FILE (GLOB allSources
     "*.cpp"                                   "*.c"
     "*/*.cpp"                                 "*/*.c"
     "*/*/*.cpp"                              "*/*/*.c"
     "*/*/*/*.cpp"                           "*/*/*/*.c"
+    "../application/dbusproxy/dldbusinterface.cpp"
+    "../application/dbusproxy/dldbushandler.cpp"
+    "../application/exportprogressdlg.cpp"
+    "../application/journalbootwork.cpp"
+    "../application/journalwork.cpp"
+    "../application/logapplicationparsethread.cpp"
+    "../application/logoocfileparsethread.cpp"
+    "../application/logexportthread.cpp"
+    "../application/logauththread.cpp"
+    "../application/logfileparser.cpp"
+    "../application/sharedmemorymanager.cpp"
+    "../application/utils.cpp"
+    "../application/wtmpparse.cpp"
+    "../application/wtmpparse.cpp"
     )
 file(GLOB_RECURSE RESOURCES "*.qrc")
 
@@ -98,11 +130,31 @@ set(LINK_DIR /usr/lib/)
 include_directories(${INC_DIR})
 link_directories(${LINK_DIR})
 
+#--------------------libxlsx源码引入---------------------------------
+file(GLOB LXW_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter/src/*.c)
+file(GLOB_RECURSE LXW_HEADERS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter/include *.h)
+
+#set (MINIZIP_SOURCES
+#    ../3rdparty/minizip/ioapi.c
+##../3rdparty/minizip/miniunz.c
+#    ../3rdparty/minizip/minizip.c
+#    ../3rdparty/minizip/mztools.c
+#    ../3rdparty/minizip/unzip.c
+#    ../3rdparty/minizip/zip.c
+#    )
+
+#file(GLOB TMPFILE_SOURCES  ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmpfileplus/*.c)
+#file(GLOB MD5SOURCES   ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5/*.c)
+
+#---------------DOCXFACTORY源码引入----------------------
+file(GLOB_RECURSE DOCXFAC_SOURCES  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.cpp" )
+file(GLOB_RECURSE DOCXFAC_SOURCES_C  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.c" )
+
 #设置不删除生成的文件夹内容文件
 set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
 
 #编译为库
-add_library(logviewerplugin SHARED ${allHeaders} ${allSources} ${RESOURCES} ${QM})
+add_library(logviewerplugin SHARED ${allHeaders} ${allSources} ${RESOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${QM})
 target_compile_options(logviewerplugin PRIVATE ${COMPILE_OPTIONS})
 set_target_properties(${TARGET_NAME} PROPERTIES VERSION 0.1.0 SOVERSION 0.1)
 
@@ -125,6 +177,8 @@ include_directories( ${ZLIB_INCLUDE_DIRS})
 message("ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS}")
 include_directories( ${RapidJSON_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
+include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/include")
 
 #引用库
 target_link_libraries(${TARGET_NAME}  ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES}  -lsystemd -licui18n -licuuc  -ldl -fPIC)
@@ -145,7 +199,7 @@ configure_file(liblogviewerplugin.pc.in ${PROJECT_BINARY_DIR}/liblogviewerplugin
 install(TARGETS ${CMD_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(FILES
-    src/structdef.h
+    ../application/structdef.h
     DESTINATION include/liblogviewerplugin)
 install(FILES
     src/plugininterfaces/logviewerplugininterface.h

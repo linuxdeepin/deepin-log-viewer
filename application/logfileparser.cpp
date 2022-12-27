@@ -177,7 +177,7 @@ int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
 #include <time.h>
 #include <utmp.h>
 #include <utmpx.h>
-#include <wtmpparse.h>
+#include "wtmpparse.h"
 
 int LogFileParser::parseByNormal(NORMAL_FILTERS &iNormalFiler)
 {

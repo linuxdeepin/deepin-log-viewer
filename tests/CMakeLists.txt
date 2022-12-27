@@ -21,7 +21,6 @@ set(LINK_LIBS
 )
 
 #可访问private
-ADD_COMPILE_OPTIONS(-fno-access-control)
 ADD_COMPILE_OPTIONS(-fno-inline)
 set (PROJECT_NAME_TEST deepin-log-viewer-test)
 set (PROJECT_NAME_PLUGIN_TEST deepin-log-viewer-plugin-test)
@@ -33,6 +32,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 #set(CMAKE_CXX_FLAGS "-g -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#${PROJECT_NAME_TEST}
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-access-control")
 #编译生成覆盖环境
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
 #添加-fno-inline编译选项，禁止内联，能获取到函数地址，可以对内联函数进行打桩
@@ -145,6 +145,7 @@ FILE(GLOB allTestSource
 FILE(GLOB allPluginTestSource
     src/ut_main.cpp
     ut_logviewerplugin/*.cpp
+    ut_logviewerplugin/*.h
 )
 
 # 5. 头文件
@@ -185,8 +186,40 @@ file(GLOB_RECURSE DOCXFAC_SOURCES  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/s
 file(GLOB_RECURSE DOCXFAC_SOURCES_C  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.c" )
 #-----------------------------------------------------
 #--------------------liblogviewerplugin源码引入---------------------------------
-file(GLOB_RECURSE LVP_SOURCES "../liblogviewerplugin/src/*.cpp") #GLOB_RECURSE递归搜索
-file(GLOB_RECURSE LVP_HEADERS "../liblogviewerplugin/src/*.h") #GLOB_RECURSE递归搜索
+#GLOB_RECURSE递归搜索
+file(GLOB_RECURSE LVP_SOURCES
+    "../liblogviewerplugin/src/*.cpp"
+    "../application/dbusproxy/dldbusinterface.cpp"
+    "../application/dbusproxy/dldbushandler.cpp"
+    "../application/exportprogressdlg.cpp"
+    "../application/journalbootwork.cpp"
+    "../application/journalwork.cpp"
+    "../application/logapplicationparsethread.cpp"
+    "../application/logauththread.cpp"
+    "../application/logfileparser.cpp"
+    "../application/sharedmemorymanager.cpp"
+    "../application/utils.cpp"
+    "../application/wtmpparse.cpp"
+    "../application/logapplicationhelper.cpp"
+    "../application/logexportthread.cpp"
+    )
+file(GLOB_RECURSE LVP_HEADERS
+    "../liblogviewerplugin/src/*.h"
+    "../application/dbusproxy/dldbusinterface.h"
+    "../application/dbusproxy/dldbushandler.h"
+    "../application/exportprogressdlg.h"
+    "../application/journalbootwork.h"
+    "../application/journalwork.h"
+    "../application/logapplicationparsethread.h"
+    "../application/logauththread.h"
+    "../application/logfileparser.h"
+    "../application/sharedmemorymanager.h"
+    "../application/utils.h"
+    "../application/wtmpparse.h"
+    "../application/structdef.h"
+    "../application/logapplicationhelper.h"
+    "../application/logexportthread.h"
+    )
 #---------------------------------------------
 
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
@@ -215,7 +248,7 @@ include_directories(src)
 
 add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 #添加插件单元测试进程
-add_executable (${PROJECT_NAME_PLUGIN_TEST} ${allPluginTestSource} ${LVP_HEADERS} ${LVP_SOURCES})
+add_executable (${PROJECT_NAME_PLUGIN_TEST} ${allPluginTestSource} ${LVP_HEADERS} ${LVP_SOURCES} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 
 target_link_libraries(${PROJECT_NAME_TEST} ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
 #当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
@@ -228,4 +261,8 @@ target_link_libraries(${PROJECT_NAME_TEST} PolkitQt5-1::Agent)
 
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} PolkitQt5-1::Agent)
+target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${ZLIB_LIBRARIES})
+target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${XercesC_LIBRARIES})
+
+
 
