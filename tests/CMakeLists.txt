@@ -18,7 +18,7 @@ set(LINK_LIBS
     ${DtkWidget_LIBRARIES}
     ${DtkCore_LIBRARIES}
     ${DtkGUI_LIBRARIES}
-    PkgConfig::qgsettings
+#    PkgConfig::qgsettings
 )
 
 #可访问private
@@ -96,7 +96,9 @@ find_package(RapidJSON)
 find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
-pkg_check_modules(qgsettings REQUIRED IMPORTED_TARGET gsettings-qt)
+#pkg_check_modules(qgsettings REQUIRED IMPORTED_TARGET gsettings-qt)
+# IMPORTED_TARGET failed to work for some of libs under flatpak env
+pkg_check_modules(Other REQUIRED  gsettings-qt)
 
 FILE(GLOB allSource
      ../application/filtercontent.cpp
@@ -256,7 +258,7 @@ add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${APP_QM_FILE
 #添加插件单元测试进程
 add_executable (${PROJECT_NAME_PLUGIN_TEST} ${allPluginTestSource} ${LVP_HEADERS} ${LVP_SOURCES} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 
-target_link_libraries(${PROJECT_NAME_TEST} ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
+target_link_libraries(${PROJECT_NAME_TEST} ${LINK_LIBS} ${Other_LIBRARIES} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
 #当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
 target_link_libraries(${PROJECT_NAME_TEST} ${ZLIB_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${Boost_LIBRARIES})
