@@ -114,11 +114,11 @@
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Сверхкритичное</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Трассировка</translation>
     </message>
 </context>
 <context>
@@ -147,7 +147,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка экспорта</translation>
     </message>
 </context>
 <context>
@@ -244,11 +244,11 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Трассировка</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Сверхкритичное</translation>
     </message>
 </context>
 <context>
@@ -354,6 +354,14 @@
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
+    <message>
+        <source>File Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Time Modified</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -398,7 +406,57 @@
     </message>
     <message>
         <source>dnf Log</source>
+        <translation>Журнал dnf</translation>
+    </message>
+    <message>
+        <source>Other Log</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Custom Log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <source>You do not have permission to view it</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Период обновления</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 с</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 мин</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Не обновлять</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Экспорт всех</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Журналы системы</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>Обновить</translation>
     </message>
 </context>
 </TS>

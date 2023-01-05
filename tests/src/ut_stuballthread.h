@@ -22,6 +22,7 @@ void LogFileParser_parseByKern(KERN_FILTERS &iKernFilter);
 void LogFileParser_parseByApp(APP_FILTERS &iAPPFilter);
 void LogFileParser_parseByNormal(QList<LOG_MSG_NORMAL> &nList, NORMAL_FILTERS &iNormalFiler); // add by Airy
 void LogFileParser_parseByKwin(KWIN_FILTERS iKwinfilter);
+void LogFileParser_parseByOOC(QString & path);
 void Doc_Document_save(const QString &path);
 void QRunnable_run();
 #endif // STUBALLTHREAD_H

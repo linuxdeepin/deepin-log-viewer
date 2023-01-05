@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
 <context>
     <name>Action</name>
     <message>
@@ -356,6 +354,14 @@
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
+    <message>
+        <source>File Name</source>
+        <translation>File Name</translation>
+    </message>
+    <message>
+        <source>Time Modified</source>
+        <translation>Time Modified</translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -402,40 +408,55 @@
         <source>dnf Log</source>
         <translation>dnf Log</translation>
     </message>
+    <message>
+        <source>Other Log</source>
+        <translation>Other Log</translation>
+    </message>
+    <message>
+        <source>Custom Log</source>
+        <translation>Custom Log</translation>
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <source>You do not have permission to view it</source>
+        <translation>You do not have permission to view it</translation>
+    </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Refresh interval</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"></translation>
+        <translation>10 sec</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"></translation>
+        <translation>1 min</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"></translation>
+        <translation>5 min</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>No refresh</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"></translation>
+        <translation>Export All</translation>
     </message>
     <message>
         <source>System Logs</source>
-        <translation type="unfinished"></translation>
+        <translation>System Logs</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Refresh Now</translation>
     </message>
 </context>
 </TS>

@@ -6,6 +6,40 @@
 #define STRUCTDEF_H
 #include <QString>
 #include <QDir>
+
+#define DPKG_TABLE_DATA "dpkgItemData"
+#define XORG_TABLE_DATA "XorgItemData"
+#define BOOT_TABLE_DATA "bootItemData"
+#define KERN_TABLE_DATA "kernItemData"
+#define JOUR_TABLE_DATA "journalItemData"
+#define BOOT_KLU_TABLE_DATA "bootKluItemData"
+#define APP_TABLE_DATA "applicationItemData"
+#define LAST_TABLE_DATA "lastItemData"  // add by Airy
+#define KWIN_TABLE_DATA "kwinItemData"
+#define DMESG_TABLE_DATA "dmesgItemData"
+#define DNF_TABLE_DATA "dnfItemData"
+#define OOC_TABLE_DATA "OOCItemData"
+
+#define JOUR_TREE_DATA "journalctl"
+#define BOOT_KLU_TREE_DATA "bootklu"
+#define DPKG_TREE_DATA "/var/log/dpkg.log"
+#define XORG_TREE_DATA "/var/log/Xorg.0.log"
+#define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"
+#define BOOT_TREE_DATA "/var/log/boot.log"
+#define KERN_TREE_DATA "/var/log/kern.log"
+#define APP_TREE_DATA "application"
+#define LAST_TREE_DATA "last"  // add by Airy
+#define DNF_TREE_DATA "/var/log/dnf.log"
+#define DMESG_TREE_DATA "dmesg"
+#define OTHER_TREE_DATA "other log"
+#define CUSTOM_TREE_DATA "custom log"
+
+#define ITEM_DATE_ROLE (Qt::UserRole + 66)
+#define ICONPREFIX "://images/"
+#define ICONLIGHTPREFIX "://images/light/"
+#define ICONDARKPREFIX "://images/dark/"
+#define DOCTEMPLATE "://doc_template/template.doc"
+
 enum PRIORITY { LVALL = -1,
                 EMER,
                 ALERT,
@@ -81,6 +115,12 @@ struct LOG_MSG_NORMAL {
 struct LOG_MSG_KWIN {
     QString msg;
 };
+struct LOG_FILE_OTHERORCUSTOM {
+    QString name;
+    QString path;
+    QString dateTimeModify;  
+};
+
 //kwin筛选条件，kwin日志只有信息，没有任何可筛选的，但是先放在这，以后统一化
 struct KWIN_FILTERS {
     QString msg;
@@ -171,6 +211,8 @@ enum LOG_FLAG {
     BOOT_KLU,
     Dnf,
     Dmesg,
+    OtherLog,
+    CustomLog,
     NONE = 9999
 }; // modified by
 // Airy
@@ -240,34 +282,5 @@ enum DMESG_DISPLAY_COLUMN {
     dmesgMsgColumn
 };
 }
-#define DPKG_TABLE_DATA "dpkgItemData"
-#define XORG_TABLE_DATA "XorgItemData"
-#define BOOT_TABLE_DATA "bootItemData"
-#define KERN_TABLE_DATA "kernItemData"
-#define JOUR_TABLE_DATA "journalItemData"
-#define BOOT_KLU_TABLE_DATA "bootKluItemData"
-#define APP_TABLE_DATA "applicationItemData"
-#define LAST_TABLE_DATA "lastItemData"  // add by Airy
-#define KWIN_TABLE_DATA "kwinItemData"
-#define DMESG_TABLE_DATA "dmesgItemData"
-#define DNF_TABLE_DATA "dnfItemData"
-
-#define JOUR_TREE_DATA "journalctl"
-#define BOOT_KLU_TREE_DATA "bootklu"
-#define DPKG_TREE_DATA "/var/log/dpkg.log"
-#define XORG_TREE_DATA "/var/log/Xorg.0.log"
-#define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"
-#define BOOT_TREE_DATA "/var/log/boot.log"
-#define KERN_TREE_DATA "/var/log/kern.log"
-#define APP_TREE_DATA "application"
-#define LAST_TREE_DATA "last"  // add by Airy
-#define DNF_TREE_DATA "/var/log/dnf.log"
-#define DMESG_TREE_DATA "dmesg"
-#define ITEM_DATE_ROLE (Qt::UserRole + 66)
-#define ICONPREFIX "://images/"
-#define ICONLIGHTPREFIX "://images/light/"
-#define ICONDARKPREFIX "://images/dark/"
-#define DOCTEMPLATE "://doc_template/template.doc"
-
 
 #endif  // STRUCTDEF_H

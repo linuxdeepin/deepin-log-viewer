@@ -18,6 +18,9 @@
 
 DWIDGET_USE_NAMESPACE
 
+#define ICON_WIDTH 24
+#define ICON_HEIGHT 24
+
 LogViewItemDelegate::LogViewItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {
@@ -96,17 +99,19 @@ void LogViewItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &o
     }
     //绘制图标
     QRect iconRect = rect;
+    iconRect.setWidth(0);
     if (opt.viewItemPosition == QStyleOptionViewItem::Beginning &&
             index.data(Qt::DecorationRole).isValid()) {
-        iconRect.setWidth(36);
-        iconRect.setHeight(36);
         iconRect.setX(rect.x() + margin);
+        iconRect.setY((rect.height() - ICON_HEIGHT) / 2 + rect.y());
+        iconRect.setWidth(ICON_WIDTH);
+        iconRect.setHeight(ICON_HEIGHT);
         QIcon ic = index.data(Qt::DecorationRole).value<QIcon>();
         ic.paint(painter, iconRect, Qt::AlignLeft | Qt::AlignVCenter);
     }
     //绘制文字
     textRect = rect;
-    textRect.setX(textRect.x() + margin - 2);
+    textRect.setX(iconRect.right() + margin - 2);
     QString text = fm.elidedText(opt.text, opt.textElideMode, textRect.width());
     painter->drawText(textRect, Qt::TextSingleLine | static_cast<int>(opt.displayAlignment), text);
     painter->restore();

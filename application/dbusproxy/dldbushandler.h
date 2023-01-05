@@ -16,6 +16,7 @@ public:
     ~DLDBusHandler();
     QString readLog(const QString &filePath);
     QStringList getFileInfo(const QString &flag, bool unzip = true);
+    QStringList getOtherFileInfo(const QString &flag, bool unzip = true);
     int exitCode();
     void quit();
     bool exportLog(const QString &outDir, const QString &in, bool isFile);

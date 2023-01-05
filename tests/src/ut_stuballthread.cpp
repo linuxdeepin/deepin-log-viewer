@@ -51,6 +51,11 @@ void LogFileParser_parseByKwin(KWIN_FILTERS iKwinfilter)
 {
 }
 
+void LogFileParser_parseByOOC(QString & path)
+{
+    Q_UNUSED(path)
+}
+
 //void QRunnable_run()
 //{
 //}

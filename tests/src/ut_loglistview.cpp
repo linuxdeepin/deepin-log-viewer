@@ -6,6 +6,8 @@
 #include "dbusmanager.h"
 #include "DebugTimeManager.h"
 #include "dldbushandler.h"
+#include "logapplicationhelper.h"
+#include "ut_stubpublic.h"
 
 #include <gtest/gtest.h>
 #include <stub.h>
@@ -20,12 +22,6 @@
 #include <QStyle>
 #include <DStyle>
 #include <DSysInfo>
-
-QAction *stub_exec(const QPoint &pos, QAction *at = nullptr)
-{
-    Q_UNUSED(pos);
-    return nullptr;
-}
 
 static QString stub_getSystemInfo()
 {
@@ -72,6 +68,7 @@ TEST(LogListDelegate_Constructor_UT, LogListDelegate_Constructor_UT_001)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
@@ -83,6 +80,7 @@ TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_001)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
@@ -97,6 +95,7 @@ TEST(LogListDelegate_helpEvent_UT, LogListDelegate_helpEvent_UT_002)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
@@ -112,6 +111,7 @@ TEST(LogListDelegate_hideTooltipImmediately_UT, LogListDelegate_hideTooltipImmed
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *v = new LogListView(nullptr);
     LogListDelegate *p = new LogListDelegate(v);
     EXPECT_NE(p, nullptr);
@@ -124,6 +124,7 @@ TEST(LogListView_Constructor_UT, LogListView_Constructor_UT_001)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->deleteLater();
@@ -135,6 +136,7 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_001)
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     stub.set(ADDR(Dtk::Core::DSysInfo, uosEditionType), stub_uosProfessEditionType);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->initUI();
@@ -148,6 +150,7 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     stub.set(ADDR(DBusManager, getSystemInfo), stub_getSystemInfo);
     stub.set(ADDR(Dtk::Core::DSysInfo, uosEditionType), stub_uosEulerEditionType);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->initUI();
@@ -159,6 +162,7 @@ TEST(LogListView_setDefaultSelect_UT, LogListView_setDefaultSelectUT_001)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->setDefaultSelect();
@@ -170,10 +174,23 @@ TEST(LogListView_isFileExist_UT, LogListView_isFileExist_001)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     bool result = p->isFileExist("");
     EXPECT_EQ(result, false);
+    p->deleteLater();
+}
+
+TEST(LogListView_initCustomLogItem_UT, LogListView_initCustomLogItem_001)
+{
+    Stub stub;
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->initUI();
+    p->initCustomLogItem();
+    EXPECT_NE(p->m_customLogItem, nullptr);
     p->deleteLater();
 }
 
@@ -182,6 +199,7 @@ TEST(LogListView_currentChanged_UT, LogListView_currentChanged_UT_002)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->currentChanged(QModelIndex(), QModelIndex());
@@ -193,6 +211,7 @@ TEST(LogListView_truncateFile_UT, LogListView_truncateFile_UT_002)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->truncateFile("");
@@ -204,6 +223,7 @@ TEST(LogListView_slot_getAppPath_UT, LogListView_slot_getAppPath_UT_002)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     QString path = "aa";
@@ -212,11 +232,32 @@ TEST(LogListView_slot_getAppPath_UT, LogListView_slot_getAppPath_UT_002)
     p->deleteLater();
 }
 
+TEST(LogListView_slot_valueChanged_dConfig_or_gSetting_UT, LogListView_slot_valueChanged_dConfig_or_gSetting_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->slot_valueChanged_dConfig_or_gSetting("customLogFiles");
+    p->deleteLater();
+}
+
+TEST(LogListView_slot_valueChanged_dConfig_or_gSetting_UT, LogListView_slot_valueChanged_dConfig_or_gSetting_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList_002);
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->slot_valueChanged_dConfig_or_gSetting("customLogFiles");
+    p->deleteLater();
+}
+
 TEST(LogListView_focusReson_UT, LogListView_focusReson_UT_002)
 {
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->focusReson();
@@ -228,6 +269,7 @@ TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_001)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     QToolTip::showText(QPoint(), "test", p);
@@ -240,6 +282,7 @@ TEST(LogListView_rmouseMoveEvent_UT, LogListView_mouseMoveEvent_UT_002)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     p->mouseMoveEvent(nullptr);
@@ -267,6 +310,7 @@ TEST_P(LogListView_keyPressEvent_UT, LogListView_keyPressEvent_UT_001)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView_keyPressEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -297,6 +341,7 @@ TEST_P(LogListView_mousePressEvent_UT, LogListView_mousePressEvent_UT_001)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView_mousePressEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -326,6 +371,7 @@ TEST_P(LogListView_focusInEvent_UT, LogListView_focusInEvent_UT_001)
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView_focusInEvent_UT_Param param = GetParam();
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
@@ -341,6 +387,7 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_focusOutEvent_UT_
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -355,7 +402,8 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_showRightMenu)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_exec);
+    stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_menu_exec);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
     QPoint point(0, 0);
@@ -368,6 +416,7 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_paintEvent)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);
     EXPECT_NE(p, nullptr);
 

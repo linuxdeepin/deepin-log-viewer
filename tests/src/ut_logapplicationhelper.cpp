@@ -36,6 +36,31 @@ TEST(LogApplicationHelper_init_UT, LogApplicationHelper_init_UT)
     p->init();
     p->deleteLater();
 }
+
+TEST(LogApplicationHelper_initAppLog_UT, LogApplicationHelper_initAppLog_UT)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->initAppLog();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_initOtherLog_UT, LogApplicationHelper_initOtherLog_UT)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->initOtherLog();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_initCustomLog_UT, LogApplicationHelper_initCustomLog_UT)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->initCustomLog();
+    p->deleteLater();
+}
+
 TEST(LogApplicationHelper_createDesktopFiles_UT, LogApplicationHelper_createDesktopFiles_UT)
 {
     LogApplicationHelper *p = new LogApplicationHelper(nullptr);
@@ -138,3 +163,28 @@ TEST(LogApplicationHelper_transName_UT, LogApplicationHelper_transName_UT)
     p->transName("");
     p->deleteLater();
 }
+
+TEST(LogApplicationHelper_getOtherLogList_UT, LogApplicationHelper_getOtherLogList_UT)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->getOtherLogList();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_getCustomLogList_UT, LogApplicationHelper_getCustomLogList_UT)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->getCustomLogList();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_getPathByAppId_UT, LogApplicationHelper_getPathByAppId_UT)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->getPathByAppId("deepin-log-viewer");
+    p->deleteLater();
+}
+

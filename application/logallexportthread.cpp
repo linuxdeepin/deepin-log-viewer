@@ -53,7 +53,18 @@ void LogAllExportThread::run()
                 for (auto &it : appData.toStdMap()) {
                     files.append(it.second);
                 }
+            } else if (it.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
+                QList<QStringList> list = LogApplicationHelper::instance()->getOtherLogList();
+                for (QStringList it : list) {
+                    files.append(it.at(1));
+                }
+            } else if (it.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
+                QList<QStringList> list = LogApplicationHelper::instance()->getCustomLogList();
+                for (QStringList it : list) {
+                    files.append(it.at(1));
+                }
             }
+
             //取消导出直接返回
             if (m_cancel) {
                 files.clear();
