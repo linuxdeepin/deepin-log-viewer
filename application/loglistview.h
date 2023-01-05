@@ -39,11 +39,13 @@ public:
 
 private:
     bool isFileExist(const QString &iFile);
+    void initCustomLogItem();
 public slots:
     void slot_getAppPath(int id, QString path); // add by Airy
     Qt::FocusReason focusReson();
     void showRightMenu(const QPoint &pos, bool isUsePoint);
     void requestshowRightMenu(const QPoint &pos);
+    void slot_valueChanged_dConfig_or_gSetting(const QString &key);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -70,6 +72,7 @@ private:
     //判断是否通过tab获取的焦点
     Qt::FocusReason m_reson = Qt::MouseFocusReason;
     QStringList m_logTypes;
+    QStandardItem *m_customLogItem = nullptr;
 };
 
 #endif // LOGLISTVIEW_H

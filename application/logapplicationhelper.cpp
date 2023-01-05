@@ -30,6 +30,13 @@ LogApplicationHelper::LogApplicationHelper(QObject *parent)
  */
 void LogApplicationHelper::init()
 {
+    initAppLog();
+    initOtherLog();
+    initCustomLog();
+}
+
+void LogApplicationHelper::initAppLog()
+{
     m_desktop_files.clear();
     m_log_files.clear();
 
@@ -43,6 +50,124 @@ void LogApplicationHelper::init()
     // get desktop & log files
     createDesktopFiles();
     createLogFiles();
+}
+
+void LogApplicationHelper::initOtherLog()
+{
+    //配置其他日志文件(可以是目录)
+    m_other_log_list.clear();
+
+    m_other_log_list.append(QStringList()<<"dalternatives.log"<<"/var/log/alternatives.log");
+    m_other_log_list.append(QStringList()<<"history.log"<<"/var/log/apt/history.log");
+    m_other_log_list.append(QStringList()<<"term.log"<<"/var/log/apt/term.log");
+    m_other_log_list.append(QStringList()<<"auth.log"<<"/var/log/auth.log");
+
+    m_other_log_list.append(QStringList()<<"access_log"<<"/var/log/cups/access_log");
+    m_other_log_list.append(QStringList()<<"error_log"<<"/var/log/cups/error_log");
+    m_other_log_list.append(QStringList()<<"daemon.log"<<"/var/log/daemon.log");
+
+    m_other_log_list.append(QStringList()<<"debug"<<"/var/log/debug");
+    m_other_log_list.append(QStringList()<<"dde-dconfig-daemon"<<"/var/log/deepin/dde-dconfig-daemon");
+    m_other_log_list.append(QStringList()<<"dde-file-manager-daemon"<<"/var/log/deepin/dde-file-manager-daemon");
+    m_other_log_list.append(QStringList()<<"deepin-boot-maker-service.log"<<"/var/log/deepin/deepin-boot-maker-service.log");
+
+    m_other_log_list.append(QStringList()<<"debug"<<"/var/log/debug");
+    m_other_log_list.append(QStringList()<<"dde-dconfig-daemon"<<"/var/log/deepin/dde-dconfig-daemon");
+    m_other_log_list.append(QStringList()<<"dde-file-manager-daemon"<<"/var/log/deepin/dde-file-manager-daemon");
+    m_other_log_list.append(QStringList()<<"deepin-boot-maker-service.log"<<"/var/log/deepin/deepin-boot-maker-service.log");
+
+    m_other_log_list.append(QStringList()<<"deepin-diskmanager-service"<<"/var/log/deepin/deepin-diskmanager-service/Log");
+    m_other_log_list.append(QStringList()<<"deepin-home-appstore-daemon"<<"/var/log/deepin/deepin-home-appstore-daemon");
+    m_other_log_list.append(QStringList()<<"deepin-log-viewer-service"<<"/var/log/deepin/deepin-log-viewer-service/Log");
+    m_other_log_list.append(QStringList()<<"deepin-sync-helper_ERROR.log"<<"/var/log/deepin-deepinid-daemon/deepin-sync-helper_ERROR.log");
+
+    m_other_log_list.append(QStringList()<<"deepin-sync-helper.log"<<"/var/log/deepin-deepinid-daemon/deepin-sync-helper.log");
+    m_other_log_list.append(QStringList()<<"deepin-defender-system-daemon.log"<<"/var/log/deepin-defender-system-daemon.log");
+    m_other_log_list.append(QStringList()<<"deepin-face.log"<<"/var/log/deepin-face.log");
+    m_other_log_list.append(QStringList()<<"deepin-installer-first-boot.log"<<"/var/log/deepin-installer-first-boot.log");
+
+    m_other_log_list.append(QStringList()<<"deepin-installer-init.log"<<"/var/log/deepin-installer-init.log");
+    m_other_log_list.append(QStringList()<<"deepin-installer.log"<<"/var/log/deepin-installer.log");
+    m_other_log_list.append(QStringList()<<"deepin-monitornetflow.log"<<"/var/log/deepin-monitornetflow.log");
+    m_other_log_list.append(QStringList()<<"faillog"<<"/var/log/faillog");
+
+    m_other_log_list.append(QStringList()<<"lastlog"<<"/var/log/lastlog");
+    m_other_log_list.append(QStringList()<<"lightdm.log"<<"/var/log/lightdm/lightdm.log");
+    m_other_log_list.append(QStringList()<<"seat0-greeter.log"<<"/var/log/lightdm/seat0-greeter.log");
+    m_other_log_list.append(QStringList()<<"x-0.log"<<"/var/log/lightdm/x-0.log");
+
+    m_other_log_list.append(QStringList()<<"x-1.log"<<"/var/log/lightdm/x-1.log");
+    m_other_log_list.append(QStringList()<<"messages"<<"/var/log/messages");
+    m_other_log_list.append(QStringList()<<"udcpg.log"<<"/var/log/udcpg/udcpg.log");
+    m_other_log_list.append(QStringList()<<"uos-applicense-agent.log"<<"/var/log/uos/uos-applicense-agent/uos-applicense-agent.log");
+
+    m_other_log_list.append(QStringList()<<"uos-license-agent"<<"/var/log/uos/uos-license-agent");
+    m_other_log_list.append(QStringList()<<"uos-license-upgrade"<<"/var/log/uos/uos-license-upgrade");
+    m_other_log_list.append(QStringList()<<"user.log"<<"/var/log/user.log");
+    m_other_log_list.append(QStringList()<<"vnetlib"<<"/var/log/vnetlib");
+
+    m_other_log_list.append(QStringList()<<"wtmp"<<"/var/log/wtmp");
+    m_other_log_list.append(QStringList()<<"dcp_log"<<"/var/log/cups/dcp_log");
+    m_other_log_list.append(QStringList()<<"deepin-graphics-driver-manager-server.log"<<"/var/log/deepin-graphics-driver-manager-server.log");
+    m_other_log_list.append(QStringList()<<"uos-activator-kms.log"<<"/var/log/uos/uos-activator-kms/uos-activator-kms.log");
+
+    m_other_log_list.append(QStringList()<<"deepin-recovery-gui.log"<<"/recovery/deepin-recovery-gui.log");
+    m_other_log_list.append(QStringList()<<"oem-custom-tool"<<"/var/local/oem-custom-tool");
+    m_other_log_list.append(QStringList()<<"iso-customizer-agent.log"<<"/root/.cache/isocustomizer-agent/iso-customizer-agent/iso-customizer-agent.log");
+    m_other_log_list.append(QStringList()<<"downloader"<<"~/.config/uos/downloader/Log");
+
+    m_other_log_list.append(QStringList()<<".kwin.log"<<"~/.kwin.log");
+    m_other_log_list.append(QStringList()<<"audit.log"<<"/var/log/audit/audit.log");
+    m_other_log_list.append(QStringList()<<"udcp-client"<<"/var/log/udcp-client");
+}
+
+//初始化自定义日志列表
+void LogApplicationHelper::initCustomLog()
+{
+    m_custom_log_list.clear();
+
+    //初始化DConfig配置
+    if (!m_pDConfig) {
+        m_pDConfig = Dtk::Core::DConfig::create("org.deepin.deepin-log-viewer", "org.deepin.deepin-log-viewer", "", this);
+
+        // 判断配置是否有效
+        if (!m_pDConfig->isValid()) {
+            qWarning() << QString("DConfig is invalide, name:[%1], subpath[%2].").arg(m_pDConfig->name(), m_pDConfig->subpath());
+            m_pDConfig->deleteLater();
+            m_pDConfig = nullptr;
+            return;
+        }
+
+        connect(m_pDConfig, &Dtk::Core::DConfig::valueChanged, this, [this](const QString &key){
+            initCustomLog();
+            emit this->sigValueChanged(key);
+        });
+    }
+
+    //读取DConfig配置
+    QStringList sList = m_pDConfig->value("customLogFiles").toStringList();
+    for (QString iter : sList) {
+        m_custom_log_list.append(QStringList()<<QFileInfo(iter).fileName()<<iter);
+    }
+
+    //初始化gsetting配置
+    if (!m_pGSettings) {
+        if (QGSettings::isSchemaInstalled("com.deepin.log-viewer")) {
+             m_pGSettings = new QGSettings("com.deepin.log-viewer", "/com/deepin/log-viewer/");
+
+             //监听key的value是否发生了变化
+             connect(m_pGSettings, &QGSettings::changed, this, [=] (const QString &key) {
+                 initCustomLog();
+                 emit this->sigValueChanged(key);
+             });
+        }
+    }
+
+    //读取gsetting配置
+    QStringList sList2 = m_pGSettings->get("customlogfiles").toStringList();
+    for (QString iter : sList2) {
+        m_custom_log_list.append(QStringList()<<QFileInfo(iter).fileName()<<iter);
+    }
 }
 
 /**
@@ -169,7 +294,7 @@ void LogApplicationHelper::createLogFiles()
     }
 
     m_log_files = appDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
-    qDebug() << " m_log_files.size()" << appDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
+    //qDebug() << " m_log_files.size()" << appDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
 
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
         QString desktopName = m_desktop_files[i].split(QDir::separator()).last();
@@ -270,28 +395,46 @@ QString LogApplicationHelper::getLogFile(QString path)
     return ret;
 }
 
-/**
- * @brief LogApplicationHelper::getMap 刷新并返回所有显示文本对应的应用日志路径
- * @return
- */
+//刷新并返回所有显示文本对应的应用日志路径
 QMap<QString, QString> LogApplicationHelper::getMap()
 {
-    init();
+    initAppLog();
+
     QMap<QString, QString>::const_iterator iter = m_en_log_map.constBegin();
     while (iter != m_en_log_map.constEnd()) {
         QString displayName = m_en_trans_map.value(iter.key());
         QString logPath = getLogFile(iter.value());
-        m_trans_log_map.insert(displayName, logPath);
+
+        //排除其他日志
+        bool bFind = false;
+        for (QStringList iterOther : getOtherLogList()) {
+            if (iterOther.at(1) == logPath) {
+                bFind = true;
+                break;
+            }
+        }
+
+        if (!bFind) {
+            m_trans_log_map.insert(displayName, logPath);
+        }
         ++iter;
     }
     return m_trans_log_map;
 }
 
-/**
- * @brief LogApplicationHelper::transName 从应用包名转换为应用显示文本
- * @param str 应用包名
- * @return 显示文本
- */
+//获取所有其他日志文件列表
+QList<QStringList> LogApplicationHelper::getOtherLogList()
+{
+    return m_other_log_list;
+}
+
+//获取所有自定义日志文件列表
+QList<QStringList> LogApplicationHelper::getCustomLogList()
+{
+    return m_custom_log_list;
+}
+
+//从应用包名转换为应用显示文本
 QString LogApplicationHelper::transName(const QString &str)
 {
     return m_en_trans_map.value(str);
@@ -301,3 +444,4 @@ QString LogApplicationHelper::getPathByAppId(const QString &str)
 {
     return m_en_log_map.value(str);
 }
+

@@ -1,0 +1,13 @@
+usr/bin/deepin-log-viewer
+usr/bin/logViewerAuth
+usr/bin/logViewerTruncate
+usr/lib/deepin-daemon/log-view-service
+usr/share/applications/deepin-log-viewer.desktop
+usr/share/dbus-1/system-services/com.deepin.logviewer.service
+usr/share/dbus-1/system.d/com.deepin.logviewer.conf
+usr/share/deepin-log-viewer/DocxTemplate/*.dfw
+usr/share/dsg/configs/org.deepin.deepin-log-viewer/*.json
+usr/share/glib-2.0/schemas/*.gschema.xml
+usr/share/deepin-log-viewer/translations/*.qm
+usr/share/polkit-1/actions/*.policy
+usr/share/icons/hicolor/scalable/apps/*.svg

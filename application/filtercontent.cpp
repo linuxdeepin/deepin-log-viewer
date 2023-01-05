@@ -595,6 +595,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     setLeftButtonState(true);
     m_curTreeIndex = index;
     //根据日志种类改变布局
+    this->setVisible(true);
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         m_currentType = APP_TREE_DATA;
         this->setAppComboBoxItem();
@@ -632,6 +633,14 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_currentType = DMESG_TREE_DATA;
         this->setSelectorVisible(true, false, false, true,
                                  false);
+    } else if (itemData.contains(OTHER_TREE_DATA)) {
+        m_currentType = OTHER_TREE_DATA;
+        //this->setSelectorVisible(false, false, false, true, false, false, true);
+        this->setVisible(false);
+    } else if (itemData.contains(CUSTOM_TREE_DATA)) {
+        m_currentType = CUSTOM_TREE_DATA;
+        //this->setSelectorVisible(false, false, false, true, false, false, true);
+        this->setVisible(false);
     }
     updateDataState();
     //必须需要,因为会丢失当前焦点顺序

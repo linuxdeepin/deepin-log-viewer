@@ -18,6 +18,7 @@ set(LINK_LIBS
     ${DtkWidget_LIBRARIES}
     ${DtkCore_LIBRARIES}
     ${DtkGUI_LIBRARIES}
+    PkgConfig::qgsettings
 )
 
 #可访问private
@@ -95,6 +96,7 @@ find_package(RapidJSON)
 find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
+pkg_check_modules(qgsettings REQUIRED IMPORTED_TARGET gsettings-qt)
 
 FILE(GLOB allSource
      ../application/filtercontent.cpp
@@ -115,6 +117,7 @@ FILE(GLOB allSource
      ../application/logauththread.cpp
      ../application/logapplicationhelper.cpp
      ../application/logapplicationparsethread.cpp
+     ../application/logoocfileparsethread.cpp
      ../application/journalbootwork.cpp
      ../application/exportprogressdlg.cpp
      ../application/logscrollbar.cpp
@@ -138,6 +141,7 @@ FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
 )
 FILE(GLOB allTestSource
+    src/*.h
     src/*.cpp
     common/*.cpp
     dbusproxy/*.cpp
@@ -195,6 +199,7 @@ file(GLOB_RECURSE LVP_SOURCES
     "../application/journalbootwork.cpp"
     "../application/journalwork.cpp"
     "../application/logapplicationparsethread.cpp"
+    "../application/logoocfileparsethread.cpp"
     "../application/logauththread.cpp"
     "../application/logfileparser.cpp"
     "../application/sharedmemorymanager.cpp"
@@ -211,6 +216,7 @@ file(GLOB_RECURSE LVP_HEADERS
     "../application/journalbootwork.h"
     "../application/journalwork.h"
     "../application/logapplicationparsethread.h"
+    "../application/logoocfileparsethread.h"
     "../application/logauththread.h"
     "../application/logfileparser.h"
     "../application/sharedmemorymanager.h"
@@ -263,6 +269,4 @@ target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${LINK_LIBS} ${DFrameworkDBus_
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} PolkitQt5-1::Agent)
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${ZLIB_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${XercesC_LIBRARIES})
-
-
 

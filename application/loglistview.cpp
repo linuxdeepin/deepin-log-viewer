@@ -6,6 +6,7 @@
 #include "logapplicationhelper.h"
 #include "dbusmanager.h"
 #include "DebugTimeManager.h"
+#include "logapplicationhelper.h"
 
 #include <DDesktopServices>
 #include <DDialog>
@@ -19,7 +20,6 @@
 #include <QItemSelectionModel>
 #include <QMargins>
 #include <QPaintEvent>
-#include <QStandardItemModel>
 #include <QPainter>
 #include <QProcess> //add by Airy
 #include <QDebug>
@@ -39,6 +39,8 @@
 Q_DECLARE_METATYPE(QMargins)
 
 DWIDGET_USE_NAMESPACE
+
+const QVariant VListViewItemMargin = QVariant::fromValue(QMargins(15, 0, 5, 0));
 
 LogListDelegate::LogListDelegate(LogListView *parent)
     : DStyledItemDelegate(parent)
@@ -120,7 +122,7 @@ LogListView::LogListView(QWidget *parent)
     initUI();
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &LogListView::customContextMenuRequested, this, &LogListView::requestshowRightMenu);
-    DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
+    //DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
 
     m_rightClickTriggerShortCut = new QShortcut(this);
     m_rightClickTriggerShortCut->setKey(Qt::ALT + Qt::Key_M);
@@ -130,6 +132,8 @@ LogListView::LogListView(QWidget *parent)
         QRect r = rectForIndex(this->currentIndex());
         showRightMenu(QPoint(r.x() + r.width() / 2, r.y() + r.height() / 2), true);
     });
+
+    connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigValueChanged, this, &LogListView::slot_valueChanged_dConfig_or_gSetting);
 }
 
 /**
@@ -142,8 +146,6 @@ void LogListView::initUI()
     this->setItemDelegate(new LogListDelegate(this));
     this->setItemSpacing(0);
     this->setViewportMargins(10, 10, 10, 0);
-    const QMargins ListViweItemMargin(15, 0, 5, 0);
-    const QVariant VListViewItemMargin = QVariant::fromValue(ListViweItemMargin);
     Dtk::Core::DSysInfo::UosEdition edition = Dtk::Core::DSysInfo::uosEditionType();
     //等于服务器行业版或欧拉版(centos)
     bool isCentos = Dtk::Core::DSysInfo::UosEuler == edition || Dtk::Core::DSysInfo::UosEnterpriseC == edition;
@@ -265,8 +267,9 @@ void LogListView::initUI()
         item->setAccessibleText("Application Log");
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
-        m_logTypes.push_back(APP_TREE_DATA);
+        m_logTypes.push_back(APP_TREE_DATA);  
     }
+
     // add by Airy
     if (isFileExist("/var/log/wtmp")) {
         item = new QStandardItem(QIcon::fromTheme("dp_onoff"), DApplication::translate("Tree", "Boot-Shutdown Event"));
@@ -281,10 +284,43 @@ void LogListView::initUI()
         this->setModel(m_pModel);
         m_logTypes.push_back(LAST_TREE_DATA);
     }
+
+    //other
+    item = new QStandardItem(QIcon::fromTheme("dp_customlog", QIcon(":/customlog.svg")), DApplication::translate("Tree", "Other Log"));
+    setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+    item->setToolTip(DApplication::translate("Tree", "Other Log"));
+    item->setData(OTHER_TREE_DATA, ITEM_DATE_ROLE);
+    item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
+    item->setAccessibleText("Other Log");
+    m_pModel->appendRow(item);
+    m_logTypes.push_back(OTHER_TREE_DATA);
+
+    //custom
+    m_logTypes.push_back(CUSTOM_TREE_DATA);
+    if (LogApplicationHelper::instance()->getCustomLogList().size()) {
+        initCustomLogItem();
+    }
+
     // set first item is select when app start
     if (m_pModel->rowCount() > 0) {
         this->setCurrentIndex(m_pModel->index(0, 0));
+    }  
+}
+
+void LogListView::initCustomLogItem()
+{
+    if (!m_customLogItem) {
+        m_customLogItem = new QStandardItem(QIcon::fromTheme("dp_customlog", QIcon(":/customlog.svg")), DApplication::translate("Tree", "Custom Log"));
     }
+
+    setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+    m_customLogItem->setToolTip(DApplication::translate("Tree", "Custom Log"));
+    m_customLogItem->setData(CUSTOM_TREE_DATA, ITEM_DATE_ROLE);
+    m_customLogItem->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    m_customLogItem->setData(VListViewItemMargin, Dtk::MarginsRole);
+    m_customLogItem->setAccessibleText("Custom Log");
+    m_pModel->appendRow(m_customLogItem);
 }
 
 void LogListView::setDefaultSelect()
@@ -393,7 +429,7 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
         g_context->addAction(g_clear);
         g_context->addAction(g_refresh);
 
-        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA) {
+        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA || pathData == OTHER_TREE_DATA || pathData == CUSTOM_TREE_DATA) {
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
@@ -503,4 +539,21 @@ void LogListView::focusInEvent(QFocusEvent *event)
 void LogListView::focusOutEvent(QFocusEvent *event)
 {
     DListView::focusOutEvent(event);
+}
+
+void LogListView::slot_valueChanged_dConfig_or_gSetting(const QString &key)
+{
+    if (key == "customLogFiles" || key == "customlogfiles") {
+        int size = LogApplicationHelper::instance()->getCustomLogList().size();
+        if (size > 0 && (!m_customLogItem || !m_pModel->indexFromItem(m_customLogItem).isValid())) {
+            initCustomLogItem();
+        } else if(size <= 0 && m_customLogItem && m_pModel->indexFromItem(m_customLogItem).isValid()) {
+            // set first item is select
+            if (currentIndex() == m_customLogItem->index()) {
+               this->setCurrentIndex(m_pModel->index(0, 0));
+            }
+            m_pModel->removeRow(m_customLogItem->row());
+            m_customLogItem = nullptr;
+        }
+    }
 }

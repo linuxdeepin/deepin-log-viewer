@@ -296,6 +296,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
                                          QString status, QString action, QString uname,
                                          QString event)
 {
+    m_hline->show();
     if (deamonName.isEmpty()) {
         m_daemonName->hide();
     } else {
@@ -381,6 +382,29 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     m_textBrowser->setText(msg);
 }
 
+void logDetailInfoWidget::fillOOCDetailInfo(const QString & data)
+{
+    m_daemonName->hide();
+    m_dateTime->hide();
+    m_userName->hide();
+    m_pid->hide();
+    m_action->hide();
+    m_status->hide();
+    m_name->hide();
+    m_event->hide();
+
+    m_hline->hide();
+
+    m_userLabel->hide();
+    m_pidLabel->hide();
+    m_statusLabel->hide();
+    m_actionLabel->hide();
+    m_nameLabel->hide();
+    m_eventLabel->hide();
+
+    m_textBrowser->setText(data);
+}
+
 /**
  * @brief logDetailInfoWidget::slot_DetailInfo 连接主表选择事件槽函数，显示信息
  * @param index 主表控件当前选择的index
@@ -388,7 +412,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
  * @param name 应用日志的应用名称
  */
 void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel,
-                                          QString name)
+                                          QString data)
 {
     cleanText();
 
@@ -432,7 +456,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        index.siblingAtColumn(2).data().toString(), index,
                        index.siblingAtColumn(3).data().toString());
     } else if (dataStr.contains(APP_TABLE_DATA)) {
-        fillDetailInfo(name, hostname, "", index.siblingAtColumn(1).data().toString(), index,
+        fillDetailInfo(data, hostname, "", index.siblingAtColumn(1).data().toString(), index,
                        index.siblingAtColumn(3).data(Qt::UserRole + 99).toString());
     } else if (dataStr.contains(LAST_TABLE_DATA)) {
         //        fillDetailInfo("Event", m_pModel->item(index.row(), 0)->text(), "",
@@ -469,5 +493,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     } else if (dataStr.contains(DMESG_TABLE_DATA)) {
         fillDetailInfo("kernel", hostname, "", index.siblingAtColumn(1).data().toString(), index,
                        index.siblingAtColumn(2).data().toString());
+    } else if (dataStr.contains(OOC_TABLE_DATA)) {
+        fillOOCDetailInfo(data);
     }
 }

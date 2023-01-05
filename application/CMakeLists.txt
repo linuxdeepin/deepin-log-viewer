@@ -16,6 +16,7 @@ set(LINK_LIBS
     Qt5::Xml
     Qt5::DBus
     Qt5::Concurrent
+    PkgConfig::qgsettings
 #${DtkWidget_LDFLAGS}
 #${DtkGui_LDFLAGS}
 #${DtkCore_LDFLAGS}
@@ -125,6 +126,7 @@ find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
 find_package(PolkitQt5-1)
+pkg_check_modules(qgsettings REQUIRED IMPORTED_TARGET gsettings-qt)
 
 message("XercesC_FOUND ${XercesC_FOUND}")
 message("zlib version: " ${ZLIB_LIBRARIES})
@@ -175,6 +177,7 @@ set (APP_CPP_FILES
      logauththread.cpp
      logapplicationhelper.cpp
      logapplicationparsethread.cpp
+     logoocfileparsethread.cpp
      journalbootwork.cpp
      exportprogressdlg.cpp
      logscrollbar.cpp
@@ -218,6 +221,7 @@ set (APP_HEADERS_FILES
     logauththread.h
     logapplicationhelper.h
     logapplicationparsethread.h
+    logoocfileparsethread.h
     logdetailedit.h
     wtmpparse.h
     model/log_sort_filter_proxy_model.h
@@ -366,14 +370,18 @@ install(FILES assets/images/deepin-log-viewer.svg
 install(FILES assets/com.deepin.pkexec.logViewerAuth.policy
                     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 install(FILES assets/com.deepin.pkexec.logViewerTruncate.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
+install(FILES gschema/com.deepin.log-viewer.gschema.xml
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)
 
 # Install files
 install(TARGETS ${EXE_NAME} DESTINATION bin)
 install(DIRECTORY assets/deepin-log-viewer
                 DESTINATION /usr/share/deepin-manual/manual-assets/application/)
 
-
-
-
+#FILES       - deployed files.
+#BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.
+#APPID       - working for the app.
+#COMMONID    - working for common.
+dconfig_meta_files(APPID org.deepin.deepin-log-viewer BASE configs FILES configs/org.deepin.deepin-log-viewer.json)
 
 

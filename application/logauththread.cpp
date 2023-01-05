@@ -7,10 +7,9 @@
 #include "sharedmemorymanager.h"
 #include "sys/utsname.h"
 #include "wtmpparse.h"
-
-#include <DGuiApplicationHelper>
 #include "dbusproxy/dldbushandler.h"
 
+#include <DGuiApplicationHelper>
 #include <DApplication>
 
 #include <QDebug>

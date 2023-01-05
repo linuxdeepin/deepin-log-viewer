@@ -3,11 +3,11 @@
     <name>Action</name>
     <message>
         <source>Display in file manager</source>
-        <translation>Wyświetl w menedżerze plików</translation>
+        <translation>Wyświetl w Menedżerze plików</translation>
     </message>
     <message>
         <source>Clear log</source>
-        <translation>Wyczyść log</translation>
+        <translation>Wyczyść dziennik</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -54,12 +54,12 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Eksport</translation>
+        <translation type="vanished">Eksportuj</translation>
     </message>
     <message>
         <source>Export</source>
         <comment>button</comment>
-        <translation>Eksport</translation>
+        <translation>Eksportuj</translation>
     </message>
 </context>
 <context>
@@ -143,7 +143,7 @@
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation>Eksport powiódł się</translation>
+        <translation>Eksport zakończony pomyślnie</translation>
     </message>
     <message>
         <source>Export failed</source>
@@ -197,15 +197,15 @@
     </message>
     <message>
         <source>Boot record</source>
-        <translation>Rekord rozruchowy</translation>
+        <translation>Wpis uruchomienia systemu</translation>
     </message>
     <message>
         <source>Shutdown record</source>
-        <translation>Zamknij rekord</translation>
+        <translation>Wpis zamknięcia systemu</translation>
     </message>
     <message>
         <source>Login record</source>
-        <translation>Rekord logowania</translation>
+        <translation>Wpis logowania do systemu</translation>
     </message>
 </context>
 <context>
@@ -354,6 +354,14 @@
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
+    <message>
+        <source>File Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Time Modified</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -400,6 +408,21 @@
         <source>dnf Log</source>
         <translation>Dziennik dpkg</translation>
     </message>
+    <message>
+        <source>Other Log</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Custom Log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <source>You do not have permission to view it</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>titlebar</name>
@@ -417,7 +440,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation>5 minut</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No refresh</source>
@@ -429,11 +452,11 @@
     </message>
     <message>
         <source>System Logs</source>
-        <translation>Logi systemowe</translation>
+        <translation>Dziennik systemowy</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>Odśwież teraz</translation>
     </message>
 </context>
 </TS>

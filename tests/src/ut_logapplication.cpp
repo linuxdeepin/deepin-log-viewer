@@ -6,6 +6,8 @@
 #include "logcollectormain.h"
 #include "DebugTimeManager.h"
 #include "ut_stuballthread.h"
+#include "logapplicationhelper.h"
+#include "ut_stubpublic.h"
 #include <stub.h>
 
 #include <QDebug>
@@ -39,6 +41,7 @@ TEST(LogApplication_setMainWindow_UT, LogApplication_setMainWindow_UT)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogApplication *p = new LogApplication(argc, argv);
     EXPECT_NE(p, nullptr);
     LogCollectorMain *m = new LogCollectorMain(nullptr);

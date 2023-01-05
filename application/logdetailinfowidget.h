@@ -37,11 +37,13 @@ private:
     void fillDetailInfo(QString deamonName, QString usrName, QString pid, QString dateTime,
                         QModelIndex level, QString msg, QString status = "", QString action = "",
                         QString uname = "", QString event = "");  // modified by Airy
+    //其他日志或者自定义日志数据显示
+    void fillOOCDetailInfo(const QString & data);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 public slots:
-    void slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel, QString name);
+    void slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel, QString data);
 
 private:
     //m_daemonName:进程名显示控件 m_dateTime:时间显示控件 m_userName：用户名显示控件  m_pid：进程号显示控件 m_action：动作显示控件  m_status：状态显示控件 m_name:开关机日志用户名显示控件 m_event: 开关机日志时间类型显示

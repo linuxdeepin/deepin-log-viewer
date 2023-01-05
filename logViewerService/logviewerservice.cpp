@@ -197,6 +197,67 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
     return fileNamePath;
 }
 
+/*!
+ * \~chinese \brief LogViewerService::getOtherFileInfo 获取其他日志文件的路径
+ * \~chinese \param file 日志文件的类型
+ * \~chinese \return 所有日志文件路径列表
+ */
+QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
+{
+    int fileNum = 0;
+    if (tmpDir.isValid()) {
+        tmpDirPath = tmpDir.path();
+    }
+    QStringList fileNamePath;
+    QString nameFilter;
+    QDir dir;
+    QFileInfo appFileInfo(file);
+    QFileInfoList fileList;
+    //判断路径是否存在
+    if (!appFileInfo.exists()) {
+        qWarning() << "it is not true path";
+        return QStringList();
+    }
+    //如果是文件
+    if (appFileInfo.isFile()) {
+        QString appDir = appFileInfo.absolutePath();
+        nameFilter = appFileInfo.fileName();
+        dir.setPath(appDir);
+        dir.setNameFilters(QStringList() << nameFilter + "*"); //设置过滤
+    } else if (appFileInfo.isDir()) {
+        //如果是目录
+        dir.setPath(file);
+    }
+
+    dir.setFilter(QDir::Files | QDir::NoSymLinks); //实现对文件的过滤
+    dir.setSorting(QDir::Time);
+    fileList = dir.entryInfoList();
+
+    for (int i = 0; i < fileList.count(); i++) {
+        if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
+            //                qDebug() << tmpDirPath;
+            QProcess m_process;
+
+            QString command = "gunzip";
+            QStringList args;
+            args.append("-c");
+            //                qDebug() << fileList[i].absoluteFilePath();
+            args.append(fileList[i].absoluteFilePath());
+            m_process.setStandardOutputFile(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
+            m_process.start(command, args);
+            m_process.waitForFinished(-1);
+            //                qDebug() << m_process.readAll();
+            fileNamePath.append(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
+            fileNum++;
+        }
+        else {
+            fileNamePath.append(fileList[i].absoluteFilePath());
+        }
+    }
+    //       qInfo()<<fileNamePath.count()<<fileNamePath<<"******************************";
+    return fileNamePath;
+}
+
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
     if(!isValidInvoker()) { //非法调用

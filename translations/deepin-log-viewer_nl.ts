@@ -354,6 +354,14 @@
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
+    <message>
+        <source>File Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Time Modified</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -400,6 +408,21 @@
         <source>dnf Log</source>
         <translation>dnf-logboek</translation>
     </message>
+    <message>
+        <source>Other Log</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Custom Log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <source>You do not have permission to view it</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>titlebar</name>
@@ -417,7 +440,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation>5 min.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No refresh</source>
@@ -433,7 +456,7 @@
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>Nu herladen</translation>
     </message>
 </context>
 </TS>

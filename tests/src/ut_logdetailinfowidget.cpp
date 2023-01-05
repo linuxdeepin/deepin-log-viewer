@@ -88,6 +88,14 @@ TEST(logDetailInfoWidget_fillDetailInfo_UT, logDetailInfoWidget_fillDetailInfo_U
     p->deleteLater();
 }
 
+TEST(logDetailInfoWidget_fillOOCDetailInfo_UT, logDetailInfoWidget_fillOOCDetailInfo_UT_001)
+{
+    logDetailInfoWidget *p = new logDetailInfoWidget(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->fillOOCDetailInfo("test");
+    p->deleteLater();
+}
+
 TEST(logDetailInfoWidget_slot_DetailInfo_UT, logDetailInfoWidget_slot_DetailInfo_UT)
 {
     logDetailInfoWidget *p = new logDetailInfoWidget(nullptr);

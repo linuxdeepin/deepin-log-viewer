@@ -211,16 +211,16 @@ install(FILES
 install(FILES ${PROJECT_BINARY_DIR}/liblogviewerplugin.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
 #translations翻译
-file(GLOB TS LIST_DIRECTORIES false translations/liblogviewerplugin*.ts)
-set_source_files_properties(${TS} PROPERTIES OUTPUT_LOCATION ${PROJECT_SOURCE_DIR}/translations)
+#file(GLOB TS LIST_DIRECTORIES false translations/liblogviewerplugin*.ts)
+#set_source_files_properties(${TS} PROPERTIES OUTPUT_LOCATION ${PROJECT_SOURCE_DIR}/translations)
 
-qt5_create_translation(QM ${allSources}  ${GLOB})
+#qt5_create_translation(QM ${allSources}  ${GLOB})
 
-if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
-    qt5_create_translation(QM ${allSources} ${TS})
-endif ()
+#if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
+#    qt5_create_translation(QM ${allSources} ${TS})
+#endif ()
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/translations
-    DESTINATION ${PREFIX}/share/liblogviewerplugin
-    FILES_MATCHING PATTERN "*.qm")
+#install(DIRECTORY ${PROJECT_SOURCE_DIR}/translations
+#    DESTINATION ${PREFIX}/share/liblogviewerplugin
+#    FILES_MATCHING PATTERN "*.qm")
 

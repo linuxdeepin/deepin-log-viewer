@@ -11,6 +11,7 @@
 #include "logauththread.h"
 #include "dbusproxy/dldbushandler.h"
 #include "dbusproxy/dldbusinterface.h"
+#include "logoocfileparsethread.h"
 
 #include <QMap>
 #include <QThread>
@@ -38,8 +39,8 @@ public:
     void parseByDnf(DNF_FILTERS iDnfFilter);
     void parseByDmesg(DMESG_FILTERS iDmesgFilter);
     int parseByNormal(NORMAL_FILTERS &iNormalFiler);   // add by Airy
-
     int parseByKwin(KWIN_FILTERS iKwinfilter);
+    int parseByOOC(QString & path);
     void createFile(QString output, int count);
     void stopAllLoad();
 
@@ -70,6 +71,9 @@ signals:
      */
     void appFinished(int index);
     void appData(int index, QList<LOG_MSG_APPLICATOIN> iDataList);
+    void OOCFinished(int index, int error = 0);
+    void OOCData(int index, const QString &data);
+
     void stopKern();
     void stopBoot();
     void stopDpkg();
@@ -81,6 +85,7 @@ signals:
     void stopJournalBoot();
     void stopDnf();
     void stopDmesg();
+    void stopOOC();
     /**
      * @brief proccessError 获取日志文件失败错误信息传递信号，传递到主界面显示 DMessage tooltip
      * @param iError 错误字符
@@ -99,6 +104,7 @@ private:
     QMap<QString, QString> m_dateDict;
     QMap<QString, int> m_levelDict;  // example:warning=>4
 
+    LogOOCFileParseThread *m_OOCThread {nullptr};
     LogApplicationParseThread *m_appThread {nullptr};
     journalWork *work {nullptr};
     JournalBootWork *m_bootJournalWork{nullptr};
@@ -115,6 +121,7 @@ private:
     bool m_isKernLoading = false;
     bool m_isAppLoading = false;
     bool m_isNormalLoading = false;
+    bool m_isOOCLoading = false;
 };
 
 #endif  // LOGFILEPARSER_H

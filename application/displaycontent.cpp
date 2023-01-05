@@ -20,6 +20,7 @@
 #include <DStandardItem>
 #include <DStandardPaths>
 #include <DMessageManager>
+#include <DDesktopServices>
 
 #include <QAbstractItemView>
 #include <QDebug>
@@ -34,6 +35,8 @@
 #include <QVBoxLayout>
 #include <QElapsedTimer>
 #include <QDateTime>
+#include <QFileIconProvider>
+#include <QMenu>
 
 #include <sys/utsname.h>
 #include "malloc.h"
@@ -41,6 +44,7 @@ DWIDGET_USE_NAMESPACE
 
 #define SINGLE_LOAD 300
 
+#define NAME_WIDTH 470
 #define LEVEL_WIDTH 80
 #define STATUS_WIDTH 90
 #define DATETIME_WIDTH 175
@@ -79,37 +83,59 @@ LogTreeView *DisplayContent::mainLogTableView()
  */
 void DisplayContent::initUI()
 {
-    QVBoxLayout *vLayout = new QVBoxLayout(this);
     // set table for display log data
     initTableView();
+    m_treeView->setMinimumHeight(100);
+    m_treeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
 
-    // layout for widgets
-    vLayout->addWidget(m_treeView, 5);
-
+    //noResultLabel
     noResultLabel = new DLabel(this);
     DPalette pa = DApplicationHelper::instance()->palette(noResultLabel);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     DApplicationHelper::instance()->setPalette(noResultLabel, pa);
-
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
-
     DFontSizeManager::instance()->bind(noResultLabel, DFontSizeManager::T4);
     noResultLabel->setAlignment(Qt::AlignCenter);
+
+    //m_spinnerWgt,m_spinnerWgt_K
     m_spinnerWgt = new LogSpinnerWidget(this);
+    m_spinnerWgt->setMinimumHeight(300);
     m_spinnerWgt_K = new LogSpinnerWidget(this);
+    m_spinnerWgt_K->setMinimumHeight(300);
 
-    vLayout->addWidget(m_spinnerWgt_K, 5);
-    vLayout->addWidget(m_spinnerWgt, 5);
+    //m_detailWgt
     m_detailWgt = new logDetailInfoWidget(this);
-    vLayout->addWidget(m_detailWgt, 3);
+    m_detailWgt->setMinimumHeight(70);
+    m_detailWgt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
+    //m_splitter
+    m_splitter = new Dtk::Widget::DSplitter( this);
+    m_splitter->setOrientation(Qt::Vertical);
+    m_splitter->setChildrenCollapsible(false);
+    m_splitter->addWidget(m_treeView);
+    m_splitter->addWidget(m_spinnerWgt_K);
+    m_splitter->addWidget(m_spinnerWgt);
+    m_splitter->addWidget(m_detailWgt);
+    m_splitter->setStretchFactor(0, 5);
+    m_splitter->setStretchFactor(1, 5);
+    m_splitter->setStretchFactor(2, 5);
+    m_splitter->setStretchFactor(3, 3);
+    m_splitter->setHandleWidth(3);
+    //this->setStyleSheet("background-color:rgb(255,0,0)");
+
+    // layout for widgets
+    QVBoxLayout *vLayout = new QVBoxLayout(this);
+    vLayout->addWidget(m_splitter);
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(3);
-
     this->setLayout(vLayout);
-    setLoadState(DATA_COMPLETE);
+
+    //m_exportDlg
     m_exportDlg = new ExportProgressDlg(this);
     m_exportDlg->hide();
+
+    //setLoadState
+    setLoadState(DATA_COMPLETE);
 }
 
 /**
@@ -155,6 +181,7 @@ void DisplayContent::initTableView()
     m_treeView->setObjectName("mainLogTable");
     m_pModel = new QStandardItemModel(this);
     m_treeView->setModel(m_pModel);
+    m_treeView->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 /**
@@ -215,6 +242,13 @@ void DisplayContent::initConnections()
     connect(&m_logFileParse, SIGNAL(dnfFinished(QList<LOG_MSG_DNF>)), this, SLOT(slot_dnfFinished(QList<LOG_MSG_DNF>)));
     connect(&m_logFileParse, &LogFileParser::dmesgFinished, this, &DisplayContent::slot_dmesgFinished,
             Qt::QueuedConnection);
+    connect(&m_logFileParse, &LogFileParser::OOCData, this, &DisplayContent::slot_OOCData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParse, &LogFileParser::OOCFinished, this, &DisplayContent::slot_OOCFinished,
+            Qt::QueuedConnection);
+
+    connect(m_treeView, &LogTreeView::customContextMenuRequested, this, &DisplayContent::slot_requestShowRightMenu);
+    connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigValueChanged, this, &DisplayContent::slot_valueChanged_dConfig_or_gSetting);
 }
 
 /**
@@ -1317,7 +1351,22 @@ void DisplayContent::insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end)
  */
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
-    emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
+    if (!index.isValid()) {
+        return;
+    }
+
+    if (m_curTreeIndex == index) {
+        return;
+    }
+
+    m_curTreeIndex = index;
+
+    if (m_flag == OtherLog || m_flag == CustomLog) {
+        QString path = m_pModel->item(index.row(),0)->data(Qt::UserRole + 2).toString();
+        generateOOCFile(path);
+    } else {
+        emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
+    }
 }
 
 /**
@@ -1403,6 +1452,8 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     if (itemData.isEmpty())
         return;
 
+    m_splitter->handle(3)->setDisabled(true);
+    m_detailWgt->setFixedHeight(230);
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         // default level is info so PRIORITY=6
         m_flag = JOURNAL;
@@ -1414,7 +1465,6 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = BOOT;
         generateBootFile();
-
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = KERN;
     } else if (itemData.contains(".cache")) {
@@ -1435,6 +1485,18 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_flag = Dnf;
     } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dmesg;
+    } else if (itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = OtherLog;
+        m_splitter->handle(3)->setDisabled(false);
+        m_detailWgt->setFixedHeight(QWIDGETSIZE_MAX);
+        createOOCTableForm();
+        createOOCTable(LogApplicationHelper::instance()->getOtherLogList());
+    } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = CustomLog;
+        m_splitter->handle(3)->setDisabled(false);
+        m_detailWgt->setFixedHeight(QWIDGETSIZE_MAX);
+        createOOCTableForm();
+        createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
     }
 }
 
@@ -1987,6 +2049,26 @@ void DisplayContent::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
     }
 }
 
+void DisplayContent::slot_OOCData(int index, const QString & data)
+{
+    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
+        return;
+
+    emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, data);
+}
+
+void DisplayContent::slot_OOCFinished(int index, int error)
+{
+    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
+        return;
+    m_isDataLoadComplete = true;
+    setLoadState(DATA_COMPLETE);
+
+    //未通过鉴权在日志区域显示文案：无权限查看
+    if (error == 1) {
+        emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, DApplication::translate("Warning", "You do not have permission to view it"));
+    }
+}
 
 /**
  * @brief DisplayContent::slot_logLoadFailed 数据获取失败槽函数，显示错误提示框
@@ -2169,6 +2251,8 @@ void DisplayContent::slot_searchResult(QString str)
                     .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
     m_currentSearchStr = str;
     if (m_flag == NONE)
+        return;
+    if (str.isEmpty())
         return;
 
     switch (m_flag) {
@@ -2574,6 +2658,33 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemM
     }
 }
 
+void DisplayContent::parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<QStandardItem *> items;
+    DStandardItem *item = nullptr;
+    int listCount = iList.size();
+    for (int i = 0; i < listCount; i++) {
+        items.clear();
+        item = new DStandardItem(QFileIconProvider().icon(QFileInfo(iList[i].path)), iList[i].name);
+        item->setData(iList[i].path, Qt::UserRole + 2);
+        item->setData(OOC_TABLE_DATA);
+        items << item;
+        item = new DStandardItem(iList[i].dateTimeModify);
+        item->setData(OOC_TABLE_DATA);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
 /**
  * @brief DisplayContent::setLoadState 设置当前的显示状态
  * @param iState 显示状态
@@ -2600,11 +2711,19 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         emit setExportEnable(false);
         m_spinnerWgt->show();
         m_spinnerWgt->spinnerStart();
+        if (m_flag == OtherLog || m_flag == CustomLog) {
+            m_detailWgt->hide();
+            m_treeView->show();
+        } else {
+            m_detailWgt->show();
+            m_treeView->hide();
+        }
         break;
     }
     case DATA_COMPLETE: {
         //如果为加载完成,则只显示主表,导出按钮置可用
         m_treeView->show();
+        m_detailWgt->show();
         emit setExportEnable(true);
         break;
     }
@@ -3024,6 +3143,14 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dmesg;
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
+    } else if (itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = OtherLog;
+        createOOCTableForm();
+        createOOCTable(LogApplicationHelper::instance()->getOtherLogList());
+    } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = CustomLog;
+        createOOCTableForm();
+        createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
     }
 
     if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) || !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) { // modified by Airy
@@ -3034,4 +3161,87 @@ void DisplayContent::slot_dnfLevel(DNFPRIORITY iLevel)
 {
     m_curDnfLevel = iLevel;
     generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
+}
+
+void DisplayContent::generateOOCFile(QString path)
+{
+    setLoadState(DATA_LOADING);
+    m_detailWgt->cleanText();
+    m_isDataLoadComplete = false;
+    m_OOCCurrentIndex = m_logFileParse.parseByOOC(path);
+}
+
+void DisplayContent::createOOCTableForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "File Name")
+                                        << DApplication::translate("Table", "Time Modified"));
+    m_treeView->setColumnWidth(0, NAME_WIDTH);
+    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 120);
+}
+
+void DisplayContent::createOOCTable(const QList<QStringList> & list)
+{
+    m_limitTag = 0;
+    setLoadState(DATA_COMPLETE);
+
+    QList<LOG_FILE_OTHERORCUSTOM> listLogFile;
+    for (QStringList iter : list) {
+        LOG_FILE_OTHERORCUSTOM logFileInfo;
+        logFileInfo.name = iter.value(0);
+        logFileInfo.path = iter.value(1);
+        logFileInfo.dateTimeModify = QFileInfo(iter.value(1)).lastModified().toLocalTime().toString("yyyy-MM-dd hh:mm:ss");
+        listLogFile.append(logFileInfo);
+    }
+
+    parseListToModel(listLogFile, m_pModel);
+
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
+void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
+{
+    if (m_flag != OtherLog && m_flag != CustomLog) {
+        return;
+    }
+
+    if (m_treeView->indexAt(pos).isValid()) {
+        QModelIndex index = m_treeView->currentIndex();
+        if (!m_treeView->selectionModel()->selectedIndexes().empty()) {
+            QMenu * menu = new QMenu(m_treeView);
+            QAction *act_openForder = new QAction(/*tr("在文件管理器中显示")*/ DApplication::translate("Action", "Display in file manager"), this);
+            QAction *act_refresh = new QAction(/*tr("刷新")*/ DApplication::translate("Action", "Refresh"), this);
+
+            menu->addAction(act_openForder);
+            menu->addAction(act_refresh);
+
+            QString path = m_pModel->item(index.row(),0)->data(Qt::UserRole + 2).toString();
+
+            //显示当前日志目录
+            connect(act_openForder, &QAction::triggered, this, [=] {
+                DDesktopServices::showFileItem(path);
+            });
+
+            //刷新逻辑
+            connect(act_refresh, &QAction::triggered, this, [=]() {
+                generateOOCFile(path);
+            });
+
+            m_treeView->setContextMenuPolicy(Qt::CustomContextMenu);
+            menu->exec(QCursor::pos());
+        }
+    }
+}
+
+void DisplayContent::slot_valueChanged_dConfig_or_gSetting(const QString &key)
+{
+    if ((key == "customLogFiles" || key == "customlogfiles") && m_flag == CustomLog) {
+        createOOCTableForm();
+        createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
+    }
 }
