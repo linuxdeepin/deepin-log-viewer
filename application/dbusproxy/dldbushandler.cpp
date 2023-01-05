@@ -84,6 +84,20 @@ QStringList DLDBusHandler::getFileInfo(const QString &flag, bool unzip)
     return filePath;
 }
 
+QStringList DLDBusHandler::getOtherFileInfo(const QString &flag, bool unzip)
+{
+    QDBusPendingReply<QStringList> reply = m_dbus->getOtherFileInfo(flag, unzip);
+    reply.waitForFinished();
+    QStringList filePathList;
+    if (reply.isError()) {
+        qDebug() << reply.error().message();
+    } else {
+        filePathList = reply.value();
+    }
+    return filePathList;
+}
+
+
 bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
     return m_dbus->exportLog(outDir, in, isFile);

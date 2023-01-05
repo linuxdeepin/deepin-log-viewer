@@ -460,3 +460,25 @@ TEST_F(LogFileParser_UT, UT_parseByJournalBoot_001)
     int index=m_parser->parseByJournalBoot();
     qInfo()<<index;
 }
+
+TEST_F(LogFileParser_UT, UT_parseByOOC_001)
+{
+    Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists); //获取虚函数地址
+    stub.set(A_foo, stub_Logexists001);
+    stub.set(ADDR(QProcess, setProcessChannelMode), stubfileparser_setProcessChannelMode);
+    stub.set(ADDR(QProcess, exitCode), stubfileparser_exitCode);
+    stub.set(ADDR(QThread, start), QThread_start);
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached001);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart001);
+    stub.set((QString(QDateTime::*)(QStringView) const)ADDR(QDateTime, toString), stub_toString001);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished001);
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_LogreadAllStandardOutput001);
+    stub.set(ADDR(QProcess, readAllStandardError), stub_LogreadAllStandardError001);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag001);
+    stub.set(wtmp_close, stub_wtmp_close001);
+    QString path("test");
+    m_parser->parseByOOC(path);
+    EXPECT_EQ(m_parser->m_isOOCLoading,true)<<"check the status after parseByJournal()";
+}

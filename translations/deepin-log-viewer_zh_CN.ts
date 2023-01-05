@@ -354,6 +354,14 @@
         <source>PID:</source>
         <translation>进程号：</translation>
     </message>
+    <message>
+        <source>File Name</source>
+        <translation>文件名称</translation>
+    </message>
+    <message>
+        <source>Time Modified</source>
+        <translation>修改日期</translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -400,6 +408,21 @@
         <source>dnf Log</source>
         <translation>dnf日志</translation>
     </message>
+    <message>
+        <source>Other Log</source>
+        <translation>其它日志</translation>
+    </message>
+    <message>
+        <source>Custom Log</source>
+        <translation>自定义日志</translation>
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <source>You do not have permission to view it</source>
+        <translation>无权限查看</translation>
+    </message>
 </context>
 <context>
     <name>titlebar</name>
@@ -417,7 +440,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation>每5分钟</translation>
+        <translation>5分钟</translation>
     </message>
     <message>
         <source>No refresh</source>

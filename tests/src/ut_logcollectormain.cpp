@@ -7,6 +7,8 @@
 #include "ut_stuballthread.h"
 #include "logapplication.h"
 #include "utils.h"
+#include "ut_stubpublic.h"
+#include "logapplicationhelper.h"
 #include <stub.h>
 
 #include <DTitlebar>
@@ -81,6 +83,7 @@ TEST(LogCollectorMain_Constructor_UT, LogCollectorMain_Constructor_UT)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->deleteLater();
@@ -99,6 +102,7 @@ TEST(LogCollectorMain_Destructor_UT, LogCollectorMain_Destructor_UT)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->~LogCollectorMain();
@@ -118,6 +122,7 @@ TEST(LogCollectorMain_initUI_UT, LogCollectorMain_initUI_UT)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->deleteLater();
@@ -136,6 +141,7 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_001)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->initShortCut();
@@ -155,6 +161,7 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_002)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
     p->m_scWndReize->deleteLater();
@@ -183,6 +190,7 @@ TEST(LogCollectorMain_initConnection_UT, LogCollectorMain_initConnection_UT)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
 
@@ -252,6 +260,7 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogCollectorMain_handleApplicationTabEventNotify_UT_Param param = GetParam();
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
@@ -278,6 +287,7 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     stub.set(ADDR(QObject, objectName), stub_ObjectName);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogCollectorMain_handleApplicationTabEventNotify_UT_Param param = GetParam();
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
@@ -303,7 +313,7 @@ TEST(LogCollectorMain_switchRefreshActionTriggered_UT, LogCollectorMain_switchRe
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
-
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     typedef  bool (*fptr)(LogApplication *);
     fptr test = (fptr)(&LogApplication::notify);
     stub.set(test, LogCollectorMain_notify);
@@ -332,6 +342,7 @@ TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_001)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     typedef  bool (*fptr)(LogApplication *);
     fptr test = (fptr)(&LogApplication::notify);
     stub.set(test, LogCollectorMain_notify);
@@ -355,6 +366,7 @@ TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_002)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     typedef  bool (*fptr)(LogApplication *);
     fptr test = (fptr)(&LogApplication::notify);
     stub.set(test, LogCollectorMain_notify);
@@ -385,6 +397,7 @@ TEST(LogCollectorMain_closeEvent_UT, LogCollectorMain_closeEvent_UT_001)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     typedef  bool (*fptr)(LogApplication *);
     fptr test = (fptr)(&LogApplication::notify);
     stub.set(test, LogCollectorMain_notify);

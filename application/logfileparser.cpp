@@ -8,7 +8,8 @@
 #include "logfileparser.h"
 #include "journalwork.h"
 #include "sharedmemorymanager.h"
-#include "utils.h"
+#include "utils.h"// add by Airy
+#include "wtmpparse.h"
 
 #include <DMessageManager>
 
@@ -22,6 +23,10 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QtConcurrent>
+
+#include <time.h>
+#include <utmp.h>
+#include <utmpx.h>
 
 int journalWork::thread_index = 0;
 int JournalBootWork::thread_index = 0;
@@ -172,12 +177,6 @@ int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
     QThreadPool::globalInstance()->tryStart(authThread);
     return index;
 }
-
-// add by Airy
-#include <time.h>
-#include <utmp.h>
-#include <utmpx.h>
-#include "wtmpparse.h"
 
 int LogFileParser::parseByNormal(NORMAL_FILTERS &iNormalFiler)
 {
@@ -344,6 +343,26 @@ void LogFileParser::parseByDmesg(DMESG_FILTERS iDmesgFilter)
     QThreadPool::globalInstance()->start(authThread);
 }
 
+int LogFileParser::parseByOOC(QString & path)
+{
+    stopAllLoad();
+    m_isOOCLoading = true;
+
+    m_OOCThread = new LogOOCFileParseThread(this);
+    m_OOCThread->setParam(path);
+    connect(m_OOCThread, &LogOOCFileParseThread::sigFinished, this,
+               &LogFileParser::OOCFinished);
+    connect(m_OOCThread, &LogOOCFileParseThread::sigData, this,
+               &LogFileParser::OOCData);
+    connect(this, &LogFileParser::stopOOC, m_OOCThread,
+               &LogOOCFileParseThread::stopProccess);
+    connect(m_OOCThread, &LogOOCFileParseThread::finished, m_OOCThread,
+            &QObject::deleteLater);
+    int index = m_OOCThread->getIndex();
+    m_OOCThread->start();
+    return index;
+}
+
 void LogFileParser::createFile(QString output, int count)
 {
 #if 1
@@ -373,6 +392,7 @@ void LogFileParser::stopAllLoad()
     emit stopNormal();
     emit stopDnf();
     emit stopDmesg();
+    emit stopOOC();
     return;
 }
 
