@@ -16,7 +16,7 @@ set(LINK_LIBS
     Qt5::Xml
     Qt5::DBus
     Qt5::Concurrent
-    PkgConfig::qgsettings
+#    PkgConfig::qgsettings
 #${DtkWidget_LDFLAGS}
 #${DtkGui_LDFLAGS}
 #${DtkCore_LDFLAGS}
@@ -126,7 +126,9 @@ find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
 find_package(PolkitQt5-1)
-pkg_check_modules(qgsettings REQUIRED IMPORTED_TARGET gsettings-qt)
+#pkg_check_modules(qgsettings REQUIRED IMPORTED_TARGET gsettings-qt)
+# IMPORTED_TARGET failed to work for some of libs under flatpak env
+pkg_check_modules(Other REQUIRED  gsettings-qt)
 
 message("XercesC_FOUND ${XercesC_FOUND}")
 message("zlib version: " ${ZLIB_LIBRARIES})
@@ -322,7 +324,7 @@ include_directories( ${RapidJSON_INCLUDE_DIRS})
 #include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
 
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES}  -lsystemd -licui18n -licuuc  -ldl -fPIC)
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS} ${Other_LIBRARIES} ${DFrameworkDBus_LIBRARIES}  -lsystemd -licui18n -licuuc  -ldl -fPIC)
 target_link_libraries(${EXE_NAME} ${DtkWidget_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${DtkCore_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${DtkGUI_LIBRARIES})
