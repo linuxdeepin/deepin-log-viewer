@@ -354,6 +354,14 @@
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
+    <message>
+        <source>File Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Time Modified</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -399,6 +407,56 @@
     <message>
         <source>dnf Log</source>
         <translation>dnf Günlüğü</translation>
+    </message>
+    <message>
+        <source>Other Log</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Custom Log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <source>You do not have permission to view it</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Yineleme sıklığı</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 sn</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 dk</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Yineleme yapma</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Tümünü Dışa Aktar</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Sistem Günlükleri</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>Şimdi yinele</translation>
     </message>
 </context>
 </TS>

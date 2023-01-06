@@ -354,6 +354,14 @@
         <source>PID:</source>
         <translation>行程號：</translation>
     </message>
+    <message>
+        <source>File Name</source>
+        <translation>檔案名稱</translation>
+    </message>
+    <message>
+        <source>Time Modified</source>
+        <translation>修改日期</translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -400,6 +408,21 @@
         <source>dnf Log</source>
         <translation>dnf日誌</translation>
     </message>
+    <message>
+        <source>Other Log</source>
+        <translation>其它日誌</translation>
+    </message>
+    <message>
+        <source>Custom Log</source>
+        <translation>自訂日誌</translation>
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <source>You do not have permission to view it</source>
+        <translation>無權限查看</translation>
+    </message>
 </context>
 <context>
     <name>titlebar</name>
@@ -417,7 +440,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation>每5分鐘</translation>
+        <translation>5分鐘</translation>
     </message>
     <message>
         <source>No refresh</source>

@@ -58,6 +58,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("getFileInfo"), argumentList);
     }
 
+    inline QDBusPendingReply<QStringList> getOtherFileInfo(const QString &file, bool unzip)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(file) << QVariant::fromValue(unzip);
+        return asyncCallWithArgumentList(QStringLiteral("getOtherFileInfo"), argumentList);
+    }
+
     inline QDBusPendingReply<> quit()
     {
         QList<QVariant> argumentList;

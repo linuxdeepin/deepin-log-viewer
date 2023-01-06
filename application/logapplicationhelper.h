@@ -7,8 +7,11 @@
 
 #include "com_deepin_dde_daemon_launcherd.h"
 
+#include <DConfig>
+
 #include <QMap>
 #include <QObject>
+#include <QGSettings/QGSettings>
 
 #include <mutex>
 using DBbusLauncher = com::deepin::dde::daemon::Launcher;
@@ -46,10 +49,19 @@ public:
     //根据包名获得路径
     QString getPathByAppId(const QString &str);
 
+    //获取所有其他日志文件列表(名称-路径)
+    QList<QStringList> getOtherLogList();
+
+    //获取所有自定义日志文件列表(名称-路径)
+    QList<QStringList> getCustomLogList();
+
 private:
     explicit LogApplicationHelper(QObject *parent = nullptr);
 
     void init();
+    void initAppLog();
+    void initOtherLog();
+    void initCustomLog();
 
     void createDesktopFiles();
     void createLogFiles();
@@ -59,6 +71,7 @@ private:
     QString getLogFile(QString path);
 
 signals:
+    void sigValueChanged(const QString &key);
 
 public slots:
 
@@ -75,6 +88,14 @@ private:
      * @brief m_trans_log_map 应用显示文本-日志路径键值对
      */
     QMap<QString, QString> m_trans_log_map;
+    /**
+     * @brief m_other_log_list 所有其他日志列表，每项包含名称、路径
+     */
+    QList<QStringList> m_other_log_list;
+    /**
+     * @brief m_custom_log_list 所有自定义日志列表，每项包含名称、路径
+     */
+    QList<QStringList> m_custom_log_list;
     /**
      * @brief m_desktop_files 所有符合条件的应用的desktop文件路径
      */
@@ -99,6 +120,11 @@ private:
      * @brief m_DbusLauncher 获取所有应用信息的dbus接口
      */
     DBbusLauncher *m_DbusLauncher;
+
+    //dconfig,自定义日志配置
+    Dtk::Core::DConfig * m_pDConfig = nullptr;
+    //gsettings,自定义日志配置
+    QGSettings * m_pGSettings = nullptr;
 };
 
 #endif  // LOGAPPLICATIONHELPER_H

@@ -355,6 +355,14 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <source>PID:</source>
         <translation>PID: </translation>
     </message>
+    <message>
+        <source>File Name</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Time Modified</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -400,6 +408,56 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <source>dnf Log</source>
         <translation>Log DNF</translation>
+    </message>
+    <message>
+        <source>Other Log</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Custom Log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>Warning</name>
+    <message>
+        <source>You do not have permission to view it</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>titlebar</name>
+    <message>
+        <source>Refresh interval</source>
+        <translation>Intervallo di aggiornamento</translation>
+    </message>
+    <message>
+        <source>10 sec</source>
+        <translation>10 sec</translation>
+    </message>
+    <message>
+        <source>1 min</source>
+        <translation>1 min</translation>
+    </message>
+    <message>
+        <source>5 min</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No refresh</source>
+        <translation>Nessun aggiornamento</translation>
+    </message>
+    <message>
+        <source>Export All</source>
+        <translation>Esporta tutto</translation>
+    </message>
+    <message>
+        <source>System Logs</source>
+        <translation>Log di Sistema</translation>
+    </message>
+    <message>
+        <source>Refresh Now</source>
+        <translation>Aggiorna ora</translation>
     </message>
 </context>
 </TS>

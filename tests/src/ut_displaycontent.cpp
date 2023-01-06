@@ -10,6 +10,7 @@
 #include "ut_stuballthread.h"
 #include "../application/DebugTimeManager.h"
 #include "../application/logtreeview.h"
+#include "ut_stubpublic.h"
 
 #include <stub.h>
 
@@ -20,6 +21,8 @@
 #include <QPaintEvent>
 #include <QDBusAbstractInterfaceBase>
 #include <QStandardPaths>
+#include <QMenu>
+#include <QAction>
 
 class DisplayContentlx_UT : public testing::Test
 {
@@ -1074,6 +1077,25 @@ TEST(DisplayContent_createKernTableForm_UT, DisplayContent_createKernTableForm_U
     delete p;
 }
 
+TEST(DisplayContent_createOOCTableForm_UT, DisplayContent_createOOCTableForm_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    p->createOOCTableForm();
+    QStringList a;
+    a << DApplication::translate("Table", "File Name")
+      << DApplication::translate("Table", "Time Modified");
+    bool rs = true;
+    for (int i = 0; i < a.size(); ++i) {
+        if (p->m_pModel->horizontalHeaderItem(i)->text() != a.value(i)) {
+            rs = false;
+        }
+    }
+    EXPECT_EQ(rs, true);
+    p->deleteLater();
+}
+
 TEST(DisplayContent_createKernTable_UT, DisplayContent_createKernTable_UT_001)
 {
     Stub stub;
@@ -1093,6 +1115,18 @@ TEST(DisplayContent_createKernTable_UT, DisplayContent_createKernTable_UT_001)
         list.append(item);
     }
     p->createKernTable(list);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_createOOCTable_UT, DisplayContent_createOOCTable_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<QStringList> list;
+    for (int i = 0; i < 100; ++i) {
+        list.append(QStringList()<<"deepin-installer-init.log"<<"/var/log/deepin-installer-init.log");
+    }
+    p->createOOCTable(list);
     p->deleteLater();
 }
 
@@ -1313,6 +1347,16 @@ TEST(DisplayContent_createNormalTable_UT, DisplayContent_createNormalTable_UT_00
     p->deleteLater();
 }
 
+TEST(DisplayContent_generateOOCFile_UT, DisplayContent_generateOOCFile_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(LogFileParser, parseByOOC), LogFileParser_parseByOOC);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->generateOOCFile("/var/log/deepin-installer-init.log");
+    p->deleteLater();
+}
+
 class DisplayContent_generateNormalFile_UT_Param
 {
 public:
@@ -1519,6 +1563,33 @@ TEST(DisplayContent_slot_tableItemClicked_UT, DisplayContent_slot_tableItemClick
     p->deleteLater();
 }
 
+TEST(DisplayContent_slot_valueChanged_dConfig_or_gSetting_UT, DisplayContent_slot_valueChanged_dConfig_or_gSetting_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+
+    p->slot_valueChanged_dConfig_or_gSetting("customLogFiles");
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_requestShowRightMenu_UT, DisplayContent_slot_requestShowRightMenu_UT_001)
+{
+    Stub stub;
+    stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_menu_exec);
+
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QPoint point(20, 10);
+    p->m_flag = OtherLog;
+    QStandardItem * standItem = new QStandardItem ();
+    standItem->setData("path", Qt::UserRole + 2);
+    p->m_pModel->appendRow(QList<QStandardItem*>()<<new QStandardItem ()<<new QStandardItem ());
+    p->m_treeView->selectionModel()->select(p->m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    p->m_treeView->setCurrentIndex(p->m_pModel->index(0, 0));
+    p->slot_requestShowRightMenu(point);
+    p->deleteLater();
+}
+
 class DisplayContent_slot_BtnSelected_UT_Param
 {
 public:
@@ -1533,7 +1604,7 @@ class DisplayContent_slot_BtnSelected_UT : public ::testing::TestWithParam<Displ
 {
 };
 
-char *slot_BtnSelected_ModelIndex_data = "";
+const char *slot_BtnSelected_ModelIndex_data = "";
 INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_BtnSelected_UT, ::testing::Values(DisplayContent_slot_BtnSelected_UT_Param(0), DisplayContent_slot_BtnSelected_UT_Param(1), DisplayContent_slot_BtnSelected_UT_Param(2), DisplayContent_slot_BtnSelected_UT_Param(3), DisplayContent_slot_BtnSelected_UT_Param(4), DisplayContent_slot_BtnSelected_UT_Param(5), DisplayContent_slot_BtnSelected_UT_Param(6), DisplayContent_slot_BtnSelected_UT_Param(7), DisplayContent_slot_BtnSelected_UT_Param(8)));
 QVariant slot_BtnSelected_ModelIndex_data_Func(void *obj, int arole)
 {
@@ -1876,6 +1947,42 @@ TEST(DisplayContent_slot_journalBootFinished_UT, DisplayContent_slot_journalBoot
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->slot_journalBootFinished(p->m_journalCurrentIndex);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_OOCFinished_UT, DisplayContent_slot_OOCFinished_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QStandardItem * standItem = new QStandardItem ();
+    standItem->setData("path", Qt::UserRole + 2);
+    p->m_pModel->appendRow(QList<QStandardItem*>()<<new QStandardItem ()<<new QStandardItem ());
+    p->m_treeView->selectionModel()->select(p->m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    p->m_treeView->setCurrentIndex(p->m_pModel->index(0, 0));
+    p->m_OOCCurrentIndex = 1;
+    p->m_flag = OtherLog;
+    p->slot_OOCFinished(1);
+    p->slot_OOCFinished(1, 1);
+    p->m_flag = CustomLog;
+    p->slot_OOCFinished(1);
+    p->slot_OOCFinished(1, 1);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_OOCData_UT, DisplayContent_slot_OOCData_UT_001)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QStandardItem * standItem = new QStandardItem ();
+    standItem->setData("path", Qt::UserRole + 2);
+    p->m_pModel->appendRow(QList<QStandardItem*>()<<new QStandardItem ()<<new QStandardItem ());
+    p->m_treeView->selectionModel()->select(p->m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    p->m_treeView->setCurrentIndex(p->m_pModel->index(0, 0));
+    p->m_OOCCurrentIndex = 1;
+    p->m_flag = OtherLog;
+    p->slot_OOCData(1, "data");
+    p->m_flag = CustomLog;
+    p->slot_OOCData(1, "data");
     p->deleteLater();
 }
 
@@ -2513,6 +2620,44 @@ TEST_P(DisplayContent_parseListToModel_KWIN_UT, DisplayContent_parseListToModel_
         LOG_MSG_KWIN item;
         for (int i = 0; i < 100; ++i) {
             item.msg = QString("msg%1").arg(i);
+            list.append(item);
+        }
+    }
+
+    p->parseListToModel(list, (param.isEmptyModel ? nullptr : p->m_pModel));
+    p->deleteLater();
+}
+
+class DisplayContent_parseListToModel_OOC_UT_Param
+{
+public:
+    DisplayContent_parseListToModel_OOC_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
+    {
+        isEmptyList = iIsEmptyList;
+        isEmptyModel = iIsEmptyModel;
+    }
+    bool isEmptyList;
+    bool isEmptyModel;
+};
+
+class DisplayContent_parseListToModel_OOC_UT : public ::testing::TestWithParam<DisplayContent_parseListToModel_OOC_UT_Param>
+{
+};
+
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_OOC_UT, ::testing::Values(DisplayContent_parseListToModel_OOC_UT_Param(true, true), DisplayContent_parseListToModel_OOC_UT_Param(true, false), DisplayContent_parseListToModel_OOC_UT_Param(false, false)));
+
+TEST_P(DisplayContent_parseListToModel_OOC_UT, DisplayContent_parseListToModel_OOC_UT)
+{
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_parseListToModel_OOC_UT_Param param = GetParam();
+    QList<LOG_FILE_OTHERORCUSTOM> list;
+
+    if (!param.isEmptyList) {
+        LOG_FILE_OTHERORCUSTOM item;
+        for (int i = 0; i < 100; ++i) {
+            item.name = "name";
+            item.path = "path";
             list.append(item);
         }
     }

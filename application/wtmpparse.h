@@ -24,6 +24,7 @@ static int cur_rec;
 static int fdWtmp = -1;
 static int bpos;
 static __off_t fpos;
+
 struct utmp_list {
     struct utmp value;
     struct utmp_list *next;

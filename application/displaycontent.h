@@ -83,6 +83,11 @@ private:
     void createNormalTable(QList<LOG_MSG_NORMAL> &list); // add by Airy
     void generateNormalFile(int id); // add by Airy for peroid
 
+    //其他日志或者自定义日志
+    void generateOOCFile(QString path);
+    void createOOCTableForm();
+    void createOOCTable(const QList<QStringList> & list);
+
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
     void insertKernTable(QList<LOG_MSG_JOURNAL> list, int start,
@@ -127,6 +132,8 @@ signals:
     void setExportEnable(bool iEnable);
 
 public slots:
+    void slot_valueChanged_dConfig_or_gSetting(const QString &key);
+    void slot_requestShowRightMenu(const QPoint &pos);
     void slot_tableItemClicked(const QModelIndex &index);
     void slot_BtnSelected(int btnId, int lId, QModelIndex idx);
     void slot_appLogs(int btnId, QString path);
@@ -156,6 +163,8 @@ public slots:
     void slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> list);
     void slot_normalFinished(int index);
     void slot_normalData(int index, QList<LOG_MSG_NORMAL> list);
+    void slot_OOCFinished(int index, int error = 0);
+    void slot_OOCData(int index, const QString & data);
 
     void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
@@ -174,6 +183,7 @@ public slots:
     void parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel);
     QString getIconByname(QString str);
     void setLoadState(LOAD_STATE iState);
     void onExportProgress(int nCur, int nTotal);
@@ -205,12 +215,17 @@ private:
      */
     QStandardItemModel *m_pModel;
 
+    //分割布局
+    Dtk::Widget::DSplitter *m_splitter;
+
     //详情页控件
     logDetailInfoWidget *m_detailWgt {nullptr};
     //搜索无结果时显示无搜索结果提示的label
     Dtk::Widget::DLabel *noResultLabel {nullptr};
     //当前选中的日志类型的index
     QModelIndex m_curListIdx;
+    //当前选中的treeview的index
+    QModelIndex m_curTreeIndex;
     //日志等级的显示文本和代码内文本的转换map
     QMap<QString, QString> m_transDict;
     //分页加载时,当前加载到的页数
@@ -316,6 +331,7 @@ private:
      * @brief m_icon_name_map 日志等级对应图标资源文件名的map
      */
     QMap<QString, QString> m_icon_name_map;
+
     //当前搜索关键字
     QString m_currentSearchStr {""};
     /**
@@ -358,6 +374,7 @@ private:
     int m_xorgCurrentIndex {-1};
     int m_kwinCurrentIndex {-1};
     int m_appCurrentIndex {-1};
+    int m_OOCCurrentIndex {-1};
     bool m_isDataLoadComplete {false};
     //筛选条件
     QString selectFilter;
