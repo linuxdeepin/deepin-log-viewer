@@ -14,7 +14,7 @@
 #include <QDBusConnectionInterface>
 #include <QStandardPaths>
 
-const QStringList ValidInvokerExePathList1 = QStandardPaths::locateAll(QStandardPaths::ApplicationsLocation, "deepin-log-viewer");
+//const QStringList ValidInvokerExePathList1 = QStandardPaths::locateAll(QStandardPaths::ApplicationsLocation, "deepin-log-viewer");
 
 LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
@@ -327,9 +327,14 @@ bool LogViewerService::isValidInvoker()
     }
 
     //是否存在于可调用者名单中
+    QStringList ValidInvokerExePathList;
     QString invokerPath = f.canonicalFilePath();
+    QStringList findPaths;//合法调用者查找目录列表
+    findPaths << "/usr/bin";
+    ValidInvokerExePathList << QStandardPaths::findExecutable("deepin-log-viewer", findPaths);
+
     if (valid)
-        valid = ValidInvokerExePathList1.contains(invokerPath);
+        valid = ValidInvokerExePathList.contains(invokerPath);
 
     //非法调用
     if (!valid) {

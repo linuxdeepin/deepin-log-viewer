@@ -57,7 +57,7 @@ void LogApplicationHelper::initOtherLog()
     //配置其他日志文件(可以是目录)
     m_other_log_list.clear();
 
-    m_other_log_list.append(QStringList()<<"dalternatives.log"<<"/var/log/alternatives.log");
+    m_other_log_list.append(QStringList()<<"alternatives.log"<<"/var/log/alternatives.log");
     m_other_log_list.append(QStringList()<<"history.log"<<"/var/log/apt/history.log");
     m_other_log_list.append(QStringList()<<"term.log"<<"/var/log/apt/term.log");
     m_other_log_list.append(QStringList()<<"auth.log"<<"/var/log/auth.log");
