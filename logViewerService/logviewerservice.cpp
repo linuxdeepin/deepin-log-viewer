@@ -14,7 +14,8 @@
 #include <QDBusConnectionInterface>
 #include <QStandardPaths>
 
-const QStringList ValidInvokerExePathList1 = QStandardPaths::locateAll(QStandardPaths::ApplicationsLocation, "deepin-log-viewer");
+const QStringList ValidInvokerExePathList1 = {"/usr/bin/deepin-log-viewer"};
+//const QStringList ValidInvokerExePathList1 = QStandardPaths::locateAll(QStandardPaths::ApplicationsLocation, "deepin-log-viewer");
 
 LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
