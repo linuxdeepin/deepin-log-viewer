@@ -1489,12 +1489,14 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_flag = OtherLog;
         m_splitter->handle(3)->setDisabled(false);
         m_detailWgt->setFixedHeight(QWIDGETSIZE_MAX);
+        m_detailWgt->setMinimumHeight(70);
         createOOCTableForm();
         createOOCTable(LogApplicationHelper::instance()->getOtherLogList());
     } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = CustomLog;
         m_splitter->handle(3)->setDisabled(false);
         m_detailWgt->setFixedHeight(QWIDGETSIZE_MAX);
+        m_detailWgt->setMinimumHeight(70);
         createOOCTableForm();
         createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
     }
