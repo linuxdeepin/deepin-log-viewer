@@ -1452,8 +1452,25 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     if (itemData.isEmpty())
         return;
 
-    m_splitter->handle(3)->setDisabled(true);
-    m_detailWgt->setFixedHeight(230);
+    //界面参数变化
+    int height = this->height();
+    int handleW = m_splitter->handleWidth();
+    if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive) || itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
+        m_splitter->handle(3)->setDisabled(false);
+        m_detailWgt->setFixedHeight(QWIDGETSIZE_MAX);
+        m_detailWgt->setMinimumHeight(70);
+
+        QMargins margins = this->parentWidget()->layout()->layout()->contentsMargins();
+        height = this->parentWidget()->height() - margins.top() - margins.bottom();
+        int heightDetailWgt = height - 160 - handleW;
+        m_splitter->setSizes(QList<int>()<<160<<heightDetailWgt<<heightDetailWgt<<heightDetailWgt);
+    } else {
+        height -= handleW;
+        m_splitter->handle(3)->setDisabled(true);
+        m_detailWgt->setFixedHeight(230);
+        m_splitter->setSizes(QList<int>()<<height*5/8<<0<<0<<height*3/8);
+    }
+
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         // default level is info so PRIORITY=6
         m_flag = JOURNAL;
@@ -1487,16 +1504,10 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_flag = Dmesg;
     } else if (itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = OtherLog;
-        m_splitter->handle(3)->setDisabled(false);
-        m_detailWgt->setFixedHeight(QWIDGETSIZE_MAX);
-        m_detailWgt->setMinimumHeight(70);
         createOOCTableForm();
         createOOCTable(LogApplicationHelper::instance()->getOtherLogList());
     } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
-        m_flag = CustomLog;
-        m_splitter->handle(3)->setDisabled(false);
-        m_detailWgt->setFixedHeight(QWIDGETSIZE_MAX);
-        m_detailWgt->setMinimumHeight(70);
+        m_flag = CustomLog; 
         createOOCTableForm();
         createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
     }
