@@ -85,6 +85,7 @@ void LogApplicationHelper::initOtherLog()
     m_other_log_list.append(QStringList()<<"deepin-installer.log"<<"/var/log/deepin-installer.log");
     m_other_log_list.append(QStringList()<<"deepin-monitornetflow.log"<<"/var/log/deepin-monitornetflow.log");
     m_other_log_list.append(QStringList()<<"faillog"<<"/var/log/faillog");
+    m_other_log_list.append(QStringList()<<"fontconfig.log"<<"/var/log/fontconfig.log");
 
     m_other_log_list.append(QStringList()<<"lastlog"<<"/var/log/lastlog");
     m_other_log_list.append(QStringList()<<"lightdm.log"<<"/var/log/lightdm/lightdm.log");
@@ -96,6 +97,7 @@ void LogApplicationHelper::initOtherLog()
     m_other_log_list.append(QStringList()<<"udcpg.log"<<"/var/log/udcpg/udcpg.log");
     m_other_log_list.append(QStringList()<<"uos-applicense-agent.log"<<"/var/log/uos/uos-applicense-agent/uos-applicense-agent.log");
 
+    m_other_log_list.append(QStringList()<<"uos-deviceh-cmd.log"<<"/var/log/uos/uos-license-agent/uos-deviceh-cmd.log");
     m_other_log_list.append(QStringList()<<"uos-license-agent"<<"/var/log/uos/uos-license-agent");
     m_other_log_list.append(QStringList()<<"uos-license-upgrade"<<"/var/log/uos/uos-license-upgrade");
     m_other_log_list.append(QStringList()<<"user.log"<<"/var/log/user.log");
