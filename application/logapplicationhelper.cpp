@@ -71,11 +71,6 @@ void LogApplicationHelper::initOtherLog()
     m_other_log_list.append(QStringList()<<"dde-file-manager-daemon"<<"/var/log/deepin/dde-file-manager-daemon");
     m_other_log_list.append(QStringList()<<"deepin-boot-maker-service.log"<<"/var/log/deepin/deepin-boot-maker-service.log");
 
-    m_other_log_list.append(QStringList()<<"debug"<<"/var/log/debug");
-    m_other_log_list.append(QStringList()<<"dde-dconfig-daemon"<<"/var/log/deepin/dde-dconfig-daemon");
-    m_other_log_list.append(QStringList()<<"dde-file-manager-daemon"<<"/var/log/deepin/dde-file-manager-daemon");
-    m_other_log_list.append(QStringList()<<"deepin-boot-maker-service.log"<<"/var/log/deepin/deepin-boot-maker-service.log");
-
     m_other_log_list.append(QStringList()<<"deepin-diskmanager-service"<<"/var/log/deepin/deepin-diskmanager-service/Log");
     m_other_log_list.append(QStringList()<<"deepin-home-appstore-daemon"<<"/var/log/deepin/deepin-home-appstore-daemon");
     m_other_log_list.append(QStringList()<<"deepin-log-viewer-service"<<"/var/log/deepin/deepin-log-viewer-service/Log");
