@@ -229,7 +229,7 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
         dir.setPath(file);
     }
 
-    dir.setFilter(QDir::Files | QDir::NoSymLinks); //实现对文件的过滤
+    dir.setFilter(QDir::Files | QDir::NoSymLinks | QDir::Hidden); //实现对文件的过滤
     dir.setSorting(QDir::Time);
     fileList = dir.entryInfoList();
 
