@@ -67,6 +67,16 @@ bool Utils::isFontMimeType(const QString &filePath)
     return false;
 }
 
+bool Utils::isTextFileType(const QString &filePath)
+{
+    QMimeDatabase db;
+    QMimeType mime = db.mimeTypeForFile(filePath);
+    if (mime.inherits("text/plain")) {
+        return true;
+    }
+    return false;
+}
+
 QString Utils::suffixList()
 {
     return QString("Font Files (*.ttf *.ttc *.otf)");
