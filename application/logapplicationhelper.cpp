@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logapplicationhelper.h"
+#include "utils.h"
 
 #include <QDebug>
 #include <QDir>
@@ -155,6 +156,10 @@ void LogApplicationHelper::initCustomLog()
         QString path = iter;
         if (path.startsWith("~/"))
             path.replace(0, 1, QDir::homePath());
+        //忽略非文本文件
+        if (!Utils::isTextFileType(path)) {
+            continue;
+        }
         m_custom_log_list.append(QStringList()<<QFileInfo(iter).fileName()<<path);
     }
 
@@ -177,6 +182,10 @@ void LogApplicationHelper::initCustomLog()
         QString path = iter;
         if (path.startsWith("~/"))
             path.replace(0, 1, QDir::homePath());
+        //忽略非文本文件
+        if (!Utils::isTextFileType(path)) {
+            continue;
+        }
         m_custom_log_list.append(QStringList()<<QFileInfo(iter).fileName()<<path);
     }
 }

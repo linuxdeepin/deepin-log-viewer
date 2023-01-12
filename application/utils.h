@@ -32,6 +32,7 @@ public:
     static QString getQssContent(const QString &filePath);
     static QString getConfigPath();
     static bool isFontMimeType(const QString &filePath);
+    static bool isTextFileType(const QString &filePath);
     static QString suffixList();
     static QPixmap renderSVG(const QString &filePath, const QSize &size);
     static QString loadFontFamilyFromFiles(const QString &fontFileName);
