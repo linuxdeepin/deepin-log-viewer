@@ -69,6 +69,8 @@ void logDetailInfoWidget::cleanText()
     m_nameLabel->hide();
     m_event->hide();
     m_eventLabel->hide();
+
+    m_errorLabel->hide();
 }
 
 /**
@@ -161,6 +163,14 @@ void logDetailInfoWidget::initUI()
     m_nameLabel = new DLabel(DApplication::translate("Label", "Username:"), this);  // add by Airy
     DFontSizeManager::instance()->bind(m_nameLabel, DFontSizeManager::T7);
 
+    m_errorLabel = new DLabel("", this);
+    m_errorLabel->setMinimumWidth(70);
+    m_errorLabel->setMinimumHeight(20);
+    DFontSizeManager::instance()->bind(m_userLabel, DFontSizeManager::T7);
+    pa = DApplicationHelper::instance()->palette(m_errorLabel);
+   // pa.setBrush(DPalette::WindowText, QColor(85,85,85,0.40));
+    pa.setBrush(DPalette::WindowText, pa.color(DPalette::PlaceholderText));
+    DApplicationHelper::instance()->setPalette(m_errorLabel, pa);
 
     m_hline = new DHorizontalLine;
 
@@ -228,6 +238,7 @@ void logDetailInfoWidget::initUI()
     v->addLayout(h2);
     v->addWidget(m_hline);
     v->addWidget(m_textBrowser, 3);
+    v->addWidget(m_errorLabel, 0, Qt::AlignCenter);
 
     v->setContentsMargins(20, 10, 20, 0);
     v->setSpacing(4);
@@ -297,6 +308,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
                                          QString event)
 {
     m_hline->show();
+    m_errorLabel->hide();
     if (deamonName.isEmpty()) {
         m_daemonName->hide();
     } else {
@@ -380,9 +392,10 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     // end
 
     m_textBrowser->setText(msg);
+    m_textBrowser->show();
 }
 
-void logDetailInfoWidget::fillOOCDetailInfo(const QString & data)
+void logDetailInfoWidget::fillOOCDetailInfo(const QString & data, const int error)
 {
     m_daemonName->hide();
     m_dateTime->hide();
@@ -402,7 +415,15 @@ void logDetailInfoWidget::fillOOCDetailInfo(const QString & data)
     m_nameLabel->hide();
     m_eventLabel->hide();
 
-    m_textBrowser->setText(data);
+    if (error == 0){
+        m_textBrowser->setText(data);
+        m_textBrowser->show();
+        m_errorLabel->hide();
+    } else {
+        m_textBrowser->hide();
+        m_errorLabel->show();
+        m_errorLabel->setText(data);
+    }
 }
 
 /**
@@ -412,7 +433,7 @@ void logDetailInfoWidget::fillOOCDetailInfo(const QString & data)
  * @param name 应用日志的应用名称
  */
 void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel,
-                                          QString data)
+                                          QString data, const int error)
 {
     cleanText();
 
@@ -494,6 +515,6 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
         fillDetailInfo("kernel", hostname, "", index.siblingAtColumn(1).data().toString(), index,
                        index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(OOC_TABLE_DATA)) {
-        fillOOCDetailInfo(data);
+        fillOOCDetailInfo(data, error);
     }
 }

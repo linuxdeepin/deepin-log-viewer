@@ -192,8 +192,8 @@ void DisplayContent::initConnections()
     connect(m_treeView, SIGNAL(pressed(const QModelIndex &)), this,
             SLOT(slot_tableItemClicked(const QModelIndex &)));
 
-    connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString)),
-            m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, QStandardItemModel *, QString)));
+    connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString, const int)),
+            m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, QStandardItemModel *, QString, const int)));
     connect(&m_logFileParse, &LogFileParser::dpkgFinished, this, &DisplayContent::slot_dpkgFinished,
             Qt::QueuedConnection);
     connect(&m_logFileParse, &LogFileParser::dpkgData, this, &DisplayContent::slot_dpkgData,
@@ -1460,10 +1460,11 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_detailWgt->setFixedHeight(QWIDGETSIZE_MAX);
         m_detailWgt->setMinimumHeight(70);
 
+        const int heightLogTree = 164;
         QMargins margins = this->parentWidget()->layout()->layout()->contentsMargins();
         height = this->parentWidget()->height() - margins.top() - margins.bottom();
-        int heightDetailWgt = height - 160 - handleW;
-        m_splitter->setSizes(QList<int>()<<160<<heightDetailWgt<<heightDetailWgt<<heightDetailWgt);
+        int heightDetailWgt = height - heightLogTree - handleW;
+        m_splitter->setSizes(QList<int>()<<heightLogTree<<heightDetailWgt<<heightDetailWgt<<heightDetailWgt);
     } else {
         height -= handleW;
         m_splitter->handle(3)->setDisabled(true);
@@ -2079,7 +2080,7 @@ void DisplayContent::slot_OOCFinished(int index, int error)
 
     //未通过鉴权在日志区域显示文案：无权限查看
     if (error == 1) {
-        emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, DApplication::translate("Warning", "You do not have permission to view it"));
+        emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, DApplication::translate("Warning", "You do not have permission to view it"), error);
     }
 }
 
