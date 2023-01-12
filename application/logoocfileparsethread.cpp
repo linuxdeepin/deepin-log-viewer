@@ -54,18 +54,26 @@ void LogOOCFileParseThread::doWork()
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
 
+    if (m_path.isEmpty()) {
+        emit sigFinished(m_threadCount);
+        return;
+    }
+
     if (!checkAuthentication(m_path)) {
+        emit sigFinished(m_threadCount);
         return;
     }
 
     QStringList filePath = DLDBusHandler::instance(this)->getOtherFileInfo(m_path);
     for (int i = 0; i < filePath.count(); i++) {
         if (!m_canRun) {
+            emit sigFinished(m_threadCount);
             return;
         }
 
         //鉴权
         if (!checkAuthentication(filePath.at(i))) {
+            emit sigFinished(m_threadCount);
             return;
         }
 
@@ -95,7 +103,6 @@ bool LogOOCFileParseThread::checkAuthentication(const QString & path)
         m_process->waitForFinished(-1);
         //有错则传出空数据
         if (m_process->exitCode() != 0) {
-            emit sigFinished(m_threadCount, 1);
             return false;
         }
     }
