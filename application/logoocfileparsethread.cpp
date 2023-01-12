@@ -60,7 +60,7 @@ void LogOOCFileParseThread::doWork()
     }
 
     if (!checkAuthentication(m_path)) {
-        emit sigFinished(m_threadCount);
+        emit sigFinished(m_threadCount, 1);
         return;
     }
 
@@ -73,11 +73,10 @@ void LogOOCFileParseThread::doWork()
 
         //鉴权
         if (!checkAuthentication(filePath.at(i))) {
-            emit sigFinished(m_threadCount);
+            emit sigFinished(m_threadCount, 1);
             return;
         }
 
-        //m_fileData += DLDBusHandler::instance(this)->readLog(filePath.at(i)) + "\n";
         m_fileData += DLDBusHandler::instance(this)->readLog(filePath.at(i));
         emit sigData(m_threadCount, m_fileData);
     }

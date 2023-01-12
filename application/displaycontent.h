@@ -124,7 +124,7 @@ signals:
      * @param pModel 当前的model指针
      * @param name 当前应用日志选择的日志名称
      */
-    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name);
+    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name, const int error = 0);
     /**
      * @brief setExportEnable 是否允许导出信号
      * @param iEnable 是否允许导出
