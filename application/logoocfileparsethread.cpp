@@ -145,7 +145,7 @@ bool LogOOCFileParseThread::checkAuthentication(const QString & path)
  */
 void LogOOCFileParseThread::run()
 {
-    qDebug() << "LogApplicationParseThread::run()---threadrun";
+    qDebug() << "LogOOCFileParseThread::run()---threadrun";
     doWork();
 }
 

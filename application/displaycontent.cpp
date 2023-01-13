@@ -1383,8 +1383,6 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
              .arg(lId + 1)
              .arg(idx.data(ITEM_DATE_ROLE).toString());
 
-    m_detailWgt->cleanText();
-
     m_curLevel = lId; // m_curLevel equal combobox index-1;
     m_curBtnId = btnId;
 
@@ -1392,6 +1390,11 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
     if (treeData.isEmpty())
         return;
 
+    if (treeData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive) || treeData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
+        return;
+    }
+
+    m_detailWgt->cleanText();
     if (treeData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         generateJournalFile(btnId, m_curLevel);
     } else if (treeData.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
@@ -3215,6 +3218,7 @@ void DisplayContent::createOOCTable(const QList<QStringList> & list)
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
 
+    m_curTreeIndex = QModelIndex();//重置一下
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
