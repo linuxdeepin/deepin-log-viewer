@@ -7,7 +7,9 @@
 
 #include "com_deepin_dde_daemon_launcherd.h"
 
+#ifdef USE_DCONFIG
 #include <DConfig>
+#endif
 
 #include <QMap>
 #include <QObject>
@@ -121,10 +123,12 @@ private:
      */
     DBbusLauncher *m_DbusLauncher;
 
+#ifdef USE_DCONFIG
     //dconfig,自定义日志配置
-    Dtk::Core::DConfig * m_pDConfig = nullptr;
+    Dtk::Core::DConfig *m_pDConfig = nullptr;
+#endif
     //gsettings,自定义日志配置
-    QGSettings * m_pGSettings = nullptr;
+    QGSettings *m_pGSettings = nullptr;
 };
 
 #endif  // LOGAPPLICATIONHELPER_H
