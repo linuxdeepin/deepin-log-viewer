@@ -59,71 +59,71 @@ void LogApplicationHelper::initOtherLog()
     m_other_log_list.clear();
 
     QList<QStringList> m_other_log_list_temp;
-    m_other_log_list_temp.append(QStringList()<<"alternatives.log"<<"/var/log/alternatives.log");
-    m_other_log_list_temp.append(QStringList()<<"history.log"<<"/var/log/apt/history.log");
-    m_other_log_list_temp.append(QStringList()<<"term.log"<<"/var/log/apt/term.log");
-    m_other_log_list_temp.append(QStringList()<<"auth.log"<<"/var/log/auth.log");
+    m_other_log_list_temp.append(QStringList() << "alternatives.log" << "/var/log/alternatives.log");
+    m_other_log_list_temp.append(QStringList() << "history.log" << "/var/log/apt/history.log");
+    m_other_log_list_temp.append(QStringList() << "term.log" << "/var/log/apt/term.log");
+    m_other_log_list_temp.append(QStringList() << "auth.log" << "/var/log/auth.log");
 
-    m_other_log_list_temp.append(QStringList()<<"access_log"<<"/var/log/cups/access_log");
-    m_other_log_list_temp.append(QStringList()<<"error_log"<<"/var/log/cups/error_log");
-    m_other_log_list_temp.append(QStringList()<<"daemon.log"<<"/var/log/daemon.log");
+    m_other_log_list_temp.append(QStringList() << "access_log" << "/var/log/cups/access_log");
+    m_other_log_list_temp.append(QStringList() << "error_log" << "/var/log/cups/error_log");
+    m_other_log_list_temp.append(QStringList() << "daemon.log" << "/var/log/daemon.log");
 
-    m_other_log_list_temp.append(QStringList()<<"debug"<<"/var/log/debug");
-    m_other_log_list_temp.append(QStringList()<<"dde-dconfig-daemon"<<"/var/log/deepin/dde-dconfig-daemon");
-    m_other_log_list_temp.append(QStringList()<<"dde-file-manager-daemon"<<"/var/log/deepin/dde-file-manager-daemon");
-    m_other_log_list_temp.append(QStringList()<<"deepin-boot-maker-service.log"<<"/var/log/deepin/deepin-boot-maker-service.log");
+    m_other_log_list_temp.append(QStringList() << "debug" << "/var/log/debug");
+    m_other_log_list_temp.append(QStringList() << "dde-dconfig-daemon" << "/var/log/deepin/dde-dconfig-daemon");
+    m_other_log_list_temp.append(QStringList() << "dde-file-manager-daemon" << "/var/log/deepin/dde-file-manager-daemon");
+    m_other_log_list_temp.append(QStringList() << "deepin-boot-maker-service.log" << "/var/log/deepin/deepin-boot-maker-service.log");
 
-    m_other_log_list_temp.append(QStringList()<<"deepin-diskmanager-service"<<"/var/log/deepin/deepin-diskmanager-service/Log");
-    m_other_log_list_temp.append(QStringList()<<"deepin-home-appstore-daemon"<<"/var/log/deepin/deepin-home-appstore-daemon");
-    m_other_log_list_temp.append(QStringList()<<"deepin-log-viewer-service"<<"/var/log/deepin/deepin-log-viewer-service/Log");
-    m_other_log_list_temp.append(QStringList()<<"deepin-sync-helper_ERROR.log"<<"/var/log/deepin-deepinid-daemon/deepin-sync-helper_ERROR.log");
+    m_other_log_list_temp.append(QStringList() << "deepin-diskmanager-service" << "/var/log/deepin/deepin-diskmanager-service/Log");
+    m_other_log_list_temp.append(QStringList() << "deepin-home-appstore-daemon" << "/var/log/deepin/deepin-home-appstore-daemon");
+    m_other_log_list_temp.append(QStringList() << "deepin-log-viewer-service" << "/var/log/deepin/deepin-log-viewer-service/Log");
+    m_other_log_list_temp.append(QStringList() << "deepin-sync-helper_ERROR.log" << "/var/log/deepin-deepinid-daemon/deepin-sync-helper_ERROR.log");
 
-    m_other_log_list_temp.append(QStringList()<<"deepin-sync-helper.log"<<"/var/log/deepin-deepinid-daemon/deepin-sync-helper.log");
-    m_other_log_list_temp.append(QStringList()<<"deepin-defender-system-daemon.log"<<"/var/log/deepin-defender-system-daemon.log");
-    m_other_log_list_temp.append(QStringList()<<"deepin-face.log"<<"/var/log/deepin-face.log");
-    m_other_log_list_temp.append(QStringList()<<"deepin-installer-first-boot.log"<<"/var/log/deepin-installer-first-boot.log");
+    m_other_log_list_temp.append(QStringList() << "deepin-sync-helper.log" << "/var/log/deepin-deepinid-daemon/deepin-sync-helper.log");
+    m_other_log_list_temp.append(QStringList() << "deepin-defender-system-daemon.log" << "/var/log/deepin-defender-system-daemon.log");
+    m_other_log_list_temp.append(QStringList() << "deepin-face.log" << "/var/log/deepin-face.log");
+    m_other_log_list_temp.append(QStringList() << "deepin-installer-first-boot.log" << "/var/log/deepin-installer-first-boot.log");
 
-    m_other_log_list_temp.append(QStringList()<<"deepin-installer-init.log"<<"/var/log/deepin-installer-init.log");
-    m_other_log_list_temp.append(QStringList()<<"deepin-installer.log"<<"/var/log/deepin-installer.log");
-    m_other_log_list_temp.append(QStringList()<<"deepin-monitornetflow.log"<<"/var/log/deepin-monitornetflow.log");
-    m_other_log_list_temp.append(QStringList()<<"faillog"<<"/var/log/faillog");
-    m_other_log_list_temp.append(QStringList()<<"fontconfig.log"<<"/var/log/fontconfig.log");
+    m_other_log_list_temp.append(QStringList() << "deepin-installer-init.log" << "/var/log/deepin-installer-init.log");
+    m_other_log_list_temp.append(QStringList() << "deepin-installer.log" << "/var/log/deepin-installer.log");
+    m_other_log_list_temp.append(QStringList() << "deepin-monitornetflow.log" << "/var/log/deepin-monitornetflow.log");
+    m_other_log_list_temp.append(QStringList() << "faillog" << "/var/log/faillog");
+    m_other_log_list_temp.append(QStringList() << "fontconfig.log" << "/var/log/fontconfig.log");
 
-    m_other_log_list_temp.append(QStringList()<<"lastlog"<<"/var/log/lastlog");
-    m_other_log_list_temp.append(QStringList()<<"lightdm.log"<<"/var/log/lightdm/lightdm.log");
-    m_other_log_list_temp.append(QStringList()<<"seat0-greeter.log"<<"/var/log/lightdm/seat0-greeter.log");
-    m_other_log_list_temp.append(QStringList()<<"x-0.log"<<"/var/log/lightdm/x-0.log");
+    m_other_log_list_temp.append(QStringList() << "lastlog" << "/var/log/lastlog");
+    m_other_log_list_temp.append(QStringList() << "lightdm.log" << "/var/log/lightdm/lightdm.log");
+    m_other_log_list_temp.append(QStringList() << "seat0-greeter.log" << "/var/log/lightdm/seat0-greeter.log");
+    m_other_log_list_temp.append(QStringList() << "x-0.log" << "/var/log/lightdm/x-0.log");
 
-    m_other_log_list_temp.append(QStringList()<<"x-1.log"<<"/var/log/lightdm/x-1.log");
-    m_other_log_list_temp.append(QStringList()<<"messages"<<"/var/log/messages");
-    m_other_log_list_temp.append(QStringList()<<"udcpg.log"<<"/var/log/udcpg/udcpg.log");
-    m_other_log_list_temp.append(QStringList()<<"uos-applicense-agent.log"<<"/var/log/uos/uos-applicense-agent/uos-applicense-agent.log");
+    m_other_log_list_temp.append(QStringList() << "x-1.log" << "/var/log/lightdm/x-1.log");
+    m_other_log_list_temp.append(QStringList() << "messages" << "/var/log/messages");
+    m_other_log_list_temp.append(QStringList() << "udcpg.log" << "/var/log/udcpg/udcpg.log");
+    m_other_log_list_temp.append(QStringList() << "uos-applicense-agent.log" << "/var/log/uos/uos-applicense-agent/uos-applicense-agent.log");
 
-    m_other_log_list_temp.append(QStringList()<<"uos-deviceh-cmd.log"<<"/var/log/uos/uos-license-agent/uos-deviceh-cmd.log");
-    m_other_log_list_temp.append(QStringList()<<"uos-license-agent"<<"/var/log/uos/uos-license-agent");
-    m_other_log_list_temp.append(QStringList()<<"uos-license-upgrade"<<"/var/log/uos/uos-license-upgrade");
-    m_other_log_list_temp.append(QStringList()<<"user.log"<<"/var/log/user.log");
-    m_other_log_list_temp.append(QStringList()<<"vnetlib"<<"/var/log/vnetlib");
+    m_other_log_list_temp.append(QStringList() << "uos-deviceh-cmd.log" << "/var/log/uos/uos-license-agent/uos-deviceh-cmd.log");
+    m_other_log_list_temp.append(QStringList() << "uos-license-agent" << "/var/log/uos/uos-license-agent");
+    m_other_log_list_temp.append(QStringList() << "uos-license-upgrade" << "/var/log/uos/uos-license-upgrade");
+    m_other_log_list_temp.append(QStringList() << "user.log" << "/var/log/user.log");
+    m_other_log_list_temp.append(QStringList() << "vnetlib" << "/var/log/vnetlib");
 
-    m_other_log_list_temp.append(QStringList()<<"wtmp"<<"/var/log/wtmp");
-    m_other_log_list_temp.append(QStringList()<<"dcp_log"<<"/var/log/cups/dcp_log");
-    m_other_log_list_temp.append(QStringList()<<"deepin-graphics-driver-manager-server.log"<<"/var/log/deepin-graphics-driver-manager-server.log");
-    m_other_log_list_temp.append(QStringList()<<"uos-activator-kms.log"<<"/var/log/uos/uos-activator-kms/uos-activator-kms.log");
+    m_other_log_list_temp.append(QStringList() << "wtmp" << "/var/log/wtmp");
+    m_other_log_list_temp.append(QStringList() << "dcp_log" << "/var/log/cups/dcp_log");
+    m_other_log_list_temp.append(QStringList() << "deepin-graphics-driver-manager-server.log" << "/var/log/deepin-graphics-driver-manager-server.log");
+    m_other_log_list_temp.append(QStringList() << "uos-activator-kms.log" << "/var/log/uos/uos-activator-kms/uos-activator-kms.log");
 
-    m_other_log_list_temp.append(QStringList()<<"deepin-recovery-gui.log"<<"/recovery/deepin-recovery-gui.log");
-    m_other_log_list_temp.append(QStringList()<<"oem-custom-tool"<<"/var/local/oem-custom-tool");
-    m_other_log_list_temp.append(QStringList()<<"iso-customizer-agent.log"<<"/root/.cache/isocustomizer-agent/iso-customizer-agent/iso-customizer-agent.log");
-    m_other_log_list_temp.append(QStringList()<<"downloader"<<"~/.config/uos/downloader/Log");
+    m_other_log_list_temp.append(QStringList() << "deepin-recovery-gui.log" << "/recovery/deepin-recovery-gui.log");
+    m_other_log_list_temp.append(QStringList() << "oem-custom-tool" << "/var/local/oem-custom-tool");
+    m_other_log_list_temp.append(QStringList() << "iso-customizer-agent.log" << "/root/.cache/isocustomizer-agent/iso-customizer-agent/iso-customizer-agent.log");
+    m_other_log_list_temp.append(QStringList() << "downloader" << "~/.config/uos/downloader/Log");
 
-    m_other_log_list_temp.append(QStringList()<<".kwin.log"<<"~/.kwin.log");
-    m_other_log_list_temp.append(QStringList()<<"audit.log"<<"/var/log/audit/audit.log");
-    m_other_log_list_temp.append(QStringList()<<"udcp-client"<<"/var/log/udcp-client");
+    m_other_log_list_temp.append(QStringList() << ".kwin.log" << "~/.kwin.log");
+    m_other_log_list_temp.append(QStringList() << "audit.log" << "/var/log/audit/audit.log");
+    m_other_log_list_temp.append(QStringList() << "udcp-client" << "/var/log/udcp-client");
 
     for (QStringList iter : m_other_log_list_temp) {
         QString path = iter.at(1);
         if (path.startsWith("~/"))
             path.replace(0, 1, QDir::homePath());
-        m_other_log_list.append(QStringList()<<iter.at(0)<<path);
+        m_other_log_list.append(QStringList() << iter.at(0) << path);
     }
 }
 
@@ -132,6 +132,7 @@ void LogApplicationHelper::initCustomLog()
 {
     m_custom_log_list.clear();
 
+#ifdef USE_DCONFIG
     //初始化DConfig配置
     if (!m_pDConfig) {
         m_pDConfig = Dtk::Core::DConfig::create("org.deepin.deepin-log-viewer", "org.deepin.deepin-log-viewer", "", this);
@@ -144,7 +145,7 @@ void LogApplicationHelper::initCustomLog()
             return;
         }
 
-        connect(m_pDConfig, &Dtk::Core::DConfig::valueChanged, this, [this](const QString &key){
+        connect(m_pDConfig, &Dtk::Core::DConfig::valueChanged, this, [this](const QString & key) {
             initCustomLog();
             emit this->sigValueChanged(key);
         });
@@ -160,19 +161,20 @@ void LogApplicationHelper::initCustomLog()
         if (!Utils::isTextFileType(path)) {
             continue;
         }
-        m_custom_log_list.append(QStringList()<<QFileInfo(iter).fileName()<<path);
+        m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
     }
+#endif
 
     //初始化gsetting配置
     if (!m_pGSettings) {
         if (QGSettings::isSchemaInstalled("com.deepin.log-viewer")) {
-             m_pGSettings = new QGSettings("com.deepin.log-viewer", "/com/deepin/log-viewer/");
+            m_pGSettings = new QGSettings("com.deepin.log-viewer", "/com/deepin/log-viewer/");
 
-             //监听key的value是否发生了变化
-             connect(m_pGSettings, &QGSettings::changed, this, [=] (const QString &key) {
-                 initCustomLog();
-                 emit this->sigValueChanged(key);
-             });
+            //监听key的value是否发生了变化
+            connect(m_pGSettings, &QGSettings::changed, this, [ = ](const QString & key) {
+                initCustomLog();
+                emit this->sigValueChanged(key);
+            });
         }
     }
 
@@ -186,7 +188,7 @@ void LogApplicationHelper::initCustomLog()
         if (!Utils::isTextFileType(path)) {
             continue;
         }
-        m_custom_log_list.append(QStringList()<<QFileInfo(iter).fileName()<<path);
+        m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
     }
 }
 
