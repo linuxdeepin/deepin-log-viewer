@@ -132,7 +132,7 @@ void LogApplicationHelper::initCustomLog()
 {
     m_custom_log_list.clear();
 
-#ifdef USE_DCONFIG
+#ifdef DTKCORE_CLASS_DConfigFile
     //初始化DConfig配置
     if (!m_pDConfig) {
         m_pDConfig = Dtk::Core::DConfig::create("org.deepin.deepin-log-viewer", "org.deepin.deepin-log-viewer", "", this);
@@ -259,7 +259,7 @@ void LogApplicationHelper::createDesktopFiles()
 
             if (lineStr.startsWith("NotShowIn")) {
                 QStringList notShowInList = lineStr.split("=", QString::SkipEmptyParts).value(1, "").split(";", QString::SkipEmptyParts);
-                if(std::any_of(notShowInList.begin(), notShowInList.end(), [currentDesktop](const auto &data){ return data == currentDesktop; })) {
+                if (std::any_of(notShowInList.begin(), notShowInList.end(), [currentDesktop](const auto & data) { return data == currentDesktop; })) {
                     canDisplay = false;
                 }
             }

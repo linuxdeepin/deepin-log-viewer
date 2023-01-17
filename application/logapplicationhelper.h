@@ -7,7 +7,8 @@
 
 #include "com_deepin_dde_daemon_launcherd.h"
 
-#ifdef USE_DCONFIG
+#include "dtkcore_config.h"
+#ifdef DTKCORE_CLASS_DConfigFile
 #include <DConfig>
 #endif
 
@@ -123,7 +124,7 @@ private:
      */
     DBbusLauncher *m_DbusLauncher;
 
-#ifdef USE_DCONFIG
+#ifdef DTKCORE_CLASS_DConfigFile
     //dconfig,自定义日志配置
     Dtk::Core::DConfig *m_pDConfig = nullptr;
 #endif
