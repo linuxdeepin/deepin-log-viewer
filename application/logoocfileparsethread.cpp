@@ -36,7 +36,7 @@ LogOOCFileParseThread::~LogOOCFileParseThread()
     stopProccess();
 }
 
-void LogOOCFileParseThread::setParam(QString &path)
+void LogOOCFileParseThread::setParam(const QString &path)
 {
     m_path = path;
 }
@@ -85,7 +85,7 @@ void LogOOCFileParseThread::doWork()
 }
 
 //鉴权
-bool LogOOCFileParseThread::checkAuthentication(const QString & path)
+bool LogOOCFileParseThread::checkAuthentication(const QString &path)
 {
     //判断当前用户对文件是否可读
     QFlags <QFileDevice::Permission> power = QFile::permissions(path);
@@ -98,7 +98,7 @@ bool LogOOCFileParseThread::checkAuthentication(const QString & path)
         //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
         initProccess();
         m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                                 << path << SharedMemoryManager::instance()->getRunnableKey());
+                         << path << SharedMemoryManager::instance()->getRunnableKey());
         m_process->waitForFinished(-1);
         //有错则传出空数据
         if (m_process->exitCode() != 0) {
@@ -169,7 +169,7 @@ void LogOOCFileParseThread::stopProccess()
     SharedMemoryManager::instance()->setRunnableTag(shareInfo);
     if (m_process) {
         m_process->kill();
-   }
+    }
 }
 
 void LogOOCFileParseThread::initProccess()

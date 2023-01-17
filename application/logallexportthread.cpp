@@ -25,53 +25,40 @@ void LogAllExportThread::run()
     QStringList files;
     QStringList commands;
 
-    if (files.isEmpty() && commands.isEmpty()) {
-        //获取所有文件
-        for (auto &it : m_types) {
-            if (it.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
-                commands.push_back("journalctl_system");
-            } else if (it.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
-                commands.push_back("journalctl_boot");
-            } else if (it.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
-                commands.push_back("dmesg");
-            } else if (it.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
-                commands.push_back("last");
-            } else if (it.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
-                files.append(DLDBusHandler::instance(nullptr)->getFileInfo("dpkg", false));
-            } else if (it.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
-                files.append(DLDBusHandler::instance(nullptr)->getFileInfo("kern", false));
-            } else if (it.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
-                files.append(DLDBusHandler::instance(nullptr)->getFileInfo("Xorg", false));
-            } else if (it.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
-                files.append(DLDBusHandler::instance(nullptr)->getFileInfo("dnf", false));
-            } else if (it.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
-                files.append(DLDBusHandler::instance(nullptr)->getFileInfo("boot", false));
-            } else if (it.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
-                files.append(KWIN_TREE_DATA);
-            } else if (it.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
-                QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
-                for (auto &it : appData.toStdMap()) {
-                    files.append(it.second);
-                }
-            } else if (it.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
-                QList<QStringList> list = LogApplicationHelper::instance()->getOtherLogList();
-                for (QStringList it : list) {
-                    files.append(it.at(1));
-                }
-            } else if (it.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
-                QList<QStringList> list = LogApplicationHelper::instance()->getCustomLogList();
-                for (QStringList it : list) {
-                    files.append(it.at(1));
-                }
+    //获取所有文件
+    for (auto &it : m_types) {
+        if (it.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
+            commands.push_back("journalctl_system");
+        } else if (it.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
+            commands.push_back("journalctl_boot");
+        } else if (it.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
+            commands.push_back("dmesg");
+        } else if (it.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
+            commands.push_back("last");
+        } else if (it.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
+            files.append(DLDBusHandler::instance(nullptr)->getFileInfo("dpkg", false));
+        } else if (it.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
+            files.append(DLDBusHandler::instance(nullptr)->getFileInfo("kern", false));
+        } else if (it.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
+            files.append(DLDBusHandler::instance(nullptr)->getFileInfo("Xorg", false));
+        } else if (it.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
+            files.append(DLDBusHandler::instance(nullptr)->getFileInfo("dnf", false));
+        } else if (it.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
+            files.append(DLDBusHandler::instance(nullptr)->getFileInfo("boot", false));
+        } else if (it.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
+            files.append(KWIN_TREE_DATA);
+        } else if (it.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
+            QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
+            for (auto &it2 : appData.toStdMap()) {
+                files.append(it2.second);
             }
-
-            //取消导出直接返回
-            if (m_cancel) {
-                files.clear();
-                commands.clear();
-                emit exportFinsh(false);
-                return;
-            }
+        }
+        //取消导出直接返回
+        if (m_cancel) {
+            files.clear();
+            commands.clear();
+            emit exportFinsh(false);
+            return;
         }
     }
 

@@ -22,7 +22,7 @@ class LogApplicationParseThread : public QThread
 public:
     explicit LogApplicationParseThread(QObject *parent = nullptr);
     ~LogApplicationParseThread() override;
-    void setParam(APP_FILTERS &iFilter);
+    void setParam(const APP_FILTERS &iFilter);
     static int thread_count;
 signals:
     /**

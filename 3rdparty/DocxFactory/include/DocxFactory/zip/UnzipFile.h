@@ -31,11 +31,11 @@ public:
 
     // functions for extracting file entries content from the zip file
 
-    byte *extractEntryToBuf(
+    DocxFactory::byte *extractEntryToBuf(
         const string   &p_path,
         size_t         &p_bufSize) const;
 
-    byte *extractEntryToRaw(
+    DocxFactory::byte *extractEntryToRaw(
         const string   &p_path,
         int            &p_method,
         int            &p_level,

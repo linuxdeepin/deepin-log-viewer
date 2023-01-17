@@ -686,7 +686,6 @@ void LogAuthThread::handleNormal()
                 Nmsg.eventType = "Login";
             }
 
-            QString end_str;
             QString strFormat = "ddd MMM dd hh:mm";
 
             //修改时间格式转换方法，采用QDateTime 转换
@@ -698,7 +697,7 @@ void LogAuthThread::handleNormal()
                     count1++;
                 }
             } else {
-                Nmsg.msg = start_str + "  -  " + end_str;
+                Nmsg.msg = start_str + "  -  ";
             }
 
             QString n_time = QDateTime::fromTime_t(static_cast<uint>(utbufp->ut_time)).toString("yyyy-MM-dd hh:mm:ss");
@@ -736,14 +735,14 @@ void LogAuthThread::NormalInfoTime()
     shareInfo.isStart = true;
     SharedMemoryManager::instance()->setRunnableTag(shareInfo);
     m_process->setProcessChannelMode(QProcess::MergedChannels);
-    m_process->start("last -f /var/log/wtmp");
+    m_process->start("last", {"-f", "/var/log/wtmp"});
     m_process->waitForFinished(-1);
     QByteArray outByte = m_process->readAllStandardOutput();
     QByteArray byte = Utils::replaceEmptyByteArray(outByte);
     QTextStream stream(&byte);
     QByteArray encode;
     stream.setCodec(encode);
-    QString output = stream.readAll();
+    stream.readAll();
     QStringList l = QString(byte).split('\n');
     m_process->close();
     TimeList.clear();
@@ -797,11 +796,11 @@ void LogAuthThread::handleDnf()
         QString multiLine;
         //开启贪婪匹配，解析dnf全部字段:日期+事件+等级+主要内容
         QRegularExpression re("^(\\d{4}-[0-2]\\d-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d)\\S*\\s*(\\w*)\\s*(.*)$");
-        for (int i = allLog.size() - 1; i >= 0; --i) {
+        for (int j = allLog.size() - 1; j >= 0; --j) {
             if (!m_canRun) {
                 return;
             }
-            QString str = allLog.value(i);
+            QString str = allLog.value(j);
             QRegularExpressionMatch match = re.match(str);
             bool matchRes = match.hasMatch();
             if (matchRes) {
@@ -881,7 +880,7 @@ void LogAuthThread::handleDmesg()
     QTextStream stream(&byte);
     QByteArray encode;
     stream.setCodec(encode);
-    QString output = stream.readAll();
+    stream.readAll();
     QStringList l = QString(byte).split('\n');
     m_process->close();
     if (!m_canRun) {

@@ -249,28 +249,17 @@ void LogApplicationHelper::createDesktopFiles()
             }
             QString currentDesktop(qgetenv("XDG_CURRENT_DESKTOP"));
             if (lineStr.startsWith("OnlyShowIn")) {
-                bool isHide = true;
                 QString onlyShowValue = lineStr.split("=", QString::SkipEmptyParts).value(1, "");
                 if (onlyShowValue.contains(currentDesktop)) {
-                    isHide = false;
                     continue;
-                }
-
-                if (isHide) {
+                } else {
                     canDisplay = false;
                 }
             }
 
             if (lineStr.startsWith("NotShowIn")) {
-                bool isHide = false;
                 QStringList notShowInList = lineStr.split("=", QString::SkipEmptyParts).value(1, "").split(";", QString::SkipEmptyParts);
-                foreach (QString item, notShowInList) {
-                    if (item == currentDesktop) {
-                        isHide = true;
-                        break;
-                    }
-                }
-                if (isHide) {
+                if(std::any_of(notShowInList.begin(), notShowInList.end(), [currentDesktop](const auto &data){ return data == currentDesktop; })) {
                     canDisplay = false;
                 }
             }
@@ -340,7 +329,7 @@ void LogApplicationHelper::createLogFiles()
  * @param isGeneric 是否有GenericName字段
  * @param isName 是否有Name字段
  */
-void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin, bool isGeneric,
+void LogApplicationHelper::parseField(const QString &path, const QString &name, bool isDeepin, bool isGeneric,
                                       bool isName)
 {
     Q_UNUSED(isName)
@@ -398,7 +387,7 @@ void LogApplicationHelper::parseField(QString path, QString name, bool isDeepin,
  * @param path 通过日志文件目录
  * @return 日志文件路经
  */
-QString LogApplicationHelper::getLogFile(QString path)
+QString LogApplicationHelper::getLogFile(const QString &path)
 {
     QString ret;
     QDir subdir(path);

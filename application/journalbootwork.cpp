@@ -396,10 +396,9 @@ QString JournalBootWork::getReplaceColorStr(const char *d)
  * @param str 接口获取的原始时间字符
  * @return  格式化的时间显示文本
  */
-QString JournalBootWork::getDateTimeFromStamp(QString str)
+QString JournalBootWork::getDateTimeFromStamp(const QString &str)
 {
     QString ret = "";
-    QString ums = str.right(6);
     QString dtstr = str.left(str.length() - 6);
     QDateTime dt = QDateTime::fromTime_t(dtstr.toUInt());
     ret = dt.toString("yyyy-MM-dd hh:mm:ss");  // + QString(".%1").arg(ums);

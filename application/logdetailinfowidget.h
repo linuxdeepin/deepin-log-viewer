@@ -43,7 +43,7 @@ private:
 protected:
     void paintEvent(QPaintEvent *event) override;
 public slots:
-    void slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel, QString data, const int error = 0);
+    void slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel, const QString &data, const int error);
 
 private:
     //m_daemonName:进程名显示控件 m_dateTime:时间显示控件 m_userName：用户名显示控件  m_pid：进程号显示控件 m_action：动作显示控件  m_status：状态显示控件 m_name:开关机日志用户名显示控件 m_event: 开关机日志时间类型显示

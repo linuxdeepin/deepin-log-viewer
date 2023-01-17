@@ -137,7 +137,7 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
  * @param iReplaceStr要替换的字符串
  * @return 替换过的字符串
  */
-QByteArray Utils::replaceEmptyByteArray(QByteArray &iReplaceStr)
+QByteArray Utils::replaceEmptyByteArray(const QByteArray &iReplaceStr)
 {
     QByteArray byteOutput = iReplaceStr;
     //\u0000是空字符，\x01是标题开始，出现于系统日志部分进程进程名称最后一个字符，不替换英文情况下显示错误
