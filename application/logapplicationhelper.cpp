@@ -126,6 +126,7 @@ void LogApplicationHelper::initCustomLog()
 {
     m_custom_log_list.clear();
 
+#ifdef DTKCORE_CLASS_DConfigFile
     //初始化DConfig配置
     if (!m_pDConfig) {
         m_pDConfig = Dtk::Core::DConfig::create("org.deepin.deepin-log-viewer", "org.deepin.deepin-log-viewer", "", this);
@@ -149,6 +150,7 @@ void LogApplicationHelper::initCustomLog()
     for (QString iter : sList) {
         m_custom_log_list.append(QStringList()<<QFileInfo(iter).fileName()<<iter);
     }
+#endif
 
     //初始化gsetting配置
     if (!m_pGSettings) {
