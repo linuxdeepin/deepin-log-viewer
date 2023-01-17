@@ -347,7 +347,7 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
  * @brief DisplayContent::createJournalTableStart 获取系统日志完成时第一次加载数据的第一页到treeview中
  * @param list 获得的系统日志数据list
  */
-void DisplayContent::createJournalTableStart(QList<LOG_MSG_JOURNAL> &list)
+void DisplayContent::createJournalTableStart(const QList<LOG_MSG_JOURNAL> &list)
 {
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
@@ -451,7 +451,7 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
  * @brief DisplayContent::createDpkgTable 获取系统日志完成时第一次加载数据的第一页到treeview中
  * @param list 获得的DPKG日志数据list
  */
-void DisplayContent::createDpkgTableStart(QList<LOG_MSG_DPKG> &list)
+void DisplayContent::createDpkgTableStart(const QList<LOG_MSG_DPKG> &list)
 {
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
@@ -564,7 +564,7 @@ void DisplayContent::createKernTableForm()
  * @param list 获得的内核日志数据list
  */
 // modified by Airy for bug  12263
-void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
+void DisplayContent::createKernTable(const QList<LOG_MSG_JOURNAL> &list)
 {
     setLoadState(DATA_COMPLETE);
 
@@ -583,7 +583,7 @@ void DisplayContent::createKernTable(QList<LOG_MSG_JOURNAL> &list)
  * @param start 分页开始的数组下标
  * @param end 分页结束的数组下标
  */
-void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int end)
+void DisplayContent::insertKernTable(const QList<LOG_MSG_JOURNAL> &list, int start, int end)
 {
     QList<LOG_MSG_JOURNAL> midList = list;
     if (end >= start) {
@@ -598,7 +598,7 @@ void DisplayContent::insertKernTable(QList<LOG_MSG_JOURNAL> list, int start, int
  * @param start 分页开始的数组下标
  * @param end 分页结束的数组下标
  */
-void DisplayContent::insertDpkgTable(QList<LOG_MSG_DPKG> list, int start, int end)
+void DisplayContent::insertDpkgTable(const QList<LOG_MSG_DPKG> &list, int start, int end)
 {
     QList<LOG_MSG_DPKG> midList = list;
     if (end >= start) {
@@ -607,7 +607,7 @@ void DisplayContent::insertDpkgTable(QList<LOG_MSG_DPKG> list, int start, int en
     parseListToModel(midList, m_pModel);
 }
 
-void DisplayContent::insertXorgTable(QList<LOG_MSG_XORG> list, int start, int end)
+void DisplayContent::insertXorgTable(const QList<LOG_MSG_XORG> &list, int start, int end)
 {
     QList<LOG_MSG_XORG> midList = list;
     if (end >= start) {
@@ -616,7 +616,7 @@ void DisplayContent::insertXorgTable(QList<LOG_MSG_XORG> list, int start, int en
     parseListToModel(midList, m_pModel);
 }
 
-void DisplayContent::insertBootTable(QList<LOG_MSG_BOOT> list, int start, int end)
+void DisplayContent::insertBootTable(const QList<LOG_MSG_BOOT> &list, int start, int end)
 {
     QList<LOG_MSG_BOOT> midList = list;
     if (end >= start) {
@@ -625,7 +625,7 @@ void DisplayContent::insertBootTable(QList<LOG_MSG_BOOT> list, int start, int en
     parseListToModel(midList, m_pModel);
 }
 
-void DisplayContent::insertKwinTable(QList<LOG_MSG_KWIN> list, int start, int end)
+void DisplayContent::insertKwinTable(const QList<LOG_MSG_KWIN> &list, int start, int end)
 {
     QList<LOG_MSG_KWIN> midList = list;
     if (end >= start) {
@@ -634,7 +634,7 @@ void DisplayContent::insertKwinTable(QList<LOG_MSG_KWIN> list, int start, int en
     parseListToModel(midList, m_pModel);
 }
 
-void DisplayContent::insertNormalTable(QList<LOG_MSG_NORMAL> list, int start, int end)
+void DisplayContent::insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int start, int end)
 {
     QList<LOG_MSG_NORMAL> midList = list;
     if (end >= start) {
@@ -650,7 +650,7 @@ void DisplayContent::insertNormalTable(QList<LOG_MSG_NORMAL> list, int start, in
  * @param lId 等级筛选id,对应PRIORITY枚举,直接传入获取系统接口,-1表示全部等级不筛选,
  * @param iSearchStr 搜索关键字,现阶段不用,保留参数
  */
-void DisplayContent::generateAppFile(QString path, int id, int lId, const QString &iSearchStr)
+void DisplayContent::generateAppFile(const QString &path, int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
     appList.clear();
@@ -736,7 +736,7 @@ void DisplayContent::createAppTableForm()
  * @brief DisplayContent::createAppTable 获取应用日志完成时第一次加载数据的第一页到treeview中
  * @param list 获得的应用日志数据list
  */
-void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
+void DisplayContent::createAppTable(const QList<LOG_MSG_APPLICATOIN> &list)
 {
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
@@ -752,7 +752,7 @@ void DisplayContent::createAppTable(QList<LOG_MSG_APPLICATOIN> &list)
  * @brief DisplayContent::createBootTable 获取启动日志完成时加载所有数据到treeview中
  * @param list 获得的启动日志数据list
  */
-void DisplayContent::createBootTable(QList<LOG_MSG_BOOT> &list)
+void DisplayContent::createBootTable(const QList<LOG_MSG_BOOT> &list)
 {
     m_limitTag = 0;
 
@@ -792,7 +792,7 @@ void DisplayContent::createXorgTableForm()
  * @brief DisplayContent::createXorgTable 获取Xorg日志完成时加载所有数据到treeview中
  * @param list 获得的Xorg日志数据list
  */
-void DisplayContent::createXorgTable(QList<LOG_MSG_XORG> &list)
+void DisplayContent::createXorgTable(const QList<LOG_MSG_XORG> &list)
 {
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
@@ -882,7 +882,7 @@ void DisplayContent::createKwinTableForm()
  * @brief DisplayContent::creatKwinTable 获取kwin日志完成时加载所有数据到treeview中
  * @param list 获得的kwin日志数据list
  */
-void DisplayContent::creatKwinTable(QList<LOG_MSG_KWIN> &list)
+void DisplayContent::creatKwinTable(const QList<LOG_MSG_KWIN> &list)
 {
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
@@ -898,7 +898,7 @@ void DisplayContent::creatKwinTable(QList<LOG_MSG_KWIN> &list)
  * @brief DisplayContent::generateKwinFile 触发获取Kwin日志数据线程
  * @param iFilters 获取线程筛选条件结构体
  */
-void DisplayContent::generateKwinFile(KWIN_FILTERS iFilters)
+void DisplayContent::generateKwinFile(const KWIN_FILTERS &iFilters)
 {
     clearAllFilter();
     clearAllDatalist();
@@ -930,7 +930,7 @@ void DisplayContent::createNormalTableForm()
  * @brief DisplayContent::createNormalTable 开关机日志表头项目创建和重置
  * @param list
  */
-void DisplayContent::createNormalTable(QList<LOG_MSG_NORMAL> &list)
+void DisplayContent::createNormalTable(const QList<LOG_MSG_NORMAL> &list)
 {
     setLoadState(DATA_COMPLETE);
 
@@ -1055,7 +1055,7 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
  * @param filePath  当前选择的应用的日志路径
  * @return 对应的日志名称
  */
-QString DisplayContent::getAppName(QString filePath)
+QString DisplayContent::getAppName(const QString &filePath)
 {
     QString ret;
     if (filePath.isEmpty())
@@ -1130,7 +1130,7 @@ void DisplayContent::generateJournalBootFile(int lId, const QString &iSearchStr)
  * @brief DisplayContent::createJournalBootTableStart 获取klu下启动日志完成时第一次加载数据的第一页到treeview中
  * @param list klu下启动日志数据list
  */
-void DisplayContent::createJournalBootTableStart(QList<LOG_MSG_JOURNAL> &list)
+void DisplayContent::createJournalBootTableStart(const QList<LOG_MSG_JOURNAL> &list)
 {
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
@@ -1244,7 +1244,7 @@ void DisplayContent::generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel)
     m_logFileParse.parseByDnf(dnffilter);
 }
 
-void DisplayContent::createDnfTable(QList<LOG_MSG_DNF> &list)
+void DisplayContent::createDnfTable(const QList<LOG_MSG_DNF> &list)
 {
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
@@ -1291,7 +1291,7 @@ void DisplayContent::generateDmesgFile(BUTTONID iDate, PRIORITY iLevel)
     m_logFileParse.parseByDmesg(dmesgfilter);
 }
 
-void DisplayContent::createDmesgTable(QList<LOG_MSG_DMESG> &list)
+void DisplayContent::createDmesgTable(const QList<LOG_MSG_DMESG> &list)
 {
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
@@ -1327,7 +1327,7 @@ void DisplayContent::createDmesgForm()
     m_treeView->hideColumn(3);
 }
 
-void DisplayContent::insertDmesgTable(QList<LOG_MSG_DMESG> list, int start, int end)
+void DisplayContent::insertDmesgTable(const QList<LOG_MSG_DMESG> &list, int start, int end)
 {
     QList<LOG_MSG_DMESG> midList = list;
     if (end >= start) {
@@ -1336,7 +1336,7 @@ void DisplayContent::insertDmesgTable(QList<LOG_MSG_DMESG> list, int start, int 
     parseListToModel(midList, m_pModel);
 }
 
-void DisplayContent::insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end)
+void DisplayContent::insertDnfTable(const QList<LOG_MSG_DNF> &list, int start, int end)
 {
     QList<LOG_MSG_DNF> midList = list;
     if (end >= start) {
@@ -1424,7 +1424,7 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
  * @brief DisplayContent::slot_appLogs 根据应用日志应用类型变化触发应用日志获取线程
  * @param path 应用日志的路径
  */
-void DisplayContent::slot_appLogs(int btnId, QString path)
+void DisplayContent::slot_appLogs(int btnId, const QString &path)
 {
     appList.clear();
     m_curAppLog = path;
@@ -1778,7 +1778,7 @@ void DisplayContent::slot_exportClicked()
  * @brief DisplayContent::slot_statusChagned 启动日志的状态combox选项改变槽函数,筛选当前启动日志内容
  * @param status 筛选的状态,有all ok failed
  */
-void DisplayContent::slot_statusChagned(QString status)
+void DisplayContent::slot_statusChagned(const QString &status)
 {
     m_bootFilter.statusFilter = status;
     currentBootList = filterBoot(m_bootFilter, bList);
@@ -1942,7 +1942,7 @@ void DisplayContent::slot_journalFinished(int index)
     }
 }
 
-void DisplayContent::slot_dnfFinished(QList<LOG_MSG_DNF> list)
+void DisplayContent::slot_dnfFinished(const QList<LOG_MSG_DNF> &list)
 {
     if (m_flag != Dnf)
         return;
@@ -1952,7 +1952,7 @@ void DisplayContent::slot_dnfFinished(QList<LOG_MSG_DNF> list)
     PERF_PRINT_END("POINT-03", "type=dnf");
 }
 
-void DisplayContent::slot_dmesgFinished(QList<LOG_MSG_DMESG> list)
+void DisplayContent::slot_dmesgFinished(const QList<LOG_MSG_DMESG> &list)
 {
     if (m_flag != Dmesg)
         return;
@@ -2387,7 +2387,7 @@ void DisplayContent::slot_getLogtype(int tcbx)
  * @param iList 要加入model中的原始数据
  * @param oPModel 要增加数据的model指针
  */
-void DisplayContent::parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel)
+void DisplayContent::parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
         qWarning() << "parse model is  Empty" << __LINE__;
@@ -2424,7 +2424,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemMo
  * @param iList 要加入model中的原始数据
  * @param oPModel 要增加数据的model指针
  */
-void DisplayContent::parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel)
+void DisplayContent::parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
         qWarning() << "parse model is  Empty" << __LINE__;
@@ -2836,7 +2836,7 @@ void DisplayContent::clearAllDatalist()
     malloc_trim(0);
 }
 
-QList<LOG_MSG_BOOT> DisplayContent::filterBoot(BOOT_FILTERS ibootFilter, QList<LOG_MSG_BOOT> &iList)
+QList<LOG_MSG_BOOT> DisplayContent::filterBoot(BOOT_FILTERS ibootFilter, const QList<LOG_MSG_BOOT> &iList)
 {
     QList<LOG_MSG_BOOT> rsList;
     bool isStatusFilterEmpty = ibootFilter.statusFilter.isEmpty();
@@ -2899,7 +2899,7 @@ QList<LOG_MSG_NORMAL> DisplayContent::filterNomal(NORMAL_FILTERS inormalFilter, 
     return rsList;
 }
 
-QList<LOG_MSG_DPKG> DisplayContent::filterDpkg(const QString &iSearchStr, QList<LOG_MSG_DPKG> &iList)
+QList<LOG_MSG_DPKG> DisplayContent::filterDpkg(const QString &iSearchStr, const QList<LOG_MSG_DPKG> &iList)
 {
     QList<LOG_MSG_DPKG> rsList;
     if (iSearchStr.isEmpty()) {
@@ -2915,7 +2915,7 @@ QList<LOG_MSG_DPKG> DisplayContent::filterDpkg(const QString &iSearchStr, QList<
     return rsList;
 }
 
-QList<LOG_MSG_JOURNAL> DisplayContent::filterKern(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList)
+QList<LOG_MSG_JOURNAL> DisplayContent::filterKern(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList)
 {
     QList<LOG_MSG_JOURNAL> rsList;
     if (iSearchStr.isEmpty()) {
@@ -2930,7 +2930,7 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterKern(const QString &iSearchStr, QLi
     return rsList;
 }
 
-QList<LOG_MSG_XORG> DisplayContent::filterXorg(const QString &iSearchStr, QList<LOG_MSG_XORG> &iList)
+QList<LOG_MSG_XORG> DisplayContent::filterXorg(const QString &iSearchStr, const QList<LOG_MSG_XORG> &iList)
 {
     QList<LOG_MSG_XORG> rsList;
     if (iSearchStr.isEmpty()) {
@@ -2944,7 +2944,7 @@ QList<LOG_MSG_XORG> DisplayContent::filterXorg(const QString &iSearchStr, QList<
     return rsList;
 }
 
-QList<LOG_MSG_KWIN> DisplayContent::filterKwin(const QString &iSearchStr, QList<LOG_MSG_KWIN> &iList)
+QList<LOG_MSG_KWIN> DisplayContent::filterKwin(const QString &iSearchStr, const QList<LOG_MSG_KWIN> &iList)
 {
     QList<LOG_MSG_KWIN> rsList;
     if (iSearchStr.isEmpty()) {
@@ -2958,7 +2958,7 @@ QList<LOG_MSG_KWIN> DisplayContent::filterKwin(const QString &iSearchStr, QList<
     return rsList;
 }
 
-QList<LOG_MSG_APPLICATOIN> DisplayContent::filterApp(const QString &iSearchStr, QList<LOG_MSG_APPLICATOIN> &iList)
+QList<LOG_MSG_APPLICATOIN> DisplayContent::filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList)
 {
     QList<LOG_MSG_APPLICATOIN> rsList;
     if (iSearchStr.isEmpty()) {
@@ -2972,7 +2972,7 @@ QList<LOG_MSG_APPLICATOIN> DisplayContent::filterApp(const QString &iSearchStr, 
     return rsList;
 }
 
-QList<LOG_MSG_JOURNAL> DisplayContent::filterJournal(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList)
+QList<LOG_MSG_JOURNAL> DisplayContent::filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList)
 {
     QList<LOG_MSG_JOURNAL> rsList;
     if (iSearchStr.isEmpty()) {
@@ -2986,7 +2986,7 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterJournal(const QString &iSearchStr, 
     return rsList;
 }
 
-QList<LOG_MSG_JOURNAL> DisplayContent::filterJournalBoot(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList)
+QList<LOG_MSG_JOURNAL> DisplayContent::filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList)
 {
     QList<LOG_MSG_JOURNAL> rsList;
     if (iSearchStr.isEmpty()) {
@@ -3075,7 +3075,7 @@ void DisplayContent::resizeEvent(QResizeEvent *event)
  * @param str 日志等级字符串
  * @return 日志等级图标文件名
  */
-QString DisplayContent::getIconByname(QString str)
+QString DisplayContent::getIconByname(const QString &str)
 {
     return m_icon_name_map.value(str);
 }
@@ -3095,7 +3095,7 @@ void DisplayContent::createBootTableForm()
  * @param start 分页开始的数组下标
  * @param end 分页结束的数组下标
  */
-void DisplayContent::insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end)
+void DisplayContent::insertApplicationTable(const QList<LOG_MSG_APPLICATOIN> &list, int start, int end)
 {
     QList<LOG_MSG_APPLICATOIN> midList = list;
     if (end >= start) {

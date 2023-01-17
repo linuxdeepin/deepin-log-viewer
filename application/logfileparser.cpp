@@ -70,7 +70,7 @@ LogFileParser::~LogFileParser()
     SharedMemoryManager::instance()->releaseMemory();
 }
 
-int LogFileParser::parseByJournal(QStringList arg)
+int LogFileParser::parseByJournal(const QStringList &arg)
 {
     stopAllLoad();
     m_isJournalLoading = true;
@@ -118,7 +118,7 @@ int LogFileParser::parseByJournal(QStringList arg)
 #endif
 }
 
-int LogFileParser::parseByJournalBoot(QStringList arg)
+int LogFileParser::parseByJournalBoot(const QStringList &arg)
 {
     stopAllLoad();
     JournalBootWork *work = new JournalBootWork(this);
@@ -136,7 +136,7 @@ int LogFileParser::parseByJournalBoot(QStringList arg)
     return index;
 }
 
-int LogFileParser::parseByDpkg(DKPG_FILTERS &iDpkgFilter)
+int LogFileParser::parseByDpkg(const DKPG_FILTERS &iDpkgFilter)
 {
 
     stopAllLoad();
@@ -158,7 +158,7 @@ int LogFileParser::parseByDpkg(DKPG_FILTERS &iDpkgFilter)
     return index;
 }
 
-int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
+int LogFileParser::parseByXlog(const XORG_FILTERS &iXorgFilter)    // modifed by Airy
 {
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
@@ -178,7 +178,7 @@ int LogFileParser::parseByXlog(XORG_FILTERS &iXorgFilter)    // modifed by Airy
     return index;
 }
 
-int LogFileParser::parseByNormal(NORMAL_FILTERS &iNormalFiler)
+int LogFileParser::parseByNormal(const NORMAL_FILTERS &iNormalFiler)
 {
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
@@ -196,7 +196,7 @@ int LogFileParser::parseByNormal(NORMAL_FILTERS &iNormalFiler)
     return index;
 }
 
-int LogFileParser::parseByKwin(KWIN_FILTERS iKwinfilter)
+int LogFileParser::parseByKwin(const KWIN_FILTERS &iKwinfilter)
 {
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
@@ -261,7 +261,7 @@ int LogFileParser::parseByBoot()
     return index;
 }
 
-int LogFileParser::parseByKern(KERN_FILTERS &iKernFilter)
+int LogFileParser::parseByKern(const KERN_FILTERS &iKernFilter)
 {
     stopAllLoad();
     m_isKernLoading = true;
@@ -281,7 +281,7 @@ int LogFileParser::parseByKern(KERN_FILTERS &iKernFilter)
     return index;
 }
 
-int LogFileParser::parseByApp(APP_FILTERS &iAPPFilter)
+int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
 {
     stopAllLoad();
     m_isAppLoading = true;
@@ -343,7 +343,7 @@ void LogFileParser::parseByDmesg(DMESG_FILTERS iDmesgFilter)
     QThreadPool::globalInstance()->start(authThread);
 }
 
-int LogFileParser::parseByOOC(QString & path)
+int LogFileParser::parseByOOC(const QString &path)
 {
     stopAllLoad();
     m_isOOCLoading = true;
@@ -351,11 +351,11 @@ int LogFileParser::parseByOOC(QString & path)
     m_OOCThread = new LogOOCFileParseThread(this);
     m_OOCThread->setParam(path);
     connect(m_OOCThread, &LogOOCFileParseThread::sigFinished, this,
-               &LogFileParser::OOCFinished);
+            &LogFileParser::OOCFinished);
     connect(m_OOCThread, &LogOOCFileParseThread::sigData, this,
-               &LogFileParser::OOCData);
+            &LogFileParser::OOCData);
     connect(this, &LogFileParser::stopOOC, m_OOCThread,
-               &LogOOCFileParseThread::stopProccess);
+            &LogOOCFileParseThread::stopProccess);
     connect(m_OOCThread, &LogOOCFileParseThread::finished, m_OOCThread,
             &QObject::deleteLater);
     int index = m_OOCThread->getIndex();
@@ -363,7 +363,7 @@ int LogFileParser::parseByOOC(QString & path)
     return index;
 }
 
-void LogFileParser::createFile(QString output, int count)
+void LogFileParser::createFile(const QString &output, int count)
 {
 #if 1
     Q_UNUSED(output)

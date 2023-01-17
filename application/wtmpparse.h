@@ -44,7 +44,7 @@ struct utmp *st_utmp_init(void);
 
 utmp_list * list_delete(struct utmp_list *list);
 
-void list_insert(QList<utmp *> &plist, struct utmp *value);
+void list_insert(QList<utmp *> &plist, const utmp *value);
 
 utmp list_get_ele_and_del(QList<utmp > &list, char *value, int &rs);
 

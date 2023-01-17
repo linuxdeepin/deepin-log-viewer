@@ -53,34 +53,34 @@ private:
     void initConnections();
 
     void generateJournalFile(int id, int lId, const QString &iSearchStr = "");
-    void createJournalTableStart(QList<LOG_MSG_JOURNAL> &list);
+    void createJournalTableStart(const QList<LOG_MSG_JOURNAL> &list);
     void createJournalTableForm();
     void generateDpkgFile(int id, const QString &iSearchStr = "");
-    void createDpkgTableStart(QList<LOG_MSG_DPKG> &list);
+    void createDpkgTableStart(const QList<LOG_MSG_DPKG> &list);
     void createDpkgTableForm();
 
     void generateKernFile(int id, const QString &iSearchStr = "");
     void createKernTableForm();
-    void createKernTable(QList<LOG_MSG_JOURNAL> &list);
+    void createKernTable(const QList<LOG_MSG_JOURNAL> &list);
 
-    void generateAppFile(QString path, int id, int lId, const QString &iSearchStr = "");
+    void generateAppFile(const QString &path, int id, int lId, const QString &iSearchStr = "");
     void createAppTableForm();
-    void createAppTable(QList<LOG_MSG_APPLICATOIN> &list);
+    void createAppTable(const QList<LOG_MSG_APPLICATOIN> &list);
 
     void createBootTableForm();
-    void createBootTable(QList<LOG_MSG_BOOT> &list);
+    void createBootTable(const QList<LOG_MSG_BOOT> &list);
     void generateBootFile();
 
     void createXorgTableForm();
-    void createXorgTable(QList<LOG_MSG_XORG> &list);
+    void createXorgTable(const QList<LOG_MSG_XORG> &list);
     void generateXorgFile(int id); // add by Airy for peroid
 
     void createKwinTableForm();
-    void creatKwinTable(QList<LOG_MSG_KWIN> &list);
-    void generateKwinFile(KWIN_FILTERS iFilters);
+    void creatKwinTable(const QList<LOG_MSG_KWIN> &list);
+    void generateKwinFile(const KWIN_FILTERS &iFilters);
 
     void createNormalTableForm();
-    void createNormalTable(QList<LOG_MSG_NORMAL> &list); // add by Airy
+    void createNormalTable(const QList<LOG_MSG_NORMAL> &list); // add by Airy
     void generateNormalFile(int id); // add by Airy for peroid
 
     //其他日志或者自定义日志
@@ -89,32 +89,32 @@ private:
     void createOOCTable(const QList<QStringList> & list);
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
-    void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
-    void insertKernTable(QList<LOG_MSG_JOURNAL> list, int start,
+    void insertApplicationTable(const QList<LOG_MSG_APPLICATOIN> &list, int start, int end);
+    void insertKernTable(const QList<LOG_MSG_JOURNAL> &list, int start,
                          int end); // add by Airy for bug 12263
-    void insertDpkgTable(QList<LOG_MSG_DPKG> list, int start, int end);
-    void insertXorgTable(QList<LOG_MSG_XORG> list, int start, int end);
-    void insertBootTable(QList<LOG_MSG_BOOT> list, int start, int end);
-    void insertKwinTable(QList<LOG_MSG_KWIN> list, int start, int end);
-    void insertNormalTable(QList<LOG_MSG_NORMAL> list, int start, int end);
-    QString getAppName(QString filePath);
+    void insertDpkgTable(const QList<LOG_MSG_DPKG> &list, int start, int end);
+    void insertXorgTable(const QList<LOG_MSG_XORG> &list, int start, int end);
+    void insertBootTable(const QList<LOG_MSG_BOOT> &list, int start, int end);
+    void insertKwinTable(const QList<LOG_MSG_KWIN> &list, int start, int end);
+    void insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int start, int end);
+    QString getAppName(const QString &filePath);
 
     bool isAuthProcessAlive();
 
     void generateJournalBootFile(int lId, const QString &iSearchStr = "");
-    void createJournalBootTableStart(QList<LOG_MSG_JOURNAL> &list);
+    void createJournalBootTableStart(const QList<LOG_MSG_JOURNAL> &list);
     void createJournalBootTableForm();
     void insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
 
     void generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel);
-    void createDnfTable(QList<LOG_MSG_DNF> &list);
+    void createDnfTable(const QList<LOG_MSG_DNF> &list);
 
     void generateDmesgFile(BUTTONID iDate, PRIORITY iLevel);
-    void createDmesgTable(QList<LOG_MSG_DMESG> &list);
+    void createDmesgTable(const QList<LOG_MSG_DMESG> &list);
     void createDnfForm();
     void createDmesgForm();
-    void insertDmesgTable(QList<LOG_MSG_DMESG> list, int start, int end);
-    void insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end);
+    void insertDmesgTable(const QList<LOG_MSG_DMESG> &list, int start, int end);
+    void insertDnfTable(const QList<LOG_MSG_DNF> &list, int start, int end);
 
 signals:
     void loadMoreInfo();
@@ -136,12 +136,12 @@ public slots:
     void slot_requestShowRightMenu(const QPoint &pos);
     void slot_tableItemClicked(const QModelIndex &index);
     void slot_BtnSelected(int btnId, int lId, QModelIndex idx);
-    void slot_appLogs(int btnId, QString path);
+    void slot_appLogs(int btnId, const QString &path);
 
     void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_exportClicked();
 
-    void slot_statusChagned(QString status);
+    void slot_statusChagned(const QString &status);
 
     void slot_dpkgFinished(int index);
     void slot_dpkgData(int index, QList<LOG_MSG_DPKG> list);
@@ -153,8 +153,8 @@ public slots:
     void slot_kernData(int index, QList<LOG_MSG_JOURNAL> list);
     void slot_kwinFinished(int index);
     void slot_kwinData(int index, QList<LOG_MSG_KWIN> list);
-    void slot_dnfFinished(QList<LOG_MSG_DNF> list);
-    void slot_dmesgFinished(QList<LOG_MSG_DMESG> list);
+    void slot_dnfFinished(const QList<LOG_MSG_DNF> &list);
+    void slot_dmesgFinished(const QList<LOG_MSG_DMESG> &list);
     void slot_journalFinished(int index);
     void slot_journalBootFinished(int index);
     void slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list);
@@ -174,8 +174,8 @@ public slots:
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
     void slot_dnfLevel(DNFPRIORITY iLevel);
     //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
-    void parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel);
-    void parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel);
+    void parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandardItemModel *oPModel);
+    void parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel);
@@ -184,7 +184,7 @@ public slots:
     void parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel);
-    QString getIconByname(QString str);
+    QString getIconByname(const QString &str);
     void setLoadState(LOAD_STATE iState);
     void onExportProgress(int nCur, int nTotal);
     void onExportResult(bool isSuccess);
@@ -192,15 +192,15 @@ public slots:
     void clearAllFilter();
     void clearAllDatalist();
 
-    QList<LOG_MSG_BOOT> filterBoot(BOOT_FILTERS ibootFilter, QList<LOG_MSG_BOOT> &iList);
+    QList<LOG_MSG_BOOT> filterBoot(BOOT_FILTERS ibootFilter, const QList<LOG_MSG_BOOT> &iList);
     QList<LOG_MSG_NORMAL> filterNomal(NORMAL_FILTERS inormalFilter, QList<LOG_MSG_NORMAL> &iList);
-    QList<LOG_MSG_DPKG> filterDpkg(const QString &iSearchStr, QList<LOG_MSG_DPKG> &iList);
-    QList<LOG_MSG_JOURNAL> filterKern(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
-    QList<LOG_MSG_XORG> filterXorg(const QString &iSearchStr, QList<LOG_MSG_XORG> &iList);
-    QList<LOG_MSG_KWIN> filterKwin(const QString &iSearchStr, QList<LOG_MSG_KWIN> &iList);
-    QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, QList<LOG_MSG_APPLICATOIN> &iList);
-    QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
-    QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
+    QList<LOG_MSG_DPKG> filterDpkg(const QString &iSearchStr, const QList<LOG_MSG_DPKG> &iList);
+    QList<LOG_MSG_JOURNAL> filterKern(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
+    QList<LOG_MSG_XORG> filterXorg(const QString &iSearchStr, const QList<LOG_MSG_XORG> &iList);
+    QList<LOG_MSG_KWIN> filterKwin(const QString &iSearchStr, const QList<LOG_MSG_KWIN> &iList);
+    QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList);
+    QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
+    QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
 
 private:
     void resizeEvent(QResizeEvent *event);

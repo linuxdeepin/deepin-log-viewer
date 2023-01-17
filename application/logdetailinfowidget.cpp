@@ -433,7 +433,7 @@ void logDetailInfoWidget::fillOOCDetailInfo(const QString & data, const int erro
  * @param name 应用日志的应用名称
  */
 void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel,
-                                          QString data, const int error)
+                                          const QString &data, const int error)
 {
     cleanText();
 

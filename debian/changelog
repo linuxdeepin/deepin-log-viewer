@@ -1,13 +1,21 @@
+deepin-log-viewer (6.0.1) unstable; urgency=medium
+
+  * Initial for Deepin V23
+
+ -- unknown <houchengqiu@uniontech.com>  Mon, 16 Jan 2023 16:57:59 +0800
+
 deepin-log-viewer (5.9.15) unstable; urgency=medium
 
   * New version 5.9.15
 
  -- lichunlong <lichunlong@uniontech.com>  Thu, 5 Jan 2023 17:30:00 +0800
+
 deepin-log-viewer (5.9.14) unstable; urgency=medium
 
   * New version 5.9.14
 
  -- lichunlong <lichunlong@uniontech.com>  Thu, 5 Jan 2023 16:00:00 +0800
+
 deepin-log-viewer (5.2.0) unstable; urgency=medium
 
   * Initial release

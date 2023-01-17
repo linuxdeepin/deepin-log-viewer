@@ -98,7 +98,7 @@ void wtmp_close(void)
 
 struct utmp_list *st_list_init(void)
 {
-    struct utmp_list *list = (struct utmp_list *)malloc(sizeof(struct utmp_list));
+    struct utmp_list *list = static_cast<struct utmp_list *>(malloc(sizeof(struct utmp_list)));
     if (!list) {
         printf("struct utmp_list malloc failed\n");
         return NULL;
@@ -111,7 +111,7 @@ struct utmp_list *st_list_init(void)
 
 struct utmp *st_utmp_init(void)
 {
-    struct utmp *stUTMP = (struct utmp *)malloc(sizeof(struct utmp));
+    struct utmp *stUTMP = static_cast<struct utmp *>(malloc(sizeof(struct utmp)));
     if (!stUTMP) {
         printf("struct utmp malloc failed\n");
         return NULL;

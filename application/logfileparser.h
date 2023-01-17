@@ -24,24 +24,25 @@ public:
     ~LogFileParser();
 
 
-    int parseByJournal(QStringList arg = QStringList());
-    int parseByJournalBoot(QStringList arg = QStringList());
+    int parseByJournal(const QStringList &arg = QStringList());
+    int parseByJournalBoot(const QStringList &arg = QStringList());
 
-    int parseByDpkg(DKPG_FILTERS &iDpkgFilter);
+    int parseByDpkg(const DKPG_FILTERS &iDpkgFilter);
 #if 0
     void parseByXlog(QStringList &xList);
     void parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms = 0);  // modifed by Airy for show period
 #endif
-    int parseByXlog(XORG_FILTERS &iXorgFilter);
+    int parseByXlog(const XORG_FILTERS &iXorgFilter);
     int parseByBoot();
-    int parseByKern(KERN_FILTERS &iKernFilter);
-    int parseByApp(APP_FILTERS &iAPPFilter);
+    int parseByKern(const KERN_FILTERS &iKernFilter);
+    int parseByApp(const APP_FILTERS &iAPPFilter);
     void parseByDnf(DNF_FILTERS iDnfFilter);
     void parseByDmesg(DMESG_FILTERS iDmesgFilter);
-    int parseByNormal(NORMAL_FILTERS &iNormalFiler);   // add by Airy
-    int parseByKwin(KWIN_FILTERS iKwinfilter);
-    int parseByOOC(QString & path);
-    void createFile(QString output, int count);
+    int parseByNormal(const NORMAL_FILTERS &iNormalFiler);   // add by Airy
+
+    int parseByKwin(const KWIN_FILTERS &iKwinfilter);
+    int parseByOOC(const QString &path);
+    void createFile(const QString &output, int count);
     void stopAllLoad();
 
 signals:

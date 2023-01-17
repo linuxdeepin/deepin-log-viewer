@@ -49,7 +49,7 @@ LogApplicationParseThread::~LogApplicationParseThread()
  * @brief LogApplicationParseThread::setParam 设置获取的筛选条件
  * @param iFilter 筛选条件结构体
  */
-void LogApplicationParseThread::setParam(APP_FILTERS &iFilter)
+void LogApplicationParseThread::setParam(const APP_FILTERS &iFilter)
 {
     m_AppFiler = iFilter;
 }

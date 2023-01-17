@@ -468,7 +468,7 @@ void Merger::merge()
 
     else {
         size_t                      l_bufSize;
-        boost::scoped_array<byte>   l_buf(OsFunc::readFile(m_dataFile, l_bufSize));
+        boost::scoped_array<DocxFactory::byte>   l_buf(OsFunc::readFile(m_dataFile, l_bufSize));
 
         l_data = string((char *) l_buf.get(), l_bufSize);
     }

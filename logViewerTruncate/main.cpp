@@ -23,7 +23,6 @@ int main(int argc, char *argv[])
     if (fileList.count() < 1) {
         return 0;
     }
-    QString fileDirStr = fileList[0];
     QStringList arg;
     if (fileList[0] == "dmesg") {
         qDebug() << "dmesg -C";

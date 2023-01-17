@@ -36,7 +36,7 @@ public:
     static QString suffixList();
     static QPixmap renderSVG(const QString &filePath, const QSize &size);
     static QString loadFontFamilyFromFiles(const QString &fontFileName);
-    static QByteArray replaceEmptyByteArray(QByteArray &iReplaceStr);
+    static QByteArray replaceEmptyByteArray(const QByteArray &iReplaceStr);
     static CommandErrorType isErroCommand(const QString &str);
     static bool checkAndDeleteDir(const QString &iFilePath);
     static bool deleteDir(const QString &iFilePath);

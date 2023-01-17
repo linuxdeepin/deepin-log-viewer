@@ -39,13 +39,13 @@ public:
     QString getStandardOutput();
     QString getStandardError();
     void setType(LOG_FLAG flag) { m_type = flag; }
-    void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
-    void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
-    void setFileterParam(DKPG_FILTERS iFIlters) { m_dkpgFilters = iFIlters; }
-    void setFileterParam(KERN_FILTERS iFIlters) { m_kernFilters = iFIlters; }
-    void setFileterParam(NORMAL_FILTERS iFIlters) { m_normalFilters = iFIlters; }
-    void setFileterParam(DNF_FILTERS iFIlters) { m_dnfFilters = iFIlters; }
-    void setFileterParam(DMESG_FILTERS iFIlters) { m_dmesgFilters = iFIlters; }
+    void setFileterParam(const KWIN_FILTERS &iFIlters) { m_kwinFilters = iFIlters; }
+    void setFileterParam(const XORG_FILTERS &iFIlters) { m_xorgFilters = iFIlters; }
+    void setFileterParam(const DKPG_FILTERS &iFIlters) { m_dkpgFilters = iFIlters; }
+    void setFileterParam(const KERN_FILTERS &iFIlters) { m_kernFilters = iFIlters; }
+    void setFileterParam(const NORMAL_FILTERS &iFIlters) { m_normalFilters = iFIlters; }
+    void setFileterParam(const DNF_FILTERS &iFIlters) { m_dnfFilters = iFIlters; }
+    void setFileterParam(const DMESG_FILTERS &iFIlters) { m_dmesgFilters = iFIlters; }
     void stopProccess();
     void setFilePath(const QStringList &filePath);
     int getIndex();
@@ -140,7 +140,7 @@ private:
     /**
      * @brief m_canRun 是否可以继续运行的标记量，用于停止运行线程
      */
-    bool m_canRun = false;
+    std::atomic_bool m_canRun = false;
     /**
      * @brief m_threadIndex 当前线程标号
      */

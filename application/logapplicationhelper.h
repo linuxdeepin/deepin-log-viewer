@@ -68,9 +68,9 @@ private:
     void createDesktopFiles();
     void createLogFiles();
 
-    void parseField(QString path, QString name, bool isDeepin, bool isGeneric, bool isName);
+    void parseField(const QString &path, const QString &name, bool isDeepin, bool isGeneric, bool isName);
 
-    QString getLogFile(QString path);
+    QString getLogFile(const QString &path);
 
 signals:
     void sigValueChanged(const QString &key);

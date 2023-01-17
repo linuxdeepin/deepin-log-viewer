@@ -25,7 +25,7 @@ DWIDGET_USE_NAMESPACE
  * @brief LogExportThread::LogExportThread 导出日志线程类构造函数
  * @param parent 父对象
  */
-LogExportThread::LogExportThread(bool &isDataComplete, QObject *parent)
+LogExportThread::LogExportThread(bool isDataComplete, QObject *parent)
     :  QObject(parent),
        QRunnable(),
        m_allLoadComplete(isDataComplete)
@@ -48,7 +48,7 @@ LogExportThread::~LogExportThread()
  * @param pModel 要导出的数据源，为QStandardItemModel
  * @param flag 导出的日志类型
  */
-void LogExportThread::exportToTxtPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
+void LogExportThread::exportToTxtPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
     m_pModel = pModel;
@@ -64,7 +64,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QStandardItemModel *pM
  * @param labels 表头字符串
  * @param flag  导出的日志类型
  */
-void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag)
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,  const QStringList &labels, LOG_FLAG flag)
 {
     m_fileName = fileName;
     m_jList = jList;
@@ -82,7 +82,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_JOURNAL>
  * @param labels 表头字符串
  * @param iAppName 导出的应用日志的应用名称
  */
-void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName)
 {
     m_fileName = fileName;
     m_appList = jList;
@@ -98,7 +98,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_APPLICAT
  * @param jList  要导出的数据源 LOG_MSG_DPKG
  * @param labels 表头字符串
  */
-void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dpkgList = jList;
@@ -113,7 +113,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_DPKG> jL
  * @param jList  要导出的数据源 LOG_MSG_BOOT
  * @param labels 表头字符串
  */
-void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_bootList = jList;
@@ -128,7 +128,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_BOOT> jL
  * @param jList 要导出的数据源 LOG_MSG_XORG
  * @param labels 表头字符串
  */
-void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_xorgList = jList;
@@ -144,7 +144,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_XORG> jL
  * @param jList 要导出的数据源 LOG_MSG_NORMAL
  * @param labels 表头字符串
  */
-void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_normalList = jList;
@@ -159,7 +159,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_NORMAL> 
  * @param jList 要导出的数据源 LOG_MSG_KWIN
  * @param labels 表头字符串
  */
-void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_kwinList = jList;
@@ -168,7 +168,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_canRunning = true;
 }
 
-void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dnfList = jList;
@@ -177,7 +177,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_DNF> jLi
     m_canRunning = true;
 }
 
-void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels)
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dmesgList = jList;
@@ -192,7 +192,7 @@ void LogExportThread::exportToTxtPublic(QString fileName, QList<LOG_MSG_DMESG> j
  * @param pModel 要导出的数据源，为QStandardItemModel
  * @param flag 导出的日志类型
  */
-void LogExportThread::exportToHtmlPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
     m_pModel = pModel;
@@ -209,7 +209,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QStandardItemModel *p
  * @param labels 表头字符串
  * @param flag  导出的日志类型
  */
-void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG flag)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList, const QStringList &labels, LOG_FLAG flag)
 {
     m_fileName = fileName;
     m_jList = jList;
@@ -227,7 +227,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_JOURNAL
  * @param labels 表头字符串
  * @param iAppName 导出的应用日志的应用名称
  */
-void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName)
 {
     m_fileName = fileName;
     m_appList = jList;
@@ -243,7 +243,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_APPLICA
  * @param jList  要导出的数据源 LOG_MSG_DPKG
  * @param labels 表头字符串
  */
-void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dpkgList = jList;
@@ -258,7 +258,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_DPKG> j
  * @param jList  要导出的数据源 LOG_MSG_BOOT
  * @param labels 表头字符串
  */
-void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_bootList = jList;
@@ -273,7 +273,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_BOOT> j
  * @param jList 要导出的数据源 LOG_MSG_XORG
  * @param labels 表头字符串
  */
-void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_xorgList = jList;
@@ -288,7 +288,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_XORG> j
  * @param jList 要导出的数据源 LOG_MSG_NORMAL
  * @param labels 表头字符串
  */
-void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_normalList = jList;
@@ -303,7 +303,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_NORMAL>
  * @param jList 要导出的数据源 LOG_MSG_KWIN
  * @param labels 表头字符串
  */
-void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_kwinList = jList;
@@ -311,7 +311,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_KWIN> j
     m_runMode = HtmlKWIN;
     m_canRunning = true;
 }
-void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dnfList = jList;
@@ -320,7 +320,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_DNF> jL
     m_canRunning = true;
 }
 
-void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels)
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dmesgList = jList;
@@ -335,7 +335,7 @@ void LogExportThread::exportToHtmlPublic(QString fileName, QList<LOG_MSG_DMESG> 
  * @param pModel 要导出的数据源，为QStandardItemModel
  * @param flag 导出的日志类型
  */
-void LogExportThread::exportToDocPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
+void LogExportThread::exportToDocPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
     m_pModel = pModel;
@@ -352,7 +352,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QStandardItemModel *pM
  * @param labels 表头字符串
  * @param flag  导出的日志类型
  */
-void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag)
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList, const QStringList &labels, LOG_FLAG iFlag)
 {
     m_fileName = fileName;
     m_jList = jList;
@@ -370,7 +370,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_JOURNAL>
  * @param labels 表头字符串
  * @param iAppName 导出的应用日志的应用名称
  */
-void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName)
 {
     m_fileName = fileName;
     m_appList = jList;
@@ -386,7 +386,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_APPLICAT
  * @param jList  要导出的数据源 LOG_MSG_DPKG
  * @param labels 表头字符串
  */
-void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dpkgList = jList;
@@ -401,7 +401,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_DPKG> jL
  * @param jList  要导出的数据源 LOG_MSG_BOOT
  * @param labels 表头字符串
  */
-void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_bootList = jList;
@@ -416,7 +416,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_BOOT> jL
  * @param jList 要导出的数据源 LOG_MSG_XORG
  * @param labels 表头字符串
  */
-void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_xorgList = jList;
@@ -431,7 +431,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_XORG> jL
  * @param jList 要导出的数据源 LOG_MSG_NORMAL
  * @param labels 表头字符串
  */
-void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_normalList = jList;
@@ -446,7 +446,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_NORMAL> 
  * @param jList 要导出的数据源 LOG_MSG_KWIN
  * @param labels 表头字符串
  */
-void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_kwinList = jList;
@@ -454,7 +454,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_runMode = DocKWIN;
     m_canRunning = true;
 }
-void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dnfList = jList;
@@ -463,7 +463,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_DNF> jLi
     m_canRunning = true;
 }
 
-void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels)
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dmesgList = jList;
@@ -477,7 +477,7 @@ void LogExportThread::exportToDocPublic(QString fileName, QList<LOG_MSG_DMESG> j
  * @param pModel 要导出的数据源，为QStandardItemModel
  * @param flag 导出的日志类型
  */
-void LogExportThread::exportToXlsPublic(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
+void LogExportThread::exportToXlsPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     m_fileName = fileName;
     m_pModel = pModel;
@@ -493,7 +493,7 @@ void LogExportThread::exportToXlsPublic(QString fileName, QStandardItemModel *pM
  * @param labels 表头字符串
  * @param flag  导出的日志类型
  */
-void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_JOURNAL> jList, QStringList labels, LOG_FLAG iFlag)
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList, const QStringList &labels, LOG_FLAG iFlag)
 {
     m_fileName = fileName;
     m_jList = jList;
@@ -510,7 +510,7 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_JOURNAL>
  * @param labels 表头字符串
  * @param iAppName 导出的应用日志的应用名称
  */
-void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName)
 {
     m_fileName = fileName;
     m_appList = jList;
@@ -526,7 +526,7 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_APPLICAT
  * @param jList  要导出的数据源 LOG_MSG_DPKG
  * @param labels 表头字符串
  */
-void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dpkgList = jList;
@@ -541,7 +541,7 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_DPKG> jL
  * @param jList  要导出的数据源 LOG_MSG_DPKG
  * @param labels 表头字符串
  */
-void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_bootList = jList;
@@ -556,7 +556,7 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_BOOT> jL
  * @param jList 要导出的数据源 LOG_MSG_XORG
  * @param labels 表头字符串
  */
-void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_xorgList = jList;
@@ -571,7 +571,7 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_XORG> jL
  * @param jList 要导出的数据源 LOG_MSG_NORMAL
  * @param labels 表头字符串
  */
-void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_normalList = jList;
@@ -586,7 +586,7 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_NORMAL> 
  * @param jList 要导出的数据源 LOG_MSG_KWIN
  * @param labels 表头字符串
  */
-void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_kwinList = jList;
@@ -594,7 +594,7 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_KWIN> jL
     m_runMode = XlsKWIN;
     m_canRunning = true;
 }
-void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dnfList = jList;
@@ -603,7 +603,7 @@ void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_DNF> jLi
     m_canRunning = true;
 }
 
-void LogExportThread::exportToXlsPublic(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels)
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
 {
     m_fileName = fileName;
     m_dmesgList = jList;
@@ -635,7 +635,7 @@ void LogExportThread::stopImmediately()
  * @param flag 导出的日志类型
  * @return 是否导出成功
  */
-bool LogExportThread::exportToTxt(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
+bool LogExportThread::exportToTxt(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     QFile fi(fileName);
     //判断文件路径是否存在，不存在就返回错误
@@ -709,7 +709,7 @@ bool LogExportThread::exportToTxt(QString fileName, QStandardItemModel *pModel, 
  * @param flag  导出的日志类型
  * @return 是否导出成功
  */
-bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag)
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,  const QStringList &labels, LOG_FLAG flag)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
@@ -798,7 +798,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_JOURNAL> jList
  * @param iAppName 导出的应用日志的应用名称
  * @return 是否导出成功
  */
-bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
@@ -849,7 +849,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_APPLICATOIN> j
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
@@ -899,7 +899,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DPKG> jList, Q
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
@@ -948,7 +948,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_BOOT> jList, Q
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
@@ -997,7 +997,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_XORG> jList, Q
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
@@ -1047,7 +1047,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_NORMAL> jList,
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
@@ -1088,7 +1088,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_KWIN> jList, Q
     return true && m_canRunning;
 }
 
-bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
@@ -1116,7 +1116,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DNF> jList, QS
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (const QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -1132,7 +1132,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DNF> jList, QS
     return true && m_canRunning;
 }
 
-bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels)
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(fileName);
@@ -1160,7 +1160,7 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DMESG> jList, 
             //导出进度信号
             sigProgress(i + 1, jList.count());
         }
-    } catch (const QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         fi.close();
@@ -1184,8 +1184,8 @@ bool LogExportThread::exportToTxt(QString fileName, QList<LOG_MSG_DMESG> jList, 
  * @param flag  导出的日志类型
  * @return 是否导出成功
  */
-bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList,
-                                  QStringList labels, LOG_FLAG iFlag)
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,
+                                  const QStringList &labels, LOG_FLAG iFlag)
 {
     try {
         QString tempdir ;
@@ -1284,7 +1284,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_JOURNAL> jList
  * @param iAppName 导出的应用日志的应用名称
  * @return 是否导出成功
  */
-bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, QString &iAppName)
 {
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
@@ -1362,7 +1362,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_APPLICATOIN> j
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/3column.dfw";
@@ -1439,7 +1439,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DPKG> jList, Q
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/2column.dfw";
@@ -1512,7 +1512,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_BOOT> jList, Q
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/2column.dfw";
@@ -1587,7 +1587,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_XORG> jList, Q
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
 
     try {
@@ -1665,7 +1665,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_NORMAL> jList,
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
 
     try {
@@ -1733,7 +1733,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_KWIN> jList, Q
     return true && m_canRunning;
 }
 
-bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
@@ -1799,7 +1799,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DNF> jList, QS
     return true && m_canRunning;
 }
 
-bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels)
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
 {
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
@@ -1872,7 +1872,7 @@ bool LogExportThread::exportToDoc(QString fileName, QList<LOG_MSG_DMESG> jList, 
  * @param flag 导出的日志类型
  * @return 是否导出成功
  */
-bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel, LOG_FLAG flag)
+bool LogExportThread::exportToHtml(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
     QFile html(fileName);
     //判断文件路径是否存在，不存在就返回错误
@@ -1969,7 +1969,7 @@ bool LogExportThread::exportToHtml(QString fileName, QStandardItemModel *pModel,
  * @param flag  导出的日志类型
  * @return 是否导出成功
  */
-bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jList,  QStringList labels, LOG_FLAG flag)
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,  const QStringList &labels, LOG_FLAG flag)
 {
     QFile html(fileName);
     //判断文件路径是否存在，不存在就返回错误
@@ -2077,7 +2077,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_JOURNAL> jLis
  * @param iAppName 导出的应用日志的应用名称
  * @return 是否导出成功
  */
-bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, QString &iAppName)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
@@ -2149,7 +2149,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_APPLICATOIN> 
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
@@ -2219,7 +2219,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DPKG> jList, 
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
@@ -2287,7 +2287,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_BOOT> jList, 
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
@@ -2355,7 +2355,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_XORG> jList, 
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
@@ -2427,7 +2427,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_NORMAL> jList
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
@@ -2486,7 +2486,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_KWIN> jList, 
     return true && m_canRunning;
 }
 
-bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
@@ -2534,7 +2534,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DNF> jList, Q
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (const QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -2550,7 +2550,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DNF> jList, Q
     return true && m_canRunning;
 }
 
-bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels)
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
 {
     //判断文件路径是否存在，不存在就返回错误
     QFile html(fileName);
@@ -2598,7 +2598,7 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DMESG> jList,
         html.write("</table>\n");
         html.write("</body>\n");
         html.write("</html>\n");
-    } catch (const QString ErrorStr) {
+    } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qDebug() << "Export Stop" << ErrorStr;
         html.close();
@@ -2622,8 +2622,8 @@ bool LogExportThread::exportToHtml(QString fileName, QList<LOG_MSG_DMESG> jList,
  * @param flag  导出的日志类型
  * @return 是否导出成功
  */
-bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList,
-                                  QStringList labels, LOG_FLAG iFlag)
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,
+                                  const QStringList &labels, LOG_FLAG iFlag)
 {
     try {
         auto currentXlsRow = 0;
@@ -2688,7 +2688,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_JOURNAL> jList
  * @param iAppName 导出的应用日志的应用名称
  * @return 是否导出成功
  */
-bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> jList, QStringList labels, QString &iAppName)
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, QString &iAppName)
 {
     try {
         auto currentXlsRow = 0;
@@ -2741,7 +2741,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_APPLICATOIN> j
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, QStringList labels)
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
     try {
         auto currentXlsRow = 0;
@@ -2792,7 +2792,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DPKG> jList, Q
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, QStringList labels)
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
     try {
         auto currentXlsRow = 0;
@@ -2842,7 +2842,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_BOOT> jList, Q
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, QStringList labels)
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
     try {
         auto currentXlsRow = 0;
@@ -2892,7 +2892,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_XORG> jList, Q
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList, QStringList labels)
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
     try {
         auto currentXlsRow = 0;
@@ -2944,7 +2944,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_NORMAL> jList,
  * @param labels 表头字符串
  * @return 是否导出成功
  */
-bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, QStringList labels)
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
     try {
         auto currentXlsRow = 0;
@@ -2986,7 +2986,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_KWIN> jList, Q
     return true && m_canRunning;
 }
 
-bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DNF> jList, QStringList labels)
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
     try {
         auto currentXlsRow = 0;
@@ -3029,7 +3029,7 @@ bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DNF> jList, QS
     return true && m_canRunning;
 }
 
-bool LogExportThread::exportToXls(QString fileName, QList<LOG_MSG_DMESG> jList, QStringList labels)
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
 {
     try {
         auto currentXlsRow = 0;
@@ -3093,7 +3093,7 @@ void LogExportThread::initMap()
  * @param iLevelStr 等级字符
  * @return 显示字符
  */
-QString LogExportThread::strTranslate(QString &iLevelStr)
+QString LogExportThread::strTranslate(const QString &iLevelStr)
 {
     return m_levelStrMap.value(iLevelStr, iLevelStr);
 }
