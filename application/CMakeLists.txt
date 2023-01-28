@@ -383,6 +383,15 @@ install(DIRECTORY assets/deepin-log-viewer
 #BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.
 #APPID       - working for the app.
 #COMMONID    - working for common.
-dconfig_meta_files(APPID org.deepin.deepin-log-viewer BASE configs FILES configs/org.deepin.deepin-log-viewer.json)
+#Only DConfig is supported by DTK, use DConfig
+set(APPID org.deepin.deepin-log-viewer)
+set(configFile configs/org.deepin.deepin-log-viewer.json)
+if (DEFINED DSG_DATA_DIR)
+    dconfig_meta_files(APPID ${APPID} BASE configs FILES ${configFile})
+    message("-- DConfig is supported by DTK")
+else()
+    install(FILES ${configFile} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dsg/configs/${APPID}/)
+    message("-- DConfig is not supported by DTK")
+endif()
 
 
