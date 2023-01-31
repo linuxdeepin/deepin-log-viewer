@@ -261,3 +261,22 @@ bool Utils::checkAuthorization(const QString &actionId, qint64 applicationPid)
                                                            Authority::AllowUserInteraction);
     return result == Authority::Yes ? true : false;
 }
+
+QString Utils::osVersion()
+{
+    QProcess *unlock = new QProcess;
+    unlock->start("lsb_release", {"-r"});
+    unlock->waitForFinished();
+    auto output = unlock->readAllStandardOutput();
+    auto str = QString::fromUtf8(output);
+    QRegExp re("\t.+\n");
+    QString osVerStr;
+    if(re.indexIn(str) > -1) {
+        auto result = re.cap(0);
+        osVerStr = result.remove(0, 1).remove(result.size() - 1, 1);
+        qInfo() << "lsb_release -r:" << output;
+        qInfo() << "OS version:" << osVerStr;
+    }
+    unlock->deleteLater();
+    return osVerStr;
+}

@@ -19,7 +19,6 @@ std::mutex LogApplicationHelper::m_mutex;
  */
 LogApplicationHelper::LogApplicationHelper(QObject *parent)
     : QObject(parent)
-    , m_DbusLauncher(new DBbusLauncher(DBbusLauncher::staticInterfaceName(), "/com/deepin/dde/daemon/Launcher", QDBusConnection::sessionBus(), this))
 {
     registerLauncherItemInfoMetaType();
     registerLauncherItemInfoListMetaType();

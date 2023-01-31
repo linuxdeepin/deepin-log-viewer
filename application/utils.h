@@ -47,6 +47,8 @@ public:
     static QString mkMutiDir(const QString &path);
     //授权框
     static bool checkAuthorization(const QString &actionId, qint64 applicationPid);
+    //系统版本号
+    static QString osVersion();
 };
 
 #endif
