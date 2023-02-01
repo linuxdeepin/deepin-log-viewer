@@ -452,4 +452,3 @@ QString LogApplicationHelper::getPathByAppId(const QString &str)
 {
     return m_en_log_map.value(str);
 }
-
