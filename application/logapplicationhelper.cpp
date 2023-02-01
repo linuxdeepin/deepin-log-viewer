@@ -20,8 +20,6 @@ std::mutex LogApplicationHelper::m_mutex;
 LogApplicationHelper::LogApplicationHelper(QObject *parent)
     : QObject(parent)
 {
-    registerLauncherItemInfoMetaType();
-    registerLauncherItemInfoListMetaType();
     init();
 }
 
