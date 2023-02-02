@@ -12,6 +12,9 @@ add_subdirectory(logViewerTruncate)
 
 add_subdirectory(logViewerService)
 
-#add_subdirectory(tests)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_subdirectory(tests)
+endif()
+
 add_subdirectory(liblogviewerplugin)
 option(PERF_ON "open the info of benchmark" ON)
