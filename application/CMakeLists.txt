@@ -28,7 +28,6 @@ configure_file(config.h.in config.h @ONLY)
 
 
 
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
