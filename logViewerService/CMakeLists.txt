@@ -6,7 +6,7 @@ endif ()
 #这里项目名称绝对不能和编译出的target名称一样
 project(log-view-service)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
