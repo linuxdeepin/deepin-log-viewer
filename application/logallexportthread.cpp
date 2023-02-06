@@ -52,7 +52,18 @@ void LogAllExportThread::run()
             for (auto &it2 : appData.toStdMap()) {
                 files.append(it2.second);
             }
+        } else if (it.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
+            auto otherLogListPair = LogApplicationHelper::instance()->getOtherLogList();
+            for (auto &it2 : otherLogListPair) {
+                files.append(it2.at(1));
+            }
+        } else if (it.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
+            auto customLogListPair = LogApplicationHelper::instance()->getCustomLogList();
+            for (auto &it2 : customLogListPair) {
+                files.append(it2.at(1));
+            }
         }
+
         //取消导出直接返回
         if (m_cancel) {
             files.clear();
