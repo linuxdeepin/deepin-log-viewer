@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -55,7 +55,7 @@ void LogAllExportThread::run()
         } else if (it.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
             auto otherLogListPair = LogApplicationHelper::instance()->getOtherLogList();
             for (auto &it2 : otherLogListPair) {
-                files.append(it2.at(1));
+                files.append(DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.at(1)));
             }
         } else if (it.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
             auto customLogListPair = LogApplicationHelper::instance()->getCustomLogList();
@@ -115,7 +115,7 @@ void LogAllExportThread::run()
         QProcess procss;
         procss.setWorkingDirectory(tmpPath);
         QStringList arg = {"-c"};
-        arg.append(QString("zip tmp.zip *.*;mv tmp.zip '%1'").arg(m_outfile));
+        arg.append(QString("zip tmp.zip ./*;mv tmp.zip '%1'").arg(m_outfile));
         procss.start("/bin/bash", arg);
         procss.waitForFinished(-1);
         currentProcess += 9;

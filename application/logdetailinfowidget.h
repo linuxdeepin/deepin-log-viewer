@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -17,6 +17,7 @@
 
 DWIDGET_USE_NAMESPACE
 class QStandardItemModel;
+class QVBoxLayout;
 /**
  * @brief The logDetailInfoWidget class 详情页控件
  */
@@ -38,7 +39,7 @@ private:
                         QModelIndex level, QString msg, QString status = "", QString action = "",
                         QString uname = "", QString event = "");  // modified by Airy
     //其他日志或者自定义日志数据显示
-    void fillOOCDetailInfo(const QString & data, const int error = 0);
+    void fillOOCDetailInfo(const QString &data, const int error = 0);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -67,6 +68,10 @@ private:
      * @brief m_pModel 当前主表的model
      */
     QStandardItemModel *m_pModel;
+    /**
+     * @brief m_bottomLayer 底部框
+     */
+    QVBoxLayout *m_bottomLayer;
 };
 
 #endif  // LOGDETAILINFOWIDGET_H

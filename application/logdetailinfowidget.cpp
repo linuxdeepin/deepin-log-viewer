@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -168,7 +168,7 @@ void logDetailInfoWidget::initUI()
     m_errorLabel->setMinimumHeight(20);
     DFontSizeManager::instance()->bind(m_userLabel, DFontSizeManager::T7);
     pa = DApplicationHelper::instance()->palette(m_errorLabel);
-   // pa.setBrush(DPalette::WindowText, QColor(85,85,85,0.40));
+    // pa.setBrush(DPalette::WindowText, QColor(85,85,85,0.40));
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::PlaceholderText));
     DApplicationHelper::instance()->setPalette(m_errorLabel, pa);
 
@@ -185,7 +185,7 @@ void logDetailInfoWidget::initUI()
 
     cleanText();
 
-    QVBoxLayout *v = new QVBoxLayout(this);
+    m_bottomLayer = new QVBoxLayout(this);
 
     QHBoxLayout *h1 = new QHBoxLayout(this);
     h1->addWidget(m_daemonName);
@@ -234,16 +234,16 @@ void logDetailInfoWidget::initUI()
     h2->addWidget(m_level);
     h2->setSpacing(20);
 
-    v->addLayout(h1);
-    v->addLayout(h2);
-    v->addWidget(m_hline);
-    v->addWidget(m_textBrowser, 3);
-    v->addWidget(m_errorLabel, 0, Qt::AlignCenter);
+    m_bottomLayer->addLayout(h1);
+    m_bottomLayer->addLayout(h2);
+    m_bottomLayer->addWidget(m_hline);
+    m_bottomLayer->addWidget(m_textBrowser, 3);
+    m_bottomLayer->addWidget(m_errorLabel, 0, Qt::AlignCenter);
 
-    v->setContentsMargins(20, 10, 20, 0);
-    v->setSpacing(4);
+    m_bottomLayer->setContentsMargins(20, 10, 20, 0);
+    m_bottomLayer->setSpacing(4);
 
-    this->setLayout(v);
+    this->setLayout(m_bottomLayer);
 }
 
 void logDetailInfoWidget::setTextCustomSize(QWidget *w)
@@ -391,11 +391,12 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     }
     // end
 
+    m_bottomLayer->setContentsMargins(20, 10, 20, 0);
     m_textBrowser->setText(msg);
     m_textBrowser->show();
 }
 
-void logDetailInfoWidget::fillOOCDetailInfo(const QString & data, const int error)
+void logDetailInfoWidget::fillOOCDetailInfo(const QString &data, const int error)
 {
     m_daemonName->hide();
     m_dateTime->hide();
@@ -415,7 +416,8 @@ void logDetailInfoWidget::fillOOCDetailInfo(const QString & data, const int erro
     m_nameLabel->hide();
     m_eventLabel->hide();
 
-    if (error == 0){
+    m_bottomLayer->setContentsMargins(20, 10, 0, 0);
+    if (error == 0) {
         m_textBrowser->setText(data);
         m_textBrowser->show();
         m_errorLabel->hide();
