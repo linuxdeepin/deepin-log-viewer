@@ -154,8 +154,8 @@ void LogApplicationHelper::initCustomLog()
         QString path = iter;
         if (path.startsWith("~/"))
             path.replace(0, 1, QDir::homePath());
-        //忽略非文本文件
-        if (!Utils::isTextFileType(path)) {
+        //忽略非文本文件和不存在的文件
+        if (!QFile::exists(path) || !Utils::isTextFileType(path)) {
             continue;
         }
         m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
@@ -181,8 +181,8 @@ void LogApplicationHelper::initCustomLog()
         QString path = iter;
         if (path.startsWith("~/"))
             path.replace(0, 1, QDir::homePath());
-        //忽略非文本文件
-        if (!Utils::isTextFileType(path)) {
+        //忽略非文本文件和不存在的文件
+        if (!QFile::exists(path) || !Utils::isTextFileType(path)) {
             continue;
         }
         m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
@@ -256,7 +256,9 @@ void LogApplicationHelper::createDesktopFiles()
 
             if (lineStr.startsWith("NotShowIn")) {
                 QStringList notShowInList = lineStr.split("=", QString::SkipEmptyParts).value(1, "").split(";", QString::SkipEmptyParts);
-                if (std::any_of(notShowInList.begin(), notShowInList.end(), [currentDesktop](const auto & data) { return data == currentDesktop; })) {
+                if (std::any_of(notShowInList.begin(), notShowInList.end(), [currentDesktop](const auto & data) {
+                return data == currentDesktop;
+            })) {
                     canDisplay = false;
                 }
             }
