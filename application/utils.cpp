@@ -50,7 +50,7 @@ QString Utils::getQssContent(const QString &filePath)
 QString Utils::getConfigPath()
 {
     QDir dir(QDir(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first())
-                 .filePath(qApp->organizationName()));
+             .filePath(qApp->organizationName()));
 
     return dir.filePath(qApp->applicationName());
 }
@@ -71,7 +71,8 @@ bool Utils::isTextFileType(const QString &filePath)
 {
     QMimeDatabase db;
     QMimeType mime = db.mimeTypeForFile(filePath);
-    if (mime.inherits("text/plain")) {
+    //标准文本文件和空白无后缀文件均计入文本文件范围
+    if (mime.inherits("text/plain") || mime.inherits("application/x-zerosize")) {
         return true;
     }
     return false;
@@ -271,7 +272,7 @@ QString Utils::osVersion()
     auto str = QString::fromUtf8(output);
     QRegExp re("\t.+\n");
     QString osVerStr;
-    if(re.indexIn(str) > -1) {
+    if (re.indexIn(str) > -1) {
         auto result = re.cap(0);
         osVerStr = result.remove(0, 1).remove(result.size() - 1, 1);
         qInfo() << "lsb_release -r:" << output;
