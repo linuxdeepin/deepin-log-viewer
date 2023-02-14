@@ -1,3 +1,10 @@
+deepin-log-viewer (6.0.2) unstable; urgency=medium
+
+  * Merge version to 6.0.2
+  * Add other log and custom log type
+
+ -- wangzhengyang <wangzhengyang@uniontech.com>  Thu, 14 Feb 2023 15:12:59 +0800
+
 deepin-log-viewer (6.0.1) unstable; urgency=medium
 
   * Initial for Deepin V23
