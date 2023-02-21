@@ -377,7 +377,7 @@ install(FILES gschema/com.deepin.log-viewer.gschema.xml
 # Install files
 install(TARGETS ${EXE_NAME} DESTINATION bin)
 install(DIRECTORY assets/deepin-log-viewer
-                DESTINATION /usr/share/deepin-manual/manual-assets/application/)
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-manual/manual-assets/application/)
 
 #FILES       - deployed files.
 #BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.
