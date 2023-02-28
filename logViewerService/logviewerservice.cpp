@@ -41,10 +41,20 @@ LogViewerService::~LogViewerService()
  */
 QString LogViewerService::readLog(const QString &filePath)
 {
-    //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
-    if ((!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp") && !filePath.startsWith("/home")) || filePath.contains("..") || !isValidInvoker())  {
+    if(!isValidInvoker()) {
         return " ";
     }
+
+    //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
+    //部分设备是直接从root账户进入，因此还需要监控/root目录
+    if ((!filePath.startsWith("/var/log/") &&
+         !filePath.startsWith("/tmp") &&
+         !filePath.startsWith("/home") &&
+         !filePath.startsWith("/root")) ||
+         filePath.contains(".."))  {
+        return " ";
+    }
+
     m_process.start("cat", QStringList() << filePath);
     m_process.waitForFinished(-1);
     QByteArray byte = m_process.readAllStandardOutput();
