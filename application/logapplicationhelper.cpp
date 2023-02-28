@@ -172,20 +172,22 @@ void LogApplicationHelper::initCustomLog()
                 initCustomLog();
                 emit this->sigValueChanged(key);
             });
-        }
-    }
 
-    //读取gsetting配置
-    QStringList sList2 = m_pGSettings->get("customlogfiles").toStringList();
-    for (QString iter : sList2) {
-        QString path = iter;
-        if (path.startsWith("~/"))
-            path.replace(0, 1, QDir::homePath());
-        //忽略非文本文件和不存在的文件
-        if (!QFile::exists(path) || !Utils::isTextFileType(path)) {
-            continue;
+            //读取gsetting配置
+            QStringList sList2 = m_pGSettings->get("customlogfiles").toStringList();
+            for (QString iter : sList2) {
+                QString path = iter;
+                if (path.startsWith("~/"))
+                    path.replace(0, 1, QDir::homePath());
+                //忽略非文本文件和不存在的文件
+                if (!QFile::exists(path) || !Utils::isTextFileType(path)) {
+                    continue;
+                }
+                m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
+            }
+        } else {
+            qWarning() << "cannot find gsettings config file";
         }
-        m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
     }
 }
 

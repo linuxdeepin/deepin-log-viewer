@@ -148,7 +148,7 @@ void LogListView::initUI()
     this->setViewportMargins(10, 10, 10, 0);
     Dtk::Core::DSysInfo::UosEdition edition = Dtk::Core::DSysInfo::uosEditionType();
     //等于服务器行业版或欧拉版(centos)
-    bool isCentos = Dtk::Core::DSysInfo::UosEuler == edition || Dtk::Core::DSysInfo::UosEnterpriseC == edition;
+    bool isCentos = Dtk::Core::DSysInfo::UosEuler == edition || Dtk::Core::DSysInfo::UosEnterpriseC == edition || Dtk::Core::DSysInfo::UosMilitaryS == edition;
     m_pModel = new QStandardItemModel(this);
     QStandardItem *item = nullptr;
     QString systemName = DBusManager::getSystemInfo();
