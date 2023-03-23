@@ -300,42 +300,48 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     switch (id) {
     case ALL: {
         m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
-    } break;
+    }
+    break;
     case ONE_DAY: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
-    } break;
+    }
+    break;
     case THREE_DAYS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addDays(-2).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
-    } break;
+    }
+    break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addDays(-6).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
-    } break;
+    }
+    break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addMonths(-1).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
-    } break;
+    }
+    break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addMonths(-3).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
         m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -368,11 +374,11 @@ void DisplayContent::createJournalTableForm()
 
     m_pModel->setHorizontalHeaderLabels(
         QStringList() << DApplication::translate("Table", "Level")
-                      << DApplication::translate("Table", "Process") // modified by Airy
-                      << DApplication::translate("Table", "Date and Time")
-                      << DApplication::translate("Table", "Info")
-                      << DApplication::translate("Table", "User")
-                      << DApplication::translate("Table", "PID"));
+        << DApplication::translate("Table", "Process") // modified by Airy
+        << DApplication::translate("Table", "Date and Time")
+        << DApplication::translate("Table", "Info")
+        << DApplication::translate("Table", "User")
+        << DApplication::translate("Table", "PID"));
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
     m_treeView->setColumnWidth(1, DEAMON_WIDTH);
     m_treeView->setColumnWidth(2, DATETIME_WIDTH);
@@ -409,7 +415,8 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dpkgFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
-    } break;
+    }
+    break;
     case THREE_DAYS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -417,7 +424,8 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dpkgFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
-    } break;
+    }
+    break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -425,7 +433,8 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dpkgFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
-    } break;
+    }
+    break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -433,7 +442,8 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dpkgFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
-    } break;
+    }
+    break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -441,7 +451,8 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dpkgFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -505,7 +516,8 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         kernFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
-    } break;
+    }
+    break;
     case THREE_DAYS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -513,7 +525,8 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         kernFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
-    } break;
+    }
+    break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -521,7 +534,8 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         kernFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
-    } break;
+    }
+    break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -529,7 +543,8 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         kernFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
-    } break;
+    }
+    break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -537,7 +552,8 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         kernFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -677,7 +693,8 @@ void DisplayContent::generateAppFile(const QString &path, int id, int lId, const
         appFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
-    } break;
+    }
+    break;
     case THREE_DAYS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -686,7 +703,8 @@ void DisplayContent::generateAppFile(const QString &path, int id, int lId, const
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
 
-    } break;
+    }
+    break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -694,7 +712,8 @@ void DisplayContent::generateAppFile(const QString &path, int id, int lId, const
         appFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
-    } break;
+    }
+    break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -702,7 +721,8 @@ void DisplayContent::generateAppFile(const QString &path, int id, int lId, const
         appFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
-    } break;
+    }
+    break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -710,7 +730,8 @@ void DisplayContent::generateAppFile(const QString &path, int id, int lId, const
         appFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -832,7 +853,8 @@ void DisplayContent::generateXorgFile(int id)
         xorgFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
-    } break;
+    }
+    break;
     case THREE_DAYS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -840,7 +862,8 @@ void DisplayContent::generateXorgFile(int id)
         xorgFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
-    } break;
+    }
+    break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -848,7 +871,8 @@ void DisplayContent::generateXorgFile(int id)
         xorgFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
-    } break;
+    }
+    break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -856,7 +880,8 @@ void DisplayContent::generateXorgFile(int id)
         xorgFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
-    } break;
+    }
+    break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
@@ -864,7 +889,8 @@ void DisplayContent::generateXorgFile(int id)
         xorgFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -974,27 +1000,32 @@ void DisplayContent::generateNormalFile(int id)
         m_normalFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
-    } break;
+    }
+    break;
     case THREE_DAYS: {
         m_normalFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
-    } break;
+    }
+    break;
     case ONE_WEEK: {
         m_normalFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
-    } break;
+    }
+    break;
     case ONE_MONTH: {
         m_normalFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
-    } break;
+    }
+    break;
     case THREE_MONTHS: {
         m_normalFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
         m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -1225,19 +1256,24 @@ void DisplayContent::generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel)
         break;
     case ONE_DAY: {
         dnffilter.timeFilter = dt.toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     case THREE_DAYS: {
         dnffilter.timeFilter = dt.addDays(-2).toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     case ONE_WEEK: {
         dnffilter.timeFilter = dt.addDays(-6).toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     case ONE_MONTH: {
         dnffilter.timeFilter = dt.addDays(-29).toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     case THREE_MONTHS: {
         dnffilter.timeFilter = dt.addDays(-89).toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -1272,19 +1308,24 @@ void DisplayContent::generateDmesgFile(BUTTONID iDate, PRIORITY iLevel)
         break;
     case ONE_DAY: {
         dmesgfilter.timeFilter = dt.toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     case THREE_DAYS: {
         dmesgfilter.timeFilter = dt.addDays(-2).toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     case ONE_WEEK: {
         dmesgfilter.timeFilter = dt.addDays(-6).toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     case ONE_MONTH: {
         dmesgfilter.timeFilter = dt.addDays(-29).toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     case THREE_MONTHS: {
         dmesgfilter.timeFilter = dt.addDays(-89).toMSecsSinceEpoch();
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -1362,7 +1403,7 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
     m_curTreeIndex = index;
 
     if (m_flag == OtherLog || m_flag == CustomLog) {
-        QString path = m_pModel->item(index.row(),0)->data(Qt::UserRole + 2).toString();
+        QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
         generateOOCFile(path);
     } else {
         emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
@@ -1467,12 +1508,12 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         QMargins margins = this->parentWidget()->layout()->layout()->contentsMargins();
         height = this->parentWidget()->height() - margins.top() - margins.bottom();
         int heightDetailWgt = height - heightLogTree - handleW;
-        m_splitter->setSizes(QList<int>()<<heightLogTree<<heightDetailWgt<<heightDetailWgt<<heightDetailWgt);
+        m_splitter->setSizes(QList<int>() << heightLogTree << heightDetailWgt << heightDetailWgt << heightDetailWgt);
     } else {
         height -= handleW;
         m_splitter->handle(3)->setDisabled(true);
         m_detailWgt->setFixedHeight(230);
-        m_splitter->setSizes(QList<int>()<<height*5/8<<0<<0<<height*3/8);
+        m_splitter->setSizes(QList<int>() << height * 5 / 8 << 0 << 0 << height * 3 / 8);
     }
 
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
@@ -1511,7 +1552,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         createOOCTableForm();
         createOOCTable(LogApplicationHelper::instance()->getOtherLogList());
     } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
-        m_flag = CustomLog; 
+        m_flag = CustomLog;
         createOOCTableForm();
         createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
     }
@@ -1538,9 +1579,9 @@ void DisplayContent::slot_exportClicked()
 
     QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
     QString fileName = DFileDialog::getSaveFileName(
-        this, DApplication::translate("File", "Export File"),
-        path,
-        tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
+                           this, DApplication::translate("File", "Export File"),
+                           path,
+                           tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
 
     //限制当导出文件为空和导出doc和xls时用户改动后缀名导致导出问题，提示导出失败
     QFileInfo exportFile(fileName);
@@ -2066,7 +2107,7 @@ void DisplayContent::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
     }
 }
 
-void DisplayContent::slot_OOCData(int index, const QString & data)
+void DisplayContent::slot_OOCData(int index, const QString &data)
 {
     if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
         return;
@@ -2135,7 +2176,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
         update();
-    } break;
+    }
+    break;
     case BOOT_KLU: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2148,7 +2190,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
-    } break;
+    }
+    break;
     case APP: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2159,7 +2202,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
-    } break;
+    }
+    break;
     case KERN: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2171,7 +2215,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
-    } break;
+    }
+    break;
     case DPKG: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2184,7 +2229,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
-    } break;
+    }
+    break;
     case XORG: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2195,7 +2241,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
-    } break;
+    }
+    break;
     case BOOT: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2206,7 +2253,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
-    } break;
+    }
+    break;
     case Kwin: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2217,7 +2265,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
-    } break;
+    }
+    break;
     case Normal: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2228,7 +2277,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
-    } break;
+    }
+    break;
     case Dnf: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2239,7 +2289,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(value);
         }
-    } break;
+    }
+    break;
     case Dmesg: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2251,7 +2302,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(value);
         }
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -2264,12 +2316,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
 void DisplayContent::slot_searchResult(QString str)
 {
     qDebug() << QString("search: %1  treeIndex: %2")
-                    .arg(str)
-                    .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
+             .arg(str)
+             .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
     m_currentSearchStr = str;
     if (m_flag == NONE)
-        return;
-    if (str.isEmpty())
         return;
 
     switch (m_flag) {
@@ -2280,78 +2330,97 @@ void DisplayContent::slot_searchResult(QString str)
         //清空model和分页重新加载
         createJournalTableForm();
         createJournalTableStart(jList);
-    } break;
+    }
+    break;
     case BOOT_KLU: {
         jBootList.clear();
         jBootList = filterJournalBoot(m_currentSearchStr, jBootListOrigin);
         createJournalBootTableForm();
         createJournalBootTableStart(jBootList);
-    } break;
+    }
+    break;
     case KERN: {
         kList = filterKern(m_currentSearchStr, kListOrigin);
         createKernTableForm();
         createKernTable(kList);
-    } break;
+    }
+    break;
     case BOOT: {
         m_bootFilter.searchstr = m_currentSearchStr;
         currentBootList = filterBoot(m_bootFilter, bList);
         createBootTableForm();
         createBootTable(currentBootList);
-    } break;
+    }
+    break;
     case XORG: {
         xList.clear();
         xList = filterXorg(m_currentSearchStr, xListOrigin);
         createXorgTableForm();
         createXorgTable(xList);
-    } break;
+    }
+    break;
     case DPKG: {
         dList.clear();
         dList = filterDpkg(m_currentSearchStr, dListOrigin);
         createDpkgTableForm();
         createDpkgTableStart(dList);
-    } break;
+    }
+    break;
     case APP: {
         appList.clear();
         appList = filterApp(m_currentSearchStr, appListOrigin);
         createAppTableForm();
         createAppTable(appList);
-    } break;
+    }
+    break;
     case Normal: {
         m_normalFilter.searchstr = m_currentSearchStr;
         nortempList = filterNomal(m_normalFilter, norList);
         createNormalTableForm();
         createNormalTable(nortempList);
-    } break; // add by Airy
+    }
+    break; // add by Airy
     case Kwin: {
         m_currentKwinList.clear();
         m_currentKwinList = filterKwin(m_currentSearchStr, m_kwinList);
         createKwinTableForm();
         creatKwinTable(m_currentKwinList);
-    } break;
+    }
+    break;
     case Dnf: {
         dnfList = dnfListOrigin;
-        int cnt = dnfList.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_DNF msg = dnfList.at(i);
-            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) || msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive) || msg.level.contains(m_currentSearchStr, Qt::CaseInsensitive))
-                continue;
-            dnfList.removeAt(i);
+        if (!m_currentSearchStr.isEmpty()) {
+            int cnt = dnfList.count();
+            for (int i = cnt - 1; i >= 0; --i) {
+                LOG_MSG_DNF msg = dnfList.at(i);
+                if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive)
+                        || msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive)
+                        || msg.level.contains(m_currentSearchStr, Qt::CaseInsensitive)) {
+                    continue;
+                } else {
+                    dnfList.removeAt(i);
+                }
+            }
         }
         createDnfForm();
         createDnfTable(dnfList);
-    } break;
+    }
+    break;
     case Dmesg: {
         dmesgList = dmesgListOrigin;
-        int cnt = dmesgList.count();
-        for (int i = cnt - 1; i >= 0; --i) {
-            LOG_MSG_DMESG msg = dmesgList.at(i);
-            if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) || msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
-                continue;
-            dmesgList.removeAt(i);
+        if (!m_currentSearchStr.isEmpty()) {
+            int cnt = dmesgList.count();
+            for (int i = cnt - 1; i >= 0; --i) {
+                LOG_MSG_DMESG msg = dmesgList.at(i);
+                if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) || msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
+                    continue;
+                dmesgList.removeAt(i);
+            }
         }
         createDmesgForm();
         createDmesgTable(dmesgList);
-    } break;
+    }
+    break;
     default:
         break;
     }
@@ -3085,7 +3154,7 @@ void DisplayContent::createBootTableForm()
     m_pModel->clear();
     m_pModel->setColumnCount(2);
     m_pModel->setHorizontalHeaderLabels(QStringList() << DApplication::translate("Table", "Status")
-                                                      << DApplication::translate("Table", "Info"));
+                                        << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, STATUS_WIDTH);
 }
 
@@ -3198,7 +3267,7 @@ void DisplayContent::createOOCTableForm()
     m_treeView->setColumnWidth(1, DATETIME_WIDTH + 120);
 }
 
-void DisplayContent::createOOCTable(const QList<QStringList> & list)
+void DisplayContent::createOOCTable(const QList<QStringList> &list)
 {
     m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
@@ -3231,22 +3300,22 @@ void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
     if (m_treeView->indexAt(pos).isValid()) {
         QModelIndex index = m_treeView->currentIndex();
         if (!m_treeView->selectionModel()->selectedIndexes().empty()) {
-            QMenu * menu = new QMenu(m_treeView);
+            QMenu *menu = new QMenu(m_treeView);
             QAction *act_openForder = new QAction(/*tr("在文件管理器中显示")*/ DApplication::translate("Action", "Display in file manager"), this);
             QAction *act_refresh = new QAction(/*tr("刷新")*/ DApplication::translate("Action", "Refresh"), this);
 
             menu->addAction(act_openForder);
             menu->addAction(act_refresh);
 
-            QString path = m_pModel->item(index.row(),0)->data(Qt::UserRole + 2).toString();
+            QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
 
             //显示当前日志目录
-            connect(act_openForder, &QAction::triggered, this, [=] {
+            connect(act_openForder, &QAction::triggered, this, [ = ] {
                 DDesktopServices::showFileItem(path);
             });
 
             //刷新逻辑
-            connect(act_refresh, &QAction::triggered, this, [=]() {
+            connect(act_refresh, &QAction::triggered, this, [ = ]() {
                 generateOOCFile(path);
             });
 
