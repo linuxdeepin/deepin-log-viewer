@@ -356,11 +356,11 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Nome do ficheiro</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Data de modificação</translation>
     </message>
 </context>
 <context>
@@ -410,18 +410,18 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Outro registo</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Ficheiro personalizado</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>Não tem permissão para o ver</translation>
     </message>
 </context>
 <context>
@@ -440,7 +440,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 mins</translation>
     </message>
     <message>
         <source>No refresh</source>

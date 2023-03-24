@@ -356,11 +356,11 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>ཡིག་ཆའི་མིང་།</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>བཟོ་བཅོས་དུས་ཚོད།</translation>
     </message>
 </context>
 <context>
@@ -410,53 +410,53 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>ཉིན་ཐོ་གཞན།</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>རང་སྒྲུབ་ཉིན་ཐོ།</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>ལྟ་དབང་མེད།</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>གསར་སྒྱུར་ཕྱོད།</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>སྐར་ཆ་10རེ།</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>སྐར་མ་1རེ།</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>སྐར་མ་5</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>གསར་སྒྱུར་མི་བྱེད།</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
+        <translation>ཚང་མ་འདོན་པ།</translation>
     </message>
     <message>
         <source>System Logs</source>
-        <translation type="unfinished"/>
+        <translation>རྒྱུད་ཁོངས་ཀྱི་ཉིན་ཐོ་ཆ་ཚང་།</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>ལམ་སེང་གསར་སྒྱུར།</translation>
     </message>
 </context>
 </TS>

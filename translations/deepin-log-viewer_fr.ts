@@ -356,11 +356,11 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Nom de fichier</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Date de modification</translation>
     </message>
 </context>
 <context>
@@ -410,18 +410,18 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Autre journal</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Journal personnalisé</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>Vous n&apos;avez pas la permission de le consulter</translation>
     </message>
 </context>
 <context>
@@ -432,7 +432,7 @@
     </message>
     <message>
         <source>10 sec</source>
-        <translation>10 sec</translation>
+        <translation>10 s</translation>
     </message>
     <message>
         <source>1 min</source>
@@ -440,7 +440,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 min</translation>
     </message>
     <message>
         <source>No refresh</source>
