@@ -2825,6 +2825,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         m_treeView->show();
         noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noResultLabel->show();
+        noResultLabel->raise();
         emit setExportEnable(true);
         break;
     }
