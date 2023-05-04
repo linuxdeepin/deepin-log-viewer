@@ -60,18 +60,8 @@ QString LogViewerService::readLog(const QString &filePath)
     QByteArray byte = m_process.readAllStandardOutput();
 
     //QByteArray -> QString 如果遇到0x00，会导致转换终止
-    //replace("\x00", "")和replace("\u0000", "")无效
-    //使用remove操作，性能损耗过大，因此遇到0x00 替换为 0x20(空格符)
-    qInfo() << "replace 0x00 to 0x20 begin";
-    int replaceTimes = 0;
-    for (int i = 0; i != byte.size(); ++i) {
-        if (byte.at(i) == 0x00) {
-            byte[i] = 0x20;
-            replaceTimes++;
-        }
-    }
-    qInfo() << "replace 0x00 to 0x20   end. replaceTimes:" << replaceTimes;
-    return QString::fromUtf8(byte);
+    //指定byte.size()到fromUtf8，以便能够处理0x00的情况
+    return QString::fromUtf8(byte, byte.size());
 }
 
 /*!
