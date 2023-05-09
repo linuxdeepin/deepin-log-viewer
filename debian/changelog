@@ -1,3 +1,9 @@
+deepin-log-viewer (6.0.8) unstable; urgency=medium
+
+  * fix: 修复获取内核日志读取卡住，展示空白的问题(Bug: 198137)
+
+ -- Deepin Packages Builder <packages@deepin.org>  Tue, 09 May 2023 17:39:35 +0800
+
 deepin-log-viewer (6.0.7) unstable; urgency=medium
 
   * Update version
