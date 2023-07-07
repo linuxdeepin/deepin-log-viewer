@@ -151,8 +151,6 @@ void LogListView::initUI()
     bool isCentos = Dtk::Core::DSysInfo::UosEuler == edition || Dtk::Core::DSysInfo::UosEnterpriseC == edition || Dtk::Core::DSysInfo::UosMilitaryS == edition;
     m_pModel = new QStandardItemModel(this);
     QStandardItem *item = nullptr;
-    QString systemName = DBusManager::getSystemInfo();
-    qDebug() << "systemName" << systemName;
     if (isFileExist("/var/log/journal") || isCentos) {
         item = new QStandardItem(QIcon::fromTheme("dp_system"), DApplication::translate("Tree", "System Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
@@ -188,7 +186,7 @@ void LogListView::initUI()
             m_logTypes.push_back(KERN_TREE_DATA);
         }
     }
-    if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU")) {
+    if (DBusManager::isSpecialComType()) {
         item = new QStandardItem(QIcon::fromTheme("dp_start"), DApplication::translate("Tree", "Boot Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Boot Log")); // add by Airy for bug 16245
@@ -233,7 +231,7 @@ void LogListView::initUI()
         }
     }
     //w515是新版本内核的panguv返回值  panguV是老版本
-    if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName == "pangu" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU") || systemName.toUpper().contains("PANGU")) {
+    if (DBusManager::isSpecialComType()) {
         item = new QStandardItem(QIcon::fromTheme("dp_kwin"), DApplication::translate("Tree", "Kwin Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));

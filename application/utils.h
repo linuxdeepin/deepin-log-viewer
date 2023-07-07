@@ -49,6 +49,11 @@ public:
     static bool checkAuthorization(const QString &actionId, qint64 applicationPid);
     //系统版本号
     static QString osVersion();
+    /**
+     * @brief specialComType 是否是特殊机型，like huawei
+     * 取值有3种（-1,0,>0），默认为-1（未知），0（不是特殊机型）,>0（特殊机型）
+     */
+    static int specialComType;
 };
 
 #endif

@@ -16,6 +16,11 @@ class DBusManager : public QObject
 public:
     explicit DBusManager(QObject *parent = nullptr);
     static QString getSystemInfo();
+    /**
+     * @brief isSpecialComType 是否是特殊机型，like huawei
+     * @return
+     */
+    static bool isSpecialComType();
     static bool isGetedKlu ;
     static QString isklusystemName ;
 

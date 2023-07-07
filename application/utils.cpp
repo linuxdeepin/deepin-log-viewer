@@ -25,6 +25,7 @@ using namespace PolkitQt1;
 
 QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
+int Utils::specialComType = -1;
 
 Utils::Utils(QObject *parent)
     : QObject(parent)
