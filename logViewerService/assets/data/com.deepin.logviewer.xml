@@ -33,5 +33,9 @@
       <arg type="b" direction="out"/>
       <arg name="filePath" type="s" direction="in"/>
     </method>
+    <method name="getFileSize"> 
+      <arg type="t" direction="out"/>
+      <arg name="filePath" type="s" direction="in"/>
+    </method>
   </interface>
 </node>

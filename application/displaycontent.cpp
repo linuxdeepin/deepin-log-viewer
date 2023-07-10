@@ -49,6 +49,7 @@ DWIDGET_USE_NAMESPACE
 #define STATUS_WIDTH 90
 #define DATETIME_WIDTH 175
 #define DEAMON_WIDTH 100
+
 /**
  * @brief DisplayContent::DisplayContent 初始化界面\等级数据和实际显示文字转换的数据结构\信号槽连接
  * @param parent
@@ -96,6 +97,13 @@ void DisplayContent::initUI()
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
     DFontSizeManager::instance()->bind(noResultLabel, DFontSizeManager::T4);
     noResultLabel->setAlignment(Qt::AlignCenter);
+
+    //notAuditLabel
+    notAuditLabel = new DLabel(this);
+    DApplicationHelper::instance()->setPalette(notAuditLabel, pa);
+    notAuditLabel->setText(DApplication::translate("Warning", "Security level for the current system: high\n audit only administrators can view the audit log"));
+    DFontSizeManager::instance()->bind(notAuditLabel, DFontSizeManager::T4);
+    notAuditLabel->setAlignment(Qt::AlignCenter);
 
     //m_spinnerWgt,m_spinnerWgt_K
     m_spinnerWgt = new LogSpinnerWidget(this);
@@ -2149,14 +2157,23 @@ void DisplayContent::slot_OOCData(int index, const QString &data)
     emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, data);
 }
 
-void DisplayContent::slot_auditFinished(int index)
+void DisplayContent::slot_auditFinished(int index, bool bShowTip/* = false*/)
 {
     if (m_flag != Audit || index != m_auditCurrentIndex)
         return;
     m_isDataLoadComplete = true;
     if (aList.isEmpty()) {
-        setLoadState(DATA_COMPLETE);
-        createAuditTable(aList);
+        if (bShowTip) {
+            createAuditTable(aList);
+            QTimer::singleShot(50, this, [=]{
+                setLoadState(DATA_NOT_AUDIT_ADMIN);
+            });
+            m_detailWgt->cleanText();
+            m_detailWgt->hideLine(true);
+        } else {
+            setLoadState(DATA_COMPLETE);
+            createAuditTable(aList);
+        }
     }
 }
 
@@ -2895,6 +2912,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemM
         items << item;
         item = new DStandardItem(iList[i].msg);
         item->setData(AUDIT_TABLE_DATA);
+        item->setData(iList[i].origin, AUDIT_ORIGIN_DATAROLE);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(4));
         items << item;
         oPModel->insertRow(oPModel->rowCount(), items);
@@ -2918,6 +2936,10 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     if (!noResultLabel->isHidden()) {
         noResultLabel->hide();
     }
+    if (!notAuditLabel->isHidden()) {
+        notAuditLabel->hide();
+    }
+
 //    if (!m_treeView->isHidden()) {
 //        m_treeView->hide();
 //    }
@@ -2957,6 +2979,15 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         noResultLabel->show();
         noResultLabel->raise();
         emit setExportEnable(true);
+        break;
+    }
+    case DATA_NOT_AUDIT_ADMIN: {
+        // 开启等保四时，若当前用户不是审计管理员，给出提示
+        m_treeView->show();
+        notAuditLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
+        notAuditLabel->show();
+        notAuditLabel->raise();
+        emit setExportEnable(false);
         break;
     }
     }
@@ -3202,7 +3233,7 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterJournalBoot(const QString &iSearchS
     return rsList;
 }
 
-QList<LOG_MSG_AUDIT> DisplayContent::filterAudit(AUDIT_FILTERS auditFilter, QList<LOG_MSG_AUDIT> &iList)
+QList<LOG_MSG_AUDIT> DisplayContent::filterAudit(AUDIT_FILTERS auditFilter, const QList<LOG_MSG_AUDIT> &iList)
 {
     QList<LOG_MSG_AUDIT> rsList;
     if (auditFilter.searchstr.isEmpty() && auditFilter.auditTypeFilter < -1) {
@@ -3287,6 +3318,7 @@ void DisplayContent::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
     noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
+    notAuditLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
 }
 
 /**
@@ -3402,15 +3434,7 @@ void DisplayContent::slot_dnfLevel(DNFPRIORITY iLevel)
     generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
 }
 
-void DisplayContent::slot_auditType(int tcbx)
-{
-    m_auditFilter.auditTypeFilter = tcbx;
-    aList = filterAudit(m_auditFilter, aListOrigin);
-    createAuditTableForm();
-    createAuditTable(aList);
-}
-
-void DisplayContent::generateOOCFile(QString path)
+void DisplayContent::generateOOCFile(const QString &path)
 {
     setLoadState(DATA_LOADING);
     m_detailWgt->cleanText();

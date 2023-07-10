@@ -42,6 +42,8 @@
 #define ICONDARKPREFIX "://images/dark/"
 #define DOCTEMPLATE "://doc_template/template.doc"
 
+#define AUDIT_ORIGIN_DATAROLE Qt::UserRole + 3
+
 enum PRIORITY { LVALL = -1,
                 EMER,
                 ALERT,
@@ -148,6 +150,7 @@ struct LOG_MSG_AUDIT {
     QString processId;
     QString status;
     QString msg;
+    QString origin;
 
     bool contains(const QString& searchstr) {
         if (auditType.contains(searchstr, Qt::CaseInsensitive)

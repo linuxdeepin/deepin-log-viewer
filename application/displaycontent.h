@@ -38,6 +38,7 @@ class DisplayContent : public Dtk::Widget::DWidget
         DATA_COMPLETE, //加载完成
         DATA_LOADING_K, //内核日志正在加载
         DATA_NO_SEARCH_RESULT, //搜索无记录
+        DATA_NOT_AUDIT_ADMIN, // 提示不是审计管理员
     };
 
 public:
@@ -84,7 +85,7 @@ private:
     void generateNormalFile(int id); // add by Airy for peroid
 
     //其他日志或者自定义日志
-    void generateOOCFile(QString path);
+    void generateOOCFile(const QString &path);
     void createOOCTableForm();
     void createOOCTable(const QList<QStringList> & list);
 
@@ -171,7 +172,7 @@ public slots:
     void slot_normalData(int index, QList<LOG_MSG_NORMAL> list);
     void slot_OOCFinished(int index, int error = 0);
     void slot_OOCData(int index, const QString & data);
-    void slot_auditFinished(int index);
+    void slot_auditFinished(int index, bool bShowTip = false);
     void slot_auditData(int index, QList<LOG_MSG_AUDIT> list);
 
     void slot_logLoadFailed(const QString &iError);
@@ -183,7 +184,6 @@ public slots:
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
     void slot_dnfLevel(DNFPRIORITY iLevel);
 
-    void slot_auditType(int tcbx);
     //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
     void parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandardItemModel *oPModel);
     void parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandardItemModel *oPModel);
@@ -213,7 +213,7 @@ public slots:
     QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList);
     QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
-    QList<LOG_MSG_AUDIT> filterAudit(AUDIT_FILTERS auditFilter, QList<LOG_MSG_AUDIT> &iList);
+    QList<LOG_MSG_AUDIT> filterAudit(AUDIT_FILTERS auditFilter, const QList<LOG_MSG_AUDIT> &iList);
 
 private:
     void resizeEvent(QResizeEvent *event);
@@ -235,6 +235,8 @@ private:
     logDetailInfoWidget *m_detailWgt {nullptr};
     //搜索无结果时显示无搜索结果提示的label
     Dtk::Widget::DLabel *noResultLabel {nullptr};
+    // 不是审计管理员提示的label
+    Dtk::Widget::DLabel *notAuditLabel {nullptr};
     //当前选中的日志类型的index
     QModelIndex m_curListIdx;
     //当前选中的treeview的index

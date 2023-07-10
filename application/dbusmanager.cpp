@@ -89,7 +89,7 @@ bool DBusManager::isAuditAdmin()
         qWarning() << qPrintable(QString("isAuditAdmin failed! interface error: %1").arg(interfaceSE.lastError().message()));
     }
 
-    return false;
+    return bIsAuditAdmin;
 }
 
 bool DBusManager::isSpecialComType(){

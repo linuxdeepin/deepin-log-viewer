@@ -8,6 +8,7 @@
 #include "sys/utsname.h"
 #include "wtmpparse.h"
 #include "dbusproxy/dldbushandler.h"
+#include "dbusmanager.h"
 
 #include <DGuiApplicationHelper>
 #include <DApplication>
@@ -24,6 +25,8 @@ std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
 int LogAuthThread::thread_count = 0;
 
+// DBUS传输文件大小阈值 100MB
+#define DBUS_THRESHOLD_MAX 100
 /**
  * @brief LogAuthThread::LogAuthThread 构造函数
  * @param parent 父对象
@@ -953,45 +956,66 @@ void LogAuthThread::handleAudit()
         if (!m_canRun) {
             return;
         }
-        //共享内存对应变量置true，允许进程内部逻辑运行
-        ShareMemoryInfo shareInfo;
-        shareInfo.isStart = true;
-        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-        //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-        m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
-        m_process->waitForFinished(-1);
-        //有错则传出空数据
-        if (m_process->exitCode() != 0) {
-            emit auditFinished(m_threadCount);
-            return;
+
+        if (DBusManager::isSEOepn()) {
+            if (DBusManager::isAuditAdmin()) {
+                // 是审计管理员，需要鉴权，有错则传出空数据
+                if (!Utils::checkAuthorization("com.deepin.pkexec.logViewerAuth.self", QCoreApplication::instance()->applicationPid())) {
+                    emit auditFinished(m_threadCount);
+                    return;
+                }
+            } else {
+                // 不是审计管理员，给出提示
+                emit auditFinished(m_threadCount, true);
+                return;
+            }
+        } else {
+            // 未开启等保四，鉴权逻辑同内核日志
+            ShareMemoryInfo shareInfo;
+            shareInfo.isStart = true;
+            SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+            //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+            m_process->start("pkexec", QStringList() << "logViewerAuth"
+                                                     << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+            m_process->waitForFinished(-1);
+            if (m_process->exitCode() != 0) {
+                emit auditFinished(m_threadCount);
+                return;
+            }
         }
+
         if (!m_canRun) {
             return;
         }
 
-//        auto token = DLDBusHandler::instance(this)->openLogStream(filePath);
-//        QString byte;
-//        while(1) {
-//            auto temp = DLDBusHandler::instance(this)->readLogInStream(token);
+        QString byte;
+        if (Utils::convertToMB(DLDBusHandler::instance(this)->getFileSize(m_FilePath.at(i))) > DBUS_THRESHOLD_MAX) {
+            // 日志文件超过100MB，使用文本流读取日志数据，避免DBUS接口被数据流量撑爆
+            auto token = DLDBusHandler::instance(this)->openLogStream(m_FilePath.at(i));
+            while(1) {
+                auto temp = DLDBusHandler::instance(this)->readLogInStream(token);
 
-//            if(temp.isEmpty()) {
-//                break;
-//            }
+                if(temp.isEmpty()) {
+                    break;
+                }
 
-//            byte += temp;
-//        }
+                byte += temp;
+            }
+        } else {
+            byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        }
 
-        QString byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
         byte.replace('\u0000', "").replace("\x01", "");
         QStringList strList = byte.split('\n', QString::SkipEmptyParts);
 
+        QRegularExpression re;
+        QRegularExpressionMatch match;
         for (int j = strList.size() - 1; j >= 0; --j) {
             if (!m_canRun) {
                 return;
             }
             QString str = strList.at(j);
-            if (str.isEmpty())
+            if (str.isEmpty() || str.indexOf("type=") == -1)
                 continue;
 
             LOG_MSG_AUDIT msg;
@@ -1015,26 +1039,25 @@ void LogAuthThread::handleAudit()
 
             // 根据事件类型未识别出审计类型
             if (auditType.isEmpty()) {
-
                 // 判断是否为远程连接审计日志
-                QString addr = "";
-                if (str.indexOf("addr=") != -1) {
-                    addr = str.mid(str.indexOf("addr="));
-                    addr = addr.split(" ", QString::SkipEmptyParts).first().split("=").last();
+                re.setPattern("(?<=addr=)([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+                match = re.match(str);
+                if (match.hasMatch()) {
+                    QString addr = match.captured(0);
                     if (QRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b").exactMatch(addr))
                         auditType = Audit_Remote;
                 }
 
                 if (auditType.isEmpty()) {
-                    // 获取key值，识别出一些特殊的审计类型(主要为自定义的审计类型)
-                    QString key = "";
-                    if (str.indexOf("key=") != -1) {
-                        key = str.mid(str.indexOf("key="));
-                        key = key.split(" ", QString::SkipEmptyParts).first().split("=").last();
-                        key = key.replace("\"", "");
+                     // 获取key值，识别出一些特殊的审计类型(主要为自定义的审计类型)
+                    re.setPattern("(?<=key=)([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+                    match = re.match(str);
+                    if (match.hasMatch()) {
+                        QString key = match.captured(0);
+                        key.replace("\"","");
+                        if (!key.isEmpty())
+                            auditType = Utils::auditType(key);
                     }
-                    if (!key.isEmpty())
-                        auditType = Utils::auditType(key);
                 }
             }
 
@@ -1045,52 +1068,76 @@ void LogAuthThread::handleAudit()
             msg.auditType = auditType;
 
             // 时间
-            QStringList strList = QString(list[1]).replace("msg=audit(","").split('.');
-            QDateTime dateTime = QDateTime::fromTime_t(strList.first().toUInt());
-            qint64 iTime = dateTime.toMSecsSinceEpoch();
-            //对时间筛选
-            if (m_auditFilters.timeFilterBegin > 0 && m_auditFilters.timeFilterEnd > 0) {
-                if (iTime < m_auditFilters.timeFilterBegin || iTime > m_auditFilters.timeFilterEnd)
-                    continue;
+            re.setPattern("(?<=msg=audit\\().*(?=\\.)");
+            match = re.match(str);
+            if (match.hasMatch()) {
+                QDateTime dateTime = QDateTime::fromTime_t(match.captured(0).toUInt());
+                qint64 iTime = dateTime.toMSecsSinceEpoch();
+                //对时间筛选
+                if (m_auditFilters.timeFilterBegin > 0 && m_auditFilters.timeFilterEnd > 0) {
+                    if (iTime < m_auditFilters.timeFilterBegin || iTime > m_auditFilters.timeFilterEnd)
+                        continue;
+                }
+                msg.dateTime = dateTime.toString("yyyy-MM-dd hh:mm:ss");
             }
-            msg.dateTime = dateTime.toString("yyyy-MM-dd hh:mm:ss");
-
 
             // 进程名
             QString processName = "";
-            if (str.indexOf("comm=") != -1) {
-                processName = str.mid(str.indexOf("comm="));
-                processName = processName.split(" ", QString::SkipEmptyParts).first().split("=").last();
-                processName = processName.replace("\"", "");
+            re.setPattern("(?<=comm=\\\")([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+            match = re.match(str);
+            if (match.hasMatch()) {
+                processName = match.captured(0);
+                processName.replace("\"","");
             }
+
             if (processName.isEmpty()) {
-                if (str.indexOf("exe=") != -1) {
-                    processName = str.mid(str.indexOf("exe="));
-                    processName = processName.split(" ", QString::SkipEmptyParts).first().split("=").last();
-                    processName = processName.replace("\"", "");
+                re.setPattern("(?<=exe=\\\")([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+                match = re.match(str);
+                if (match.hasMatch()) {
+                    processName = match.captured(0);
+                    processName.replace("\"","");
                     processName = processName.split("/").last();
                 }
             }
+
             if (processName.isEmpty())
                 processName = "N/A";
             msg.processName = processName;
 
             // 状态
-            QString status = "OK";
-            for (int i = 0; i < strList.count(); i++) {
-                if (strList[i].contains("success=") || strList[i].contains("res=")) {
-                    QString value = strList[i].split("=", QString::SkipEmptyParts).last();
-                    value = value.replace("'", "");
-                    if (value == "success" || value == "yes")
+            QString status = "";
+            re.setPattern("(?<=success=)([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+            match = re.match(str);
+            if (match.hasMatch()) {
+                status = match.captured(0);
+                if (status == "yes")
+                    status = "OK";
+                else
+                    status = "Failed";
+            }
+
+            if (status.isEmpty()) {
+                re.setPattern("(?<=res=)([^= ']+|('(\\\\'|[^'])*'))");
+                match = re.match(str);
+                if (match.hasMatch()) {
+                    status = match.captured(0);
+                    if (status == "success")
                         status = "OK";
                     else
                         status = "Failed";
                 }
+
+                if (status.isEmpty())
+                    status = "OK";
             }
+
             msg.status = status;
 
-            // 信息
-            msg.msg = str.right(str.length() - str.indexOf("pid="));
+            // 信息，将“msg=audit(1688526389.214:61):”之后的内容作为详细信息
+            msg.msg = str.right(str.length() - str.indexOf("):") - 3);
+
+            // 原文
+            msg.origin = str;
 
             aList.append(msg);
             if (!m_canRun) {
