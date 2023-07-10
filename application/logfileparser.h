@@ -42,6 +42,9 @@ public:
 
     int parseByKwin(const KWIN_FILTERS &iKwinfilter);
     int parseByOOC(const QString &path);
+
+    int parseByAudit(const AUDIT_FILTERS &iAuditFilter);
+
     void createFile(const QString &output, int count);
     void stopAllLoad();
 
@@ -74,6 +77,9 @@ signals:
     void appData(int index, QList<LOG_MSG_APPLICATOIN> iDataList);
     void OOCFinished(int index, int error = 0);
     void OOCData(int index, const QString &data);
+
+    void auditFinished(int index);
+    void auditData(int index, QList<LOG_MSG_AUDIT>);
 
     void stopKern();
     void stopBoot();
@@ -123,6 +129,7 @@ private:
     bool m_isAppLoading = false;
     bool m_isNormalLoading = false;
     bool m_isOOCLoading = false;
+    bool m_isAuditLoading = false;
 };
 
 #endif  // LOGFILEPARSER_H

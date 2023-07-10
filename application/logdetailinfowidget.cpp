@@ -518,5 +518,12 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(OOC_TABLE_DATA)) {
         fillOOCDetailInfo(data, error);
+    } else if (dataStr.contains(AUDIT_TABLE_DATA)) {
+        fillDetailInfo("audit", hostname, "", index.siblingAtColumn(1).data().toString(), QModelIndex(),
+                       index.siblingAtColumn(4).data().toString(),
+                       index.siblingAtColumn(3).data().toString(),
+                       "",
+                       "",
+                       index.siblingAtColumn(0).data().toString());
     }
 }

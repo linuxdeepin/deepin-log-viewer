@@ -58,6 +58,10 @@ public:
     void saveConfigWinSize(int w, int h);
     void saveLogDir(const QString &iKey, const QString &iDir);
     QString getLogDir(const QString &iKey);
+
+    // 审计类型与事件类型映射表
+    static QMap<QString, QStringList> loadAuditMap();
+
 signals:
 
 public slots:

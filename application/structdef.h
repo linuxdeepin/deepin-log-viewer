@@ -19,6 +19,7 @@
 #define DMESG_TABLE_DATA "dmesgItemData"
 #define DNF_TABLE_DATA "dnfItemData"
 #define OOC_TABLE_DATA "OOCItemData"
+#define AUDIT_TABLE_DATA "auditItemData"
 
 #define JOUR_TREE_DATA "journalctl"
 #define BOOT_KLU_TREE_DATA "bootklu"
@@ -33,6 +34,7 @@
 #define DMESG_TREE_DATA "dmesg"
 #define OTHER_TREE_DATA "other log"
 #define CUSTOM_TREE_DATA "custom log"
+#define AUDIT_TREE_DATA "/var/log/audit/audit.log"
 
 #define ITEM_DATE_ROLE (Qt::UserRole + 66)
 #define ICONPREFIX "://images/"
@@ -60,6 +62,16 @@ enum DNFPRIORITY { DNFLVALL = -1,
                    CRITICAL,
                    SUPERCRITICAL };
 Q_DECLARE_METATYPE(DNFPRIORITY)
+
+enum AUDITTYPE { AUDITLVALL= -1,
+                 IDENTAUTH,
+                 DAC,
+                 MAC,
+                 REMOTE,
+                 DOCAUDIT,
+                 OTHER};
+Q_DECLARE_METATYPE(AUDITTYPE)
+
 struct LOG_MSG_JOURNAL {
     // include dateTime level type detailInfo...
     QString dateTime;
@@ -121,6 +133,72 @@ struct LOG_FILE_OTHERORCUSTOM {
     QString dateTimeModify;  
 };
 
+#define Audit_IdentAuth     "IdentAuth"
+#define Audit_DAC           "DAC"
+#define Audit_MAC           "MAC"
+#define Audit_Remote        "Remote"
+#define Audit_DocAudit      "DocAudit"
+#define Audit_Other         "Other"
+
+struct LOG_MSG_AUDIT {
+    QString auditType;
+    QString eventType;
+    QString dateTime;
+    QString processName;
+    QString processId;
+    QString status;
+    QString msg;
+
+    bool contains(const QString& searchstr) {
+        if (auditType.contains(searchstr, Qt::CaseInsensitive)
+                || eventType.contains(searchstr, Qt::CaseInsensitive)
+                || dateTime.contains(searchstr, Qt::CaseInsensitive)
+                || processName.contains(searchstr, Qt::CaseInsensitive)
+                || status.contains(searchstr, Qt::CaseInsensitive)
+                || msg.contains(searchstr, Qt::CaseInsensitive))
+            return true;
+
+        return false;
+    }
+
+    QString auditType2Str(int nAuditType) {
+        QString str = "";
+        switch (nAuditType) {
+        case IDENTAUTH:
+            str = Audit_IdentAuth;
+            break;
+        case DAC:
+            str = Audit_DAC;
+            break;
+        case MAC:
+            str = Audit_MAC;
+            break;
+        case REMOTE:
+            str = Audit_Remote;
+            break;
+        case DOCAUDIT:
+            str = Audit_DocAudit;
+            break;
+        case OTHER:
+            str = Audit_Other;
+            break;
+        default:
+            str = "";
+            break;
+        }
+
+        return str;
+    }
+
+    bool filterAuditType(int nAuditType) {
+        QString str = auditType2Str(nAuditType);
+        if (str.compare(auditType) == 0)
+            return true;
+
+        return false;
+    }
+};
+
 //kwin筛选条件，kwin日志只有信息，没有任何可筛选的，但是先放在这，以后统一化
 struct KWIN_FILTERS {
     QString msg;
@@ -177,6 +255,16 @@ struct BOOT_FILTERS {
 };
 
 /**
+ * @brief The AUDIT_FILTERS struct 审计日志筛选条件
+ */
+struct AUDIT_FILTERS {
+    qint64 timeFilterBegin = -1 ; //筛选开始时间
+    qint64 timeFilterEnd = -1; //筛选结束时间
+    int auditTypeFilter = 0; //筛选类型, 有 0全部 1身份鉴别 2自主访问控制 3强制访问控制 4远程连接 5文件审计
+    QString searchstr = ""; //搜索关键字
+};
+
+/**
  * @brief The FILTER_CONFIG struct 筛选控件中的筛选情况记录结构体
  */
 struct FILTER_CONFIG {
@@ -185,6 +273,7 @@ struct FILTER_CONFIG {
     int statusCbx = 0; //启动日志状态筛选下拉框的值
     int dateBtn = 0; //时间筛选按钮当前选择筛选按钮对应BUTTONID
     int typeCbx = 0;
+    int auditCbx = 0;
     int dnfCbx = 5;
 };
 enum BUTTONID {
@@ -213,6 +302,7 @@ enum LOG_FLAG {
     Dmesg,
     OtherLog,
     CustomLog,
+    Audit,
     NONE = 9999
 }; // modified by
 // Airy
@@ -280,6 +370,16 @@ enum DMESG_DISPLAY_COLUMN {
     dmesgLevelColumn = 0,
     dmesgDateTimeColumn,
     dmesgMsgColumn
+};
+}
+
+namespace AUDIT_SPACE {
+enum AUDIT_DISPLAY_COLUMN {
+    auditEventTypeColumn = 0,
+    auditDateTimeColumn,
+    auditProcessNameColumn,
+    auditStatusColumn,
+    auditMsgColumn
 };
 }
 

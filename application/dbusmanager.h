@@ -16,6 +16,10 @@ class DBusManager : public QObject
 public:
     explicit DBusManager(QObject *parent = nullptr);
     static QString getSystemInfo();
+    // 是否开启等保四
+    static bool isSEOepn();
+    // 开启等保四情况下，判断是否为审计管理员身份
+    static bool isAuditAdmin();
     /**
      * @brief isSpecialComType 是否是特殊机型，like huawei
      * @return

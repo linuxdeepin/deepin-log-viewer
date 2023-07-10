@@ -247,6 +247,11 @@ void DisplayContent::initConnections()
     connect(&m_logFileParse, &LogFileParser::OOCFinished, this, &DisplayContent::slot_OOCFinished,
             Qt::QueuedConnection);
 
+    connect(&m_logFileParse, &LogFileParser::auditData, this, &DisplayContent::slot_auditData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParse, &LogFileParser::auditFinished, this, &DisplayContent::slot_auditFinished,
+            Qt::QueuedConnection);
+
     connect(m_treeView, &LogTreeView::customContextMenuRequested, this, &DisplayContent::slot_requestShowRightMenu);
     connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigValueChanged, this, &DisplayContent::slot_valueChanged_dConfig_or_gSetting);
 }
@@ -653,6 +658,15 @@ void DisplayContent::insertKwinTable(const QList<LOG_MSG_KWIN> &list, int start,
 void DisplayContent::insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int start, int end)
 {
     QList<LOG_MSG_NORMAL> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
+    }
+    parseListToModel(midList, m_pModel);
+}
+
+void DisplayContent::insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end)
+{
+    QList<LOG_MSG_AUDIT> midList = list;
     if (end >= start) {
         midList = midList.mid(start, end - start);
     }
@@ -1458,6 +1472,8 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
     } else if (treeData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
+    } else if (treeData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
+        generateAuditFile(BUTTONID(m_curBtnId), AUDITTYPE(m_curLevel));
     }
 }
 
@@ -1555,6 +1571,8 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_flag = CustomLog;
         createOOCTableForm();
         createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
+    } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Audit;
     }
 }
 
@@ -1652,6 +1670,10 @@ void DisplayContent::slot_exportClicked()
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
             exportThread->exportToTxtPublic(fileName, dnfList, labels);
             break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToTxtPublic(fileName, aList, labels);
+            break;
         default:
             break;
         }
@@ -1703,6 +1725,10 @@ void DisplayContent::slot_exportClicked()
         case Dnf:
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
             exportThread->exportToHtmlPublic(fileName, dnfList, labels);
+            break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToHtmlPublic(fileName, aList, labels);
             break;
         default:
             break;
@@ -1756,6 +1782,10 @@ void DisplayContent::slot_exportClicked()
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
             exportThread->exportToDocPublic(fileName, dnfList, labels);
             break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToDocPublic(fileName, aList, labels);
+            break;
         default:
             break;
         }
@@ -1807,6 +1837,10 @@ void DisplayContent::slot_exportClicked()
         case Dnf:
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
             exportThread->exportToXlsPublic(fileName, dnfList, labels);
+            break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToXlsPublic(fileName, aList, labels);
             break;
         default:
             break;
@@ -2115,6 +2149,32 @@ void DisplayContent::slot_OOCData(int index, const QString &data)
     emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, data);
 }
 
+void DisplayContent::slot_auditFinished(int index)
+{
+    if (m_flag != Audit || index != m_auditCurrentIndex)
+        return;
+    m_isDataLoadComplete = true;
+    if (aList.isEmpty()) {
+        setLoadState(DATA_COMPLETE);
+        createAuditTable(aList);
+    }
+}
+
+void DisplayContent::slot_auditData(int index, QList<LOG_MSG_AUDIT> list)
+{
+    if (m_flag != Audit || index != m_auditCurrentIndex)
+        return;
+
+    aListOrigin.append(list);
+    aList.append(filterAudit(m_auditFilter, list));
+    //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
+    if (m_firstLoadPageData) {
+        createAuditTable(aList);
+        m_firstLoadPageData = false;
+        PERF_PRINT_END("POINT-03", "type=audit");
+    }
+}
+
 void DisplayContent::slot_OOCFinished(int index, int error)
 {
     if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
@@ -2304,6 +2364,20 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         }
     }
     break;
+    case Audit: {
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
+                return;
+
+            int leftCnt = aList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertAuditTable(aList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
+        }
+    }
+    break;
     default:
         break;
     }
@@ -2421,6 +2495,14 @@ void DisplayContent::slot_searchResult(QString str)
         createDmesgTable(dmesgList);
     }
     break;
+    case Audit: {
+        aList.clear();
+        m_auditFilter.searchstr = m_currentSearchStr;
+        aList = filterAudit(m_auditFilter, aListOrigin);
+        createAuditTableForm();
+        createAuditTable(aList);
+    }
+    break;
     default:
         break;
     }
@@ -2449,6 +2531,14 @@ void DisplayContent::slot_getLogtype(int tcbx)
     nortempList = filterNomal(m_normalFilter, norList);
     createNormalTableForm();
     createNormalTable(nortempList);
+}
+
+void DisplayContent::slot_getAuditType(int tcbx)
+{
+    m_auditFilter.auditTypeFilter = tcbx;
+    aList = filterAudit(m_auditFilter, aListOrigin);
+    createAuditTableForm();
+    createAuditTable(aList);
 }
 
 /**
@@ -2771,6 +2861,46 @@ void DisplayContent::parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStan
     }
 }
 
+void DisplayContent::parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<QStandardItem *> items;
+    DStandardItem *item = nullptr;
+    int listCount = iList.size();
+    for (int i = 0; i < listCount; i++) {
+        items.clear();
+        item = new DStandardItem(iList[i].eventType);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+        items << item;
+        item = new DStandardItem(iList[i].dateTime);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+        items << item;
+        item = new DStandardItem(iList[i].processName);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+        items << item;
+        item = new DStandardItem(iList[i].status);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+        items << item;
+        item = new DStandardItem(iList[i].msg);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(4));
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
 /**
  * @brief DisplayContent::setLoadState 设置当前的显示状态
  * @param iState 显示状态
@@ -2903,6 +3033,8 @@ void DisplayContent::clearAllDatalist()
     jBootListOrigin.clear();
     dnfList.clear();
     dnfListOrigin.clear();
+    aList.clear();
+    aListOrigin.clear();
     malloc_trim(0);
 }
 
@@ -3067,6 +3199,23 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterJournalBoot(const QString &iSearchS
         if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
+    return rsList;
+}
+
+QList<LOG_MSG_AUDIT> DisplayContent::filterAudit(AUDIT_FILTERS auditFilter, QList<LOG_MSG_AUDIT> &iList)
+{
+    QList<LOG_MSG_AUDIT> rsList;
+    if (auditFilter.searchstr.isEmpty() && auditFilter.auditTypeFilter < -1) {
+        return iList;
+    }
+    int nAuditType = auditFilter.auditTypeFilter - 1;
+    for (int i = 0; i < iList.size(); i++) {
+        LOG_MSG_AUDIT msg = iList.at(i);
+        if (msg.contains(auditFilter.searchstr) && (nAuditType == -1 || msg.filterAuditType(nAuditType))) {
+            rsList.append(msg);
+        }
+    }
+
     return rsList;
 }
 
@@ -3238,6 +3387,9 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         m_flag = CustomLog;
         createOOCTableForm();
         createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
+    } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Audit;
+        generateAuditFile(m_curBtnId, m_curLevel);
     }
 
     if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) || !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) { // modified by Airy
@@ -3248,6 +3400,14 @@ void DisplayContent::slot_dnfLevel(DNFPRIORITY iLevel)
 {
     m_curDnfLevel = iLevel;
     generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
+}
+
+void DisplayContent::slot_auditType(int tcbx)
+{
+    m_auditFilter.auditTypeFilter = tcbx;
+    aList = filterAudit(m_auditFilter, aListOrigin);
+    createAuditTableForm();
+    createAuditTable(aList);
 }
 
 void DisplayContent::generateOOCFile(QString path)
@@ -3289,6 +3449,113 @@ void DisplayContent::createOOCTable(const QList<QStringList> &list)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
 
     m_curTreeIndex = QModelIndex();//重置一下
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
+void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchStr)
+{
+    Q_UNUSED(iSearchStr);
+    clearAllFilter();
+    clearAllDatalist();
+    m_firstLoadPageData = true;
+    m_isDataLoadComplete = false;
+    setLoadState(DATA_LOADING);
+    createAuditTableForm();
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime()); // get zero time
+    AUDIT_FILTERS auditFilter;
+    auditFilter.auditTypeFilter = lId;
+
+    switch (id) {
+    case ALL: {
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case ONE_DAY: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case THREE_DAYS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case ONE_WEEK: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case ONE_MONTH: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case THREE_MONTHS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    default:
+        break;
+    }
+}
+
+void DisplayContent::createAuditTableForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Event Type")
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Process")
+                                        << DApplication::translate("Table", "Status")
+                                        << DApplication::translate("Table", "Info"));
+#ifndef SHOW_DETAIL
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditEventTypeColumn, 125);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditDateTimeColumn, 140);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditProcessNameColumn, 100);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditStatusColumn, 55);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditMsgColumn, DATETIME_WIDTH);
+#else
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditEventTypeColumn, DATETIME_WIDTH + 20);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditDateTimeColumn, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditProcessNameColumn, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditStatusColumn, STATUS_WIDTH);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditMsgColumn, DATETIME_WIDTH);
+    m_treeView->hideColumn(AUDIT_SPACE::auditMsgColumn);
+#endif
+}
+
+void DisplayContent::createAuditTable(const QList<LOG_MSG_AUDIT> &list)
+{
+    setLoadState(DATA_COMPLETE);
+
+    m_limitTag = 0;
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertAuditTable(list, 0, end);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 

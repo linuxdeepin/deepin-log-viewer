@@ -46,6 +46,7 @@ public:
     void setFileterParam(const NORMAL_FILTERS &iFIlters) { m_normalFilters = iFIlters; }
     void setFileterParam(const DNF_FILTERS &iFIlters) { m_dnfFilters = iFIlters; }
     void setFileterParam(const DMESG_FILTERS &iFIlters) { m_dmesgFilters = iFIlters; }
+    void setFileterParam(const AUDIT_FILTERS &iFIlters) { m_auditFilters = iFIlters; }
     void stopProccess();
     void setFilePath(const QStringList &filePath);
     int getIndex();
@@ -69,6 +70,7 @@ protected:
     void NormalInfoTime();
     void handleDnf();
     void handleDmesg();
+    void handleAudit();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
     qint64 formatDateTime(QString y, QString t);
@@ -98,6 +100,8 @@ signals:
     void normalData(int index, QList<LOG_MSG_NORMAL> iDataList);
     void dnfFinished(QList<LOG_MSG_DNF> iKwinList);
     void dmesgFinished(QList<LOG_MSG_DMESG> iKwinList);
+    void auditFinished(int index);
+    void auditData(int index, QList<LOG_MSG_AUDIT> iDataList);
     void proccessError(const QString &iError);
 public slots:
     //    void onFinished(int exitCode);
@@ -133,6 +137,10 @@ private:
     NORMAL_FILTERS  m_normalFilters;
     DNF_FILTERS m_dnfFilters;
     DMESG_FILTERS m_dmesgFilters;
+    /**
+     * @brief m_normalFilters 开关机日志筛选条件
+     */
+    AUDIT_FILTERS m_auditFilters;
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
     //获取数据用的cat命令的process

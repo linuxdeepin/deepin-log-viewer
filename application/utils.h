@@ -28,6 +28,7 @@ public:
     };
     static QHash<QString, QPixmap> m_imgCacheHash;
     static QHash<QString, QString> m_fontNameCache;
+    static QMap<QString, QStringList> m_mapAuditType2EventType;
 
     static QString getQssContent(const QString &filePath);
     static QString getConfigPath();
@@ -49,6 +50,7 @@ public:
     static bool checkAuthorization(const QString &actionId, qint64 applicationPid);
     //系统版本号
     static QString osVersion();
+    static QString auditType(const QString& eventType);
     /**
      * @brief specialComType 是否是特殊机型，like huawei
      * 取值有3种（-1,0,>0），默认为-1（未知），0（不是特殊机型）,>0（特殊机型）

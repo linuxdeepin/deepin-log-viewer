@@ -170,6 +170,9 @@ void LogAuthThread::run()
     case Dmesg:
         handleDmesg();
         break;
+    case Audit:
+        handleAudit();
+        break;
     default:
         break;
     }
@@ -927,6 +930,187 @@ void LogAuthThread::handleDmesg()
         }
     }
     emit dmesgFinished(dmesgList);
+}
+
+void LogAuthThread::handleAudit()
+{
+    QList<LOG_MSG_AUDIT> aList;
+    for (int i = 0; i < m_FilePath.count(); i++) {
+        if (!m_FilePath.at(i).contains("txt")) {
+            if (!DLDBusHandler::instance(this)->isFileExist(m_FilePath.at(i))) {
+                emit kernFinished(m_threadCount);
+                return;
+            }
+        }
+        if (!m_canRun) {
+            return;
+        }
+        initProccess();
+        if (!m_canRun) {
+            return;
+        }
+        m_process->setProcessChannelMode(QProcess::MergedChannels);
+        if (!m_canRun) {
+            return;
+        }
+        //共享内存对应变量置true，允许进程内部逻辑运行
+        ShareMemoryInfo shareInfo;
+        shareInfo.isStart = true;
+        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+        //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+        m_process->start("pkexec", QStringList() << "logViewerAuth"
+                                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+        m_process->waitForFinished(-1);
+        //有错则传出空数据
+        if (m_process->exitCode() != 0) {
+            emit auditFinished(m_threadCount);
+            return;
+        }
+        if (!m_canRun) {
+            return;
+        }
+
+//        auto token = DLDBusHandler::instance(this)->openLogStream(filePath);
+//        QString byte;
+//        while(1) {
+//            auto temp = DLDBusHandler::instance(this)->readLogInStream(token);
+
+//            if(temp.isEmpty()) {
+//                break;
+//            }
+
+//            byte += temp;
+//        }
+
+        QString byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        byte.replace('\u0000', "").replace("\x01", "");
+        QStringList strList = byte.split('\n', QString::SkipEmptyParts);
+
+        for (int j = strList.size() - 1; j >= 0; --j) {
+            if (!m_canRun) {
+                return;
+            }
+            QString str = strList.at(j);
+            if (str.isEmpty())
+                continue;
+
+            LOG_MSG_AUDIT msg;
+            //删除颜色格式字符
+            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            // remove Useless characters
+            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            if (list.size() < 2)
+                continue;
+
+            // 事件类型
+            QString eventType = list[0].split("=").last();
+            msg.eventType = eventType;
+
+            // 审计类型
+            QString auditType = "";
+            // 根据事件类型识别审计类型
+            if (auditType.isEmpty())
+                auditType = Utils::auditType(msg.eventType);
+
+            // 根据事件类型未识别出审计类型
+            if (auditType.isEmpty()) {
+
+                // 判断是否为远程连接审计日志
+                QString addr = "";
+                if (str.indexOf("addr=") != -1) {
+                    addr = str.mid(str.indexOf("addr="));
+                    addr = addr.split(" ", QString::SkipEmptyParts).first().split("=").last();
+                    if (QRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b").exactMatch(addr))
+                        auditType = Audit_Remote;
+                }
+
+                if (auditType.isEmpty()) {
+                    // 获取key值，识别出一些特殊的审计类型(主要为自定义的审计类型)
+                    QString key = "";
+                    if (str.indexOf("key=") != -1) {
+                        key = str.mid(str.indexOf("key="));
+                        key = key.split(" ", QString::SkipEmptyParts).first().split("=").last();
+                        key = key.replace("\"", "");
+                    }
+                    if (!key.isEmpty())
+                        auditType = Utils::auditType(key);
+                }
+            }
+
+            // 审计类型依然为空，归为其他类型
+            if (auditType.isEmpty())
+                auditType = Audit_Other;
+
+            msg.auditType = auditType;
+
+            // 时间
+            QStringList strList = QString(list[1]).replace("msg=audit(","").split('.');
+            QDateTime dateTime = QDateTime::fromTime_t(strList.first().toUInt());
+            qint64 iTime = dateTime.toMSecsSinceEpoch();
+            //对时间筛选
+            if (m_auditFilters.timeFilterBegin > 0 && m_auditFilters.timeFilterEnd > 0) {
+                if (iTime < m_auditFilters.timeFilterBegin || iTime > m_auditFilters.timeFilterEnd)
+                    continue;
+            }
+            msg.dateTime = dateTime.toString("yyyy-MM-dd hh:mm:ss");
+
+
+            // 进程名
+            QString processName = "";
+            if (str.indexOf("comm=") != -1) {
+                processName = str.mid(str.indexOf("comm="));
+                processName = processName.split(" ", QString::SkipEmptyParts).first().split("=").last();
+                processName = processName.replace("\"", "");
+            }
+            if (processName.isEmpty()) {
+                if (str.indexOf("exe=") != -1) {
+                    processName = str.mid(str.indexOf("exe="));
+                    processName = processName.split(" ", QString::SkipEmptyParts).first().split("=").last();
+                    processName = processName.replace("\"", "");
+                    processName = processName.split("/").last();
+                }
+            }
+            if (processName.isEmpty())
+                processName = "N/A";
+            msg.processName = processName;
+
+            // 状态
+            QString status = "OK";
+            for (int i = 0; i < strList.count(); i++) {
+                if (strList[i].contains("success=") || strList[i].contains("res=")) {
+                    QString value = strList[i].split("=", QString::SkipEmptyParts).last();
+                    value = value.replace("'", "");
+                    if (value == "success" || value == "yes")
+                        status = "OK";
+                    else
+                        status = "Failed";
+                }
+            }
+            msg.status = status;
+
+            // 信息
+            msg.msg = str.right(str.length() - str.indexOf("pid="));
+
+            aList.append(msg);
+            if (!m_canRun) {
+                return;
+            }
+            //每获得500个数据就发出信号给控件加载
+            if (aList.count() % SINGLE_READ_CNT == 0) {
+                emit auditData(m_threadCount, aList);
+                aList.clear();
+            }
+            if (!m_canRun) {
+                return;
+            }
+        }
+    }
+    //最后可能有余下不足500的数据
+    if (aList.count() >= 0) {
+        emit auditData(m_threadCount, aList);
+    }
+    emit auditFinished(m_threadCount);
 }
 
 /**

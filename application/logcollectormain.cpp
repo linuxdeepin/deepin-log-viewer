@@ -51,6 +51,7 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
     //恢复上次关闭时记录的窗口大小
     resize(LogSettings::instance()->getConfigWinSize());
+    Utils::m_mapAuditType2EventType = LogSettings::instance()->loadAuditMap();
 }
 
 /**
@@ -345,6 +346,9 @@ void LogCollectorMain::initConnection()
 
     connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, m_midRightWgt,
             &DisplayContent::slot_getLogtype); // add by Airy
+
+    connect(m_topRightWgt, &FilterContent::sigAuditTypeChanged, m_midRightWgt,
+            &DisplayContent::slot_getAuditType);
 
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_logCatelogue,
             &LogListView::slot_getAppPath); // add by Airy for getting app path

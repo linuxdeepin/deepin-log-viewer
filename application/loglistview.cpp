@@ -7,6 +7,7 @@
 #include "dbusmanager.h"
 #include "DebugTimeManager.h"
 #include "logapplicationhelper.h"
+#include "dbusproxy/dldbushandler.h"
 
 #include <DDesktopServices>
 #include <DDialog>
@@ -300,6 +301,19 @@ void LogListView::initUI()
         initCustomLogItem();
     }
 
+    // 审计日志文件存在，才加载和显示审计日志模块（审计日志文件需要root权限访问，因此在service服务中判断审计日志文件是否存在）
+    if (DLDBusHandler::instance(this)->isFileExist(AUDIT_TREE_DATA)) {
+        item = new QStandardItem(QIcon::fromTheme("dp_customlog"), DApplication::translate("Tree", "Audit Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+        item->setToolTip(DApplication::translate("Tree", "Audit Log"));
+        item->setData(AUDIT_TREE_DATA, ITEM_DATE_ROLE);
+        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        item->setAccessibleText("Auidt Log");
+        m_pModel->appendRow(item);
+        m_logTypes.push_back(AUDIT_TREE_DATA);
+    }
+
     // set first item is select when app start
     if (m_pModel->rowCount() > 0) {
         this->setCurrentIndex(m_pModel->index(0, 0));
@@ -427,7 +441,7 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
         g_context->addAction(g_clear);
         g_context->addAction(g_refresh);
 
-        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA || pathData == OTHER_TREE_DATA || pathData == CUSTOM_TREE_DATA) {
+        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA || pathData == OTHER_TREE_DATA || pathData == CUSTOM_TREE_DATA || pathData == AUDIT_TREE_DATA) {
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }

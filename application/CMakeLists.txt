@@ -376,6 +376,9 @@ install(TARGETS ${EXE_NAME} DESTINATION bin)
 install(DIRECTORY assets/deepin-log-viewer
                 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-manual/manual-assets/application/)
 
+# Install aduit rule config file.
+install(FILES assets/auditRule.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer)
+
 #FILES       - deployed files.
 #BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.
 #APPID       - working for the app.

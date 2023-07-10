@@ -88,6 +88,11 @@ private:
     void createOOCTableForm();
     void createOOCTable(const QList<QStringList> & list);
 
+    // 审计日志
+    void generateAuditFile(int id, int lId, const QString &iSearchStr = "");
+    void createAuditTableForm();
+    void createAuditTable(const QList<LOG_MSG_AUDIT> &list);
+
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(const QList<LOG_MSG_APPLICATOIN> &list, int start, int end);
     void insertKernTable(const QList<LOG_MSG_JOURNAL> &list, int start,
@@ -97,6 +102,7 @@ private:
     void insertBootTable(const QList<LOG_MSG_BOOT> &list, int start, int end);
     void insertKwinTable(const QList<LOG_MSG_KWIN> &list, int start, int end);
     void insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int start, int end);
+    void insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end);
     QString getAppName(const QString &filePath);
 
     bool isAuthProcessAlive();
@@ -165,14 +171,19 @@ public slots:
     void slot_normalData(int index, QList<LOG_MSG_NORMAL> list);
     void slot_OOCFinished(int index, int error = 0);
     void slot_OOCData(int index, const QString & data);
+    void slot_auditFinished(int index);
+    void slot_auditData(int index, QList<LOG_MSG_AUDIT> list);
 
     void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
 
     void slot_searchResult(QString str);
     void slot_getLogtype(int tcbx); // add by Airy
+    void slot_getAuditType(int tcbx);
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
     void slot_dnfLevel(DNFPRIORITY iLevel);
+
+    void slot_auditType(int tcbx);
     //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
     void parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandardItemModel *oPModel);
     void parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandardItemModel *oPModel);
@@ -184,6 +195,7 @@ public slots:
     void parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemModel *oPModel);
     QString getIconByname(const QString &str);
     void setLoadState(LOAD_STATE iState);
     void onExportProgress(int nCur, int nTotal);
@@ -201,6 +213,7 @@ public slots:
     QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList);
     QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
+    QList<LOG_MSG_AUDIT> filterAudit(AUDIT_FILTERS auditFilter, QList<LOG_MSG_AUDIT> &iList);
 
 private:
     void resizeEvent(QResizeEvent *event);
@@ -300,6 +313,12 @@ private:
      * @brief kListOrigin 未经过筛选的内核日志数据   kern.log
      */
     QList<LOG_MSG_JOURNAL> kList, kListOrigin;
+
+    /**
+     * @brief aListOrigin 未经过筛选的审计日志数据   audit/audit.log
+     */
+    QList<LOG_MSG_AUDIT> aList, aListOrigin;
+
     /**
      * @brief appList 经过筛选完成的内核日志数据
      */
@@ -358,6 +377,10 @@ private:
      * @brief m_journalFilter 当前系统日志筛选条件
      */
     JOURNAL_FILTERS m_journalFilter;
+    /**
+     * @brief m_auditFilter 当前审计日志筛选条件
+     */
+    AUDIT_FILTERS m_auditFilter;
     QList<LOG_MSG_DNF> dnfList, dnfListOrigin; //dnf.log
     QList<LOG_MSG_DMESG> dmesgList, dmesgListOrigin; //dmesg cmd
     QMap<QString, QString> m_dnfIconNameMap;
@@ -375,6 +398,7 @@ private:
     int m_kwinCurrentIndex {-1};
     int m_appCurrentIndex {-1};
     int m_OOCCurrentIndex {-1};
+    int m_auditCurrentIndex {-1};
     bool m_isDataLoadComplete {false};
     //筛选条件
     QString selectFilter;

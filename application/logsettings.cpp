@@ -12,6 +12,10 @@
 #define MAINWINDOW_WIDTH_NAME "logMainWindowWidthName"
 std::atomic<LogSettings *> LogSettings::m_instance;
 std::mutex LogSettings::m_mutex;
+
+// 审计类型归类规则配置文件
+const QString AUDIT_CONFIG_PATH = "/usr/share/deepin-log-viewer/auditRule.conf";
+
 /**
  * @brief LogSettings::LogSettings 构造函数从配置文件初始化配置
  * @param parent　父对象
@@ -73,6 +77,20 @@ void LogSettings::saveConfigWinSize(int w, int h)
     m_winInfoConfig->setValue(MAINWINDOW_HEIGHT_NAME, winHeight);
     m_winInfoConfig->setValue(MAINWINDOW_WIDTH_NAME, winWidth);
     m_winInfoConfig->sync();
+}
+
+QMap<QString, QStringList> LogSettings::loadAuditMap()
+{
+    QMap<QString, QStringList> auditType2EventType;
+    QSettings auditConfig(AUDIT_CONFIG_PATH, QSettings::IniFormat);
+    QStringList auditTypes = auditConfig.childKeys();
+    for (auto auditType : auditTypes) {
+        QString value = auditConfig.value(auditType).toString();
+        QStringList strList = value.split('@', QString::SkipEmptyParts);
+        auditType2EventType.insert(auditType, strList);
+    }
+
+    return auditType2EventType;
 }
 
 

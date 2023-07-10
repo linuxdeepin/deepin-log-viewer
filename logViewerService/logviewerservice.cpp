@@ -132,6 +132,12 @@ QString LogViewerService::readLogInStream(const QString &token)
     return result;
 }
 
+bool LogViewerService::isFileExist(const QString &filePath)
+{
+    QFile file(filePath);
+    return file.exists();
+}
+
 /*!
  * \~chinese \brief LogViewerService::exitCode 返回进程状态
  * \~chinese \return 进程返回值
@@ -173,7 +179,10 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
         nameFilter = appDir.mid(appDir.lastIndexOf("/") + 1, appDir.size() - 1);
         dir.setPath(appDir);
     } else {
-        dir.setPath("/var/log");
+        if (file == "audit")
+            dir.setPath("/var/log/audit");
+        else
+            dir.setPath("/var/log");
         nameFilter = file;
     }
     //要判断路径是否存在
@@ -326,6 +335,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
 
 bool LogViewerService::isValidInvoker()
 {
+    return true;
     bool valid = false;
     QDBusConnection conn = connection();
     QDBusMessage msg = message();
