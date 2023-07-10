@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_CN">
 <context>
     <name>Action</name>
     <message>
@@ -51,10 +53,6 @@
     <message>
         <source>3 months</source>
         <translation>近三个月</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">导出</translation>
     </message>
     <message>
         <source>Export</source>
@@ -119,6 +117,30 @@
     <message>
         <source>Trace</source>
         <translation>跟踪</translation>
+    </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>身份鉴别</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>自主访问控制</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>强制访问控制</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>远程连接</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>文档审计</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>其他</translation>
     </message>
 </context>
 <context>
@@ -206,6 +228,10 @@
     <message>
         <source>Login record</source>
         <translation>登录信息</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>审计类型：</translation>
     </message>
 </context>
 <context>
@@ -416,12 +442,21 @@
         <source>Custom Log</source>
         <translation>自定义日志</translation>
     </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>审计日志</translation>
+    </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
         <translation>无权限查看</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation>当前系统安全等级为：高\n仅审计管理员可查看审计日志</translation>
     </message>
 </context>
 <context>

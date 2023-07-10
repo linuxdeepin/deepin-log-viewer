@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="it">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="it">
 <context>
     <name>Action</name>
     <message>
@@ -51,10 +53,6 @@
     <message>
         <source>3 months</source>
         <translation>3 mesi</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">Esporta</translation>
     </message>
     <message>
         <source>Export</source>
@@ -119,6 +117,30 @@
     <message>
         <source>Trace</source>
         <translation>Traccia</translation>
+    </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -206,6 +228,10 @@
     <message>
         <source>Login record</source>
         <translation>Registrazione login</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -357,11 +383,11 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -411,18 +437,27 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -441,7 +476,7 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">1 min {5 ?}</translation>
     </message>
     <message>
         <source>No refresh</source>

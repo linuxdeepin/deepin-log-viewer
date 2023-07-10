@@ -138,6 +138,15 @@ bool LogViewerService::isFileExist(const QString &filePath)
     return file.exists();
 }
 
+quint64 LogViewerService::getFileSize(const QString &filePath)
+{
+    QFileInfo fi(filePath);
+    if (fi.exists())
+        return static_cast<quint64>(fi.size());
+
+    return 0;
+}
+
 /*!
  * \~chinese \brief LogViewerService::exitCode 返回进程状态
  * \~chinese \return 进程返回值
@@ -335,7 +344,6 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
 
 bool LogViewerService::isValidInvoker()
 {
-    return true;
     bool valid = false;
     QDBusConnection conn = connection();
     QDBusMessage msg = message();

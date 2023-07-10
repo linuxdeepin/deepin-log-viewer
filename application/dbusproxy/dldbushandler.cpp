@@ -107,3 +107,8 @@ bool DLDBusHandler::isFileExist(const QString &filePath)
 {
     return m_dbus->isFileExist(filePath);
 }
+
+quint64 DLDBusHandler::getFileSize(const QString &filePath)
+{
+    return m_dbus->getFileSize(filePath);
+}

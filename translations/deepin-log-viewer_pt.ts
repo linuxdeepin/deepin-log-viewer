@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="pt">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="pt">
 <context>
     <name>Action</name>
     <message>
@@ -51,10 +53,6 @@
     <message>
         <source>3 months</source>
         <translation>3 meses</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">Exportar</translation>
     </message>
     <message>
         <source>Export</source>
@@ -119,6 +117,30 @@
     <message>
         <source>Trace</source>
         <translation>Vestígio</translation>
+    </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -206,6 +228,10 @@
     <message>
         <source>Login record</source>
         <translation>Registo do iniciar sessão</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -416,12 +442,21 @@
         <source>Custom Log</source>
         <translation>Ficheiro personalizado</translation>
     </message>
+    <message>
+        <source>Audit Log</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
         <translation>Não tem permissão para o ver</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

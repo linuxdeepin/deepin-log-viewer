@@ -78,7 +78,7 @@ signals:
     void OOCFinished(int index, int error = 0);
     void OOCData(int index, const QString &data);
 
-    void auditFinished(int index);
+    void auditFinished(int index, bool bShowTip = false);
     void auditData(int index, QList<LOG_MSG_AUDIT>);
 
     void stopKern();

@@ -5,6 +5,8 @@
 #include "utils.h"
 #include "logsettings.h"
 
+#include <math.h>
+
 #include <QUrl>
 #include <QDir>
 #include <QFile>
@@ -295,4 +297,19 @@ QString Utils::auditType(const QString &eventType)
     }
 
     return "";
+}
+
+double Utils::convertToMB(quint64 cap, const int size/* = 1024*/)
+{
+    static QString type[] = {" B", " KB", " MB"};
+
+    double dc = cap;
+    double ds = size;
+
+    for (size_t p = 0; p < sizeof(type); ++p) {
+        if (cap < pow(size, p + 1) || p == sizeof(type) - 1)
+            return dc / pow(ds, p);
+    }
+
+    return 0.0;
 }

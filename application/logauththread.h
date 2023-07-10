@@ -100,7 +100,7 @@ signals:
     void normalData(int index, QList<LOG_MSG_NORMAL> iDataList);
     void dnfFinished(QList<LOG_MSG_DNF> iKwinList);
     void dmesgFinished(QList<LOG_MSG_DMESG> iKwinList);
-    void auditFinished(int index);
+    void auditFinished(int index, bool bShowTip = false);
     void auditData(int index, QList<LOG_MSG_AUDIT> iDataList);
     void proccessError(const QString &iError);
 public slots:

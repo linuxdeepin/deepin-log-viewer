@@ -21,6 +21,7 @@ public:
     void quit();
     bool exportLog(const QString &outDir, const QString &in, bool isFile);
     bool isFileExist(const QString &filePath);
+    quint64 getFileSize(const QString &filePath);
     QString openLogStream(const QString &filePath);
     QString readLogInStream(const QString &token);
 

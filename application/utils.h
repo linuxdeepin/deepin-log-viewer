@@ -51,6 +51,7 @@ public:
     //系统版本号
     static QString osVersion();
     static QString auditType(const QString& eventType);
+    static double convertToMB(quint64 cap, const int size = 1024);
     /**
      * @brief specialComType 是否是特殊机型，like huawei
      * 取值有3种（-1,0,>0），默认为-1（未知），0（不是特殊机型）,>0（特殊机型）

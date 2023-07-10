@@ -520,7 +520,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
         fillOOCDetailInfo(data, error);
     } else if (dataStr.contains(AUDIT_TABLE_DATA)) {
         fillDetailInfo("audit", hostname, "", index.siblingAtColumn(1).data().toString(), QModelIndex(),
-                       index.siblingAtColumn(4).data().toString(),
+                       index.siblingAtColumn(4).data(AUDIT_ORIGIN_DATAROLE).toString(),
                        index.siblingAtColumn(3).data().toString(),
                        "",
                        "",

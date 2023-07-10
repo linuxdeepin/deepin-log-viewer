@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="bo">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="bo">
 <context>
     <name>Action</name>
     <message>
@@ -51,10 +53,6 @@
     <message>
         <source>3 months</source>
         <translation>ཉེ་བའི་ཟླ་3</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">ཕྱིར་འདྲེན།</translation>
     </message>
     <message>
         <source>Export</source>
@@ -119,6 +117,30 @@
     <message>
         <source>Trace</source>
         <translation>རྗེས་སྙེག</translation>
+    </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -206,6 +228,10 @@
     <message>
         <source>Login record</source>
         <translation>ཐོ་འཇུག་ཆ་འཕྲིན། </translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -416,12 +442,21 @@
         <source>Custom Log</source>
         <translation>རང་སྒྲུབ་ཉིན་ཐོ།</translation>
     </message>
+    <message>
+        <source>Audit Log</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
         <translation>ལྟ་དབང་མེད།</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

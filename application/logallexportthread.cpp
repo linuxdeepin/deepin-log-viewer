@@ -6,6 +6,9 @@
 #include "dbusproxy/dldbushandler.h"
 #include "logapplicationhelper.h"
 #include "utils.h"
+
+#include "dbusmanager.h"
+
 LogAllExportThread::LogAllExportThread(const QStringList &types, const QString &outfile, QObject *parent)
     : QObject(parent)
     , m_types(types)
@@ -63,6 +66,10 @@ void LogAllExportThread::run()
                 files.append(it2.at(1));
             }
         } else if (it.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
+            // 开启等保四，若当前用户不是审计管理员，不导出审计日志
+            if (DBusManager::isSEOepn() && !DBusManager::isAuditAdmin())
+                continue;
+
             files.append(DLDBusHandler::instance(nullptr)->getFileInfo("audit", false));
         }
 

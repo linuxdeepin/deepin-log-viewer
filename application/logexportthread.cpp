@@ -734,7 +734,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, QStandardItemModel *p
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -823,7 +823,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_J
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -875,7 +875,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_A
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -925,7 +925,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -974,7 +974,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_B
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1023,7 +1023,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_X
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1074,7 +1074,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_N
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 /**
  * @brief LogExportThread::exportToTxt导出到日志txt格式函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
@@ -1121,7 +1121,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_K
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
@@ -1165,7 +1165,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
@@ -1209,7 +1209,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
@@ -1254,7 +1254,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_A
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1351,7 +1351,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_J
     Utils::sleep(200);
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1433,7 +1433,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_A
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1510,7 +1510,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1583,7 +1583,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_B
     Utils::sleep(200);
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1658,7 +1658,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_X
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1736,7 +1736,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_N
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1811,7 +1811,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_K
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
@@ -1877,7 +1877,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
@@ -1943,7 +1943,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
@@ -2014,7 +2014,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_A
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2110,7 +2110,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, QStandardItemModel *
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2218,7 +2218,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2291,7 +2291,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2361,7 +2361,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2429,7 +2429,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2497,7 +2497,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2569,7 +2569,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2635,7 +2635,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
@@ -2699,7 +2699,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
@@ -2763,7 +2763,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
@@ -2830,7 +2830,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2895,7 +2895,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_J
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 
 }
 
@@ -2949,7 +2949,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_A
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 
 }
 
@@ -3001,7 +3001,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -3051,7 +3051,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_B
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -3101,7 +3101,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_X
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -3153,7 +3153,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_N
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -3202,7 +3202,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_K
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
@@ -3245,7 +3245,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
@@ -3288,7 +3288,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
@@ -3333,7 +3333,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_A
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
