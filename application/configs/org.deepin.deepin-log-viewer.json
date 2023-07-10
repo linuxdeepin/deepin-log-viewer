@@ -13,7 +13,7 @@
             "visibility": "private"
         },
 	"specialComType": {
-            "value": 0,
+            "value": -1,
             "serial": 0,
             "flags": ["global"],
             "name": "Special Computer Type",
