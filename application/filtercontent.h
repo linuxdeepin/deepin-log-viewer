@@ -67,7 +67,7 @@ private:
     void setAppComboBoxItem();
 
     void setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period, bool needMove,
-                            bool typecbx = false, bool dnfCbx = false); // modified by Airy
+                            bool typecbx = false, bool dnfCbx = false, bool auditCbx = false); // modified by Airy
     void setSelection(FILTER_CONFIG iConifg);
 
     void setUeButtonSytle();
@@ -106,6 +106,11 @@ signals:
      */
     void sigLogtypeChanged(int tId);  // add by Airy
     /**
+     * @brief sigAuditTypeChanged  审计日志审计类型下拉框触发筛选信号
+     * @param tId 下拉框当前index
+     */
+    void sigAuditTypeChanged(int tId);
+    /**
      * @brief sigResizeWidth  当前控件应有宽度信号
      * @param iWidth 计算宽度
      */
@@ -120,6 +125,7 @@ public slots:
     void slot_cbxAppIdxChanged(int idx);
     void slot_cbxStatusChanged(int idx);
     void slot_cbxLogTypeChanged(int idx);  // add  by Airy
+    void slot_cbxAuditTypeChanged(int idx);
     void setExportButtonEnable(bool iEnable);
     void slot_cbxDnfLvIdxChanged(int idx);
 
@@ -172,6 +178,14 @@ private:
      * @brief typeCbx 开关机日志日志种类筛选下拉框
      */
     LogCombox *typeCbx;  // add by Airy
+    /**
+     * @brief typeTxt 审计日志审计类型筛选下拉框前面的提示文字
+     */
+    Dtk::Widget::DLabel *auditTypeTxt;
+    /**
+     * @brief typeCbx 审计日志审计类型筛选下拉框
+     */
+    LogCombox *auditTypeCbx;
     /**
      * @brief m_curTreeIndex 日志种类选择listview传进来的当前选择的日志种类信息
      */

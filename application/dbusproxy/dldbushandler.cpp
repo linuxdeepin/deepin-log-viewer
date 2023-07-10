@@ -102,3 +102,8 @@ bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isF
 {
     return m_dbus->exportLog(outDir, in, isFile);
 }
+
+bool DLDBusHandler::isFileExist(const QString &filePath)
+{
+    return m_dbus->isFileExist(filePath);
+}

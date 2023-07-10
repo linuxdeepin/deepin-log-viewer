@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "utils.h"
+#include "logsettings.h"
 
 #include <QUrl>
 #include <QDir>
@@ -25,6 +26,7 @@ using namespace PolkitQt1;
 
 QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
+QMap<QString, QStringList> Utils::m_mapAuditType2EventType;
 int Utils::specialComType = -1;
 
 Utils::Utils(QObject *parent)
@@ -281,4 +283,16 @@ QString Utils::osVersion()
     }
     unlock->deleteLater();
     return osVerStr;
+}
+
+QString Utils::auditType(const QString &eventType)
+{
+    QMapIterator<QString, QStringList> it(m_mapAuditType2EventType);
+    while (it.hasNext()) {
+        it.next();
+        if (it.value().indexOf(eventType) != -1)
+            return it.key();
+    }
+
+    return "";
 }

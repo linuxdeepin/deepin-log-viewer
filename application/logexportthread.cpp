@@ -186,6 +186,15 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
     m_canRunning = true;
 }
 
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_alist = jList;
+    m_labels = labels;
+    m_runMode = TxtAUDIT;
+    m_canRunning = true;
+}
+
 /**
  * @brief LogExportThread::exportToHtmlPublic 导出到日志html格式配置函数对QStandardItemModel数据类型的重载
  * @param fileName 导出文件路径全称
@@ -326,6 +335,15 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
     m_dmesgList = jList;
     m_labels = labels;
     m_runMode = HtmlDMESG;
+    m_canRunning = true;
+}
+
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_alist = jList;
+    m_labels = labels;
+    m_runMode = HtmlAUDIT;
     m_canRunning = true;
 }
 
@@ -471,6 +489,15 @@ void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG
     m_runMode = DocDMESG;
     m_canRunning = true;
 }
+
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_alist = jList;
+    m_labels = labels;
+    m_runMode = DocAUDIT;
+    m_canRunning = true;
+}
 /**
  * @brief LogExportThread::exportToXlsPublic 导出到日志xlsx格式配置函数对QStandardItemModel数据类型的重载
  * @param fileName 导出文件路径全称
@@ -609,6 +636,15 @@ void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG
     m_dmesgList = jList;
     m_labels = labels;
     m_runMode = XlsDMESG;
+    m_canRunning = true;
+}
+
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_alist = jList;
+    m_labels = labels;
+    m_runMode = XlsAUDIT;
     m_canRunning = true;
 }
 /**
@@ -1155,6 +1191,51 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
             LOG_MSG_DMESG jMsg = jList.at(i);
             out << labels.value(col++, "") << ":" << jMsg.level << " ";
             out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
+            out << labels.value(col++, "") << ":" << jMsg.msg << " ";
+            out << "\n";
+            //导出进度信号
+            sigProgress(i + 1, jList.count());
+        }
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qDebug() << "Export Stop" << ErrorStr;
+        fi.close();
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
+}
+
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    //判断文件路径是否存在，不存在就返回错误
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
+    try {
+        QTextStream out(&fi);
+        out.setCodec(QTextCodec::codecForName("utf-8"));
+        for (int i = 0; i < jList.count(); i++) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            //导出各字段的描述和对应内容拼成目标字符串
+            LOG_MSG_AUDIT jMsg = jList.at(i);
+            int col = 0;
+            out << labels.value(col++, "") << ":" << jMsg.eventType << " ";
+            out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
+            out << labels.value(col++, "") << ":" << jMsg.processName << " ";
+            out << labels.value(col++, "") << ":" << jMsg.status << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
             //导出进度信号
@@ -1832,6 +1913,77 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
         QString fileNamex = fileName + "x";
 
         QFile rsNameFile(fileName);
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
+
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qDebug() << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    //如果取消导出，则删除文件
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    //100%进度
+    sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
+    Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+
+    return true && m_canRunning;
+}
+
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    try {
+        QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/5column.dfw";
+        if (!QFile(tempdir).exists()) {
+            qWarning() << "export docx template is not exisits";
+            return  false;
+        }
+
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(tempdir.toStdString());
+        //往表头中添加表头描述，表头为第一行，数据则在下面
+        for (int col = 0; col < labels.count(); ++col) {
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+
+        }
+        l_merger.paste("tableRow");
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+        for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_AUDIT message = jList.at(row);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.eventType.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), message.processName.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.status.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column5").toStdString(), message.msg.toStdString());
+            l_merger.paste("tableRow");
+            //导出进度信号
+            sigProgress(row + 1, jList.count() + end);
+        }
+        //保存，把拼好的xml写入文件中
+        QString fileNamex = fileName + "x";
+
+        QFile rsNameFile(fileName) ;
         if (rsNameFile.exists()) {
             rsNameFile.remove();
         }
@@ -2614,6 +2766,73 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     return true && m_canRunning;
 }
 
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    //判断文件路径是否存在，不存在就返回错误
+    QFile html(fileName);
+    if (!html.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
+    try {
+        //写网页头
+        html.write("<!DOCTYPE html>\n");
+        html.write("<html>\n");
+        html.write("<body>\n");
+        //写入表格标签
+        html.write("<table border=\"1\">\n");
+        // 写入表头
+        html.write("<tr>");
+        for (int i = 0; i < labels.count(); ++i) {
+            QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
+            html.write(labelInfo.toUtf8().data());
+        }
+        html.write("</tr>");
+        // 写入内容
+        for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            //根据字段拼出每行的网页内容
+            LOG_MSG_AUDIT jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
+            html.write("<tr>");
+            QString info = QString("<td>%1</td>").arg(jMsg.eventType);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.dateTime);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.processName);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.status);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.msg);
+            html.write(info.toUtf8().data());
+            html.write("</tr>");
+            //导出进度信号
+            sigProgress(row + 1, jList.count());
+        }
+
+        html.write("</table>\n");
+        html.write("</body>\n");
+        html.write("</html>\n");
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qDebug() << "Export Stop" << ErrorStr;
+        html.close();
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
+}
+
 /**
  * @brief LogExportThread::exportToXls导出到日志xlsx格式函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
  * @param fileName 导出文件路径全称
@@ -3072,6 +3291,51 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
     return true && m_canRunning;
 }
 
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    try {
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
+        for (int col = 0; col < labels.count(); ++col) {
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
+        }
+        ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+
+        for (int row = 0; row < jList.count() ; ++row) {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_AUDIT message = jList.at(row);
+            int col = 0;
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.eventType.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.processName.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.status.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
+            ++currentXlsRow;
+            sigProgress(row + 1, jList.count() + end);
+        }
+
+        workbook_close(workbook);
+        malloc_trim(0);
+        sigProgress(100, 100);
+        qDebug() << "export xlsx new";
+    } catch (const QString &ErrorStr) {
+        qDebug() << "Export Stop" << ErrorStr;
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    emit sigResult(m_canRunning);
+    return true && m_canRunning;
+}
+
 /**
  * @brief LogExportThread::initMap 初始化等级和对应显示字符的map
  */
@@ -3156,6 +3420,10 @@ void LogExportThread::run()
         exportToTxt(m_fileName, m_kwinList, m_labels);
         break;
     }
+    case TxtAUDIT: {
+        exportToTxt(m_fileName, m_alist, m_labels);
+    }
+        break;
     case HtmlModel: {
         exportToHtml(m_fileName, m_pModel, m_flag);
         break;
@@ -3196,6 +3464,10 @@ void LogExportThread::run()
         exportToHtml(m_fileName, m_dmesgList, m_labels);
         break;
     }
+    case HtmlAUDIT: {
+        exportToHtml(m_fileName, m_alist, m_labels);
+    }
+        break;
     case DocJOURNAL: {
         exportToDoc(m_fileName, m_jList, m_labels, m_flag);
         break;
@@ -3232,6 +3504,10 @@ void LogExportThread::run()
         exportToDoc(m_fileName, m_dmesgList, m_labels);
         break;
     }
+    case DocAUDIT: {
+        exportToDoc(m_fileName, m_alist, m_labels);
+    }
+        break;
     case XlsJOURNAL: {
         exportToXls(m_fileName, m_jList, m_labels, m_flag);
         break;
@@ -3268,6 +3544,10 @@ void LogExportThread::run()
         exportToXls(m_fileName, m_dmesgList, m_labels);
         break;
     }
+    case XlsAUDIT: {
+        exportToXls(m_fileName, m_alist, m_labels);
+    }
+        break;
     default:
         break;
     }

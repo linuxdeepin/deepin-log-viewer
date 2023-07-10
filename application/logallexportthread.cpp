@@ -62,6 +62,8 @@ void LogAllExportThread::run()
             for (auto &it2 : customLogListPair) {
                 files.append(it2.at(1));
             }
+        } else if (it.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
+            files.append(DLDBusHandler::instance(nullptr)->getFileInfo("audit", false));
         }
 
         //取消导出直接返回
@@ -72,6 +74,9 @@ void LogAllExportThread::run()
             return;
         }
     }
+
+    // 路径去重
+    files.removeDuplicates();
 
     if (files.isEmpty() && commands.isEmpty()) {
         emit exportFinsh(false);

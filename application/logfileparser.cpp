@@ -59,6 +59,7 @@ LogFileParser::LogFileParser(QWidget *parent)
     qRegisterMetaType<QList<LOG_MSG_NORMAL> > ("QList<LOG_MSG_NORMAL>");
     qRegisterMetaType<QList<LOG_MSG_DNF>>("QList<LOG_MSG_DNF>");
     qRegisterMetaType<QList<LOG_MSG_DMESG>>("QList<LOG_MSG_DMESG>");
+    qRegisterMetaType<QList<LOG_MSG_AUDIT>>("QList<LOG_MSG_AUDIT>");
     qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
 
 }
@@ -360,6 +361,26 @@ int LogFileParser::parseByOOC(const QString &path)
             &QObject::deleteLater);
     int index = m_OOCThread->getIndex();
     m_OOCThread->start();
+    return index;
+}
+
+int LogFileParser::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
+{
+    stopAllLoad();
+    m_isAuditLoading = true;
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(Audit);
+    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("audit", false);
+    authThread->setFileterParam(iAuditFilter);
+    authThread->setFilePath(filePath);
+    connect(authThread, &LogAuthThread::auditFinished, this,
+            &LogFileParser::auditFinished);
+    connect(authThread, &LogAuthThread::auditData, this,
+            &LogFileParser::auditData);
+    connect(this, &LogFileParser::stopKern, authThread,
+            &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
+    QThreadPool::globalInstance()->start(authThread);
     return index;
 }
 

@@ -5,7 +5,10 @@
 #include "dbusmanager.h"
 #include "utils.h"
 
+#include <unistd.h>
+#include <pwd.h>
 #include <QDBusInterface>
+#include <QDBusReply>
 #include <QDebug>
 
 bool DBusManager::isGetedKlu = false;
@@ -43,6 +46,50 @@ QString DBusManager::getSystemInfo()
         isGetedKlu = true;
     }
     return  isklusystemName;
+}
+
+bool DBusManager::isSEOepn()
+{
+    bool bIsSEOpen = false;
+    QDBusInterface interfaceSE("com.deepin.daemon.SecurityEnhance", "/com/deepin/daemon/SecurityEnhance", "com.deepin.daemon.SecurityEnhance", QDBusConnection::systemBus());
+    if (interfaceSE.isValid()) {
+        QDBusReply<QString> reply = interfaceSE.call(QStringLiteral("Status"));
+        if (!reply.error().message().isEmpty())
+            qWarning() << qPrintable(QString("com.deepin.daemon.SecurityEnhance.Status DBus error: %1").arg(reply.error().message()));
+
+        if (reply.value() == "close")
+            bIsSEOpen = false;
+        else
+            bIsSEOpen = true;
+    } else {
+        qWarning() << qPrintable(QString("isSEOpen failed! interface error: %1").arg(interfaceSE.lastError().message()));
+    }
+
+    return bIsSEOpen;
+}
+
+bool DBusManager::isAuditAdmin()
+{
+    bool bIsAuditAdmin = false;
+
+    // 获取当前系统用户名
+    struct passwd* pwd = getpwuid(getuid());
+    QString currentUserName = pwd->pw_name;
+
+    // 根据用户名判断用户身份，查看是否为审计管理员
+    QDBusInterface interfaceSE("com.deepin.daemon.SecurityEnhance", "/com/deepin/daemon/SecurityEnhance", "com.deepin.daemon.SecurityEnhance", QDBusConnection::systemBus());
+    if (interfaceSE.isValid()) {
+        QDBusReply<QString> reply = interfaceSE.call(QStringLiteral("GetSEUserByName"), currentUserName);
+        if (!reply.error().message().isEmpty())
+            qWarning() << qPrintable(QString("com.deepin.daemon.SecurityEnhance.GetSEUserByName DBus error: %1").arg(reply.error().message()));
+
+        if (reply.value() == "audadm_u" || reply.value() == "auditadm_u")
+            bIsAuditAdmin = true;
+    } else {
+        qWarning() << qPrintable(QString("isAuditAdmin failed! interface error: %1").arg(interfaceSE.lastError().message()));
+    }
+
+    return false;
 }
 
 bool DBusManager::isSpecialComType(){
