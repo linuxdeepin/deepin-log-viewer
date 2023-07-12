@@ -9,6 +9,7 @@ usr/share/deepin-log-viewer/DocxTemplate/*.dfw
 usr/share/dsg/configs/org.deepin.deepin-log-viewer/*.json
 usr/share/glib-2.0/schemas/*.gschema.xml
 usr/share/deepin-log-viewer/translations/*.qm
+usr/share/deepin-log-viewer/auditRule.conf
 usr/share/polkit-1/actions/*.policy
 usr/share/icons/hicolor/scalable/apps/*.svg
 usr/share/deepin-manual
