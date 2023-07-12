@@ -33,5 +33,15 @@
 			<source>authentication</source>
 			<translation type="unfinished" />
 		</message>
+		<message>
+			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0" />
+			<source>Authentication is required to export logs</source>
+			<translation type="unfinished" />
+		</message>
+		<message>
+			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0" />
+			<source>authentication</source>
+			<translation type="unfinished" />
+		</message>
 	</context>
 </TS>

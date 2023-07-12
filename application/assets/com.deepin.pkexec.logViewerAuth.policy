@@ -114,4 +114,16 @@
 		<description xml:lang="pl">uwierzytelnienie</description>
 		<message xml:lang="pl">Wymagane jest uwierzytelnienie do eksportowania logów</message>
 	</action>
+	<action id="com.deepin.pkexec.logViewerAuth.exportLogsSelf">
+		<description>authentication</description>
+		<message>Authentication is required to export logs</message>
+		<icon_name />
+		<defaults>
+			<allow_any>no</allow_any>
+			<allow_inactive>no</allow_inactive>
+			<allow_active>auth_self</allow_active>
+		</defaults>
+		<description xml:lang="zh_CN">认证</description>
+		<message xml:lang="zh_CN">导出日志需要授权</message>
+	</action>
 </policyconfig>
