@@ -1067,8 +1067,8 @@ void LogAuthThread::handleAudit()
 
             msg.auditType = auditType;
 
-            // 时间
-            re.setPattern("(?<=msg=audit\\().*(?=\\.)");
+            // 时间"(?<=msg=audit\()[^\.]*(?=\.)"
+            re.setPattern("(?<=msg=audit\\()[^\\.]*(?=\\.)");
             match = re.match(str);
             if (match.hasMatch()) {
                 QDateTime dateTime = QDateTime::fromTime_t(match.captured(0).toUInt());
