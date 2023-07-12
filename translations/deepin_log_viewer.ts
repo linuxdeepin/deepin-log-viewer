@@ -505,7 +505,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="86"/>
+        <location filename="../application/logcollectormain.cpp" line="88"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -781,43 +781,43 @@
 <context>
     <name>titlebar</name>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="175"/>
+        <location filename="../application/logcollectormain.cpp" line="177"/>
         <source>Refresh interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="176"/>
+        <location filename="../application/logcollectormain.cpp" line="178"/>
         <source>10 sec</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="177"/>
+        <location filename="../application/logcollectormain.cpp" line="179"/>
         <source>1 min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="178"/>
+        <location filename="../application/logcollectormain.cpp" line="180"/>
         <location filename="../tests/src/ut_logcollectormain.cpp" line="322"/>
         <source>5 min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="179"/>
+        <location filename="../application/logcollectormain.cpp" line="181"/>
         <source>No refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="206"/>
+        <location filename="../application/logcollectormain.cpp" line="208"/>
         <source>Export All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="211"/>
+        <location filename="../application/logcollectormain.cpp" line="213"/>
         <source>Refresh Now</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="289"/>
+        <location filename="../application/logcollectormain.cpp" line="299"/>
         <source>System Logs</source>
         <translation type="unfinished"></translation>
     </message>
