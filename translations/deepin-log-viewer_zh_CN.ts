@@ -456,7 +456,8 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation>当前系统安全等级为：高\n仅审计管理员可查看审计日志</translation>
+        <translation>当前系统安全等级为：高
+仅审计管理员可查看审计日志</translation>
     </message>
 </context>
 <context>
