@@ -9,6 +9,8 @@
 #include "logallexportthread.h"
 #include "exportprogressdlg.h"
 
+#include "dbusmanager.h"
+
 #include <DApplication>
 #include <DTitlebar>
 #include <DWindowOptionButton>
@@ -280,7 +282,15 @@ void LogCollectorMain::exportAllLogs()
 {
     static bool authorization = false;
     if (false == authorization) {
-        if (!Utils::checkAuthorization("com.deepin.pkexec.logViewerAuth.exportLogs", qApp->applicationPid())) {
+        QString policyActionId = "";
+        // 开启等保四，若当前用户是审计管理员，使用单用户审计管理员鉴权
+        if (DBusManager::isSEOepn() && DBusManager::isAuditAdmin())
+            policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogsSelf";
+        else
+            // 其他情况，默认为多用户鉴权
+            policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogs";
+
+        if (!Utils::checkAuthorization(policyActionId, qApp->applicationPid())) {
             return;
         }
         authorization = true;

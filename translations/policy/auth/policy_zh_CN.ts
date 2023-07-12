@@ -33,5 +33,15 @@
 			<source>authentication</source>
 			<translation>认证</translation>
 		</message>
+		<message>
+			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0" />
+			<source>Authentication is required to export logs</source>
+			<translation>导出日志需要授权</translation>
+		</message>
+		<message>
+			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0" />
+			<source>authentication</source>
+			<translation>认证</translation>
+		</message>
 	</context>
 </TS>
