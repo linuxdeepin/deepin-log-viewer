@@ -136,7 +136,7 @@
     </message>
     <message>
         <source>Document audit</source>
-        <translation>文档审计</translation>
+        <translation>文件审计</translation>
     </message>
     <message>
         <source>Other</source>
