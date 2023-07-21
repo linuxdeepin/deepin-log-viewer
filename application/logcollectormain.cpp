@@ -11,6 +11,8 @@
 
 #include "dbusmanager.h"
 
+#include <sys/utsname.h>
+
 #include <DApplication>
 #include <DTitlebar>
 #include <DWindowOptionButton>
