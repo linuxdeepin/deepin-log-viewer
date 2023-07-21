@@ -10,6 +10,7 @@
 #include "utils.h"
 #include "eventlogutils.h"
 #include "DebugTimeManager.h"
+#include "logbackend.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
@@ -54,13 +55,6 @@ int main(int argc, char *argv[])
     qDebug() << "XDG_SESSION_TYPE:" << XDG_SESSION_TYPE << "---WAYLAND_DISPLAY:" << WAYLAND_DISPLAY;
     qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
 
-    if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
-                                                              DGuiApplicationHelper::UserScope)) {
-        qInfo() << "DGuiApplicationHelper::instance()->setSingleInstance";
-        a.activeWindow();
-        return 0;
-    }
-
     //高分屏支持
     a.setAttribute(Qt::AA_UseHighDpiPixmaps);
     a.setAutoActivateWindows(true);
@@ -80,26 +74,60 @@ int main(int argc, char *argv[])
     LogApplicationHelper::instance();
 
     //命令行参数的解析
+
+    QCommandLineOption exportOption(QStringList() << "e" << "export", DApplication::translate("main", "export logs"));
+
     QCommandLineParser cmdParser;
+    cmdParser.addPositionalArgument("outDir", DApplication::translate("main", "export logs directory. if not set, default export to ~/Document."), "[outDir...]");
     cmdParser.setApplicationDescription("deepin-log-viewer");
     cmdParser.addHelpOption();
     cmdParser.addVersionOption();
+    cmdParser.addOption(exportOption);
+
+    if (!cmdParser.parse(qApp->arguments())) {
+        cmdParser.showHelp();
+    }
+
     cmdParser.process(a);
 
-    LogCollectorMain w;
-    a.setMainWindow(&w);
+    // cli命令处理
+    QStringList args = cmdParser.positionalArguments();
+    if (cmdParser.isSet(exportOption)) {
+        QString outDir = "";
 
-    //埋点记录启动数据
-    QJsonObject objStartEvent{
-        {"tid", Eventlogutils::StartUp},
-        {"vsersion", VERSION},
-        {"mode", 1},
-    };
-    Eventlogutils::GetInstance()->writeLogs(objStartEvent);
+        // 若指定有导出目录，按指定目录导出，否则按默认路径导出
+        if (!args.isEmpty())
+            outDir = args.first();
 
-    w.show();
-    Dtk::Widget::moveToCenter(&w);
-    bool result = a.exec();
-    PERF_PRINT_END("POINT-02", "");
-    return  result;
+        // 全部导出日志
+        LogBackend::instance(&a)->exportAllLogs(outDir);
+
+        return a.exec();
+    } else {
+
+        if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
+                                                                  DGuiApplicationHelper::UserScope)) {
+            qInfo() << "DGuiApplicationHelper::instance()->setSingleInstance";
+            a.activeWindow();
+            return 0;
+        }
+
+        // 显示GUI
+        LogCollectorMain w;
+        a.setMainWindow(&w);
+
+        //埋点记录启动数据
+        QJsonObject objStartEvent{
+            {"tid", Eventlogutils::StartUp},
+            {"vsersion", VERSION},
+            {"mode", 1},
+        };
+        Eventlogutils::GetInstance()->writeLogs(objStartEvent);
+        
+        w.show();
+        Dtk::Widget::moveToCenter(&w);
+        bool result = a.exec();
+        PERF_PRINT_END("POINT-02", "");
+        return  result;
+    }
 }

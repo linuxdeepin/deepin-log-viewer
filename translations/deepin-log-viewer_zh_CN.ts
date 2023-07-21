@@ -461,6 +461,21 @@
     </message>
 </context>
 <context>
+    <name>main</name>
+    <message>
+        <source>export logs</source>
+        <translation>导出日志</translation>
+    </message>
+    <message>
+        <source>export logs by logType. if not set, defaut export all logs.</source>
+        <translation>根据日志类型导出日志。若未设置此项，默认导出全部日志。</translation>
+    </message>
+    <message>
+        <source>export logs directory. if not set, default export to ~/Document.</source>
+        <translation>指定日志导出目录。若未设置此项，默认导出到~/文档。</translation>
+    </message>
+</context>
+<context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
@@ -485,10 +500,6 @@
     <message>
         <source>Export All</source>
         <translation>全部导出</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>系统全部日志</translation>
     </message>
     <message>
         <source>Refresh Now</source>

@@ -295,8 +295,16 @@ void LogCollectorMain::exportAllLogs()
         }
         authorization = true;
     }
+
+    // 时间
+    QString dateTime = QDateTime::currentDateTime().toString("yyyyMMddHHmmss");
+    // 主机名
+    utsname _utsname;
+    uname(&_utsname);
+    QString hostname = QString(_utsname.nodename);
+
     static QString defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    static QString fileFullPath = defaultDir + "/" + qApp->translate("titlebar", "System Logs") + ".zip";
+    static QString fileFullPath = defaultDir + "/" + QString("%1_%2_all_logs.zip").arg(dateTime).arg(hostname);
     QString newPath = DFileDialog::getSaveFileName(this, "", fileFullPath, "*.zip");
     if (newPath.isEmpty()) {
         return;
