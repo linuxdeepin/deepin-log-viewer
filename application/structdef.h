@@ -6,6 +6,7 @@
 #define STRUCTDEF_H
 #include <QString>
 #include <QDir>
+#include <QMap>
 
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"
@@ -385,5 +386,32 @@ enum AUDIT_DISPLAY_COLUMN {
     auditMsgColumn
 };
 }
+
+struct EXPORTALL_DATA {
+    QStringList files; // 日志文件原始路径
+    QMap<QString, QStringList> dir2Files; //包含父目录的日志文件
+    QStringList commands; // 需要用命令获得的日志
+    QString logCategory; // 日志种类
+
+    EXPORTALL_DATA()
+        : files(QStringList())
+        , commands(QStringList())
+        , logCategory("")
+    {
+        dir2Files.clear();
+    }
+
+    // 统计存入二级目录文件的总数
+    int dir2FilesCount() {
+        int nCount = 0;
+        QMapIterator<QString, QStringList> i(dir2Files);
+        while (i.hasNext()) {
+            i.next();
+            nCount += i.value().count();
+        }
+
+        return nCount;
+    }
+};
 
 #endif  // STRUCTDEF_H

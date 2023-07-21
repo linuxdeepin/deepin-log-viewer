@@ -11,6 +11,8 @@
 
 #include "dbusmanager.h"
 
+#include <sys/utsname.h>
+
 #include <DApplication>
 #include <DTitlebar>
 #include <DWindowOptionButton>
@@ -295,8 +297,16 @@ void LogCollectorMain::exportAllLogs()
         }
         authorization = true;
     }
+
+    // 时间
+    QString dateTime = QDateTime::currentDateTime().toString("yyyyMMddHHmmss");
+    // 主机名
+    utsname _utsname;
+    uname(&_utsname);
+    QString hostname = QString(_utsname.nodename);
+
     static QString defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    static QString fileFullPath = defaultDir + "/" + qApp->translate("titlebar", "System Logs") + ".zip";
+    static QString fileFullPath = defaultDir + "/" + QString("%1_%2_all_logs").arg(dateTime).arg(hostname) + ".zip";
     QString newPath = DFileDialog::getSaveFileName(this, "", fileFullPath, "*.zip");
     if (newPath.isEmpty()) {
         return;
