@@ -194,6 +194,7 @@ set (APP_CPP_FILES
 #     viewsortfilter.cpp
      logallexportthread.cpp
      eventlogutils.cpp
+     logbackend.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -229,6 +230,7 @@ set (APP_HEADERS_FILES
 #    viewsortfilter.h
     logallexportthread.h
     eventlogutils.h
+    logbackend.h
     )
 
 # 5. 头文件
@@ -378,6 +380,9 @@ install(DIRECTORY assets/deepin-log-viewer
 
 # Install aduit rule config file.
 install(FILES assets/auditRule.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer)
+
+# Install cli script deepin-logger
+install(FILES assets/deepin-logger DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 #FILES       - deployed files.
 #BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.

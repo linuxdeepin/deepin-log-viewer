@@ -460,6 +460,21 @@
     </message>
 </context>
 <context>
+    <name>main</name>
+    <message>
+        <source>export logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>export logs by logType. if not set, defaut export all logs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>export logs directory. if not set, default export to ~/Document.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
@@ -484,10 +499,6 @@
     <message>
         <source>Export All</source>
         <translation>Експортувати усе</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>Журнал системи</translation>
     </message>
     <message>
         <source>Refresh Now</source>

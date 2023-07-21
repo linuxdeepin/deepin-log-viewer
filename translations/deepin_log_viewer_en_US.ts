@@ -486,13 +486,13 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="../application/main.cpp" line="73"/>
         <location filename="../application/main.cpp" line="74"/>
+        <location filename="../application/main.cpp" line="75"/>
         <source>Log Viewer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="76"/>
+        <location filename="../application/main.cpp" line="77"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -505,7 +505,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="88"/>
+        <location filename="../application/logcollectormain.cpp" line="90"/>
         <source>Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -779,46 +779,59 @@
     </message>
 </context>
 <context>
+    <name>main</name>
+    <message>
+        <location filename="../application/main.cpp" line="85"/>
+        <source>export logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../application/main.cpp" line="88"/>
+        <source>export logs by logType. if not set, defaut export all logs.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../application/main.cpp" line="89"/>
+        <source>export logs directory. if not set, default export to ~/Document.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>titlebar</name>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="177"/>
+        <location filename="../application/logcollectormain.cpp" line="179"/>
         <source>Refresh interval</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="178"/>
+        <location filename="../application/logcollectormain.cpp" line="180"/>
         <source>10 sec</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="179"/>
+        <location filename="../application/logcollectormain.cpp" line="181"/>
         <source>1 min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="180"/>
+        <location filename="../application/logcollectormain.cpp" line="182"/>
         <location filename="../tests/src/ut_logcollectormain.cpp" line="322"/>
         <source>5 min</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="181"/>
+        <location filename="../application/logcollectormain.cpp" line="183"/>
         <source>No refresh</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="208"/>
+        <location filename="../application/logcollectormain.cpp" line="210"/>
         <source>Export All</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="213"/>
+        <location filename="../application/logcollectormain.cpp" line="215"/>
         <source>Refresh Now</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../application/logcollectormain.cpp" line="299"/>
-        <source>System Logs</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

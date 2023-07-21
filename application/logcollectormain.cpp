@@ -306,7 +306,7 @@ void LogCollectorMain::exportAllLogs()
     QString hostname = QString(_utsname.nodename);
 
     static QString defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    static QString fileFullPath = defaultDir + "/" + QString("%1_%2_all_logs").arg(dateTime).arg(hostname) + ".zip";
+    static QString fileFullPath = defaultDir + "/" + QString("%1_%2_all_logs.zip").arg(dateTime).arg(hostname);
     QString newPath = DFileDialog::getSaveFileName(this, "", fileFullPath, "*.zip");
     if (newPath.isEmpty()) {
         return;
