@@ -24,9 +24,9 @@ void LogAllExportThread::run()
         return;
     }
 
-    QStringList files;
-    QStringList commands;
+    QList<EXPORTALL_DATA> eList;
 
+    int nCount = 0;
     //获取所有文件
     for (auto &it : m_types) {
         if (it.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
