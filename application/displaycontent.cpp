@@ -61,6 +61,16 @@ DisplayContent::DisplayContent(QWidget *parent)
     initUI();
     initMap();
     initConnections();
+
+    // is coredumpctl installed
+    QDir dir("/usr/bin");
+    QStringList list = dir.entryList(QStringList() << (QString("coredumpctl") + "*"), QDir::NoDotAndDotDot | QDir::Files);
+    for (int i = 0; i < list.count(); i++) {
+        if("coredumpctl" == list[i]) {
+            m_isCoredumpctlExist = true;
+            break;
+        }
+    }
 }
 
 /**
@@ -104,6 +114,12 @@ void DisplayContent::initUI()
     notAuditLabel->setText(DApplication::translate("Warning", "Security level for the current system: high\n audit only administrators can view the audit log"));
     DFontSizeManager::instance()->bind(notAuditLabel, DFontSizeManager::T4);
     notAuditLabel->setAlignment(Qt::AlignCenter);
+
+    noCoredumpctlLabel = new DLabel(this);
+    DApplicationHelper::instance()->setPalette(noCoredumpctlLabel, pa);
+    noCoredumpctlLabel->setText(DApplication::translate("Waring", "Unable to obtain crash information, please install systemd-coredump."));
+    DFontSizeManager::instance()->bind(noCoredumpctlLabel, DFontSizeManager::T4);
+    noCoredumpctlLabel->setAlignment(Qt::AlignCenter);
 
     //m_spinnerWgt,m_spinnerWgt_K
     m_spinnerWgt = new LogSpinnerWidget(this);
@@ -200,8 +216,7 @@ void DisplayContent::initConnections()
     connect(m_treeView, SIGNAL(pressed(const QModelIndex &)), this,
             SLOT(slot_tableItemClicked(const QModelIndex &)));
 
-    connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString, const int)),
-            m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, QStandardItemModel *, QString, const int)));
+    connect(this, &DisplayContent::sigDetailInfo, m_detailWgt, &logDetailInfoWidget::slot_DetailInfo);
     connect(&m_logFileParse, &LogFileParser::dpkgFinished, this, &DisplayContent::slot_dpkgFinished,
             Qt::QueuedConnection);
     connect(&m_logFileParse, &LogFileParser::dpkgData, this, &DisplayContent::slot_dpkgData,
@@ -258,6 +273,11 @@ void DisplayContent::initConnections()
     connect(&m_logFileParse, &LogFileParser::auditData, this, &DisplayContent::slot_auditData,
             Qt::QueuedConnection);
     connect(&m_logFileParse, &LogFileParser::auditFinished, this, &DisplayContent::slot_auditFinished,
+            Qt::QueuedConnection);
+
+    connect(&m_logFileParse, &LogFileParser::coredumpData, this, &DisplayContent::slot_coredumpData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParse, &LogFileParser::coredumpFinished, this, &DisplayContent::slot_coredumpFinished,
             Qt::QueuedConnection);
 
     connect(m_treeView, &LogTreeView::customContextMenuRequested, this, &DisplayContent::slot_requestShowRightMenu);
@@ -675,6 +695,15 @@ void DisplayContent::insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int st
 void DisplayContent::insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end)
 {
     QList<LOG_MSG_AUDIT> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
+    }
+    parseListToModel(midList, m_pModel);
+}
+
+void DisplayContent::insertCoredumpTable(const QList<LOG_MSG_COREDUMP> &list, int start, int end)
+{
+    QList<LOG_MSG_COREDUMP> midList = list;
     if (end >= start) {
         midList = midList.mid(start, end - start);
     }
@@ -1423,10 +1452,13 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
     }
 
     m_curTreeIndex = index;
+    int row = index.row();
 
     if (m_flag == OtherLog || m_flag == CustomLog) {
         QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
         generateOOCFile(path);
+    } else if (m_flag == Coredump) {
+        emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog), 0, m_currentCoredumpList[index.row()].storagePath);
     } else {
         emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
     }
@@ -1482,6 +1514,8 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     } else if (treeData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         generateAuditFile(BUTTONID(m_curBtnId), AUDITTYPE(m_curLevel));
+    } else if(treeData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
+        generateCoredumpFile(btnId);
     }
 }
 
@@ -1581,6 +1615,8 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
     } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Audit;
+    } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Coredump;
     }
 }
 
@@ -1603,11 +1639,21 @@ void DisplayContent::slot_exportClicked()
         logName = QString("/%1").arg(("New File"));
     }
 
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
-    QString fileName = DFileDialog::getSaveFileName(
-                           this, DApplication::translate("File", "Export File"),
-                           path,
-                           tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
+    QString path, fileName;
+    if (m_flag != Coredump) {
+        path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
+        fileName = DFileDialog::getSaveFileName(
+                    this, DApplication::translate("File", "Export File"),
+                    path,
+                    tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))"), &selectFilter);
+    } else {
+        path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".zip";
+        fileName = DFileDialog::getSaveFileName(
+                    this, DApplication::translate("File", "Export File"),
+                    path,
+                    tr("zip(*.zip)"), &selectFilter);
+    }
+
 
     //限制当导出文件为空和导出doc和xls时用户改动后缀名导致导出问题，提示导出失败
     QFileInfo exportFile(fileName);
@@ -1853,6 +1899,10 @@ void DisplayContent::slot_exportClicked()
         default:
             break;
         }
+        QThreadPool::globalInstance()->start(exportThread);
+    } else if (selectFilter.contains("(*.zip)") && m_flag == Coredump) {
+        PERF_PRINT_BEGIN("POINT-04", QString("format=zip count=%1").arg(aList.count()));
+        exportThread->exportToZipPublic(fileName, m_currentCoredumpList, labels);
         QThreadPool::globalInstance()->start(exportThread);
     }
 }
@@ -2192,6 +2242,33 @@ void DisplayContent::slot_auditData(int index, QList<LOG_MSG_AUDIT> list)
     }
 }
 
+void DisplayContent::slot_coredumpFinished(int index)
+{
+    if (m_flag != Coredump || index != m_coredumpCurrentIndex)
+        return;
+
+    m_isDataLoadComplete = true;
+    if (m_currentCoredumpList.isEmpty()) {
+        setLoadState(DATA_COMPLETE);
+        emit setExportEnable(false);
+        createCoredumpTable(m_currentCoredumpList);
+    }
+}
+void DisplayContent::slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list)
+{
+    if (m_flag != Coredump || index != m_coredumpCurrentIndex)
+        return;
+
+    m_coredumpList.append(list);
+    m_currentCoredumpList.append(filterCoredump(m_currentSearchStr, list));
+    //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
+    if (m_firstLoadPageData) {
+        createCoredumpTable(m_currentCoredumpList);
+        m_firstLoadPageData = false;
+        PERF_PRINT_END("POINT-03", "type=coredump");
+    }
+}
+
 void DisplayContent::slot_OOCFinished(int index, int error)
 {
     if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
@@ -2395,6 +2472,20 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         }
     }
     break;
+    case Coredump: {
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
+                return;
+
+            int leftCnt = m_currentCoredumpList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertCoredumpTable(m_currentCoredumpList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
+        }
+    }
+    break;
     default:
         break;
     }
@@ -2520,6 +2611,12 @@ void DisplayContent::slot_searchResult(QString str)
         createAuditTable(aList);
     }
     break;
+    case Coredump: {
+        m_currentCoredumpList.clear();
+        m_currentCoredumpList = filterCoredump(m_currentSearchStr, m_coredumpList);
+        createCoredumpTableForm();
+        createCoredumpTable(m_currentCoredumpList);
+    }
     default:
         break;
     }
@@ -2919,6 +3016,51 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemM
     }
 }
 
+void DisplayContent::parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+
+    if (iList.isEmpty()) {
+        qWarning() << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<QStandardItem *> items;
+    DStandardItem *item = nullptr;
+    int listCount = iList.size();
+    for (int i = 0; i < listCount; i++) {
+        items.clear();
+
+        item = new DStandardItem(iList[i].sig);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+        items << item;
+
+        item = new DStandardItem(iList[i].dateTime);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+        items << item;
+
+        item = new DStandardItem(iList[i].coreFile);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+        items << item;
+
+        item = new DStandardItem(iList[i].uid);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+        items << item;
+
+        item = new DStandardItem(iList[i].exe);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(4));
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
 /**
  * @brief DisplayContent::setLoadState 设置当前的显示状态
  * @param iState 显示状态
@@ -2938,6 +3080,9 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     }
     if (!notAuditLabel->isHidden()) {
         notAuditLabel->hide();
+    }
+    if (!noCoredumpctlLabel->isHidden()) {
+        noCoredumpctlLabel->hide();
     }
 
 //    if (!m_treeView->isHidden()) {
@@ -2963,6 +3108,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         m_treeView->show();
         m_detailWgt->show();
         emit setExportEnable(true);
+
         break;
     }
     case DATA_LOADING_K: {
@@ -2978,7 +3124,8 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noResultLabel->show();
         noResultLabel->raise();
-        emit setExportEnable(true);
+        //搜索结果为空，导出按钮置灰
+        emit setExportEnable(false);
         break;
     }
     case DATA_NOT_AUDIT_ADMIN: {
@@ -2987,6 +3134,14 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         notAuditLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         notAuditLabel->show();
         notAuditLabel->raise();
+        emit setExportEnable(false);
+        break;
+    }
+    case COREDUMPCTL_NOT_INSTALLED: {
+        m_treeView->show();
+        noCoredumpctlLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
+        noCoredumpctlLabel->show();
+        noCoredumpctlLabel->raise();
         emit setExportEnable(false);
         break;
     }
@@ -3066,6 +3221,8 @@ void DisplayContent::clearAllDatalist()
     dnfListOrigin.clear();
     aList.clear();
     aListOrigin.clear();
+    m_coredumpList.clear();
+    m_currentCoredumpList.clear();
     malloc_trim(0);
 }
 
@@ -3249,6 +3406,25 @@ QList<LOG_MSG_AUDIT> DisplayContent::filterAudit(AUDIT_FILTERS auditFilter, cons
 
     return rsList;
 }
+QList<LOG_MSG_COREDUMP> DisplayContent::filterCoredump(const QString &iSearchStr, const QList<LOG_MSG_COREDUMP> &iList)
+{
+    QList<LOG_MSG_COREDUMP> rsList;
+    if (iSearchStr.isEmpty()) {
+        return iList;
+    }
+    for (int i = 0; i < iList.size(); i++) {
+        LOG_MSG_COREDUMP msg = iList.at(i);
+        if (msg.sig.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.coreFile.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.uid.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.exe.contains(iSearchStr, Qt::CaseInsensitive)) {
+            rsList.append(msg);
+        }
+    }
+
+    return rsList;
+}
 
 /**
  * @brief DisplayContent::onExportProgress 导出时进度显示槽函数,连接导出数据进程
@@ -3422,6 +3598,9 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Audit;
         generateAuditFile(m_curBtnId, m_curLevel);
+    } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Coredump;
+        generateCoredumpFile(m_curBtnId);
     }
 
     if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) || !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) { // modified by Airy
@@ -3583,6 +3762,107 @@ void DisplayContent::createAuditTable(const QList<LOG_MSG_AUDIT> &list)
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
+void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
+{
+    Q_UNUSED(iSearchStr)
+
+    if (!m_isCoredumpctlExist) {
+        setLoadState(COREDUMPCTL_NOT_INSTALLED);
+        return;
+    }
+
+    clearAllFilter();
+    clearAllDatalist();
+    m_coredumpList.clear();
+    m_firstLoadPageData = true;
+    m_isDataLoadComplete = false;
+    setLoadState(DATA_LOADING);
+    createCoredumpTableForm();
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime()); // get zero time
+    COREDUMP_FILTERS coreFilter;
+
+    switch (id) {
+    case ALL:
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+        break;
+    case ONE_DAY: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    case THREE_DAYS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    case ONE_WEEK: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    case ONE_MONTH: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    case THREE_MONTHS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    default:
+        break;
+    }
+}
+void DisplayContent::createCoredumpTableForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "SIG")
+                                        << DApplication::translate("Table", "TIME")
+                                        << DApplication::translate("Table", "COREFILE")
+                                        << DApplication::translate("Table", "UID")
+                                        << DApplication::translate("Table", "EXE"));
+
+    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpSIGColumn, 105);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpTimeColumn, 140);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpCorefileColumn, 100);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpUIDColumn, 75);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpEXEColumn, 175);
+}
+void DisplayContent::createCoredumpTable(const QList<LOG_MSG_COREDUMP> &list)
+{
+    setLoadState(DATA_COMPLETE);
+
+    m_limitTag = 0;
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertCoredumpTable(list, 0, end);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
 void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
 {
     if (m_flag != OtherLog && m_flag != CustomLog) {

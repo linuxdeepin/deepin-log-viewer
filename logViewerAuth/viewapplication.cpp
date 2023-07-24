@@ -31,6 +31,12 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     if (fileList[0] == "dmesg") {
         arg << "-c"
             << "dmesg -r";
+    } else if(fileList[0] == "coredumpctl-list"){
+        arg << "-c"
+            << "coredumpctl list";
+    } else if(fileList[0] == "coredumpctl-info"){
+        arg << "-c"
+            << QString("coredumpctl info %1").arg(fileList[1]);
     } else {
         arg << "-c" << QString("cat %1").arg(fileList[0]);
     }

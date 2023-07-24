@@ -47,6 +47,7 @@ public:
     void setFileterParam(const DNF_FILTERS &iFIlters) { m_dnfFilters = iFIlters; }
     void setFileterParam(const DMESG_FILTERS &iFIlters) { m_dmesgFilters = iFIlters; }
     void setFileterParam(const AUDIT_FILTERS &iFIlters) { m_auditFilters = iFIlters; }
+    void setFileterParam(const COREDUMP_FILTERS &iFIlters) { m_coredumpFilters = iFIlters; }
     void stopProccess();
     void setFilePath(const QStringList &filePath);
     int getIndex();
@@ -71,6 +72,7 @@ protected:
     void handleDnf();
     void handleDmesg();
     void handleAudit();
+    void handleCoredump();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
     qint64 formatDateTime(QString y, QString t);
@@ -102,6 +104,8 @@ signals:
     void dmesgFinished(QList<LOG_MSG_DMESG> iKwinList);
     void auditFinished(int index, bool bShowTip = false);
     void auditData(int index, QList<LOG_MSG_AUDIT> iDataList);
+    void coredumpFinished(int index);
+    void coredumpData(int index, QList<LOG_MSG_COREDUMP> iDataList);
     void proccessError(const QString &iError);
 public slots:
     //    void onFinished(int exitCode);
@@ -141,6 +145,8 @@ private:
      * @brief m_normalFilters 开关机日志筛选条件
      */
     AUDIT_FILTERS m_auditFilters;
+
+    COREDUMP_FILTERS m_coredumpFilters;
     static std::atomic<LogAuthThread *> m_instance;
     static std::mutex m_mutex;
     //获取数据用的cat命令的process

@@ -309,8 +309,9 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     QString outFullPath = "";
     QStringList arg = {"-c", ""};
     if (isFile) {
-        //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
-        if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home")) || in.contains("..")) {
+        //增加服务黑名单，只允许通过提权接口读取/var/log、/var/lib/systemd/coredump下，家目录下和临时目录下的文件
+        if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home") && !in.startsWith("/var/lib/systemd/coredump"))
+                || in.contains("..")) {
             return false;
         }
         QFileInfo filein(in);

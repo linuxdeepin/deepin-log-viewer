@@ -39,6 +39,7 @@ class DisplayContent : public Dtk::Widget::DWidget
         DATA_LOADING_K, //内核日志正在加载
         DATA_NO_SEARCH_RESULT, //搜索无记录
         DATA_NOT_AUDIT_ADMIN, // 提示不是审计管理员
+        COREDUMPCTL_NOT_INSTALLED
     };
 
 public:
@@ -94,6 +95,11 @@ private:
     void createAuditTableForm();
     void createAuditTable(const QList<LOG_MSG_AUDIT> &list);
 
+    //coredump log
+    void generateCoredumpFile(int id, const QString &iSearchStr = "");
+    void createCoredumpTableForm();
+    void createCoredumpTable(const QList<LOG_MSG_COREDUMP> &list);
+
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(const QList<LOG_MSG_APPLICATOIN> &list, int start, int end);
     void insertKernTable(const QList<LOG_MSG_JOURNAL> &list, int start,
@@ -104,6 +110,7 @@ private:
     void insertKwinTable(const QList<LOG_MSG_KWIN> &list, int start, int end);
     void insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int start, int end);
     void insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end);
+    void insertCoredumpTable(const QList<LOG_MSG_COREDUMP> &list, int start, int end);
     QString getAppName(const QString &filePath);
 
     bool isAuthProcessAlive();
@@ -131,12 +138,14 @@ signals:
      * @param pModel 当前的model指针
      * @param name 当前应用日志选择的日志名称
      */
-    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name, const int error = 0);
+    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name, const int error = 0, const QString coredumpPath = "");
     /**
      * @brief setExportEnable 是否允许导出信号
      * @param iEnable 是否允许导出
      */
     void setExportEnable(bool iEnable);
+
+    void sigCoredumpDetailInfo(QList<LOG_MSG_COREDUMP> cList);
 
 public slots:
     void slot_valueChanged_dConfig_or_gSetting(const QString &key);
@@ -174,6 +183,8 @@ public slots:
     void slot_OOCData(int index, const QString & data);
     void slot_auditFinished(int index, bool bShowTip = false);
     void slot_auditData(int index, QList<LOG_MSG_AUDIT> list);
+    void slot_coredumpFinished(int index);
+    void slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list);
 
     void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
@@ -196,6 +207,7 @@ public slots:
     void parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardItemModel *oPModel);
     QString getIconByname(const QString &str);
     void setLoadState(LOAD_STATE iState);
     void onExportProgress(int nCur, int nTotal);
@@ -214,6 +226,7 @@ public slots:
     QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_MSG_AUDIT> filterAudit(AUDIT_FILTERS auditFilter, const QList<LOG_MSG_AUDIT> &iList);
+    QList<LOG_MSG_COREDUMP> filterCoredump(const QString &iSearchStr, const QList<LOG_MSG_COREDUMP> &iList);
 
 private:
     void resizeEvent(QResizeEvent *event);
@@ -237,6 +250,7 @@ private:
     Dtk::Widget::DLabel *noResultLabel {nullptr};
     // 不是审计管理员提示的label
     Dtk::Widget::DLabel *notAuditLabel {nullptr};
+    Dtk::Widget::DLabel *noCoredumpctlLabel {nullptr};
     //当前选中的日志类型的index
     QModelIndex m_curListIdx;
     //当前选中的treeview的index
@@ -322,9 +336,6 @@ private:
     QList<LOG_MSG_AUDIT> aList, aListOrigin;
 
     /**
-     * @brief appList 经过筛选完成的内核日志数据
-     */
-    /**
      * @brief appListOrigin 未经过筛选的内核日志数据   ~/.cache/deepin/xxx.log(.xxx)
      */
     QList<LOG_MSG_APPLICATOIN> appList, appListOrigin;
@@ -344,6 +355,10 @@ private:
      * @brief m_kwinList 未经过筛选的开关机日志数据
      */
     QList<LOG_MSG_KWIN> m_kwinList;
+
+
+    QList<LOG_MSG_COREDUMP> m_coredumpList;
+    QList<LOG_MSG_COREDUMP> m_currentCoredumpList;
     /**
      * @brief m_iconPrefix 图标资源文件路径前缀
      */
@@ -401,9 +416,12 @@ private:
     int m_appCurrentIndex {-1};
     int m_OOCCurrentIndex {-1};
     int m_auditCurrentIndex {-1};
+    int m_coredumpCurrentIndex {-1};
     bool m_isDataLoadComplete {false};
     //筛选条件
     QString selectFilter;
+
+    bool m_isCoredumpctlExist = false;
 };
 
 #endif // DISPLAYCONTENT_H

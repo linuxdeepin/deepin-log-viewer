@@ -20,6 +20,7 @@
 #define DNF_TABLE_DATA "dnfItemData"
 #define OOC_TABLE_DATA "OOCItemData"
 #define AUDIT_TABLE_DATA "auditItemData"
+#define COREDUMP_TABLE_DATA "coredumpItemData"
 
 #define JOUR_TREE_DATA "journalctl"
 #define BOOT_KLU_TREE_DATA "bootklu"
@@ -35,6 +36,7 @@
 #define OTHER_TREE_DATA "other log"
 #define CUSTOM_TREE_DATA "custom log"
 #define AUDIT_TREE_DATA "/var/log/audit/audit.log"
+#define COREDUMP_TREE_DATA "coredump log"
 
 #define ITEM_DATE_ROLE (Qt::UserRole + 66)
 #define ICONPREFIX "://images/"
@@ -202,6 +204,16 @@ struct LOG_MSG_AUDIT {
     }
 };
 
+struct LOG_MSG_COREDUMP {
+    QString sig;
+    QString dateTime;
+    QString coreFile;
+    QString uid;
+    QString exe;
+    QString pid;
+    QString storagePath;
+};
+
 //kwin筛选条件，kwin日志只有信息，没有任何可筛选的，但是先放在这，以后统一化
 struct KWIN_FILTERS {
     QString msg;
@@ -248,6 +260,12 @@ struct KERN_FILTERS {
     qint64 timeFilterBegin = -1 ;
     qint64 timeFilterEnd = -1;
 };
+
+struct COREDUMP_FILTERS {
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
+};
+
 /**
  * @brief The BOOT_FILTERS struct 启动日志筛选条件
  */
@@ -306,6 +324,7 @@ enum LOG_FLAG {
     OtherLog,
     CustomLog,
     Audit,
+    Coredump,
     NONE = 9999
 }; // modified by
 // Airy
@@ -383,6 +402,16 @@ enum AUDIT_DISPLAY_COLUMN {
     auditProcessNameColumn,
     auditStatusColumn,
     auditMsgColumn
+};
+}
+
+namespace COREDUMP_SPACE {
+enum COREDUMP_DISPLAY_COLUMN {
+    coredumpSIGColumn = 0,
+    coredumpTimeColumn,
+    coredumpCorefileColumn,
+    coredumpUIDColumn,
+    coredumpEXEColumn
 };
 }
 

@@ -19,6 +19,9 @@
 #include <utmp.h>
 #include <utmpx.h>
 #include <algorithm>
+#include <signal.h>
+#include <unistd.h>
+#include <pwd.h>
 
 DGUI_USE_NAMESPACE
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
@@ -175,6 +178,9 @@ void LogAuthThread::run()
         break;
     case Audit:
         handleAudit();
+        break;
+    case Coredump:
+        handleCoredump();
         break;
     default:
         break;
@@ -780,7 +786,6 @@ void LogAuthThread::NormalInfoTime()
     std::reverse(TimeList.begin(), TimeList.end());
 }
 
-
 void LogAuthThread::handleDnf()
 {
     QList<LOG_MSG_DNF> dList;
@@ -1158,6 +1163,97 @@ void LogAuthThread::handleAudit()
         emit auditData(m_threadCount, aList);
     }
     emit auditFinished(m_threadCount);
+}
+
+void LogAuthThread::handleCoredump()
+{
+    QStringList sigList;
+    sigList << "SIGHUP" << "SIGINT" << "SIGQUIT" << "SIGILL" << "SIGTRAP" << "SIGABRT" << "SIGBUS" << "SIGFPE" << "SIGKILL" << "SIGUSR1"
+            << "SIGSEGV" << "SIGUSR2" << "SIGPIPE" << "SIGALRM" << "SIGTERM" << "SIGSTKFLT" << "SIGCHLD" << "SIGCONT" << "SIGSTOP" << "SIGTSTP"
+            << "SIGTTIN" << "SIGTTOU" << "SIGURG" << "SIGXCPU" << "SIGXFSZ" << "SIGVTALRM" << "SIGPROF" << "SIGWINCH" << "SIGIO" << "SIGPWR"
+            << "SIGSYS";
+
+    if (!m_canRun) {
+        return;
+    }
+    QList<LOG_MSG_COREDUMP> coredumpList;
+
+    initProccess();
+    m_process->start("pkexec", QStringList() << "logViewerAuth" <<
+                     QStringList() << "coredumpctl-list" << SharedMemoryManager::instance()->getRunnableKey());
+    m_process->waitForFinished(-1);
+
+    QByteArray outByte = m_process->readAllStandardOutput();
+    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+
+    QRegExp re("(Storage: )\\S+");
+    for (int i = strList.size() - 1; i >= 0 ; --i)  {
+        QString str = strList.at(i);
+        if (!m_canRun) {
+            return;
+        }
+        if (str.trimmed().isEmpty()) {
+            continue;
+        }
+        QStringList tmpList = str.split(" ", QString::SkipEmptyParts);
+        if (tmpList.count() < 10)
+            continue;
+
+        LOG_MSG_COREDUMP coredumpMsg;
+        coredumpMsg.dateTime = tmpList[1] + " " + tmpList[2];
+        QDateTime dt = QDateTime::fromString(coredumpMsg.dateTime, "yyyy-MM-dd hh:mm:ss");
+        if (m_coredumpFilters.timeFilterBegin > 0 && m_coredumpFilters.timeFilterEnd > 0) {
+            if (dt.toMSecsSinceEpoch() < m_coredumpFilters.timeFilterBegin
+                    || dt.toMSecsSinceEpoch() > m_coredumpFilters.timeFilterEnd)
+                continue;
+        }
+
+        // 获取信号名称
+        int sigId = tmpList[7].toInt();
+        if ( sigId <= sigList.size()) {
+            coredumpMsg.sig = sigList[sigId - 1];
+        } else {
+            coredumpMsg.sig = tmpList[7];
+        }
+        //获取用户名
+        struct passwd * pwd;
+       // uid_t userid;
+       // userid = getuid();
+        pwd = getpwuid(tmpList[5].toUInt());
+        coredumpMsg.uid = pwd->pw_name;
+        coredumpMsg.coreFile = tmpList[8];
+        coredumpMsg.exe = tmpList[9];
+        coredumpMsg.pid = tmpList[4];
+        // 解析coredump文件保存位置
+        if (coredumpMsg.coreFile != "missing") {
+            m_process->start("pkexec", QStringList() << "logViewerAuth" << QStringList() << "coredumpctl-info"
+                             << coredumpMsg.pid <<SharedMemoryManager::instance()->getRunnableKey());
+            m_process->waitForFinished(-1);
+            QByteArray outInfoByte = m_process->readAllStandardOutput();
+            re.indexIn(outInfoByte);
+            // QString path = re.cap(0).replace("Storage: ", "");
+            // coredumpMsg.storagePath = path;
+            coredumpMsg.storagePath = re.cap(0).replace("Storage: ", "");
+        } else {
+            coredumpMsg.storagePath = QString("coredump file is missing");
+        }
+
+        coredumpList.append(coredumpMsg);
+        //每获得500个数据就发出信号给控件加载
+        if (coredumpList.count() % SINGLE_READ_CNT == 0) {
+            emit coredumpData(m_threadCount, coredumpList);
+            coredumpList.clear();
+        }
+    }
+
+    if (!m_canRun) {
+        return;
+    }
+    //最后可能有余下不足500的数据
+    if (coredumpList.count() >= 0) {
+        emit coredumpData(m_threadCount, coredumpList);
+    }
+    emit coredumpFinished(m_threadCount);
 }
 
 /**
