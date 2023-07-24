@@ -269,6 +269,18 @@ void LogListView::initUI()
         m_logTypes.push_back(APP_TREE_DATA);  
     }
 
+    // coredump log
+    item = new QStandardItem(QIcon::fromTheme("dp_customlog"), DApplication::translate("Tree", "Coredump Log"));
+    setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+    item->setToolTip(DApplication::translate("Tree", "Coredump Log"));
+    item->setData(COREDUMP_TREE_DATA, ITEM_DATE_ROLE);
+    item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
+    item->setAccessibleText("Coredump Log");
+    m_pModel->appendRow(item);
+    m_logTypes.push_back(COREDUMP_TREE_DATA);
+
+
     // add by Airy
     if (isFileExist("/var/log/wtmp")) {
         item = new QStandardItem(QIcon::fromTheme("dp_onoff"), DApplication::translate("Tree", "Boot-Shutdown Event"));
@@ -441,7 +453,9 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
         g_context->addAction(g_clear);
         g_context->addAction(g_refresh);
 
-        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA || pathData == OTHER_TREE_DATA || pathData == CUSTOM_TREE_DATA || pathData == AUDIT_TREE_DATA) {
+        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA
+                || pathData == OTHER_TREE_DATA || pathData == CUSTOM_TREE_DATA || pathData == AUDIT_TREE_DATA
+                || pathData == COREDUMP_TREE_DATA) {
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
@@ -449,6 +463,7 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
+
         QString dirPath = QDir::homePath();
         QString _path_ = g_path; //get app path
         QString path = "";
@@ -458,9 +473,14 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
         } else if (pathData == APP_TREE_DATA) {
             path = _path_;
         }
+
         //显示当前日志目录
         connect(g_openForder, &QAction::triggered, this, [=] {
-            DDesktopServices::showFileItem(path);
+            if (pathData != COREDUMP_TREE_DATA) {
+                DDesktopServices::showFileItem(path);
+            } else {
+                DDesktopServices::showFolder(path);
+            }
         });
 
         QModelIndex index = idx;

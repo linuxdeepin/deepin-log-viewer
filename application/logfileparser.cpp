@@ -384,6 +384,24 @@ int LogFileParser::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
     return index;
 }
 
+int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter)
+{
+    stopAllLoad();
+    m_isCoredumpLoading = true;
+    qRegisterMetaType<QList<quint16>>("QList<LOG_MSG_COREDUMP>");
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(COREDUMP);
+    authThread->setFileterParam(iCoredumpFilter);
+    connect(authThread, &LogAuthThread::coredumpFinished, this,
+            &LogFileParser::coredumpFinished);
+    connect(authThread, &LogAuthThread::coredumpData, this,
+            &LogFileParser::coredumpData);
+    connect(this, &LogFileParser::stopCoredump, authThread, &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
+    QThreadPool::globalInstance()->start(authThread);
+    return index;
+}
+
 void LogFileParser::createFile(const QString &output, int count)
 {
 #if 1
@@ -414,6 +432,7 @@ void LogFileParser::stopAllLoad()
     emit stopDnf();
     emit stopDmesg();
     emit stopOOC();
+    emit stopCoredump();
     return;
 }
 

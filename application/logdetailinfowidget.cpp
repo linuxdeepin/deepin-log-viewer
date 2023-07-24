@@ -525,5 +525,12 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        "",
                        "",
                        index.siblingAtColumn(0).data().toString());
+    } else if (dataStr.contains(COREDUMP_TABLE_DATA)) {
+        fillDetailInfo(index.siblingAtColumn(3).data().toString(), hostname, "", index.siblingAtColumn(1).data().toString(), QModelIndex(),
+                       index.siblingAtColumn(4).data(Qt::UserRole + 2).toString(),
+                       index.siblingAtColumn(2).data().toString(),
+                       "",
+                       "",
+                       "");
     }
 }

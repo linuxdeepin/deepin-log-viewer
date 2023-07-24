@@ -7,6 +7,7 @@
 #include "xlsxwriter.h"
 #include "WordProcessingMerger.h"
 #include "WordProcessingCompiler.h"
+#include "dbusproxy/dldbushandler.h"
 
 #include <DApplication>
 
@@ -17,6 +18,8 @@
 #include <QTextDocument>
 #include <QTextDocumentWriter>
 #include <QElapsedTimer>
+#include <QStandardPaths>
+#include <QProcess>
 
 #include <malloc.h>
 DWIDGET_USE_NAMESPACE
@@ -647,6 +650,16 @@ void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG
     m_runMode = XlsAUDIT;
     m_canRunning = true;
 }
+
+void LogExportThread::exportToZipPublic(const QString &fileName, const QList<LOG_MSG_COREDUMP> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_coredumplist = jList;
+    m_labels = labels;
+    m_runMode = ZipCoredump;
+    m_canRunning = true;
+}
+
 /**
  * @brief LogExportThread::isProcessing 返回当前线程获取数据逻辑启动停止控制的变量
  * @return 当前线程获取数据逻辑启动停止控制的变量
@@ -3336,6 +3349,62 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_A
     return m_canRunning;
 }
 
+bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_COREDUMP> &jList)
+{
+    QString tmpPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/tmp/";
+    QDir dir(tmpPath);
+    //删除临时目录
+    dir.removeRecursively();
+    //创建临时目录
+    Utils::mkMutiDir(tmpPath);
+
+    //复制文件
+    for (auto &it : jList) {
+        DLDBusHandler::instance(this)->exportLog(tmpPath, it.storagePath, true);
+        if (!m_canRunning) {
+            break;
+        }
+    }
+
+    if (!m_canRunning) {
+        return false;
+    }
+    //打包日志文件
+    QProcess procss;
+    procss.setWorkingDirectory(tmpPath);
+    QStringList arg = {"-c"};
+    // 使用7z进行压缩，方便获取进度
+    arg.append(QString("7z a -l -bsp1 tmp.zip ./*;mv tmp.zip '%1'").arg(fileName));
+
+    // refresh progress
+    bool ret = false;
+    connect(&procss, &QProcess::readyReadStandardOutput, this, [&](){
+        if (!m_canRunning) {
+            procss.kill();
+            ret = false;
+            return;
+        }
+
+        QByteArray dd = procss.readAllStandardOutput();
+        QList<QString> lines = QString(dd).split('\n', QString::SkipEmptyParts);
+        for (const QString &line : qAsConst(lines)) {
+            int pos = line.indexOf(QLatin1Char('%'));
+            if (pos > 1) {
+                int percentage = line.midRef(pos - 3, 3).toInt();
+                sigProgress(percentage, 100);
+            }
+        }
+        ret = true;
+    });
+    procss.start("/bin/bash", arg);
+    procss.waitForFinished(-1);
+
+    emit sigResult(ret);
+
+    dir.removeRecursively();
+    return m_canRunning;
+}
+
 /**
  * @brief LogExportThread::initMap 初始化等级和对应显示字符的map
  */
@@ -3546,8 +3615,12 @@ void LogExportThread::run()
     }
     case XlsAUDIT: {
         exportToXls(m_fileName, m_alist, m_labels);
-    }
         break;
+    }
+    case ZipCoredump: {
+        exportToZip(m_fileName, m_coredumplist);
+        break;
+    }
     default:
         break;
     }

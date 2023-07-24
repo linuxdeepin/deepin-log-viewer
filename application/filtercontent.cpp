@@ -670,6 +670,9 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(AUDIT_TREE_DATA)) {
         m_currentType = AUDIT_TABLE_DATA;
         this->setSelectorVisible(false, false, false, true, false, false, false, true);
+    } else if (itemData.contains(COREDUMP_TREE_DATA)) {
+        m_currentType = COREDUMP_TREE_DATA;
+        this->setSelectorVisible(false, false, false, true, true, false, false, false);
     }
     updateDataState();
     //必须需要,因为会丢失当前焦点顺序
