@@ -27,9 +27,6 @@ void LogAllExportThread::run()
         return;
     }
 
-    QStringList files;
-    QStringList commands;
-
     QList<EXPORTALL_DATA> eList;
 
     int nCount = 0;
