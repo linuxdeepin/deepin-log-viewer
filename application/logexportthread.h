@@ -67,6 +67,7 @@ public:
         XlsDNF,
         XlsDMESG,
         XlsAUDIT, //数据来源是audit日志数据结构体的list,导出格式为xlxs
+        ZipCoredump,
         NoneExportType = 9999 //任何行为
     };
 
@@ -117,6 +118,8 @@ public:
     void exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels);
     void exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels);
     void exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels);
+
+    void exportToZipPublic(const QString &fileName, const QList<LOG_MSG_COREDUMP> &jList, const QStringList &labels);
 
     bool isProcessing();
 public slots:
@@ -192,6 +195,8 @@ private:
     bool exportToXls(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels);
     bool exportToXls(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels);
 
+    bool exportToZip(const QString &fileName, const QList<LOG_MSG_COREDUMP> &jList);
+
     void initMap();
     QString strTranslate(const QString &iLevelStr);
 
@@ -227,6 +232,7 @@ private:
     QList<LOG_MSG_DNF> m_dnfList;
     QList<LOG_MSG_DMESG> m_dmesgList;
     QList<LOG_MSG_AUDIT> m_alist;
+    QList<LOG_MSG_COREDUMP> m_coredumplist;
     //当前线程执行的逻辑种类
     RUN_MODE m_runMode = NoneExportType;
     //打开文件错误描述

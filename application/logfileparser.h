@@ -15,6 +15,7 @@
 
 #include <QMap>
 #include <QThread>
+#include <QDebug>
 
 class LogFileParser : public QObject
 {
@@ -44,6 +45,8 @@ public:
     int parseByOOC(const QString &path);
 
     int parseByAudit(const AUDIT_FILTERS &iAuditFilter);
+
+    int parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter);
 
     void createFile(const QString &output, int count);
     void stopAllLoad();
@@ -81,6 +84,9 @@ signals:
     void auditFinished(int index, bool bShowTip = false);
     void auditData(int index, QList<LOG_MSG_AUDIT>);
 
+    void coredumpFinished(int index);
+    void coredumpData(int index, QList<LOG_MSG_COREDUMP> iDataList);
+
     void stopKern();
     void stopBoot();
     void stopDpkg();
@@ -93,6 +99,7 @@ signals:
     void stopDnf();
     void stopDmesg();
     void stopOOC();
+    void stopCoredump();
     /**
      * @brief proccessError 获取日志文件失败错误信息传递信号，传递到主界面显示 DMessage tooltip
      * @param iError 错误字符
@@ -130,6 +137,7 @@ private:
     bool m_isNormalLoading = false;
     bool m_isOOCLoading = false;
     bool m_isAuditLoading = false;
+    bool m_isCoredumpLoading = false;
 };
 
 #endif  // LOGFILEPARSER_H

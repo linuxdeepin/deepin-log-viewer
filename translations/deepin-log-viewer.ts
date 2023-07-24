@@ -147,7 +147,15 @@
     <name>DisplayContent</name>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation type="vanished">TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+    </message>
+    <message>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -388,6 +396,26 @@
         <source>Time Modified</source>
         <translation>Time Modified</translation>
     </message>
+    <message>
+        <source>SIG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TIME</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>COREFILE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UID</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -444,6 +472,17 @@
     </message>
     <message>
         <source>Audit Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
