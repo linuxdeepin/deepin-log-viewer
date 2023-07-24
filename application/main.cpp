@@ -93,6 +93,14 @@ int main(int argc, char *argv[])
     // cli命令处理
     QStringList args = cmdParser.positionalArguments();
     if (cmdParser.isSet(exportOption)) {
+
+        if (!DGuiApplicationHelper::instance()->setSingleInstance("deepin-logger",
+                                                                  DGuiApplicationHelper::UserScope)) {
+            qInfo() << "DGuiApplicationHelper::instance()->setSingleInstance";
+            a.activeWindow();
+            return 0;
+        }
+
         QString outDir = "";
 
         // 若指定有导出目录，按指定目录导出，否则按默认路径导出
