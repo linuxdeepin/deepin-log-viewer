@@ -390,7 +390,7 @@ int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter)
     m_isCoredumpLoading = true;
     qRegisterMetaType<QList<quint16>>("QList<LOG_MSG_COREDUMP>");
     LogAuthThread   *authThread = new LogAuthThread(this);
-    authThread->setType(Coredump);
+    authThread->setType(COREDUMP);
     authThread->setFileterParam(iCoredumpFilter);
     connect(authThread, &LogAuthThread::coredumpFinished, this,
             &LogFileParser::coredumpFinished);

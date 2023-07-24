@@ -324,7 +324,7 @@ enum LOG_FLAG {
     OtherLog,
     CustomLog,
     Audit,
-    Coredump,
+    COREDUMP,
     NONE = 9999
 }; // modified by
 // Airy
@@ -407,11 +407,11 @@ enum AUDIT_DISPLAY_COLUMN {
 
 namespace COREDUMP_SPACE {
 enum COREDUMP_DISPLAY_COLUMN {
-    coredumpSIGColumn = 0,
-    coredumpTimeColumn,
-    coredumpCorefileColumn,
-    coredumpUIDColumn,
-    coredumpEXEColumn
+    COREDUMP_SIG_COLUMN = 0,
+    COREDUMP_TIME_COLUMN,
+    COREDUMP_COREFILE_COLUMN,
+    COREDUMP_UNAME_COLUMN,
+    COREDUMP_EXE_COLUMN
 };
 }
 

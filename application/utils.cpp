@@ -6,6 +6,7 @@
 #include "logsettings.h"
 
 #include <math.h>
+#include <pwd.h>
 
 #include <QUrl>
 #include <QDir>
@@ -312,4 +313,25 @@ double Utils::convertToMB(quint64 cap, const int size/* = 1024*/)
     }
 
     return 0.0;
+}
+
+QString Utils::getUserNamebyUID(uint uid)
+{
+    struct passwd * pwd;
+    pwd = getpwuid(uid);
+    return pwd->pw_name;
+}
+
+bool Utils::isCoredumpctlExist()
+{
+    bool isCoredumpctlExist = false;
+    QDir dir("/usr/bin");
+    QStringList list = dir.entryList(QStringList() << (QString("coredumpctl") + "*"), QDir::NoDotAndDotDot | QDir::Files);
+    for (int i = 0; i < list.count(); i++) {
+        if("coredumpctl" == list[i]) {
+            isCoredumpctlExist = true;
+            break;
+        }
+    }
+    return isCoredumpctlExist;
 }
