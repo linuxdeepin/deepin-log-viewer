@@ -435,7 +435,7 @@ void logDetailInfoWidget::fillOOCDetailInfo(const QString &data, const int error
  * @param name 应用日志的应用名称
  */
 void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel,
-                                          const QString &data, const int error, const QString &coredumpPath)
+                                          const QString &data, const int error)
 {
     cleanText();
 
@@ -527,7 +527,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        index.siblingAtColumn(0).data().toString());
     } else if (dataStr.contains(COREDUMP_TABLE_DATA)) {
         fillDetailInfo(index.siblingAtColumn(3).data().toString(), hostname, "", index.siblingAtColumn(1).data().toString(), QModelIndex(),
-                       coredumpPath,
+                       index.siblingAtColumn(4).data(Qt::UserRole + 2).toString(),
                        index.siblingAtColumn(2).data().toString(),
                        "",
                        "",

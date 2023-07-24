@@ -39,7 +39,7 @@ class DisplayContent : public Dtk::Widget::DWidget
         DATA_LOADING_K, //内核日志正在加载
         DATA_NO_SEARCH_RESULT, //搜索无记录
         DATA_NOT_AUDIT_ADMIN, // 提示不是审计管理员
-        COREDUMPCTL_NOT_INSTALLED
+        COREDUMPCTL_NOT_INSTALLED //未安装coredumpctl工具
     };
 
 public:
@@ -138,7 +138,7 @@ signals:
      * @param pModel 当前的model指针
      * @param name 当前应用日志选择的日志名称
      */
-    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name, const int error = 0, const QString coredumpPath = "");
+    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name, const int error = 0);
     /**
      * @brief setExportEnable 是否允许导出信号
      * @param iEnable 是否允许导出
@@ -421,7 +421,7 @@ private:
     //筛选条件
     QString selectFilter;
 
-    bool m_isCoredumpctlExist = false;
+    //bool m_isCoredumpctlExist = false;
 };
 
 #endif // DISPLAYCONTENT_H

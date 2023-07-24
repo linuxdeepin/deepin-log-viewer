@@ -464,10 +464,6 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             g_openForder->setEnabled(false);
         }
 
-        if (pathData == COREDUMP_TREE_DATA) {
-            g_clear->setEnabled(false);
-            g_openForder->setEnabled(true);
-        }
         QString dirPath = QDir::homePath();
         QString _path_ = g_path; //get app path
         QString path = "";
@@ -476,9 +472,8 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             path = pathData;
         } else if (pathData == APP_TREE_DATA) {
             path = _path_;
-        } else if (pathData == COREDUMP_TREE_DATA) {
-            path = "/var/lib/systemd/coredump";
         }
+
         //显示当前日志目录
         connect(g_openForder, &QAction::triggered, this, [=] {
             if (pathData != COREDUMP_TREE_DATA) {

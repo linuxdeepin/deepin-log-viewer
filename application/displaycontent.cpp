@@ -61,16 +61,6 @@ DisplayContent::DisplayContent(QWidget *parent)
     initUI();
     initMap();
     initConnections();
-
-    // is coredumpctl installed
-    QDir dir("/usr/bin");
-    QStringList list = dir.entryList(QStringList() << (QString("coredumpctl") + "*"), QDir::NoDotAndDotDot | QDir::Files);
-    for (int i = 0; i < list.count(); i++) {
-        if("coredumpctl" == list[i]) {
-            m_isCoredumpctlExist = true;
-            break;
-        }
-    }
 }
 
 /**
@@ -1457,8 +1447,6 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
     if (m_flag == OtherLog || m_flag == CustomLog) {
         QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
         generateOOCFile(path);
-    } else if (m_flag == Coredump) {
-        emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog), 0, m_currentCoredumpList[index.row()].storagePath);
     } else {
         emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
     }
@@ -1616,7 +1604,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Audit;
     } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
-        m_flag = Coredump;
+        m_flag = COREDUMP;
     }
 }
 
@@ -1640,7 +1628,7 @@ void DisplayContent::slot_exportClicked()
     }
 
     QString path, fileName;
-    if (m_flag != Coredump) {
+    if (m_flag != COREDUMP) {
         path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
         fileName = DFileDialog::getSaveFileName(
                     this, DApplication::translate("File", "Export File"),
@@ -1900,7 +1888,7 @@ void DisplayContent::slot_exportClicked()
             break;
         }
         QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter.contains("(*.zip)") && m_flag == Coredump) {
+    } else if (selectFilter.contains("(*.zip)") && m_flag == COREDUMP) {
         PERF_PRINT_BEGIN("POINT-04", QString("format=zip count=%1").arg(aList.count()));
         exportThread->exportToZipPublic(fileName, m_currentCoredumpList, labels);
         QThreadPool::globalInstance()->start(exportThread);
@@ -2244,7 +2232,7 @@ void DisplayContent::slot_auditData(int index, QList<LOG_MSG_AUDIT> list)
 
 void DisplayContent::slot_coredumpFinished(int index)
 {
-    if (m_flag != Coredump || index != m_coredumpCurrentIndex)
+    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex)
         return;
 
     m_isDataLoadComplete = true;
@@ -2256,7 +2244,7 @@ void DisplayContent::slot_coredumpFinished(int index)
 }
 void DisplayContent::slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list)
 {
-    if (m_flag != Coredump || index != m_coredumpCurrentIndex)
+    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex)
         return;
 
     m_coredumpList.append(list);
@@ -2472,7 +2460,7 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         }
     }
     break;
-    case Coredump: {
+    case COREDUMP: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
@@ -2611,7 +2599,7 @@ void DisplayContent::slot_searchResult(QString str)
         createAuditTable(aList);
     }
     break;
-    case Coredump: {
+    case COREDUMP: {
         m_currentCoredumpList.clear();
         m_currentCoredumpList = filterCoredump(m_currentSearchStr, m_coredumpList);
         createCoredumpTableForm();
@@ -3054,6 +3042,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardIt
         items << item;
 
         item = new DStandardItem(iList[i].exe);
+        item->setData(iList[i].storagePath, Qt::UserRole + 2);
         item->setData(COREDUMP_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(4));
         items << item;
@@ -3599,7 +3588,7 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         m_flag = Audit;
         generateAuditFile(m_curBtnId, m_curLevel);
     } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
-        m_flag = Coredump;
+        m_flag = COREDUMP;
         generateCoredumpFile(m_curBtnId);
     }
 
@@ -3766,7 +3755,7 @@ void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
 
-    if (!m_isCoredumpctlExist) {
+    if (!Utils::isCoredumpctlExist()) {
         setLoadState(COREDUMPCTL_NOT_INSTALLED);
         return;
     }
@@ -3840,16 +3829,16 @@ void DisplayContent::createCoredumpTableForm()
     m_pModel->clear();
     m_pModel->setHorizontalHeaderLabels(QStringList()
                                         << DApplication::translate("Table", "SIG")
-                                        << DApplication::translate("Table", "TIME")
-                                        << DApplication::translate("Table", "COREFILE")
-                                        << DApplication::translate("Table", "UID")
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Core File")
+                                        << DApplication::translate("Table", "User Name ")
                                         << DApplication::translate("Table", "EXE"));
 
-    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpSIGColumn, 105);
-    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpTimeColumn, 140);
-    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpCorefileColumn, 100);
-    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpUIDColumn, 75);
-    m_treeView->setColumnWidth(COREDUMP_SPACE::coredumpEXEColumn, 175);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_SIG_COLUMN, 110);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_TIME_COLUMN, 150);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_COREFILE_COLUMN, 100);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_UNAME_COLUMN, 100);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_EXE_COLUMN, 135);
 }
 void DisplayContent::createCoredumpTable(const QList<LOG_MSG_COREDUMP> &list)
 {
@@ -3865,7 +3854,7 @@ void DisplayContent::createCoredumpTable(const QList<LOG_MSG_COREDUMP> &list)
 }
 void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
 {
-    if (m_flag != OtherLog && m_flag != CustomLog) {
+    if (m_flag != OtherLog && m_flag != CustomLog && m_flag != COREDUMP) {
         return;
     }
 
@@ -3879,7 +3868,21 @@ void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
             menu->addAction(act_openForder);
             menu->addAction(act_refresh);
 
-            QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
+            QString path;
+            if (m_flag == COREDUMP) {
+                if (index.siblingAtColumn(2).data().toString() == "missing") {
+                    // 文件状态为missing，不能在文管中打开
+                    act_openForder->setEnabled(false);
+                } else {
+                    act_openForder->setEnabled(true);
+                }
+                //coredump文件不需要刷新
+                act_refresh->setEnabled(false);
+
+                path = m_pModel->item(index.row(), 4)->data(Qt::UserRole + 2).toString();
+            } else {
+                path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
+            }
 
             //显示当前日志目录
             connect(act_openForder, &QAction::triggered, this, [ = ] {

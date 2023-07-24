@@ -179,7 +179,7 @@ void LogAuthThread::run()
     case Audit:
         handleAudit();
         break;
-    case Coredump:
+    case COREDUMP:
         handleCoredump();
         break;
     default:
@@ -1216,23 +1216,18 @@ void LogAuthThread::handleCoredump()
             coredumpMsg.sig = tmpList[7];
         }
         //获取用户名
-        struct passwd * pwd;
-       // uid_t userid;
-       // userid = getuid();
-        pwd = getpwuid(tmpList[5].toUInt());
-        coredumpMsg.uid = pwd->pw_name;
+        coredumpMsg.uid = Utils::getUserNamebyUID(tmpList[5].toUInt());
         coredumpMsg.coreFile = tmpList[8];
         coredumpMsg.exe = tmpList[9];
         coredumpMsg.pid = tmpList[4];
         // 解析coredump文件保存位置
         if (coredumpMsg.coreFile != "missing") {
+            // 若coreFile状态为missing，表示文件已丢失，不继续解析文件位置
             m_process->start("pkexec", QStringList() << "logViewerAuth" << QStringList() << "coredumpctl-info"
                              << coredumpMsg.pid <<SharedMemoryManager::instance()->getRunnableKey());
             m_process->waitForFinished(-1);
             QByteArray outInfoByte = m_process->readAllStandardOutput();
             re.indexIn(outInfoByte);
-            // QString path = re.cap(0).replace("Storage: ", "");
-            // coredumpMsg.storagePath = path;
             coredumpMsg.storagePath = re.cap(0).replace("Storage: ", "");
         } else {
             coredumpMsg.storagePath = QString("coredump file is missing");
