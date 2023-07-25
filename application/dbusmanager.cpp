@@ -94,7 +94,6 @@ bool DBusManager::isAuditAdmin()
 
 bool DBusManager::isSpecialComType(){
     bool isSpecialComType = false;
-    qInfo() << "Utils::specialComType value is:" << Utils::specialComType;
     //机器类型未知时，走以前判读机器的类型，有可能是通过DConfig获取失败，导致机器类型未知
     if(Utils::specialComType != -1){
         isSpecialComType = Utils::specialComType ? true:false;
@@ -111,6 +110,5 @@ bool DBusManager::isSpecialComType(){
             isSpecialComType = true;
         }
     }
-    qInfo() << "Is it a special computer type?" << Utils::specialComType;
     return isSpecialComType;
 }

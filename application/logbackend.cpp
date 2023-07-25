@@ -12,14 +12,11 @@
 
 #include <sys/utsname.h>
 
-#include <DApplication>
 #include <DSysInfo>
 
 #include <QDateTime>
 #include <QStandardPaths>
 #include <QThreadPool>
-
-DWIDGET_USE_NAMESPACE
 
 LogBackend *LogBackend::m_staticbackend = nullptr;
 
@@ -65,7 +62,8 @@ void LogBackend::exportAllLogs(const QString &outDir)
          m_newDir = odir.exists();
          if (m_newDir)
              outPath = odir.absolutePath();
-    }
+    } else
+        outPath = odir.absolutePath();
 
     m_outPath = outPath;
 
@@ -84,7 +82,7 @@ void LogBackend::exportAllLogs(const QString &outDir)
             PERF_PRINT_END("POINT-05", "cost");
             qApp->quit();
         } else {
-            qInfo() << "exporting all logs stoped.";
+            qWarning() << "exporting all logs stoped.";
             // 导出失败，若为用户指定的新目录，应清除
             if (m_newDir) {
                 QDir odir(outPath);
@@ -136,6 +134,8 @@ QStringList LogBackend::getLogTypes()
     if (!appMap.isEmpty()) {
         m_logTypes.push_back(APP_TREE_DATA);
     }
+
+    m_logTypes.push_back(COREDUMP_TREE_DATA);
 
     // add by Airy
     if (QFile::exists("/var/log/wtmp")) {

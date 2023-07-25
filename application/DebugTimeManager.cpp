@@ -43,7 +43,7 @@ void DebugTimeManager::endPointLinux(const QString &point, const QString &status
             return;
         }
         timespec diffTime =  diff(m_MapLinuxPoint[point].time, endTime);
-        qInfo() << QString("[GRABPOINT] %1 %2 %3 time=%4ms").arg(point).arg(m_MapLinuxPoint[point].desc).arg(status).arg(diffTime.tv_sec * 1000 + (diffTime.tv_nsec) / 1000000);
+        qInfo() << QString("[GRABPOINT] %1 %2 %3 time=%4s").arg(point).arg(m_MapLinuxPoint[point].desc).arg(status).arg(QString::number((diffTime.tv_sec * 1000 + (diffTime.tv_nsec) / 1000000) / 1000.0, 'g', 4));
         m_MapLinuxPoint.remove(point);
     }
 }
