@@ -147,7 +147,15 @@
     <name>DisplayContent</name>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation type="vanished">TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+    </message>
+    <message>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</translation>
+    </message>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation>zip(*.zip)</translation>
     </message>
 </context>
 <context>
@@ -388,6 +396,22 @@
         <source>Time Modified</source>
         <translation>修改日期</translation>
     </message>
+    <message>
+        <source>SIG</source>
+        <translation>崩溃信号</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>核心文件</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>用户</translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation>进程</translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -445,6 +469,17 @@
     <message>
         <source>Audit Log</source>
         <translation>审计日志</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation>崩溃日志</translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation>无法获取崩溃信息，请安装 systemd-coredump。</translation>
     </message>
 </context>
 <context>
