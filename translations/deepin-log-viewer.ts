@@ -401,19 +401,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>TIME</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>COREFILE</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>UID</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>EXE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Name </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
