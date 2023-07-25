@@ -5,10 +5,7 @@
 #include "logallexportthread.h"
 #include "dbusproxy/dldbushandler.h"
 #include "logapplicationhelper.h"
-#include <DApplication>
 #include "utils.h"
-
-DWIDGET_USE_NAMESPACE
 
 LogAllExportThread::LogAllExportThread(const QStringList &types, const QString &outfile, QObject *parent)
     : QObject(parent)
@@ -20,6 +17,7 @@ LogAllExportThread::LogAllExportThread(const QStringList &types, const QString &
 void LogAllExportThread::run()
 {
     //判断权限
+    qInfo() << "outFile: " << m_outfile;
     QFileInfo info(m_outfile);
     if (!QFileInfo(info.path()).isWritable()) {
         qInfo() << QString("outdir:%1 it not writable or is not exist.").arg(info.absolutePath());
@@ -74,6 +72,9 @@ void LogAllExportThread::run()
                     data.dir2Files[fi.baseName()] = paths;
                 }
             }
+        } else if (it.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
+            data.logCategory = "coredump";
+            data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("coredump", false));
         } else if (it.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "other";
             auto otherLogListPair = LogApplicationHelper::instance()->getOtherLogList();

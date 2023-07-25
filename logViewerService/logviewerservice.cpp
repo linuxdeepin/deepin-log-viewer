@@ -187,11 +187,49 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
         QString appDir = appFileInfo.absolutePath();
         nameFilter = appDir.mid(appDir.lastIndexOf("/") + 1, appDir.size() - 1);
         dir.setPath(appDir);
+    } else if (file == "audit"){
+        dir.setPath("/var/log/audit");
+        nameFilter = file;
+    } else if (file == "coredump") {
+        QProcess process;
+        QStringList args = {"-c", ""};
+        args[1].append("coredumpctl list");
+        process.start("/bin/bash", args);
+        process.waitForFinished(-1);
+        QByteArray outByte = process.readAllStandardOutput();
+        QStringList strList = QString(outByte.replace('\u0000', "").replace("\x01", "")).split('\n', QString::SkipEmptyParts);
+
+        QRegExp re("(Storage: )\\S+");
+        for (int i = strList.size() - 1; i >= 0; --i) {
+            QString str = strList.at(i);
+            if (str.trimmed().isEmpty())
+                continue;
+
+            QStringList tmpList = str.split(" ", QString::SkipEmptyParts);
+            if (tmpList.count() < 10)
+                continue;
+
+            QString coreFile = tmpList[8];
+            QString pid = tmpList[4];
+            QString storagePath = "";
+            // 解析coredump文件保存位置
+            if (coreFile != "missing") {
+                args[1] = QString("coredumpctl info %1").arg(pid);
+                process.start("/bin/bash", args);
+                process.waitForFinished(-1);
+                QByteArray outInfoByte = process.readAllStandardOutput();
+                re.indexIn(outInfoByte);
+                storagePath = re.cap(0).replace("Storage: ", "");
+            }
+
+            if (!storagePath.isEmpty()) {
+                fileNamePath.append(storagePath);
+            }
+        }
+
+        return fileNamePath;
     } else {
-        if (file == "audit")
-            dir.setPath("/var/log/audit");
-        else
-            dir.setPath("/var/log");
+        dir.setPath("/var/log");
         nameFilter = file;
     }
     //要判断路径是否存在
@@ -328,7 +366,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             qInfo() << "unknown command:" << in;
             return false;
         }
-        outFullPath = outDirInfo.absoluteFilePath() + in + ".txt";
+        outFullPath = outDirInfo.absoluteFilePath() + in + ".log";
         //结果重定向到文件
         arg[1].append(QString("%1 >& \"%2\";").arg(it.value(), outFullPath));
     }
