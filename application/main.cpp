@@ -11,6 +11,7 @@
 #include "eventlogutils.h"
 #include "DebugTimeManager.h"
 #include "logbackend.h"
+#include "cliapplicationhelper.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
@@ -53,6 +54,11 @@ int main(int argc, char *argv[])
         // cli命令处理
         QStringList args = cmdParser.positionalArguments();
         if (cmdParser.isSet(exportOption)) {
+
+            if (!CliApplicationHelper::instance()->setSingleInstance(a.applicationName(),
+                                                                      CliApplicationHelper::UserScope)) {
+                return 0;
+            }
 
             QString outDir = "";
 
@@ -134,6 +140,7 @@ int main(int argc, char *argv[])
         Dtk::Widget::moveToCenter(&w);
         bool result = a.exec();
         PERF_PRINT_END("POINT-02", "");
+
         return  result;
 
     }

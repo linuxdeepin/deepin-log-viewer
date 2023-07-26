@@ -158,6 +158,7 @@ list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
 
 set (APP_CPP_FILES
      main.cpp
+     cliapplicationhelper.cpp
      filtercontent.cpp
      displaycontent.cpp
      logcollectormain.cpp
@@ -202,8 +203,9 @@ assets/resources.qrc
 
 
 set (APP_HEADERS_FILES
-   logcollectormain.h
-  displaycontent.h
+    cliapplicationhelper.h
+    logcollectormain.h
+    displaycontent.h
     logfileparser.h
     filtercontent.h
     structdef.h
