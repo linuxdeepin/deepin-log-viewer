@@ -41,7 +41,7 @@ void LogAllExportThread::run()
             data.logCategory = "kernel";
             data.commands.push_back("dmesg");
         } else if (it.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
-            data.logCategory = "boot-shutdown event";
+            data.logCategory = "boot-shutdown-event";
             data.commands.push_back("last");
         } else if (it.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "dpkg";

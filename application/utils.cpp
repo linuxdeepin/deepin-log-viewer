@@ -281,8 +281,6 @@ QString Utils::osVersion()
     if (re.indexIn(str) > -1) {
         auto result = re.cap(0);
         osVerStr = result.remove(0, 1).remove(result.size() - 1, 1);
-        qInfo() << "lsb_release -r:" << output;
-        qInfo() << "OS version:" << osVerStr;
     }
     unlock->deleteLater();
     return osVerStr;
