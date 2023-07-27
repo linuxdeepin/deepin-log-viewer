@@ -42,6 +42,11 @@ class DisplayContent : public Dtk::Widget::DWidget
         COREDUMPCTL_NOT_INSTALLED //未安装coredumpctl工具
     };
 
+    enum OOC_TYPE {
+        OOC_OTHER = 0, // 其他日志
+        OOC_CUSTOM     // 自定义日志
+    };
+
 public:
     explicit DisplayContent(QWidget *parent = nullptr);
     ~DisplayContent();
@@ -87,8 +92,9 @@ private:
 
     //其他日志或者自定义日志
     void generateOOCFile(const QString &path);
+    void generateOOCLogs(const OOC_TYPE &type, const QString &iSearchStr = "");
     void createOOCTableForm();
-    void createOOCTable(const QList<QStringList> & list);
+    void createOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list);
 
     // 审计日志
     void generateAuditFile(int id, int lId, const QString &iSearchStr = "");
@@ -109,6 +115,7 @@ private:
     void insertBootTable(const QList<LOG_MSG_BOOT> &list, int start, int end);
     void insertKwinTable(const QList<LOG_MSG_KWIN> &list, int start, int end);
     void insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int start, int end);
+    void insertOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list, int start, int end);
     void insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end);
     void insertCoredumpTable(const QList<LOG_MSG_COREDUMP> &list, int start, int end);
     QString getAppName(const QString &filePath);
@@ -225,6 +232,7 @@ public slots:
     QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList);
     QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
+    QList<LOG_FILE_OTHERORCUSTOM> filterOOC(const QString &iSearchStr, const QList<LOG_FILE_OTHERORCUSTOM> &iList);
     QList<LOG_MSG_AUDIT> filterAudit(AUDIT_FILTERS auditFilter, const QList<LOG_MSG_AUDIT> &iList);
     QList<LOG_MSG_COREDUMP> filterCoredump(const QString &iSearchStr, const QList<LOG_MSG_COREDUMP> &iList);
 
@@ -329,6 +337,16 @@ private:
      * @brief kListOrigin 未经过筛选的内核日志数据   kern.log
      */
     QList<LOG_MSG_JOURNAL> kList, kListOrigin;
+
+    /**
+     * @brief oList未经过筛选的其他日志数据   other
+     */
+    QList<LOG_FILE_OTHERORCUSTOM> oList, oListOrigin;
+
+    /**
+     * @brief cList未经过筛选的自定义日志数据   custom
+     */
+    QList<LOG_FILE_OTHERORCUSTOM> cList, cListOrigin;
 
     /**
      * @brief aListOrigin 未经过筛选的审计日志数据   audit/audit.log

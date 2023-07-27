@@ -1122,9 +1122,12 @@ TEST(DisplayContent_createOOCTable_UT, DisplayContent_createOOCTable_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
-    QList<QStringList> list;
+    QList<LOG_FILE_OTHERORCUSTOM> list;
     for (int i = 0; i < 100; ++i) {
-        list.append(QStringList()<<"deepin-installer-init.log"<<"/var/log/deepin-installer-init.log");
+        LOG_FILE_OTHERORCUSTOM data;
+        data.name = "deepin-installer-init.log";
+        data.path = "/var/log/deepin-installer-init.log";
+        list.append(data);
     }
     p->createOOCTable(list);
     p->deleteLater();

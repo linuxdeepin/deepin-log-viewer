@@ -682,6 +682,15 @@ void DisplayContent::insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int st
     parseListToModel(midList, m_pModel);
 }
 
+void DisplayContent::insertOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list, int start, int end)
+{
+    QList<LOG_FILE_OTHERORCUSTOM> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
+    }
+    parseListToModel(midList, m_pModel);
+}
+
 void DisplayContent::insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end)
 {
     QList<LOG_MSG_AUDIT> midList = list;
@@ -1595,12 +1604,10 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_flag = Dmesg;
     } else if (itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = OtherLog;
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getOtherLogList());
+        generateOOCLogs(OOC_OTHER);
     } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = CustomLog;
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
+        generateOOCLogs(OOC_CUSTOM);
     } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Audit;
     } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
@@ -2446,6 +2453,34 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         }
     }
     break;
+    case OtherLog: {
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
+                return;
+
+            int leftCnt = oList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertOOCTable(oList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
+        }
+    }
+    break;
+    case CustomLog: {
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
+                return;
+
+            int leftCnt = cList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertOOCTable(cList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
+        }
+    }
+    break;
     case Audit: {
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
@@ -2591,6 +2626,20 @@ void DisplayContent::slot_searchResult(QString str)
         createDmesgTable(dmesgList);
     }
     break;
+    case OtherLog: {
+        oList.clear();
+        oList = filterOOC(m_currentSearchStr, oListOrigin);
+        createOOCTableForm();
+        createOOCTable(oList);
+    }
+    break;
+    case CustomLog: {
+        cList.clear();
+        cList = filterOOC(m_currentSearchStr, cListOrigin);
+        createOOCTableForm();
+        createOOCTable(cList);
+    }
+    break;
     case Audit: {
         aList.clear();
         m_auditFilter.searchstr = m_currentSearchStr;
@@ -2605,6 +2654,7 @@ void DisplayContent::slot_searchResult(QString str)
         createCoredumpTableForm();
         createCoredumpTable(m_currentCoredumpList);
     }
+    break;
     default:
         break;
     }
@@ -3208,6 +3258,10 @@ void DisplayContent::clearAllDatalist()
     jBootListOrigin.clear();
     dnfList.clear();
     dnfListOrigin.clear();
+    oList.clear();
+    oListOrigin.clear();
+    cList.clear();
+    cListOrigin.clear();
     aList.clear();
     aListOrigin.clear();
     m_coredumpList.clear();
@@ -3374,6 +3428,20 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterJournalBoot(const QString &iSearchS
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_JOURNAL msg = iList.at(i);
         if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
+            rsList.append(msg);
+    }
+    return rsList;
+}
+
+QList<LOG_FILE_OTHERORCUSTOM> DisplayContent::filterOOC(const QString &iSearchStr, const QList<LOG_FILE_OTHERORCUSTOM> &iList)
+{
+    QList<LOG_FILE_OTHERORCUSTOM> rsList;
+    if (iSearchStr.isEmpty()) {
+        return iList;
+    }
+    for (int i = 0; i < iList.size(); i++) {
+        LOG_FILE_OTHERORCUSTOM msg = iList.at(i);
+        if (msg.name.contains(iSearchStr, Qt::CaseInsensitive) || msg.path.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
     return rsList;
@@ -3578,12 +3646,10 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     } else if (itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = OtherLog;
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getOtherLogList());
+        generateOOCLogs(OOC_OTHER);
     } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = CustomLog;
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
+        generateOOCLogs(OOC_CUSTOM);
     } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Audit;
         generateAuditFile(m_curBtnId, m_curLevel);
@@ -3610,6 +3676,40 @@ void DisplayContent::generateOOCFile(const QString &path)
     m_OOCCurrentIndex = m_logFileParse.parseByOOC(path);
 }
 
+void DisplayContent::generateOOCLogs(const OOC_TYPE &type, const QString &iSearchStr/* = ""*/)
+{
+    clearAllFilter();
+    clearAllDatalist();
+
+    QList<QStringList> files;
+    QList<LOG_FILE_OTHERORCUSTOM>* pListOrigin = nullptr;
+    QList<LOG_FILE_OTHERORCUSTOM>* pList = nullptr;
+
+    if (type == OOC_OTHER) {
+        files = LogApplicationHelper::instance()->getOtherLogList();
+        pListOrigin = &oListOrigin;
+        pList = &oList;
+    }
+    else {
+        files = LogApplicationHelper::instance()->getCustomLogList();
+        pListOrigin = &cListOrigin;
+        pList = &cList;
+    }
+
+    for (QStringList iter : files) {
+        LOG_FILE_OTHERORCUSTOM logFileInfo;
+        logFileInfo.name = iter.value(0);
+        logFileInfo.path = iter.value(1);
+        logFileInfo.dateTimeModify = QFileInfo(iter.value(1)).lastModified().toLocalTime().toString("yyyy-MM-dd hh:mm:ss");
+        pListOrigin->append(logFileInfo);
+    }
+
+    *pList = filterOOC(iSearchStr, *pListOrigin);
+
+    createOOCTableForm();
+    createOOCTable(*pList);
+}
+
 void DisplayContent::createOOCTableForm()
 {
     m_pModel->clear();
@@ -3620,22 +3720,13 @@ void DisplayContent::createOOCTableForm()
     m_treeView->setColumnWidth(1, DATETIME_WIDTH + 120);
 }
 
-void DisplayContent::createOOCTable(const QList<QStringList> &list)
+void DisplayContent::createOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list)
 {
-    m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
 
-    QList<LOG_FILE_OTHERORCUSTOM> listLogFile;
-    for (QStringList iter : list) {
-        LOG_FILE_OTHERORCUSTOM logFileInfo;
-        logFileInfo.name = iter.value(0);
-        logFileInfo.path = iter.value(1);
-        logFileInfo.dateTimeModify = QFileInfo(iter.value(1)).lastModified().toLocalTime().toString("yyyy-MM-dd hh:mm:ss");
-        listLogFile.append(logFileInfo);
-    }
-
-    parseListToModel(listLogFile, m_pModel);
-
+    m_limitTag = 0;
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertOOCTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
@@ -3903,7 +3994,6 @@ void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
 void DisplayContent::slot_valueChanged_dConfig_or_gSetting(const QString &key)
 {
     if ((key == "customLogFiles" || key == "customlogfiles") && m_flag == CustomLog) {
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
+        generateOOCLogs(OOC_CUSTOM);
     }
 }
