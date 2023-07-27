@@ -116,6 +116,13 @@ void LogApplicationHelper::initOtherLog()
     m_other_log_list_temp.append(QStringList() << "audit.log" << "/var/log/audit/audit.log");
     m_other_log_list_temp.append(QStringList() << "udcp-client" << "/var/log/udcp-client");
 
+    //窗管日志和配置文件监视
+    m_other_log_list_temp.append(QStringList() << ".kwin_x11.log" << "~/.kwin_x11.log");
+    m_other_log_list_temp.append(QStringList() << "kwinrc" << "~/.config/kwinrc.log");
+    m_other_log_list_temp.append(QStringList() << "kglobalshortcutsrc" << "~/.config/kglobalshortcutsrc.log");
+    m_other_log_list_temp.append(QStringList() << "kwinrulesrc" << "~/.config/kwinrulesrc.log");
+
+
     for (QStringList iter : m_other_log_list_temp) {
         QString path = iter.at(1);
         if (path.startsWith("~/"))
