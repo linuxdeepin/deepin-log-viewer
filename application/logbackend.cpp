@@ -67,7 +67,7 @@ void LogBackend::exportAllLogs(const QString &outDir)
 
     m_outPath = outPath;
 
-    static QString fileFullPath = outPath + "/" + QString("%1_%2_all_logs.zip").arg(dateTime).arg(hostname);
+    QString fileFullPath = outPath + "/" + QString("%1_%2_all_logs.zip").arg(dateTime).arg(hostname);
 
     // 添加文件后缀
     if (!fileFullPath.endsWith(".zip")) {

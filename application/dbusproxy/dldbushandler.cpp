@@ -30,9 +30,9 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
                                           this);
     //Note: when dealing with remote objects, it is not always possible to determine if it exists when creating a QDBusInterface.
     if (!m_dbus->isValid() && !m_dbus->lastError().message().isEmpty()) {
-        qDebug() << "m_dbus isValid false error:" << m_dbus->lastError() << m_dbus->lastError().message();
+        qDebug() << "dbus com.deepin.logviewer isValid false error:" << m_dbus->lastError() << m_dbus->lastError().message();
     }
-    qDebug() << "m_dbus isValid true";
+    qDebug() << "dbus com.deepin.logviewer isValid true";
 }
 
 /*!

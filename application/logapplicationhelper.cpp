@@ -218,7 +218,6 @@ void LogApplicationHelper::createDesktopFiles()
             }
         }
     }
-    qDebug() << "  tempDesktopFiles.count()" << tempDesktopFiles.count();
     for (QString var : tempDesktopFiles) {
         QString filePath = path + "/" + var;
         QFile fi(filePath);
@@ -291,7 +290,6 @@ void LogApplicationHelper::createDesktopFiles()
             parseField(filePath, var.split(QDir::separator()).last(), isDeepin, isGeneric, isName);
         }
     }
-    qDebug() << "  m_desktop_files.count()" << m_desktop_files.count();
 }
 
 /**
@@ -310,7 +308,6 @@ void LogApplicationHelper::createLogFiles()
     }
 
     m_log_files = appDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
-    //qDebug() << " m_log_files.size()" << appDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
 
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
         QString desktopName = m_desktop_files[i].split(QDir::separator()).last();
