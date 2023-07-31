@@ -16,6 +16,7 @@ set(LINK_LIBS
     Qt5::Xml
     Qt5::DBus
     Qt5::Concurrent
+    Qt5::Network
 #${DtkWidget_LDFLAGS}
 #${DtkGui_LDFLAGS}
 #${DtkCore_LDFLAGS}
@@ -112,6 +113,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Xml REQUIRED)
+find_package(Qt5Network REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5DBus REQUIRED)
 find_package(DtkWidget REQUIRED)
