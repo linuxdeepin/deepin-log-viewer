@@ -118,7 +118,7 @@ struct LOG_MSG_APPLICATOIN {
 };
 
 struct LOG_MSG_XORG {
-    QString dateTime;
+    QString offset;
     QString msg;
 };
 

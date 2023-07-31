@@ -284,7 +284,7 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
     QFileInfoList fileList;
     //判断路径是否存在
     if (!appFileInfo.exists()) {
-        qWarning() << "it is not true path";
+        qWarning() << QString("path:[%1] it is not true path").arg(file);
         return QStringList();
     }
     //如果是文件

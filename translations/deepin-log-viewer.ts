@@ -146,10 +146,6 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation type="vanished">TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
-    </message>
-    <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
         <translation type="unfinished"></translation>
     </message>
@@ -410,6 +406,10 @@
     </message>
     <message>
         <source>User Name </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offset</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

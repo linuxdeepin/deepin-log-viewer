@@ -1017,7 +1017,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_X
             //导出各字段的描述和对应内容拼成目标字符串
             LOG_MSG_XORG jMsg = jList.at(i);
             int col = 0;
-            out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
+            out << labels.value(col++, "") << ":" << jMsg.offset << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
             //导出进度信号
@@ -1631,7 +1631,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_X
                 throw  QString(stopStr);
             }
             LOG_MSG_XORG message = jList.at(row);
-            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.offset.toStdString());
             l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.msg.toStdString());
             l_merger.paste("tableRow");
             //导出进度信号
@@ -2485,7 +2485,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
             LOG_MSG_XORG jMsg = jList.at(row);
             htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
-            QString info = QString("<td>%1</td>").arg(jMsg.dateTime);
+            QString info = QString("<td>%1</td>").arg(jMsg.offset);
             html.write(info.toUtf8().data());
             info = QString("<td>%1</td>").arg(jMsg.msg);
             html.write(info.toUtf8().data());
@@ -3094,7 +3094,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_X
             }
             LOG_MSG_XORG message = jList.at(row);
             int col = 0;
-            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.offset.toStdString().c_str(), nullptr);
             worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
             ++currentXlsRow;
             sigProgress(row + 1, jList.count() + end);

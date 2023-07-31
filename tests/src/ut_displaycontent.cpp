@@ -1257,7 +1257,7 @@ TEST(DisplayContent_createXorgTable_UT, DisplayContent_createXorgTable_UT_001)
     LOG_MSG_XORG item;
     for (int i = 0; i < 100; ++i) {
         item.msg = QString("msg%1").arg(i);
-        item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        item.offset = "3.541";
         list.append(item);
     }
     p->createXorgTable(list);
@@ -1868,7 +1868,7 @@ TEST(DisplayContent_slot_XorgFinished_UT, DisplayContent_slot_XorgFinished_UT_00
     LOG_MSG_XORG item;
     for (int i = 0; i < 100; ++i) {
         item.msg = QString("msg%1").arg(i);
-        item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        item.offset = "3.541";
         list.append(item);
     }
     p->m_flag = XORG;
@@ -2315,7 +2315,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
         LOG_MSG_XORG item;
         for (int i = 0; i < 100; ++i) {
             item.msg = QString("msg%1").arg(i);
-            item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+            item.offset = "3.541";
             list.append(item);
         }
         p->xListOrigin.append(list);
@@ -2539,7 +2539,7 @@ TEST_P(DisplayContent_parseListToModel_XORG_UT, DisplayContent_parseListToModel_
         LOG_MSG_XORG item;
         for (int i = 0; i < 100; ++i) {
             item.msg = QString("msg%1").arg(i);
-            item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+            item.offset = "3.541";
             list.append(item);
         }
     }

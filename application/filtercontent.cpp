@@ -640,7 +640,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         this->setSelectorVisible(false, false, false, true, true);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
         m_currentType = XORG_TREE_DATA;
-        this->setSelectorVisible(false, false, false, true,
+        this->setSelectorVisible(false, false, false, false,
                                  true);  // modified by Airy for showing  peroid
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
         m_currentType = LAST_TREE_DATA;
