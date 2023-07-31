@@ -330,7 +330,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     } else {
         m_dateTime->show();
         QStringList dtlist = dateTime.split(".");
-        if (dtlist.count() == 2)
+        if (dtlist.count() == 2 && deamonName != "Xorg")
             m_dateTime->setText(dtlist[0]);
         else
             m_dateTime->setText(dateTime);

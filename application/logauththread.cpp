@@ -491,20 +491,11 @@ void LogAuthThread::handleKwin()
  */
 void LogAuthThread::handleXorg()
 {
-    qint64 curDtSecond = 0;
-    //xorg.0.log文件以当前boot的时间加上时间偏移量
-    QFile startFile("/proc/uptime");
-    QString startStr = "";
-    if (startFile.open(QFile::ReadOnly)) {
-        startStr = QString(startFile.readLine());
-        startFile.close();
-    }
-    startStr = startStr.split(" ").value(0, "");
     QList<LOG_MSG_XORG> xList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
             QFile file(m_FilePath.at(i)); // add by Airy
-            if (!file.exists() || !startFile.exists()) {
+            if (!file.exists()) {
                 emit proccessError(tr("Log file is empty"));
                 emit xorgFinished(m_threadCount);
                 return;
@@ -517,15 +508,6 @@ void LogAuthThread::handleXorg()
         QByteArray outByte = m_Log.toUtf8();
         if (!m_canRun) {
             return;
-        }
-        //多文件的情况下除了xorg.0.log文件其他文件的时间以文件创建的时间加上时间偏移量
-        QFileInfo fileInfo(m_FilePath.at(i));
-        if (i == 0) {
-            QDateTime curDt = QDateTime::currentDateTime();
-            curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
-        } else {
-            QDateTime creatTime = fileInfo.birthTime();
-            curDtSecond = creatTime.toMSecsSinceEpoch();
         }
         if (!m_canRun) {
             return;
@@ -541,19 +523,11 @@ void LogAuthThread::handleXorg()
                 if (list.count() < 2)
                     continue;
                 QString timeStr = list[0];
-                QString msgInfo = list.mid(1, list.length() - 1).join("]");
-                // 把文件生成时间加上日志记录的毫秒数则为日志记录的时间
+                QString msgInfo = list.mid(1, list.length() - 1).join("]").trimmed();
+                // 仅显示时间偏移量（单位：秒
                 QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
-                qint64 tStrMesc = qint64(tStr.toDouble() * 1000);
-                qint64 realT = 0;
-                realT = curDtSecond + tStrMesc;
-                QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
-                if (m_xorgFilters.timeFilterBegin > 0 && m_xorgFilters.timeFilterEnd > 0) {
-                    if (realDt.toMSecsSinceEpoch() < m_xorgFilters.timeFilterBegin || realDt.toMSecsSinceEpoch() > m_xorgFilters.timeFilterEnd)
-                        continue;
-                }
                 LOG_MSG_XORG msg;
-                msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
+                msg.offset = tStr;
                 msg.msg = msgInfo + tempStr;
                 tempStr.clear();
                 xList.append(msg);

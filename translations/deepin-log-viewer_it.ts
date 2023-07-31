@@ -146,8 +146,12 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -389,6 +393,26 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <source>Time Modified</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -447,6 +471,17 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
         <source>Audit Log</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Warning</name>
@@ -464,10 +499,6 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <name>main</name>
     <message>
         <source>export logs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>export logs by logType. if not set, defaut export all logs.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

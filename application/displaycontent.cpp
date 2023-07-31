@@ -854,7 +854,7 @@ void DisplayContent::createXorgTableForm()
     m_pModel->clear();
     m_pModel->setColumnCount(2);
     m_pModel->setHorizontalHeaderLabels(QStringList()
-                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Offset")
                                         << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, DATETIME_WIDTH + 20);
 }
@@ -2833,7 +2833,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemMo
     int listCount = iList.size();
     for (int i = 0; i < listCount; i++) {
         items.clear();
-        item = new DStandardItem(iList[i].dateTime);
+        item = new DStandardItem(iList[i].offset);
         item->setData(XORG_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
         items << item;
@@ -3371,7 +3371,7 @@ QList<LOG_MSG_XORG> DisplayContent::filterXorg(const QString &iSearchStr, const 
     }
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_XORG msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
+        if (msg.offset.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
     return rsList;

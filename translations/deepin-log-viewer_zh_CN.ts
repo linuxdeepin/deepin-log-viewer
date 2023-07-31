@@ -146,10 +146,6 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation type="vanished">TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
-    </message>
-    <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</translation>
     </message>
@@ -412,6 +408,10 @@
         <source>EXE</source>
         <translation>进程</translation>
     </message>
+    <message>
+        <source>Offset</source>
+        <translation>偏移量</translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -500,10 +500,6 @@
     <message>
         <source>export logs</source>
         <translation>导出日志</translation>
-    </message>
-    <message>
-        <source>export logs by logType. if not set, defaut export all logs.</source>
-        <translation>根据日志类型导出日志。若未设置此项，默认导出全部日志。</translation>
     </message>
     <message>
         <source>export logs directory. if not set, default export to ~/Document.</source>
