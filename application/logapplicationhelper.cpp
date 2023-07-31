@@ -118,9 +118,9 @@ void LogApplicationHelper::initOtherLog()
 
     //窗管日志和配置文件监视
     m_other_log_list_temp.append(QStringList() << ".kwin_x11.log" << "~/.kwin_x11.log");
-    m_other_log_list_temp.append(QStringList() << "kwinrc" << "~/.config/kwinrc.log");
-    m_other_log_list_temp.append(QStringList() << "kglobalshortcutsrc" << "~/.config/kglobalshortcutsrc.log");
-    m_other_log_list_temp.append(QStringList() << "kwinrulesrc" << "~/.config/kwinrulesrc.log");
+    m_other_log_list_temp.append(QStringList() << "kwinrc" << "~/.config/kwinrc");
+    m_other_log_list_temp.append(QStringList() << "kglobalshortcutsrc" << "~/.config/kglobalshortcutsrc");
+    m_other_log_list_temp.append(QStringList() << "kwinrulesrc" << "~/.config/kwinrulesrc");
 
 
     for (QStringList iter : m_other_log_list_temp) {
