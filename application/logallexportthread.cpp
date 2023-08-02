@@ -76,7 +76,7 @@ void LogAllExportThread::run()
             data.logCategory = "coredump";
             data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("coredump", false));
         } else if (it.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
-            data.logCategory = "other";
+            data.logCategory = "others";
             auto otherLogListPair = LogApplicationHelper::instance()->getOtherLogList();
             for (auto &it2 : otherLogListPair) {
                 QStringList paths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.at(1));
