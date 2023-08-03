@@ -1,3 +1,24 @@
+deepin-log-viewer (6.1.0) unstable; urgency=medium
+
+  * fix: modify audit rule
+  * feat: collect crash log(Task: 279017)
+  * fix: fix review problems
+  * feat: add command -e option(support export all)
+  * fix: cli run in the single instance
+  * feat: export all-add subdirectory
+  * chore: update Ts
+  * feat: export all-support export coredump files
+  * fix: cli run in the single instance
+  * fix: fix export name not update to current time
+  * feat: other logs add kwin logs
+  * fix: other log and custom log add search feature
+  * fix: fix 1042 build fail
+  * fix: fix kwin logs can't show content
+  * feat: xorg log column datetime change to offset
+  * fix: export all-directory other change to others
+
+ -- Deepin Packages Builder <packages@deepin.org>  Thu, 03 Aug 2023 16:36:26 +0800
+
 deepin-log-viewer (6.0.10) unstable; urgency=medium
 
   * Update version to 6.0.10
