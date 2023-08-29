@@ -3382,6 +3382,7 @@ bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_C
         if (!m_canRunning) {
             procss.kill();
             ret = false;
+            qDebug() << "route process slot can't run.. ret:" << ret;
             return;
         }
 
@@ -3395,6 +3396,7 @@ bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_C
             }
         }
         ret = true;
+        qDebug() << "route process slot ret:" << ret;
     });
     procss.start("/bin/bash", arg);
     procss.waitForFinished(-1);
