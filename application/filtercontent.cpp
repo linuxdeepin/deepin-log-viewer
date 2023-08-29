@@ -93,20 +93,16 @@ void FilterContent::initUI()
     hLayout_period->addWidget(m_lastMonthBtn);
     hLayout_period->addWidget(m_threeMonthBtn);
     hLayout_period->addStretch(1);
-
-    DSuggestButton *cmdLinkBtn = new DSuggestButton(("Reset"), this);
-    cmdLinkBtn->setFlat(true);
-    cmdLinkBtn->hide();
-    m_btnGroup->addButton(cmdLinkBtn, 6);
-    hLayout_period->addWidget(cmdLinkBtn);
     hLayout_period->setSpacing(10);
 
     // set level info
     hLayout_all = new QHBoxLayout;
     QHBoxLayout *hLayout_lvl = new QHBoxLayout;
     lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
+    lvTxt->setAccessibleName(DApplication::translate("Label", "Level:  "));
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
+    cbx_lv->view()->setAccessibleName("combobox_level_view");
     cbx_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                      << DApplication::translate("ComboBox", "Emergency")
@@ -124,8 +120,10 @@ void FilterContent::initUI()
     hLayout_all->addLayout(hLayout_lvl);
     QHBoxLayout *hLayout_dnf_lvl = new QHBoxLayout;
     dnflvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
+    dnflvTxt->setAccessibleName("dnf" + DApplication::translate("Label", "Level:  "));
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
+    cbx_dnf_lv->view()->setAccessibleName("combobox_dnflevel_view");
     cbx_dnf_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Super critical"), SUPERCRITICAL);
@@ -143,6 +141,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
     cbx_app = new LogCombox(this);
+    cbx_app->view()->setAccessibleName("combobox_app_view");
 
     cbx_app->setMinimumSize(QSize(180, BUTTON_HEIGHT_MIN));
     hLayout_app->addWidget(appTxt);
@@ -154,6 +153,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_status = new QHBoxLayout;
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
     cbx_status = new LogCombox(this);
+    cbx_status->view()->setAccessibleName("combobox_status_view");
     cbx_status->setMinimumWidth(120);
     cbx_status->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
@@ -167,6 +167,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_type = new QHBoxLayout;
     typeTxt = new DLabel(DApplication::translate("Label", "Event Type:"), this);
     typeCbx = new LogCombox(this);
+    typeCbx->view()->setAccessibleName("combobox_eventtype_view");
     typeCbx->setMinimumWidth(120);
     typeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")

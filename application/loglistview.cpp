@@ -159,7 +159,6 @@ void LogListView::initUI()
         item->setData(JOUR_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("System Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(JOUR_TREE_DATA);
     }
@@ -171,7 +170,6 @@ void LogListView::initUI()
         item->setData(DMESG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("dmesg Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(DMESG_TREE_DATA);
     } else {
@@ -182,7 +180,6 @@ void LogListView::initUI()
             item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
             item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
             item->setData(VListViewItemMargin, Dtk::MarginsRole);
-            item->setAccessibleText("Kernel Log");
             m_pModel->appendRow(item);
             m_logTypes.push_back(KERN_TREE_DATA);
         }
@@ -194,7 +191,6 @@ void LogListView::initUI()
         item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Boot Klu Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(BOOT_KLU_TREE_DATA);
     } else {
@@ -204,7 +200,6 @@ void LogListView::initUI()
         item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Boot Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(BOOT_TREE_DATA);
     }
@@ -215,7 +210,6 @@ void LogListView::initUI()
         item->setData(DNF_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("dnf Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(DNF_TREE_DATA);
     } else {
@@ -226,7 +220,6 @@ void LogListView::initUI()
             item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
             item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
             item->setData(VListViewItemMargin, Dtk::MarginsRole);
-            item->setAccessibleText("dpkg Log");
             m_pModel->appendRow(item);
             m_logTypes.push_back(DPKG_TREE_DATA);
         }
@@ -239,7 +232,6 @@ void LogListView::initUI()
         item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("dpkg Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(KWIN_TREE_DATA);
     } else {
@@ -249,7 +241,6 @@ void LogListView::initUI()
         item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Xorg Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(XORG_TREE_DATA);
     }
@@ -263,7 +254,6 @@ void LogListView::initUI()
         item->setData(APP_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Application Log");
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
         m_logTypes.push_back(APP_TREE_DATA);  
@@ -276,7 +266,6 @@ void LogListView::initUI()
     item->setData(COREDUMP_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
     item->setData(VListViewItemMargin, Dtk::MarginsRole);
-    item->setAccessibleText("Coredump Log");
     m_pModel->appendRow(item);
     m_logTypes.push_back(COREDUMP_TREE_DATA);
 
@@ -290,7 +279,6 @@ void LogListView::initUI()
             DApplication::translate("Tree", "Boot-Shutdown Event")); // add by Airy for bug 16245
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Boot-Shutdown Event");
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
         m_logTypes.push_back(LAST_TREE_DATA);
@@ -303,7 +291,6 @@ void LogListView::initUI()
     item->setData(OTHER_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
     item->setData(VListViewItemMargin, Dtk::MarginsRole);
-    item->setAccessibleText("Other Log");
     m_pModel->appendRow(item);
     m_logTypes.push_back(OTHER_TREE_DATA);
 
@@ -321,7 +308,6 @@ void LogListView::initUI()
         item->setData(AUDIT_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Auidt Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(AUDIT_TREE_DATA);
     }
@@ -343,7 +329,6 @@ void LogListView::initCustomLogItem()
     m_customLogItem->setData(CUSTOM_TREE_DATA, ITEM_DATE_ROLE);
     m_customLogItem->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
     m_customLogItem->setData(VListViewItemMargin, Dtk::MarginsRole);
-    m_customLogItem->setAccessibleText("Custom Log");
     m_pModel->appendRow(m_customLogItem);
 }
 

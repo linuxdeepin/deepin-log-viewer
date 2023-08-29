@@ -12,6 +12,7 @@
 #include "DebugTimeManager.h"
 #include "logbackend.h"
 #include "cliapplicationhelper.h"
+#include "accessible.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
@@ -127,6 +128,9 @@ int main(int argc, char *argv[])
         // 显示GUI
         LogCollectorMain w;
         a.setMainWindow(&w);
+
+        // 自动化标记由此开始
+        QAccessible::installFactory(accessibleFactory);
 
         //埋点记录启动数据
         QJsonObject objStartEvent{

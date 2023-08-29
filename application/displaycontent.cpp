@@ -113,17 +113,21 @@ void DisplayContent::initUI()
 
     //m_spinnerWgt,m_spinnerWgt_K
     m_spinnerWgt = new LogSpinnerWidget(this);
+    m_spinnerWgt->setAccessibleName("spinnerWidget");
     m_spinnerWgt->setMinimumHeight(300);
     m_spinnerWgt_K = new LogSpinnerWidget(this);
+    m_spinnerWgt_K->setAccessibleName("spinnerWidget_K");
     m_spinnerWgt_K->setMinimumHeight(300);
 
     //m_detailWgt
     m_detailWgt = new logDetailInfoWidget(this);
+    m_detailWgt->setAccessibleName("detailInfoWidget");
     m_detailWgt->setMinimumHeight(70);
     m_detailWgt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     //m_splitter
     m_splitter = new Dtk::Widget::DSplitter( this);
+    m_splitter->setAccessibleName("splitterFrame");
     m_splitter->setOrientation(Qt::Vertical);
     m_splitter->setChildrenCollapsible(false);
     m_splitter->addWidget(m_treeView);
@@ -146,7 +150,14 @@ void DisplayContent::initUI()
 
     //m_exportDlg
     m_exportDlg = new ExportProgressDlg(this);
+    m_exportDlg->setAccessibleName("ExportProgressDlg");
     m_exportDlg->hide();
+
+
+    m_menu = new QMenu(m_treeView);
+    m_menu->setAccessibleName("table_menu");
+    m_act_openForder = m_menu->addAction(/*tr("在文件管理器中显示")*/ DApplication::translate("Action", "Display in file manager"));
+    m_act_refresh = m_menu->addAction(/*tr("刷新")*/ DApplication::translate("Action", "Refresh"));
 
     //setLoadState
     setLoadState(DATA_COMPLETE);
@@ -193,6 +204,7 @@ void DisplayContent::initTableView()
 {
     m_treeView = new LogTreeView(this);
     m_treeView->setObjectName("mainLogTable");
+    m_treeView->setAccessibleName("mainLogTable");
     m_pModel = new QStandardItemModel(this);
     m_treeView->setModel(m_pModel);
     m_treeView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -3952,23 +3964,17 @@ void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
     if (m_treeView->indexAt(pos).isValid()) {
         QModelIndex index = m_treeView->currentIndex();
         if (!m_treeView->selectionModel()->selectedIndexes().empty()) {
-            QMenu *menu = new QMenu(m_treeView);
-            QAction *act_openForder = new QAction(/*tr("在文件管理器中显示")*/ DApplication::translate("Action", "Display in file manager"), this);
-            QAction *act_refresh = new QAction(/*tr("刷新")*/ DApplication::translate("Action", "Refresh"), this);
-
-            menu->addAction(act_openForder);
-            menu->addAction(act_refresh);
 
             QString path;
             if (m_flag == COREDUMP) {
                 if (index.siblingAtColumn(2).data().toString() == "missing") {
                     // 文件状态为missing，不能在文管中打开
-                    act_openForder->setEnabled(false);
+                    m_act_openForder->setEnabled(false);
                 } else {
-                    act_openForder->setEnabled(true);
+                    m_act_openForder->setEnabled(true);
                 }
                 //coredump文件不需要刷新
-                act_refresh->setEnabled(false);
+                m_act_refresh->setEnabled(false);
 
                 path = m_pModel->item(index.row(), 4)->data(Qt::UserRole + 2).toString();
             } else {
@@ -3976,17 +3982,19 @@ void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
             }
 
             //显示当前日志目录
-            connect(act_openForder, &QAction::triggered, this, [ = ] {
+            m_act_openForder->disconnect();
+            connect(m_act_openForder, &QAction::triggered, this, [ = ] {
                 DDesktopServices::showFileItem(path);
             });
 
             //刷新逻辑
-            connect(act_refresh, &QAction::triggered, this, [ = ]() {
+            m_act_refresh->disconnect();
+            connect(m_act_refresh, &QAction::triggered, this, [ = ]() {
                 generateOOCFile(path);
             });
 
             m_treeView->setContextMenuPolicy(Qt::CustomContextMenu);
-            menu->exec(QCursor::pos());
+            m_menu->exec(QCursor::pos());
         }
     }
 }

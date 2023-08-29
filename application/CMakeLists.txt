@@ -235,6 +235,7 @@ set (APP_HEADERS_FILES
     logallexportthread.h
     eventlogutils.h
     logbackend.h
+    accessible.h
     )
 
 # 5. 头文件

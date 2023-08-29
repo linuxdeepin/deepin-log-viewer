@@ -143,11 +143,13 @@ void LogCollectorMain::initUI()
     /** left frame */
     m_logCatelogue = new LogListView();
     m_logCatelogue->setObjectName("logTypeSelectList");
+    m_logCatelogue->setAccessibleName("left_side_bar");
     m_hLayout->addWidget(m_logCatelogue, 1);
     m_logCatelogue->setFixedWidth(160);
     m_vLayout = new QVBoxLayout;
     /** topRight frame */
     m_topRightWgt = new FilterContent();
+    m_topRightWgt->setAccessibleName("filterWidget");
     m_vLayout->addWidget(m_topRightWgt);
     /** midRight frame */
     m_midRightWgt = new DisplayContent();
@@ -160,6 +162,7 @@ void LogCollectorMain::initUI()
     m_hLayout->setContentsMargins(0, 0, 10, 0);
     m_hLayout->setSpacing(10);
 
+    this->centralWidget()->setAccessibleName("centralWidget");
     this->centralWidget()->setLayout(m_hLayout);
     m_searchEdt->setObjectName("searchEdt");
     m_searchEdt->lineEdit()->setObjectName("searchChildEdt");
@@ -177,6 +180,7 @@ void LogCollectorMain::initTitlebarExtensions()
 {
     DMenu *refreshMenu = new DMenu(this);
     DMenu *menu = new DMenu(DApplication::translate("titlebar", "Refresh interval"), refreshMenu);
+    menu->setAccessibleName("refresh_interval_menu");
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "10 sec")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "1 min")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "5 min")));
@@ -208,11 +212,13 @@ void LogCollectorMain::initTitlebarExtensions()
     m_exportAllBtn->setIcon(QIcon::fromTheme("export"));
     m_exportAllBtn->setIconSize(QSize(36, 36));
     m_exportAllBtn->setToolTip(qApp->translate("titlebar", "Export All"));
+    m_exportAllBtn->setAccessibleName(qApp->translate("titlebar", "Export All"));
     m_refreshBtn = new DIconButton(widget);
     m_refreshBtn->setIcon(QIcon::fromTheme("refresh"));
     m_refreshBtn->setFixedSize(QSize(36, 36));
     m_refreshBtn->setIconSize(QSize(36, 36));
     m_refreshBtn->setToolTip(qApp->translate("titlebar", "Refresh Now"));
+    m_refreshBtn->setAccessibleName(qApp->translate("titlebar", "Refresh Now"));
     layout->addSpacing(115);
     layout->addWidget(m_exportAllBtn);
     layout->addSpacing(2);
