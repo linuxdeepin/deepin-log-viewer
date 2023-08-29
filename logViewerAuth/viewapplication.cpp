@@ -27,13 +27,15 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
         qDebug() << "less than 2";
         return ;
     }
+    bool useFinishedSignal = false;
     QStringList arg;
     if (fileList[0] == "dmesg") {
         arg << "-c"
             << "dmesg -r";
     } else if(fileList[0] == "coredumpctl-list"){
         arg << "-c"
-            << "coredumpctl list";
+            << "coredumpctl list --no-pager";
+        useFinishedSignal = true;
     } else if(fileList[0] == "coredumpctl-info"){
         arg << "-c"
             << QString("coredumpctl info %1").arg(fileList[1]);
@@ -48,16 +50,36 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
         m_commondM->detach();          //解除关联
     m_commondM->attach(QSharedMemory::ReadOnly);
 
-    connect(m_proc, &QProcess::readyReadStandardOutput, this, [ = ] {
-        if (!getControlInfo().isStart)
-        {
-            m_proc->kill();
-            releaseMemery();
-            exit(0);
-        }
-        QByteArray byte =   m_proc->readAll();
-        std::cout << byte.replace('\u0000', "").data();
-    });
+    if (useFinishedSignal) {
+        // 为读取崩溃日志全部信息，需要使用finished信号，使用readyReadStandardOutput信号，获取的日志信息不全
+        connect(m_proc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, [ = ](int exitCode, QProcess::ExitStatus exitStatus) {
+            Q_UNUSED(exitCode)
+            Q_UNUSED(exitStatus)
+            if (!getControlInfo().isStart)
+            {
+                m_proc->kill();
+                releaseMemery();
+                exit(0);
+            }
+
+            QByteArray byte =   m_proc->readAll();
+            QStringList strList = QString(byte.replace('\u0000', "").replace("\x01", "")).split('\n', QString::SkipEmptyParts);
+            std::cout << byte.replace('\u0000', "").data();
+        });
+    } else {
+        connect(m_proc, &QProcess::readyReadStandardOutput, this, [ = ] {
+            if (!getControlInfo().isStart)
+            {
+                m_proc->kill();
+                releaseMemery();
+                exit(0);
+            }
+            QByteArray byte =   m_proc->readAll();
+            std::cout << byte.replace('\u0000', "").data();
+        });
+    }
+
+
     m_proc->start("/bin/bash", arg);
 
     m_proc->waitForFinished(-1);
