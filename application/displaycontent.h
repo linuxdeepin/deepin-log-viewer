@@ -275,6 +275,12 @@ private:
      * @brief m_spinnerWgt_K 加载内核日志数据时转轮控件
      */
     LogSpinnerWidget *m_spinnerWgt_K; // add by Airy
+
+    // 列表右键菜单
+    QMenu *m_menu{ nullptr };
+    QAction *m_act_openForder{ nullptr };
+    QAction *m_act_refresh{ nullptr };
+
     /**
      * @brief m_curAppLog 当前选中的应用的日志文件路径
      */
