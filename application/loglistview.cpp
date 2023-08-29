@@ -308,8 +308,8 @@ void LogListView::initUI()
     m_logTypes.push_back(OTHER_TREE_DATA);
 
     //custom
-    m_logTypes.push_back(CUSTOM_TREE_DATA);
     if (LogApplicationHelper::instance()->getCustomLogList().size()) {
+        m_logTypes.push_back(CUSTOM_TREE_DATA);
         initCustomLogItem();
     }
 
