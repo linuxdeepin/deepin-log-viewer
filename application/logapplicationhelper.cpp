@@ -112,12 +112,12 @@ void LogApplicationHelper::initOtherLog()
     m_other_log_list_temp.append(QStringList() << "iso-customizer-agent.log" << "/root/.cache/isocustomizer-agent/iso-customizer-agent/iso-customizer-agent.log");
     m_other_log_list_temp.append(QStringList() << "downloader" << "~/.config/uos/downloader/Log");
 
-    m_other_log_list_temp.append(QStringList() << ".kwin.log" << "~/.kwin.log");
+    m_other_log_list_temp.append(QStringList() << "kwin.log" << "~/kwin.log");
     m_other_log_list_temp.append(QStringList() << "audit.log" << "/var/log/audit/audit.log");
     m_other_log_list_temp.append(QStringList() << "udcp-client" << "/var/log/udcp-client");
 
     //窗管日志和配置文件监视
-    m_other_log_list_temp.append(QStringList() << ".kwin_x11.log" << "~/.kwin_x11.log");
+    m_other_log_list_temp.append(QStringList() << "kwin_x11.log" << "~/kwin_x11.log");
     m_other_log_list_temp.append(QStringList() << "kwinrc" << "~/.config/kwinrc");
     m_other_log_list_temp.append(QStringList() << "kglobalshortcutsrc" << "~/.config/kglobalshortcutsrc");
     m_other_log_list_temp.append(QStringList() << "kwinrulesrc" << "~/.config/kwinrulesrc");
