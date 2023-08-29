@@ -87,7 +87,7 @@ void LogAllExportThread::run()
                     data.files.append(paths);
             }
         } else if (it.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
-            data.logCategory = "custom";
+            data.logCategory = "customized";
             auto customLogListPair = LogApplicationHelper::instance()->getCustomLogList();
             for (auto &it2 : customLogListPair) {
                 data.files.append(it2.at(1));
