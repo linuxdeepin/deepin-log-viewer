@@ -3359,8 +3359,11 @@ bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_C
     Utils::mkMutiDir(tmpPath);
 
     //复制文件
+    int nCoreDumpCount = 0;
     for (auto &it : jList) {
         DLDBusHandler::instance(this)->exportLog(tmpPath, it.storagePath, true);
+        if (it.coreFile == "present")
+            nCoreDumpCount++;
         if (!m_canRunning) {
             break;
         }
@@ -3378,26 +3381,31 @@ bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_C
 
     // refresh progress
     bool ret = false;
-    connect(&procss, &QProcess::readyReadStandardOutput, this, [&](){
-        if (!m_canRunning) {
-            procss.kill();
-            ret = false;
-            qDebug() << "route process slot can't run.. ret:" << ret;
-            return;
-        }
-
-        QByteArray dd = procss.readAllStandardOutput();
-        QList<QString> lines = QString(dd).split('\n', QString::SkipEmptyParts);
-        for (const QString &line : qAsConst(lines)) {
-            int pos = line.indexOf(QLatin1Char('%'));
-            if (pos > 1) {
-                int percentage = line.midRef(pos - 3, 3).toInt();
-                sigProgress(percentage, 100);
+    // 有coredump文件，才读取压缩进度
+    if (nCoreDumpCount > 0) {
+        connect(&procss, &QProcess::readyReadStandardOutput, this, [&](){
+            if (!m_canRunning) {
+                procss.kill();
+                ret = false;
+                return;
             }
-        }
+
+            qInfo() << "recive proces done..";
+            QByteArray dd = procss.readAllStandardOutput();
+            QList<QString> lines = QString(dd).split('\n', QString::SkipEmptyParts);
+            for (const QString &line : qAsConst(lines)) {
+                int pos = line.indexOf(QLatin1Char('%'));
+                if (pos > 1) {
+                    int percentage = line.midRef(pos - 3, 3).toInt();
+                    sigProgress(percentage, 100);
+                }
+            }
+            ret = true;
+        });
+    } else {
         ret = true;
-        qDebug() << "route process slot ret:" << ret;
-    });
+    }
+
     procss.start("/bin/bash", arg);
     procss.waitForFinished(-1);
 
