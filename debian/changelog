@@ -1,3 +1,11 @@
+deepin-log-viewer (6.1.1) unstable; urgency=medium
+
+  * fix: fix coredump logs show is not complete(Bug: 217023)
+  * fix: fix export coredump logs failed(Bug: 217019)
+  * feat: add accessible labels
+
+ -- Deepin Packages Builder <packages@deepin.org>  Thu, 31 Aug 2023 16:02:33 +0800
+
 deepin-log-viewer (6.1.0) unstable; urgency=medium
 
   * fix: modify audit rule
