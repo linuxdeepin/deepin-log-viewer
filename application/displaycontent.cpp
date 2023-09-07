@@ -1661,20 +1661,29 @@ void DisplayContent::slot_exportClicked()
                     tr("zip(*.zip)"), &selectFilter);
     }
 
+    QFileInfo fi(fileName.left(fileName.lastIndexOf("/")));
+    if (!fi.isWritable()) {
+        exportThread->sigResult(false);
+        delete exportThread;
+        qInfo() <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
+        return;
+    }
 
     //限制当导出文件为空和导出doc和xls时用户改动后缀名导致导出问题，提示导出失败
     QFileInfo exportFile(fileName);
 
     QString exportSuffix = exportFile.suffix();
     QString selectSuffix = selectFilter.mid(selectFilter.lastIndexOf(".") + 1, selectFilter.size() - selectFilter.lastIndexOf(".") - 2);
-    if (fileName.isEmpty())
+    if (fileName.isEmpty()) {
+        exportThread->sigResult(false);
+        delete exportThread;
         return;
+    }
 
     //用户修改后缀名后添加默认的后缀
     if (selectSuffix != exportSuffix) {
         fileName.append(".").append(selectSuffix);
     }
-
 
     m_exportDlg->show();
     QStringList labels;
