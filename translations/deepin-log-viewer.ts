@@ -493,6 +493,10 @@
  audit only administrators can view the audit log</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Please input password for %1. </source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>main</name>

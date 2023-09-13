@@ -13,6 +13,7 @@
 #include "logbackend.h"
 #include "cliapplicationhelper.h"
 #include "accessible.h"
+#include "pamauthority.h"
 
 #include <DApplication>
 #include <DApplicationSettings>
@@ -23,6 +24,7 @@
 #include <QDateTime>
 #include <QSurfaceFormat>
 #include <QDebug>
+
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
@@ -61,18 +63,8 @@ int main(int argc, char *argv[])
                 return 0;
             }
 
-            QString policyActionId = "";
-            // 开启等保四，若当前用户是审计管理员，使用单用户审计管理员鉴权
-            if (DBusManager::isSEOepn() && DBusManager::isAuditAdmin())
-                policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogsSelf";
-            else
-                // 其他情况，默认为多用户鉴权
-                policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogs";
-
-            if (!Utils::checkAuthorization(policyActionId, qApp->applicationPid())) {
-                qApp->quit();
-                return 0;
-            }
+            PamAuthority pamauth;
+            pamauth.startPam();
 
             QString outDir = "";
 

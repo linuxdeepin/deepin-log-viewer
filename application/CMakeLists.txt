@@ -106,8 +106,11 @@ execute_process(COMMAND deepin-policy-ts-convert "policy2ts" "assets/com.deepin.
 #  message("cp_var ${cp_var} cp_out ${cp_out} cp_error ${cp_error}")
 endif ()
 
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
+
 add_definitions(-DUSE_POLKIT -DENABLE_INACTIVE_DISPLAY)
 # Find the library
+find_package(PAM REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui REQUIRED)
@@ -198,6 +201,7 @@ set (APP_CPP_FILES
      logallexportthread.cpp
      eventlogutils.cpp
      logbackend.cpp
+     pamauthority.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -236,6 +240,7 @@ set (APP_HEADERS_FILES
     eventlogutils.h
     logbackend.h
     accessible.h
+    pamauthority.h
     )
 
 # 5. 头文件
@@ -326,7 +331,9 @@ message("ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS}")
 include_directories( ${RapidJSON_INCLUDE_DIRS})
 #include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
+include_directories(${PAM_INCLUDE_DIRS})
 
+target_link_libraries(${EXE_NAME} ${PAM_LIBRARIES})
 target_link_libraries(${EXE_NAME}  ${LINK_LIBS} ${Other_LIBRARIES} -lsystemd -licui18n -licuuc  -ldl -fPIC)
 target_link_libraries(${EXE_NAME} ${DtkWidget_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${DtkCore_LIBRARIES})
