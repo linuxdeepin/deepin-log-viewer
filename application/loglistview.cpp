@@ -8,6 +8,7 @@
 #include "DebugTimeManager.h"
 #include "logapplicationhelper.h"
 #include "dbusproxy/dldbushandler.h"
+#include "utils.h"
 
 #include <DDesktopServices>
 #include <DDialog>
@@ -449,7 +450,7 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             g_openForder->setEnabled(false);
         }
 
-        QString dirPath = QDir::homePath();
+        QString dirPath = Utils::homePath;
         QString _path_ = g_path; //get app path
         QString path = "";
 

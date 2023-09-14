@@ -1705,7 +1705,7 @@ TEST(DisplayContent_slot_appLogs_UT, DisplayContent_slot_appLogs_UT_001)
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     stub.set(ADDR(DisplayContent, generateAppFile), DisplayContent_slot_BtnSelected_UT_generateAppFile);
-    p->slot_appLogs(1, QDir::homePath() + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log");
+    p->slot_appLogs(1, Utils::homePath + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log");
     p->deleteLater();
 }
 

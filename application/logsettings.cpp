@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logsettings.h"
+#include "utils.h"
 
 #include <QStandardPaths>
 #include <QApplication>
@@ -27,9 +28,9 @@ LogSettings::LogSettings(QObject *parent)
       m_configPath(""),
       m_logDirPath("")
 {
-    QDir infoPath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+    QDir infoPath(Utils::getConfigPath());
     if (!infoPath.exists()) {
-        infoPath.mkpath(QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation));
+        infoPath.mkpath(Utils::getConfigPath());
     }
 
     m_configPath = infoPath.filePath("wininfo-config.conf");

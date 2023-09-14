@@ -15,6 +15,9 @@ public:
     ~LogBackend();
     explicit LogBackend(QObject *parent = nullptr);
 
+    // 设置命令行当前工作目录
+    void setCmdWorkDir(const QString &dir);
+
     // 导出全部日志到指定目录
     void exportAllLogs(const QString& outDir = "");
 
@@ -28,6 +31,7 @@ private:
     QStringList m_logTypes;
     bool m_newDir {false};
     QString m_outPath {""};
+    QString m_cmdWorkDir {""};
 };
 
 #endif // LOGBACKEND_H

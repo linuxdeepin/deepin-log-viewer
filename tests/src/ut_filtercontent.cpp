@@ -124,7 +124,7 @@ TEST_F(FilterContent_UT, slot_logCatelogueClicked_UT)
     m_model.setData(m_model.index(7, 0), QString("bootklu"), Qt::UserRole + 66);
     m_model.setData(m_model.index(8, 0), QString("/var/log/dnf.log"), Qt::UserRole + 66);
     m_model.setData(m_model.index(9, 0), QString("dmesg"), Qt::UserRole + 66);
-    m_model.setData(m_model.index(10, 0), QString(QDir::homePath() + "/.kwin.log"), Qt::UserRole + 66);
+    m_model.setData(m_model.index(10, 0), QString(Utils::homePath + "/.kwin.log"), Qt::UserRole + 66);
     for (int i = 0; i < m_model.rowCount(); i++) {
         QModelIndex modelindex = m_model.index(i, 0, QModelIndex());
         m_filter->slot_logCatelogueClicked(modelindex);

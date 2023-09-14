@@ -39,6 +39,11 @@ LogBackend::LogBackend(QObject *parent) : QObject(parent)
     getLogTypes();
 }
 
+void LogBackend::setCmdWorkDir(const QString &dir)
+{
+    m_cmdWorkDir = dir;
+}
+
 void LogBackend::exportAllLogs(const QString &outDir)
 {
     PERF_PRINT_BEGIN("POINT-05", "export all logs");
@@ -53,7 +58,7 @@ void LogBackend::exportAllLogs(const QString &outDir)
 
     QString outPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     if (!outDir.isEmpty())
-        outPath = outDir;
+        outPath = QDir::isRelativePath(outDir) ? (m_cmdWorkDir + "/" + outDir) : outDir;
 
     // 若指定目录不存在，先创建目录
     QDir odir(outPath);
@@ -62,8 +67,9 @@ void LogBackend::exportAllLogs(const QString &outDir)
          m_newDir = odir.exists();
          if (m_newDir)
              outPath = odir.absolutePath();
-    } else
+    } else {
         outPath = odir.absolutePath();
+    }
 
     m_outPath = outPath;
 

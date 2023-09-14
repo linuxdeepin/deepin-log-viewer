@@ -126,7 +126,7 @@ void LogApplicationHelper::initOtherLog()
     for (QStringList iter : m_other_log_list_temp) {
         QString path = iter.at(1);
         if (path.startsWith("~/"))
-            path.replace(0, 1, QDir::homePath());
+            path.replace(0, 1, Utils::homePath);
         m_other_log_list.append(QStringList() << iter.at(0) << path);
     }
 }
@@ -160,7 +160,7 @@ void LogApplicationHelper::initCustomLog()
     for (QString iter : sList) {
         QString path = iter;
         if (path.startsWith("~/"))
-            path.replace(0, 1, QDir::homePath());
+            path.replace(0, 1, Utils::homePath);
         //忽略非文本文件和不存在的文件
         if (!QFile::exists(path) || !Utils::isTextFileType(path)) {
             continue;
@@ -189,7 +189,7 @@ void LogApplicationHelper::initCustomLog()
             for (QString iter : sList2) {
                 QString path = iter;
                 if (path.startsWith("~/"))
-                    path.replace(0, 1, QDir::homePath());
+                    path.replace(0, 1, Utils::homePath);
                 //忽略非文本文件和不存在的文件
                 if (!QFile::exists(path) || !Utils::isTextFileType(path)) {
                     continue;
@@ -304,7 +304,7 @@ void LogApplicationHelper::createDesktopFiles()
  */
 void LogApplicationHelper::createLogFiles()
 {
-    QString homePath = QDir::homePath();
+    QString homePath = Utils::homePath;
     if (homePath.isEmpty()) {
         return;
     }
