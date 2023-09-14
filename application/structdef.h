@@ -7,7 +7,7 @@
 #include <QString>
 #include <QDir>
 #include <QMap>
-
+#include "utils.h"
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"
 #define BOOT_TABLE_DATA "bootItemData"
@@ -27,7 +27,7 @@
 #define BOOT_KLU_TREE_DATA "bootklu"
 #define DPKG_TREE_DATA "/var/log/dpkg.log"
 #define XORG_TREE_DATA "/var/log/Xorg.0.log"
-#define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"
+#define KWIN_TREE_DATA Utils::homePath + "/.kwin.log"
 #define BOOT_TREE_DATA "/var/log/boot.log"
 #define KERN_TREE_DATA "/var/log/kern.log"
 #define APP_TREE_DATA "application"

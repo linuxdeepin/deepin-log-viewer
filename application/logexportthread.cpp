@@ -3351,7 +3351,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_A
 
 bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_COREDUMP> &jList)
 {
-    QString tmpPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/tmp/";
+    QString tmpPath = Utils::getAppDataPath() + "/tmp/";
     QDir dir(tmpPath);
     //删除临时目录
     dir.removeRecursively();

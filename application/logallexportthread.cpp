@@ -123,7 +123,7 @@ void LogAllExportThread::run()
     int tolProcess = nCount + 10;
     int currentProcess = 1;
     emit updateTolProcess(tolProcess);
-    QString tmpPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/tmp/";
+    QString tmpPath = Utils::getAppDataPath() + "/tmp/";
     QDir dir(tmpPath);
     //删除临时目录
     dir.removeRecursively();
@@ -182,7 +182,7 @@ void LogAllExportThread::run()
         QProcess procss;
         procss.setWorkingDirectory(tmpPath);
         QStringList arg = {"-c"};
-        arg.append(QString("zip -r tmp.zip ./*;mv tmp.zip '%1'").arg(m_outfile));
+        arg.append(QString("zip -r tmp.zip ./*;mv tmp.zip '%1';chmod 666 '%2'").arg(m_outfile).arg(m_outfile));
         procss.start("/bin/bash", arg);
         procss.waitForFinished(-1);
         currentProcess += 9;

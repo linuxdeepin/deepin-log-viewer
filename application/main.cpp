@@ -36,6 +36,8 @@ int main(int argc, char *argv[])
     // 命令参数大于1，进行命令行处理
     if (argc > 1) {
         QCoreApplication a(argc, argv);
+        a.setOrganizationName("deepin");
+        a.setApplicationName("deepin-log-viewer");
 
         QCommandLineOption exportOption(QStringList() << "e" << "export", DApplication::translate("main", "export logs"));
 
@@ -62,10 +64,14 @@ int main(int argc, char *argv[])
             }
 
             QString outDir = "";
-
             // 若指定有导出目录，按指定目录导出，否则按默认路径导出
             if (!args.isEmpty())
                 outDir = args.first();
+
+            // 设置命令行工作目录
+            LogBackend::instance(&a)->setCmdWorkDir(argv[argc - 2]);
+            // 根据当前用户名获取正确家目录路径
+            Utils::homePath = Utils::getHomePath(argv[argc - 1]);
 
             // 全部导出日志
             LogBackend::instance(&a)->exportAllLogs(outDir);

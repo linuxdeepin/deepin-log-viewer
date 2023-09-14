@@ -31,6 +31,7 @@ QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
 QMap<QString, QStringList> Utils::m_mapAuditType2EventType;
 int Utils::specialComType = -1;
+QString Utils::homePath = QDir::homePath();
 
 Utils::Utils(QObject *parent)
     : QObject(parent)
@@ -55,7 +56,15 @@ QString Utils::getQssContent(const QString &filePath)
 
 QString Utils::getConfigPath()
 {
-    QDir dir(QDir(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first())
+    QDir dir(QDir(Utils::homePath + "/.config")
+             .filePath(qApp->organizationName()));
+
+    return dir.filePath(qApp->applicationName());
+}
+
+QString Utils::getAppDataPath()
+{
+    QDir dir(QDir(Utils::homePath + "/.local/share")
              .filePath(qApp->organizationName()));
 
     return dir.filePath(qApp->applicationName());
@@ -320,6 +329,13 @@ QString Utils::getUserNamebyUID(uint uid)
     return pwd->pw_name;
 }
 
+QString Utils::getCurrentUserName()
+{
+    // 获取当前系统用户名
+    struct passwd* pwd = getpwuid(getuid());
+    return pwd->pw_name;
+}
+
 bool Utils::isCoredumpctlExist()
 {
     bool isCoredumpctlExist = false;
@@ -332,4 +348,23 @@ bool Utils::isCoredumpctlExist()
         }
     }
     return isCoredumpctlExist;
+}
+
+QString Utils::getHomePath(const QString &userName)
+{
+    QString uName("");
+    if (!userName.isEmpty())
+        uName = userName;
+    else
+        uName = getCurrentUserName();
+
+
+    QProcess *unlock = new QProcess;
+    unlock->start("sh", QStringList() << "-c" << QString("cat /etc/passwd | grep %1").arg(uName));
+    unlock->waitForFinished();
+    auto output = unlock->readAllStandardOutput();
+    auto str = QString::fromUtf8(output);
+    str = str.mid(str.indexOf("::") + 2).split(":").first();
+    qInfo() << "userName: " << uName << "homePath:" << str;
+    return str;
 }

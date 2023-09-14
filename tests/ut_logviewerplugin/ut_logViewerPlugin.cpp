@@ -42,7 +42,7 @@ TEST_F(LogViewerPlugin_UT, generateAppFile_UT001)
     stub.set(ADDR(QThread, start), QThread_start);
 
     LogViewerPlugin *p = new LogViewerPlugin;
-    p->generateAppFile(QDir::homePath() + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log", ALL, INF, "");
+    p->generateAppFile(Utils::homePath + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log", ALL, INF, "");
     connect(p, &LogViewerPlugin::sigAppData, this, [=](int index, QList<LOG_MSG_APPLICATOIN> iList) {
         qDebug() << "index:" << index << endl;
         qDebug() << "appDatas:" << endl;
