@@ -182,7 +182,7 @@ void LogAllExportThread::run()
         QProcess procss;
         procss.setWorkingDirectory(tmpPath);
         QStringList arg = {"-c"};
-        arg.append(QString("zip -r tmp.zip ./*;mv tmp.zip '%1';chmod 666 '%2'").arg(m_outfile).arg(m_outfile));
+        arg.append(QString("zip -r tmp.zip ./*;mv tmp.zip '%1';chmod 666 '%2';chmod -R 666 '%3'").arg(m_outfile).arg(m_outfile).arg(Utils::getAppDataPath()));
         procss.start("/bin/bash", arg);
         procss.waitForFinished(-1);
         currentProcess += 9;
