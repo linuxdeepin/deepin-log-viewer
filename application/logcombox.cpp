@@ -85,7 +85,6 @@ void LogCombox::keyPressEvent(QKeyEvent *event)
 void LogCombox::focusInEvent(QFocusEvent *event)
 {
     if (event->reason() != Qt::PopupFocusReason) {
-        qDebug() << __FUNCTION__ << event->reason();
         m_reson = event->reason();
     }
     DComboBox::focusInEvent(event);

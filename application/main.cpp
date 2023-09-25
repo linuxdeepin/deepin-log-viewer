@@ -26,6 +26,8 @@
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
+Q_LOGGING_CATEGORY(test, "main.app.test.module")
+
 int main(int argc, char *argv[])
 {
     //在root下或者非deepin/uos环境下运行不会发生异常，需要加上XDG_CURRENT_DESKTOP=Deepin环境变量；
@@ -33,11 +35,22 @@ int main(int argc, char *argv[])
         setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
     }
 
+    qCDebug(test) << "just test";
     // 命令参数大于1，进行命令行处理
     if (argc > 1) {
         QCoreApplication a(argc, argv);
         a.setOrganizationName("deepin");
         a.setApplicationName("deepin-log-viewer");
+
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 5, 0))
+        DLogManager::registerJournalAppender();
+#ifdef QT_DEBUG
+        DLogManager::registerConsoleAppender();
+#endif
+#else
+        DLogManager::registerConsoleAppender();
+        DLogManager::registerFileAppender();
+#endif
 
         QCommandLineOption exportOption(QStringList() << "e" << "export", DApplication::translate("main", "export logs"));
 
@@ -88,8 +101,6 @@ int main(int argc, char *argv[])
         QCoreApplication::setAttribute(Qt::AA_UseOpenGLES);
         //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了,这个真正有效
         qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
-        QString  systemName =   DBusManager::getSystemInfo();
-        qDebug() << "systemName" << systemName;
         if (Utils::isWayland()) {
             qputenv("QT_WAYLAND_SHELL_INTEGRATION", "kwayland-shell");
         }
@@ -99,11 +110,6 @@ int main(int argc, char *argv[])
         format.setDefaultFormat(format);
         LogApplication a(argc, argv);
 
-        //wayland环境判断
-        auto systemEnv = QProcessEnvironment::systemEnvironment();
-        QString XDG_SESSION_TYPE = systemEnv.value(QStringLiteral("XDG_SESSION_TYPE"));
-        QString WAYLAND_DISPLAY = systemEnv.value(QStringLiteral("WAYLAND_DISPLAY"));
-        qDebug() << "XDG_SESSION_TYPE:" << XDG_SESSION_TYPE << "---WAYLAND_DISPLAY:" << WAYLAND_DISPLAY;
         qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
 
         //高分屏支持
@@ -119,14 +125,24 @@ int main(int argc, char *argv[])
         a.setApplicationDisplayName(DApplication::translate("Main", "Log Viewer"));
         a.setApplicationDescription(
                     DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
-        DApplicationSettings settings;
+
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 5, 0))
+        qCDebug(test) << "just test 2";
+        DLogManager::registerJournalAppender();
+#ifdef QT_DEBUG
+        DLogManager::registerConsoleAppender();
+#endif
+
+        qCDebug(test) << "just test 3";
+#else
         DLogManager::registerConsoleAppender();
         DLogManager::registerFileAppender();
+#endif
         LogApplicationHelper::instance();
 
         if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                                   DGuiApplicationHelper::UserScope)) {
-            qInfo() << "DGuiApplicationHelper::instance()->setSingleInstance";
+            qCritical() << "DGuiApplicationHelper::instance()->setSingleInstance";
             a.activeWindow();
             return 0;
         }

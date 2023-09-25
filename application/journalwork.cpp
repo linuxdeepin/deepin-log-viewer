@@ -114,7 +114,7 @@ void journalWork::setArg(QStringList arg)
  */
 void journalWork::run()
 {
-    qDebug() << "journalWork::run--------threadrun";
+    qDebug() << "threadrun";
     doWork();
 
 }
@@ -174,7 +174,6 @@ void journalWork::doWork()
         return;
     }
     int cnt = 0;
-    qDebug() << "m_arg" << m_arg;
     //调用宏开始迭代
     SD_JOURNAL_FOREACH_BACKWARDS(j) {
         if ((!m_canRun)) {
@@ -226,7 +225,7 @@ void journalWork::doWork()
         r = sd_journal_get_data(j, "_COMM", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.daemonName = "unknown";
-            qDebug() << logMsg.daemonId << "error code" << r;
+            qWarning() << logMsg.daemonId << "error code" << r;
         } else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();

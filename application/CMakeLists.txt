@@ -389,6 +389,9 @@ install(FILES assets/auditRule.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/de
 # Install cli script deepin-logger
 install(FILES assets/deepin-logger DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
+# Install log json config file.
+install(FILES assets/deepin-log-viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d)
+
 #FILES       - deployed files.
 #BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.
 #APPID       - working for the app.

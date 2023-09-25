@@ -24,7 +24,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     parser.process(*this);
     const QStringList fileList = parser.positionalArguments();
     if (fileList.count() < 2) {
-        qDebug() << "less than 2";
+        qCritical() << "cmd param count less than 2";
         return ;
     }
     bool useFinishedSignal = false;

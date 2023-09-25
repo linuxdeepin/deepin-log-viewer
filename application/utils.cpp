@@ -133,7 +133,6 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
 
     QFile fontFile(fontFileName);
     if (!fontFile.open(QIODevice::ReadOnly)) {
-        //        qDebug() << "Open font file error";
         return fontFamilyName;
     }
 
@@ -208,7 +207,6 @@ bool Utils::deleteDir(const QString &iFilePath)
         if (fileInfo.isFile() || fileInfo.isSymLink()) {
             QFile::setPermissions(filePath, QFile::WriteOwner);
             if (!QFile::remove(filePath)) {
-                //                qDebug() << "remove file" << filePath << " faild!";
                 error = true;
             }
         } else if (fileInfo.isDir()) {
@@ -219,7 +217,6 @@ bool Utils::deleteDir(const QString &iFilePath)
     }
 
     if (!directory.rmdir(QDir::toNativeSeparators(directory.path()))) {
-        //        qDebug() << "remove dir" << directory.path() << " faild!";
         error = true;
     }
 

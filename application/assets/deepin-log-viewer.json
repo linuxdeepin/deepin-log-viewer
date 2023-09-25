@@ -1,0 +1,8 @@
+{
+	"name": "deepin-log-viewer",
+	"exec": "/usr/bin/deepin-log-viewer",
+	"logType": "journal",
+	"logPath": "~/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log",
+	"visible": "1",
+	"version": "V1.0"
+}

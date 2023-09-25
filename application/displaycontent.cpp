@@ -305,7 +305,7 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     Q_UNUSED(iSearchStr)
     //系统日志上次获取的时间,和筛选条件一起判断,防止获取过于频繁
     if (m_lastJournalGetTime.msecsTo(QDateTime::currentDateTime()) < 500 && m_journalFilter.timeFilter == id && m_journalFilter.eventTypeFilter == lId) {
-        qDebug() << "repeat refrsh journal too fast!";
+        qWarning() << "load journal log: repeat refrsh journal too fast!";
         QItemSelectionModel *p = m_treeView->selectionModel();
         if (p)
             p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
@@ -1481,12 +1481,6 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
  */
 void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 {
-    qDebug() << QString("Button %1 clicked\n combobox: level is %2, cbxIdx is %3 tree %4 node!!")
-             .arg(btnId)
-             .arg(lId)
-             .arg(lId + 1)
-             .arg(idx.data(ITEM_DATE_ROLE).toString());
-
     m_curLevel = lId; // m_curLevel equal combobox index-1;
     m_curBtnId = btnId;
 
@@ -1551,7 +1545,6 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     }
 
     if (m_curListIdx == index && (m_flag != KERN && m_flag != BOOT)) {
-        qDebug() << "repeat click" << m_flag;
         return;
     }
     m_currentKwinFilter = {""};
@@ -1665,7 +1658,7 @@ void DisplayContent::slot_exportClicked()
     if (!fi.isWritable()) {
         exportThread->sigResult(false);
         delete exportThread;
-        qInfo() <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
+        qCritical() <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
         return;
     }
 
@@ -2338,7 +2331,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             int leftCnt = jList.count() - SINGLE_LOAD * rateValue;
             //如果在页尾部则只加载最后一页的数量,否则加载单页全部数量
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            qDebug() << "rate" << rateValue;
             //把数据加入model中
             insertJournalTable(jList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
@@ -2355,7 +2347,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             int leftCnt = jBootList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            qDebug() << "rate" << rateValue;
             insertJournalBootTable(jBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
@@ -2539,11 +2530,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
  * @brief DisplayContent::slot_searchResult 搜索框执行搜索槽函数
  * @param str 要搜索的关键字
  */
-void DisplayContent::slot_searchResult(QString str)
+void DisplayContent::slot_searchResult(const QString &str)
 {
-    qDebug() << QString("search: %1  treeIndex: %2")
-             .arg(str)
-             .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
     m_currentSearchStr = str;
     if (m_flag == NONE)
         return;
@@ -3300,7 +3288,6 @@ QList<LOG_MSG_BOOT> DisplayContent::filterBoot(BOOT_FILTERS ibootFilter, const Q
         for (int i = 0; i < iList.size(); i++) {
             LOG_MSG_BOOT msg = iList.at(i);
             QString _statusStr = msg.status;
-            qDebug() << "xxx" << msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive) << "--" << msg.msg;
             if ((_statusStr.compare(ibootFilter.statusFilter, Qt::CaseInsensitive) != 0) && !isStatusFilterEmpty)
                 continue;
             if ((msg.status.contains(ibootFilter.searchstr, Qt::CaseInsensitive)) || (msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive))) {

@@ -196,7 +196,7 @@ public slots:
     void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
 
-    void slot_searchResult(QString str);
+    void slot_searchResult(const QString &str);
     void slot_getLogtype(int tcbx); // add by Airy
     void slot_getAuditType(int tcbx);
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh

@@ -135,7 +135,6 @@ QString LogAuthThread::startTime()
         startFile.close();
     }
 
-    qDebug() << "startStr" << startFile;
     startStr = startStr.split(" ").value(0, "");
     if (startStr.isEmpty()) {
         return "";
@@ -226,7 +225,6 @@ void LogAuthThread::handleBoot()
         QStringList strList = byte.split('\n', QString::SkipEmptyParts);
 
         //按换行分割
-        //    qInfo()<<strList.size()<<"_________________________";
         for (int j = strList.size() - 1; j >= 0; --j) {
             QString lineStr = strList.at(j);
             if (lineStr.startsWith("/dev") || lineStr.isEmpty())
@@ -624,7 +622,6 @@ void LogAuthThread::handleDkpg()
 
 void LogAuthThread::handleNormal()
 {
-    qDebug() << "logAuthThread::handleNormal()";
     if (!m_canRun) {
         emit normalFinished(m_threadCount);
         return;
