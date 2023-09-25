@@ -243,18 +243,15 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
     QFileInfoList fileList = dir.entryInfoList();
     for (int i = 0; i < fileList.count(); i++) {
         if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
-            //                qDebug() << tmpDirPath;
             QProcess m_process;
 
             QString command = "gunzip";
             QStringList args;
             args.append("-c");
-            //                qDebug() << fileList[i].absoluteFilePath();
             args.append(fileList[i].absoluteFilePath());
             m_process.setStandardOutputFile(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             m_process.start(command, args);
             m_process.waitForFinished(-1);
-            //                qDebug() << m_process.readAll();
             fileNamePath.append(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             fileNum++;
         }
@@ -262,7 +259,6 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
             fileNamePath.append(fileList[i].absoluteFilePath());
         }
     }
-    //       qInfo()<<fileNamePath.count()<<fileNamePath<<"******************************";
     return fileNamePath;
 }
 
@@ -304,18 +300,15 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
 
     for (int i = 0; i < fileList.count(); i++) {
         if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
-            //                qDebug() << tmpDirPath;
             QProcess m_process;
 
             QString command = "gunzip";
             QStringList args;
             args.append("-c");
-            //                qDebug() << fileList[i].absoluteFilePath();
             args.append(fileList[i].absoluteFilePath());
             m_process.setStandardOutputFile(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             m_process.start(command, args);
             m_process.waitForFinished(-1);
-            //                qDebug() << m_process.readAll();
             fileNamePath.append(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             fileNum++;
         }
@@ -323,7 +316,6 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
             fileNamePath.append(fileList[i].absoluteFilePath());
         }
     }
-    //       qInfo()<<fileNamePath.count()<<fileNamePath<<"******************************";
     return fileNamePath;
 }
 
@@ -354,7 +346,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         }
         QFileInfo filein(in);
         if (!filein.isFile()) {
-            qInfo() << "in not file:" << in;
+            qWarning() << "in not file:" << in;
             return false;
         }
         outFullPath = outDirInfo.absoluteFilePath() + filein.fileName();
@@ -363,7 +355,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     } else {
         auto it = m_commands.find(in);
         if (it == m_commands.end()) {
-            qInfo() << "unknown command:" << in;
+            qWarning() << "unknown command:" << in;
             return false;
         }
         outFullPath = outDirInfo.absoluteFilePath() + in + ".log";
@@ -375,7 +367,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     QProcess process;
     process.start("/bin/bash", arg);
     if (!process.waitForFinished()) {
-        qInfo() << "command error:" << arg;
+        qWarning() << "command error:" << arg;
         return false;
     }
     return true;

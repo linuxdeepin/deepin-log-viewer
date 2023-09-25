@@ -793,7 +793,6 @@ void FilterContent::slot_cbxAppIdxChanged(int idx)
     setChangedcomboxstate(!getLeftButtonState());
     QString path = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
-    qDebug() << "apppath" << path;
     curConfig.appListCbx = path;
     //变化时改变记录选择选项的数据结构,以便下次还原
     setCurrentConfig(curConfig);
@@ -832,7 +831,6 @@ void FilterContent::slot_cbxLogTypeChanged(int idx)
     curConfig.typeCbx = idx;
     setCurrentConfig(curConfig);
     emit sigLogtypeChanged(idx);
-    qDebug() << "emit signal " + QString::number(idx);
 }
 
 void FilterContent::slot_cbxAuditTypeChanged(int idx)
@@ -842,7 +840,6 @@ void FilterContent::slot_cbxAuditTypeChanged(int idx)
     curConfig.auditCbx = idx;
     setCurrentConfig(curConfig);
     emit sigAuditTypeChanged(idx);
-    qDebug() << "auditType emit signal " + QString::number(idx);
 }
 
 /**

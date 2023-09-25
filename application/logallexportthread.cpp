@@ -20,7 +20,7 @@ void LogAllExportThread::run()
     qInfo() << "outFile: " << m_outfile;
     QFileInfo info(m_outfile);
     if (!QFileInfo(info.path()).isWritable()) {
-        qInfo() << QString("outdir:%1 it not writable or is not exist.").arg(info.absolutePath());
+        qCritical() << QString("outdir:%1 it not writable or is not exist.").arg(info.absolutePath());
         emit exportFinsh(false);
         return;
     }

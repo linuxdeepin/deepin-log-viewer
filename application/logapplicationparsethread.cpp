@@ -231,6 +231,6 @@ void LogApplicationParseThread::initProccess()
  */
 void LogApplicationParseThread::run()
 {
-    qDebug() << "LogApplicationParseThread::run()---threadrun";
+    qDebug() << "threadrun";
     doWork();
 }

@@ -155,7 +155,7 @@ bool LogViewerPlugin::exportAppLogFile(const QString &path, BUTTONID period, PRI
     }
     generateAppFile(m_curAppLog, period, level);
     connect(this, &LogViewerPlugin::sigAppFinished, this, [=](int index) {
-        qDebug() << "index:" << index << endl;
+        Q_UNUSED(index);
         exportLogFile(path);
     });
 

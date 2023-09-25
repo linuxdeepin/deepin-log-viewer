@@ -426,7 +426,6 @@ Qt::FocusReason LogListView::focusReson()
 
 void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
 {
-    qDebug() << __FUNCTION__;
     QModelIndex idx = this->currentIndex();
     QString pathData = idx.data(ITEM_DATE_ROLE).toString();
     if (!this->selectionModel()->selectedIndexes().empty()) {

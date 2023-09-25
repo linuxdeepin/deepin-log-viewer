@@ -73,7 +73,7 @@ JournalBootWork::~JournalBootWork()
 void JournalBootWork::stopWork()
 {
     m_canRun = false;
-    qDebug() << "stopWorkb";
+    qDebug() << "stopWork";
 }
 
 /**
@@ -110,7 +110,7 @@ void JournalBootWork::setArg(QStringList arg)
  */
 void JournalBootWork::run()
 {
-    qDebug() << "JournalBootWork::run----threadrun";
+    qDebug() << "threadrun";
     doWork();
 
 }
@@ -148,7 +148,7 @@ void JournalBootWork::doWork()
     //r为系统借口返回值，小于0则表示失败，直接返回
     if (r < 0) {
         QString errostr = QString("Failed to open journal: %1").arg(r);
-        qDebug() << errostr;
+        qWarning() << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -157,7 +157,7 @@ void JournalBootWork::doWork()
 
     if (r < 0) {
         QString errostr = QString("Failed to seek tail journal: %1").arg(r);
-        qDebug() << errostr;
+        qWarning() << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -174,7 +174,7 @@ void JournalBootWork::doWork()
             r = sd_journal_add_match(j, m_arg.at(0).toStdString().c_str(), 0);
         if (r < 0) {
             QString errostr = QString("Failed to add match journal: %1").arg(r);
-            qDebug() << errostr;
+            qWarning() << errostr;
             emit  journalBootError(errostr);
             return;
         }
@@ -201,12 +201,12 @@ void JournalBootWork::doWork()
         sd_journal_close(j);
         return;
     }
-    qDebug() << "match" << match;
+    qDebug() << "journal match condition:" << match;
     //增加筛选条件
     r = sd_journal_add_match(j, match, sizeof(match) - 1);
     if (r < 0) {
         QString errostr = QString("Failed to add match journal: %1").arg(r);
-        qDebug() << errostr;
+        qWarning() << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -214,7 +214,7 @@ void JournalBootWork::doWork()
     r =   sd_journal_add_conjunction(j);
     if (r < 0) {
         QString errostr = QString("Failed to add conjunction journal: %1").arg(r);
-        qDebug() << errostr;
+        qWarning() << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -276,7 +276,7 @@ void JournalBootWork::doWork()
         r = sd_journal_get_data(j, "_COMM", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.daemonName = "unknown";
-            qDebug() << logMsg.daemonId << "error code" << r;
+            qWarning() << logMsg.daemonId << "error code" << r;
         } else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();

@@ -22,7 +22,6 @@ int main(int argc, char *argv[])
     //set env otherwise utils excutecmd  excute command failed
     QString PATH = qgetenv("PATH");
 
-    qDebug() << "main start" << PATH;
     if (PATH.isEmpty()) {
         PATH = "/usr/bin";
     }
@@ -30,10 +29,17 @@ int main(int argc, char *argv[])
     PATH += ":/sbin";
     qputenv("PATH", PATH.toLatin1());
 
+    qDebug() << "log-viewer-service start, PATH" << PATH;
+
     QCoreApplication a(argc, argv);
     a.setOrganizationName("deepin");
     a.setApplicationName("deepin-log-viewer-service");
-
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 5, 0))
+    Dtk::Core::DLogManager::registerJournalAppender();
+#ifdef QT_DEBUG
+    Dtk::Core::DLogManager::registerConsoleAppender();
+#endif
+#else
     QDir dirCheck;
     QString LogPath = QString("%1/%2/%3/Log/")
                           .arg("/var/log")
@@ -47,7 +53,7 @@ int main(int argc, char *argv[])
     Dtk::Core::DLogManager::setlogFilePath(serviceLogPath);
     Dtk::Core::DLogManager::registerConsoleAppender();
     Dtk::Core::DLogManager::registerFileAppender();
-
+#endif
     QDBusConnection systemBus = QDBusConnection::systemBus();
     if (!systemBus.registerService(LogViewrServiceName)) {
         qCritical() << "registerService failed:" << systemBus.lastError();
@@ -55,9 +61,6 @@ int main(int argc, char *argv[])
     }
     LogViewerWatcher watcher;
     LogViewerService service;
-    //service.getFileInfo("lpr");
-    //service.readLog("etc/apt/sources.list");
-    qDebug() << "systemBus.registerService success" << Dtk::Core::DLogManager::getlogFilePath();
     if (!systemBus.registerObject(LogViewrPath,
                                   &service,
                                   QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals)) {

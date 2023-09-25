@@ -16,7 +16,6 @@ int wtmp_open(char *filename)
 int wtmp_open_back(char *filename)
 {
     fdWtmp = open(filename, O_RDONLY);
-    //    qDebug() << "fdWtmp" << fdWtmp;
     bpos = cur_rec = num_recs = 0;
     fpos = lseek(fdWtmp, 0, SEEK_END);
     return fdWtmp;
@@ -24,7 +23,6 @@ int wtmp_open_back(char *filename)
 
 int seek_end(void)
 {
-    //    qDebug() <<  lseek(0, fdWtmp, SEEK_END);
     return 0;
 }
 
@@ -60,8 +58,6 @@ struct utmp *wtmp_next(void)
 int wtmp_reload_back(void)
 {
     int amt_read;
-
-//   qDebug() << "endsize" << endsize << NRECS << UTSIZE;
 
     off_t o;
     o = ((fpos - 1) / (NRECS * UTSIZE)) * (NRECS * UTSIZE);
