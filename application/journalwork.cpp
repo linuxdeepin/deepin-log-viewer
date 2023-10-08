@@ -29,6 +29,7 @@ journalWork::journalWork(QStringList arg, QObject *parent)
        QRunnable()
 
 {
+    // test compile
     //注册QList<LOG_MSG_JOURNAL>类型以让信号可以发出数据并能连接信号槽
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     //使用线程池启动该线程，跑完自己删自己

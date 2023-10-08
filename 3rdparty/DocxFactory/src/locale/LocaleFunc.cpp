@@ -1015,93 +1015,93 @@ unsigned short LocaleFunc::getQuarter(tm *p_date)
 
 double LocaleFunc::strToNum(const string &p_str)
 {
-    if (!m_initialized)
-        initialize();
+//    if (!m_initialized)
+//        initialize();
 
-    enum Part {
-        PREFIX = 0,
-        INTEGER,
-        FRACTION,
-        SUFFIX
-    };
+//    enum Part {
+//        PREFIX = 0,
+//        INTEGER,
+//        FRACTION,
+//        SUFFIX
+//    };
 
-    Part    l_part  = PREFIX;
-    double  l_val   = 0;
-    double  l_dec   = 1;
-    char    l_neg   = 0;
+//    Part    l_part  = PREFIX;
+//    double  l_val   = 0;
+//    double  l_dec   = 1;
+//    char    l_neg   = 0;
 
-    size_t  l_len   = p_str.length();
-    size_t  l_pos   = 0;
-    char    l_ch;
+//    size_t  l_len   = p_str.length();
+//    size_t  l_pos   = 0;
+//    char    l_ch;
 
-    while (l_pos < l_len) {
-        l_ch = p_str[ l_pos ];
+//    while (l_pos < l_len) {
+//        l_ch = p_str[ l_pos ];
 
-        if (l_ch == '+' || l_ch == '-') {
-            if (l_neg != 0)
-                break;
+//        if (l_ch == '+' || l_ch == '-') {
+//            if (l_neg != 0)
+//                break;
 
-            if (l_part == INTEGER || l_part == FRACTION)
-                l_part = SUFFIX;
+//            if (l_part == INTEGER || l_part == FRACTION)
+//                l_part = SUFFIX;
 
-            l_neg = l_ch;
-        }
+//            l_neg = l_ch;
+//        }
 
-        else if (l_ch == ' '
+//        else if (l_ch == ' '
 
-                 // if thousand separator is also space then treated as space only in prefix and suffix.
-                 && (m_numThSep != ' ' || l_part == PREFIX || l_part == SUFFIX)) {
-            if (l_part == INTEGER || l_part == FRACTION)
-                l_part = SUFFIX;
+//                 // if thousand separator is also space then treated as space only in prefix and suffix.
+//                 && (m_numThSep != ' ' || l_part == PREFIX || l_part == SUFFIX)) {
+//            if (l_part == INTEGER || l_part == FRACTION)
+//                l_part = SUFFIX;
 
-            if (l_part == SUFFIX  && l_neg != 0)
-                break;
-        }
+//            if (l_part == SUFFIX  && l_neg != 0)
+//                break;
+//        }
 
-        else if (IS_DIGIT(l_ch)) {
-            if (l_part == PREFIX)
-                l_part = INTEGER;
+//        else if (IS_DIGIT(l_ch)) {
+//            if (l_part == PREFIX)
+//                l_part = INTEGER;
 
-            switch (l_part) {
-            case INTEGER:
-                l_val = l_val * 10 + (l_ch - 48);
-                break;
+//            switch (l_part) {
+//            case INTEGER:
+//                l_val = l_val * 10 + (l_ch - 48);
+//                break;
 
-            case FRACTION:
-                l_dec = l_dec * 10;
-                l_val = l_val + (l_ch - 48) / l_dec;
-                break;
-            default:
-                break;
-            }
+//            case FRACTION:
+//                l_dec = l_dec * 10;
+//                l_val = l_val + (l_ch - 48) / l_dec;
+//                break;
+//            default:
+//                break;
+//            }
 
-            if (l_part == SUFFIX)
-                break;
-        }
+//            if (l_part == SUFFIX)
+//                break;
+//        }
 
-        else if (l_ch == m_numFracSep) {
-            if (l_part == PREFIX || l_part == INTEGER)
-                l_part = FRACTION;
+//        else if (l_ch == m_numFracSep) {
+//            if (l_part == PREFIX || l_part == INTEGER)
+//                l_part = FRACTION;
 
-            else
-                break;
-        }
+//            else
+//                break;
+//        }
 
-        else if (l_ch == m_numThSep) {
-            if (l_part != INTEGER && l_part != FRACTION)
-                break;
-        }
+//        else if (l_ch == m_numThSep) {
+//            if (l_part != INTEGER && l_part != FRACTION)
+//                break;
+//        }
 
-        else
-            break;
+//        else
+//            break;
 
-        ++l_pos;
-    }
+//        ++l_pos;
+//    }
 
-    if (l_neg == '-')
-        l_val = -l_val;
+//    if (l_neg == '-')
+//        l_val = -l_val;
 
-    return l_val;
+    return 0;
 } // strToNum
 
 string LocaleFunc::numToStr(double p_num, const NumFormat *p_format)
