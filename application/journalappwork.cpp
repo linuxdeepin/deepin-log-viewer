@@ -1,36 +1,31 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "journalwork.h"
+#include "journalappwork.h"
 #include "utils.h"
 
 #include <DApplication>
 
 #include <QDateTime>
 #include <QDebug>
-#include <QFile>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QProcess>
+#include <QLoggingCategory>
 
 DWIDGET_USE_NAMESPACE
 
-std::atomic<journalWork *> journalWork::m_instance;
-std::mutex journalWork::m_mutex;
-
+int JournalAppWork::thread_index;
 /**
- * @brief journalWork::journalWork 线程构造函数
+ * @brief journalAppWork::journalAppWork 线程构造函数
  * @param arg 筛选参数
  * @param parent 父对象
  */
-journalWork::journalWork(QStringList arg, QObject *parent)
+JournalAppWork::JournalAppWork(QStringList arg, QObject *parent)
     :  QObject(parent),
        QRunnable()
 
 {
-    //注册QList<LOG_MSG_JOURNAL>类型以让信号可以发出数据并能连接信号槽
-    qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
+    //注册QList<LOG_MSG_APPLICATOIN>类型以让信号可以发出数据并能连接信号槽
+    qRegisterMetaType<QList<LOG_MSG_APPLICATOIN> >("QList<LOG_MSG_APPLICATOIN>");
     //使用线程池启动该线程，跑完自己删自己
     setAutoDelete(true);
     //初始化等级数字对应显示文本的map
@@ -46,15 +41,15 @@ journalWork::journalWork(QStringList arg, QObject *parent)
 }
 
 /**
- * @brief journalWork::journalWork 线程构造函数
+ * @brief journalAppWork::journalAppWork 线程构造函数
  * @param parent 父对象
  */
-journalWork::journalWork(QObject *parent)
+JournalAppWork::JournalAppWork(QObject *parent)
     :  QObject(parent),
        QRunnable()
 
 {
-    qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
+    qRegisterMetaType<QList<LOG_MSG_APPLICATOIN> >("QList<LOG_MSG_APPLICATOIN>");
     initMap();
     setAutoDelete(true);
     thread_index++;
@@ -62,47 +57,47 @@ journalWork::journalWork(QObject *parent)
 }
 
 /**
- * @brief journalWork::~journalWork 析构时清空数据结构
+ * @brief journalAppWork::~journalAppWork 析构时清空数据结构
  */
-journalWork::~journalWork()
+JournalAppWork::~JournalAppWork()
 {
     logList.clear();
     m_map.clear();
 }
 
 /**
- * @brief journalWork::stopWork 停止该线程
+ * @brief journalAppWork::stopWork 停止该线程
  */
-void journalWork::stopWork()
+void JournalAppWork::stopWork()
 {
     qDebug() << "stopWork";
     m_canRun = false;
 }
 
 /**
- * @brief journalWork::getIndex 获取当前对象的计数
+ * @brief journalAppWork::getIndex 获取当前对象的计数
  * @return 当前对象的计数标号
  */
-int journalWork::getIndex()
+int JournalAppWork::getIndex()
 {
     return m_threadIndex;
 }
 
 /**
- * @brief journalWork::getPublicIndex 获取现在此类产生对象的个数
+ * @brief journalAppWork::getPublicIndex 获取现在此类产生对象的个数
  * @return 此类产生对象的个数，静态成员变量
  */
-int journalWork::getPublicIndex()
+int JournalAppWork::getPublicIndex()
 {
     return thread_index;
 }
 
 
 /**
- * @brief journalWork::setArg 设置筛选参数
+ * @brief journalAppWork::setArg 设置筛选参数
  * @param arg 筛选参数
  */
-void journalWork::setArg(QStringList arg)
+void JournalAppWork::setArg(QStringList arg)
 {
     m_arg.clear();
     if (!arg.isEmpty())
@@ -110,19 +105,18 @@ void journalWork::setArg(QStringList arg)
 }
 
 /**a
- * @brief journalWork::run 线程执行函数
+ * @brief journalAppWork::run 线程执行函数
  */
-void journalWork::run()
+void JournalAppWork::run()
 {
     qDebug() << "threadrun";
     doWork();
-
 }
 
 /**
- * @brief journalWork::doWork 实际的获取数据逻辑
+ * @brief journalAppWork::doWork 实际的获取数据逻辑
  */
-void journalWork::doWork()
+void JournalAppWork::doWork()
 {
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
@@ -133,7 +127,7 @@ void journalWork::doWork()
         mutex.unlock();
         return;
     }
-#if 1
+
     int r;
 
     sd_journal *j ;
@@ -160,13 +154,14 @@ void journalWork::doWork()
         sd_journal_close(j);
         return;
     }
-    //    sd_journal_add_match(j, "PRIORITY=3", 0);
 
     if (!m_arg.isEmpty()) {
         QString _priority = m_arg.at(0);
         //增加日志等级筛选
         if (_priority != "all")
             sd_journal_add_match(j, m_arg.at(0).toStdString().c_str(), 0);
+
+        sd_journal_add_match(j, QString("SYSLOG_IDENTIFIER=%1").arg(m_arg.last()).toStdString().c_str(), 0);
     }
     if ((!m_canRun)) {
         mutex.unlock();
@@ -184,7 +179,7 @@ void journalWork::doWork()
         const char *d;
         size_t l;
 
-        LOG_MSG_JOURNAL logMsg;
+        LOG_MSG_APPLICATOIN logMsg;
         //获取时间
         r = sd_journal_get_data(j, "_SOURCE_REALTIME_TIMESTAMP", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
@@ -203,34 +198,6 @@ void journalWork::doWork()
                 continue;
         }
         logMsg.dateTime = getDateTimeFromStamp(dt);
-        //获取主机名
-        r = sd_journal_get_data(j, "_HOSTNAME", reinterpret_cast<const void **>(&d), &l);
-        if (r < 0)
-            logMsg.hostName = "";
-        else {
-            QStringList strList =    getReplaceColorStr(d).split("=");
-            strList.removeFirst();
-            logMsg.hostName = strList.join("=");
-        }
-        //获取进程号
-        r = sd_journal_get_data(j, "_PID", reinterpret_cast<const void **>(&d), &l);
-        if (r < 0)
-            logMsg.daemonId = "";
-        else {
-            QStringList strList =    getReplaceColorStr(d).split("=");
-            strList.removeFirst();
-            logMsg.daemonId = strList.join("=");
-        }
-        //获取进程名
-        r = sd_journal_get_data(j, "SYSLOG_IDENTIFIER", reinterpret_cast<const void **>(&d), &l);
-        if (r < 0) {
-            logMsg.daemonName = "unknown";
-            qWarning() << logMsg.daemonId << "error code" << r;
-        } else {
-            QStringList strList =    getReplaceColorStr(d).split("=");
-            strList.removeFirst();
-            logMsg.daemonName = strList.join("=");
-        }
 
         //获取信息体
         r = sd_journal_get_data(j, "MESSAGE", reinterpret_cast<const void **>(&d), &l);
@@ -241,6 +208,12 @@ void journalWork::doWork()
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
             logMsg.msg = strList.join("=");
+        }
+        logMsg.detailInfo = logMsg.msg;
+
+        //如果日志太长就显示一部分
+        if (logMsg.detailInfo.size() > 500) {
+            logMsg.msg = logMsg.detailInfo.mid(0, 500);
         }
 
         //获取等级
@@ -260,7 +233,7 @@ void journalWork::doWork()
         //每获得500个数据就发出信号给控件加载
         if (cnt % 500 == 0) {
             mutex.lock();
-            emit journalData(m_threadIndex, logList);
+            emit journalAppData(m_threadIndex, logList);
             logList.clear();
             //sleep(100);
             mutex.unlock();
@@ -268,68 +241,20 @@ void journalWork::doWork()
     }
     //最后可能有余下不足500的数据
     if (logList.count() >= 0) {
-        emit journalData(m_threadIndex, logList);
+        emit journalAppData(m_threadIndex, logList);
     }
 
-    emit journalFinished(m_threadIndex);
+    emit journalAppFinished(m_threadIndex);
     //第一次加载时这个之后的代码都不执行?故放到最后
     sd_journal_close(j);
-
-#else
-    proc = new QProcess;
-    //! by time: --since="xxxx-xx-xx" --until="xxxx-xx-xx" exclude U
-    //! by priority: journalctl PRIORITY=x
-    proc->start("journalctl", m_arg);
-    proc->waitForFinished(-1);
-
-    QByteArray output = proc->readAllStandardOutput();
-    proc->close();
-
-    // reverse by time
-    QList<QByteArray> arrayList = output.split('\n');
-    for (auto i = arrayList.count() - 1; i >= 0; i--) {
-        QByteArray data = arrayList.at(i);
-        //    for (QByteArray data : output.split('\n')) {
-        if (data.isEmpty())
-            continue;
-
-        LOG_MSG_JOURNAL logMsg;
-
-        cnt++;
-
-        QJsonParseError erro;
-        QJsonDocument jsonDoc(QJsonDocument::fromJson(data, &erro));
-
-        if (erro.error != QJsonParseError::NoError) {
-            qDebug() << "erro" << erro.error << erro.errorString();
-            continue;
-        }
-        QJsonObject jsonObj = jsonDoc.object();
-        // fill field
-        QString dt = jsonObj.value("_SOURCE_REALTIME_TIMESTAMP").toString();
-        if (dt.isEmpty())
-            dt = jsonObj.value("__REALTIME_TIMESTAMP").toString();
-        logMsg.dateTime = getDateTimeFromStamp(dt);
-        logMsg.hostName = jsonObj.value("_HOSTNAME").toString();
-        logMsg.daemonName = jsonObj.value("_COMM").toString();
-        logMsg.daemonId = jsonObj.value("_PID").toString();
-        logMsg.msg = jsonObj.value("MESSAGE").toString();
-        logMsg.level = i2str(jsonObj.value("PRIORITY").toString().toInt());
-        logList.append(logMsg);
-        if (cnt == 500)
-            break;
-    }
-
-    emit journalFinished(logList);
-#endif
 }
 
 /**
- * @brief JournalBootWork::getReplaceColorStr 替换掉获取字符的颜色字符和特殊符号
+ * @brief journalAppWork::getReplaceColorStr 替换掉获取字符的颜色字符和特殊符号
  * @param d 原字符
  * @return  替换后的字符
  */
-QString journalWork::getReplaceColorStr(const char *d)
+QString JournalAppWork::getReplaceColorStr(const char *d)
 {
     QByteArray byteChar(d);
     byteChar = Utils::replaceEmptyByteArray(byteChar);
@@ -341,11 +266,11 @@ QString journalWork::getReplaceColorStr(const char *d)
 
 
 /**
- * @brief JournalBootWork::getDateTimeFromStamp 通过获取的时间戳转换为格式化的时间显示文本
+ * @brief journalAppWork::getDateTimeFromStamp 通过获取的时间戳转换为格式化的时间显示文本
  * @param str 接口获取的原始时间字符
  * @return  格式化的时间显示文本
  */
-QString journalWork::getDateTimeFromStamp(const QString &str)
+QString JournalAppWork::getDateTimeFromStamp(const QString &str)
 {
     QString ret = "";
     QString dtstr = str.left(str.length() - 6);
@@ -355,9 +280,9 @@ QString journalWork::getDateTimeFromStamp(const QString &str)
 }
 
 /**
- * @brief JournalBootWork::initMap 初始化等级数字和等级显示文本的map
+ * @brief journalAppWork::initMap 初始化等级数字和等级显示文本的map
  */
-void journalWork::initMap()
+void JournalAppWork::initMap()
 {
     m_map.clear();
     m_map.insert(0, DApplication::translate("Level", "Emergency"));
@@ -371,11 +296,11 @@ void journalWork::initMap()
 }
 
 /**
- * @brief JournalBootWork::i2str 日志等级到等级显示文本的转换
+ * @brief journalAppWork::i2str 日志等级到等级显示文本的转换
  * @param prio 日志等级数字
  * @return 等级显示文
  */
-QString journalWork::i2str(int prio)
+QString JournalAppWork::i2str(int prio)
 {
     return m_map.value(prio);
 }

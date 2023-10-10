@@ -1654,6 +1654,12 @@ void DisplayContent::slot_exportClicked()
                     tr("zip(*.zip)"), &selectFilter);
     }
 
+    if (fileName.isEmpty()) {
+        delete exportThread;
+        DApplication::setActiveWindow(this);
+        return;
+    }
+
     QFileInfo fi(fileName.left(fileName.lastIndexOf("/")));
     if (!fi.isWritable()) {
         exportThread->sigResult(false);

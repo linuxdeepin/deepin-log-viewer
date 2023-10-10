@@ -198,6 +198,7 @@ set (APP_CPP_FILES
      logallexportthread.cpp
      eventlogutils.cpp
      logbackend.cpp
+     journalappwork.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -236,6 +237,7 @@ set (APP_HEADERS_FILES
     eventlogutils.h
     logbackend.h
     accessible.h
+    journalappwork.h
     )
 
 # 5. 头文件

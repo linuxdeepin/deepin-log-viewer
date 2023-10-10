@@ -26,8 +26,6 @@
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
-Q_LOGGING_CATEGORY(test, "main.app.test.module")
-
 int main(int argc, char *argv[])
 {
     //在root下或者非deepin/uos环境下运行不会发生异常，需要加上XDG_CURRENT_DESKTOP=Deepin环境变量；
@@ -35,7 +33,6 @@ int main(int argc, char *argv[])
         setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
     }
 
-    qCDebug(test) << "just test";
     // 命令参数大于1，进行命令行处理
     if (argc > 1) {
         QCoreApplication a(argc, argv);
@@ -127,13 +124,10 @@ int main(int argc, char *argv[])
                     DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
 
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 5, 0))
-        qCDebug(test) << "just test 2";
         DLogManager::registerJournalAppender();
 #ifdef QT_DEBUG
         DLogManager::registerConsoleAppender();
 #endif
-
-        qCDebug(test) << "just test 3";
 #else
         DLogManager::registerConsoleAppender();
         DLogManager::registerFileAppender();

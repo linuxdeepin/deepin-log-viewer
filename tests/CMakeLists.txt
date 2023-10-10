@@ -134,6 +134,7 @@ FILE(GLOB allSource
      ../application/dbusproxy/dldbushandler.cpp
 #     ../application/viewsortfilter.cpp
      ../application/logallexportthread.cpp
+     ../application/journalappwork.cpp
 )
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
@@ -207,6 +208,7 @@ file(GLOB_RECURSE LVP_SOURCES
     "../application/wtmpparse.cpp"
     "../application/logapplicationhelper.cpp"
     "../application/logexportthread.cpp"
+    "../application/journalappwork.cpp"
     )
 file(GLOB_RECURSE LVP_HEADERS
     "../liblogviewerplugin/src/*.h"
@@ -227,6 +229,7 @@ file(GLOB_RECURSE LVP_HEADERS
     "../application/structdef.h"
     "../application/logapplicationhelper.h"
     "../application/logexportthread.h"
+    "../application/journalappwork.h"
     )
 #---------------------------------------------
 

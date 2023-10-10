@@ -442,4 +442,34 @@ struct EXPORTALL_DATA {
     }
 };
 
+// 自研应用日志配置信息
+struct AppLogConfig {
+
+    QString name;
+    QString execPath;
+    QString logPath;
+    QString logType; // 日志类型分为file或journal
+    bool    visible;
+
+    AppLogConfig()
+        : name("")
+        , execPath("")
+        , logPath("")
+        , logType("")
+        , visible(true)
+    {
+
+    }
+
+    bool contains(const QString& app) {
+        return name.contains(app) || execPath.contains(app);
+    }
+
+    bool isValid() {
+        return !name.isEmpty() && !execPath.isEmpty();
+    }
+};
+
+#define AppLogConfigList QList<AppLogConfig>
+
 #endif  // STRUCTDEF_H
