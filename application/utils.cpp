@@ -365,3 +365,8 @@ QString Utils::getHomePath(const QString &userName)
     qInfo() << "userName: " << uName << "homePath:" << str;
     return str;
 }
+
+QString Utils::appName(const QString &path)
+{
+    return path.mid(path.lastIndexOf("/") + 1, path.size() - 1).split(".").first();
+}

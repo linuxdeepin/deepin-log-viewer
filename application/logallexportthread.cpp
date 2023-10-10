@@ -65,11 +65,19 @@ void LogAllExportThread::run()
             data.logCategory = "apps";
             QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
             for (auto &it2 : appData.toStdMap()) {
-                QStringList paths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.second);
-                paths.removeDuplicates();
-                if (paths.size() > 0) {
-                    QFileInfo fi(it2.second);
-                    data.dir2Files[fi.baseName()] = paths;
+                QString appName = Utils::appName(it2.second);
+                if (appName.isEmpty())
+                    continue;
+                AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
+                if (appLogConfig.logType == "file") {
+                    QStringList paths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.second);
+                    paths.removeDuplicates();
+                    if (paths.size() > 0) {
+                        QFileInfo fi(it2.second);
+                        data.dir2Files[fi.baseName()] = paths;
+                    }
+                } else if (appLogConfig.logType == "journal") {
+                    data.dir2Files[Utils::appName(it2.second)] = QStringList() << "journalctl_app";
                 }
             }
         } else if (it.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
@@ -153,7 +161,7 @@ void LogAllExportThread::run()
                     QString tmpSubCategoryPath = QString("%1%2/").arg(tmpCategoryPath).arg(itMap.key());
                     Utils::mkMutiDir(tmpSubCategoryPath);
                     for (auto &path : itMap.value()) {
-                        DLDBusHandler::instance(this)->exportLog(tmpSubCategoryPath, path, true);
+                        DLDBusHandler::instance(this)->exportLog(tmpSubCategoryPath, path, path != "journalctl_app");
                         emit updatecurrentProcess(currentProcess++);
                         if (m_cancel) {
                             break;
@@ -182,7 +190,7 @@ void LogAllExportThread::run()
         QProcess procss;
         procss.setWorkingDirectory(tmpPath);
         QStringList arg = {"-c"};
-        arg.append(QString("zip -r tmp.zip ./*;mv tmp.zip '%1';chmod 777 '%2';chmod -R 777 '%3'").arg(m_outfile).arg(m_outfile).arg(Utils::getAppDataPath()));
+        arg.append(QString("chmod -R 777 '%1';zip -r tmp.zip ./*;mv tmp.zip '%2';chmod 777 '%3'").arg(Utils::getAppDataPath()).arg(m_outfile).arg(m_outfile));
         procss.start("/bin/bash", arg);
         procss.waitForFinished(-1);
         currentProcess += 9;

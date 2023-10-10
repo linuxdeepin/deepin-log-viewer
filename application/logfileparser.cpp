@@ -10,6 +10,7 @@
 #include "sharedmemorymanager.h"
 #include "utils.h"// add by Airy
 #include "wtmpparse.h"
+#include "logapplicationhelper.h"
 
 #include <DMessageManager>
 
@@ -284,30 +285,71 @@ int LogFileParser::parseByKern(const KERN_FILTERS &iKernFilter)
 
 int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
 {
-    stopAllLoad();
-    m_isAppLoading = true;
+    // 根据应用名获取应用日志类型，缺省为log文件类型
+    QString appName = Utils::appName(iAPPFilter.path);
+    AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
 
-    m_appThread = new LogApplicationParseThread(this);
-    quitLogAuththread(m_appThread);
+    qDebug() << QString("parsing app log, appName:%1 applogType:%2 path:%3").arg(appName).arg(appLogConfig.logType).arg(iAPPFilter.path);
 
-    disconnect(m_appThread, &LogApplicationParseThread::appFinished, this,
-               &LogFileParser::appFinished);
-    disconnect(m_appThread, &LogApplicationParseThread::appData, this,
-               &LogFileParser::appData);
-    disconnect(this, &LogFileParser::stopApp, m_appThread,
-               &LogApplicationParseThread::stopProccess);
-    m_appThread->setParam(iAPPFilter);
-    connect(m_appThread, &LogApplicationParseThread::appFinished, this,
-            &LogFileParser::appFinished);
-    connect(m_appThread, &LogApplicationParseThread::appData, this,
-            &LogFileParser::appData);
-    connect(this, &LogFileParser::stopApp, m_appThread,
-            &LogApplicationParseThread::stopProccess);
-    connect(m_appThread, &LogApplicationParseThread::finished, m_appThread,
-            &QObject::deleteLater);
-    int index = m_appThread->getIndex();
-    m_appThread->start();
-    return index;
+    if (appLogConfig.logType == "file") {
+        stopAllLoad();
+        m_isAppLoading = true;
+
+        m_appThread = new LogApplicationParseThread(this);
+        quitLogAuththread(m_appThread);
+
+        disconnect(m_appThread, &LogApplicationParseThread::appFinished, this,
+                   &LogFileParser::appFinished);
+        disconnect(m_appThread, &LogApplicationParseThread::appData, this,
+                   &LogFileParser::appData);
+        disconnect(this, &LogFileParser::stopApp, m_appThread,
+                   &LogApplicationParseThread::stopProccess);
+        m_appThread->setParam(iAPPFilter);
+        connect(m_appThread, &LogApplicationParseThread::appFinished, this,
+                &LogFileParser::appFinished);
+        connect(m_appThread, &LogApplicationParseThread::appData, this,
+                &LogFileParser::appData);
+        connect(this, &LogFileParser::stopApp, m_appThread,
+                &LogApplicationParseThread::stopProccess);
+        connect(m_appThread, &LogApplicationParseThread::finished, m_appThread,
+                &QObject::deleteLater);
+        int index = m_appThread->getIndex();
+        m_appThread->start();
+        return index;
+    } else {
+        stopAllLoad();
+        emit stopJournalApp();
+
+        // 级别筛选
+        QStringList arg;
+        if (iAPPFilter.lvlFilter != LVALL) {
+            QString prio = QString("PRIORITY=%1").arg(iAPPFilter.lvlFilter);
+            arg.append(prio);
+        } else {
+            arg.append("all");
+        }
+
+        // 时间筛选
+        if (iAPPFilter.timeFilterBegin != -1) {
+            arg << QString::number(iAPPFilter.timeFilterBegin * 1000) << QString::number(iAPPFilter.timeFilterEnd * 1000);
+        }
+
+        // 应用筛选
+        arg << appName;
+
+        JournalAppWork* work = new JournalAppWork(this);
+
+        // 设置筛选条件参数
+        work->setArg(arg);
+
+        connect(work, &JournalAppWork::journalAppFinished, this, &LogFileParser::appFinished, Qt::QueuedConnection);
+        connect(work, &JournalAppWork::journalAppData, this, &LogFileParser::appData, Qt::QueuedConnection);
+        connect(this, &LogFileParser::stopJournalApp, work, &JournalAppWork::stopWork);
+
+        int index = work->getIndex();
+        QThreadPool::globalInstance()->start(work);
+        return index;
+    }
 }
 
 void LogFileParser::parseByDnf(DNF_FILTERS iDnfFilter)
@@ -426,6 +468,7 @@ void LogFileParser::stopAllLoad()
     emit stopXlog();
     emit stopKwin();
     emit stopApp();
+    emit stopJournalApp();
     emit stopJournal();
     emit stopJournalBoot();
     emit stopNormal();

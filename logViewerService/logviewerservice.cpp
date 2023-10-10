@@ -23,6 +23,7 @@ LogViewerService::LogViewerService(QObject *parent)
     m_commands.insert("last", "last -x");
     m_commands.insert("journalctl_system", "journalctl -r");
     m_commands.insert("journalctl_boot", "journalctl -b -r");
+    m_commands.insert("journalctl_app", "journalctl");
 }
 
 LogViewerService::~LogViewerService()
@@ -358,9 +359,19 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             qWarning() << "unknown command:" << in;
             return false;
         }
+
+        QString cmd = it.value();
         outFullPath = outDirInfo.absoluteFilePath() + in + ".log";
+        if (in == "journalctl_app") {
+            QString appName = outDirInfo.absoluteFilePath().split("/").at(outDirInfo.absoluteFilePath().split("/").size() - 2);
+            outFullPath = outDirInfo.absoluteFilePath() + appName + ".log";
+            cmd += QString(" SYSLOG_IDENTIFIER=%1").arg(appName);
+
+            qDebug() << "journalctl app export cmd:" << cmd;
+        }
+
         //结果重定向到文件
-        arg[1].append(QString("%1 >& \"%2\";").arg(it.value(), outFullPath));
+        arg[1].append(QString("%1 >& \"%2\";").arg(cmd, outFullPath));
     }
     //设置文件权限
     arg[1].append(QString("chmod 777 \"%1\";").arg(outFullPath));

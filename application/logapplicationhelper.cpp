@@ -9,9 +9,14 @@
 #include <QDir>
 #include <QFile>
 #include <QLocale>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 std::atomic<LogApplicationHelper *> LogApplicationHelper::m_instance;
 std::mutex LogApplicationHelper::m_mutex;
+
+// 自研应用日志json配置文件目录
+const QString APP_LOG_CONFIG_PATH = "/usr/share/deepin-log-viewer/deepin-log.conf.d";
 
 /**
  * @brief LogApplicationHelper::LogApplicationHelper 构造函数，获取日志文件路径和应用名称
@@ -275,6 +280,11 @@ void LogApplicationHelper::createDesktopFiles()
                 }
             }
 
+            // 子应用日志可控制自己的日志的是否在日志收集工具中显示
+            AppLogConfig applogConfig = appLogConfig(Utils::appName(filePath));
+            if (applogConfig.isValid())
+                canDisplay = applogConfig.visible;
+
             if (!lineStr.contains("X-Deepin-Vendor", Qt::CaseInsensitive)) {
                 continue;
             }
@@ -415,6 +425,51 @@ QString LogApplicationHelper::getLogFile(const QString &path)
     return ret;
 }
 
+void LogApplicationHelper::loadAppLogConfigs()
+{
+    m_appLogConfigs.clear();
+
+    QDir dir(APP_LOG_CONFIG_PATH);
+    if (!dir.exists()) {
+        qWarning() << QString("%1 does not exist.").arg(APP_LOG_CONFIG_PATH);
+        return;
+    }
+
+    dir.setFilter(QDir::Files);
+    dir.setNameFilters(QStringList() << "*.json");
+    QFileInfoList fiList = dir.entryInfoList();
+    foreach (QFileInfo fi, fiList) {
+        QFile file(fi.absoluteFilePath());
+        if (!file.open(QIODevice::ReadOnly))
+            continue;
+
+        QByteArray data = file.readAll();
+        file.close();
+
+        QJsonParseError parseError;
+        QJsonDocument document = QJsonDocument::fromJson(data, &parseError);
+        if (parseError.error == QJsonParseError::NoError) {
+            if (document.isObject()) {
+                QJsonObject object = document.object();
+
+                AppLogConfig logConfig;
+                logConfig.name = object.value("name").toString();
+                logConfig.execPath = object.value("exec").toString();
+                logConfig.logPath = object.value("logPath").toString();
+                if (object.contains("visible"))
+                    logConfig.visible = object.value("visible").toString().toInt();
+                if (object.contains("logType")) {
+                    logConfig.logType = object.value("logType").toString();
+                }
+
+                qInfo() << QString("name:%1 exec:%2 logType:%3 logPath:%4 visible:%5").arg(logConfig.name).arg(logConfig.execPath).arg(logConfig.logType).arg(logConfig.logPath).arg(logConfig.visible);
+
+                m_appLogConfigs.push_back(logConfig);
+            }
+        }
+    }
+}
+
 //刷新并返回所有显示文本对应的应用日志路径
 QMap<QString, QString> LogApplicationHelper::getMap()
 {
@@ -452,6 +507,21 @@ QList<QStringList> LogApplicationHelper::getOtherLogList()
 QList<QStringList> LogApplicationHelper::getCustomLogList()
 {
     return m_custom_log_list;
+}
+
+AppLogConfig LogApplicationHelper::appLogConfig(const QString &app)
+{
+    if (m_appLogConfigs.isEmpty()) {
+        loadAppLogConfigs();
+    }
+
+    foreach (AppLogConfig config, m_appLogConfigs) {
+        if (config.contains(app)) {
+            return config;
+        }
+    }
+
+    return AppLogConfig();
 }
 
 //从应用包名转换为应用显示文本
