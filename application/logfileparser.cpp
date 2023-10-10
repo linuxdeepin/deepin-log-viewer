@@ -291,7 +291,7 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
 
     qDebug() << QString("parsing app log, appName:%1 applogType:%2 path:%3").arg(appName).arg(appLogConfig.logType).arg(iAPPFilter.path);
 
-    if (appLogConfig.logType == "file") {
+    if (appLogConfig.logType == "file" || appLogConfig.logType.isEmpty()) {
         stopAllLoad();
         m_isAppLoading = true;
 

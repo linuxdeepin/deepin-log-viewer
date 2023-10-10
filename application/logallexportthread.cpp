@@ -69,7 +69,7 @@ void LogAllExportThread::run()
                 if (appName.isEmpty())
                     continue;
                 AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
-                if (appLogConfig.logType == "file") {
+                if (appLogConfig.logType == "file" || appLogConfig.logType.isEmpty()) {
                     QStringList paths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.second);
                     paths.removeDuplicates();
                     if (paths.size() > 0) {
