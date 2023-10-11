@@ -291,7 +291,20 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
 
     qDebug() << QString("parsing app log, appName:%1 applogType:%2 path:%3").arg(appName).arg(appLogConfig.logType).arg(iAPPFilter.path);
 
-    if (appLogConfig.logType == "file" || appLogConfig.logType.isEmpty()) {
+    // 确定解析方式
+    QString parseType = "file";
+    if (appLogConfig.logType == "file" || !appLogConfig.isValid())
+        parseType = "file";
+    else if (appLogConfig.isValid() && appLogConfig.logType == "journal")
+        parseType = "journal";
+
+// DTKCore 5.6.8以下，不支持journal方式解析，指定按file方式解析应用日志
+#if (DTK_VERSION < DTK_VERSION_CHECK(5, 6, 8, 0))
+    parseType = "file";
+#endif
+
+    if (parseType == "file") {
+        // file方式解析应用日志(老流程)
         stopAllLoad();
         m_isAppLoading = true;
 
@@ -316,7 +329,8 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
         int index = m_appThread->getIndex();
         m_appThread->start();
         return index;
-    } else {
+    } else if (parseType == "journal") {
+        // journal方式解析应用日志
         stopAllLoad();
         emit stopJournalApp();
 
@@ -350,6 +364,8 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
         QThreadPool::globalInstance()->start(work);
         return index;
     }
+
+    return -1;
 }
 
 void LogFileParser::parseByDnf(DNF_FILTERS iDnfFilter)
