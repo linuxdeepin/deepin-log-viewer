@@ -16,7 +16,7 @@
 using HelperCreator = CliApplicationHelper::HelperCreator;
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(dgAppHelper, "deepin-logger")
+Q_LOGGING_CATEGORY(dgAppHelper, "deepin.logger")
 #else
 Q_LOGGING_CATEGORY(dgAppHelper, "deepin.logger", QtInfoMsg)
 #endif

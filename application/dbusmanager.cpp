@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,13 @@
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QDebug>
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logDBusManager, "log.viewer.dbus.manager")
+#else
+Q_LOGGING_CATEGORY(logDBusManager, "log.viewer.dbus.manager", QtInfoMsg)
+#endif
 
 bool DBusManager::isGetedKlu = false;
 QString DBusManager::isklusystemName = "";
@@ -41,7 +48,7 @@ QString DBusManager::getSystemInfo()
                                .property("ProductName")
                                .toString();
         } else {
-            qWarning() << "Unknown OS version:" << osVersion;
+            qCWarning(logDBusManager) << "Unknown OS version:" << osVersion;
         }
         isGetedKlu = true;
     }
@@ -55,14 +62,14 @@ bool DBusManager::isSEOepn()
     if (interfaceSE.isValid()) {
         QDBusReply<QString> reply = interfaceSE.call(QStringLiteral("Status"));
         if (!reply.error().message().isEmpty())
-            qWarning() << qPrintable(QString("com.deepin.daemon.SecurityEnhance.Status DBus error: %1").arg(reply.error().message()));
+            qCWarning(logDBusManager) << qPrintable(QString("com.deepin.daemon.SecurityEnhance.Status DBus error: %1").arg(reply.error().message()));
 
         if (reply.value() == "close")
             bIsSEOpen = false;
         else
             bIsSEOpen = true;
     } else {
-        qWarning() << qPrintable(QString("isSEOpen failed! interface error: %1").arg(interfaceSE.lastError().message()));
+        qCWarning(logDBusManager) << qPrintable(QString("isSEOpen failed! interface error: %1").arg(interfaceSE.lastError().message()));
     }
 
     return bIsSEOpen;
@@ -81,12 +88,12 @@ bool DBusManager::isAuditAdmin()
     if (interfaceSE.isValid()) {
         QDBusReply<QString> reply = interfaceSE.call(QStringLiteral("GetSEUserByName"), currentUserName);
         if (!reply.error().message().isEmpty())
-            qWarning() << qPrintable(QString("com.deepin.daemon.SecurityEnhance.GetSEUserByName DBus error: %1").arg(reply.error().message()));
+            qCWarning(logDBusManager) << qPrintable(QString("com.deepin.daemon.SecurityEnhance.GetSEUserByName DBus error: %1").arg(reply.error().message()));
 
         if (reply.value() == "audadm_u" || reply.value() == "auditadm_u")
             bIsAuditAdmin = true;
     } else {
-        qWarning() << qPrintable(QString("isAuditAdmin failed! interface error: %1").arg(interfaceSE.lastError().message()));
+        qCWarning(logDBusManager) << qPrintable(QString("isAuditAdmin failed! interface error: %1").arg(interfaceSE.lastError().message()));
     }
 
     return bIsAuditAdmin;

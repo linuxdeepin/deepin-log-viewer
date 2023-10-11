@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -23,8 +23,16 @@
 #include <QDateTime>
 #include <QSurfaceFormat>
 #include <QDebug>
+#include <QLoggingCategory>
+
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logAppMain, "log.viewer.main")
+#else
+Q_LOGGING_CATEGORY(logAppMain, "log.viewer.main", QtInfoMsg)
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -136,7 +144,7 @@ int main(int argc, char *argv[])
 
         if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                                   DGuiApplicationHelper::UserScope)) {
-            qCritical() << "DGuiApplicationHelper::instance()->setSingleInstance";
+            qCCritical(logAppMain) << "DGuiApplicationHelper::instance()->setSingleInstance";
             a.activeWindow();
             return 0;
         }

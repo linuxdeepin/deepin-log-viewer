@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,6 +13,13 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QProcess>
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logJournal, "log.viewer.journal.work")
+#else
+Q_LOGGING_CATEGORY(logJournal, "log.viewer.journal.work", QtInfoMsg)
+#endif
 
 DWIDGET_USE_NAMESPACE
 
@@ -75,7 +82,7 @@ journalWork::~journalWork()
  */
 void journalWork::stopWork()
 {
-    qDebug() << "stopWork";
+    qCDebug(logJournal) << "stopWork";
     m_canRun = false;
 }
 
@@ -114,7 +121,7 @@ void journalWork::setArg(QStringList arg)
  */
 void journalWork::run()
 {
-    qDebug() << "threadrun";
+    qCDebug(logJournal) << "threadrun";
     doWork();
 
 }
@@ -133,7 +140,7 @@ void journalWork::doWork()
         mutex.unlock();
         return;
     }
-#if 1
+
     int r;
 
     sd_journal *j ;
@@ -225,7 +232,7 @@ void journalWork::doWork()
         r = sd_journal_get_data(j, "SYSLOG_IDENTIFIER", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.daemonName = "unknown";
-            qWarning() << logMsg.daemonId << "error code" << r;
+            qCWarning(logJournal) << logMsg.daemonId << "error code" << r;
         } else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
@@ -274,54 +281,6 @@ void journalWork::doWork()
     emit journalFinished(m_threadIndex);
     //第一次加载时这个之后的代码都不执行?故放到最后
     sd_journal_close(j);
-
-#else
-    proc = new QProcess;
-    //! by time: --since="xxxx-xx-xx" --until="xxxx-xx-xx" exclude U
-    //! by priority: journalctl PRIORITY=x
-    proc->start("journalctl", m_arg);
-    proc->waitForFinished(-1);
-
-    QByteArray output = proc->readAllStandardOutput();
-    proc->close();
-
-    // reverse by time
-    QList<QByteArray> arrayList = output.split('\n');
-    for (auto i = arrayList.count() - 1; i >= 0; i--) {
-        QByteArray data = arrayList.at(i);
-        //    for (QByteArray data : output.split('\n')) {
-        if (data.isEmpty())
-            continue;
-
-        LOG_MSG_JOURNAL logMsg;
-
-        cnt++;
-
-        QJsonParseError erro;
-        QJsonDocument jsonDoc(QJsonDocument::fromJson(data, &erro));
-
-        if (erro.error != QJsonParseError::NoError) {
-            qDebug() << "erro" << erro.error << erro.errorString();
-            continue;
-        }
-        QJsonObject jsonObj = jsonDoc.object();
-        // fill field
-        QString dt = jsonObj.value("_SOURCE_REALTIME_TIMESTAMP").toString();
-        if (dt.isEmpty())
-            dt = jsonObj.value("__REALTIME_TIMESTAMP").toString();
-        logMsg.dateTime = getDateTimeFromStamp(dt);
-        logMsg.hostName = jsonObj.value("_HOSTNAME").toString();
-        logMsg.daemonName = jsonObj.value("_COMM").toString();
-        logMsg.daemonId = jsonObj.value("_PID").toString();
-        logMsg.msg = jsonObj.value("MESSAGE").toString();
-        logMsg.level = i2str(jsonObj.value("PRIORITY").toString().toInt());
-        logList.append(logMsg);
-        if (cnt == 500)
-            break;
-    }
-
-    emit journalFinished(logList);
-#endif
 }
 
 /**

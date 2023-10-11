@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -24,10 +24,17 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QtConcurrent>
+#include <QLoggingCategory>
 
 #include <time.h>
 #include <utmp.h>
 #include <utmpx.h>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logFileParser, "log.viewer.file.parser")
+#else
+Q_LOGGING_CATEGORY(logFileParser, "log.viewer.file.parser", QtInfoMsg)
+#endif
 
 int journalWork::thread_index = 0;
 int JournalBootWork::thread_index = 0;
@@ -289,7 +296,7 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
     QString appName = Utils::appName(iAPPFilter.path);
     AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
 
-    qDebug() << QString("parsing app log, appName:%1 applogType:%2 path:%3").arg(appName).arg(appLogConfig.logType).arg(iAPPFilter.path);
+    qCDebug(logFileParser) << QString("parsing app log, appName:%1 applogType:%2 path:%3").arg(appName).arg(appLogConfig.logType).arg(iAPPFilter.path);
 
     // 确定解析方式
     QString parseType = "file";

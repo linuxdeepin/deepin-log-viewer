@@ -17,6 +17,13 @@
 #include <QDateTime>
 #include <QStandardPaths>
 #include <QThreadPool>
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logBackend, "log.viewer.backend")
+#else
+Q_LOGGING_CATEGORY(logBackend, "log.viewer.backend", QtInfoMsg)
+#endif
 
 LogBackend *LogBackend::m_staticbackend = nullptr;
 
@@ -47,7 +54,7 @@ void LogBackend::setCmdWorkDir(const QString &dir)
 void LogBackend::exportAllLogs(const QString &outDir)
 {
     PERF_PRINT_BEGIN("POINT-05", "export all logs");
-    qInfo() << "exporting all logs begin.";
+    qCInfo(logBackend) << "exporting all logs begin.";
     // 时间
     QString dateTime = QDateTime::currentDateTime().toString("yyyyMMddHHmmss");
 
@@ -84,11 +91,11 @@ void LogBackend::exportAllLogs(const QString &outDir)
     thread->setAutoDelete(true);
     connect(thread, &LogAllExportThread::exportFinsh, this, [ = ](bool ret) {
         if (ret) {
-            qInfo() << "exporting all logs done.";
+            qCInfo(logBackend) << "exporting all logs done.";
             PERF_PRINT_END("POINT-05", "cost");
             qApp->quit();
         } else {
-            qWarning() << "exporting all logs stoped.";
+            qCWarning(logBackend) << "exporting all logs stoped.";
             // 导出失败，若为用户指定的新目录，应清除
             if (m_newDir) {
                 QDir odir(outPath);
