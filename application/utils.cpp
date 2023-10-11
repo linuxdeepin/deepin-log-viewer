@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -24,8 +24,15 @@
 #include <QFontDatabase>
 #include <QProcessEnvironment>
 #include <QTime>
+#include <QLoggingCategory>
 #include <polkit-qt5-1/PolkitQt1/Authority>
 using namespace PolkitQt1;
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logUtils, "log.viewer.utils")
+#else
+Q_LOGGING_CATEGORY(logUtils, "log.viewer.utils", QtInfoMsg)
+#endif
 
 QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
@@ -362,7 +369,7 @@ QString Utils::getHomePath(const QString &userName)
     auto output = unlock->readAllStandardOutput();
     auto str = QString::fromUtf8(output);
     str = str.mid(str.indexOf("::") + 2).split(":").first();
-    qInfo() << "userName: " << uName << "homePath:" << str;
+    qCInfo(logUtils) << "userName: " << uName << "homePath:" << str;
     return str;
 }
 

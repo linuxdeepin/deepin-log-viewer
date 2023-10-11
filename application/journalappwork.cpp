@@ -11,6 +11,12 @@
 #include <QDebug>
 #include <QLoggingCategory>
 
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logJournalApp, "log.viewer.journal.app.work")
+#else
+Q_LOGGING_CATEGORY(logJournalApp, "log.viewer.journal.app.work", QtInfoMsg)
+#endif
+
 DWIDGET_USE_NAMESPACE
 
 int JournalAppWork::thread_index;
@@ -70,7 +76,7 @@ JournalAppWork::~JournalAppWork()
  */
 void JournalAppWork::stopWork()
 {
-    qDebug() << "stopWork";
+    qCDebug(logJournalApp) << "stopWork";
     m_canRun = false;
 }
 
@@ -109,7 +115,7 @@ void JournalAppWork::setArg(QStringList arg)
  */
 void JournalAppWork::run()
 {
-    qDebug() << "threadrun";
+    qCDebug(logJournalApp) << "threadrun";
     doWork();
 }
 

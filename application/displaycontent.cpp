@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -37,10 +37,17 @@
 #include <QDateTime>
 #include <QFileIconProvider>
 #include <QMenu>
+#include <QLoggingCategory>
 
 #include <sys/utsname.h>
 #include "malloc.h"
 DWIDGET_USE_NAMESPACE
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logDisplaycontent, "log.viewer.display.content")
+#else
+Q_LOGGING_CATEGORY(logDisplaycontent, "log.viewer.display.content", QtInfoMsg)
+#endif
 
 #define SINGLE_LOAD 300
 
@@ -305,7 +312,7 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     Q_UNUSED(iSearchStr)
     //系统日志上次获取的时间,和筛选条件一起判断,防止获取过于频繁
     if (m_lastJournalGetTime.msecsTo(QDateTime::currentDateTime()) < 500 && m_journalFilter.timeFilter == id && m_journalFilter.eventTypeFilter == lId) {
-        qWarning() << "load journal log: repeat refrsh journal too fast!";
+        qCWarning(logDisplaycontent) << "load journal log: repeat refrsh journal too fast!";
         QItemSelectionModel *p = m_treeView->selectionModel();
         if (p)
             p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
@@ -1664,7 +1671,7 @@ void DisplayContent::slot_exportClicked()
     if (!fi.isWritable()) {
         exportThread->sigResult(false);
         delete exportThread;
-        qCritical() <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
+        qCCritical(logDisplaycontent) <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
         return;
     }
 
@@ -2716,11 +2723,11 @@ void DisplayContent::slot_getAuditType(int tcbx)
 void DisplayContent::parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<LOG_MSG_DPKG> list = iList;
@@ -2753,12 +2760,12 @@ void DisplayContent::parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandar
 void DisplayContent::parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<LOG_MSG_BOOT> list = iList;
@@ -2786,12 +2793,12 @@ void DisplayContent::parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandar
 void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -2835,12 +2842,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
 void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     DStandardItem *item = nullptr;
@@ -2868,12 +2875,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemMo
 void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     DStandardItem *item = nullptr;
@@ -2909,12 +2916,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItem
 void DisplayContent::parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     DStandardItem *item = nullptr;
@@ -2933,12 +2940,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemMo
 void DisplayContent::parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -2969,12 +2976,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemMod
 void DisplayContent::parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -3004,12 +3011,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemM
 void DisplayContent::parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -3031,12 +3038,12 @@ void DisplayContent::parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStan
 void DisplayContent::parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -3072,12 +3079,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemM
 void DisplayContent::parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -3528,12 +3535,12 @@ void DisplayContent::onExportProgress(int nCur, int nTotal)
 void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     DStandardItem *item = nullptr;

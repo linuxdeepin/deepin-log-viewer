@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -14,9 +14,16 @@
 #include <QSharedMemory>
 #include <QBuffer>
 #include <QDataStream>
+#include <QLoggingCategory>
 
 #include <iostream>
 #include<signal.h>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logViewApp, "log.viewer.view.application")
+#else
+Q_LOGGING_CATEGORY(logViewApp, "log.viewer.view.application", QtInfoMsg)
+#endif
 
 ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc, argv),m_commondM(new QSharedMemory())
 {
@@ -24,7 +31,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     parser.process(*this);
     const QStringList fileList = parser.positionalArguments();
     if (fileList.count() < 2) {
-        qCritical() << "cmd param count less than 2";
+        qCCritical(logViewApp) << "cmd param count less than 2";
         return ;
     }
     bool useFinishedSignal = false;

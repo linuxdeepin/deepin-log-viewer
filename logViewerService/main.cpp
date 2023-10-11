@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,6 +11,9 @@
 #include <QDBusConnection>
 #include <QDBusError>
 #include <QDebug>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logService)
 
 //service name
 const QString LogViewrServiceName = "com.deepin.logviewer";
@@ -29,7 +32,7 @@ int main(int argc, char *argv[])
     PATH += ":/sbin";
     qputenv("PATH", PATH.toLatin1());
 
-    qDebug() << "log-viewer-service start, PATH" << PATH;
+    qCDebug(logService) << "log-viewer-service start, PATH" << PATH;
 
     QCoreApplication a(argc, argv);
     a.setOrganizationName("deepin");
@@ -56,7 +59,7 @@ int main(int argc, char *argv[])
 #endif
     QDBusConnection systemBus = QDBusConnection::systemBus();
     if (!systemBus.registerService(LogViewrServiceName)) {
-        qCritical() << "registerService failed:" << systemBus.lastError();
+        qCCritical(logService) << "registerService failed:" << systemBus.lastError();
         exit(0x0001);
     }
     LogViewerWatcher watcher;
@@ -64,7 +67,7 @@ int main(int argc, char *argv[])
     if (!systemBus.registerObject(LogViewrPath,
                                   &service,
                                   QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals)) {
-        qCritical() << "registerObject failed:" << systemBus.lastError();
+        qCCritical(logService) << "registerObject failed:" << systemBus.lastError();
         exit(0x0002);
     }
     return a.exec();

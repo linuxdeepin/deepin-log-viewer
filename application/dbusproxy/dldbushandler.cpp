@@ -1,10 +1,17 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dldbushandler.h"
 #include <QDebug>
 #include <QStandardPaths>
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logDBusHandler, "log.viewer.dbus.handler")
+#else
+Q_LOGGING_CATEGORY(logDBusHandler, "log.viewer.dbus.handler", QtInfoMsg)
+#endif
 
 DLDBusHandler *DLDBusHandler::m_statichandeler = nullptr;
 
@@ -30,9 +37,9 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
                                           this);
     //Note: when dealing with remote objects, it is not always possible to determine if it exists when creating a QDBusInterface.
     if (!m_dbus->isValid() && !m_dbus->lastError().message().isEmpty()) {
-        qCritical() << "dbus com.deepin.logviewer isValid false error:" << m_dbus->lastError() << m_dbus->lastError().message();
+        qCCritical(logDBusHandler) << "dbus com.deepin.logviewer isValid false error:" << m_dbus->lastError() << m_dbus->lastError().message();
     }
-    qInfo() << "dbus com.deepin.logviewer isValid true";
+    qCInfo(logDBusHandler) << "dbus com.deepin.logviewer isValid true";
 }
 
 /*!
@@ -77,7 +84,7 @@ QStringList DLDBusHandler::getFileInfo(const QString &flag, bool unzip)
     QDBusPendingReply<QStringList> reply = m_dbus->getFileInfo(flag, unzip);
     reply.waitForFinished();
     if (reply.isError()) {
-        qWarning() << "call dbus iterface 'getFileInfo()' failed. error info:" << reply.error().message();
+        qCWarning(logDBusHandler) << "call dbus iterface 'getFileInfo()' failed. error info:" << reply.error().message();
     } else {
         filePath = reply.value();
     }
@@ -90,7 +97,7 @@ QStringList DLDBusHandler::getOtherFileInfo(const QString &flag, bool unzip)
     reply.waitForFinished();
     QStringList filePathList;
     if (reply.isError()) {
-        qWarning() << "call dbus iterface 'getOtherFileInfo()' failed. error info:" << reply.error().message();
+        qCWarning(logDBusHandler) << "call dbus iterface 'getOtherFileInfo()' failed. error info:" << reply.error().message();
     } else {
         filePathList = reply.value();
     }

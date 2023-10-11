@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,6 +11,14 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QProcess>
+
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logFileApp, "log.viewer.file.app.work")
+#else
+Q_LOGGING_CATEGORY(logFileApp, "log.viewer.file.app.work", QtInfoMsg)
+#endif
 
 DWIDGET_USE_NAMESPACE
 
@@ -101,12 +109,11 @@ void LogApplicationParseThread::doWork()
                     return;
                 }
                 LOG_MSG_APPLICATOIN msg;
-                QString str =strList[j];
+                QString str = strList[j];
 
                 QRegularExpressionMatch match = re.match(str);
                 bool matchRes = match.hasMatch();
                 if(!matchRes){
-                    qWarning()<<"not match ，Format problem";
                     continue;
                 }
 
@@ -158,51 +165,6 @@ void LogApplicationParseThread::doWork()
 void LogApplicationParseThread::onProcFinished(int ret)
 {
     Q_UNUSED(ret)
-#if 0
-    QProcess *proc = dynamic_cast<QProcess *>(sender());
-    QString output = proc->readAllStandardOutput();
-    proc->deleteLater();
-
-    for (QString str : output.split('\n')) {
-        LOG_MSG_APPLICATOIN msg;
-
-        str.replace(QRegExp("\\s{2,}"), "");
-
-        QStringList list = str.split("]", QString::SkipEmptyParts);
-        if (list.count() < 3)
-            continue;
-
-        QString dateTime = list[0].split("[", QString::SkipEmptyParts)[0].trimmed();
-        if (dateTime.contains(",")) {
-            dateTime.replace(",", "");
-        }
-        //        if (dateTime.split(".").count() == 2) {
-        //            dateTime = dateTime.split(".")[0];
-        //        }
-        qint64 dt = QDateTime::fromString(dateTime, "yyyy-MM-dd hh:mm:ss.zzz").toMSecsSinceEpoch();
-        if (dt < m_periorTime)
-            continue;
-        msg.dateTime = dateTime;
-        msg.level = list[0].split("[", QString::SkipEmptyParts)[1];
-
-        if (m_level != LVALL) {
-            if (m_levelDict.value(msg.level) != m_level)
-                continue;
-        }
-
-        msg.src = list[1].split("[", QString::SkipEmptyParts)[1];
-
-        if (list.count() >= 4) {
-            msg.msg = list.mid(2).join("]");
-        } else {
-            msg.msg = list[2];
-        }
-
-        m_appList.insert(0, msg);
-    }
-
-    emit appCmdFinished(m_appList);
-#endif
 }
 
 /**
@@ -231,6 +193,6 @@ void LogApplicationParseThread::initProccess()
  */
 void LogApplicationParseThread::run()
 {
-    qDebug() << "threadrun";
+    qCDebug(logFileApp) << "threadrun";
     doWork();
 }

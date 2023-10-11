@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,8 +13,13 @@
 #include <QDBusMessage>
 #include <QDBusConnectionInterface>
 #include <QStandardPaths>
+#include <QLoggingCategory>
 
-//const QStringList ValidInvokerExePathList1 = QStandardPaths::locateAll(QStandardPaths::ApplicationsLocation, "deepin-log-viewer");
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logService, "log.viewer.service")
+#else
+Q_LOGGING_CATEGORY(logService, "log.viewer.service", QtInfoMsg)
+#endif
 
 LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
@@ -63,7 +68,7 @@ QString LogViewerService::readLog(const QString &filePath)
     //QByteArray -> QString 如果遇到0x00，会导致转换终止
     //replace("\x00", "")和replace("\u0000", "")无效
     //使用remove操作，性能损耗过大，因此遇到0x00 替换为 0x20(空格符)
-    qInfo() << "replace 0x00 to 0x20 begin";
+    qCInfo(logService) << "replace 0x00 to 0x20 begin";
     int replaceTimes = 0;
     for (int i = 0; i != byte.size(); ++i) {
         if (byte.at(i) == 0x00) {
@@ -71,7 +76,7 @@ QString LogViewerService::readLog(const QString &filePath)
             replaceTimes++;
         }
     }
-    qInfo() << "replace 0x00 to 0x20   end. replaceTimes:" << replaceTimes;
+    qCInfo(logService) << "replace 0x00 to 0x20   end. replaceTimes:" << replaceTimes;
     return QString::fromUtf8(byte);
 }
 
@@ -162,7 +167,7 @@ int LogViewerService::exitCode()
  */
 void LogViewerService::quit()
 {
-    qDebug() << "LogViewService::Quit called";
+    qCDebug(logService) << "LogViewService::Quit called";
     QCoreApplication::exit(0);
 }
 
@@ -235,7 +240,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
     }
     //要判断路径是否存在
     if (!dir.exists()) {
-        qWarning() << "it is not true path";
+        qCWarning(logService) << "it is not true path";
         return QStringList() << "";
     }
     dir.setFilter(QDir::Files | QDir::NoSymLinks); //实现对文件的过滤
@@ -281,7 +286,7 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
     QFileInfoList fileList;
     //判断路径是否存在
     if (!appFileInfo.exists()) {
-        qWarning() << QString("path:[%1] it is not true path").arg(file);
+        qCWarning(logService) << QString("path:[%1] it is not true path").arg(file);
         return QStringList();
     }
     //如果是文件
@@ -347,7 +352,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         }
         QFileInfo filein(in);
         if (!filein.isFile()) {
-            qWarning() << "in not file:" << in;
+            qCWarning(logService) << "in not file:" << in;
             return false;
         }
         outFullPath = outDirInfo.absoluteFilePath() + filein.fileName();
@@ -356,7 +361,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     } else {
         auto it = m_commands.find(in);
         if (it == m_commands.end()) {
-            qWarning() << "unknown command:" << in;
+            qCWarning(logService) << "unknown command:" << in;
             return false;
         }
 
@@ -367,7 +372,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             outFullPath = outDirInfo.absoluteFilePath() + appName + ".log";
             cmd += QString(" SYSLOG_IDENTIFIER=%1").arg(appName);
 
-            qDebug() << "journalctl app export cmd:" << cmd;
+            qCDebug(logService) << "journalctl app export cmd:" << cmd;
         }
 
         //结果重定向到文件
@@ -378,7 +383,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     QProcess process;
     process.start("/bin/bash", arg);
     if (!process.waitForFinished()) {
-        qWarning() << "command error:" << arg;
+        qCWarning(logService) << "command error:" << arg;
         return false;
     }
     return true;

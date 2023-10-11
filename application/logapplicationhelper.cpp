@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,6 +11,13 @@
 #include <QLocale>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logAppHelper, "log.viewer.application.helper")
+#else
+Q_LOGGING_CATEGORY(logAppHelper, "log.viewer.application.helper", QtInfoMsg)
+#endif
 
 std::atomic<LogApplicationHelper *> LogApplicationHelper::m_instance;
 std::mutex LogApplicationHelper::m_mutex;
@@ -151,7 +158,7 @@ void LogApplicationHelper::initCustomLog()
 
         // 判断配置是否有效
         if (!m_pDConfig->isValid()) {
-            qWarning() << QString("DConfig is invalide, name:[%1], subpath[%2].").arg(m_pDConfig->name(), m_pDConfig->subpath());
+            qCWarning(logAppHelper) << QString("DConfig is invalide, name:[%1], subpath[%2].").arg(m_pDConfig->name(), m_pDConfig->subpath());
             m_pDConfig->deleteLater();
             m_pDConfig = nullptr;
             return;
@@ -205,7 +212,7 @@ void LogApplicationHelper::initCustomLog()
                 m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
             }
         } else {
-            qWarning() << "cannot find gsettings config file";
+            qCWarning(logAppHelper) << "cannot find gsettings config file";
         }
     }
 }
@@ -454,7 +461,7 @@ void LogApplicationHelper::loadAppLogConfigs()
 
     QDir dir(APP_LOG_CONFIG_PATH);
     if (!dir.exists()) {
-        qWarning() << QString("%1 does not exist.").arg(APP_LOG_CONFIG_PATH);
+        qCWarning(logAppHelper) << QString("%1 does not exist.").arg(APP_LOG_CONFIG_PATH);
         return;
     }
 
@@ -485,7 +492,7 @@ void LogApplicationHelper::loadAppLogConfigs()
                     logConfig.logType = object.value("logType").toString();
                 }
 
-                qInfo() << QString("name:%1 exec:%2 logType:%3 logPath:%4 visible:%5").arg(logConfig.name).arg(logConfig.execPath).arg(logConfig.logType).arg(logConfig.logPath).arg(logConfig.visible);
+                qCInfo(logAppHelper) << QString("name:%1 exec:%2 logType:%3 logPath:%4 visible:%5").arg(logConfig.name).arg(logConfig.execPath).arg(logConfig.logType).arg(logConfig.logPath).arg(logConfig.visible);
 
                 m_appLogConfigs.push_back(logConfig);
             }

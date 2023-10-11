@@ -7,6 +7,13 @@
 #include "logapplicationhelper.h"
 #include "utils.h"
 
+#include <QLoggingCategory>
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logExportAll, "log.viewer.exportall.work")
+#else
+Q_LOGGING_CATEGORY(logExportAll, "log.viewer.exportall.work", QtInfoMsg)
+#endif
+
 LogAllExportThread::LogAllExportThread(const QStringList &types, const QString &outfile, QObject *parent)
     : QObject(parent)
     , m_types(types)
@@ -17,10 +24,10 @@ LogAllExportThread::LogAllExportThread(const QStringList &types, const QString &
 void LogAllExportThread::run()
 {
     //判断权限
-    qInfo() << "outFile: " << m_outfile;
+    qCInfo(logExportAll) << "outFile: " << m_outfile;
     QFileInfo info(m_outfile);
     if (!QFileInfo(info.path()).isWritable()) {
-        qCritical() << QString("outdir:%1 it not writable or is not exist.").arg(info.absolutePath());
+        qCCritical(logExportAll) << QString("outdir:%1 it not writable or is not exist.").arg(info.absolutePath());
         emit exportFinsh(false);
         return;
     }
