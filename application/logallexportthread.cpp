@@ -69,14 +69,27 @@ void LogAllExportThread::run()
                 if (appName.isEmpty())
                     continue;
                 AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
-                if (appLogConfig.logType == "file" || appLogConfig.logType.isEmpty()) {
+
+                // 确定解析方式
+                QString parseType = "";
+                if (appLogConfig.logType == "file" || !appLogConfig.isValid())
+                    parseType = "file";
+                else if (appLogConfig.isValid() && appLogConfig.logType == "journal")
+                    parseType = "journal";
+
+                // DTKCore 5.6.8以下，不支持journal方式解析，指定按file方式解析应用日志
+#if (DTK_VERSION < DTK_VERSION_CHECK(5, 6, 8, 0))
+                parseType = "file";
+#endif
+
+                if (parseType == "file") {
                     QStringList paths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.second);
                     paths.removeDuplicates();
                     if (paths.size() > 0) {
                         QFileInfo fi(it2.second);
                         data.dir2Files[fi.baseName()] = paths;
                     }
-                } else if (appLogConfig.logType == "journal") {
+                } else if (parseType == "journal") {
                     data.dir2Files[Utils::appName(it2.second)] = QStringList() << "journalctl_app";
                 }
             }

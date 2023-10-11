@@ -50,6 +50,9 @@ void LogApplicationHelper::initAppLog()
     // get current system language shortname
     m_current_system_language = QLocale::system().name();
 
+    // 加载应用日志配置文件
+    loadAppLogConfigs();
+
     // get desktop & log files
     createDesktopFiles();
     createLogFiles();
@@ -329,12 +332,32 @@ void LogApplicationHelper::createLogFiles()
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
         QString desktopName = m_desktop_files[i].split(QDir::separator()).last();
         QString _name = desktopName.mid(0, desktopName.lastIndexOf("."));
+        // 默认在~/.cache/deepin目录下取自研应用日志路径
         for (auto j = 0; j < m_log_files.count(); ++j) {
             //desktop文件名和日志文件名比较，相同则符合条件
             if (_name == m_log_files[j]) {
                 QString logPath = path + m_log_files[j];
                 m_en_log_map.insert(_name, logPath);
                 break;
+            }
+        }
+
+        // 若该自研应用在file方式下配置有有效的日志路径，则按自研应用的日志路径来加载日志
+        AppLogConfig appConfig = appLogConfig(_name);
+        if (appConfig.isValid() && appConfig.logType == "file") {
+            if (!appConfig.logPath.isEmpty()) {
+
+                // 转为绝对路径
+                if (appConfig.logPath.front() == '~')
+                    appConfig.logPath.replace(0, 1, homePath);
+
+                QFileInfo fi(appConfig.logPath);
+                if (fi.exists()) {
+                    if (fi.isDir())
+                        m_en_log_map.insert(_name, appConfig.logPath);
+                    else if (fi.isFile())
+                        m_en_log_map.insert(_name, fi.absolutePath());
+                }
             }
         }
     }

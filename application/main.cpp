@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
         a.setOrganizationName("deepin");
         a.setApplicationName("deepin-log-viewer");
 
-#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 5, 0))
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
         DLogManager::registerJournalAppender();
 #ifdef QT_DEBUG
         DLogManager::registerConsoleAppender();
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
         a.setApplicationDescription(
                     DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
 
-#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 5, 0))
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
         DLogManager::registerJournalAppender();
 #ifdef QT_DEBUG
         DLogManager::registerConsoleAppender();
