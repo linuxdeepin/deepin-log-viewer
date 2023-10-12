@@ -349,22 +349,28 @@ void LogApplicationHelper::createLogFiles()
             }
         }
 
-        // 若该自研应用在file方式下配置有有效的日志路径，则按自研应用的日志路径来加载日志
+        // 若该自研应用在json配置文件
         AppLogConfig appConfig = appLogConfig(_name);
-        if (appConfig.isValid() && appConfig.logType == "file") {
-            if (!appConfig.logPath.isEmpty()) {
+        if (appConfig.isValid()) {
+            if (appConfig.logType == "file") {
+                // 若该自研应用在file方式下配置有有效的日志路径，则按自研应用的日志路径来加载日志
+                if (!appConfig.logPath.isEmpty()) {
 
-                // 转为绝对路径
-                if (appConfig.logPath.front() == '~')
-                    appConfig.logPath.replace(0, 1, homePath);
+                    // 转为绝对路径
+                    if (appConfig.logPath.front() == '~')
+                        appConfig.logPath.replace(0, 1, homePath);
 
-                QFileInfo fi(appConfig.logPath);
-                if (fi.exists()) {
-                    if (fi.isDir())
-                        m_en_log_map.insert(_name, appConfig.logPath);
-                    else if (fi.isFile())
-                        m_en_log_map.insert(_name, fi.absolutePath());
+                    QFileInfo fi(appConfig.logPath);
+                    if (fi.exists()) {
+                        if (fi.isDir())
+                            m_en_log_map.insert(_name, appConfig.logPath);
+                        else if (fi.isFile())
+                            m_en_log_map.insert(_name, fi.absolutePath());
+                    }
                 }
+            } else if (appConfig.logType == "journal") {
+                // 若该自研应用配置为journal方式解析，则将项目名填入log_map，便于后续解析流程处理
+                m_en_log_map.insert(_name, _name);
             }
         }
     }
@@ -510,6 +516,10 @@ QMap<QString, QString> LogApplicationHelper::getMap()
         QString displayName = m_en_trans_map.value(iter.key());
         QString logPath = getLogFile(iter.value());
 
+        // 针对journal日志，使用logPath存储项目名称，便于后续解析流程处理
+        if (iter.key() == iter.value())
+            logPath = iter.key();
+
         //排除其他日志
         bool bFind = false;
         for (QStringList iterOther : getOtherLogList()) {
@@ -541,6 +551,9 @@ QList<QStringList> LogApplicationHelper::getCustomLogList()
 
 AppLogConfig LogApplicationHelper::appLogConfig(const QString &app)
 {
+    if (app.isEmpty())
+        return AppLogConfig();
+
     if (m_appLogConfigs.isEmpty()) {
         loadAppLogConfigs();
     }
