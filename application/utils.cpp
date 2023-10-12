@@ -375,5 +375,8 @@ QString Utils::getHomePath(const QString &userName)
 
 QString Utils::appName(const QString &path)
 {
+    if (path.indexOf('/') == -1)
+        return path;
+
     return path.mid(path.lastIndexOf("/") + 1, path.size() - 1).split(".").first();
 }
