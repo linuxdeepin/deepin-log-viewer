@@ -26,9 +26,9 @@
 DWIDGET_USE_NAMESPACE
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logExport, "log.viewer.export.work")
+Q_LOGGING_CATEGORY(logExport, "org.deepin.log.viewer.export.work")
 #else
-Q_LOGGING_CATEGORY(logExport, "log.viewer.export.work", QtInfoMsg)
+Q_LOGGING_CATEGORY(logExport, "org.deepin.log.viewer.export.work", QtInfoMsg)
 #endif
 
 /**

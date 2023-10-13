@@ -17,9 +17,9 @@
 DWIDGET_USE_NAMESPACE
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logOOCParse, "log.viewer.oocparse.work")
+Q_LOGGING_CATEGORY(logOOCParse, "org.deepin.log.viewer.parse.ooc.work")
 #else
-Q_LOGGING_CATEGORY(logOOCParse, "log.viewer.oocparse.work", QtInfoMsg)
+Q_LOGGING_CATEGORY(logOOCParse, "org.deepin.log.viewer.parse.ooc.work", QtInfoMsg)
 #endif
 
 int LogOOCFileParseThread::thread_count = 0;

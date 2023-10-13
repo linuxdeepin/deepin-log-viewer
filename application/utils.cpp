@@ -29,9 +29,9 @@
 using namespace PolkitQt1;
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logUtils, "log.viewer.utils")
+Q_LOGGING_CATEGORY(logUtils, "org.deepin.log.viewer.utils")
 #else
-Q_LOGGING_CATEGORY(logUtils, "log.viewer.utils", QtInfoMsg)
+Q_LOGGING_CATEGORY(logUtils, "org.deepin.log.viewer.utils", QtInfoMsg)
 #endif
 
 QHash<QString, QPixmap> Utils::m_imgCacheHash;

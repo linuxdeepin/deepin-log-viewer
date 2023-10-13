@@ -9,9 +9,9 @@
 
 #include <QLoggingCategory>
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logExportAll, "log.viewer.exportall.work")
+Q_LOGGING_CATEGORY(logExportAll, "org.deepin.log.viewer.exportall.work")
 #else
-Q_LOGGING_CATEGORY(logExportAll, "log.viewer.exportall.work", QtInfoMsg)
+Q_LOGGING_CATEGORY(logExportAll, "org.deepin.log.viewer.exportall.work", QtInfoMsg)
 #endif
 
 LogAllExportThread::LogAllExportThread(const QStringList &types, const QString &outfile, QObject *parent)

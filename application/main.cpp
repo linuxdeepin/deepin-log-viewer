@@ -29,9 +29,9 @@ DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logAppMain, "log.viewer.main")
+Q_LOGGING_CATEGORY(logAppMain, "org.deepin.log.viewer.main")
 #else
-Q_LOGGING_CATEGORY(logAppMain, "log.viewer.main", QtInfoMsg)
+Q_LOGGING_CATEGORY(logAppMain, "org.deepin.log.viewer.main", QtInfoMsg)
 #endif
 
 int main(int argc, char *argv[])

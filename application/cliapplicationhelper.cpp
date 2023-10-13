@@ -16,9 +16,9 @@
 using HelperCreator = CliApplicationHelper::HelperCreator;
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(dgAppHelper, "deepin.logger")
+Q_LOGGING_CATEGORY(dgAppHelper, "org.deepin.logger")
 #else
-Q_LOGGING_CATEGORY(dgAppHelper, "deepin.logger", QtInfoMsg)
+Q_LOGGING_CATEGORY(dgAppHelper, "org.deepin.logger", QtInfoMsg)
 #endif
 
 Q_GLOBAL_STATIC(QLocalServer, _d_singleServer)

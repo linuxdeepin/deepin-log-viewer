@@ -8,9 +8,9 @@
 #include <QLoggingCategory>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logSM, "log.viewer.share.memory.manager")
+Q_LOGGING_CATEGORY(logSM, "org.deepin.log.viewer.share.memory.manager")
 #else
-Q_LOGGING_CATEGORY(logSM, "log.viewer.share.memory.manager", QtInfoMsg)
+Q_LOGGING_CATEGORY(logSM, "org.deepin.log.viewer.share.memory.manager", QtInfoMsg)
 #endif
 
 #define LOG_POLIKIT_STOP_TAG "LOGAUTHCONTROL"

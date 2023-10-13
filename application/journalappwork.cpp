@@ -12,9 +12,9 @@
 #include <QLoggingCategory>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logJournalApp, "log.viewer.journal.app.work")
+Q_LOGGING_CATEGORY(logJournalApp, "org.deepin.log.viewer.parse.app.journal.work")
 #else
-Q_LOGGING_CATEGORY(logJournalApp, "log.viewer.journal.app.work", QtInfoMsg)
+Q_LOGGING_CATEGORY(logJournalApp, "org.deepin.log.viewer.parse.app.journal.work", QtInfoMsg)
 #endif
 
 DWIDGET_USE_NAMESPACE
