@@ -13,9 +13,9 @@
 #include <QLoggingCategory>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logDBusManager, "log.viewer.dbus.manager")
+Q_LOGGING_CATEGORY(logDBusManager, "org.deepin.log.viewer.dbus.manager")
 #else
-Q_LOGGING_CATEGORY(logDBusManager, "log.viewer.dbus.manager", QtInfoMsg)
+Q_LOGGING_CATEGORY(logDBusManager, "org.deepin.log.viewer.dbus.manager", QtInfoMsg)
 #endif
 
 bool DBusManager::isGetedKlu = false;

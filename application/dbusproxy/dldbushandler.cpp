@@ -8,9 +8,9 @@
 #include <QLoggingCategory>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logDBusHandler, "log.viewer.dbus.handler")
+Q_LOGGING_CATEGORY(logDBusHandler, "org.deepin.log.viewer.dbus.handler")
 #else
-Q_LOGGING_CATEGORY(logDBusHandler, "log.viewer.dbus.handler", QtInfoMsg)
+Q_LOGGING_CATEGORY(logDBusHandler, "org.deepin.log.viewer.dbus.handler", QtInfoMsg)
 #endif
 
 DLDBusHandler *DLDBusHandler::m_statichandeler = nullptr;

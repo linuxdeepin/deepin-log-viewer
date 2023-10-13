@@ -15,9 +15,9 @@
 #include <QLoggingCategory>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logFileApp, "log.viewer.file.app.work")
+Q_LOGGING_CATEGORY(logFileApp, "org.deepin.log.viewer.parse.app.file.work")
 #else
-Q_LOGGING_CATEGORY(logFileApp, "log.viewer.file.app.work", QtInfoMsg)
+Q_LOGGING_CATEGORY(logFileApp, "org.deepin.log.viewer.parse.app.file.work", QtInfoMsg)
 #endif
 
 DWIDGET_USE_NAMESPACE

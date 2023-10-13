@@ -20,9 +20,9 @@
 #include<signal.h>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logViewApp, "log.viewer.view.application")
+Q_LOGGING_CATEGORY(logViewApp, "org.deepin.log.viewer.application.view")
 #else
-Q_LOGGING_CATEGORY(logViewApp, "log.viewer.view.application", QtInfoMsg)
+Q_LOGGING_CATEGORY(logViewApp, "org.deepin.log.viewer.application.view", QtInfoMsg)
 #endif
 
 ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc, argv),m_commondM(new QSharedMemory())

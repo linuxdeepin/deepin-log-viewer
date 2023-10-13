@@ -14,9 +14,9 @@
 #include <QLoggingCategory>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logAppHelper, "log.viewer.application.helper")
+Q_LOGGING_CATEGORY(logAppHelper, "org.deepin.log.viewer.application.helper")
 #else
-Q_LOGGING_CATEGORY(logAppHelper, "log.viewer.application.helper", QtInfoMsg)
+Q_LOGGING_CATEGORY(logAppHelper, "org.deepin.log.viewer.application.helper", QtInfoMsg)
 #endif
 
 std::atomic<LogApplicationHelper *> LogApplicationHelper::m_instance;
@@ -492,8 +492,21 @@ void LogApplicationHelper::loadAppLogConfigs()
                 logConfig.name = object.value("name").toString();
                 logConfig.execPath = object.value("exec").toString();
                 logConfig.logPath = object.value("logPath").toString();
-                if (object.contains("visible"))
-                    logConfig.visible = object.value("visible").toString().toInt();
+                if (object.contains("visible")) {
+                    QJsonValue value = object.value("visible");
+                    if (value.isString()) {
+                        if (value == "true")
+                            logConfig.visible = true;
+                        else if (value == "false")
+                            logConfig.visible = false;
+                        else
+                            logConfig.visible = object.value("visible").toString().toInt();
+                    }
+                    else if (value.isBool())
+                        logConfig.visible = object.value("visible").toBool();
+                    else
+                        logConfig.visible = object.value("visible").toInt();
+                }
                 if (object.contains("logType")) {
                     logConfig.logType = object.value("logType").toString();
                 }

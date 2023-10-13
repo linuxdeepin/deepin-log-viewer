@@ -16,9 +16,9 @@
 #include <QLoggingCategory>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logService, "log.viewer.service")
+Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service")
 #else
-Q_LOGGING_CATEGORY(logService, "log.viewer.service", QtInfoMsg)
+Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service", QtInfoMsg)
 #endif
 
 LogViewerService::LogViewerService(QObject *parent)

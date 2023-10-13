@@ -20,9 +20,9 @@
 #include <QLoggingCategory>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logBackend, "log.viewer.backend")
+Q_LOGGING_CATEGORY(logBackend, "org.deepin.log.viewer.backend")
 #else
-Q_LOGGING_CATEGORY(logBackend, "log.viewer.backend", QtInfoMsg)
+Q_LOGGING_CATEGORY(logBackend, "org.deepin.log.viewer.backend", QtInfoMsg)
 #endif
 
 LogBackend *LogBackend::m_staticbackend = nullptr;

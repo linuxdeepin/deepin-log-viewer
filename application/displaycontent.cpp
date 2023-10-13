@@ -44,9 +44,9 @@
 DWIDGET_USE_NAMESPACE
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logDisplaycontent, "log.viewer.display.content")
+Q_LOGGING_CATEGORY(logDisplaycontent, "org.deepin.log.viewer.display.content")
 #else
-Q_LOGGING_CATEGORY(logDisplaycontent, "log.viewer.display.content", QtInfoMsg)
+Q_LOGGING_CATEGORY(logDisplaycontent, "org.deepin.log.viewer.display.content", QtInfoMsg)
 #endif
 
 #define SINGLE_LOAD 300

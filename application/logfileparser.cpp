@@ -31,9 +31,9 @@
 #include <utmpx.h>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logFileParser, "log.viewer.file.parser")
+Q_LOGGING_CATEGORY(logFileParser, "org.deepin.log.viewer.parser")
 #else
-Q_LOGGING_CATEGORY(logFileParser, "log.viewer.file.parser", QtInfoMsg)
+Q_LOGGING_CATEGORY(logFileParser, "org.deepin.log.viewer.parser", QtInfoMsg)
 #endif
 
 int journalWork::thread_index = 0;

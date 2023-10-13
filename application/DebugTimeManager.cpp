@@ -11,9 +11,9 @@
 #include <time.h>
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logDebugTime, "log.viewer.debug.timemanager")
+Q_LOGGING_CATEGORY(logDebugTime, "org.deepin.log.viewer.debug.timemanager")
 #else
-Q_LOGGING_CATEGORY(logDebugTime, "log.viewer.debug.timemanager", QtInfoMsg)
+Q_LOGGING_CATEGORY(logDebugTime, "org.deepin.log.viewer.debug.timemanager", QtInfoMsg)
 #endif
 
 DebugTimeManager::DebugTimeManager()
