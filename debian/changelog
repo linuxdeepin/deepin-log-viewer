@@ -1,3 +1,15 @@
+deepin-log-viewer (6.1.2) unstable; urgency=medium
+
+  * fix: Fix the issue of successfully exporting read-only file directories(Bug: 217957)
+  * fix: Command line export add authentication window(Bug: 218757)
+  * fix: Add pkexec to implement command line export authentication(Bug: 218757)
+  * fix: Fix the issue of missing 'apps' directory in command line export(Bug: 219629)
+  * fix: Command line export initializes homePath first(Bug: 219629)
+  * fix: Fix UI - issue of all export failures
+  * fix: Application data directory requires permission to create tmp directory
+
+ -- Deepin Packages Builder <packages@deepin.org>  Tue, 17 Oct 2023 10:17:05 +0800
+
 deepin-log-viewer (6.1.1) unstable; urgency=medium
 
   * fix: fix coredump logs show is not complete(Bug: 217023)
