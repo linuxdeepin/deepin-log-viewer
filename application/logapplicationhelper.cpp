@@ -369,8 +369,10 @@ void LogApplicationHelper::createLogFiles()
                     }
                 }
             } else if (appConfig.logType == "journal") {
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
                 // 若该自研应用配置为journal方式解析，则将项目名填入log_map，便于后续解析流程处理
                 m_en_log_map.insert(_name, _name);
+#endif
             }
         }
     }
