@@ -368,6 +368,19 @@ void LogApplicationHelper::createLogFiles()
                             m_en_log_map.insert(_name, fi.absolutePath());
                     }
                 }
+
+                // 应用未配置有效的日志路径，并且配置文件中visible为真，遵循配置文件优先级最高原则，在"应用列表“显示该应用
+                if (m_en_log_map.find(_name) == m_en_log_map.end() && appConfig.visible) {
+                    if (appConfig.logPath.isEmpty())
+                        m_en_log_map.insert(_name, path + _name);
+                    else {
+                        QString tmpText = appConfig.logPath.mid(appConfig.logPath.lastIndexOf('/') + 1);
+                        if (tmpText.contains('.'))
+                            m_en_log_map.insert(_name, appConfig.logPath.mid(0, appConfig.logPath.lastIndexOf('/')));
+                        else
+                            m_en_log_map.insert(_name, appConfig.logPath);
+                    }
+                }
             } else if (appConfig.logType == "journal") {
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
                 // 若该自研应用配置为journal方式解析，则将项目名填入log_map，便于后续解析流程处理
