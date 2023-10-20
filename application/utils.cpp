@@ -268,8 +268,11 @@ QString Utils::mkMutiDir(const QString &path)
     QString parentDir = mkMutiDir(path.mid(0, path.lastIndexOf('/')));
     QString dirname = path.mid(path.lastIndexOf('/') + 1);
     QDir parentPath(parentDir);
-    if (!dirname.isEmpty())
-        parentPath.mkpath(dirname);
+    if (!dirname.isEmpty()) {
+        bool bRet = parentPath.mkpath(dirname);
+        if (!bRet)
+            qCWarning(logUtils) << QString("mkpath: unable to create directory '%1' in path: '%2/', please confirm if the file exists.").arg(dirname).arg(parentDir);
+    }
     return parentDir + "/" + dirname;
 }
 
@@ -368,9 +371,16 @@ QString Utils::getHomePath(const QString &userName)
     unlock->waitForFinished();
     auto output = unlock->readAllStandardOutput();
     auto str = QString::fromUtf8(output);
-    str = str.mid(str.indexOf("::") + 2).split(":").first();
-    qCInfo(logUtils) << "userName: " << uName << "homePath:" << str;
-    return str;
+    QString homePath = str.mid(str.indexOf("::") + 2).split(":").first();
+
+    // 根据用户名获取家目录失败，默认采用QDir::homePath()作为homePath
+    QDir dir(homePath);
+    if (!dir.exists() || homePath.isEmpty())
+        homePath = QDir::homePath();
+
+    qCInfo(logUtils) << "userName: " << uName << "homePath:" << homePath;
+
+    return homePath;
 }
 
 QString Utils::appName(const QString &path)

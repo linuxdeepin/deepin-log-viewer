@@ -47,24 +47,25 @@ int main(int argc, char *argv[])
         a.setOrganizationName("deepin");
         a.setApplicationName("deepin-log-viewer");
 
+        DLogManager::registerConsoleAppender();
+
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
         DLogManager::registerJournalAppender();
-#ifdef QT_DEBUG
-        DLogManager::registerConsoleAppender();
-#endif
 #else
-        DLogManager::registerConsoleAppender();
         DLogManager::registerFileAppender();
 #endif
 
-        QCommandLineOption exportOption(QStringList() << "e" << "export", DApplication::translate("main", "export logs"));
+        QCommandLineOption exportOption(QStringList() << "e" << "export", DApplication::translate("main", "Export logs to the specified path"), DApplication::translate("main", "PATH"));
+        QCommandLineOption typeOption(QStringList() << "t" << "type", DApplication::translate("main", "Export logs of specified types"), DApplication::translate("main", "TYPE"));
+        QCommandLineOption appOption(QStringList() << "d" << "deepin-application", DApplication::translate("main", "Export logs of specified self-developed applications"), DApplication::translate("main", "SELF APPNAME"));
 
         QCommandLineParser cmdParser;
-        cmdParser.addPositionalArgument("outDir", DApplication::translate("main", "export logs directory. if not set, default export to ~/Document."), "[outDir...]");
         cmdParser.setApplicationDescription("deepin-log-viewer");
         cmdParser.addHelpOption();
         cmdParser.addVersionOption();
         cmdParser.addOption(exportOption);
+        cmdParser.addOption(typeOption);
+        cmdParser.addOption(appOption);
 
         if (!cmdParser.parse(qApp->arguments())) {
             cmdParser.showHelp();
@@ -81,23 +82,42 @@ int main(int argc, char *argv[])
                 return 0;
             }
 
-            QString outDir = "";
-            // 若指定有导出目录，按指定目录导出，否则按默认路径导出
-            if (!args.isEmpty())
-                outDir = args.first();
-
             // 根据当前用户名获取正确家目录路径
             Utils::homePath = Utils::getHomePath(argv[argc - 1]);
             // 设置命令行工作目录
             LogBackend::instance(&a)->setCmdWorkDir(argv[argc - 2]);
 
-            // 全部导出日志
-            LogBackend::instance(&a)->exportAllLogs(outDir);
+
+            // 若指定有导出目录，按指定目录导出
+            QString outDir = cmdParser.value(exportOption);
+            if (outDir.isEmpty()) {
+                qCWarning(logAppMain) << "plseae input outpath.";
+                return 0;
+            }
+
+            QString type = "";
+            QString appName = "";
+            if (cmdParser.isSet(typeOption))
+                type = cmdParser.value(typeOption);
+            if (cmdParser.isSet(appOption))
+                appName = cmdParser.value(appOption);
+
+            if (!type.isEmpty()) {
+                // 按种类导出日志
+                LogBackend::instance(&a)->exportTypeLogs(outDir, type);
+                return 0;
+            } else if (!appName.isEmpty()) {
+                LogBackend::instance(&a)->exportLogsByApp(outDir, appName);
+                return 0;
+            } else {
+                // 未指定类型，默认导出所有日志
+                LogBackend::instance(&a)->exportAllLogs(outDir);
+            }
 
             return a.exec();
+        } else {
+            return 0;
         }
-
-        return a.exec();
     } else {
 
         PERF_PRINT_BEGIN("POINT-01", "");

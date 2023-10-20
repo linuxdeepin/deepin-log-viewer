@@ -174,6 +174,9 @@ void LogApplicationHelper::initCustomLog()
     QStringList sList = m_pDConfig->value("customLogFiles").toStringList();
     for (QString iter : sList) {
         QString path = iter;
+        if (path.isEmpty())
+            continue;
+
         if (path.startsWith("~/"))
             path.replace(0, 1, Utils::homePath);
         //忽略非文本文件和不存在的文件
@@ -525,8 +528,6 @@ void LogApplicationHelper::loadAppLogConfigs()
                 if (object.contains("logType")) {
                     logConfig.logType = object.value("logType").toString();
                 }
-
-                qCInfo(logAppHelper) << QString("name:%1 exec:%2 logType:%3 logPath:%4 visible:%5").arg(logConfig.name).arg(logConfig.execPath).arg(logConfig.logType).arg(logConfig.logPath).arg(logConfig.visible);
 
                 m_appLogConfigs.push_back(logConfig);
             }

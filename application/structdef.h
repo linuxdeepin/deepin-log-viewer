@@ -215,6 +215,11 @@ struct LOG_MSG_COREDUMP {
     QString storagePath;
 };
 
+struct TIME_RANGE {
+    qint64 begin = -1;
+    qint64 end = -1;
+};
+
 //kwin筛选条件，kwin日志只有信息，没有任何可筛选的，但是先放在这，以后统一化
 struct KWIN_FILTERS {
     QString msg;

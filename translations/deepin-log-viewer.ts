@@ -497,11 +497,27 @@
 <context>
     <name>main</name>
     <message>
-        <source>export logs</source>
+        <source>Export logs to the specified path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>export logs directory. if not set, default export to ~/Document.</source>
+        <source>PATH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
