@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,7 @@
 #include "sharedmemorymanager.h"
 #include "utils.h"// add by Airy
 #include "wtmpparse.h"
+#include "logapplicationhelper.h"
 
 #include <DMessageManager>
 
@@ -23,10 +24,17 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QtConcurrent>
+#include <QLoggingCategory>
 
 #include <time.h>
 #include <utmp.h>
 #include <utmpx.h>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logFileParser, "org.deepin.log.viewer.parser")
+#else
+Q_LOGGING_CATEGORY(logFileParser, "org.deepin.log.viewer.parser", QtInfoMsg)
+#endif
 
 int journalWork::thread_index = 0;
 int JournalBootWork::thread_index = 0;
@@ -59,6 +67,7 @@ LogFileParser::LogFileParser(QWidget *parent)
     qRegisterMetaType<QList<LOG_MSG_NORMAL> > ("QList<LOG_MSG_NORMAL>");
     qRegisterMetaType<QList<LOG_MSG_DNF>>("QList<LOG_MSG_DNF>");
     qRegisterMetaType<QList<LOG_MSG_DMESG>>("QList<LOG_MSG_DMESG>");
+    qRegisterMetaType<QList<LOG_MSG_AUDIT>>("QList<LOG_MSG_AUDIT>");
     qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
 
 }
@@ -283,30 +292,87 @@ int LogFileParser::parseByKern(const KERN_FILTERS &iKernFilter)
 
 int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
 {
-    stopAllLoad();
-    m_isAppLoading = true;
+    // 根据应用名获取应用日志类型，缺省为log文件类型
+    QString appName = Utils::appName(iAPPFilter.path);
+    AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
 
-    m_appThread = new LogApplicationParseThread(this);
-    quitLogAuththread(m_appThread);
+    qCDebug(logFileParser) << QString("parsing app log, appName:%1 applogType:%2 path:%3").arg(appName).arg(appLogConfig.logType).arg(iAPPFilter.path);
 
-    disconnect(m_appThread, &LogApplicationParseThread::appFinished, this,
-               &LogFileParser::appFinished);
-    disconnect(m_appThread, &LogApplicationParseThread::appData, this,
-               &LogFileParser::appData);
-    disconnect(this, &LogFileParser::stopApp, m_appThread,
-               &LogApplicationParseThread::stopProccess);
-    m_appThread->setParam(iAPPFilter);
-    connect(m_appThread, &LogApplicationParseThread::appFinished, this,
-            &LogFileParser::appFinished);
-    connect(m_appThread, &LogApplicationParseThread::appData, this,
-            &LogFileParser::appData);
-    connect(this, &LogFileParser::stopApp, m_appThread,
-            &LogApplicationParseThread::stopProccess);
-    connect(m_appThread, &LogApplicationParseThread::finished, m_appThread,
-            &QObject::deleteLater);
-    int index = m_appThread->getIndex();
-    m_appThread->start();
-    return index;
+    // 确定解析方式
+    QString parseType = "file";
+    if (appLogConfig.logType == "file" || !appLogConfig.isValid())
+        parseType = "file";
+    else if (appLogConfig.isValid() && appLogConfig.logType == "journal")
+        parseType = "journal";
+
+// DTKCore 5.6.8以下，不支持journal方式解析，指定按file方式解析应用日志
+#if (DTK_VERSION < DTK_VERSION_CHECK(5, 6, 8, 0))
+    parseType = "file";
+#endif
+
+    if (parseType == "file") {
+        // file方式解析应用日志(老流程)
+        stopAllLoad();
+        m_isAppLoading = true;
+
+        m_appThread = new LogApplicationParseThread(this);
+        quitLogAuththread(m_appThread);
+
+        disconnect(m_appThread, &LogApplicationParseThread::appFinished, this,
+                   &LogFileParser::appFinished);
+        disconnect(m_appThread, &LogApplicationParseThread::appData, this,
+                   &LogFileParser::appData);
+        disconnect(this, &LogFileParser::stopApp, m_appThread,
+                   &LogApplicationParseThread::stopProccess);
+        m_appThread->setParam(iAPPFilter);
+        connect(m_appThread, &LogApplicationParseThread::appFinished, this,
+                &LogFileParser::appFinished);
+        connect(m_appThread, &LogApplicationParseThread::appData, this,
+                &LogFileParser::appData);
+        connect(this, &LogFileParser::stopApp, m_appThread,
+                &LogApplicationParseThread::stopProccess);
+        connect(m_appThread, &LogApplicationParseThread::finished, m_appThread,
+                &QObject::deleteLater);
+        int index = m_appThread->getIndex();
+        m_appThread->start();
+        return index;
+    } else if (parseType == "journal") {
+        // journal方式解析应用日志
+        stopAllLoad();
+        emit stopJournalApp();
+
+        // 级别筛选
+        QStringList arg;
+        if (iAPPFilter.lvlFilter != LVALL) {
+            QString prio = QString("PRIORITY=%1").arg(iAPPFilter.lvlFilter);
+            arg.append(prio);
+        } else {
+            arg.append("all");
+        }
+
+        // 时间筛选
+        if (iAPPFilter.timeFilterBegin != -1) {
+            arg << QString::number(iAPPFilter.timeFilterBegin * 1000) << QString::number(iAPPFilter.timeFilterEnd * 1000);
+        }
+
+        // 应用筛选
+        arg << appName;
+
+        JournalAppWork* work = new JournalAppWork(this);
+
+        // 设置筛选条件参数
+        work->setArg(arg);
+
+        connect(work, &JournalAppWork::journalAppFinished, this, &LogFileParser::appFinished, Qt::QueuedConnection);
+        connect(work, &JournalAppWork::journalAppData, this, &LogFileParser::appData, Qt::QueuedConnection);
+        connect(this, &LogFileParser::stopJournalApp, work, &JournalAppWork::stopWork);
+
+        int index = work->getIndex();
+        QThreadPool::globalInstance()->start(work);
+        return index;
+    }
+
+    return -1;
 }
 
 void LogFileParser::parseByDnf(DNF_FILTERS iDnfFilter)
@@ -363,6 +429,44 @@ int LogFileParser::parseByOOC(const QString &path)
     return index;
 }
 
+int LogFileParser::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
+{
+    stopAllLoad();
+    m_isAuditLoading = true;
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(Audit);
+    QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("audit", false);
+    authThread->setFileterParam(iAuditFilter);
+    authThread->setFilePath(filePath);
+    connect(authThread, &LogAuthThread::auditFinished, this,
+            &LogFileParser::auditFinished);
+    connect(authThread, &LogAuthThread::auditData, this,
+            &LogFileParser::auditData);
+    connect(this, &LogFileParser::stopKern, authThread,
+            &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
+    QThreadPool::globalInstance()->start(authThread);
+    return index;
+}
+
+int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter)
+{
+    stopAllLoad();
+    m_isCoredumpLoading = true;
+    qRegisterMetaType<QList<quint16>>("QList<LOG_MSG_COREDUMP>");
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(COREDUMP);
+    authThread->setFileterParam(iCoredumpFilter);
+    connect(authThread, &LogAuthThread::coredumpFinished, this,
+            &LogFileParser::coredumpFinished);
+    connect(authThread, &LogAuthThread::coredumpData, this,
+            &LogFileParser::coredumpData);
+    connect(this, &LogFileParser::stopCoredump, authThread, &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
+    QThreadPool::globalInstance()->start(authThread);
+    return index;
+}
+
 void LogFileParser::createFile(const QString &output, int count)
 {
 #if 1
@@ -387,12 +491,14 @@ void LogFileParser::stopAllLoad()
     emit stopXlog();
     emit stopKwin();
     emit stopApp();
+    emit stopJournalApp();
     emit stopJournal();
     emit stopJournalBoot();
     emit stopNormal();
     emit stopDnf();
     emit stopDmesg();
     emit stopOOC();
+    emit stopCoredump();
     return;
 }
 
@@ -401,7 +507,6 @@ void LogFileParser::stopAllLoad()
 void LogFileParser::quitLogAuththread(QThread *iThread)
 {
     if (iThread && iThread->isRunning()) {
-        qDebug() << __FUNCTION__;
         iThread->quit();
         iThread->wait();
     }

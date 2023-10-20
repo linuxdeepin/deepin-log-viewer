@@ -19,13 +19,11 @@ int main(int argc, char *argv[])
     QCommandLineParser parser;
     parser.process(app);
     const QStringList fileList = parser.positionalArguments();
-    //        qInfo() << fileList << "***" << fileList.count();
     if (fileList.count() < 1) {
         return 0;
     }
     QStringList arg;
     if (fileList[0] == "dmesg") {
-        qDebug() << "dmesg -C";
         arg << "-c"
             << "dmesg -C";
     } else {

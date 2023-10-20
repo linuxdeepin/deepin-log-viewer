@@ -38,6 +38,13 @@ class DisplayContent : public Dtk::Widget::DWidget
         DATA_COMPLETE, //加载完成
         DATA_LOADING_K, //内核日志正在加载
         DATA_NO_SEARCH_RESULT, //搜索无记录
+        DATA_NOT_AUDIT_ADMIN, // 提示不是审计管理员
+        COREDUMPCTL_NOT_INSTALLED //未安装coredumpctl工具
+    };
+
+    enum OOC_TYPE {
+        OOC_OTHER = 0, // 其他日志
+        OOC_CUSTOM     // 自定义日志
     };
 
 public:
@@ -84,9 +91,20 @@ private:
     void generateNormalFile(int id); // add by Airy for peroid
 
     //其他日志或者自定义日志
-    void generateOOCFile(QString path);
+    void generateOOCFile(const QString &path);
+    void generateOOCLogs(const OOC_TYPE &type, const QString &iSearchStr = "");
     void createOOCTableForm();
-    void createOOCTable(const QList<QStringList> & list);
+    void createOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list);
+
+    // 审计日志
+    void generateAuditFile(int id, int lId, const QString &iSearchStr = "");
+    void createAuditTableForm();
+    void createAuditTable(const QList<LOG_MSG_AUDIT> &list);
+
+    //coredump log
+    void generateCoredumpFile(int id, const QString &iSearchStr = "");
+    void createCoredumpTableForm();
+    void createCoredumpTable(const QList<LOG_MSG_COREDUMP> &list);
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
     void insertApplicationTable(const QList<LOG_MSG_APPLICATOIN> &list, int start, int end);
@@ -97,6 +115,9 @@ private:
     void insertBootTable(const QList<LOG_MSG_BOOT> &list, int start, int end);
     void insertKwinTable(const QList<LOG_MSG_KWIN> &list, int start, int end);
     void insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int start, int end);
+    void insertOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list, int start, int end);
+    void insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end);
+    void insertCoredumpTable(const QList<LOG_MSG_COREDUMP> &list, int start, int end);
     QString getAppName(const QString &filePath);
 
     bool isAuthProcessAlive();
@@ -130,6 +151,8 @@ signals:
      * @param iEnable 是否允许导出
      */
     void setExportEnable(bool iEnable);
+
+    void sigCoredumpDetailInfo(QList<LOG_MSG_COREDUMP> cList);
 
 public slots:
     void slot_valueChanged_dConfig_or_gSetting(const QString &key);
@@ -165,14 +188,20 @@ public slots:
     void slot_normalData(int index, QList<LOG_MSG_NORMAL> list);
     void slot_OOCFinished(int index, int error = 0);
     void slot_OOCData(int index, const QString & data);
+    void slot_auditFinished(int index, bool bShowTip = false);
+    void slot_auditData(int index, QList<LOG_MSG_AUDIT> list);
+    void slot_coredumpFinished(int index);
+    void slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list);
 
     void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
 
-    void slot_searchResult(QString str);
+    void slot_searchResult(const QString &str);
     void slot_getLogtype(int tcbx); // add by Airy
+    void slot_getAuditType(int tcbx);
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
     void slot_dnfLevel(DNFPRIORITY iLevel);
+
     //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
     void parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandardItemModel *oPModel);
     void parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandardItemModel *oPModel);
@@ -184,6 +213,8 @@ public slots:
     void parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardItemModel *oPModel);
     QString getIconByname(const QString &str);
     void setLoadState(LOAD_STATE iState);
     void onExportProgress(int nCur, int nTotal);
@@ -201,6 +232,9 @@ public slots:
     QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList);
     QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
+    QList<LOG_FILE_OTHERORCUSTOM> filterOOC(const QString &iSearchStr, const QList<LOG_FILE_OTHERORCUSTOM> &iList);
+    QList<LOG_MSG_AUDIT> filterAudit(AUDIT_FILTERS auditFilter, const QList<LOG_MSG_AUDIT> &iList);
+    QList<LOG_MSG_COREDUMP> filterCoredump(const QString &iSearchStr, const QList<LOG_MSG_COREDUMP> &iList);
 
 private:
     void resizeEvent(QResizeEvent *event);
@@ -222,6 +256,9 @@ private:
     logDetailInfoWidget *m_detailWgt {nullptr};
     //搜索无结果时显示无搜索结果提示的label
     Dtk::Widget::DLabel *noResultLabel {nullptr};
+    // 不是审计管理员提示的label
+    Dtk::Widget::DLabel *notAuditLabel {nullptr};
+    Dtk::Widget::DLabel *noCoredumpctlLabel {nullptr};
     //当前选中的日志类型的index
     QModelIndex m_curListIdx;
     //当前选中的treeview的index
@@ -238,6 +275,12 @@ private:
      * @brief m_spinnerWgt_K 加载内核日志数据时转轮控件
      */
     LogSpinnerWidget *m_spinnerWgt_K; // add by Airy
+
+    // 列表右键菜单
+    QMenu *m_menu{ nullptr };
+    QAction *m_act_openForder{ nullptr };
+    QAction *m_act_refresh{ nullptr };
+
     /**
      * @brief m_curAppLog 当前选中的应用的日志文件路径
      */
@@ -300,9 +343,22 @@ private:
      * @brief kListOrigin 未经过筛选的内核日志数据   kern.log
      */
     QList<LOG_MSG_JOURNAL> kList, kListOrigin;
+
     /**
-     * @brief appList 经过筛选完成的内核日志数据
+     * @brief oList未经过筛选的其他日志数据   other
      */
+    QList<LOG_FILE_OTHERORCUSTOM> oList, oListOrigin;
+
+    /**
+     * @brief cList未经过筛选的自定义日志数据   custom
+     */
+    QList<LOG_FILE_OTHERORCUSTOM> cList, cListOrigin;
+
+    /**
+     * @brief aListOrigin 未经过筛选的审计日志数据   audit/audit.log
+     */
+    QList<LOG_MSG_AUDIT> aList, aListOrigin;
+
     /**
      * @brief appListOrigin 未经过筛选的内核日志数据   ~/.cache/deepin/xxx.log(.xxx)
      */
@@ -323,6 +379,10 @@ private:
      * @brief m_kwinList 未经过筛选的开关机日志数据
      */
     QList<LOG_MSG_KWIN> m_kwinList;
+
+
+    QList<LOG_MSG_COREDUMP> m_coredumpList;
+    QList<LOG_MSG_COREDUMP> m_currentCoredumpList;
     /**
      * @brief m_iconPrefix 图标资源文件路径前缀
      */
@@ -358,6 +418,10 @@ private:
      * @brief m_journalFilter 当前系统日志筛选条件
      */
     JOURNAL_FILTERS m_journalFilter;
+    /**
+     * @brief m_auditFilter 当前审计日志筛选条件
+     */
+    AUDIT_FILTERS m_auditFilter;
     QList<LOG_MSG_DNF> dnfList, dnfListOrigin; //dnf.log
     QList<LOG_MSG_DMESG> dmesgList, dmesgListOrigin; //dmesg cmd
     QMap<QString, QString> m_dnfIconNameMap;
@@ -375,9 +439,13 @@ private:
     int m_kwinCurrentIndex {-1};
     int m_appCurrentIndex {-1};
     int m_OOCCurrentIndex {-1};
+    int m_auditCurrentIndex {-1};
+    int m_coredumpCurrentIndex {-1};
     bool m_isDataLoadComplete {false};
     //筛选条件
     QString selectFilter;
+
+    //bool m_isCoredumpctlExist = false;
 };
 
 #endif // DISPLAYCONTENT_H

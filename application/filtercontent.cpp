@@ -93,20 +93,16 @@ void FilterContent::initUI()
     hLayout_period->addWidget(m_lastMonthBtn);
     hLayout_period->addWidget(m_threeMonthBtn);
     hLayout_period->addStretch(1);
-
-    DSuggestButton *cmdLinkBtn = new DSuggestButton(("Reset"), this);
-    cmdLinkBtn->setFlat(true);
-    cmdLinkBtn->hide();
-    m_btnGroup->addButton(cmdLinkBtn, 6);
-    hLayout_period->addWidget(cmdLinkBtn);
     hLayout_period->setSpacing(10);
 
     // set level info
     hLayout_all = new QHBoxLayout;
     QHBoxLayout *hLayout_lvl = new QHBoxLayout;
     lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
+    lvTxt->setAccessibleName(DApplication::translate("Label", "Level:  "));
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
+    cbx_lv->view()->setAccessibleName("combobox_level_view");
     cbx_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                      << DApplication::translate("ComboBox", "Emergency")
@@ -124,8 +120,10 @@ void FilterContent::initUI()
     hLayout_all->addLayout(hLayout_lvl);
     QHBoxLayout *hLayout_dnf_lvl = new QHBoxLayout;
     dnflvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
+    dnflvTxt->setAccessibleName("dnf" + DApplication::translate("Label", "Level:  "));
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
+    cbx_dnf_lv->view()->setAccessibleName("combobox_dnflevel_view");
     cbx_dnf_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Super critical"), SUPERCRITICAL);
@@ -143,6 +141,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
     cbx_app = new LogCombox(this);
+    cbx_app->view()->setAccessibleName("combobox_app_view");
 
     cbx_app->setMinimumSize(QSize(180, BUTTON_HEIGHT_MIN));
     hLayout_app->addWidget(appTxt);
@@ -154,6 +153,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_status = new QHBoxLayout;
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
     cbx_status = new LogCombox(this);
+    cbx_status->view()->setAccessibleName("combobox_status_view");
     cbx_status->setMinimumWidth(120);
     cbx_status->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
@@ -167,6 +167,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_type = new QHBoxLayout;
     typeTxt = new DLabel(DApplication::translate("Label", "Event Type:"), this);
     typeCbx = new LogCombox(this);
+    typeCbx->view()->setAccessibleName("combobox_eventtype_view");
     typeCbx->setMinimumWidth(120);
     typeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
@@ -177,6 +178,25 @@ void FilterContent::initUI()
     hLayout_status->addWidget(typeCbx, 1);
     hLayout_status->setSpacing(6);
     hLayout_all->addLayout(hLayout_type);  // end add
+
+    // 审计日志审计类型筛选下拉框
+    QHBoxLayout *hLayout_auditType = new QHBoxLayout;
+    auditTypeTxt = new DLabel(DApplication::translate("Label", "Audit Type:"), this);
+    auditTypeCbx = new LogCombox(this);
+    auditTypeCbx->setMinimumWidth(120);
+    auditTypeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
+    auditTypeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
+                      << DApplication::translate("ComboBox", "Identity authentication")
+                      << DApplication::translate("ComboBox", "Discretionary Access Control")
+                      << DApplication::translate("ComboBox", "Mandatory access control")
+                      << DApplication::translate("ComboBox", "Remote")
+                      << DApplication::translate("ComboBox", "Document audit")
+                      << DApplication::translate("ComboBox", "Other"));
+    hLayout_status->addWidget(auditTypeTxt);
+    hLayout_status->addWidget(auditTypeCbx, 1);
+    hLayout_status->setSpacing(6);
+    hLayout_all->addLayout(hLayout_auditType);  // end add
+
     hLayout_all->addStretch(1);
     exportBtn = new LogNormalButton(DApplication::translate("Button", "Export", "button"), this);
     exportBtn->setContentsMargins(0, 0, 18, 18);
@@ -215,6 +235,7 @@ void FilterContent::initConnections()
     connect(cbx_status, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxStatusChanged(int)));
     connect(typeCbx, SIGNAL(currentIndexChanged(int)), this,
             SLOT(slot_cbxLogTypeChanged(int)));  // add by Airy
+    connect(auditTypeCbx, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAuditTypeChanged(int)));
 }
 
 /**
@@ -263,9 +284,10 @@ void FilterContent::setAppComboBoxItem()
  * @param period 时间筛选按钮是否显示
  * @param needMove 如果筛选器只有单排布局,则需要移动导出按钮到上排布局,这个参数表示是否把导出按钮移动到上排的布局
  * @param typecbx 开关机日志日志种类筛选下拉框是否显示
+ * @param auditcbx 审计日志审计类型筛选下拉框是否显示
  */
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
-                                       bool needMove, bool typecbx, bool dnfCbx)
+                                       bool needMove, bool typecbx, bool dnfCbx, bool auditCbx)
 {
     //先不立马更新界面,等全部更新好控件状态后再更新界面,否则会导致界面跳动
     setUpdatesEnabled(false);
@@ -281,6 +303,9 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 
     typeTxt->setVisible(typecbx);  // add by Airy
     typeCbx->setVisible(typecbx);  // add by Airy
+
+    auditTypeTxt->setVisible(auditCbx);
+    auditTypeCbx->setVisible(auditCbx);
 
     periodLabel->setVisible(period);
     //button的setVisible false会触发taborder到下一个可视控件,比如cbx_status,所以先设置button,再设置cbx_status可防止点击后时间筛选button后再切启动日志导致cbx_status自动进入tabfocus状态,但是这样会引起本窗口焦点重置,所以设置完后需要对loglist setfoucs
@@ -344,6 +369,8 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
         Q_EMIT cbx_status->currentIndexChanged(iConifg.statusCbx);
     if (typeCbx->isVisible())
         typeCbx->setCurrentIndex(iConifg.typeCbx);
+    if (auditTypeCbx->isVisible())
+        auditTypeCbx->setCurrentIndex(iConifg.auditCbx);
     if (cbx_dnf_lv->isVisible()) {
         cbx_dnf_lv->setCurrentIndex(iConifg.dnfCbx);
     }
@@ -614,7 +641,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         this->setSelectorVisible(false, false, false, true, true);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
         m_currentType = XORG_TREE_DATA;
-        this->setSelectorVisible(false, false, false, true,
+        this->setSelectorVisible(false, false, false, false,
                                  true);  // modified by Airy for showing  peroid
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
         m_currentType = LAST_TREE_DATA;
@@ -641,6 +668,12 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_currentType = CUSTOM_TREE_DATA;
         //this->setSelectorVisible(false, false, false, true, false, false, true);
         this->setVisible(false);
+    } else if (itemData.contains(AUDIT_TREE_DATA)) {
+        m_currentType = AUDIT_TABLE_DATA;
+        this->setSelectorVisible(false, false, false, true, false, false, false, true);
+    } else if (itemData.contains(COREDUMP_TREE_DATA)) {
+        m_currentType = COREDUMP_TREE_DATA;
+        this->setSelectorVisible(false, false, false, true, true, false, false, false);
     }
     updateDataState();
     //必须需要,因为会丢失当前焦点顺序
@@ -760,7 +793,6 @@ void FilterContent::slot_cbxAppIdxChanged(int idx)
     setChangedcomboxstate(!getLeftButtonState());
     QString path = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
-    qDebug() << "apppath" << path;
     curConfig.appListCbx = path;
     //变化时改变记录选择选项的数据结构,以便下次还原
     setCurrentConfig(curConfig);
@@ -799,7 +831,15 @@ void FilterContent::slot_cbxLogTypeChanged(int idx)
     curConfig.typeCbx = idx;
     setCurrentConfig(curConfig);
     emit sigLogtypeChanged(idx);
-    qDebug() << "emit signal " + QString::number(idx);
+}
+
+void FilterContent::slot_cbxAuditTypeChanged(int idx)
+{
+    setChangedcomboxstate(true);
+    FILTER_CONFIG curConfig = m_config.value(m_currentType);
+    curConfig.auditCbx = idx;
+    setCurrentConfig(curConfig);
+    emit sigAuditTypeChanged(idx);
 }
 
 /**

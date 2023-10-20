@@ -330,7 +330,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     } else {
         m_dateTime->show();
         QStringList dtlist = dateTime.split(".");
-        if (dtlist.count() == 2)
+        if (dtlist.count() == 2 && deamonName != "Xorg")
             m_dateTime->setText(dtlist[0]);
         else
             m_dateTime->setText(dateTime);
@@ -518,5 +518,19 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(OOC_TABLE_DATA)) {
         fillOOCDetailInfo(data, error);
+    } else if (dataStr.contains(AUDIT_TABLE_DATA)) {
+        fillDetailInfo("audit", hostname, "", index.siblingAtColumn(1).data().toString(), QModelIndex(),
+                       index.siblingAtColumn(4).data().toString(),
+                       index.siblingAtColumn(3).data().toString(),
+                       "",
+                       "",
+                       index.siblingAtColumn(0).data().toString());
+    } else if (dataStr.contains(COREDUMP_TABLE_DATA)) {
+        fillDetailInfo(index.siblingAtColumn(3).data().toString(), hostname, "", index.siblingAtColumn(1).data().toString(), QModelIndex(),
+                       index.siblingAtColumn(4).data(Qt::UserRole + 2).toString(),
+                       index.siblingAtColumn(2).data().toString(),
+                       "",
+                       "",
+                       "");
     }
 }

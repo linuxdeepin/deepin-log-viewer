@@ -1018,14 +1018,14 @@ double LocaleFunc::strToNum(const string &p_str)
     if (!m_initialized)
         initialize();
 
-    enum Part {
-        PREFIX = 0,
-        INTEGER,
-        FRACTION,
-        SUFFIX
+    enum _Part {
+        _PREFIX = 0,
+        _INTEGER,
+        _FRACTION,
+        _SUFFIX
     };
 
-    Part    l_part  = PREFIX;
+    _Part    l_part  = _PREFIX;
     double  l_val   = 0;
     double  l_dec   = 1;
     char    l_neg   = 0;
@@ -1041,8 +1041,8 @@ double LocaleFunc::strToNum(const string &p_str)
             if (l_neg != 0)
                 break;
 
-            if (l_part == INTEGER || l_part == FRACTION)
-                l_part = SUFFIX;
+            if (l_part == _INTEGER || l_part == _FRACTION)
+                l_part = _SUFFIX;
 
             l_neg = l_ch;
         }
@@ -1050,24 +1050,24 @@ double LocaleFunc::strToNum(const string &p_str)
         else if (l_ch == ' '
 
                  // if thousand separator is also space then treated as space only in prefix and suffix.
-                 && (m_numThSep != ' ' || l_part == PREFIX || l_part == SUFFIX)) {
-            if (l_part == INTEGER || l_part == FRACTION)
-                l_part = SUFFIX;
+                 && (m_numThSep != ' ' || l_part == _PREFIX || l_part == _SUFFIX)) {
+            if (l_part == _INTEGER || l_part == _FRACTION)
+                l_part = _SUFFIX;
 
-            if (l_part == SUFFIX  && l_neg != 0)
+            if (l_part == _SUFFIX  && l_neg != 0)
                 break;
         }
 
         else if (IS_DIGIT(l_ch)) {
-            if (l_part == PREFIX)
-                l_part = INTEGER;
+            if (l_part == _PREFIX)
+                l_part = _INTEGER;
 
             switch (l_part) {
-            case INTEGER:
+            case _INTEGER:
                 l_val = l_val * 10 + (l_ch - 48);
                 break;
 
-            case FRACTION:
+            case _FRACTION:
                 l_dec = l_dec * 10;
                 l_val = l_val + (l_ch - 48) / l_dec;
                 break;
@@ -1075,20 +1075,20 @@ double LocaleFunc::strToNum(const string &p_str)
                 break;
             }
 
-            if (l_part == SUFFIX)
+            if (l_part == _SUFFIX)
                 break;
         }
 
         else if (l_ch == m_numFracSep) {
-            if (l_part == PREFIX || l_part == INTEGER)
-                l_part = FRACTION;
+            if (l_part == _PREFIX || l_part == _INTEGER)
+                l_part = _FRACTION;
 
             else
                 break;
         }
 
         else if (l_ch == m_numThSep) {
-            if (l_part != INTEGER && l_part != FRACTION)
+            if (l_part != _INTEGER && l_part != _FRACTION)
                 break;
         }
 

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -6,7 +6,8 @@
 #define STRUCTDEF_H
 #include <QString>
 #include <QDir>
-
+#include <QMap>
+#include "utils.h"
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"
 #define BOOT_TABLE_DATA "bootItemData"
@@ -19,12 +20,14 @@
 #define DMESG_TABLE_DATA "dmesgItemData"
 #define DNF_TABLE_DATA "dnfItemData"
 #define OOC_TABLE_DATA "OOCItemData"
+#define AUDIT_TABLE_DATA "auditItemData"
+#define COREDUMP_TABLE_DATA "coredumpItemData"
 
 #define JOUR_TREE_DATA "journalctl"
 #define BOOT_KLU_TREE_DATA "bootklu"
 #define DPKG_TREE_DATA "/var/log/dpkg.log"
 #define XORG_TREE_DATA "/var/log/Xorg.0.log"
-#define KWIN_TREE_DATA QDir::homePath() + "/.kwin.log"
+#define KWIN_TREE_DATA Utils::homePath + "/.kwin.log"
 #define BOOT_TREE_DATA "/var/log/boot.log"
 #define KERN_TREE_DATA "/var/log/kern.log"
 #define APP_TREE_DATA "application"
@@ -33,12 +36,16 @@
 #define DMESG_TREE_DATA "dmesg"
 #define OTHER_TREE_DATA "other log"
 #define CUSTOM_TREE_DATA "custom log"
+#define AUDIT_TREE_DATA "/var/log/audit/audit.log"
+#define COREDUMP_TREE_DATA "coredump log"
 
 #define ITEM_DATE_ROLE (Qt::UserRole + 66)
 #define ICONPREFIX "://images/"
 #define ICONLIGHTPREFIX "://images/light/"
 #define ICONDARKPREFIX "://images/dark/"
 #define DOCTEMPLATE "://doc_template/template.doc"
+
+#define AUDIT_ORIGIN_DATAROLE Qt::UserRole + 3
 
 enum PRIORITY { LVALL = -1,
                 EMER,
@@ -60,6 +67,16 @@ enum DNFPRIORITY { DNFLVALL = -1,
                    CRITICAL,
                    SUPERCRITICAL };
 Q_DECLARE_METATYPE(DNFPRIORITY)
+
+enum AUDITTYPE { AUDITLVALL= -1,
+                 IDENTAUTH,
+                 DAC,
+                 MAC,
+                 REMOTE,
+                 DOCAUDIT,
+                 OTHER};
+Q_DECLARE_METATYPE(AUDITTYPE)
+
 struct LOG_MSG_JOURNAL {
     // include dateTime level type detailInfo...
     QString dateTime;
@@ -101,7 +118,7 @@ struct LOG_MSG_APPLICATOIN {
 };
 
 struct LOG_MSG_XORG {
-    QString dateTime;
+    QString offset;
     QString msg;
 };
 
@@ -119,6 +136,83 @@ struct LOG_FILE_OTHERORCUSTOM {
     QString name;
     QString path;
     QString dateTimeModify;  
+};
+
+#define Audit_IdentAuth     "IdentAuth"
+#define Audit_DAC           "DAC"
+#define Audit_MAC           "MAC"
+#define Audit_Remote        "Remote"
+#define Audit_DocAudit      "DocAudit"
+#define Audit_Other         "Other"
+
+struct LOG_MSG_AUDIT {
+    QString auditType;
+    QString eventType;
+    QString dateTime;
+    QString processName;
+    QString processId;
+    QString status;
+    QString msg;
+    QString origin;
+
+    bool contains(const QString& searchstr) {
+        if (auditType.contains(searchstr, Qt::CaseInsensitive)
+                || eventType.contains(searchstr, Qt::CaseInsensitive)
+                || dateTime.contains(searchstr, Qt::CaseInsensitive)
+                || processName.contains(searchstr, Qt::CaseInsensitive)
+                || status.contains(searchstr, Qt::CaseInsensitive)
+                || msg.contains(searchstr, Qt::CaseInsensitive))
+            return true;
+
+        return false;
+    }
+
+    QString auditType2Str(int nAuditType) {
+        QString str = "";
+        switch (nAuditType) {
+        case IDENTAUTH:
+            str = Audit_IdentAuth;
+            break;
+        case DAC:
+            str = Audit_DAC;
+            break;
+        case MAC:
+            str = Audit_MAC;
+            break;
+        case REMOTE:
+            str = Audit_Remote;
+            break;
+        case DOCAUDIT:
+            str = Audit_DocAudit;
+            break;
+        case OTHER:
+            str = Audit_Other;
+            break;
+        default:
+            str = "";
+            break;
+        }
+
+        return str;
+    }
+
+    bool filterAuditType(int nAuditType) {
+        QString str = auditType2Str(nAuditType);
+        if (str.compare(auditType) == 0)
+            return true;
+
+        return false;
+    }
+};
+
+struct LOG_MSG_COREDUMP {
+    QString sig;
+    QString dateTime;
+    QString coreFile;
+    QString uid;
+    QString exe;
+    QString pid;
+    QString storagePath;
 };
 
 //kwin筛选条件，kwin日志只有信息，没有任何可筛选的，但是先放在这，以后统一化
@@ -167,6 +261,12 @@ struct KERN_FILTERS {
     qint64 timeFilterBegin = -1 ;
     qint64 timeFilterEnd = -1;
 };
+
+struct COREDUMP_FILTERS {
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
+};
+
 /**
  * @brief The BOOT_FILTERS struct 启动日志筛选条件
  */
@@ -174,6 +274,16 @@ struct BOOT_FILTERS {
     QString searchstr;//搜索关键字
     QString statusFilter; //状态筛选,有 ALL OK failed
 
+};
+
+/**
+ * @brief The AUDIT_FILTERS struct 审计日志筛选条件
+ */
+struct AUDIT_FILTERS {
+    qint64 timeFilterBegin = -1 ; //筛选开始时间
+    qint64 timeFilterEnd = -1; //筛选结束时间
+    int auditTypeFilter = 0; //筛选类型, 有 0全部 1身份鉴别 2自主访问控制 3强制访问控制 4远程连接 5文件审计
+    QString searchstr = ""; //搜索关键字
 };
 
 /**
@@ -185,6 +295,7 @@ struct FILTER_CONFIG {
     int statusCbx = 0; //启动日志状态筛选下拉框的值
     int dateBtn = 0; //时间筛选按钮当前选择筛选按钮对应BUTTONID
     int typeCbx = 0;
+    int auditCbx = 0;
     int dnfCbx = 5;
 };
 enum BUTTONID {
@@ -213,6 +324,8 @@ enum LOG_FLAG {
     Dmesg,
     OtherLog,
     CustomLog,
+    Audit,
+    COREDUMP,
     NONE = 9999
 }; // modified by
 // Airy
@@ -282,5 +395,81 @@ enum DMESG_DISPLAY_COLUMN {
     dmesgMsgColumn
 };
 }
+
+namespace AUDIT_SPACE {
+enum AUDIT_DISPLAY_COLUMN {
+    auditEventTypeColumn = 0,
+    auditDateTimeColumn,
+    auditProcessNameColumn,
+    auditStatusColumn,
+    auditMsgColumn
+};
+}
+
+namespace COREDUMP_SPACE {
+enum COREDUMP_DISPLAY_COLUMN {
+    COREDUMP_SIG_COLUMN = 0,
+    COREDUMP_TIME_COLUMN,
+    COREDUMP_COREFILE_COLUMN,
+    COREDUMP_UNAME_COLUMN,
+    COREDUMP_EXE_COLUMN
+};
+}
+struct EXPORTALL_DATA {
+    QStringList files; // 日志文件原始路径
+    QMap<QString, QStringList> dir2Files; //包含父目录的日志文件
+    QStringList commands; // 需要用命令获得的日志
+    QString logCategory; // 日志种类
+
+    EXPORTALL_DATA()
+        : files(QStringList())
+        , commands(QStringList())
+        , logCategory("")
+    {
+        dir2Files.clear();
+    }
+
+    // 统计存入二级目录文件的总数
+    int dir2FilesCount() {
+        int nCount = 0;
+        QMapIterator<QString, QStringList> i(dir2Files);
+        while (i.hasNext()) {
+            i.next();
+            nCount += i.value().count();
+        }
+
+        return nCount;
+    }
+};
+
+// 自研应用日志配置信息
+struct AppLogConfig {
+
+    QString name;
+    QString execPath;
+    QString logPath;
+    QString logType; // 日志类型分为file或journal
+    bool    visible;
+
+    AppLogConfig()
+        : name("")
+        , execPath("")
+        , logPath("")
+        , logType("")
+        , visible(true)
+    {
+
+    }
+
+    bool contains(const QString& app) {
+        return name.contains(app) || execPath.contains(app);
+    }
+
+    bool isValid() {
+        return !name.isEmpty() && !execPath.isEmpty();
+    }
+};
+
+#define AppLogConfigList QList<AppLogConfig>
 
 #endif  // STRUCTDEF_H

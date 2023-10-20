@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -7,6 +7,7 @@
 #include "xlsxwriter.h"
 #include "WordProcessingMerger.h"
 #include "WordProcessingCompiler.h"
+#include "dbusproxy/dldbushandler.h"
 
 #include <DApplication>
 
@@ -17,9 +18,18 @@
 #include <QTextDocument>
 #include <QTextDocumentWriter>
 #include <QElapsedTimer>
+#include <QStandardPaths>
+#include <QProcess>
+#include <QLoggingCategory>
 
 #include <malloc.h>
 DWIDGET_USE_NAMESPACE
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logExport, "org.deepin.log.viewer.export.work")
+#else
+Q_LOGGING_CATEGORY(logExport, "org.deepin.log.viewer.export.work", QtInfoMsg)
+#endif
 
 /**
  * @brief LogExportThread::LogExportThread 导出日志线程类构造函数
@@ -186,6 +196,15 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
     m_canRunning = true;
 }
 
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_alist = jList;
+    m_labels = labels;
+    m_runMode = TxtAUDIT;
+    m_canRunning = true;
+}
+
 /**
  * @brief LogExportThread::exportToHtmlPublic 导出到日志html格式配置函数对QStandardItemModel数据类型的重载
  * @param fileName 导出文件路径全称
@@ -326,6 +345,15 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
     m_dmesgList = jList;
     m_labels = labels;
     m_runMode = HtmlDMESG;
+    m_canRunning = true;
+}
+
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_alist = jList;
+    m_labels = labels;
+    m_runMode = HtmlAUDIT;
     m_canRunning = true;
 }
 
@@ -471,6 +499,15 @@ void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG
     m_runMode = DocDMESG;
     m_canRunning = true;
 }
+
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_alist = jList;
+    m_labels = labels;
+    m_runMode = DocAUDIT;
+    m_canRunning = true;
+}
 /**
  * @brief LogExportThread::exportToXlsPublic 导出到日志xlsx格式配置函数对QStandardItemModel数据类型的重载
  * @param fileName 导出文件路径全称
@@ -611,6 +648,25 @@ void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG
     m_runMode = XlsDMESG;
     m_canRunning = true;
 }
+
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_alist = jList;
+    m_labels = labels;
+    m_runMode = XlsAUDIT;
+    m_canRunning = true;
+}
+
+void LogExportThread::exportToZipPublic(const QString &fileName, const QList<LOG_MSG_COREDUMP> &jList, const QStringList &labels)
+{
+    m_fileName = fileName;
+    m_coredumplist = jList;
+    m_labels = labels;
+    m_runMode = ZipCoredump;
+    m_canRunning = true;
+}
+
 /**
  * @brief LogExportThread::isProcessing 返回当前线程获取数据逻辑启动停止控制的变量
  * @return 当前线程获取数据逻辑启动停止控制的变量
@@ -687,7 +743,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, QStandardItemModel *p
         }
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -698,7 +754,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, QStandardItemModel *p
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -776,7 +832,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_J
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -787,7 +843,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_J
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -828,7 +884,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_A
         }
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -839,7 +895,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_A
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -878,7 +934,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
         }
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -889,7 +945,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -927,7 +983,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_B
         }
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -938,7 +994,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_B
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -968,7 +1024,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_X
             //导出各字段的描述和对应内容拼成目标字符串
             LOG_MSG_XORG jMsg = jList.at(i);
             int col = 0;
-            out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
+            out << labels.value(col++, "") << ":" << jMsg.offset << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
             //导出进度信号
@@ -976,7 +1032,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_X
         }
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -987,7 +1043,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_X
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1027,7 +1083,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_N
         }
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1038,7 +1094,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_N
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 /**
  * @brief LogExportThread::exportToTxt导出到日志txt格式函数，对LOG_MSG_KWIN数据类型的重载（指klu上的kwin日志）
@@ -1074,7 +1130,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_K
         }
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1085,7 +1141,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_K
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
@@ -1118,7 +1174,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
         }
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1129,7 +1185,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
@@ -1162,7 +1218,7 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
         }
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         fi.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1173,7 +1229,52 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
     fi.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
+}
+
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    //判断文件路径是否存在，不存在就返回错误
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
+    try {
+        QTextStream out(&fi);
+        out.setCodec(QTextCodec::codecForName("utf-8"));
+        for (int i = 0; i < jList.count(); i++) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            //导出各字段的描述和对应内容拼成目标字符串
+            LOG_MSG_AUDIT jMsg = jList.at(i);
+            int col = 0;
+            out << labels.value(col++, "") << ":" << jMsg.eventType << " ";
+            out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
+            out << labels.value(col++, "") << ":" << jMsg.processName << " ";
+            out << labels.value(col++, "") << ":" << jMsg.status << " ";
+            out << labels.value(col++, "") << ":" << jMsg.msg << " ";
+            out << "\n";
+            //导出进度信号
+            sigProgress(i + 1, jList.count());
+        }
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
+        fi.close();
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+    return m_canRunning;
 }
 
 /**
@@ -1194,11 +1295,11 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_J
         } else if (iFlag == KERN) {
             tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
         } else {
-            qDebug() << "exportToDoc type is Wrong!";
+            qCWarning(logExport) << "exportToDoc type is Wrong!";
             return false;
         }
         if (!QFile(tempdir).exists()) {
-            qWarning() << "export docx template is not exisits";
+            qCWarning(logExport) << "export docx template is not exisits";
             return  false;
         }
 
@@ -1249,7 +1350,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_J
         QFile(fileNamex).rename(fileName);
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -1270,13 +1371,13 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_J
     Utils::sleep(200);
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
  * @brief LogExportThread::exportToDoc导出到日志doc格式配置函数，对LOG_MSG_APPLICATOIN数据类型的重载（指应用日志）
  * @param fileName 导出文件路径全称        if (!QFile(fileName).exists()) {
-            qWarning() << "export file dir is not exisits";
+            qCWarning(logExport) << "export file dir is not exisits";
             return  false;
         }
  * @param jList 要导出的数据源 数据类型为LOG_MSG_APPLICATOIN
@@ -1289,7 +1390,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_A
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
         if (!QFile(tempdir).exists()) {
-            qWarning() << "export docx template is not exisits";
+            qCWarning(logExport) << "export docx template is not exisits";
             return  false;
         }
 
@@ -1330,7 +1431,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_A
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -1352,7 +1453,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_A
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1367,7 +1468,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/3column.dfw";
         if (!QFile(tempdir).exists()) {
-            qWarning() << "export docx template is not exisits";
+            qCWarning(logExport) << "export docx template is not exisits";
             return  false;
         }
 
@@ -1407,7 +1508,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -1429,7 +1530,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1444,7 +1545,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_B
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/2column.dfw";
         if (!QFile(tempdir).exists()) {
-            qWarning() << "export docx template is not exisits";
+            qCWarning(logExport) << "export docx template is not exisits";
             return  false;
         }
 
@@ -1481,7 +1582,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_B
         QFile(fileNamex).rename(fileName);
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -1502,7 +1603,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_B
     Utils::sleep(200);
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1517,7 +1618,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_X
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/2column.dfw";
         if (!QFile(tempdir).exists()) {
-            qWarning() << "export docx template is not exisits";
+            qCWarning(logExport) << "export docx template is not exisits";
             return  false;
         }
 
@@ -1537,7 +1638,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_X
                 throw  QString(stopStr);
             }
             LOG_MSG_XORG message = jList.at(row);
-            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.offset.toStdString());
             l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.msg.toStdString());
             l_merger.paste("tableRow");
             //导出进度信号
@@ -1555,7 +1656,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_X
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -1577,7 +1678,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_X
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1593,7 +1694,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_N
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
         if (!QFile(tempdir).exists()) {
-            qWarning() << "export docx template is not exisits";
+            qCWarning(logExport) << "export docx template is not exisits";
             return  false;
         }
 
@@ -1633,7 +1734,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_N
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -1655,7 +1756,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_N
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -1671,7 +1772,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_K
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
         if (!QFile(tempdir).exists()) {
-            qWarning() << "export docx template is not exisits";
+            qCWarning(logExport) << "export docx template is not exisits";
             return  false;
         }
 
@@ -1708,7 +1809,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_K
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -1730,7 +1831,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_K
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
@@ -1738,7 +1839,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
         if (!QFile(tempdir).exists()) {
-            qWarning() << "export docx template is not exisits";
+            qCWarning(logExport) << "export docx template is not exisits";
             return false;
         }
 
@@ -1774,7 +1875,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -1796,7 +1897,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
@@ -1804,7 +1905,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
     try {
         QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
         if (!QFile(tempdir).exists()) {
-            qWarning() << "export docx template is not exisits";
+            qCWarning(logExport) << "export docx template is not exisits";
             return false;
         }
 
@@ -1840,7 +1941,7 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         if (!m_canRunning) {
             Utils::checkAndDeleteDir(m_fileName);
         }
@@ -1862,7 +1963,78 @@ bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_D
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
 
-    return true && m_canRunning;
+    return m_canRunning;
+}
+
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    try {
+        QString tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/5column.dfw";
+        if (!QFile(tempdir).exists()) {
+            qCWarning(logExport) << "export docx template is not exisits";
+            return  false;
+        }
+
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
+        l_merger.load(tempdir.toStdString());
+        //往表头中添加表头描述，表头为第一行，数据则在下面
+        for (int col = 0; col < labels.count(); ++col) {
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+
+        }
+        l_merger.paste("tableRow");
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+        for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_AUDIT message = jList.at(row);
+            l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.eventType.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.dateTime.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), message.processName.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.status.toStdString());
+            l_merger.setClipboardValue("tableRow", QString("column5").toStdString(), message.msg.toStdString());
+            l_merger.paste("tableRow");
+            //导出进度信号
+            sigProgress(row + 1, jList.count() + end);
+        }
+        //保存，把拼好的xml写入文件中
+        QString fileNamex = fileName + "x";
+
+        QFile rsNameFile(fileName) ;
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
+
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    //如果取消导出，则删除文件
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    //100%进度
+    sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
+    Utils::sleep(200);
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+
+    return m_canRunning;
 }
 
 /**
@@ -1947,7 +2119,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, QStandardItemModel *
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -1958,7 +2130,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, QStandardItemModel *
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2055,7 +2227,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2066,7 +2238,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2128,7 +2300,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2139,7 +2311,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2198,7 +2370,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2209,7 +2381,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2266,7 +2438,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2277,7 +2449,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2320,7 +2492,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
             LOG_MSG_XORG jMsg = jList.at(row);
             htmlEscapeCovert(jMsg.msg);
             html.write("<tr>");
-            QString info = QString("<td>%1</td>").arg(jMsg.dateTime);
+            QString info = QString("<td>%1</td>").arg(jMsg.offset);
             html.write(info.toUtf8().data());
             info = QString("<td>%1</td>").arg(jMsg.msg);
             html.write(info.toUtf8().data());
@@ -2334,7 +2506,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2345,7 +2517,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2406,7 +2578,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2417,7 +2589,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2472,7 +2644,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2483,7 +2655,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
@@ -2536,7 +2708,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2547,7 +2719,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
@@ -2600,7 +2772,7 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
         html.write("</html>\n");
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         html.close();
         emit sigResult(false);
         if (ErrorStr != stopStr) {
@@ -2611,7 +2783,74 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     html.close();
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
+}
+
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    //判断文件路径是否存在，不存在就返回错误
+    QFile html(fileName);
+    if (!html.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
+    try {
+        //写网页头
+        html.write("<!DOCTYPE html>\n");
+        html.write("<html>\n");
+        html.write("<body>\n");
+        //写入表格标签
+        html.write("<table border=\"1\">\n");
+        // 写入表头
+        html.write("<tr>");
+        for (int i = 0; i < labels.count(); ++i) {
+            QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
+            html.write(labelInfo.toUtf8().data());
+        }
+        html.write("</tr>");
+        // 写入内容
+        for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            //根据字段拼出每行的网页内容
+            LOG_MSG_AUDIT jMsg = jList.at(row);
+            htmlEscapeCovert(jMsg.msg);
+            html.write("<tr>");
+            QString info = QString("<td>%1</td>").arg(jMsg.eventType);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.dateTime);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.processName);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.status);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.msg);
+            html.write(info.toUtf8().data());
+            html.write("</tr>");
+            //导出进度信号
+            sigProgress(row + 1, jList.count());
+        }
+
+        html.write("</table>\n");
+        html.write("</body>\n");
+        html.write("</html>\n");
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
+        html.close();
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+    return m_canRunning;
 }
 
 /**
@@ -2666,9 +2905,8 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_J
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
-        qDebug() << "export xlsx new";
     } catch (const QString &ErrorStr) {
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -2676,7 +2914,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_J
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 
 }
 
@@ -2720,9 +2958,8 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_A
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
-        qDebug() << "export xlsx new";
     } catch (const QString &ErrorStr) {
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -2730,7 +2967,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_A
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 
 }
 
@@ -2772,9 +3009,8 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
-        qDebug() << "export xlsx new";
     } catch (const QString &ErrorStr) {
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -2782,7 +3018,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2822,9 +3058,8 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_B
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
-        qDebug() << "export xlsx new";
     } catch (const QString &ErrorStr) {
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -2832,7 +3067,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_B
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2862,7 +3097,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_X
             }
             LOG_MSG_XORG message = jList.at(row);
             int col = 0;
-            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.offset.toStdString().c_str(), nullptr);
             worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
             ++currentXlsRow;
             sigProgress(row + 1, jList.count() + end);
@@ -2872,9 +3107,8 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_X
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
-        qDebug() << "export xlsx new";
     } catch (const QString &ErrorStr) {
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -2882,7 +3116,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_X
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2924,9 +3158,8 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_N
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
-        qDebug() << "export xlsx new";
     } catch (const QString &ErrorStr) {
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -2934,7 +3167,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_N
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 /**
@@ -2973,9 +3206,8 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_K
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
-        qDebug() << "export xlsx new";
     } catch (const QString &ErrorStr) {
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -2983,7 +3215,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_K
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
@@ -3016,9 +3248,8 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
-        qDebug() << "export xlsx new";
     } catch (const QString &ErrorStr) {
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -3026,7 +3257,7 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
 }
 
 bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
@@ -3059,9 +3290,8 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
         workbook_close(workbook);
         malloc_trim(0);
         sigProgress(100, 100);
-        qDebug() << "export xlsx new";
     } catch (const QString &ErrorStr) {
-        qDebug() << "Export Stop" << ErrorStr;
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
         emit sigResult(false);
         if (ErrorStr != stopStr) {
             emit sigError(QString("export error: %1").arg(ErrorStr));
@@ -3069,7 +3299,116 @@ bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_D
         return false;
     }
     emit sigResult(m_canRunning);
-    return true && m_canRunning;
+    return m_canRunning;
+}
+
+bool LogExportThread::exportToXls(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
+{
+    try {
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
+        for (int col = 0; col < labels.count(); ++col) {
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
+        }
+        ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+
+        for (int row = 0; row < jList.count() ; ++row) {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_AUDIT message = jList.at(row);
+            int col = 0;
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.eventType.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.processName.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.status.toStdString().c_str(), nullptr);
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
+            ++currentXlsRow;
+            sigProgress(row + 1, jList.count() + end);
+        }
+
+        workbook_close(workbook);
+        malloc_trim(0);
+        sigProgress(100, 100);
+    } catch (const QString &ErrorStr) {
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    emit sigResult(m_canRunning);
+    return m_canRunning;
+}
+
+bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_COREDUMP> &jList)
+{
+    QString tmpPath = Utils::getAppDataPath() + "/tmp/";
+    QDir dir(tmpPath);
+    //删除临时目录
+    dir.removeRecursively();
+    //创建临时目录
+    Utils::mkMutiDir(tmpPath);
+
+    //复制文件
+    int nCoreDumpCount = 0;
+    for (auto &it : jList) {
+        DLDBusHandler::instance(this)->exportLog(tmpPath, it.storagePath, true);
+        if (it.coreFile == "present")
+            nCoreDumpCount++;
+        if (!m_canRunning) {
+            break;
+        }
+    }
+
+    if (!m_canRunning) {
+        return false;
+    }
+    //打包日志文件
+    QProcess procss;
+    procss.setWorkingDirectory(tmpPath);
+    QStringList arg = {"-c"};
+    // 使用7z进行压缩，方便获取进度
+    arg.append(QString("7z a -l -bsp1 tmp.zip ./*;mv tmp.zip '%1'").arg(fileName));
+
+    // refresh progress
+    bool ret = false;
+    // 有coredump文件，才读取压缩进度
+    if (nCoreDumpCount > 0) {
+        connect(&procss, &QProcess::readyReadStandardOutput, this, [&](){
+            if (!m_canRunning) {
+                procss.kill();
+                ret = false;
+                return;
+            }
+
+            QByteArray dd = procss.readAllStandardOutput();
+            QList<QString> lines = QString(dd).split('\n', QString::SkipEmptyParts);
+            for (const QString &line : qAsConst(lines)) {
+                int pos = line.indexOf(QLatin1Char('%'));
+                if (pos > 1) {
+                    int percentage = line.midRef(pos - 3, 3).toInt();
+                    sigProgress(percentage, 100);
+                }
+            }
+            ret = true;
+        });
+    } else {
+        ret = true;
+    }
+
+    procss.start("/bin/bash", arg);
+    procss.waitForFinished(-1);
+
+    emit sigResult(ret);
+
+    dir.removeRecursively();
+    return m_canRunning;
 }
 
 /**
@@ -3113,7 +3452,7 @@ void LogExportThread::htmlEscapeCovert(QString &htmlMsg)
  */
 void LogExportThread::run()
 {
-    qInfo() << " LogExportThread::run()threadrun";
+    qCDebug(logExport) << "threadrun";
     sigProgress(0, 100);
     switch (m_runMode) {
     case TxtModel: {
@@ -3156,6 +3495,10 @@ void LogExportThread::run()
         exportToTxt(m_fileName, m_kwinList, m_labels);
         break;
     }
+    case TxtAUDIT: {
+        exportToTxt(m_fileName, m_alist, m_labels);
+    }
+        break;
     case HtmlModel: {
         exportToHtml(m_fileName, m_pModel, m_flag);
         break;
@@ -3196,6 +3539,10 @@ void LogExportThread::run()
         exportToHtml(m_fileName, m_dmesgList, m_labels);
         break;
     }
+    case HtmlAUDIT: {
+        exportToHtml(m_fileName, m_alist, m_labels);
+    }
+        break;
     case DocJOURNAL: {
         exportToDoc(m_fileName, m_jList, m_labels, m_flag);
         break;
@@ -3232,6 +3579,10 @@ void LogExportThread::run()
         exportToDoc(m_fileName, m_dmesgList, m_labels);
         break;
     }
+    case DocAUDIT: {
+        exportToDoc(m_fileName, m_alist, m_labels);
+    }
+        break;
     case XlsJOURNAL: {
         exportToXls(m_fileName, m_jList, m_labels, m_flag);
         break;
@@ -3266,6 +3617,14 @@ void LogExportThread::run()
     }
     case XlsDMESG: {
         exportToXls(m_fileName, m_dmesgList, m_labels);
+        break;
+    }
+    case XlsAUDIT: {
+        exportToXls(m_fileName, m_alist, m_labels);
+        break;
+    }
+    case ZipCoredump: {
+        exportToZip(m_fileName, m_coredumplist);
         break;
     }
     default:

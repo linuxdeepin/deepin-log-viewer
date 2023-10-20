@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,8 +13,13 @@
 #include <QDBusMessage>
 #include <QDBusConnectionInterface>
 #include <QStandardPaths>
+#include <QLoggingCategory>
 
-//const QStringList ValidInvokerExePathList1 = QStandardPaths::locateAll(QStandardPaths::ApplicationsLocation, "deepin-log-viewer");
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service")
+#else
+Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service", QtInfoMsg)
+#endif
 
 LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
@@ -23,6 +28,7 @@ LogViewerService::LogViewerService(QObject *parent)
     m_commands.insert("last", "last -x");
     m_commands.insert("journalctl_system", "journalctl -r");
     m_commands.insert("journalctl_boot", "journalctl -b -r");
+    m_commands.insert("journalctl_app", "journalctl");
 }
 
 LogViewerService::~LogViewerService()
@@ -62,7 +68,7 @@ QString LogViewerService::readLog(const QString &filePath)
     //QByteArray -> QString 如果遇到0x00，会导致转换终止
     //replace("\x00", "")和replace("\u0000", "")无效
     //使用remove操作，性能损耗过大，因此遇到0x00 替换为 0x20(空格符)
-    qInfo() << "replace 0x00 to 0x20 begin";
+    qCInfo(logService) << "replace 0x00 to 0x20 begin";
     int replaceTimes = 0;
     for (int i = 0; i != byte.size(); ++i) {
         if (byte.at(i) == 0x00) {
@@ -70,7 +76,7 @@ QString LogViewerService::readLog(const QString &filePath)
             replaceTimes++;
         }
     }
-    qInfo() << "replace 0x00 to 0x20   end. replaceTimes:" << replaceTimes;
+    qCInfo(logService) << "replace 0x00 to 0x20   end. replaceTimes:" << replaceTimes;
     return QString::fromUtf8(byte);
 }
 
@@ -132,6 +138,21 @@ QString LogViewerService::readLogInStream(const QString &token)
     return result;
 }
 
+bool LogViewerService::isFileExist(const QString &filePath)
+{
+    QFile file(filePath);
+    return file.exists();
+}
+
+quint64 LogViewerService::getFileSize(const QString &filePath)
+{
+    QFileInfo fi(filePath);
+    if (fi.exists())
+        return static_cast<quint64>(fi.size());
+
+    return 0;
+}
+
 /*!
  * \~chinese \brief LogViewerService::exitCode 返回进程状态
  * \~chinese \return 进程返回值
@@ -146,7 +167,7 @@ int LogViewerService::exitCode()
  */
 void LogViewerService::quit()
 {
-    qDebug() << "LogViewService::Quit called";
+    qCDebug(logService) << "LogViewService::Quit called";
     QCoreApplication::exit(0);
 }
 
@@ -172,13 +193,54 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
         QString appDir = appFileInfo.absolutePath();
         nameFilter = appDir.mid(appDir.lastIndexOf("/") + 1, appDir.size() - 1);
         dir.setPath(appDir);
+    } else if (file == "audit"){
+        dir.setPath("/var/log/audit");
+        nameFilter = file;
+    } else if (file == "coredump") {
+        QProcess process;
+        QStringList args = {"-c", ""};
+        args[1].append("coredumpctl list");
+        process.start("/bin/bash", args);
+        process.waitForFinished(-1);
+        QByteArray outByte = process.readAllStandardOutput();
+        QStringList strList = QString(outByte.replace('\u0000', "").replace("\x01", "")).split('\n', QString::SkipEmptyParts);
+
+        QRegExp re("(Storage: )\\S+");
+        for (int i = strList.size() - 1; i >= 0; --i) {
+            QString str = strList.at(i);
+            if (str.trimmed().isEmpty())
+                continue;
+
+            QStringList tmpList = str.split(" ", QString::SkipEmptyParts);
+            if (tmpList.count() < 10)
+                continue;
+
+            QString coreFile = tmpList[8];
+            QString pid = tmpList[4];
+            QString storagePath = "";
+            // 解析coredump文件保存位置
+            if (coreFile != "missing") {
+                args[1] = QString("coredumpctl info %1").arg(pid);
+                process.start("/bin/bash", args);
+                process.waitForFinished(-1);
+                QByteArray outInfoByte = process.readAllStandardOutput();
+                re.indexIn(outInfoByte);
+                storagePath = re.cap(0).replace("Storage: ", "");
+            }
+
+            if (!storagePath.isEmpty()) {
+                fileNamePath.append(storagePath);
+            }
+        }
+
+        return fileNamePath;
     } else {
         dir.setPath("/var/log");
         nameFilter = file;
     }
     //要判断路径是否存在
     if (!dir.exists()) {
-        qWarning() << "it is not true path";
+        qCWarning(logService) << "it is not true path";
         return QStringList() << "";
     }
     dir.setFilter(QDir::Files | QDir::NoSymLinks); //实现对文件的过滤
@@ -187,18 +249,15 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
     QFileInfoList fileList = dir.entryInfoList();
     for (int i = 0; i < fileList.count(); i++) {
         if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
-            //                qDebug() << tmpDirPath;
             QProcess m_process;
 
             QString command = "gunzip";
             QStringList args;
             args.append("-c");
-            //                qDebug() << fileList[i].absoluteFilePath();
             args.append(fileList[i].absoluteFilePath());
             m_process.setStandardOutputFile(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             m_process.start(command, args);
             m_process.waitForFinished(-1);
-            //                qDebug() << m_process.readAll();
             fileNamePath.append(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             fileNum++;
         }
@@ -206,7 +265,6 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
             fileNamePath.append(fileList[i].absoluteFilePath());
         }
     }
-    //       qInfo()<<fileNamePath.count()<<fileNamePath<<"******************************";
     return fileNamePath;
 }
 
@@ -228,7 +286,7 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
     QFileInfoList fileList;
     //判断路径是否存在
     if (!appFileInfo.exists()) {
-        qWarning() << "it is not true path";
+        qCWarning(logService) << QString("path:[%1] it is not true path").arg(file);
         return QStringList();
     }
     //如果是文件
@@ -248,18 +306,15 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
 
     for (int i = 0; i < fileList.count(); i++) {
         if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
-            //                qDebug() << tmpDirPath;
             QProcess m_process;
 
             QString command = "gunzip";
             QStringList args;
             args.append("-c");
-            //                qDebug() << fileList[i].absoluteFilePath();
             args.append(fileList[i].absoluteFilePath());
             m_process.setStandardOutputFile(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             m_process.start(command, args);
             m_process.waitForFinished(-1);
-            //                qDebug() << m_process.readAll();
             fileNamePath.append(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
             fileNum++;
         }
@@ -267,7 +322,6 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
             fileNamePath.append(fileList[i].absoluteFilePath());
         }
     }
-    //       qInfo()<<fileNamePath.count()<<fileNamePath<<"******************************";
     return fileNamePath;
 }
 
@@ -291,13 +345,14 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     QString outFullPath = "";
     QStringList arg = {"-c", ""};
     if (isFile) {
-        //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
-        if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home")) || in.contains("..")) {
+        //增加服务黑名单，只允许通过提权接口读取/var/log、/var/lib/systemd/coredump下，家目录下和临时目录下的文件
+        if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home") && !in.startsWith("/var/lib/systemd/coredump"))
+                || in.contains("..")) {
             return false;
         }
         QFileInfo filein(in);
         if (!filein.isFile()) {
-            qInfo() << "in not file:" << in;
+            qCWarning(logService) << "in not file:" << in;
             return false;
         }
         outFullPath = outDirInfo.absoluteFilePath() + filein.fileName();
@@ -306,19 +361,29 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     } else {
         auto it = m_commands.find(in);
         if (it == m_commands.end()) {
-            qInfo() << "unknown command:" << in;
+            qCWarning(logService) << "unknown command:" << in;
             return false;
         }
-        outFullPath = outDirInfo.absoluteFilePath() + in + ".txt";
+
+        QString cmd = it.value();
+        outFullPath = outDirInfo.absoluteFilePath() + in + ".log";
+        if (in == "journalctl_app") {
+            QString appName = outDirInfo.absoluteFilePath().split("/").at(outDirInfo.absoluteFilePath().split("/").size() - 2);
+            outFullPath = outDirInfo.absoluteFilePath() + appName + ".log";
+            cmd += QString(" SYSLOG_IDENTIFIER=%1").arg(appName);
+
+            qCDebug(logService) << "journalctl app export cmd:" << cmd;
+        }
+
         //结果重定向到文件
-        arg[1].append(QString("%1 >& \"%2\";").arg(it.value(), outFullPath));
+        arg[1].append(QString("%1 >& \"%2\";").arg(cmd, outFullPath));
     }
     //设置文件权限
     arg[1].append(QString("chmod 777 \"%1\";").arg(outFullPath));
     QProcess process;
     process.start("/bin/bash", arg);
     if (!process.waitForFinished()) {
-        qInfo() << "command error:" << arg;
+        qCWarning(logService) << "command error:" << arg;
         return false;
     }
     return true;

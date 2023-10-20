@@ -1122,9 +1122,12 @@ TEST(DisplayContent_createOOCTable_UT, DisplayContent_createOOCTable_UT_001)
 {
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
-    QList<QStringList> list;
+    QList<LOG_FILE_OTHERORCUSTOM> list;
     for (int i = 0; i < 100; ++i) {
-        list.append(QStringList()<<"deepin-installer-init.log"<<"/var/log/deepin-installer-init.log");
+        LOG_FILE_OTHERORCUSTOM data;
+        data.name = "deepin-installer-init.log";
+        data.path = "/var/log/deepin-installer-init.log";
+        list.append(data);
     }
     p->createOOCTable(list);
     p->deleteLater();
@@ -1254,7 +1257,7 @@ TEST(DisplayContent_createXorgTable_UT, DisplayContent_createXorgTable_UT_001)
     LOG_MSG_XORG item;
     for (int i = 0; i < 100; ++i) {
         item.msg = QString("msg%1").arg(i);
-        item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        item.offset = "3.541";
         list.append(item);
     }
     p->createXorgTable(list);
@@ -1702,7 +1705,7 @@ TEST(DisplayContent_slot_appLogs_UT, DisplayContent_slot_appLogs_UT_001)
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     stub.set(ADDR(DisplayContent, generateAppFile), DisplayContent_slot_BtnSelected_UT_generateAppFile);
-    p->slot_appLogs(1, QDir::homePath() + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log");
+    p->slot_appLogs(1, Utils::homePath + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log");
     p->deleteLater();
 }
 
@@ -1865,7 +1868,7 @@ TEST(DisplayContent_slot_XorgFinished_UT, DisplayContent_slot_XorgFinished_UT_00
     LOG_MSG_XORG item;
     for (int i = 0; i < 100; ++i) {
         item.msg = QString("msg%1").arg(i);
-        item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+        item.offset = "3.541";
         list.append(item);
     }
     p->m_flag = XORG;
@@ -2312,7 +2315,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
         LOG_MSG_XORG item;
         for (int i = 0; i < 100; ++i) {
             item.msg = QString("msg%1").arg(i);
-            item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+            item.offset = "3.541";
             list.append(item);
         }
         p->xListOrigin.append(list);
@@ -2536,7 +2539,7 @@ TEST_P(DisplayContent_parseListToModel_XORG_UT, DisplayContent_parseListToModel_
         LOG_MSG_XORG item;
         for (int i = 0; i < 100; ++i) {
             item.msg = QString("msg%1").arg(i);
-            item.dateTime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+            item.offset = "3.541";
             list.append(item);
         }
     }

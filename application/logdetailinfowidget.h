@@ -6,6 +6,7 @@
 #define LOGDETAILINFOWIDGET_H
 #include "logiconbutton.h"
 #include "logdetailedit.h"
+#include "structdef.h"
 
 #include <DHorizontalLine>
 #include <DLabel>

@@ -9,6 +9,10 @@
 #include "logallexportthread.h"
 #include "exportprogressdlg.h"
 
+#include "dbusmanager.h"
+
+#include <sys/utsname.h>
+
 #include <DApplication>
 #include <DTitlebar>
 #include <DWindowOptionButton>
@@ -51,6 +55,7 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
     setMinimumSize(MAINWINDOW_WIDTH, MAINWINDOW_HEIGHT);
     //恢复上次关闭时记录的窗口大小
     resize(LogSettings::instance()->getConfigWinSize());
+    Utils::m_mapAuditType2EventType = LogSettings::instance()->loadAuditMap();
 }
 
 /**
@@ -138,11 +143,13 @@ void LogCollectorMain::initUI()
     /** left frame */
     m_logCatelogue = new LogListView();
     m_logCatelogue->setObjectName("logTypeSelectList");
+    m_logCatelogue->setAccessibleName("left_side_bar");
     m_hLayout->addWidget(m_logCatelogue, 1);
     m_logCatelogue->setFixedWidth(160);
     m_vLayout = new QVBoxLayout;
     /** topRight frame */
     m_topRightWgt = new FilterContent();
+    m_topRightWgt->setAccessibleName("filterWidget");
     m_vLayout->addWidget(m_topRightWgt);
     /** midRight frame */
     m_midRightWgt = new DisplayContent();
@@ -155,6 +162,7 @@ void LogCollectorMain::initUI()
     m_hLayout->setContentsMargins(0, 0, 10, 0);
     m_hLayout->setSpacing(10);
 
+    this->centralWidget()->setAccessibleName("centralWidget");
     this->centralWidget()->setLayout(m_hLayout);
     m_searchEdt->setObjectName("searchEdt");
     m_searchEdt->lineEdit()->setObjectName("searchChildEdt");
@@ -172,6 +180,7 @@ void LogCollectorMain::initTitlebarExtensions()
 {
     DMenu *refreshMenu = new DMenu(this);
     DMenu *menu = new DMenu(DApplication::translate("titlebar", "Refresh interval"), refreshMenu);
+    menu->setAccessibleName("refresh_interval_menu");
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "10 sec")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "1 min")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "5 min")));
@@ -203,11 +212,13 @@ void LogCollectorMain::initTitlebarExtensions()
     m_exportAllBtn->setIcon(QIcon::fromTheme("export"));
     m_exportAllBtn->setIconSize(QSize(36, 36));
     m_exportAllBtn->setToolTip(qApp->translate("titlebar", "Export All"));
+    m_exportAllBtn->setAccessibleName(qApp->translate("titlebar", "Export All"));
     m_refreshBtn = new DIconButton(widget);
     m_refreshBtn->setIcon(QIcon::fromTheme("refresh"));
     m_refreshBtn->setFixedSize(QSize(36, 36));
     m_refreshBtn->setIconSize(QSize(36, 36));
     m_refreshBtn->setToolTip(qApp->translate("titlebar", "Refresh Now"));
+    m_refreshBtn->setAccessibleName(qApp->translate("titlebar", "Refresh Now"));
     layout->addSpacing(115);
     layout->addWidget(m_exportAllBtn);
     layout->addSpacing(2);
@@ -279,13 +290,29 @@ void LogCollectorMain::exportAllLogs()
 {
     static bool authorization = false;
     if (false == authorization) {
-        if (!Utils::checkAuthorization("com.deepin.pkexec.logViewerAuth.exportLogs", qApp->applicationPid())) {
+        QString policyActionId = "";
+        // 开启等保四，若当前用户是审计管理员，使用单用户审计管理员鉴权
+        if (DBusManager::isSEOepn() && DBusManager::isAuditAdmin())
+            policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogsSelf";
+        else
+            // 其他情况，默认为多用户鉴权
+            policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogs";
+
+        if (!Utils::checkAuthorization(policyActionId, qApp->applicationPid())) {
             return;
         }
         authorization = true;
     }
+
+    // 时间
+    QString dateTime = QDateTime::currentDateTime().toString("yyyyMMddHHmmss");
+    // 主机名
+    utsname _utsname;
+    uname(&_utsname);
+    QString hostname = QString(_utsname.nodename);
+
     static QString defaultDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
-    static QString fileFullPath = defaultDir + "/" + qApp->translate("titlebar", "System Logs") + ".zip";
+    QString fileFullPath = defaultDir + "/" + QString("%1_%2_all_logs.zip").arg(dateTime).arg(hostname);
     QString newPath = DFileDialog::getSaveFileName(this, "", fileFullPath, "*.zip");
     if (newPath.isEmpty()) {
         return;
@@ -345,6 +372,9 @@ void LogCollectorMain::initConnection()
 
     connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, m_midRightWgt,
             &DisplayContent::slot_getLogtype); // add by Airy
+
+    connect(m_topRightWgt, &FilterContent::sigAuditTypeChanged, m_midRightWgt,
+            &DisplayContent::slot_getAuditType);
 
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_logCatelogue,
             &LogListView::slot_getAppPath); // add by Airy for getting app path

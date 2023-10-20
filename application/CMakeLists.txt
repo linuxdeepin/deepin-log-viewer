@@ -16,6 +16,7 @@ set(LINK_LIBS
     Qt5::Xml
     Qt5::DBus
     Qt5::Concurrent
+    Qt5::Network
 #${DtkWidget_LDFLAGS}
 #${DtkGui_LDFLAGS}
 #${DtkCore_LDFLAGS}
@@ -112,6 +113,7 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Xml REQUIRED)
+find_package(Qt5Network REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5DBus REQUIRED)
 find_package(DtkWidget REQUIRED)
@@ -158,6 +160,7 @@ list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
 
 set (APP_CPP_FILES
      main.cpp
+     cliapplicationhelper.cpp
      filtercontent.cpp
      displaycontent.cpp
      logcollectormain.cpp
@@ -194,6 +197,8 @@ set (APP_CPP_FILES
 #     viewsortfilter.cpp
      logallexportthread.cpp
      eventlogutils.cpp
+     logbackend.cpp
+     journalappwork.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -201,8 +206,9 @@ assets/resources.qrc
 
 
 set (APP_HEADERS_FILES
-   logcollectormain.h
-  displaycontent.h
+    cliapplicationhelper.h
+    logcollectormain.h
+    displaycontent.h
     logfileparser.h
     filtercontent.h
     structdef.h
@@ -229,6 +235,9 @@ set (APP_HEADERS_FILES
 #    viewsortfilter.h
     logallexportthread.h
     eventlogutils.h
+    logbackend.h
+    accessible.h
+    journalappwork.h
     )
 
 # 5. 头文件
@@ -375,6 +384,15 @@ install(FILES gschema/com.deepin.log-viewer.gschema.xml
 install(TARGETS ${EXE_NAME} DESTINATION bin)
 install(DIRECTORY assets/deepin-log-viewer
                 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-manual/manual-assets/application/)
+
+# Install aduit rule config file.
+install(FILES assets/auditRule.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer)
+
+# Install cli script deepin-logger
+install(FILES assets/deepin-logger DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+
+# Install log json config file.
+install(FILES assets/deepin-log-viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d)
 
 #FILES       - deployed files.
 #BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.

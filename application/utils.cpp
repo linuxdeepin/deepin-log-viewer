@@ -1,8 +1,12 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "utils.h"
+#include "logsettings.h"
+
+#include <math.h>
+#include <pwd.h>
 
 #include <QUrl>
 #include <QDir>
@@ -20,11 +24,21 @@
 #include <QFontDatabase>
 #include <QProcessEnvironment>
 #include <QTime>
+#include <QLoggingCategory>
 #include <polkit-qt5-1/PolkitQt1/Authority>
 using namespace PolkitQt1;
 
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logUtils, "org.deepin.log.viewer.utils")
+#else
+Q_LOGGING_CATEGORY(logUtils, "org.deepin.log.viewer.utils", QtInfoMsg)
+#endif
+
 QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
+QMap<QString, QStringList> Utils::m_mapAuditType2EventType;
+int Utils::specialComType = -1;
+QString Utils::homePath = QDir::homePath();
 
 Utils::Utils(QObject *parent)
     : QObject(parent)
@@ -49,7 +63,15 @@ QString Utils::getQssContent(const QString &filePath)
 
 QString Utils::getConfigPath()
 {
-    QDir dir(QDir(QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first())
+    QDir dir(QDir(Utils::homePath + "/.config")
+             .filePath(qApp->organizationName()));
+
+    return dir.filePath(qApp->applicationName());
+}
+
+QString Utils::getAppDataPath()
+{
+    QDir dir(QDir(Utils::homePath + "/.local/share")
              .filePath(qApp->organizationName()));
 
     return dir.filePath(qApp->applicationName());
@@ -118,7 +140,6 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
 
     QFile fontFile(fontFileName);
     if (!fontFile.open(QIODevice::ReadOnly)) {
-        //        qDebug() << "Open font file error";
         return fontFamilyName;
     }
 
@@ -193,7 +214,6 @@ bool Utils::deleteDir(const QString &iFilePath)
         if (fileInfo.isFile() || fileInfo.isSymLink()) {
             QFile::setPermissions(filePath, QFile::WriteOwner);
             if (!QFile::remove(filePath)) {
-                //                qDebug() << "remove file" << filePath << " faild!";
                 error = true;
             }
         } else if (fileInfo.isDir()) {
@@ -204,7 +224,6 @@ bool Utils::deleteDir(const QString &iFilePath)
     }
 
     if (!directory.rmdir(QDir::toNativeSeparators(directory.path()))) {
-        //        qDebug() << "remove dir" << directory.path() << " faild!";
         error = true;
     }
 
@@ -275,9 +294,89 @@ QString Utils::osVersion()
     if (re.indexIn(str) > -1) {
         auto result = re.cap(0);
         osVerStr = result.remove(0, 1).remove(result.size() - 1, 1);
-        qInfo() << "lsb_release -r:" << output;
-        qInfo() << "OS version:" << osVerStr;
     }
     unlock->deleteLater();
     return osVerStr;
+}
+
+QString Utils::auditType(const QString &eventType)
+{
+    QMapIterator<QString, QStringList> it(m_mapAuditType2EventType);
+    while (it.hasNext()) {
+        it.next();
+        if (it.value().indexOf(eventType) != -1)
+            return it.key();
+    }
+
+    return "";
+}
+
+double Utils::convertToMB(quint64 cap, const int size/* = 1024*/)
+{
+    static QString type[] = {" B", " KB", " MB"};
+
+    double dc = cap;
+    double ds = size;
+
+    for (size_t p = 0; p < sizeof(type); ++p) {
+        if (cap < pow(size, p + 1) || p == sizeof(type) - 1)
+            return dc / pow(ds, p);
+    }
+
+    return 0.0;
+}
+
+QString Utils::getUserNamebyUID(uint uid)
+{
+    struct passwd * pwd;
+    pwd = getpwuid(uid);
+    return pwd->pw_name;
+}
+
+QString Utils::getCurrentUserName()
+{
+    // 获取当前系统用户名
+    struct passwd* pwd = getpwuid(getuid());
+    return pwd->pw_name;
+}
+
+bool Utils::isCoredumpctlExist()
+{
+    bool isCoredumpctlExist = false;
+    QDir dir("/usr/bin");
+    QStringList list = dir.entryList(QStringList() << (QString("coredumpctl") + "*"), QDir::NoDotAndDotDot | QDir::Files);
+    for (int i = 0; i < list.count(); i++) {
+        if("coredumpctl" == list[i]) {
+            isCoredumpctlExist = true;
+            break;
+        }
+    }
+    return isCoredumpctlExist;
+}
+
+QString Utils::getHomePath(const QString &userName)
+{
+    QString uName("");
+    if (!userName.isEmpty())
+        uName = userName;
+    else
+        uName = getCurrentUserName();
+
+
+    QProcess *unlock = new QProcess;
+    unlock->start("sh", QStringList() << "-c" << QString("cat /etc/passwd | grep %1").arg(uName));
+    unlock->waitForFinished();
+    auto output = unlock->readAllStandardOutput();
+    auto str = QString::fromUtf8(output);
+    str = str.mid(str.indexOf("::") + 2).split(":").first();
+    qCInfo(logUtils) << "userName: " << uName << "homePath:" << str;
+    return str;
+}
+
+QString Utils::appName(const QString &path)
+{
+    if (path.indexOf('/') == -1)
+        return path;
+
+    return path.mid(path.lastIndexOf("/") + 1, path.size() - 1).split(".").first();
 }

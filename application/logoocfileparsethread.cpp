@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,8 +12,15 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QProcess>
+#include <QLoggingCategory>
 
 DWIDGET_USE_NAMESPACE
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logOOCParse, "org.deepin.log.viewer.parse.ooc.work")
+#else
+Q_LOGGING_CATEGORY(logOOCParse, "org.deepin.log.viewer.parse.ooc.work", QtInfoMsg)
+#endif
 
 int LogOOCFileParseThread::thread_count = 0;
 /**
@@ -145,7 +152,7 @@ bool LogOOCFileParseThread::checkAuthentication(const QString &path)
  */
 void LogOOCFileParseThread::run()
 {
-    qDebug() << "LogOOCFileParseThread::run()---threadrun";
+    qCDebug(logOOCParse) << "threadrun";
     doWork();
 }
 

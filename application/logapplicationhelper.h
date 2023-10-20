@@ -5,6 +5,7 @@
 #ifndef LOGAPPLICATIONHELPER_H
 #define LOGAPPLICATIONHELPER_H
 
+#include "structdef.h"
 #include "dtkcore_config.h"
 #ifdef DTKCORE_CLASS_DConfigFile
 #include <DConfig>
@@ -56,6 +57,8 @@ public:
     //获取所有自定义日志文件列表(名称-路径)
     QList<QStringList> getCustomLogList();
 
+    AppLogConfig  appLogConfig(const QString& app);
+
 private:
     explicit LogApplicationHelper(QObject *parent = nullptr);
 
@@ -70,6 +73,8 @@ private:
     void parseField(const QString &path, const QString &name, bool isDeepin, bool isGeneric, bool isName);
 
     QString getLogFile(const QString &path);
+
+    void loadAppLogConfigs();
 
 signals:
     void sigValueChanged(const QString &key);
@@ -109,6 +114,11 @@ private:
      * @brief m_current_system_language 系统语言
      */
     QString m_current_system_language;
+
+    /**
+     * @brief m_appLogConfigs 应用日志配置信息
+     */
+    AppLogConfigList m_appLogConfigs;
     /**
      * @brief m_instance 单例用的本类指针的原子性封装
      */

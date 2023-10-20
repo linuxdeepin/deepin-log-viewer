@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -9,9 +9,21 @@
 #include <QDir>
 #include <QFile>
 #include <QLocale>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logAppHelper, "org.deepin.log.viewer.application.helper")
+#else
+Q_LOGGING_CATEGORY(logAppHelper, "org.deepin.log.viewer.application.helper", QtInfoMsg)
+#endif
 
 std::atomic<LogApplicationHelper *> LogApplicationHelper::m_instance;
 std::mutex LogApplicationHelper::m_mutex;
+
+// 自研应用日志json配置文件目录
+const QString APP_LOG_CONFIG_PATH = "/usr/share/deepin-log-viewer/deepin-log.conf.d";
 
 /**
  * @brief LogApplicationHelper::LogApplicationHelper 构造函数，获取日志文件路径和应用名称
@@ -44,6 +56,9 @@ void LogApplicationHelper::initAppLog()
 
     // get current system language shortname
     m_current_system_language = QLocale::system().name();
+
+    // 加载应用日志配置文件
+    loadAppLogConfigs();
 
     // get desktop & log files
     createDesktopFiles();
@@ -116,10 +131,17 @@ void LogApplicationHelper::initOtherLog()
     m_other_log_list_temp.append(QStringList() << "audit.log" << "/var/log/audit/audit.log");
     m_other_log_list_temp.append(QStringList() << "udcp-client" << "/var/log/udcp-client");
 
+    //窗管日志和配置文件监视
+    m_other_log_list_temp.append(QStringList() << ".kwin_x11.log" << "~/.kwin_x11.log");
+    m_other_log_list_temp.append(QStringList() << "kwinrc" << "~/.config/kwinrc");
+    m_other_log_list_temp.append(QStringList() << "kglobalshortcutsrc" << "~/.config/kglobalshortcutsrc");
+    m_other_log_list_temp.append(QStringList() << "kwinrulesrc" << "~/.config/kwinrulesrc");
+
+
     for (QStringList iter : m_other_log_list_temp) {
         QString path = iter.at(1);
         if (path.startsWith("~/"))
-            path.replace(0, 1, QDir::homePath());
+            path.replace(0, 1, Utils::homePath);
         m_other_log_list.append(QStringList() << iter.at(0) << path);
     }
 }
@@ -136,7 +158,7 @@ void LogApplicationHelper::initCustomLog()
 
         // 判断配置是否有效
         if (!m_pDConfig->isValid()) {
-            qWarning() << QString("DConfig is invalide, name:[%1], subpath[%2].").arg(m_pDConfig->name(), m_pDConfig->subpath());
+            qCWarning(logAppHelper) << QString("DConfig is invalide, name:[%1], subpath[%2].").arg(m_pDConfig->name(), m_pDConfig->subpath());
             m_pDConfig->deleteLater();
             m_pDConfig = nullptr;
             return;
@@ -153,13 +175,17 @@ void LogApplicationHelper::initCustomLog()
     for (QString iter : sList) {
         QString path = iter;
         if (path.startsWith("~/"))
-            path.replace(0, 1, QDir::homePath());
+            path.replace(0, 1, Utils::homePath);
         //忽略非文本文件和不存在的文件
         if (!QFile::exists(path) || !Utils::isTextFileType(path)) {
             continue;
         }
         m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
     }
+
+    //需要查询是否是特殊机型，例如hw机型
+    if(m_pDConfig->keyList().contains("specialComType"))
+        Utils::specialComType = m_pDConfig->value("specialComType").toInt();
 #endif
 
     //初始化gsetting配置
@@ -178,7 +204,7 @@ void LogApplicationHelper::initCustomLog()
             for (QString iter : sList2) {
                 QString path = iter;
                 if (path.startsWith("~/"))
-                    path.replace(0, 1, QDir::homePath());
+                    path.replace(0, 1, Utils::homePath);
                 //忽略非文本文件和不存在的文件
                 if (!QFile::exists(path) || !Utils::isTextFileType(path)) {
                     continue;
@@ -186,7 +212,7 @@ void LogApplicationHelper::initCustomLog()
                 m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
             }
         } else {
-            qWarning() << "cannot find gsettings config file";
+            qCWarning(logAppHelper) << "cannot find gsettings config file";
         }
     }
 }
@@ -214,7 +240,6 @@ void LogApplicationHelper::createDesktopFiles()
             }
         }
     }
-    qDebug() << "  tempDesktopFiles.count()" << tempDesktopFiles.count();
     for (QString var : tempDesktopFiles) {
         QString filePath = path + "/" + var;
         QFile fi(filePath);
@@ -265,6 +290,11 @@ void LogApplicationHelper::createDesktopFiles()
                 }
             }
 
+            // 子应用日志可控制自己的日志的是否在日志收集工具中显示
+            AppLogConfig applogConfig = appLogConfig(Utils::appName(filePath));
+            if (applogConfig.isValid())
+                canDisplay = applogConfig.visible;
+
             if (!lineStr.contains("X-Deepin-Vendor", Qt::CaseInsensitive)) {
                 continue;
             }
@@ -287,7 +317,6 @@ void LogApplicationHelper::createDesktopFiles()
             parseField(filePath, var.split(QDir::separator()).last(), isDeepin, isGeneric, isName);
         }
     }
-    qDebug() << "  m_desktop_files.count()" << m_desktop_files.count();
 }
 
 /**
@@ -295,7 +324,7 @@ void LogApplicationHelper::createDesktopFiles()
  */
 void LogApplicationHelper::createLogFiles()
 {
-    QString homePath = QDir::homePath();
+    QString homePath = Utils::homePath;
     if (homePath.isEmpty()) {
         return;
     }
@@ -306,17 +335,57 @@ void LogApplicationHelper::createLogFiles()
     }
 
     m_log_files = appDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
-    //qDebug() << " m_log_files.size()" << appDir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
 
     for (auto i = 0; i < m_desktop_files.count(); ++i) {
         QString desktopName = m_desktop_files[i].split(QDir::separator()).last();
         QString _name = desktopName.mid(0, desktopName.lastIndexOf("."));
+        // 默认在~/.cache/deepin目录下取自研应用日志路径
         for (auto j = 0; j < m_log_files.count(); ++j) {
             //desktop文件名和日志文件名比较，相同则符合条件
             if (_name == m_log_files[j]) {
                 QString logPath = path + m_log_files[j];
                 m_en_log_map.insert(_name, logPath);
                 break;
+            }
+        }
+
+        // 若该自研应用在json配置文件
+        AppLogConfig appConfig = appLogConfig(_name);
+        if (appConfig.isValid()) {
+            if (appConfig.logType == "file") {
+                // 若该自研应用在file方式下配置有有效的日志路径，则按自研应用的日志路径来加载日志
+                if (!appConfig.logPath.isEmpty()) {
+
+                    // 转为绝对路径
+                    if (appConfig.logPath.front() == '~')
+                        appConfig.logPath.replace(0, 1, homePath);
+
+                    QFileInfo fi(appConfig.logPath);
+                    if (fi.exists()) {
+                        if (fi.isDir())
+                            m_en_log_map.insert(_name, appConfig.logPath);
+                        else if (fi.isFile())
+                            m_en_log_map.insert(_name, fi.absolutePath());
+                    }
+                }
+
+                // 应用未配置有效的日志路径，并且配置文件中visible为真，遵循配置文件优先级最高原则，在"应用列表“显示该应用
+                if (m_en_log_map.find(_name) == m_en_log_map.end() && appConfig.visible) {
+                    if (appConfig.logPath.isEmpty())
+                        m_en_log_map.insert(_name, path + _name);
+                    else {
+                        QString tmpText = appConfig.logPath.mid(appConfig.logPath.lastIndexOf('/') + 1);
+                        if (tmpText.contains('.'))
+                            m_en_log_map.insert(_name, appConfig.logPath.mid(0, appConfig.logPath.lastIndexOf('/')));
+                        else
+                            m_en_log_map.insert(_name, appConfig.logPath);
+                    }
+                }
+            } else if (appConfig.logType == "journal") {
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
+                // 若该自研应用配置为journal方式解析，则将项目名填入log_map，便于后续解析流程处理
+                m_en_log_map.insert(_name, _name);
+#endif
             }
         }
     }
@@ -407,6 +476,64 @@ QString LogApplicationHelper::getLogFile(const QString &path)
     return ret;
 }
 
+void LogApplicationHelper::loadAppLogConfigs()
+{
+    m_appLogConfigs.clear();
+
+    QDir dir(APP_LOG_CONFIG_PATH);
+    if (!dir.exists()) {
+        qCWarning(logAppHelper) << QString("%1 does not exist.").arg(APP_LOG_CONFIG_PATH);
+        return;
+    }
+
+    dir.setFilter(QDir::Files);
+    dir.setNameFilters(QStringList() << "*.json");
+    QFileInfoList fiList = dir.entryInfoList();
+    foreach (QFileInfo fi, fiList) {
+        QFile file(fi.absoluteFilePath());
+        if (!file.open(QIODevice::ReadOnly))
+            continue;
+
+        QByteArray data = file.readAll();
+        file.close();
+
+        QJsonParseError parseError;
+        QJsonDocument document = QJsonDocument::fromJson(data, &parseError);
+        if (parseError.error == QJsonParseError::NoError) {
+            if (document.isObject()) {
+                QJsonObject object = document.object();
+
+                AppLogConfig logConfig;
+                logConfig.name = object.value("name").toString();
+                logConfig.execPath = object.value("exec").toString();
+                logConfig.logPath = object.value("logPath").toString();
+                if (object.contains("visible")) {
+                    QJsonValue value = object.value("visible");
+                    if (value.isString()) {
+                        if (value == "true")
+                            logConfig.visible = true;
+                        else if (value == "false")
+                            logConfig.visible = false;
+                        else
+                            logConfig.visible = object.value("visible").toString().toInt();
+                    }
+                    else if (value.isBool())
+                        logConfig.visible = object.value("visible").toBool();
+                    else
+                        logConfig.visible = object.value("visible").toInt();
+                }
+                if (object.contains("logType")) {
+                    logConfig.logType = object.value("logType").toString();
+                }
+
+                qCInfo(logAppHelper) << QString("name:%1 exec:%2 logType:%3 logPath:%4 visible:%5").arg(logConfig.name).arg(logConfig.execPath).arg(logConfig.logType).arg(logConfig.logPath).arg(logConfig.visible);
+
+                m_appLogConfigs.push_back(logConfig);
+            }
+        }
+    }
+}
+
 //刷新并返回所有显示文本对应的应用日志路径
 QMap<QString, QString> LogApplicationHelper::getMap()
 {
@@ -416,6 +543,10 @@ QMap<QString, QString> LogApplicationHelper::getMap()
     while (iter != m_en_log_map.constEnd()) {
         QString displayName = m_en_trans_map.value(iter.key());
         QString logPath = getLogFile(iter.value());
+
+        // 针对journal日志，使用logPath存储项目名称，便于后续解析流程处理
+        if (iter.key() == iter.value())
+            logPath = iter.key();
 
         //排除其他日志
         bool bFind = false;
@@ -444,6 +575,24 @@ QList<QStringList> LogApplicationHelper::getOtherLogList()
 QList<QStringList> LogApplicationHelper::getCustomLogList()
 {
     return m_custom_log_list;
+}
+
+AppLogConfig LogApplicationHelper::appLogConfig(const QString &app)
+{
+    if (app.isEmpty())
+        return AppLogConfig();
+
+    if (m_appLogConfigs.isEmpty()) {
+        loadAppLogConfigs();
+    }
+
+    foreach (AppLogConfig config, m_appLogConfigs) {
+        if (config.contains(app)) {
+            return config;
+        }
+    }
+
+    return AppLogConfig();
 }
 
 //从应用包名转换为应用显示文本

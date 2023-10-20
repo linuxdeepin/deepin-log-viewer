@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -37,10 +37,17 @@
 #include <QDateTime>
 #include <QFileIconProvider>
 #include <QMenu>
+#include <QLoggingCategory>
 
 #include <sys/utsname.h>
 #include "malloc.h"
 DWIDGET_USE_NAMESPACE
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logDisplaycontent, "org.deepin.log.viewer.display.content")
+#else
+Q_LOGGING_CATEGORY(logDisplaycontent, "org.deepin.log.viewer.display.content", QtInfoMsg)
+#endif
 
 #define SINGLE_LOAD 300
 
@@ -49,6 +56,7 @@ DWIDGET_USE_NAMESPACE
 #define STATUS_WIDTH 90
 #define DATETIME_WIDTH 175
 #define DEAMON_WIDTH 100
+
 /**
  * @brief DisplayContent::DisplayContent 初始化界面\等级数据和实际显示文字转换的数据结构\信号槽连接
  * @param parent
@@ -97,19 +105,36 @@ void DisplayContent::initUI()
     DFontSizeManager::instance()->bind(noResultLabel, DFontSizeManager::T4);
     noResultLabel->setAlignment(Qt::AlignCenter);
 
+    //notAuditLabel
+    notAuditLabel = new DLabel(this);
+    DApplicationHelper::instance()->setPalette(notAuditLabel, pa);
+    notAuditLabel->setText(DApplication::translate("Warning", "Security level for the current system: high\n audit only administrators can view the audit log"));
+    DFontSizeManager::instance()->bind(notAuditLabel, DFontSizeManager::T4);
+    notAuditLabel->setAlignment(Qt::AlignCenter);
+
+    noCoredumpctlLabel = new DLabel(this);
+    DApplicationHelper::instance()->setPalette(noCoredumpctlLabel, pa);
+    noCoredumpctlLabel->setText(DApplication::translate("Waring", "Unable to obtain crash information, please install systemd-coredump."));
+    DFontSizeManager::instance()->bind(noCoredumpctlLabel, DFontSizeManager::T4);
+    noCoredumpctlLabel->setAlignment(Qt::AlignCenter);
+
     //m_spinnerWgt,m_spinnerWgt_K
     m_spinnerWgt = new LogSpinnerWidget(this);
+    m_spinnerWgt->setAccessibleName("spinnerWidget");
     m_spinnerWgt->setMinimumHeight(300);
     m_spinnerWgt_K = new LogSpinnerWidget(this);
+    m_spinnerWgt_K->setAccessibleName("spinnerWidget_K");
     m_spinnerWgt_K->setMinimumHeight(300);
 
     //m_detailWgt
     m_detailWgt = new logDetailInfoWidget(this);
+    m_detailWgt->setAccessibleName("detailInfoWidget");
     m_detailWgt->setMinimumHeight(70);
     m_detailWgt->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     //m_splitter
     m_splitter = new Dtk::Widget::DSplitter( this);
+    m_splitter->setAccessibleName("splitterFrame");
     m_splitter->setOrientation(Qt::Vertical);
     m_splitter->setChildrenCollapsible(false);
     m_splitter->addWidget(m_treeView);
@@ -132,7 +157,14 @@ void DisplayContent::initUI()
 
     //m_exportDlg
     m_exportDlg = new ExportProgressDlg(this);
+    m_exportDlg->setAccessibleName("ExportProgressDlg");
     m_exportDlg->hide();
+
+
+    m_menu = new QMenu(m_treeView);
+    m_menu->setAccessibleName("table_menu");
+    m_act_openForder = m_menu->addAction(/*tr("在文件管理器中显示")*/ DApplication::translate("Action", "Display in file manager"));
+    m_act_refresh = m_menu->addAction(/*tr("刷新")*/ DApplication::translate("Action", "Refresh"));
 
     //setLoadState
     setLoadState(DATA_COMPLETE);
@@ -179,6 +211,7 @@ void DisplayContent::initTableView()
 {
     m_treeView = new LogTreeView(this);
     m_treeView->setObjectName("mainLogTable");
+    m_treeView->setAccessibleName("mainLogTable");
     m_pModel = new QStandardItemModel(this);
     m_treeView->setModel(m_pModel);
     m_treeView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -192,8 +225,7 @@ void DisplayContent::initConnections()
     connect(m_treeView, SIGNAL(pressed(const QModelIndex &)), this,
             SLOT(slot_tableItemClicked(const QModelIndex &)));
 
-    connect(this, SIGNAL(sigDetailInfo(const QModelIndex &, QStandardItemModel *, QString, const int)),
-            m_detailWgt, SLOT(slot_DetailInfo(const QModelIndex &, QStandardItemModel *, QString, const int)));
+    connect(this, &DisplayContent::sigDetailInfo, m_detailWgt, &logDetailInfoWidget::slot_DetailInfo);
     connect(&m_logFileParse, &LogFileParser::dpkgFinished, this, &DisplayContent::slot_dpkgFinished,
             Qt::QueuedConnection);
     connect(&m_logFileParse, &LogFileParser::dpkgData, this, &DisplayContent::slot_dpkgData,
@@ -247,6 +279,16 @@ void DisplayContent::initConnections()
     connect(&m_logFileParse, &LogFileParser::OOCFinished, this, &DisplayContent::slot_OOCFinished,
             Qt::QueuedConnection);
 
+    connect(&m_logFileParse, &LogFileParser::auditData, this, &DisplayContent::slot_auditData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParse, &LogFileParser::auditFinished, this, &DisplayContent::slot_auditFinished,
+            Qt::QueuedConnection);
+
+    connect(&m_logFileParse, &LogFileParser::coredumpData, this, &DisplayContent::slot_coredumpData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParse, &LogFileParser::coredumpFinished, this, &DisplayContent::slot_coredumpFinished,
+            Qt::QueuedConnection);
+
     connect(m_treeView, &LogTreeView::customContextMenuRequested, this, &DisplayContent::slot_requestShowRightMenu);
     connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigValueChanged, this, &DisplayContent::slot_valueChanged_dConfig_or_gSetting);
 }
@@ -270,7 +312,7 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     Q_UNUSED(iSearchStr)
     //系统日志上次获取的时间,和筛选条件一起判断,防止获取过于频繁
     if (m_lastJournalGetTime.msecsTo(QDateTime::currentDateTime()) < 500 && m_journalFilter.timeFilter == id && m_journalFilter.eventTypeFilter == lId) {
-        qDebug() << "repeat refrsh journal too fast!";
+        qCWarning(logDisplaycontent) << "load journal log: repeat refrsh journal too fast!";
         QItemSelectionModel *p = m_treeView->selectionModel();
         if (p)
             p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
@@ -659,6 +701,33 @@ void DisplayContent::insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int st
     parseListToModel(midList, m_pModel);
 }
 
+void DisplayContent::insertOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list, int start, int end)
+{
+    QList<LOG_FILE_OTHERORCUSTOM> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
+    }
+    parseListToModel(midList, m_pModel);
+}
+
+void DisplayContent::insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end)
+{
+    QList<LOG_MSG_AUDIT> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
+    }
+    parseListToModel(midList, m_pModel);
+}
+
+void DisplayContent::insertCoredumpTable(const QList<LOG_MSG_COREDUMP> &list, int start, int end)
+{
+    QList<LOG_MSG_COREDUMP> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
+    }
+    parseListToModel(midList, m_pModel);
+}
+
 /**
  * @brief DisplayContent::generateAppFile 触发获取应用日志数据线程
  * @param path 要获取的某一个应用的日志的日志文件路径
@@ -804,7 +873,7 @@ void DisplayContent::createXorgTableForm()
     m_pModel->clear();
     m_pModel->setColumnCount(2);
     m_pModel->setHorizontalHeaderLabels(QStringList()
-                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Offset")
                                         << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, DATETIME_WIDTH + 20);
 }
@@ -1401,6 +1470,7 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
     }
 
     m_curTreeIndex = index;
+    int row = index.row();
 
     if (m_flag == OtherLog || m_flag == CustomLog) {
         QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
@@ -1418,12 +1488,6 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
  */
 void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 {
-    qDebug() << QString("Button %1 clicked\n combobox: level is %2, cbxIdx is %3 tree %4 node!!")
-             .arg(btnId)
-             .arg(lId)
-             .arg(lId + 1)
-             .arg(idx.data(ITEM_DATE_ROLE).toString());
-
     m_curLevel = lId; // m_curLevel equal combobox index-1;
     m_curBtnId = btnId;
 
@@ -1458,6 +1522,10 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
     } else if (treeData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
+    } else if (treeData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
+        generateAuditFile(BUTTONID(m_curBtnId), AUDITTYPE(m_curLevel));
+    } else if(treeData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
+        generateCoredumpFile(btnId);
     }
 }
 
@@ -1484,7 +1552,6 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     }
 
     if (m_curListIdx == index && (m_flag != KERN && m_flag != BOOT)) {
-        qDebug() << "repeat click" << m_flag;
         return;
     }
     m_currentKwinFilter = {""};
@@ -1549,12 +1616,14 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         m_flag = Dmesg;
     } else if (itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = OtherLog;
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getOtherLogList());
+        generateOOCLogs(OOC_OTHER);
     } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = CustomLog;
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
+        generateOOCLogs(OOC_CUSTOM);
+    } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Audit;
+    } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = COREDUMP;
     }
 }
 
@@ -1577,25 +1646,50 @@ void DisplayContent::slot_exportClicked()
         logName = QString("/%1").arg(("New File"));
     }
 
-    QString path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
-    QString fileName = DFileDialog::getSaveFileName(
-                           this, DApplication::translate("File", "Export File"),
-                           path,
-                           tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
+    QString path, fileName;
+    if (m_flag != COREDUMP) {
+        path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".txt";
+        fileName = DFileDialog::getSaveFileName(
+                    this, DApplication::translate("File", "Export File"),
+                    path,
+                    tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))"), &selectFilter);
+    } else {
+        path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".zip";
+        fileName = DFileDialog::getSaveFileName(
+                    this, DApplication::translate("File", "Export File"),
+                    path,
+                    tr("zip(*.zip)"), &selectFilter);
+    }
+
+    if (fileName.isEmpty()) {
+        delete exportThread;
+        DApplication::setActiveWindow(this);
+        return;
+    }
+
+    QFileInfo fi(fileName.left(fileName.lastIndexOf("/")));
+    if (!fi.isWritable()) {
+        exportThread->sigResult(false);
+        delete exportThread;
+        qCCritical(logDisplaycontent) <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
+        return;
+    }
 
     //限制当导出文件为空和导出doc和xls时用户改动后缀名导致导出问题，提示导出失败
     QFileInfo exportFile(fileName);
 
     QString exportSuffix = exportFile.suffix();
     QString selectSuffix = selectFilter.mid(selectFilter.lastIndexOf(".") + 1, selectFilter.size() - selectFilter.lastIndexOf(".") - 2);
-    if (fileName.isEmpty())
+    if (fileName.isEmpty()) {
+        exportThread->sigResult(false);
+        delete exportThread;
         return;
+    }
 
     //用户修改后缀名后添加默认的后缀
     if (selectSuffix != exportSuffix) {
         fileName.append(".").append(selectSuffix);
     }
-
 
     m_exportDlg->show();
     QStringList labels;
@@ -1652,6 +1746,10 @@ void DisplayContent::slot_exportClicked()
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
             exportThread->exportToTxtPublic(fileName, dnfList, labels);
             break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToTxtPublic(fileName, aList, labels);
+            break;
         default:
             break;
         }
@@ -1703,6 +1801,10 @@ void DisplayContent::slot_exportClicked()
         case Dnf:
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
             exportThread->exportToHtmlPublic(fileName, dnfList, labels);
+            break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToHtmlPublic(fileName, aList, labels);
             break;
         default:
             break;
@@ -1756,6 +1858,10 @@ void DisplayContent::slot_exportClicked()
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
             exportThread->exportToDocPublic(fileName, dnfList, labels);
             break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToDocPublic(fileName, aList, labels);
+            break;
         default:
             break;
         }
@@ -1808,9 +1914,17 @@ void DisplayContent::slot_exportClicked()
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
             exportThread->exportToXlsPublic(fileName, dnfList, labels);
             break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToXlsPublic(fileName, aList, labels);
+            break;
         default:
             break;
         }
+        QThreadPool::globalInstance()->start(exportThread);
+    } else if (selectFilter.contains("(*.zip)") && m_flag == COREDUMP) {
+        PERF_PRINT_BEGIN("POINT-04", QString("format=zip count=%1").arg(aList.count()));
+        exportThread->exportToZipPublic(fileName, m_currentCoredumpList, labels);
         QThreadPool::globalInstance()->start(exportThread);
     }
 }
@@ -2115,6 +2229,68 @@ void DisplayContent::slot_OOCData(int index, const QString &data)
     emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, data);
 }
 
+void DisplayContent::slot_auditFinished(int index, bool bShowTip/* = false*/)
+{
+    if (m_flag != Audit || index != m_auditCurrentIndex)
+        return;
+    m_isDataLoadComplete = true;
+    if (aList.isEmpty()) {
+        if (bShowTip) {
+            createAuditTable(aList);
+            QTimer::singleShot(50, this, [=]{
+                setLoadState(DATA_NOT_AUDIT_ADMIN);
+            });
+            m_detailWgt->cleanText();
+            m_detailWgt->hideLine(true);
+        } else {
+            setLoadState(DATA_COMPLETE);
+            createAuditTable(aList);
+        }
+    }
+}
+
+void DisplayContent::slot_auditData(int index, QList<LOG_MSG_AUDIT> list)
+{
+    if (m_flag != Audit || index != m_auditCurrentIndex)
+        return;
+
+    aListOrigin.append(list);
+    aList.append(filterAudit(m_auditFilter, list));
+    //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
+    if (m_firstLoadPageData) {
+        createAuditTable(aList);
+        m_firstLoadPageData = false;
+        PERF_PRINT_END("POINT-03", "type=audit");
+    }
+}
+
+void DisplayContent::slot_coredumpFinished(int index)
+{
+    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex)
+        return;
+
+    m_isDataLoadComplete = true;
+    if (m_currentCoredumpList.isEmpty()) {
+        setLoadState(DATA_COMPLETE);
+        emit setExportEnable(false);
+        createCoredumpTable(m_currentCoredumpList);
+    }
+}
+void DisplayContent::slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list)
+{
+    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex)
+        return;
+
+    m_coredumpList.append(list);
+    m_currentCoredumpList.append(filterCoredump(m_currentSearchStr, list));
+    //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
+    if (m_firstLoadPageData) {
+        createCoredumpTable(m_currentCoredumpList);
+        m_firstLoadPageData = false;
+        PERF_PRINT_END("POINT-03", "type=coredump");
+    }
+}
+
 void DisplayContent::slot_OOCFinished(int index, int error)
 {
     if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
@@ -2168,7 +2344,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             int leftCnt = jList.count() - SINGLE_LOAD * rateValue;
             //如果在页尾部则只加载最后一页的数量,否则加载单页全部数量
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            qDebug() << "rate" << rateValue;
             //把数据加入model中
             insertJournalTable(jList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
@@ -2185,7 +2360,6 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             int leftCnt = jBootList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            qDebug() << "rate" << rateValue;
             insertJournalBootTable(jBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
@@ -2304,6 +2478,62 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         }
     }
     break;
+    case OtherLog: {
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
+                return;
+
+            int leftCnt = oList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertOOCTable(oList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
+        }
+    }
+    break;
+    case CustomLog: {
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
+                return;
+
+            int leftCnt = cList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertOOCTable(cList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
+        }
+    }
+    break;
+    case Audit: {
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
+                return;
+
+            int leftCnt = aList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertAuditTable(aList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
+        }
+    }
+    break;
+    case COREDUMP: {
+        if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
+            if (m_limitTag >= rateValue)
+                return;
+
+            int leftCnt = m_currentCoredumpList.count() - SINGLE_LOAD * rateValue;
+            int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+
+            insertCoredumpTable(m_currentCoredumpList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            m_limitTag = rateValue;
+            m_treeView->verticalScrollBar()->setValue(valuePixel);
+        }
+    }
+    break;
     default:
         break;
     }
@@ -2313,11 +2543,8 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
  * @brief DisplayContent::slot_searchResult 搜索框执行搜索槽函数
  * @param str 要搜索的关键字
  */
-void DisplayContent::slot_searchResult(QString str)
+void DisplayContent::slot_searchResult(const QString &str)
 {
-    qDebug() << QString("search: %1  treeIndex: %2")
-             .arg(str)
-             .arg(m_curListIdx.data(ITEM_DATE_ROLE).toString());
     m_currentSearchStr = str;
     if (m_flag == NONE)
         return;
@@ -2421,6 +2648,35 @@ void DisplayContent::slot_searchResult(QString str)
         createDmesgTable(dmesgList);
     }
     break;
+    case OtherLog: {
+        oList.clear();
+        oList = filterOOC(m_currentSearchStr, oListOrigin);
+        createOOCTableForm();
+        createOOCTable(oList);
+    }
+    break;
+    case CustomLog: {
+        cList.clear();
+        cList = filterOOC(m_currentSearchStr, cListOrigin);
+        createOOCTableForm();
+        createOOCTable(cList);
+    }
+    break;
+    case Audit: {
+        aList.clear();
+        m_auditFilter.searchstr = m_currentSearchStr;
+        aList = filterAudit(m_auditFilter, aListOrigin);
+        createAuditTableForm();
+        createAuditTable(aList);
+    }
+    break;
+    case COREDUMP: {
+        m_currentCoredumpList.clear();
+        m_currentCoredumpList = filterCoredump(m_currentSearchStr, m_coredumpList);
+        createCoredumpTableForm();
+        createCoredumpTable(m_currentCoredumpList);
+    }
+    break;
     default:
         break;
     }
@@ -2451,6 +2707,14 @@ void DisplayContent::slot_getLogtype(int tcbx)
     createNormalTable(nortempList);
 }
 
+void DisplayContent::slot_getAuditType(int tcbx)
+{
+    m_auditFilter.auditTypeFilter = tcbx;
+    aList = filterAudit(m_auditFilter, aListOrigin);
+    createAuditTableForm();
+    createAuditTable(aList);
+}
+
 /**
  * @brief DisplayContent::parseListToModel 把dpkglist加入model中以供treeview显示
  * @param iList 要加入model中的原始数据
@@ -2459,11 +2723,11 @@ void DisplayContent::slot_getLogtype(int tcbx)
 void DisplayContent::parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<LOG_MSG_DPKG> list = iList;
@@ -2496,12 +2760,12 @@ void DisplayContent::parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandar
 void DisplayContent::parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<LOG_MSG_BOOT> list = iList;
@@ -2529,12 +2793,12 @@ void DisplayContent::parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandar
 void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -2578,12 +2842,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
 void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     DStandardItem *item = nullptr;
@@ -2591,7 +2855,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemMo
     int listCount = iList.size();
     for (int i = 0; i < listCount; i++) {
         items.clear();
-        item = new DStandardItem(iList[i].dateTime);
+        item = new DStandardItem(iList[i].offset);
         item->setData(XORG_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
         items << item;
@@ -2611,12 +2875,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemMo
 void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     DStandardItem *item = nullptr;
@@ -2652,12 +2916,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_NORMAL> iList, QStandardItem
 void DisplayContent::parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     DStandardItem *item = nullptr;
@@ -2676,12 +2940,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_KWIN> iList, QStandardItemMo
 void DisplayContent::parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -2712,12 +2976,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemMod
 void DisplayContent::parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -2747,12 +3011,12 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemM
 void DisplayContent::parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     QList<QStandardItem *> items;
@@ -2766,6 +3030,93 @@ void DisplayContent::parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStan
         items << item;
         item = new DStandardItem(iList[i].dateTimeModify);
         item->setData(OOC_TABLE_DATA);
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
+void DisplayContent::parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
+        return;
+    }
+
+    if (iList.isEmpty()) {
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<QStandardItem *> items;
+    DStandardItem *item = nullptr;
+    int listCount = iList.size();
+    for (int i = 0; i < listCount; i++) {
+        items.clear();
+        item = new DStandardItem(iList[i].eventType);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+        items << item;
+        item = new DStandardItem(iList[i].dateTime);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+        items << item;
+        item = new DStandardItem(iList[i].processName);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+        items << item;
+        item = new DStandardItem(iList[i].status);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+        items << item;
+        item = new DStandardItem(iList[i].msg);
+        item->setData(AUDIT_TABLE_DATA);
+        item->setData(iList[i].origin, AUDIT_ORIGIN_DATAROLE);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(4));
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
+void DisplayContent::parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardItemModel *oPModel)
+{
+    if (!oPModel) {
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
+        return;
+    }
+
+    if (iList.isEmpty()) {
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
+        return;
+    }
+    QList<QStandardItem *> items;
+    DStandardItem *item = nullptr;
+    int listCount = iList.size();
+    for (int i = 0; i < listCount; i++) {
+        items.clear();
+
+        item = new DStandardItem(iList[i].sig);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+        items << item;
+
+        item = new DStandardItem(iList[i].dateTime);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+        items << item;
+
+        item = new DStandardItem(iList[i].coreFile);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+        items << item;
+
+        item = new DStandardItem(iList[i].uid);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+        items << item;
+
+        item = new DStandardItem(iList[i].exe);
+        item->setData(iList[i].storagePath, Qt::UserRole + 2);
+        item->setData(COREDUMP_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(4));
         items << item;
         oPModel->insertRow(oPModel->rowCount(), items);
     }
@@ -2788,6 +3139,13 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
     if (!noResultLabel->isHidden()) {
         noResultLabel->hide();
     }
+    if (!notAuditLabel->isHidden()) {
+        notAuditLabel->hide();
+    }
+    if (!noCoredumpctlLabel->isHidden()) {
+        noCoredumpctlLabel->hide();
+    }
+
 //    if (!m_treeView->isHidden()) {
 //        m_treeView->hide();
 //    }
@@ -2811,6 +3169,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         m_treeView->show();
         m_detailWgt->show();
         emit setExportEnable(true);
+
         break;
     }
     case DATA_LOADING_K: {
@@ -2826,7 +3185,25 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
         noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noResultLabel->show();
         noResultLabel->raise();
-        emit setExportEnable(true);
+        //搜索结果为空，导出按钮置灰
+        emit setExportEnable(false);
+        break;
+    }
+    case DATA_NOT_AUDIT_ADMIN: {
+        // 开启等保四时，若当前用户不是审计管理员，给出提示
+        m_treeView->show();
+        notAuditLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
+        notAuditLabel->show();
+        notAuditLabel->raise();
+        emit setExportEnable(false);
+        break;
+    }
+    case COREDUMPCTL_NOT_INSTALLED: {
+        m_treeView->show();
+        noCoredumpctlLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
+        noCoredumpctlLabel->show();
+        noCoredumpctlLabel->raise();
+        emit setExportEnable(false);
         break;
     }
     }
@@ -2903,6 +3280,14 @@ void DisplayContent::clearAllDatalist()
     jBootListOrigin.clear();
     dnfList.clear();
     dnfListOrigin.clear();
+    oList.clear();
+    oListOrigin.clear();
+    cList.clear();
+    cListOrigin.clear();
+    aList.clear();
+    aListOrigin.clear();
+    m_coredumpList.clear();
+    m_currentCoredumpList.clear();
     malloc_trim(0);
 }
 
@@ -2916,7 +3301,6 @@ QList<LOG_MSG_BOOT> DisplayContent::filterBoot(BOOT_FILTERS ibootFilter, const Q
         for (int i = 0; i < iList.size(); i++) {
             LOG_MSG_BOOT msg = iList.at(i);
             QString _statusStr = msg.status;
-            qDebug() << "xxx" << msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive) << "--" << msg.msg;
             if ((_statusStr.compare(ibootFilter.statusFilter, Qt::CaseInsensitive) != 0) && !isStatusFilterEmpty)
                 continue;
             if ((msg.status.contains(ibootFilter.searchstr, Qt::CaseInsensitive)) || (msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive))) {
@@ -3008,7 +3392,7 @@ QList<LOG_MSG_XORG> DisplayContent::filterXorg(const QString &iSearchStr, const 
     }
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_XORG msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
+        if (msg.offset.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
     return rsList;
@@ -3070,6 +3454,56 @@ QList<LOG_MSG_JOURNAL> DisplayContent::filterJournalBoot(const QString &iSearchS
     return rsList;
 }
 
+QList<LOG_FILE_OTHERORCUSTOM> DisplayContent::filterOOC(const QString &iSearchStr, const QList<LOG_FILE_OTHERORCUSTOM> &iList)
+{
+    QList<LOG_FILE_OTHERORCUSTOM> rsList;
+    if (iSearchStr.isEmpty()) {
+        return iList;
+    }
+    for (int i = 0; i < iList.size(); i++) {
+        LOG_FILE_OTHERORCUSTOM msg = iList.at(i);
+        if (msg.name.contains(iSearchStr, Qt::CaseInsensitive) || msg.path.contains(iSearchStr, Qt::CaseInsensitive))
+            rsList.append(msg);
+    }
+    return rsList;
+}
+
+QList<LOG_MSG_AUDIT> DisplayContent::filterAudit(AUDIT_FILTERS auditFilter, const QList<LOG_MSG_AUDIT> &iList)
+{
+    QList<LOG_MSG_AUDIT> rsList;
+    if (auditFilter.searchstr.isEmpty() && auditFilter.auditTypeFilter < -1) {
+        return iList;
+    }
+    int nAuditType = auditFilter.auditTypeFilter - 1;
+    for (int i = 0; i < iList.size(); i++) {
+        LOG_MSG_AUDIT msg = iList.at(i);
+        if (msg.contains(auditFilter.searchstr) && (nAuditType == -1 || msg.filterAuditType(nAuditType))) {
+            rsList.append(msg);
+        }
+    }
+
+    return rsList;
+}
+QList<LOG_MSG_COREDUMP> DisplayContent::filterCoredump(const QString &iSearchStr, const QList<LOG_MSG_COREDUMP> &iList)
+{
+    QList<LOG_MSG_COREDUMP> rsList;
+    if (iSearchStr.isEmpty()) {
+        return iList;
+    }
+    for (int i = 0; i < iList.size(); i++) {
+        LOG_MSG_COREDUMP msg = iList.at(i);
+        if (msg.sig.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.coreFile.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.uid.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.exe.contains(iSearchStr, Qt::CaseInsensitive)) {
+            rsList.append(msg);
+        }
+    }
+
+    return rsList;
+}
+
 /**
  * @brief DisplayContent::onExportProgress 导出时进度显示槽函数,连接导出数据进程
  * @param nCur 当前进行到的count
@@ -3101,12 +3535,12 @@ void DisplayContent::onExportProgress(int nCur, int nTotal)
 void DisplayContent::parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel)
 {
     if (!oPModel) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
 
     if (iList.isEmpty()) {
-        qWarning() << "parse model is  Empty" << __LINE__;
+        qCWarning(logDisplaycontent) << "parse model is  Empty" << __LINE__;
         return;
     }
     DStandardItem *item = nullptr;
@@ -3138,6 +3572,7 @@ void DisplayContent::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event)
     noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
+    notAuditLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
 }
 
 /**
@@ -3232,12 +3667,16 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     } else if (itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = OtherLog;
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getOtherLogList());
+        generateOOCLogs(OOC_OTHER);
     } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = CustomLog;
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
+        generateOOCLogs(OOC_CUSTOM);
+    } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Audit;
+        generateAuditFile(m_curBtnId, m_curLevel);
+    } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = COREDUMP;
+        generateCoredumpFile(m_curBtnId);
     }
 
     if (!itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) || !itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) { // modified by Airy
@@ -3250,12 +3689,46 @@ void DisplayContent::slot_dnfLevel(DNFPRIORITY iLevel)
     generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
 }
 
-void DisplayContent::generateOOCFile(QString path)
+void DisplayContent::generateOOCFile(const QString &path)
 {
     setLoadState(DATA_LOADING);
     m_detailWgt->cleanText();
     m_isDataLoadComplete = false;
     m_OOCCurrentIndex = m_logFileParse.parseByOOC(path);
+}
+
+void DisplayContent::generateOOCLogs(const OOC_TYPE &type, const QString &iSearchStr/* = ""*/)
+{
+    clearAllFilter();
+    clearAllDatalist();
+
+    QList<QStringList> files;
+    QList<LOG_FILE_OTHERORCUSTOM>* pListOrigin = nullptr;
+    QList<LOG_FILE_OTHERORCUSTOM>* pList = nullptr;
+
+    if (type == OOC_OTHER) {
+        files = LogApplicationHelper::instance()->getOtherLogList();
+        pListOrigin = &oListOrigin;
+        pList = &oList;
+    }
+    else {
+        files = LogApplicationHelper::instance()->getCustomLogList();
+        pListOrigin = &cListOrigin;
+        pList = &cList;
+    }
+
+    for (QStringList iter : files) {
+        LOG_FILE_OTHERORCUSTOM logFileInfo;
+        logFileInfo.name = iter.value(0);
+        logFileInfo.path = iter.value(1);
+        logFileInfo.dateTimeModify = QFileInfo(iter.value(1)).lastModified().toLocalTime().toString("yyyy-MM-dd hh:mm:ss");
+        pListOrigin->append(logFileInfo);
+    }
+
+    *pList = filterOOC(iSearchStr, *pListOrigin);
+
+    createOOCTableForm();
+    createOOCTable(*pList);
 }
 
 void DisplayContent::createOOCTableForm()
@@ -3268,22 +3741,13 @@ void DisplayContent::createOOCTableForm()
     m_treeView->setColumnWidth(1, DATETIME_WIDTH + 120);
 }
 
-void DisplayContent::createOOCTable(const QList<QStringList> &list)
+void DisplayContent::createOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list)
 {
-    m_limitTag = 0;
     setLoadState(DATA_COMPLETE);
 
-    QList<LOG_FILE_OTHERORCUSTOM> listLogFile;
-    for (QStringList iter : list) {
-        LOG_FILE_OTHERORCUSTOM logFileInfo;
-        logFileInfo.name = iter.value(0);
-        logFileInfo.path = iter.value(1);
-        logFileInfo.dateTimeModify = QFileInfo(iter.value(1)).lastModified().toLocalTime().toString("yyyy-MM-dd hh:mm:ss");
-        listLogFile.append(logFileInfo);
-    }
-
-    parseListToModel(listLogFile, m_pModel);
-
+    m_limitTag = 0;
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertOOCTable(list, 0, end);
     QItemSelectionModel *p = m_treeView->selectionModel();
     if (p)
         p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
@@ -3292,36 +3756,254 @@ void DisplayContent::createOOCTable(const QList<QStringList> &list)
     slot_tableItemClicked(m_pModel->index(0, 0));
 }
 
+void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchStr)
+{
+    Q_UNUSED(iSearchStr);
+    clearAllFilter();
+    clearAllDatalist();
+    m_firstLoadPageData = true;
+    m_isDataLoadComplete = false;
+    setLoadState(DATA_LOADING);
+    createAuditTableForm();
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime()); // get zero time
+    AUDIT_FILTERS auditFilter;
+    auditFilter.auditTypeFilter = lId;
+
+    switch (id) {
+    case ALL: {
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case ONE_DAY: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case THREE_DAYS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case ONE_WEEK: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case ONE_MONTH: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    case THREE_MONTHS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        auditFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
+    }
+    break;
+    default:
+        break;
+    }
+}
+
+void DisplayContent::createAuditTableForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Event Type")
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Process")
+                                        << DApplication::translate("Table", "Status")
+                                        << DApplication::translate("Table", "Info"));
+#ifndef SHOW_DETAIL
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditEventTypeColumn, 125);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditDateTimeColumn, 140);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditProcessNameColumn, 100);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditStatusColumn, 55);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditMsgColumn, DATETIME_WIDTH);
+#else
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditEventTypeColumn, DATETIME_WIDTH + 20);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditDateTimeColumn, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditProcessNameColumn, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditStatusColumn, STATUS_WIDTH);
+    m_treeView->setColumnWidth(AUDIT_SPACE::auditMsgColumn, DATETIME_WIDTH);
+    m_treeView->hideColumn(AUDIT_SPACE::auditMsgColumn);
+#endif
+}
+
+void DisplayContent::createAuditTable(const QList<LOG_MSG_AUDIT> &list)
+{
+    setLoadState(DATA_COMPLETE);
+
+    m_limitTag = 0;
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertAuditTable(list, 0, end);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
+void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
+{
+    Q_UNUSED(iSearchStr)
+
+    if (!Utils::isCoredumpctlExist()) {
+        setLoadState(COREDUMPCTL_NOT_INSTALLED);
+        return;
+    }
+
+    clearAllFilter();
+    clearAllDatalist();
+    m_coredumpList.clear();
+    m_firstLoadPageData = true;
+    m_isDataLoadComplete = false;
+    setLoadState(DATA_LOADING);
+    createCoredumpTableForm();
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime()); // get zero time
+    COREDUMP_FILTERS coreFilter;
+
+    switch (id) {
+    case ALL:
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+        break;
+    case ONE_DAY: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    case THREE_DAYS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    case ONE_WEEK: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    case ONE_MONTH: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    case THREE_MONTHS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        coreFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
+    }
+    break;
+    default:
+        break;
+    }
+}
+void DisplayContent::createCoredumpTableForm()
+{
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "SIG")
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "Core File")
+                                        << DApplication::translate("Table", "User Name ")
+                                        << DApplication::translate("Table", "EXE"));
+
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_SIG_COLUMN, 110);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_TIME_COLUMN, 150);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_COREFILE_COLUMN, 100);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_UNAME_COLUMN, 100);
+    m_treeView->setColumnWidth(COREDUMP_SPACE::COREDUMP_EXE_COLUMN, 135);
+}
+void DisplayContent::createCoredumpTable(const QList<LOG_MSG_COREDUMP> &list)
+{
+    setLoadState(DATA_COMPLETE);
+
+    m_limitTag = 0;
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertCoredumpTable(list, 0, end);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
 void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
 {
-    if (m_flag != OtherLog && m_flag != CustomLog) {
+    if (m_flag != OtherLog && m_flag != CustomLog && m_flag != COREDUMP) {
         return;
     }
 
     if (m_treeView->indexAt(pos).isValid()) {
         QModelIndex index = m_treeView->currentIndex();
         if (!m_treeView->selectionModel()->selectedIndexes().empty()) {
-            QMenu *menu = new QMenu(m_treeView);
-            QAction *act_openForder = new QAction(/*tr("在文件管理器中显示")*/ DApplication::translate("Action", "Display in file manager"), this);
-            QAction *act_refresh = new QAction(/*tr("刷新")*/ DApplication::translate("Action", "Refresh"), this);
 
-            menu->addAction(act_openForder);
-            menu->addAction(act_refresh);
+            QString path;
+            if (m_flag == COREDUMP) {
+                if (index.siblingAtColumn(2).data().toString() == "missing") {
+                    // 文件状态为missing，不能在文管中打开
+                    m_act_openForder->setEnabled(false);
+                } else {
+                    m_act_openForder->setEnabled(true);
+                }
+                //coredump文件不需要刷新
+                m_act_refresh->setEnabled(false);
 
-            QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
+                path = m_pModel->item(index.row(), 4)->data(Qt::UserRole + 2).toString();
+            } else {
+                path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
+            }
 
             //显示当前日志目录
-            connect(act_openForder, &QAction::triggered, this, [ = ] {
+            m_act_openForder->disconnect();
+            connect(m_act_openForder, &QAction::triggered, this, [ = ] {
                 DDesktopServices::showFileItem(path);
             });
 
             //刷新逻辑
-            connect(act_refresh, &QAction::triggered, this, [ = ]() {
+            m_act_refresh->disconnect();
+            connect(m_act_refresh, &QAction::triggered, this, [ = ]() {
                 generateOOCFile(path);
             });
 
             m_treeView->setContextMenuPolicy(Qt::CustomContextMenu);
-            menu->exec(QCursor::pos());
+            m_menu->exec(QCursor::pos());
         }
     }
 }
@@ -3329,7 +4011,6 @@ void DisplayContent::slot_requestShowRightMenu(const QPoint &pos)
 void DisplayContent::slot_valueChanged_dConfig_or_gSetting(const QString &key)
 {
     if ((key == "customLogFiles" || key == "customlogfiles") && m_flag == CustomLog) {
-        createOOCTableForm();
-        createOOCTable(LogApplicationHelper::instance()->getCustomLogList());
+        generateOOCLogs(OOC_CUSTOM);
     }
 }

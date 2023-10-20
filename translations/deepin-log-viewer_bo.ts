@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="bo">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="bo">
 <context>
     <name>Action</name>
     <message>
@@ -51,10 +53,6 @@
     <message>
         <source>3 months</source>
         <translation>ཉེ་བའི་ཟླ་3</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">ཕྱིར་འདྲེན།</translation>
     </message>
     <message>
         <source>Export</source>
@@ -120,12 +118,40 @@
         <source>Trace</source>
         <translation>རྗེས་སྙེག</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -206,6 +232,10 @@
     <message>
         <source>Login record</source>
         <translation>ཐོ་འཇུག་ཆ་འཕྲིན། </translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -362,6 +392,26 @@
         <source>Time Modified</source>
         <translation>བཟོ་བཅོས་དུས་ཚོད།</translation>
     </message>
+    <message>
+        <source>Offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -416,12 +466,43 @@
         <source>Custom Log</source>
         <translation>རང་སྒྲུབ་ཉིན་ཐོ།</translation>
     </message>
+    <message>
+        <source>Audit Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
         <translation>ལྟ་དབང་མེད།</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>export logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>export logs directory. if not set, default export to ~/Document.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -449,10 +530,6 @@
     <message>
         <source>Export All</source>
         <translation>ཚང་མ་འདོན་པ།</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>རྒྱུད་ཁོངས་ཀྱི་ཉིན་ཐོ་ཆ་ཚང་།</translation>
     </message>
     <message>
         <source>Refresh Now</source>

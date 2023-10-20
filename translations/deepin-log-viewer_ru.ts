@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ru">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="ru">
 <context>
     <name>Action</name>
     <message>
@@ -51,10 +53,6 @@
     <message>
         <source>3 months</source>
         <translation>3 месяца</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">Экспорт</translation>
     </message>
     <message>
         <source>Export</source>
@@ -120,12 +118,40 @@
         <source>Trace</source>
         <translation>Трассировка</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>Текст (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -206,6 +232,10 @@
     <message>
         <source>Login record</source>
         <translation>Запись об авторизации</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -356,11 +386,31 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -410,18 +460,49 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>export logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>export logs directory. if not set, default export to ~/Document.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -440,7 +521,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished">1 мин {5 ?}</translation>
     </message>
     <message>
         <source>No refresh</source>
@@ -449,10 +530,6 @@
     <message>
         <source>Export All</source>
         <translation>Экспорт всех</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>Журналы системы</translation>
     </message>
     <message>
         <source>Refresh Now</source>

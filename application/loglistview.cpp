@@ -7,6 +7,8 @@
 #include "dbusmanager.h"
 #include "DebugTimeManager.h"
 #include "logapplicationhelper.h"
+#include "dbusproxy/dldbushandler.h"
+#include "utils.h"
 
 #include <DDesktopServices>
 #include <DDialog>
@@ -151,8 +153,6 @@ void LogListView::initUI()
     bool isCentos = Dtk::Core::DSysInfo::UosEuler == edition || Dtk::Core::DSysInfo::UosEnterpriseC == edition || Dtk::Core::DSysInfo::UosMilitaryS == edition;
     m_pModel = new QStandardItemModel(this);
     QStandardItem *item = nullptr;
-    QString systemName = DBusManager::getSystemInfo();
-    qDebug() << "systemName" << systemName;
     if (isFileExist("/var/log/journal") || isCentos) {
         item = new QStandardItem(QIcon::fromTheme("dp_system"), DApplication::translate("Tree", "System Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
@@ -160,7 +160,6 @@ void LogListView::initUI()
         item->setData(JOUR_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("System Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(JOUR_TREE_DATA);
     }
@@ -172,7 +171,6 @@ void LogListView::initUI()
         item->setData(DMESG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("dmesg Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(DMESG_TREE_DATA);
     } else {
@@ -183,19 +181,17 @@ void LogListView::initUI()
             item->setData(KERN_TREE_DATA, ITEM_DATE_ROLE);
             item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
             item->setData(VListViewItemMargin, Dtk::MarginsRole);
-            item->setAccessibleText("Kernel Log");
             m_pModel->appendRow(item);
             m_logTypes.push_back(KERN_TREE_DATA);
         }
     }
-    if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU")) {
+    if (DBusManager::isSpecialComType()) {
         item = new QStandardItem(QIcon::fromTheme("dp_start"), DApplication::translate("Tree", "Boot Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Boot Log")); // add by Airy for bug 16245
         item->setData(BOOT_KLU_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Boot Klu Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(BOOT_KLU_TREE_DATA);
     } else {
@@ -205,7 +201,6 @@ void LogListView::initUI()
         item->setData(BOOT_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Boot Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(BOOT_TREE_DATA);
     }
@@ -216,7 +211,6 @@ void LogListView::initUI()
         item->setData(DNF_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("dnf Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(DNF_TREE_DATA);
     } else {
@@ -227,20 +221,18 @@ void LogListView::initUI()
             item->setData(DPKG_TREE_DATA, ITEM_DATE_ROLE);
             item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
             item->setData(VListViewItemMargin, Dtk::MarginsRole);
-            item->setAccessibleText("dpkg Log");
             m_pModel->appendRow(item);
             m_logTypes.push_back(DPKG_TREE_DATA);
         }
     }
     //w515是新版本内核的panguv返回值  panguV是老版本
-    if (systemName == "klu" || systemName == "panguV" || systemName == "W515 PGUV-WBY0" || systemName == "pangu" || systemName.toUpper().contains("PGUV") || systemName.toUpper().contains("PANGUV") || systemName.toUpper().contains("KLU") || systemName.toUpper().contains("PANGU")) {
+    if (DBusManager::isSpecialComType()) {
         item = new QStandardItem(QIcon::fromTheme("dp_kwin"), DApplication::translate("Tree", "Kwin Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
         item->setData(KWIN_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("dpkg Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(KWIN_TREE_DATA);
     } else {
@@ -250,7 +242,6 @@ void LogListView::initUI()
         item->setData(XORG_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Xorg Log");
         m_pModel->appendRow(item);
         m_logTypes.push_back(XORG_TREE_DATA);
     }
@@ -264,11 +255,21 @@ void LogListView::initUI()
         item->setData(APP_TREE_DATA, ITEM_DATE_ROLE);
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Application Log");
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
         m_logTypes.push_back(APP_TREE_DATA);  
     }
+
+    // coredump log
+    item = new QStandardItem(QIcon::fromTheme("dp_customlog"), DApplication::translate("Tree", "Coredump Log"));
+    setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+    item->setToolTip(DApplication::translate("Tree", "Coredump Log"));
+    item->setData(COREDUMP_TREE_DATA, ITEM_DATE_ROLE);
+    item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
+    m_pModel->appendRow(item);
+    m_logTypes.push_back(COREDUMP_TREE_DATA);
+
 
     // add by Airy
     if (isFileExist("/var/log/wtmp")) {
@@ -279,7 +280,6 @@ void LogListView::initUI()
             DApplication::translate("Tree", "Boot-Shutdown Event")); // add by Airy for bug 16245
         item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        item->setAccessibleText("Boot-Shutdown Event");
         m_pModel->appendRow(item);
         this->setModel(m_pModel);
         m_logTypes.push_back(LAST_TREE_DATA);
@@ -292,14 +292,25 @@ void LogListView::initUI()
     item->setData(OTHER_TREE_DATA, ITEM_DATE_ROLE);
     item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
     item->setData(VListViewItemMargin, Dtk::MarginsRole);
-    item->setAccessibleText("Other Log");
     m_pModel->appendRow(item);
     m_logTypes.push_back(OTHER_TREE_DATA);
 
     //custom
-    m_logTypes.push_back(CUSTOM_TREE_DATA);
     if (LogApplicationHelper::instance()->getCustomLogList().size()) {
+        m_logTypes.push_back(CUSTOM_TREE_DATA);
         initCustomLogItem();
+    }
+
+    // 审计日志文件存在，才加载和显示审计日志模块（审计日志文件需要root权限访问，因此在service服务中判断审计日志文件是否存在）
+    if (DLDBusHandler::instance(this)->isFileExist(AUDIT_TREE_DATA)) {
+        item = new QStandardItem(QIcon::fromTheme("dp_customlog"), DApplication::translate("Tree", "Audit Log"));
+        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+        item->setToolTip(DApplication::translate("Tree", "Audit Log"));
+        item->setData(AUDIT_TREE_DATA, ITEM_DATE_ROLE);
+        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+        item->setData(VListViewItemMargin, Dtk::MarginsRole);
+        m_pModel->appendRow(item);
+        m_logTypes.push_back(AUDIT_TREE_DATA);
     }
 
     // set first item is select when app start
@@ -319,7 +330,6 @@ void LogListView::initCustomLogItem()
     m_customLogItem->setData(CUSTOM_TREE_DATA, ITEM_DATE_ROLE);
     m_customLogItem->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
     m_customLogItem->setData(VListViewItemMargin, Dtk::MarginsRole);
-    m_customLogItem->setAccessibleText("Custom Log");
     m_pModel->appendRow(m_customLogItem);
 }
 
@@ -416,7 +426,6 @@ Qt::FocusReason LogListView::focusReson()
 
 void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
 {
-    qDebug() << __FUNCTION__;
     QModelIndex idx = this->currentIndex();
     QString pathData = idx.data(ITEM_DATE_ROLE).toString();
     if (!this->selectionModel()->selectedIndexes().empty()) {
@@ -429,7 +438,9 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
         g_context->addAction(g_clear);
         g_context->addAction(g_refresh);
 
-        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA || pathData == OTHER_TREE_DATA || pathData == CUSTOM_TREE_DATA) {
+        if (pathData == JOUR_TREE_DATA || pathData == LAST_TREE_DATA || pathData == BOOT_KLU_TREE_DATA
+                || pathData == OTHER_TREE_DATA || pathData == CUSTOM_TREE_DATA || pathData == AUDIT_TREE_DATA
+                || pathData == COREDUMP_TREE_DATA) {
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
@@ -437,7 +448,8 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             g_clear->setEnabled(false);
             g_openForder->setEnabled(false);
         }
-        QString dirPath = QDir::homePath();
+
+        QString dirPath = Utils::homePath;
         QString _path_ = g_path; //get app path
         QString path = "";
 
@@ -446,9 +458,14 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
         } else if (pathData == APP_TREE_DATA) {
             path = _path_;
         }
+
         //显示当前日志目录
         connect(g_openForder, &QAction::triggered, this, [=] {
-            DDesktopServices::showFileItem(path);
+            if (pathData != COREDUMP_TREE_DATA) {
+                DDesktopServices::showFileItem(path);
+            } else {
+                DDesktopServices::showFolder(path);
+            }
         });
 
         QModelIndex index = idx;

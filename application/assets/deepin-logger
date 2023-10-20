@@ -1,0 +1,19 @@
+#!/bin/bash
+# this is deepin-log-viewer-cli adapter.
+
+para=$*
+CMDPATTERN="^-"
+
+# 添加当前路径作为命令行最后一个参数，用来解决身份验证提权后，程序获取不到终端当前运行路径的问题。
+para+=" "
+para+=$(pwd)
+
+# 添加当前用户名，解决身份验证提权后，homePath为/root的问题。
+para+=" "
+para+=$USER
+
+if [[ "$para" =~ $CMDPATTERN ]]; then
+	pkexec deepin-log-viewer ${para}
+else
+	deepin-log-viewer -h
+fi

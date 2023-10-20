@@ -33,6 +33,8 @@ public Q_SLOTS:
     Q_SCRIPTABLE bool exportLog(const QString &outDir, const QString &in, bool isFile);
     Q_SCRIPTABLE QString openLogStream(const QString &filePath);
     Q_SCRIPTABLE QString readLogInStream(const QString &token);
+    Q_SCRIPTABLE bool isFileExist(const QString &filePath);
+    Q_SCRIPTABLE quint64 getFileSize(const QString &filePath);
 
 private:
     QTemporaryDir tmpDir;
