@@ -142,12 +142,9 @@ bool CliApplicationHelper::setSingleInstance(const QString &key, CliApplicationH
     if (!_d_singleServer->listen(socket_key)) {
         qCWarning(dgAppHelper) << "listen failed:" <<  _d_singleServer->errorString();
         return false;
-    } else {
-        qCDebug(dgAppHelper) << "===> listen <===" << _d_singleServer->serverName() << getpid();
     }
 
     if (new_server) {
-        qCDebug(dgAppHelper) << "===> new server <===" << _d_singleServer->serverName() << getpid();
         QObject::connect(_d_singleServer, &QLocalServer::newConnection, qApp, [] {
             QLocalSocket *instance = _d_singleServer->nextPendingConnection();
             // 先发送数据告诉新的实例自己收到了它的请求

@@ -56,28 +56,44 @@ QString LogViewerService::readLog(const QString &filePath)
     if ((!filePath.startsWith("/var/log/") &&
          !filePath.startsWith("/tmp") &&
          !filePath.startsWith("/home") &&
-         !filePath.startsWith("/root")) ||
+         !filePath.startsWith("/root") &&
+         !filePath.startsWith("coredumpctl info") &&
+         filePath != "coredump") ||
          filePath.contains(".."))  {
         return " ";
     }
 
-    m_process.start("cat", QStringList() << filePath);
-    m_process.waitForFinished(-1);
-    QByteArray byte = m_process.readAllStandardOutput();
+    if (filePath == "coredump") {
+        // 通过后端服务，读取系统下所有账户的崩溃日志信息
+        m_process.start("/bin/bash", QStringList() << "-c" << "coredumpctl list --no-pager");
+        m_process.waitForFinished(-1);
 
-    //QByteArray -> QString 如果遇到0x00，会导致转换终止
-    //replace("\x00", "")和replace("\u0000", "")无效
-    //使用remove操作，性能损耗过大，因此遇到0x00 替换为 0x20(空格符)
-    qCInfo(logService) << "replace 0x00 to 0x20 begin";
-    int replaceTimes = 0;
-    for (int i = 0; i != byte.size(); ++i) {
-        if (byte.at(i) == 0x00) {
-            byte[i] = 0x20;
-            replaceTimes++;
+        return m_process.readAllStandardOutput();
+    } else if (filePath.startsWith("coredumpctl info")) {
+        // 通过后端服务，按进程号获取崩溃信息
+        m_process.start("/bin/bash", QStringList() << "-c" << filePath);
+        m_process.waitForFinished(-1);
+
+        return m_process.readAllStandardOutput();
+    } else {
+        m_process.start("cat", QStringList() << filePath);
+        m_process.waitForFinished(-1);
+        QByteArray byte = m_process.readAllStandardOutput();
+
+        //QByteArray -> QString 如果遇到0x00，会导致转换终止
+        //replace("\x00", "")和replace("\u0000", "")无效
+        //使用remove操作，性能损耗过大，因此遇到0x00 替换为 0x20(空格符)
+        qCInfo(logService) << "replace 0x00 to 0x20 begin";
+        int replaceTimes = 0;
+        for (int i = 0; i != byte.size(); ++i) {
+            if (byte.at(i) == 0x00) {
+                byte[i] = 0x20;
+                replaceTimes++;
+            }
         }
+        qCInfo(logService) << "replace 0x00 to 0x20   end. replaceTimes:" << replaceTimes;
+        return QString::fromUtf8(byte);
     }
-    qCInfo(logService) << "replace 0x00 to 0x20   end. replaceTimes:" << replaceTimes;
-    return QString::fromUtf8(byte);
 }
 
 /*!

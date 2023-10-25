@@ -39,7 +39,7 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
     if (!m_dbus->isValid() && !m_dbus->lastError().message().isEmpty()) {
         qCCritical(logDBusHandler) << "dbus com.deepin.logviewer isValid false error:" << m_dbus->lastError() << m_dbus->lastError().message();
     }
-    qCInfo(logDBusHandler) << "dbus com.deepin.logviewer isValid true";
+    qCDebug(logDBusHandler) << "dbus com.deepin.logviewer isValid true";
 }
 
 /*!

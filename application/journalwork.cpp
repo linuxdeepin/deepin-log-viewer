@@ -231,10 +231,23 @@ void journalWork::doWork()
         //获取进程名
         r = sd_journal_get_data(j, "SYSLOG_IDENTIFIER", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
-            logMsg.daemonName = "unknown";
-            qCWarning(logJournal) << logMsg.daemonId << "error code" << r;
+            r = sd_journal_get_data(j, "_EXE", reinterpret_cast<const void **>(&d), &l);
+            if (r >= 0) {
+                QStringList strList =    getReplaceColorStr(d).split("=");
+                strList.removeFirst();
+                QFileInfo fi(strList.first());
+                if (fi.exists())
+                    logMsg.daemonName = fi.fileName();
+                else {
+                    qCWarning(logJournal) << "unknown progressname, exe path: " << strList.first();
+                    logMsg.daemonName = "unknown";
+                }
+            } else {
+                qCWarning(logJournal) << logMsg.daemonId << "error code" << r;
+                logMsg.daemonName = "unknown";
+            }
         } else {
-            QStringList strList =    getReplaceColorStr(d).split("=");
+            QStringList strList = getReplaceColorStr(d).split("=");
             strList.removeFirst();
             logMsg.daemonName = strList.join("=");
         }
