@@ -103,15 +103,17 @@ void LogAuthThread::stopProccess()
     m_isStopProccess = true;
     //停止获取线程执行，标记量置false
     m_canRun = false;
-    //共享内存数据结构，用于和获取进程共享内存，数据为是否可执行进程，用于控制数据获取进程停止，因为这里会出现需要提权执行的进程，主进程没有权限停止提权进程，所以使用共享内存变量标记量控制提权进程停止
-    ShareMemoryInfo   shareInfo ;
-    //设置进程为不可执行
-    shareInfo.isStart = false;
-    //把数据付给共享内存中对应的变量
-    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+    if (!Utils::runInCmd) {
+        //共享内存数据结构，用于和获取进程共享内存，数据为是否可执行进程，用于控制数据获取进程停止，因为这里会出现需要提权执行的进程，主进程没有权限停止提权进程，所以使用共享内存变量标记量控制提权进程停止
+        ShareMemoryInfo   shareInfo ;
+        //设置进程为不可执行
+        shareInfo.isStart = false;
+        //把数据付给共享内存中对应的变量
+        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+    }
     if (m_process) {
         m_process->kill();
-   }
+    }
 }
 
 void LogAuthThread::setFilePath(const QStringList &filePath)
@@ -206,20 +208,24 @@ void LogAuthThread::handleBoot()
         if (!m_canRun) {
             return;
         }
-        initProccess();
-        m_process->setProcessChannelMode(QProcess::MergedChannels);
-        //共享内存对应变量置true，允许进程内部逻辑运行
-        ShareMemoryInfo shareInfo;
-        shareInfo.isStart = true;
-        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-        //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-        m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
-        m_process->waitForFinished(-1);
-        if (m_process->exitCode() != 0) {
-            emit bootFinished(m_threadCount);
-            return;
+
+        if (!Utils::runInCmd) {
+            initProccess();
+            m_process->setProcessChannelMode(QProcess::MergedChannels);
+            //共享内存对应变量置true，允许进程内部逻辑运行
+            ShareMemoryInfo shareInfo;
+            shareInfo.isStart = true;
+            SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+            //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+            m_process->start("pkexec", QStringList() << "logViewerAuth"
+                             << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+            m_process->waitForFinished(-1);
+            if (m_process->exitCode() != 0) {
+                emit bootFinished(m_threadCount);
+                return;
+            }
         }
+
         QString byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
         byte.replace('\u0000', "").replace("\x01", "");
         QStringList strList = byte.split('\n', QString::SkipEmptyParts);
@@ -284,27 +290,31 @@ void LogAuthThread::handleKern()
         if (!m_canRun) {
             return;
         }
-        initProccess();
-        if (!m_canRun) {
-            return;
+
+        if (!Utils::runInCmd) {
+            initProccess();
+            if (!m_canRun) {
+                return;
+            }
+            m_process->setProcessChannelMode(QProcess::MergedChannels);
+            if (!m_canRun) {
+                return;
+            }
+            //共享内存对应变量置true，允许进程内部逻辑运行
+            ShareMemoryInfo shareInfo;
+            shareInfo.isStart = true;
+            SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+            //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+            m_process->start("pkexec", QStringList() << "logViewerAuth"
+                             << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+            m_process->waitForFinished(-1);
+            //有错则传出空数据
+            if (m_process->exitCode() != 0) {
+                emit kernFinished(m_threadCount);
+                return;
+            }
         }
-        m_process->setProcessChannelMode(QProcess::MergedChannels);
-        if (!m_canRun) {
-            return;
-        }
-        //共享内存对应变量置true，允许进程内部逻辑运行
-        ShareMemoryInfo shareInfo;
-        shareInfo.isStart = true;
-        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-        //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-        m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
-        m_process->waitForFinished(-1);
-        //有错则传出空数据
-        if (m_process->exitCode() != 0) {
-            emit kernFinished(m_threadCount);
-            return;
-        }
+
         if (!m_canRun) {
             return;
         }
@@ -924,39 +934,42 @@ void LogAuthThread::handleAudit()
         if (!m_canRun) {
             return;
         }
-        initProccess();
-        if (!m_canRun) {
-            return;
-        }
-        m_process->setProcessChannelMode(QProcess::MergedChannels);
-        if (!m_canRun) {
-            return;
-        }
 
-        if (DBusManager::isSEOepn()) {
-            if (DBusManager::isAuditAdmin()) {
-                // 是审计管理员，需要鉴权，有错则传出空数据
-                if (!Utils::checkAuthorization("com.deepin.pkexec.logViewerAuth.self", QCoreApplication::instance()->applicationPid())) {
-                    emit auditFinished(m_threadCount);
+        if (!Utils::runInCmd) {
+            initProccess();
+            if (!m_canRun) {
+                return;
+            }
+            m_process->setProcessChannelMode(QProcess::MergedChannels);
+            if (!m_canRun) {
+                return;
+            }
+
+            if (DBusManager::isSEOepn()) {
+                if (DBusManager::isAuditAdmin()) {
+                    // 是审计管理员，需要鉴权，有错则传出空数据
+                    if (!Utils::checkAuthorization("com.deepin.pkexec.logViewerAuth.self", QCoreApplication::instance()->applicationPid())) {
+                        emit auditFinished(m_threadCount);
+                        return;
+                    }
+                } else {
+                    // 不是审计管理员，给出提示
+                    emit auditFinished(m_threadCount, true);
                     return;
                 }
             } else {
-                // 不是审计管理员，给出提示
-                emit auditFinished(m_threadCount, true);
-                return;
-            }
-        } else {
-            // 未开启等保四，鉴权逻辑同内核日志
-            ShareMemoryInfo shareInfo;
-            shareInfo.isStart = true;
-            SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-            //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-            m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                                     << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
-            m_process->waitForFinished(-1);
-            if (m_process->exitCode() != 0) {
-                emit auditFinished(m_threadCount);
-                return;
+                // 未开启等保四，鉴权逻辑同内核日志
+                ShareMemoryInfo shareInfo;
+                shareInfo.isStart = true;
+                SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+                //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+                m_process->start("pkexec", QStringList() << "logViewerAuth"
+                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+                m_process->waitForFinished(-1);
+                if (m_process->exitCode() != 0) {
+                    emit auditFinished(m_threadCount);
+                    return;
+                }
             }
         }
 
@@ -1149,13 +1162,20 @@ void LogAuthThread::handleCoredump()
     }
     QList<LOG_MSG_COREDUMP> coredumpList;
 
+    QString byte;
     initProccess();
-    m_process->start("pkexec", QStringList() << "logViewerAuth" <<
-                     QStringList() << "coredumpctl-list" << SharedMemoryManager::instance()->getRunnableKey());
-    m_process->waitForFinished(-1);
+    if (Utils::runInCmd) {
+        byte = DLDBusHandler::instance()->readLog("coredump");
+        byte = byte.replace('\u0000', "").replace("\x01", "");
+    } else {
+        m_process->start("pkexec", QStringList() << "logViewerAuth" <<
+                         QStringList() << "coredumpctl-list" << SharedMemoryManager::instance()->getRunnableKey());
+        m_process->waitForFinished(-1);
+        QByteArray outByte = m_process->readAllStandardOutput();
+        byte = Utils::replaceEmptyByteArray(outByte);
+    }
 
-    QByteArray outByte = m_process->readAllStandardOutput();
-    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+    QStringList strList =  QString(byte).split('\n', QString::SkipEmptyParts);
 
     QRegExp re("(Storage: )\\S+");
     for (int i = strList.size() - 1; i >= 0 ; --i)  {
@@ -1194,10 +1214,15 @@ void LogAuthThread::handleCoredump()
         // 解析coredump文件保存位置
         if (coredumpMsg.coreFile != "missing") {
             // 若coreFile状态为missing，表示文件已丢失，不继续解析文件位置
-            m_process->start("pkexec", QStringList() << "logViewerAuth" << QStringList() << "coredumpctl-info"
-                             << coredumpMsg.pid <<SharedMemoryManager::instance()->getRunnableKey());
-            m_process->waitForFinished(-1);
-            QByteArray outInfoByte = m_process->readAllStandardOutput();
+            QString outInfoByte;
+            if (Utils::runInCmd) {
+                outInfoByte = DLDBusHandler::instance()->readLog(QString("coredumpctl info %1").arg(coredumpMsg.pid));
+            } else {
+                m_process->start("pkexec", QStringList() << "logViewerAuth" << QStringList() << "coredumpctl-info"
+                                 << coredumpMsg.pid <<SharedMemoryManager::instance()->getRunnableKey());
+                m_process->waitForFinished(-1);
+                outInfoByte = m_process->readAllStandardOutput();
+            }
             re.indexIn(outInfoByte);
             coredumpMsg.storagePath = re.cap(0).replace("Storage: ", "");
         } else {

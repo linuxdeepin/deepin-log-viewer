@@ -45,6 +45,20 @@
 #define ICONDARKPREFIX "://images/dark/"
 #define DOCTEMPLATE "://doc_template/template.doc"
 
+#define TYPE_SYSTEM "system"
+#define TYPE_KERNEL "kernel"
+#define TYPE_BOOT "boot"
+#define TYPE_DPKG "dpkg"
+#define TYPE_DNF "dnf"
+#define TYPE_KWIN "kwin"
+#define TYPE_XORG "xorg"
+#define TYPE_APP "app"
+#define TYPE_COREDUMP "coredump"
+#define TYPE_BSE "boot-shutdown-event"
+#define TYPE_OTHER "other"
+#define TYPE_CUSTOM "custom"
+#define TYPE_AUDIT "audit"
+
 #define AUDIT_ORIGIN_DATAROLE Qt::UserRole + 3
 
 enum PRIORITY { LVALL = -1,

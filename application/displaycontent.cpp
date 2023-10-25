@@ -1157,22 +1157,11 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
  */
 QString DisplayContent::getAppName(const QString &filePath)
 {
-    QString ret;
-    if (filePath.isEmpty())
+
+    QString ret = Utils::appName(filePath);
+    if (ret.isEmpty())
         return ret;
 
-    QStringList strList = filePath.split("/");
-    if (strList.count() < 2) {
-        if (filePath.contains("."))
-            ret = filePath.section(".", 0, 0);
-        else {
-            ret = filePath;
-        }
-        return LogApplicationHelper::instance()->transName(ret);
-    }
-
-    QString desStr = filePath.section("/", -1);
-    ret = desStr.mid(0, desStr.lastIndexOf("."));
     return LogApplicationHelper::instance()->transName(ret);
 }
 

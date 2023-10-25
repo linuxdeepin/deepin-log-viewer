@@ -25,6 +25,8 @@
 #include <QProcessEnvironment>
 #include <QTime>
 #include <QLoggingCategory>
+#include <QDBusInterface>
+
 #include <polkit-qt5-1/PolkitQt1/Authority>
 using namespace PolkitQt1;
 
@@ -39,7 +41,7 @@ QHash<QString, QString> Utils::m_fontNameCache;
 QMap<QString, QStringList> Utils::m_mapAuditType2EventType;
 int Utils::specialComType = -1;
 QString Utils::homePath = QDir::homePath();
-
+bool Utils::runInCmd = false;
 Utils::Utils(QObject *parent)
     : QObject(parent)
 {
@@ -343,6 +345,23 @@ QString Utils::getCurrentUserName()
     return pwd->pw_name;
 }
 
+bool Utils::isValidUserName(const QString &userName)
+{
+    bool bValidUserName = false;
+    QDBusInterface interface("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts", QDBusConnection::systemBus());
+    QStringList userList = qvariant_cast< QStringList >(interface.property("UserList"));
+    for (auto strUser : userList) {
+        uint uid = strUser.mid(strUser.lastIndexOf("User") + 4).toUInt();
+        QString tempUserName = getUserNamebyUID(uid);
+        if(tempUserName == userName) {
+            bValidUserName = true;
+            break;
+        }
+    }
+
+    return bValidUserName;
+}
+
 bool Utils::isCoredumpctlExist()
 {
     bool isCoredumpctlExist = false;
@@ -365,28 +384,60 @@ QString Utils::getHomePath(const QString &userName)
     else
         uName = getCurrentUserName();
 
-
-    QProcess *unlock = new QProcess;
-    unlock->start("sh", QStringList() << "-c" << QString("cat /etc/passwd | grep %1").arg(uName));
-    unlock->waitForFinished();
-    auto output = unlock->readAllStandardOutput();
-    auto str = QString::fromUtf8(output);
-    QString homePath = str.mid(str.indexOf("::") + 2).split(":").first();
+    QString homePath = "";
+    if (isValidUserName(uName)) {
+        QProcess *unlock = new QProcess;
+        unlock->start("sh", QStringList() << "-c" << QString("cat /etc/passwd | grep %1").arg(uName));
+        unlock->waitForFinished();
+        auto output = unlock->readAllStandardOutput();
+        auto str = QString::fromUtf8(output);
+        homePath = str.mid(str.indexOf("::") + 2).split(":").first();
+    }
 
     // 根据用户名获取家目录失败，默认采用QDir::homePath()作为homePath
     QDir dir(homePath);
     if (!dir.exists() || homePath.isEmpty())
         homePath = QDir::homePath();
 
-    qCInfo(logUtils) << "userName: " << uName << "homePath:" << homePath;
+    qCDebug(logUtils) << "userName: " << uName << "homePath:" << homePath;
 
     return homePath;
 }
 
-QString Utils::appName(const QString &path)
+QString Utils::appName(const QString &filePath)
 {
-    if (path.indexOf('/') == -1)
-        return path;
+    QString ret;
+    if (filePath.isEmpty())
+        return ret;
 
-    return path.mid(path.lastIndexOf("/") + 1, path.size() - 1).split(".").first();
+    QStringList strList = filePath.split("/");
+    if (strList.count() < 2) {
+        if (filePath.contains("."))
+            ret = filePath.section(".", 0, 0);
+        else {
+            ret = filePath;
+        }
+        return ret;
+    }
+
+    QString tmpPath = filePath;
+    if (tmpPath.endsWith('/'))
+        tmpPath = tmpPath.remove(tmpPath.size() - 1, 1);
+    QString desStr = tmpPath.section("/", -1);
+    ret = desStr.mid(0, desStr.lastIndexOf("."));
+    return ret;
+}
+
+void Utils::resetToNormalAuth(const QString &path)
+{
+    QFileInfo fi(path);
+    if (!path.isEmpty() && fi.exists()) {
+        qCDebug(logUtils) << "resetToNormalAuth path:" << path;
+        QProcess procss;
+        procss.setWorkingDirectory(path);
+        QStringList arg = {"-c"};
+        arg.append(QString("chmod -R 777 '%1'").arg(path));
+        procss.start("/bin/bash", arg);
+        procss.waitForFinished(-1);
+    }
 }

@@ -520,6 +520,30 @@
         <source>SELF APPNAME</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export boot logs within a specified status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>titlebar</name>

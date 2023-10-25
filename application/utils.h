@@ -55,15 +55,18 @@ public:
     static double convertToMB(quint64 cap, const int size = 1024);
     static QString getUserNamebyUID(uint uid);  //根据uid获取用户名
     static QString getCurrentUserName();
+    static bool isValidUserName(const QString &userName);
     static bool isCoredumpctlExist();  // is coredumpctl installed
     static QString getHomePath(const QString &userName = "");
-    static QString appName(const QString &path);
+    static QString appName(const QString &filePath);
+    static void resetToNormalAuth(const QString &path);
     /**
      * @brief specialComType 是否是特殊机型，like huawei
      * 取值有3种（-1,0,>0），默认为-1（未知），0（不是特殊机型）,>0（特殊机型）
      */
     static int specialComType;
     static QString homePath;
+    static bool runInCmd;
 };
 
 #endif
