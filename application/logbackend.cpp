@@ -57,10 +57,10 @@ void LogBackend::setCmdWorkDir(const QString &dirPath)
         m_cmdWorkDir = dirPath;
 }
 
-void LogBackend::exportAllLogs(const QString &outDir)
+int LogBackend::exportAllLogs(const QString &outDir)
 {
     if(!getOutDirPath(outDir))
-        return;
+        return -1;
 
     PERF_PRINT_BEGIN("POINT-05", "export all logs");
     qCInfo(logBackend) << "exporting all logs begin.";
@@ -100,6 +100,8 @@ void LogBackend::exportAllLogs(const QString &outDir)
     QThreadPool::globalInstance()->start(thread);
 
     Utils::resetToNormalAuth(m_outPath);
+
+    return 0;
 }
 
 int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
@@ -1434,7 +1436,7 @@ bool LogBackend::getOutDirPath(const QString &path)
     if (dir.exists()) {
         QFileInfo fi(tmpPath);
         if (!fi.isWritable()) {
-            qCWarning(logBackend) << "outPath: isnot writable." << m_outPath;
+            qCWarning(logBackend) << QString("outPath: %1 is not writable.").arg(tmpPath);
             return false;
         }
 
