@@ -11,6 +11,7 @@
 #include <QDBusReply>
 #include <QDebug>
 #include <QLoggingCategory>
+#include <QProcess>
 
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(logDBusManager, "org.deepin.log.viewer.dbus.manager")
@@ -53,6 +54,58 @@ QString DBusManager::getSystemInfo()
         isGetedKlu = true;
     }
     return  isklusystemName;
+}
+
+//根据命令行 dmidecode -s system-product-name|awk '{print SNF}' 返回的结果判断是否是华为电脑
+bool DBusManager::isHuaWei()
+{
+    QStringList options;
+    options << QString(QStringLiteral("-c"));
+    options << QString(QStringLiteral("dmidecode -s system-product-name|awk '{print $NF}'"));
+    QProcess process;
+    process.start(QString(QStringLiteral("bash")), options);
+    process.waitForFinished();
+    process.waitForReadyRead();
+    QByteArray tempArray =  process.readAllStandardOutput();
+    char *charTemp = tempArray.data();
+    QString str_output = QString(QLatin1String(charTemp));
+    process.close();
+    //qInfo() << "system-product-name: " << str_output;
+    options.clear();
+    options << QString(QStringLiteral("-c"));
+    options << QString(QStringLiteral("dmidecode | grep -i \"String 4\""));
+    process.start(QString(QStringLiteral("bash")), options);
+    process.waitForFinished();
+    process.waitForReadyRead();
+    QString str_output1 = QString(QLatin1String(process.readAllStandardOutput().data()));
+    //qInfo() << "dmidecode | grep -i \"String 4\": " << str_output1;
+    if (str_output.contains("KLVV", Qt::CaseInsensitive) ||
+            str_output.contains("KLVU", Qt::CaseInsensitive) ||
+            str_output.contains("PGUV", Qt::CaseInsensitive) ||
+            str_output.contains("PGUW", Qt::CaseInsensitive) ||
+            str_output1.contains("PWC30", Qt::CaseInsensitive) ||
+            str_output.contains("L540", Qt::CaseInsensitive) ||
+            str_output.contains("W585", Qt::CaseInsensitive) ||
+            isPangu())
+        return true;
+    return false;
+}
+
+bool DBusManager::isPangu()
+{
+    QDBusInterface systemInfoInterface("com.deepin.daemon.SystemInfo",
+                                       "/com/deepin/daemon/SystemInfo",
+                                       "org.freedesktop.DBus.Properties",
+                                       QDBusConnection::sessionBus());
+    QDBusMessage replyCpu = systemInfoInterface.call("Get", "com.deepin.daemon.SystemInfo", "CPUHardware");
+    QList<QVariant> outArgsCPU = replyCpu.arguments();
+    if (outArgsCPU.count()) {
+        QString CPUHardware = outArgsCPU.at(0).value<QDBusVariant>().variant().toString();
+        if (CPUHardware.contains("PANGU")) {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool DBusManager::isSEOepn()
@@ -100,24 +153,28 @@ bool DBusManager::isAuditAdmin()
 }
 
 bool DBusManager::isSpecialComType(){
-    qCDebug(logDBusManager) << "Utils::specialComType:" << Utils::specialComType;
     bool isSpecialComType = false;
     //机器类型未知时，走以前判读机器的类型，有可能是通过DConfig获取失败，导致机器类型未知
     if(Utils::specialComType != -1){
         isSpecialComType = Utils::specialComType ? true:false;
     }else{
         QString systemName = getSystemInfo();
-        qCDebug(logDBusManager) << "systemName:" << systemName;
-        if (systemName == "klu" ||
-                systemName == "panguV" ||
-                systemName == "W515 PGUV-WBY0" ||
-                systemName == "pangu" ||
-                systemName.toUpper().contains("PGUV") ||
-                systemName.toUpper().contains("PANGUV") ||
-                systemName.toUpper().contains("KLU") ||
-                systemName.toUpper().contains("PANGU")) {
-            isSpecialComType = true;
+        if (!systemName.isEmpty()) {
+            if (systemName == "klu" ||
+                    systemName == "panguV" ||
+                    systemName == "W515 PGUV-WBY0" ||
+                    systemName == "pangu" ||
+                    systemName.toUpper().contains("PGUV") ||
+                    systemName.toUpper().contains("PANGUV") ||
+                    systemName.toUpper().contains("KLU") ||
+                    systemName.toUpper().contains("PANGU")) {
+                isSpecialComType = true;
+            }
         }
+
+        // 上一dbus服务可能在新版本已失效，使用dmidecode命令再判断一次
+        if (!isSpecialComType)
+            isSpecialComType = isHuaWei();
     }
     return isSpecialComType;
 }

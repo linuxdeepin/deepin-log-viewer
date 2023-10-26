@@ -1512,7 +1512,7 @@ BUTTONID LogBackend::period2Enum(const QString &period)
     BUTTONID id = INVALID;
     if (period == "all")
         id = ALL;
-    else if (period == "today" || period == "1d")
+    else if (period == "today")
         id = ONE_DAY;
     else if (period == "3d")
         id = THREE_DAYS;

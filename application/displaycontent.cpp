@@ -1511,6 +1511,10 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
     } else if (treeData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
+    } else if (treeData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
+        KWIN_FILTERS filter;
+        filter.msg = "";
+        generateKwinFile(filter);
     } else if (treeData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         generateAuditFile(BUTTONID(m_curBtnId), AUDITTYPE(m_curLevel));
     } else if(treeData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {

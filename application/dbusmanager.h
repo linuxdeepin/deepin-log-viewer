@@ -16,6 +16,8 @@ class DBusManager : public QObject
 public:
     explicit DBusManager(QObject *parent = nullptr);
     static QString getSystemInfo();
+    static bool isHuaWei();
+    static bool isPangu();
     // 是否开启等保四
     static bool isSEOepn();
     // 开启等保四情况下，判断是否为审计管理员身份
@@ -27,7 +29,6 @@ public:
     static bool isSpecialComType();
     static bool isGetedKlu ;
     static QString isklusystemName ;
-
 signals:
 
 public slots:
