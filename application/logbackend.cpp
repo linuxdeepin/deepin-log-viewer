@@ -444,6 +444,12 @@ bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &
         }
     }
 
+    // 级别有效性判断
+    if (!level.isEmpty() && level2Id(level) == -2) {
+        qCWarning(logBackend) << "invalid level parameter: " << level;
+        return false;
+    }
+
     qCInfo(logBackend) << "appName:" << appName << "period:" << period << "level:" << level << "keyword:" << keyword;
 
     TIME_RANGE timeRange = getTimeRange(periodId);
@@ -809,16 +815,15 @@ void LogBackend::onExportProgress(int nCur, int nTotal)
 
 void LogBackend::onExportResult(bool isSuccess)
 {
-    if (isSuccess) {
-        qCInfo(logBackend) << "export success.";
-
-    } else {
-        qCWarning(logBackend) << "export failed.";
-    }
-
     Utils::resetToNormalAuth(m_outPath);
 
-    qApp->exit(-1);
+    if (isSuccess) {
+        qCInfo(logBackend) << "export success.";
+        qApp->quit();
+    } else {
+        qCWarning(logBackend) << "export failed.";
+        qApp->exit(-1);
+    }
 }
 
 QList<LOG_MSG_BOOT> LogBackend::filterBoot(BOOT_FILTERS ibootFilter, const QList<LOG_MSG_BOOT> &iList)
@@ -1060,6 +1065,23 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         periodId = period2Enum(period);
         if (INVALID == periodId) {
             qCWarning(logBackend) << "invalid period parameter: " << period;
+            return false;
+        }
+    }
+
+    // 常规级别有效性判断
+    if (flag == JOURNAL || flag == Dmesg || flag == BOOT_KLU || flag == APP) {
+        if (!condition.isEmpty() && level2Id(condition) == -2) {
+            qCWarning(logBackend) << "invalid level parameter: " << condition;
+            return false;
+        }
+
+    }
+
+    // dnf级别有效性判断
+    if (flag == Dnf) {
+        if (!condition.isEmpty() && dnfLevel2Id(condition) == DNFINVALID) {
+            qCWarning(logBackend) << "invalid level parameter: " << condition;
             return false;
         }
     }
@@ -1530,7 +1552,7 @@ BUTTONID LogBackend::period2Enum(const QString &period)
 
 int LogBackend::level2Id(const QString &level)
 {
-    int lId = -1;
+    int lId = -2;
     if (level == "debug" || level == "7")
         lId = 7;
     if (level == "info" || level == "6")
@@ -1547,13 +1569,15 @@ int LogBackend::level2Id(const QString &level)
         lId = 1;
     else if (level == "emerg" || level == "0")
         lId = 0;
+    else if (level == "all")
+        lId = -1;
 
     return lId;
 }
 
 DNFPRIORITY LogBackend::dnfLevel2Id(const QString &level)
 {
-    DNFPRIORITY eId = DNFLVALL;
+    DNFPRIORITY eId = DNFINVALID;
     if (level == "trace" || level == "6")
         eId = TRACE;
     else if (level == "debug" || level == "5")
@@ -1568,6 +1592,8 @@ DNFPRIORITY LogBackend::dnfLevel2Id(const QString &level)
         eId = CRITICAL;
     else if (level == "supercritical" || level == "supercrit" || level == "0")
         eId = SUPERCRITICAL;
+    else if (level == "all")
+        eId = DNFLVALL;
 
     return eId;
 }
