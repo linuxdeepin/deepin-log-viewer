@@ -777,16 +777,15 @@ void LogBackend::onExportProgress(int nCur, int nTotal)
 
 void LogBackend::onExportResult(bool isSuccess)
 {
-    if (isSuccess) {
-        qCInfo(logBackend) << "export success.";
-
-    } else {
-        qCWarning(logBackend) << "export failed.";
-    }
-
     Utils::resetToNormalAuth(m_outPath);
 
-    qApp->exit(-1);
+    if (isSuccess) {
+        qCInfo(logBackend) << "export success.";
+        qApp->exit(0);
+    } else {
+        qCWarning(logBackend) << "export failed.";
+        qApp->exit(-1);
+    }
 }
 
 QList<LOG_MSG_BOOT> LogBackend::filterBoot(BOOT_FILTERS ibootFilter, const QList<LOG_MSG_BOOT> &iList)
