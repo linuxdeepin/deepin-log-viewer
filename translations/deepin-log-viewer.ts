@@ -537,11 +537,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export boot logs within a specified status</source>
+        <source>BOOT STATUS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>BOOT STATUS</source>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
