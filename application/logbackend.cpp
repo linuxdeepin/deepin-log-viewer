@@ -102,22 +102,24 @@ void LogBackend::exportAllLogs(const QString &outDir)
     Utils::resetToNormalAuth(m_outPath);
 }
 
-void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
+int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 {
     // 输出目录有效性验证
     if(!getOutDirPath(outDir))
-        return;
+        return -1;
 
     // 日志种类有效性验证
     QString error;
     m_flag = type2Flag(type, error);
     if (NONE == m_flag) {
-        qCInfo(logBackend) << error;
-        return;
+        qCWarning(logBackend) << error;
+        return -1;
     }
 
     QString categoryOutPath = QString("%1/%2/").arg(m_outPath).arg(type);
 
+    qCInfo(logBackend) << "exporting ... type:" << type;
+    bool bSuccess = true;
     switch (m_flag) {
     case JOURNAL: {
         resetCategoryOutputPath(categoryOutPath);
@@ -139,7 +141,8 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else if (logPaths.size() == 0) {
-            qCInfo(logBackend) << "/var/log has not kern.log";
+            qCWarning(logBackend) << "/var/log has not kern.log";
+            bSuccess = false;
         }
     }
     break;
@@ -157,7 +160,8 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
-            qCInfo(logBackend) << "/var/log has not boot.log";
+            qCWarning(logBackend) << "/var/log has not boot.log";
+            bSuccess = false;
         }
     }
     break;
@@ -168,8 +172,10 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
-        } else
-            qCInfo(logBackend) << "/var/log has not dpkg.log";
+        } else {
+            qCWarning(logBackend) << "/var/log has not dpkg.log";
+            bSuccess = false;
+        }
     }
     break;
     case Dnf: {
@@ -179,8 +185,10 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
-        } else
-            qCInfo(logBackend) << "/var/log has not dnf.log";
+        } else {
+            qCWarning(logBackend) << "/var/log has not dnf.log";
+            bSuccess = false;
+        }
     }
     break;
     case Kwin: {
@@ -196,8 +204,10 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
-        } else
-            qCInfo(logBackend) << "/var/log has not Xorg.log";
+        } else {
+            qCWarning(logBackend) << "/var/log has not Xorg.log";
+            bSuccess = false;
+        }
     }
     break;
     case APP: {
@@ -241,14 +251,18 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
-        } else
-            qCInfo(logBackend) << "/var/log has no coredump logs";
+        } else {
+            qCWarning(logBackend) << "/var/log has no coredump logs";
+            bSuccess = false;
+        }
     }
     break;
     case Normal: {
         QFile file("/var/log/wtmp");
-        if (!file.exists())
-            qCInfo(logBackend) << "/var/log has no boot shutdown event log";
+        if (!file.exists()) {
+            qCWarning(logBackend) << "/var/log has no boot shutdown event log";
+            bSuccess = false;
+        }
 
         resetCategoryOutputPath(categoryOutPath);
 
@@ -290,7 +304,8 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
             }
         } else {
-            qCInfo(logBackend) << "no custom logs";
+            qCWarning(logBackend) << "no custom logs";
+            bSuccess = false;
         }
     }
     break;
@@ -301,8 +316,10 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
-        } else
-            qCInfo(logBackend) << "/var/log has no audit logs";
+        } else {
+            qCWarning(logBackend) << "/var/log has no audit logs";
+            bSuccess = false;
+        }
     }
     break;
     default:
@@ -310,6 +327,13 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     }
 
     Utils::resetToNormalAuth(categoryOutPath);
+
+    if (bSuccess)
+        qCInfo(logBackend) << QString("export success.");
+    else
+        qCInfo(logBackend) << QString("export failed.");
+
+    return bSuccess ? 0 : -1;
 }
 
 bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, const QString &type, const QString &period, const QString &condition, const QString &keyword)
@@ -321,9 +345,11 @@ bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, co
     QString error;
     m_flag = type2Flag(type, error);
     if (NONE == m_flag) {
-        qCInfo(logBackend) << error;
+        qCWarning(logBackend) << error;
         return false;
     }
+
+    qCInfo(logBackend) << "exporting ... type:" << type;
 
     m_currentSearchStr = keyword;
 
@@ -337,29 +363,29 @@ bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, co
     return true;
 }
 
-void LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
+int LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
 {
     if(!getOutDirPath(outDir))
-        return;
+        return -1;
 
     if (appName.isEmpty())
-        return;
+        return -1;
 
     // 先查找是否有该应用相关日志
-    QString logPath;
-    QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
-    for (auto &it2 : appData.toStdMap()) {
-        if (it2.second.contains(appName)) {
-            logPath = it2.second;
-            break;
-        }
+    if (!LogApplicationHelper::instance()->isValidAppName(appName)) {
+        qCWarning(logBackend) << QString("unknown app:%1 is invalid.").arg(appName);
+        return -1;
     }
 
+    QString logPath = getApplogPath(appName);
     if (logPath.isEmpty()) {
-        qCInfo(logBackend) << QString("unknown app:%1 is invalid.").arg(appName);
-        return;
+        qCWarning(logBackend) << QString("app:%1 log path is null.").arg(appName);
+        return -1;
     }
 
+    qCInfo(logBackend) << QString("exporting %1 logs...").arg(appName);
+
+    bool bSuccess = true;
     AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
     // 确定解析方式
     QString parseType = "";
@@ -367,7 +393,6 @@ void LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
         parseType = "file";
     else if (appLogConfig.isValid() && appLogConfig.logType == "journal")
         parseType = "journal";
-
 
     QString categoryOutPath = QString("%1/%2").arg(m_outPath).arg(appName);
     if (parseType == "file") {
@@ -380,7 +405,8 @@ void LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
-            qCInfo(logBackend) << QString("app:%1 not found log files.").arg(appName);
+            qCWarning(logBackend) << QString("app:%1 not found log files.").arg(appName);
+            bSuccess = false;
         }
     } else if (parseType == "journal") {
         resetCategoryOutputPath(categoryOutPath);
@@ -389,6 +415,13 @@ void LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
     }
 
     Utils::resetToNormalAuth(categoryOutPath);
+
+    if (bSuccess)
+        qCInfo(logBackend) << QString("export success.");
+    else
+        qCInfo(logBackend) << QString("export failed.");
+
+    return bSuccess ? 0 : -1;
 }
 
 bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &appName, const QString &period, const QString &level, const QString &keyword)
@@ -409,22 +442,19 @@ bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &
         }
     }
 
-    qCInfo(logBackend) << "period:" << period << "level:" << level << "keyword:" << keyword;
+    qCInfo(logBackend) << "appName:" << appName << "period:" << period << "level:" << level << "keyword:" << keyword;
 
     TIME_RANGE timeRange = getTimeRange(periodId);
 
     // 先查找是否有该应用相关日志
-    QString logPath;
-    QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
-    for (auto &it2 : appData.toStdMap()) {
-        if (it2.second.contains(appName)) {
-            logPath = it2.second;
-            break;
-        }
+    if (!LogApplicationHelper::instance()->isValidAppName(appName)) {
+        qCWarning(logBackend) << QString("unknown app:%1 is invalid.").arg(appName);
+        return false;
     }
 
+    QString logPath = getApplogPath(appName);
     if (logPath.isEmpty()) {
-        qCInfo(logBackend) << QString("unknown app:%1 is invalid.").arg(appName);
+        qCWarning(logBackend) << QString("app:%1 log path is null.").arg(appName);
         return false;
     }
 
@@ -777,15 +807,16 @@ void LogBackend::onExportProgress(int nCur, int nTotal)
 
 void LogBackend::onExportResult(bool isSuccess)
 {
-    Utils::resetToNormalAuth(m_outPath);
-
     if (isSuccess) {
         qCInfo(logBackend) << "export success.";
-        qApp->exit(0);
+
     } else {
         qCWarning(logBackend) << "export failed.";
-        qApp->exit(-1);
     }
+
+    Utils::resetToNormalAuth(m_outPath);
+
+    qApp->exit(-1);
 }
 
 QList<LOG_MSG_BOOT> LogBackend::filterBoot(BOOT_FILTERS ibootFilter, const QList<LOG_MSG_BOOT> &iList)
@@ -1031,7 +1062,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         }
     }
 
-    qCInfo(logBackend) << "period:" << period << "condition:" << condition << "keyword:" << m_currentSearchStr;
+    qCInfo(logBackend) << "parsing ..." << "period:" << period << "condition:" << condition << "keyword:" << m_currentSearchStr;
 
     TIME_RANGE timeRange = getTimeRange(periodId);
     int lId = level2Id(condition);
@@ -1410,10 +1441,9 @@ bool LogBackend::getOutDirPath(const QString &path)
         m_outPath = tmpPath;
         qCInfo(logBackend) << "outPath:" << m_outPath;
         return true;
-    }
-    else {
+    } else {
         m_outPath = "";
-        qCInfo(logBackend) << QString("outpath:%1 is not exist.").arg(path);
+        qCWarning(logBackend) << QString("outpath:%1 is not exist.").arg(path);
     }
 
     return false;
@@ -1626,4 +1656,21 @@ TIME_RANGE LogBackend::getTimeRange(const BUTTONID &periodId)
     }
 
     return tr;
+}
+
+QString LogBackend::getApplogPath(const QString &appName)
+{
+    QString logPath;
+    QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
+    for (auto &it2 : appData.toStdMap()) {
+        if (it2.second.contains(appName)) {
+            logPath = it2.second;
+            break;
+        }
+    }
+
+    if (logPath.isEmpty())
+        logPath = LogApplicationHelper::instance()->getPathByAppId(appName);
+
+    return logPath;
 }
