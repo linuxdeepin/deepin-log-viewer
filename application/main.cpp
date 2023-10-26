@@ -94,11 +94,6 @@ int main(int argc, char *argv[])
 
             Utils::runInCmd = true;
 
-            // 根据当前用户名获取正确家目录路径
-            Utils::homePath = Utils::getHomePath(argv[argc - 1]);
-            // 设置命令行工作目录
-            LogBackend::instance(&a)->setCmdWorkDir(argv[argc - 2]);
-
             // 若指定有导出目录，按指定目录导出
             QString outDir = cmdParser.value(exportOption);
             if (outDir.isEmpty()) {
