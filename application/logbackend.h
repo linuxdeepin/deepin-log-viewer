@@ -100,6 +100,7 @@ private:
 
     void exportData();
 
+    void resetCategoryOutputPath(const QString & path);
     bool getOutDirPath(const QString &path);
     BUTTONID period2Enum(const QString &period);
     int level2Id(const QString &level);

@@ -199,6 +199,10 @@ int main(int argc, char *argv[])
                         return 0;
                 }
             } else {
+                if (!period.isEmpty() || !level.isEmpty() || !status.isEmpty() || !event.isEmpty() || !keyword.isEmpty()) {
+                    qCWarning(logAppMain) << "Export all logs by conditons currently is not supported.";
+                    return 0;
+                }
                 // 未指定类型，默认导出所有日志
                 LogBackend::instance(&a)->exportAllLogs(outDir);
             }

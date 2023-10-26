@@ -116,48 +116,46 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
         return;
     }
 
-    QString tmpCategoryOutPath("");
+    QString categoryOutPath = QString("%1/%2/").arg(m_outPath).arg(type);
 
     switch (m_flag) {
     case JOURNAL: {
-        DLDBusHandler::instance()->exportLog(m_outPath, "journalctl_system", false);
+        resetCategoryOutputPath(categoryOutPath);
+
+        DLDBusHandler::instance()->exportLog(categoryOutPath, "journalctl_system", false);
     }
     break;
     case Dmesg: {
-        DLDBusHandler::instance()->exportLog(m_outPath, "dmesg", false);
+        resetCategoryOutputPath(categoryOutPath);
+
+        DLDBusHandler::instance()->exportLog(categoryOutPath, "dmesg", false);
     }
     break;
     case KERN: {
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("kern", false);
         if (logPaths.size() > 0) {
-            tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("kernel");
-            // 先清空原有路径中的kernel日志文件
-            QDir dir(tmpCategoryOutPath);
-            dir.removeRecursively();
+            resetCategoryOutputPath(categoryOutPath);
 
-            Utils::mkMutiDir(tmpCategoryOutPath);
             for (auto &file: logPaths)
-                DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, file, true);
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else if (logPaths.size() == 0) {
             qCInfo(logBackend) << "/var/log has not kern.log";
         }
     }
     break;
     case BOOT_KLU: {
-        DLDBusHandler::instance()->exportLog(m_outPath, "journalctl_boot", false);
+        resetCategoryOutputPath(categoryOutPath);
+
+        DLDBusHandler::instance()->exportLog(categoryOutPath, "journalctl_boot", false);
     }
     break;
     case BOOT: {
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("boot", false);
         if (!logPaths.isEmpty()) {
-            tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("boot");
-            // 先清空原有路径中的boot日志文件
-            QDir dir(tmpCategoryOutPath);
-            dir.removeRecursively();
+            resetCategoryOutputPath(categoryOutPath);
 
-            Utils::mkMutiDir(tmpCategoryOutPath);
             for (auto &file: logPaths)
-                DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, file, true);
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
             qCInfo(logBackend) << "/var/log has not boot.log";
         }
@@ -166,14 +164,10 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     case DPKG: {
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("dpkg", false);
         if (!logPaths.isEmpty()) {
-            tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("dpkg");
-            // 先清空原有路径中的dpkg日志文件
-            QDir dir(tmpCategoryOutPath);
-            dir.removeRecursively();
+            resetCategoryOutputPath(categoryOutPath);
 
-            Utils::mkMutiDir(tmpCategoryOutPath);
             for (auto &file: logPaths)
-                DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, file, true);
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else
             qCInfo(logBackend) << "/var/log has not dpkg.log";
     }
@@ -181,45 +175,34 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     case Dnf: {
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("dnf", false);
         if (!logPaths.isEmpty()) {
-            tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("dnf");
-            // 先清空原有路径中的dnf日志文件
-            QDir dir(tmpCategoryOutPath);
-            dir.removeRecursively();
+            resetCategoryOutputPath(categoryOutPath);
 
-            Utils::mkMutiDir(tmpCategoryOutPath);
             for (auto &file: logPaths)
-                DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, file, true);
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else
             qCInfo(logBackend) << "/var/log has not dnf.log";
     }
     break;
     case Kwin: {
-        DLDBusHandler::instance()->exportLog(m_outPath, KWIN_TREE_DATA, true);
+        resetCategoryOutputPath(categoryOutPath);
+
+        DLDBusHandler::instance()->exportLog(categoryOutPath, KWIN_TREE_DATA, true);
     }
     break;
     case XORG: {
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("Xorg", false);
         if (!logPaths.isEmpty()) {
-            tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("xorg");
-            // 先清空原有路径中的xorg日志文件
-            QDir dir(tmpCategoryOutPath);
-            dir.removeRecursively();
+            resetCategoryOutputPath(categoryOutPath);
 
-            Utils::mkMutiDir(tmpCategoryOutPath);
             for (auto &file: logPaths)
-                DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, file, true);
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else
             qCInfo(logBackend) << "/var/log has not Xorg.log";
     }
     break;
     case APP: {
-        tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("apps");
-
-        // 先清空原有路径中的app日志文件
-        QDir dir(tmpCategoryOutPath);
-        dir.removeRecursively();
-
-        Utils::mkMutiDir(tmpCategoryOutPath);
+        categoryOutPath = QString("%1/%2/").arg(m_outPath).arg("apps");
+        resetCategoryOutputPath(categoryOutPath);
 
         QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
         for (auto &it2 : appData.toStdMap()) {
@@ -237,7 +220,7 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
                 parseType = "journal";
 
             QFileInfo fi(it2.second);
-            QString tmpSubCategoryOutPath = QString("%1/%2/").arg(tmpCategoryOutPath).arg(fi.baseName());
+            QString tmpSubCategoryOutPath = QString("%1/%2/").arg(categoryOutPath).arg(fi.baseName());
             Utils::mkMutiDir(tmpSubCategoryOutPath);
 
             if (parseType == "file") {
@@ -254,14 +237,10 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     case COREDUMP: {
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("coredump", false);
         if (!logPaths.isEmpty()) {
-            tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("coredump");
-            // 先清空原有路径中的coredump日志文件
-            QDir dir(tmpCategoryOutPath);
-            dir.removeRecursively();
+            resetCategoryOutputPath(categoryOutPath);
 
-            Utils::mkMutiDir(tmpCategoryOutPath);
             for (auto &file: logPaths)
-                DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, file, true);
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else
             qCInfo(logBackend) << "/var/log has no coredump logs";
     }
@@ -271,31 +250,28 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
         if (!file.exists())
             qCInfo(logBackend) << "/var/log has no boot shutdown event log";
 
-        DLDBusHandler::instance()->exportLog(m_outPath, "last", false);
+        resetCategoryOutputPath(categoryOutPath);
+
+        DLDBusHandler::instance()->exportLog(categoryOutPath, "last", false);
     }
     break;
     case OtherLog: {
-        tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("others");
-
-        // 先清空原有路径中的other日志文件
-        QDir dir(tmpCategoryOutPath);
-        dir.removeRecursively();
-
-        Utils::mkMutiDir(tmpCategoryOutPath);
+        categoryOutPath = QString("%1/%2/").arg(m_outPath).arg("others");
+        resetCategoryOutputPath(categoryOutPath);
 
         auto otherLogListPair = LogApplicationHelper::instance()->getOtherLogList();
         for (auto &it2 : otherLogListPair) {
             QStringList logPaths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.at(1));
             logPaths.removeDuplicates();
             if (logPaths.size() > 1) {
-                QString tmpSubCategoryOutPath = QString("%1/%2/").arg(tmpCategoryOutPath).arg(it2.at(0));
+                QString tmpSubCategoryOutPath = QString("%1/%2/").arg(categoryOutPath).arg(it2.at(0));
                 Utils::mkMutiDir(tmpSubCategoryOutPath);
                 for (auto &file : logPaths) {
                     DLDBusHandler::instance()->exportLog(tmpSubCategoryOutPath, file, true);
                 }
             }
             else if (logPaths.size() == 1)
-                 DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, logPaths[0], true);
+                 DLDBusHandler::instance()->exportLog(categoryOutPath, logPaths[0], true);
         }
     }
     break;
@@ -307,15 +283,11 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
         }
 
         if (logPaths.size() > 0) {
-            tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("customized");
-            // 先清空原有路径中的other日志文件
-            QDir dir(tmpCategoryOutPath);
-            dir.removeRecursively();
-
-            Utils::mkMutiDir(tmpCategoryOutPath);
+            categoryOutPath = QString("%1/%2/").arg(m_outPath).arg("customized");
+            resetCategoryOutputPath(categoryOutPath);
 
             for (auto &file : logPaths) {
-                DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, file, true);
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
             }
         } else {
             qCInfo(logBackend) << "no custom logs";
@@ -325,14 +297,10 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     case Audit: {
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("audit", false);
         if (!logPaths.isEmpty()) {
-            tmpCategoryOutPath = QString("%1/%2/").arg(m_outPath).arg("audit");
-            // 先清空原有路径中的audit日志文件
-            QDir dir(tmpCategoryOutPath);
-            dir.removeRecursively();
+            resetCategoryOutputPath(categoryOutPath);
 
-            Utils::mkMutiDir(tmpCategoryOutPath);
             for (auto &file: logPaths)
-                DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, file, true);
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else
             qCInfo(logBackend) << "/var/log has no audit logs";
     }
@@ -341,7 +309,7 @@ void LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
         break;
     }
 
-    Utils::resetToNormalAuth(tmpCategoryOutPath);
+    Utils::resetToNormalAuth(categoryOutPath);
 }
 
 bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, const QString &type, const QString &period, const QString &condition, const QString &keyword)
@@ -401,33 +369,26 @@ void LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
         parseType = "journal";
 
 
-    QString tmpCategoryOutPath = QString("%1/%2").arg(m_outPath).arg(appName);
+    QString categoryOutPath = QString("%1/%2").arg(m_outPath).arg(appName);
     if (parseType == "file") {
         QStringList logPaths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(logPath);
         logPaths.removeDuplicates();
 
         if (logPaths.size() > 0) {
-            // 先清空原有路径中的app日志文件
-            QDir dir(tmpCategoryOutPath);
-            dir.removeRecursively();
+            resetCategoryOutputPath(categoryOutPath);
 
-            Utils::mkMutiDir(tmpCategoryOutPath);
             for (auto &file: logPaths)
-                DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, file, true);
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
             qCInfo(logBackend) << QString("app:%1 not found log files.").arg(appName);
         }
     } else if (parseType == "journal") {
-        // 先清空原有路径中的app日志文件
-        QDir dir(tmpCategoryOutPath);
-        dir.removeRecursively();
+        resetCategoryOutputPath(categoryOutPath);
 
-        Utils::mkMutiDir(tmpCategoryOutPath);
-
-        DLDBusHandler::instance()->exportLog(tmpCategoryOutPath, "journalctl_app", false);
+        DLDBusHandler::instance()->exportLog(categoryOutPath, "journalctl_app", false);
     }
 
-    Utils::resetToNormalAuth(tmpCategoryOutPath);
+    Utils::resetToNormalAuth(categoryOutPath);
 }
 
 bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &appName, const QString &period, const QString &level, const QString &keyword)
@@ -1341,6 +1302,16 @@ void LogBackend::exportData()
     }
     QThreadPool::globalInstance()->start(exportThread);
     qCInfo(logBackend) << "exporting ...";
+}
+
+void LogBackend::resetCategoryOutputPath(const QString &path)
+{
+    // 先清空原有路径中的kernel日志文件
+    QDir dir(path);
+    dir.removeRecursively();
+
+    // 创建目录
+    Utils::mkMutiDir(path);
 }
 
 void LogBackend::initParser()
