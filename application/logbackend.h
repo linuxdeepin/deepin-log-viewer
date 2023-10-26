@@ -23,7 +23,7 @@ public:
     void setCmdWorkDir(const QString &dirPath);
 
     // 导出全部日志到指定目录
-    void exportAllLogs(const QString &outDir = "");
+    int exportAllLogs(const QString &outDir = "");
 
     // 按类型导出日志
     int exportTypeLogs(const QString &outDir, const QString &type = "");

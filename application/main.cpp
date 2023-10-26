@@ -210,7 +210,9 @@ int main(int argc, char *argv[])
                     return -1;
                 }
                 // 未指定类型，默认导出所有日志
-                LogBackend::instance(&a)->exportAllLogs(outDir);
+                int nRet = LogBackend::instance(&a)->exportAllLogs(outDir);
+                if (nRet != 0)
+                    return nRet;
             }
 
             return a.exec();
