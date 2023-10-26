@@ -439,9 +439,15 @@ bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &
     if (!period.isEmpty()) {
         periodId = period2Enum(period);
         if (INVALID == periodId) {
-            qCWarning(logBackend) << "invalid period parameter: " << period;
+            qCWarning(logBackend) << "invalid 'period' parameter: " << period << "\nUSEAGE: all(export all), today(export today), 3d(export past 3 days), 1w(export past week), 1m(export past month), 3m(export past 3 months)";
             return false;
         }
+    }
+
+    // 级别有效性判断
+    if (!level.isEmpty() && level2Id(level) == -2) {
+        qCWarning(logBackend) << "invalid 'level' parameter: " << level << "\nUSEAGE: 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
+        return false;
     }
 
     qCInfo(logBackend) << "appName:" << appName << "period:" << period << "level:" << level << "keyword:" << keyword;
@@ -809,16 +815,15 @@ void LogBackend::onExportProgress(int nCur, int nTotal)
 
 void LogBackend::onExportResult(bool isSuccess)
 {
-    if (isSuccess) {
-        qCInfo(logBackend) << "export success.";
-
-    } else {
-        qCWarning(logBackend) << "export failed.";
-    }
-
     Utils::resetToNormalAuth(m_outPath);
 
-    qApp->exit(-1);
+    if (isSuccess) {
+        qCInfo(logBackend) << "export success.";
+        qApp->quit();
+    } else {
+        qCWarning(logBackend) << "export failed.";
+        qApp->exit(-1);
+    }
 }
 
 QList<LOG_MSG_BOOT> LogBackend::filterBoot(BOOT_FILTERS ibootFilter, const QList<LOG_MSG_BOOT> &iList)
@@ -1059,7 +1064,55 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     if (!period.isEmpty()) {
         periodId = period2Enum(period);
         if (INVALID == periodId) {
-            qCWarning(logBackend) << "invalid period parameter: " << period;
+            qCWarning(logBackend) << "invalid 'period' parameter: " << period << "\nUSEAGE: all(export all), today(export today), 3d(export past 3 days), 1w(export past week), 1m(export past month), 3m(export past 3 months)";
+            return false;
+        }
+    }
+
+    // 常规级别有效性判断
+    if (flag == JOURNAL || flag == Dmesg || flag == BOOT_KLU || flag == APP) {
+        if (!condition.isEmpty() && level2Id(condition) == -2) {
+            qCWarning(logBackend) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
+            return false;
+        }
+
+    }
+
+    // dnf级别有效性判断
+    if (flag == Dnf) {
+        if (!condition.isEmpty() && dnfLevel2Id(condition) == DNFINVALID) {
+            qCWarning(logBackend) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(supercrit), 1(crit), 2(error), 3(warning), 4(info), 5(debug), 6(trace)";
+            return false;
+        }
+    }
+
+    // boot status有效性判断
+    QString statusFilter = "";
+    if (flag == BOOT) {
+        if (condition == "0")
+            statusFilter = "";
+        else if (condition == "ok" || condition == "1")
+            statusFilter = "OK";
+        else if (condition == "failed" || condition == "2")
+            statusFilter = "Failed";
+        else {
+            qCWarning(logBackend) << "invalid 'status' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export ok), 2(export failed)";
+            return false;
+        }
+    }
+
+    // boot-shutdown-event event类型有效性判断
+    if (flag == Normal) {
+        if (normal2eventType(condition) == -1) {
+            qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export login), 2(export boot), 3(shutdown)";
+            return false;
+        }
+    }
+
+    // audit event有效性判断
+    if (flag == Audit) {
+        if (audit2eventType(condition) == -1) {
+            qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(all), 1(ident auth), 2(discretionary access Contro), 3(mandatory access control), 4(remote), 5(doc audit), 6(other)";
             return false;
         }
     }
@@ -1124,16 +1177,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     break;
     case BOOT: {
         m_bootFilter.searchstr = m_currentSearchStr;
-        if (condition.isEmpty())
-            m_bootFilter.statusFilter = "";
-        else if (condition == "ok" || condition == "1")
-            m_bootFilter.statusFilter = "OK";
-        else if (condition == "failed" || condition == "0")
-            m_bootFilter.statusFilter = "Failed";
-        else {
-            qCWarning(logBackend) << "unknown status: " << condition;
-            m_bootFilter.statusFilter = "";
-        }
+        m_bootFilter.statusFilter = statusFilter;
 
         m_bootCurrentIndex = m_pParser->parseByBoot();
     }
@@ -1186,11 +1230,10 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case Audit: {
-        AUDIT_FILTERS auditFilter;
-        auditFilter.timeFilterBegin = timeRange.begin;
-        auditFilter.timeFilterEnd = timeRange.end;
-        auditFilter.auditTypeFilter = audit2eventType(condition);
-        m_auditCurrentIndex = m_pParser->parseByAudit(auditFilter);
+        m_auditFilter.timeFilterBegin = timeRange.begin;
+        m_auditFilter.timeFilterEnd = timeRange.end;
+        m_auditFilter.auditTypeFilter = audit2eventType(condition);
+        m_auditCurrentIndex = m_pParser->parseByAudit(m_auditFilter);
     }
     break;
     default:
@@ -1503,7 +1546,7 @@ LOG_FLAG LogBackend::type2Flag(const QString &type, QString& error)
         flag = Audit;
     } else {
         flag = NONE;
-        error = QString("Unknown type: %1.").arg(type);
+        error = QString("Unknown type: %1.").arg(type) + "USEAGE: system(journal log), kernel(kernel log), boot(boot log), dpkg(dpkg log), dnf(dnf log), kwin(Kwin log), xorg(Xorg log), app(deepin app log), coredump(coredump log)、boot-shutdown-event(boot shutdown event log)、other(other log)、custom(custom log)、audit(audit log)";
     }
 
     return flag;
@@ -1530,7 +1573,7 @@ BUTTONID LogBackend::period2Enum(const QString &period)
 
 int LogBackend::level2Id(const QString &level)
 {
-    int lId = -1;
+    int lId = -2;
     if (level == "debug" || level == "7")
         lId = 7;
     if (level == "info" || level == "6")
@@ -1547,13 +1590,15 @@ int LogBackend::level2Id(const QString &level)
         lId = 1;
     else if (level == "emerg" || level == "0")
         lId = 0;
+    else if (level == "all")
+        lId = -1;
 
     return lId;
 }
 
 DNFPRIORITY LogBackend::dnfLevel2Id(const QString &level)
 {
-    DNFPRIORITY eId = DNFLVALL;
+    DNFPRIORITY eId = DNFINVALID;
     if (level == "trace" || level == "6")
         eId = TRACE;
     else if (level == "debug" || level == "5")
@@ -1568,13 +1613,15 @@ DNFPRIORITY LogBackend::dnfLevel2Id(const QString &level)
         eId = CRITICAL;
     else if (level == "supercritical" || level == "supercrit" || level == "0")
         eId = SUPERCRITICAL;
+    else if (level == "all")
+        eId = DNFLVALL;
 
     return eId;
 }
 
 int LogBackend::normal2eventType(const QString &eventType)
 {
-    int type = 0;
+    int type = -1;
     if (eventType == "all" || eventType == "0")
         type = 0;
     else if (eventType == "login" || eventType == "1")
@@ -1589,7 +1636,7 @@ int LogBackend::normal2eventType(const QString &eventType)
 
 int LogBackend::audit2eventType(const QString &eventType)
 {
-    int type = 0;
+    int type = -1;
     if (eventType == "all" || eventType == "0")
         type = 0;
     else if (eventType == "identauth" || eventType == "1")
