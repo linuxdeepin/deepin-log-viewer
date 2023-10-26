@@ -100,12 +100,14 @@ bool DBusManager::isAuditAdmin()
 }
 
 bool DBusManager::isSpecialComType(){
+    qCDebug(logDBusManager) << "Utils::specialComType:" << Utils::specialComType;
     bool isSpecialComType = false;
     //机器类型未知时，走以前判读机器的类型，有可能是通过DConfig获取失败，导致机器类型未知
     if(Utils::specialComType != -1){
         isSpecialComType = Utils::specialComType ? true:false;
     }else{
         QString systemName = getSystemInfo();
+        qCDebug(logDBusManager) << "systemName:" << systemName;
         if (systemName == "klu" ||
                 systemName == "panguV" ||
                 systemName == "W515 PGUV-WBY0" ||

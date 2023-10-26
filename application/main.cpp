@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
                     }
 
                     if (!bRet)
-                        return 0;
+                        return -1;
                 }
             } else if (!appName.isEmpty()) {
                 if (period.isEmpty() &&
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
                     event.isEmpty() &&
                     keyword.isEmpty()) {
                     LogBackend::instance(&a)->exportAppLogs(outDir, appName);
-                    return  0;
+                    return 0;
                 } else {
                     bool bRet = false;
                     if (!status.isEmpty() || !event.isEmpty())
@@ -196,12 +196,12 @@ int main(int argc, char *argv[])
                     else if (!period.isEmpty() || !level.isEmpty())
                         bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, keyword);
                     if (!bRet)
-                        return 0;
+                        return -1;
                 }
             } else {
                 if (!period.isEmpty() || !level.isEmpty() || !status.isEmpty() || !event.isEmpty() || !keyword.isEmpty()) {
                     qCWarning(logAppMain) << "Export all logs by conditons currently is not supported.";
-                    return 0;
+                    return -1;
                 }
                 // 未指定类型，默认导出所有日志
                 LogBackend::instance(&a)->exportAllLogs(outDir);
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
 
             return a.exec();
         } else {
-            return 0;
+            return -1;
         }
     } else {
 
