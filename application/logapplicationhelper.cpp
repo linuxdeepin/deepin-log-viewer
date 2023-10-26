@@ -596,6 +596,14 @@ AppLogConfig LogApplicationHelper::appLogConfig(const QString &app)
     return AppLogConfig();
 }
 
+bool LogApplicationHelper::isValidAppName(const QString &appName)
+{
+    if (m_en_log_map.find(appName) != m_en_log_map.end())
+        return true;
+
+    return false;
+}
+
 //从应用包名转换为应用显示文本
 QString LogApplicationHelper::transName(const QString &str)
 {

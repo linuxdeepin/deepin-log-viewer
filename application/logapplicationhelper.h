@@ -59,6 +59,9 @@ public:
 
     AppLogConfig  appLogConfig(const QString& app);
 
+    // 验证是否为有效的应用名
+    bool isValidAppName(const QString& appName);
+
 private:
     explicit LogApplicationHelper(QObject *parent = nullptr);
 

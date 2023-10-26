@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
             QString outDir = cmdParser.value(exportOption);
             if (outDir.isEmpty()) {
                 qCWarning(logAppMain) << "plseae input outpath.";
-                return 0;
+                return -1;
             }
 
             QString type = "";
@@ -131,8 +131,8 @@ int main(int argc, char *argv[])
                     event.isEmpty() &&
                     appName.isEmpty() &&
                     keyword.isEmpty()) {
-                    LogBackend::instance(&a)->exportTypeLogs(outDir, type);
-                    return 0;
+                    int nRet = LogBackend::instance(&a)->exportTypeLogs(outDir, type);
+                    return nRet;
                 } else {
                     // 按筛选条件导出指定类型的日志
                     bool bRet = false;
@@ -187,8 +187,8 @@ int main(int argc, char *argv[])
                     status.isEmpty() &&
                     event.isEmpty() &&
                     keyword.isEmpty()) {
-                    LogBackend::instance(&a)->exportAppLogs(outDir, appName);
-                    return 0;
+                    int nRet = LogBackend::instance(&a)->exportAppLogs(outDir, appName);
+                    return nRet;
                 } else {
                     bool bRet = false;
                     if (!status.isEmpty() || !event.isEmpty())

@@ -26,14 +26,14 @@ public:
     void exportAllLogs(const QString &outDir = "");
 
     // 按类型导出日志
-    void exportTypeLogs(const QString &outDir, const QString &type = "");
+    int exportTypeLogs(const QString &outDir, const QString &type = "");
 
     // 按条件导出日志
     // condition 可能为级别、事件类型、状态、审计类型等条件
     bool exportTypeLogsByCondition(const QString &outDir, const QString &type, const QString &period, const QString &condition = "", const QString &keyword = "");
 
     // 按应用导出日志
-    void exportAppLogs(const QString &outDir, const QString &appName = "");
+    int exportAppLogs(const QString &outDir, const QString &appName = "");
 
     // 按条件导出应用日志
     bool exportAppLogsByCondition(const QString &outDir, const QString& appName, const QString &period, const QString &level = "", const QString &keyword = "");
@@ -108,6 +108,7 @@ private:
     int normal2eventType(const QString &eventType);
     int audit2eventType(const QString &eventType);
     TIME_RANGE getTimeRange(const BUTTONID& periodId);
+    QString getApplogPath(const QString &appName);
 
 private:
     QStringList m_logTypes;
