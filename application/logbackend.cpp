@@ -1256,125 +1256,172 @@ void LogBackend::exportData()
 
     QString fileName = "";
     QStringList labels;
+    bool bMatchedData = false;
     switch (m_flag) {
     case JOURNAL: {
-        fileName = outPath + "/system.txt";
-        labels << QCoreApplication::translate("Table", "Level")
-        << QCoreApplication::translate("Table", "Process") // modified by Airy
-        << QCoreApplication::translate("Table", "Date and Time")
-        << QCoreApplication::translate("Table", "Info")
-        << QCoreApplication::translate("Table", "User")
-        << QCoreApplication::translate("Table", "PID");
-        exportThread->exportToTxtPublic(fileName, jList, labels, m_flag);
+        if (!jList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/system.txt";
+            labels << QCoreApplication::translate("Table", "Level")
+                   << QCoreApplication::translate("Table", "Process") // modified by Airy
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info")
+                   << QCoreApplication::translate("Table", "User")
+                   << QCoreApplication::translate("Table", "PID");
+            exportThread->exportToTxtPublic(fileName, jList, labels, m_flag);
+        }
     }
     break;
     case Dmesg: {
-        fileName = outPath + "/dmesg.txt";
-        labels  << QCoreApplication::translate("Table", "Level")
-                << QCoreApplication::translate("Table", "Date and Time")
-                << QCoreApplication::translate("Table", "Info");
-        exportThread->exportToTxtPublic(fileName, dmesgList, labels);
+        if (!dmesgList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/dmesg.txt";
+            labels  << QCoreApplication::translate("Table", "Level")
+                    << QCoreApplication::translate("Table", "Date and Time")
+                    << QCoreApplication::translate("Table", "Info");
+            exportThread->exportToTxtPublic(fileName, dmesgList, labels);
+        }
     }
     break;
     case KERN: {
-        fileName = outPath + "/kernel.txt";
-        labels << QCoreApplication::translate("Table", "Date and Time")
-               << QCoreApplication::translate("Table", "User")
-               << QCoreApplication::translate("Table", "Process")
-               << QCoreApplication::translate("Table", "Info");
-        exportThread->exportToTxtPublic(fileName, kList, labels, m_flag);
+        if (!kList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/kernel.txt";
+            labels << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "User")
+                   << QCoreApplication::translate("Table", "Process")
+                   << QCoreApplication::translate("Table", "Info");
+            exportThread->exportToTxtPublic(fileName, kList, labels, m_flag);
+        }
     }
     break;
     case BOOT_KLU: {
-        fileName = outPath + "/boot_klu.txt";
-        labels << QCoreApplication::translate("Table", "Level")
-               << QCoreApplication::translate("Table", "Process")
-               << QCoreApplication::translate("Table", "Date and Time")
-               << QCoreApplication::translate("Table", "Info")
-               << QCoreApplication::translate("Table", "User")
-               << QCoreApplication::translate("Table", "PID");
-        exportThread->exportToTxtPublic(fileName, jBootList, labels, JOURNAL);
+        if (!jBootList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/boot_klu.txt";
+            labels << QCoreApplication::translate("Table", "Level")
+                   << QCoreApplication::translate("Table", "Process")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info")
+                   << QCoreApplication::translate("Table", "User")
+                   << QCoreApplication::translate("Table", "PID");
+            exportThread->exportToTxtPublic(fileName, jBootList, labels, JOURNAL);
+        }
     }
     break;
     case BOOT: {
-        fileName = outPath + "/boot.txt";
-        labels << QCoreApplication::translate("Table", "Status")
-               << QCoreApplication::translate("Table", "Info");
-        exportThread->exportToTxtPublic(fileName, currentBootList, labels);
+        if (!currentBootList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/boot.txt";
+            labels << QCoreApplication::translate("Table", "Status")
+                   << QCoreApplication::translate("Table", "Info");
+            exportThread->exportToTxtPublic(fileName, currentBootList, labels);
+        }
     }
     break;
     case DPKG: {
-        fileName = outPath + "/dpkg.txt";
-        labels << QCoreApplication::translate("Table", "Date and Time")
-              << QCoreApplication::translate("Table", "Info")
-              << QCoreApplication::translate("Table", "Action");
-        exportThread->exportToTxtPublic(fileName, dList, labels);
+        if (!dList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/dpkg.txt";
+            labels << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info")
+                   << QCoreApplication::translate("Table", "Action");
+            exportThread->exportToTxtPublic(fileName, dList, labels);
+        }
     }
     break;
     case Dnf: {
-        fileName = outPath + "/dnf.txt";
-        labels << QCoreApplication::translate("Table", "Level")
-               << QCoreApplication::translate("Table", "Date and Time")
-               << QCoreApplication::translate("Table", "Info");
-        exportThread->exportToTxtPublic(fileName, dnfList, labels);
+        if (!dnfList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/dnf.txt";
+            labels << QCoreApplication::translate("Table", "Level")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info");
+            exportThread->exportToTxtPublic(fileName, dnfList, labels);
+        }
     }
     break;
     case Kwin: {
-        fileName = outPath + "/kwin.txt";
-        labels << QCoreApplication::translate("Table", "Info");
-        exportThread->exportToTxtPublic(fileName, m_currentKwinList, labels);
+        if (!m_currentKwinList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/kwin.txt";
+            labels << QCoreApplication::translate("Table", "Info");
+            exportThread->exportToTxtPublic(fileName, m_currentKwinList, labels);
+        }
     }
     break;
     case XORG: {
-        fileName = outPath + "/xorg.txt";
-        labels << QCoreApplication::translate("Table", "Offset")
-               << QCoreApplication::translate("Table", "Info");
-        exportThread->exportToTxtPublic(fileName, xList, labels);
+        if (!xList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/xorg.txt";
+            labels << QCoreApplication::translate("Table", "Offset")
+                   << QCoreApplication::translate("Table", "Info");
+            exportThread->exportToTxtPublic(fileName, xList, labels);
+        }
     }
     break;
     case APP: {
-        QString appName = Utils::appName(m_curAppLog);
-        QString transAppName = LogApplicationHelper::instance()->transName(appName);
-        fileName = outPath + QString("/%1.txt").arg(appName);
-        labels << QCoreApplication::translate("Table", "Level")
-               << QCoreApplication::translate("Table", "Date and Time")
-               << QCoreApplication::translate("Table", "Source")
-               << QCoreApplication::translate("Table", "Info");
-        exportThread->exportToTxtPublic(fileName, appList, labels, transAppName);
+        if (!appList.isEmpty()) {
+            bMatchedData = true;
+            QString appName = Utils::appName(m_curAppLog);
+            QString transAppName = LogApplicationHelper::instance()->transName(appName);
+            fileName = outPath + QString("/%1.txt").arg(appName);
+            labels << QCoreApplication::translate("Table", "Level")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Source")
+                   << QCoreApplication::translate("Table", "Info");
+            exportThread->exportToTxtPublic(fileName, appList, labels, transAppName);
+        }
     }
     break;
     case COREDUMP: {
-        fileName = outPath + "/coredump.zip";
-        labels << QCoreApplication::translate("Table", "SIG")
-               << QCoreApplication::translate("Table", "Date and Time")
-               << QCoreApplication::translate("Table", "Core File")
-               << QCoreApplication::translate("Table", "User Name ")
-               << QCoreApplication::translate("Table", "EXE");
-        exportThread->exportToZipPublic(fileName, m_currentCoredumpList, labels);
+        if (!m_currentCoredumpList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/coredump.zip";
+            labels << QCoreApplication::translate("Table", "SIG")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Core File")
+                   << QCoreApplication::translate("Table", "User Name ")
+                   << QCoreApplication::translate("Table", "EXE");
+            exportThread->exportToZipPublic(fileName, m_currentCoredumpList, labels);
+        }
     }
     break;
     case Normal: {
-        fileName = outPath + "/boot-shutdown-event.txt";
-        labels << QCoreApplication::translate("Table", "Event Type")
-               << QCoreApplication::translate("Table", "Username")
-               << QCoreApplication::translate("Tbble", "Date and Time")
-               << QCoreApplication::translate("Table", "Info");
-        exportThread->exportToTxtPublic(fileName, nortempList, labels);
+        if (!nortempList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/boot-shutdown-event.txt";
+            labels << QCoreApplication::translate("Table", "Event Type")
+                   << QCoreApplication::translate("Table", "Username")
+                   << QCoreApplication::translate("Tbble", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info");
+            exportThread->exportToTxtPublic(fileName, nortempList, labels);
+        }
     }
     break;
     case Audit: {
-        fileName = outPath + "/audit.txt";
-        labels << QCoreApplication::translate("Table", "Event Type")
-               << QCoreApplication::translate("Table", "Date and Time")
-               << QCoreApplication::translate("Table", "Process")
-               << QCoreApplication::translate("Table", "Status")
-               << QCoreApplication::translate("Table", "Info");
-        exportThread->exportToTxtPublic(fileName, aList, labels);
+        if (!aList.isEmpty()) {
+            bMatchedData = true;
+            fileName = outPath + "/audit.txt";
+            labels << QCoreApplication::translate("Table", "Event Type")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Process")
+                   << QCoreApplication::translate("Table", "Status")
+                   << QCoreApplication::translate("Table", "Info");
+            exportThread->exportToTxtPublic(fileName, aList, labels);
+        }
     }
     break;
     default:
     break;
     }
+
+    if (!bMatchedData) {
+        qCWarning(logBackend) << "No matching data..";
+        qApp->exit(-1);
+        return;
+    }
+
     QThreadPool::globalInstance()->start(exportThread);
     qCInfo(logBackend) << "exporting ...";
 }
@@ -1592,6 +1639,8 @@ int LogBackend::level2Id(const QString &level)
         lId = 0;
     else if (level == "all")
         lId = -1;
+    else if (level.isEmpty())
+        lId = -1;
 
     return lId;
 }
@@ -1614,6 +1663,8 @@ DNFPRIORITY LogBackend::dnfLevel2Id(const QString &level)
     else if (level == "supercritical" || level == "supercrit" || level == "0")
         eId = SUPERCRITICAL;
     else if (level == "all")
+        eId = DNFLVALL;
+    else if (level.isEmpty())
         eId = DNFLVALL;
 
     return eId;
