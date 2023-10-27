@@ -162,7 +162,7 @@ int main(int argc, char *argv[])
                         } else if (!appName.isEmpty()) {
                             bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, keyword);
                         } else {
-                            qCWarning(logAppMain) << QString("Export logs by %1, filterd by 'period' or 'level', currently not supported.").arg(type).arg(appName);
+                            qCWarning(logAppMain) << QString("Export logs by %1, filterd by 'period' or 'level' or 'keyword', currently not supported.").arg(type).arg(appName);
                         }
                     } else if (TYPE_BSE == type || TYPE_AUDIT == type) {
                         // 开关机事件、审计日志 可按周期和事件类型导出
@@ -199,7 +199,7 @@ int main(int argc, char *argv[])
                     bool bRet = false;
                     if (!status.isEmpty() || !event.isEmpty())
                         qCWarning(logAppMain) << QString("Export app logs, can only be filtered using 'period' or 'level' parameter.");
-                    else if (!period.isEmpty() || !level.isEmpty())
+                    else if (!period.isEmpty() || !level.isEmpty() || !keyword.isEmpty())
                         bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, keyword);
                     if (!bRet)
                         return -1;
