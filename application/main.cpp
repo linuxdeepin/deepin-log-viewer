@@ -217,6 +217,7 @@ int main(int argc, char *argv[])
 
             return a.exec();
         } else {
+            qCWarning(logAppMain) <<"Missing export path, please enter the '-e' parameter.";
             return -1;
         }
     } else {
