@@ -1956,7 +1956,7 @@ void DisplayContent::slot_dpkgData(int index, QList<LOG_MSG_DPKG> list)
     dListOrigin.append(list);
     dList.append(filterDpkg(m_currentSearchStr, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !dList.isEmpty()) {
         createDpkgTableStart(dList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=dpkg");
@@ -1984,7 +1984,7 @@ void DisplayContent::slot_xorgData(int index, QList<LOG_MSG_XORG> list)
     xListOrigin.append(list);
     xList.append(filterXorg(m_currentSearchStr, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !xList.isEmpty()) {
         createXorgTable(xList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=xorg");
@@ -2014,7 +2014,7 @@ void DisplayContent::slot_bootData(int index, QList<LOG_MSG_BOOT> list)
 
     currentBootList.append(filterBoot(m_bootFilter, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !currentBootList.isEmpty()) {
         createBootTable(currentBootList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=boot");
@@ -2044,7 +2044,7 @@ void DisplayContent::slot_kernData(int index, QList<LOG_MSG_JOURNAL> list)
     kListOrigin.append(list);
     kList.append(filterKern(m_currentSearchStr, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !kList.isEmpty()) {
         createKernTable(kList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=kern");
@@ -2072,7 +2072,7 @@ void DisplayContent::slot_kwinData(int index, QList<LOG_MSG_KWIN> list)
         return;
     m_kwinList.append(list);
     m_currentKwinList.append(filterKwin(m_currentSearchStr, list));
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !m_currentKwinList.isEmpty()) {
         creatKwinTable(m_currentKwinList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=kwin");
@@ -2123,7 +2123,7 @@ void DisplayContent::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
     jListOrigin.append(list);
     jList.append(filterJournal(m_currentSearchStr, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !jList.isEmpty()) {
         createJournalTableStart(jList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-01", "");
@@ -2154,7 +2154,7 @@ void DisplayContent::slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list
     jBootListOrigin.append(list);
     jBootList.append(filterJournalBoot(m_currentSearchStr, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !jBootList.isEmpty()) {
         createJournalBootTableStart(jBootList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=boot_klu");
@@ -2182,7 +2182,7 @@ void DisplayContent::slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> 
     appListOrigin.append(list);
     appList.append(filterApp(m_currentSearchStr, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !appList.isEmpty()) {
         createAppTable(appList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=application");
@@ -2207,7 +2207,7 @@ void DisplayContent::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
     norList.append(list);
     nortempList.append(filterNomal(m_normalFilter, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !nortempList.isEmpty()) {
         createNormalTable(nortempList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=on_off");
@@ -2250,7 +2250,7 @@ void DisplayContent::slot_auditData(int index, QList<LOG_MSG_AUDIT> list)
     aListOrigin.append(list);
     aList.append(filterAudit(m_auditFilter, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !aList.isEmpty()) {
         createAuditTable(aList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=audit");
@@ -2277,7 +2277,7 @@ void DisplayContent::slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list)
     m_coredumpList.append(list);
     m_currentCoredumpList.append(filterCoredump(m_currentSearchStr, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData) {
+    if (m_firstLoadPageData && !m_currentCoredumpList.isEmpty()) {
         createCoredumpTable(m_currentCoredumpList);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=coredump");
