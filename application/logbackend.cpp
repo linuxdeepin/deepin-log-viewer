@@ -6,6 +6,7 @@
 #include "logallexportthread.h"
 #include "logfileparser.h"
 #include "logexportthread.h"
+#include "logsettings.h"
 #include "utils.h"
 #include "dbusmanager.h"
 #include "dbusproxy/dldbushandler.h"
@@ -48,6 +49,7 @@ LogBackend::LogBackend(QObject *parent) : QObject(parent)
     getLogTypes();
 
     m_cmdWorkDir = QDir::currentPath();
+    Utils::m_mapAuditType2EventType = LogSettings::instance()->loadAuditMap();
 }
 
 void LogBackend::setCmdWorkDir(const QString &dirPath)
