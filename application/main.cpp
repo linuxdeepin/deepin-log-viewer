@@ -120,8 +120,30 @@ int main(int argc, char *argv[])
                 status = cmdParser.value(statusOption);
             if (cmdParser.isSet(eventOption))
                 event = cmdParser.value(eventOption);
-            if (cmdParser.isSet(keywordOption))
-                keyword = cmdParser.value(keywordOption);
+            if (cmdParser.isSet(keywordOption)) {
+                // Qt命令行解析器不能完整获取--key后的参数内容，
+                // 此处做特殊处理，以便能完整获取--key后的参数内容
+                int nKeyIndex = -1;
+                for (int i = 0; i < argc; i++) {
+                    QString tmpArg = argv[i];
+                    if (tmpArg == "-k") {
+                        nKeyIndex = i;
+                        continue;
+                    }
+
+                    if (nKeyIndex != -1) {
+                        if ((tmpArg.startsWith("-") && tmpArg.size() == 2)
+                                || tmpArg.startsWith("--")) {
+                            break;
+                        } else {
+                            if (!keyword.isEmpty()) {
+                                keyword += " ";
+                            }
+                            keyword += tmpArg;
+                        }
+                    }
+                }
+            }
 
             if (!type.isEmpty()) {
                 // 按类型导出日志
