@@ -1092,31 +1092,37 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     // boot status有效性判断
     QString statusFilter = "";
     if (flag == BOOT) {
-        if (condition == "0")
-            statusFilter = "";
-        else if (condition == "ok" || condition == "1")
-            statusFilter = "OK";
-        else if (condition == "failed" || condition == "2")
-            statusFilter = "Failed";
-        else {
-            qCWarning(logBackend) << "invalid 'status' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export ok), 2(export failed)";
-            return false;
+        if (!condition.isEmpty()) {
+            if (condition == "0")
+                statusFilter = "";
+            else if (condition == "ok" || condition == "1")
+                statusFilter = "OK";
+            else if (condition == "failed" || condition == "2")
+                statusFilter = "Failed";
+            else {
+                qCWarning(logBackend) << "invalid 'status' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export ok), 2(export failed)";
+                return false;
+            }
         }
     }
 
     // boot-shutdown-event event类型有效性判断
     if (flag == Normal) {
-        if (normal2eventType(condition) == -1) {
-            qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export login), 2(export boot), 3(shutdown)";
-            return false;
+        if (!condition.isEmpty()) {
+            if (normal2eventType(condition) == -1) {
+                qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export login), 2(export boot), 3(shutdown)";
+                return false;
+            }
         }
     }
 
     // audit event有效性判断
     if (flag == Audit) {
-        if (audit2eventType(condition) == -1) {
-            qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(all), 1(ident auth), 2(discretionary access Contro), 3(mandatory access control), 4(remote), 5(doc audit), 6(other)";
-            return false;
+        if (!condition.isEmpty()) {
+            if (audit2eventType(condition) == -1) {
+                qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(all), 1(ident auth), 2(discretionary access Contro), 3(mandatory access control), 4(remote), 5(doc audit), 6(other)";
+                return false;
+            }
         }
     }
 
