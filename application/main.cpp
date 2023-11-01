@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
         cmdParser.addOption(keywordOption);
 
         if (!cmdParser.parse(qApp->arguments())) {
-            cmdParser.showHelp();
+            cmdParser.showHelp(-1);
         }
 
         cmdParser.process(a);
