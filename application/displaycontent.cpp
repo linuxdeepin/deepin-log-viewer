@@ -1459,7 +1459,6 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
     }
 
     m_curTreeIndex = index;
-    int row = index.row();
 
     if (m_flag == OtherLog || m_flag == CustomLog) {
         QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
