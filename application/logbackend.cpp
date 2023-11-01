@@ -1233,6 +1233,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case Audit: {
+        m_auditFilter.searchstr = m_currentSearchStr;
         m_auditFilter.timeFilterBegin = timeRange.begin;
         m_auditFilter.timeFilterEnd = timeRange.end;
         m_auditFilter.auditTypeFilter = audit2eventType(condition);
