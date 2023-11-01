@@ -120,7 +120,8 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
         return -1;
     }
 
-    QString categoryOutPath = QString("%1/%2/").arg(m_outPath).arg(type);
+    QString dateTime = QDateTime::currentDateTime().toString("yyyyMMddHHmmss");
+    QString categoryOutPath = QString("%1/%2-%3/").arg(m_outPath).arg(type).arg(dateTime);
 
     qCInfo(logBackend) << "exporting ... type:" << type;
     bool bSuccess = true;
