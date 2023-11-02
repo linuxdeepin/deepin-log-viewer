@@ -1492,7 +1492,8 @@ void LogBackend::initParser()
             Qt::QueuedConnection);
     connect(m_pParser, &LogFileParser::normalFinished, this, &LogBackend::slot_normalFinished,
             Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::journalBootFinished, this, &LogBackend::slot_journalBootFinished);
+    connect(m_pParser, &LogFileParser::journalBootFinished, this, &LogBackend::slot_journalBootFinished,
+            Qt::QueuedConnection);
 
     connect(m_pParser, &LogFileParser::proccessError, this, &LogBackend::slot_logLoadFailed,
             Qt::QueuedConnection);
