@@ -239,7 +239,7 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             Utils::mkMutiDir(tmpSubCategoryOutPath);
 
             if (parseType == "file") {
-                QStringList logPaths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.second);
+                QStringList logPaths = DLDBusHandler::instance(nullptr)->getFileInfo(it2.second);
                 logPaths.removeDuplicates();
                 for (auto &file: logPaths)
                     DLDBusHandler::instance()->exportLog(tmpSubCategoryOutPath, file, true);
@@ -401,7 +401,7 @@ int LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
 
     QString categoryOutPath = QString("%1/%2").arg(m_outPath).arg(appName);
     if (parseType == "file") {
-        QStringList logPaths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(logPath);
+        QStringList logPaths = DLDBusHandler::instance(nullptr)->getFileInfo(logPath);
         logPaths.removeDuplicates();
 
         if (logPaths.size() > 0) {

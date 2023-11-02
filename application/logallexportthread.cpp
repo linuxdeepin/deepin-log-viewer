@@ -90,7 +90,7 @@ void LogAllExportThread::run()
 #endif
 
                 if (parseType == "file") {
-                    QStringList paths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.second);
+                    QStringList paths = DLDBusHandler::instance(nullptr)->getFileInfo(it2.second);
                     paths.removeDuplicates();
                     if (paths.size() > 0) {
                         QFileInfo fi(it2.second);
