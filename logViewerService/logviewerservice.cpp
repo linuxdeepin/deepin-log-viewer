@@ -203,10 +203,15 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
     QDir dir;
     if (file.contains("deepin", Qt::CaseInsensitive) || file.contains("uos", Qt::CaseInsensitive)) {
         QFileInfo appFileInfo(file);
-        if (!appFileInfo.isFile()) {
-            return QStringList() << "";
+        QString appDir;
+        if (appFileInfo.isFile()) {
+            appDir = appFileInfo.absolutePath();
+        } else if (appFileInfo.isDir()) {
+            appDir = appFileInfo.absoluteFilePath();
+        } else {
+            return QStringList();
         }
-        QString appDir = appFileInfo.absolutePath();
+
         nameFilter = appDir.mid(appDir.lastIndexOf("/") + 1, appDir.size() - 1);
         dir.setPath(appDir);
     } else if (file == "audit"){
