@@ -165,27 +165,33 @@ int main(int argc, char *argv[])
                     bool bRet = false;
                     QString error("");
                     LOG_FLAG flag = LogBackend::type2Flag(type, error);
-                    if (TYPE_SYSTEM == type || Dmesg == flag || BOOT_KLU == flag || TYPE_DNF == type){
-                        // system、dmesg(centos下内核日志)、boot_klu、dnf 可按周期或级别导出
+                    if (TYPE_SYSTEM == type || Dmesg == flag || TYPE_DNF == type){
+                        // system、dmesg(centos下内核日志)、dnf 可按周期或级别导出
                         if (!status.isEmpty() || !event.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'level' parameter.").arg(type);
+                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'level' or 'keyword' parameters.").arg(type);
+                        else
+                            bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, period, level, keyword);
+                    } else if (BOOT_KLU == flag) {
+                        // boot_klu级别导出
+                        if (!status.isEmpty() || !event.isEmpty() || !period.isEmpty())
+                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'level' or 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, period, level, keyword);
                     } else if (KERN == flag || TYPE_DPKG == type || TYPE_COREDUMP == type) {
                         // 内核、dpkg、崩溃日志 可按周期导出
                         if (!level.isEmpty() || !status.isEmpty() || !event.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' condition.").arg(type);
+                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, period, "", keyword);
                     } else if (BOOT == flag) {
                         // 启动日志 可按状态导出
                         if (!period.isEmpty() || !level.isEmpty() || !event.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'status' parameter.").arg(type);
+                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'status' or 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, "", status, keyword);
                     } else if (TYPE_APP == type) {
                         if (!status.isEmpty() || !event.isEmpty()) {
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'level' parameter.").arg(type);
+                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'level' or 'keyword' parameters.").arg(type);
                         } else if (!appName.isEmpty()) {
                             bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, keyword);
                         } else {
@@ -194,7 +200,7 @@ int main(int argc, char *argv[])
                     } else if (TYPE_BSE == type || TYPE_AUDIT == type) {
                         // 开关机事件、审计日志 可按周期和事件类型导出
                         if (!level.isEmpty() || !status.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'event' parameter.").arg(type);
+                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'event' or 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, period, event, keyword);
                     } else if (TYPE_XORG == type || TYPE_OTHER == type || TYPE_CUSTOM == type || TYPE_KWIN == type) {
