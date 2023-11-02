@@ -145,6 +145,11 @@ int main(int argc, char *argv[])
                 }
             }
 
+            if (!type.isEmpty() && type != "app" && !appName.isEmpty()) {
+                qCWarning(logAppMain) << QString("Option -d -t both exist, -t can only be set to 'app' type.");
+                return -1;
+            }
+
             if (!type.isEmpty()) {
                 // 按类型导出日志
                 if (period.isEmpty() &&
