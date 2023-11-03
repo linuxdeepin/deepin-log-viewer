@@ -12,6 +12,8 @@
 #include "dbusproxy/dldbushandler.h"
 #include "logapplicationhelper.h"
 #include "DebugTimeManager.h"
+#include "eventlogutils.h"
+
 #include <sys/utsname.h>
 
 #include <DSysInfo>
@@ -364,7 +366,7 @@ bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, co
         return false;
     }
 
-    m_bNeedExport = true;
+    m_sessionType = Export;
     return true;
 }
 
@@ -476,7 +478,7 @@ bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &
 
     m_flag = APP;
     m_curAppLog = logPath;
-    m_bNeedExport = true;
+    m_sessionType = Export;
     m_currentSearchStr = keyword;
 
     APP_FILTERS appFilter;
@@ -558,7 +560,7 @@ void LogBackend::slot_dpkgFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -578,7 +580,7 @@ void LogBackend::slot_XorgFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -598,7 +600,7 @@ void LogBackend::slot_bootFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -618,7 +620,7 @@ void LogBackend::slot_kernFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -638,7 +640,7 @@ void LogBackend::slot_kwinFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -660,7 +662,7 @@ void LogBackend::slot_dnfFinished(const QList<LOG_MSG_DNF> &list)
 
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -675,7 +677,7 @@ void LogBackend::slot_dmesgFinished(const QList<LOG_MSG_DMESG> &list)
 
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -686,7 +688,7 @@ void LogBackend::slot_journalFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -697,7 +699,7 @@ void LogBackend::slot_journalBootFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -727,7 +729,7 @@ void LogBackend::slot_applicationFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -747,7 +749,7 @@ void LogBackend::slot_normalFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -769,7 +771,7 @@ void LogBackend::slot_auditFinished(int index, bool bShowTip)
     m_isDataLoadComplete = true;
 
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
     }
 }
@@ -790,8 +792,49 @@ void LogBackend::slot_coredumpFinished(int index)
 
     m_isDataLoadComplete = true;
 
-    if (m_bNeedExport) {
+    if (Export == m_sessionType) {
         exportData();
+    } else if (Report == m_sessionType) {
+        int nCount = m_currentCoredumpList.size();
+        if (nCount == 0) {
+            qCWarning(logBackend) << QString("Report coredump info failed, timeRange: '%1 ---- %2', no matching data.")
+                                     .arg(LogSettings::instance()->getConfigLastReportTime().toString("yyyy-MM-dd hh:mm:ss"))
+                                     .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+            qApp->exit(-1);
+        } else {
+
+            // 崩溃数据转json数据
+            QJsonArray objList;
+            QDateTime latestCoredumpTime;
+            for (auto &data : m_currentCoredumpList) {
+                QDateTime coredumpTime = QDateTime::fromString(data.dateTime, "yyyy-MM-dd hh:mm:ss");
+                if (coredumpTime > latestCoredumpTime)
+                    latestCoredumpTime = coredumpTime;
+                objList.append(data.toJson());
+            }
+
+            // 以最近的崩溃时间的下一秒作为下次上报的筛选起始时间
+            latestCoredumpTime = latestCoredumpTime.addSecs(1);
+
+            // 先初始化埋点接口，延迟2秒后调用埋点接口，以便能正常写入埋点数据
+            Eventlogutils::GetInstance();
+
+            QTimer::singleShot(2000, this, [=]{
+                // 埋点记录崩溃数据
+                QJsonObject objCoredumpEvent{
+                    {"tid", Eventlogutils::ReportCoredump},
+                    {"version", QCoreApplication::applicationVersion()},
+                    {"event",  "log"},
+                    {"target", "coredump"},
+                    {"message", objList}
+                };
+
+                Eventlogutils::GetInstance()->writeLogs(objCoredumpEvent);
+                LogSettings::instance()->saveLastRerportTime(latestCoredumpTime);
+                qCInfo(logBackend) << QString("Successfully reported %1 crash messages in total.").arg(m_currentCoredumpList.size());
+                qApp->exit(0);
+            });
+        }
     }
 }
 
@@ -1608,6 +1651,34 @@ LOG_FLAG LogBackend::type2Flag(const QString &type, QString& error)
     }
 
     return flag;
+}
+
+bool LogBackend::reportCoredumpInfo()
+{
+    qCDebug(logBackend) << "ready report coredump.";
+
+    m_flag = COREDUMP;
+    m_currentSearchStr = "";
+    m_sessionType = Report;
+
+    // 增量上报，每次上报，仅上报新增的崩溃信息，根据时间范围筛选出目标数据
+    COREDUMP_FILTERS coreFilter;
+    QDateTime lastTime = LogSettings::instance()->getConfigLastReportTime();
+    if (!lastTime.isValid()) {
+        TIME_RANGE timeRange = getTimeRange(ALL);
+        coreFilter.timeFilterBegin = timeRange.begin;
+        coreFilter.timeFilterEnd = timeRange.end;
+    } else {
+        coreFilter.timeFilterBegin = lastTime.toMSecsSinceEpoch();
+        coreFilter.timeFilterEnd = QDateTime::currentDateTime().toMSecsSinceEpoch();
+    }
+
+    if (!m_pParser)
+        initParser();
+
+    m_coredumpCurrentIndex = m_pParser->parseByCoredump(coreFilter);
+
+    return true;
 }
 
 BUTTONID LogBackend::period2Enum(const QString &period)

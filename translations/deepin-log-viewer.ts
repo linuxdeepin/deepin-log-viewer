@@ -560,6 +560,10 @@
         <source>KEY WORD</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>titlebar</name>

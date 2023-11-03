@@ -3,6 +3,10 @@ usr/bin/logViewerAuth
 usr/bin/logViewerTruncate
 usr/bin/deepin-logger
 usr/lib/deepin-daemon/log-view-service
+usr/lib/systemd/system/coredump-reporter.service
+usr/lib/systemd/system/coredump-reporter.timer
+/etc/systemd/system/multi-user.target.wants/coredump-reporter.service
+/etc/systemd/system/timers.target.wants/coredump-reporter.timer
 usr/share/applications/deepin-log-viewer.desktop
 usr/share/dbus-1/system-services/com.deepin.logviewer.service
 usr/share/dbus-1/system.d/com.deepin.logviewer.conf

@@ -69,6 +69,7 @@ LogFileParser::LogFileParser(QWidget *parent)
     qRegisterMetaType<QList<LOG_MSG_DMESG>>("QList<LOG_MSG_DMESG>");
     qRegisterMetaType<QList<LOG_MSG_AUDIT>>("QList<LOG_MSG_AUDIT>");
     qRegisterMetaType<QList<LOG_MSG_JOURNAL>>("QList<LOG_MSG_JOURNAL>");
+    qRegisterMetaType<QList<LOG_MSG_COREDUMP>>("QList<LOG_MSG_COREDUMP>");
     qRegisterMetaType<LOG_FLAG> ("LOG_FLAG");
 
 }
@@ -454,7 +455,7 @@ int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter)
 {
     stopAllLoad();
     m_isCoredumpLoading = true;
-    qRegisterMetaType<QList<quint16>>("QList<LOG_MSG_COREDUMP>");
+    //qRegisterMetaType<QList<quint16>>("QList<LOG_MSG_COREDUMP>");
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(COREDUMP);
     authThread->setFileterParam(iCoredumpFilter);
@@ -502,8 +503,6 @@ void LogFileParser::stopAllLoad()
     emit stopCoredump();
     return;
 }
-
-
 
 void LogFileParser::quitLogAuththread(QThread *iThread)
 {

@@ -7,6 +7,7 @@
 #include <QString>
 #include <QDir>
 #include <QMap>
+#include <QJsonObject>
 #include "utils.h"
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"
@@ -228,6 +229,19 @@ struct LOG_MSG_COREDUMP {
     QString exe;
     QString pid;
     QString storagePath;
+
+    QJsonObject toJson() {
+        QJsonObject obj;
+        obj.insert("sig", sig);
+        obj.insert("dateTime", dateTime);
+        obj.insert("coreFile", coreFile);
+        obj.insert("user", uid);
+        obj.insert("exe", exe);
+        obj.insert("pid", pid);
+        obj.insert("storagePath", storagePath);
+
+        return obj;
+    }
 };
 
 struct TIME_RANGE {

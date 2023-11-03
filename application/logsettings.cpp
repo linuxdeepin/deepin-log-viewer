@@ -9,8 +9,11 @@
 #include <QApplication>
 #include <QDir>
 #include <QDebug>
+#include <QDateTime>
 #define MAINWINDOW_HEIGHT_NAME "logMainWindowHeightName"
 #define MAINWINDOW_WIDTH_NAME "logMainWindowWidthName"
+#define LAST_REPORT_TIME_NAME "lastReportTimeName"
+
 std::atomic<LogSettings *> LogSettings::m_instance;
 std::mutex LogSettings::m_mutex;
 
@@ -77,6 +80,23 @@ void LogSettings::saveConfigWinSize(int w, int h)
     int winHeight = h > MAINWINDOW_HEIGHT ? h : MAINWINDOW_HEIGHT;
     m_winInfoConfig->setValue(MAINWINDOW_HEIGHT_NAME, winHeight);
     m_winInfoConfig->setValue(MAINWINDOW_WIDTH_NAME, winWidth);
+    m_winInfoConfig->sync();
+}
+
+QDateTime LogSettings::getConfigLastReportTime()
+{
+    QVariant time = m_winInfoConfig->value(LAST_REPORT_TIME_NAME);
+    if (time.isValid()) {
+        return QDateTime::fromString(time.toString(), "yyyy-MM-dd hh:mm:ss");
+    }
+
+    return QDateTime();
+}
+
+void LogSettings::saveLastRerportTime(const QDateTime &date)
+{
+    QString str = date.toString("yyyy-MM-dd hh:mm:ss");
+    m_winInfoConfig->setValue(LAST_REPORT_TIME_NAME, str);
     m_winInfoConfig->sync();
 }
 

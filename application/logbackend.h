@@ -15,6 +15,13 @@ class LogBackend : public QObject
     Q_OBJECT
 
 public:
+    enum SessionType
+    {
+        Unknown = -1,
+        Export,
+        Report
+    };
+
     static LogBackend *instance(QObject *parent = nullptr);
     ~LogBackend();
     explicit LogBackend(QObject *parent = nullptr);
@@ -44,6 +51,8 @@ public:
     QString getOutDirPath() const;
 
     static LOG_FLAG type2Flag(const QString &type, QString &error);
+
+    bool reportCoredumpInfo();
 
 private:
     static LogBackend *m_staticbackend;
@@ -239,6 +248,7 @@ private:
 
     bool m_isDataLoadComplete {false};
     bool m_bNeedExport {false};
+    SessionType m_sessionType {Export};
 
 private:
     LogFileParser *m_pParser {nullptr};
