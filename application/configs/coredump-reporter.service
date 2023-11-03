@@ -1,0 +1,9 @@
+[Unit]
+Description=deepin-log-viewer coredump report activities
+
+[Service]
+User=root
+ExecStart=/usr/bin/deepin-log-viewer --reportcoredump
+
+[Install]
+WantedBy=multi-user.target

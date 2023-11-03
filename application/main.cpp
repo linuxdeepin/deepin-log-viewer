@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
         QCommandLineOption statusOption(QStringList() << "s" << "status", DApplication::translate("main", "Export boot(no-klu) logs within a specified status"), DApplication::translate("main", "BOOT STATUS"));
         QCommandLineOption eventOption(QStringList() << "E" << "event", DApplication::translate("main", "Export boot-shutdown-event or audit logs within a specified event type"), DApplication::translate("main", "EVENT TYPE"));
         QCommandLineOption keywordOption(QStringList() << "k" << "search", DApplication::translate("main", "Export logs based on keywords search results"), DApplication::translate("main", "KEY WORD"));
+        QCommandLineOption reportCoredumpOption(QStringList() << "reportcoredump", DApplication::translate("main", "Report coredump informations."));
 
         QCommandLineParser cmdParser;
         cmdParser.setApplicationDescription("deepin-log-viewer");
@@ -76,6 +77,7 @@ int main(int argc, char *argv[])
         cmdParser.addOption(statusOption);
         cmdParser.addOption(eventOption);
         cmdParser.addOption(keywordOption);
+        cmdParser.addOption(reportCoredumpOption);
 
         if (!cmdParser.parse(qApp->arguments())) {
             cmdParser.showHelp(-1);
@@ -85,7 +87,69 @@ int main(int argc, char *argv[])
 
         // cli命令处理
         QStringList args = cmdParser.positionalArguments();
-        if (cmdParser.isSet(exportOption)) {
+        QString type = "";
+        QString appName = "";
+        QString period = "";
+        QString level = "";
+        QString status = "";
+        QString event = "";
+        QString keyword = "";
+        if (cmdParser.isSet(typeOption))
+            type = cmdParser.value(typeOption);
+        if (cmdParser.isSet(appOption))
+            appName = cmdParser.value(appOption);
+        if (cmdParser.isSet(periodOption))
+            period = cmdParser.value(periodOption);
+        if (cmdParser.isSet(levelOption))
+            level = cmdParser.value(levelOption);
+        if (cmdParser.isSet(statusOption))
+            status = cmdParser.value(statusOption);
+        if (cmdParser.isSet(eventOption))
+            event = cmdParser.value(eventOption);
+        if (cmdParser.isSet(keywordOption)) {
+            // Qt命令行解析器不能完整获取--key后的参数内容，
+            // 此处做特殊处理，以便能完整获取--key后的参数内容
+            int nKeyIndex = -1;
+            for (int i = 0; i < argc; i++) {
+                QString tmpArg = argv[i];
+                if (tmpArg == "-k") {
+                    nKeyIndex = i;
+                    continue;
+                }
+
+                if (nKeyIndex != -1) {
+                    if ((tmpArg.startsWith("-") && tmpArg.size() == 2)
+                            || tmpArg.startsWith("--")) {
+                        break;
+                    } else {
+                        if (!keyword.isEmpty()) {
+                            keyword += " ";
+                        }
+                        keyword += tmpArg;
+                    }
+                }
+            }
+        }
+
+        if (cmdParser.isSet(reportCoredumpOption)) {
+            if (!type.isEmpty() ||
+                    !appName.isEmpty() ||
+                    !period.isEmpty() ||
+                    !level.isEmpty() ||
+                    !status.isEmpty() ||
+                    !event.isEmpty() ||
+                    !keyword.isEmpty() ||
+                    cmdParser.isSet(exportOption)) {
+                qCWarning(logAppMain) << "Only reportcoreump option can set, please do not add other options.";
+                return -1;
+            }
+
+            Utils::runInCmd = true;
+            if (!LogBackend::instance(&a)->reportCoredumpInfo())
+                return -1;
+
+            return a.exec();
+        } else if (cmdParser.isSet(exportOption)) {
 
             if (!CliApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                                       CliApplicationHelper::UserScope)) {
@@ -99,50 +163,6 @@ int main(int argc, char *argv[])
             if (outDir.isEmpty()) {
                 qCWarning(logAppMain) << "plseae input outpath.";
                 return -1;
-            }
-
-            QString type = "";
-            QString appName = "";
-            QString period = "";
-            QString level = "";
-            QString status = "";
-            QString event = "";
-            QString keyword = "";
-            if (cmdParser.isSet(typeOption))
-                type = cmdParser.value(typeOption);
-            if (cmdParser.isSet(appOption))
-                appName = cmdParser.value(appOption);
-            if (cmdParser.isSet(periodOption))
-                period = cmdParser.value(periodOption);
-            if (cmdParser.isSet(levelOption))
-                level = cmdParser.value(levelOption);
-            if (cmdParser.isSet(statusOption))
-                status = cmdParser.value(statusOption);
-            if (cmdParser.isSet(eventOption))
-                event = cmdParser.value(eventOption);
-            if (cmdParser.isSet(keywordOption)) {
-                // Qt命令行解析器不能完整获取--key后的参数内容，
-                // 此处做特殊处理，以便能完整获取--key后的参数内容
-                int nKeyIndex = -1;
-                for (int i = 0; i < argc; i++) {
-                    QString tmpArg = argv[i];
-                    if (tmpArg == "-k") {
-                        nKeyIndex = i;
-                        continue;
-                    }
-
-                    if (nKeyIndex != -1) {
-                        if ((tmpArg.startsWith("-") && tmpArg.size() == 2)
-                                || tmpArg.startsWith("--")) {
-                            break;
-                        } else {
-                            if (!keyword.isEmpty()) {
-                                keyword += " ";
-                            }
-                            keyword += tmpArg;
-                        }
-                    }
-                }
             }
 
             if (!type.isEmpty() && type != "app" && !appName.isEmpty()) {
@@ -311,13 +331,17 @@ int main(int argc, char *argv[])
         // 自动化标记由此开始
         QAccessible::installFactory(accessibleFactory);
 
-        //埋点记录启动数据
-        QJsonObject objStartEvent{
-            {"tid", Eventlogutils::StartUp},
-            {"vsersion", VERSION},
-            {"mode", 1},
-        };
-        Eventlogutils::GetInstance()->writeLogs(objStartEvent);
+        // 先初始化埋点接口，延迟2秒后调用埋点接口，以便能正常写入埋点数据
+        Eventlogutils::GetInstance();
+        QTimer::singleShot(2000, &a, [=]{
+            //埋点记录启动数据
+            QJsonObject objStartEvent{
+                {"tid", Eventlogutils::StartUp},
+                {"vsersion", VERSION},
+                {"mode", 1},
+            };
+            Eventlogutils::GetInstance()->writeLogs(objStartEvent);
+        });
 
         w.show();
         Dtk::Widget::moveToCenter(&w);

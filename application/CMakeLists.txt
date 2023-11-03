@@ -394,6 +394,16 @@ install(FILES assets/deepin-logger DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 # Install log json config file.
 install(FILES assets/deepin-log-viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d)
 
+# Install coredump report service&timer
+install(FILES ./configs/coredump-reporter.timer ./configs/coredump-reporter.service DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/system/)
+macro(install_symlink filepath wantsdir)
+    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/link/${wantsdir}/)
+    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_INSTALL_PREFIX}/lib/systemd/system/${filepath} ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath})
+    install(FILES ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath} DESTINATION /etc/systemd/system/${wantsdir}/)
+endmacro(install_symlink)
+install_symlink(coredump-reporter.service multi-user.target.wants)
+install_symlink(coredump-reporter.timer timers.target.wants)
+
 #FILES       - deployed files.
 #BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.
 #APPID       - working for the app.
