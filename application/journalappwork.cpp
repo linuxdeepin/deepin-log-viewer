@@ -199,7 +199,7 @@ void JournalAppWork::doWork()
         //解锁返回字符串长度上限，默认是64k，写0为无限
         // sd_journal_set_data_threshold(j, 0);
         QString dt = getReplaceColorStr(d).split("=").value(1);
-        if (m_arg.size() == 3) {
+        if (m_arg.size() == 4) {
             if (t < static_cast<uint64_t>(m_arg.at(1).toLongLong()) || t > static_cast<uint64_t>(m_arg.at(2).toLongLong()))
                 continue;
         }
