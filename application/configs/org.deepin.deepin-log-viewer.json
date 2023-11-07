@@ -12,6 +12,16 @@
             "permissions": "readwrite",
             "visibility": "private"
         },
+	"coredumpReportTime": {
+            "value": "",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Coredump report time",
+            "name[zh_CN]": "最近一次上报成功的崩溃信息时间点",
+            "description": "The time point of the last successful crash report",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
 	"specialComType": {
             "value": -1,
             "serial": 0,

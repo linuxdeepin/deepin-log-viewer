@@ -798,7 +798,7 @@ void LogBackend::slot_coredumpFinished(int index)
         int nCount = m_currentCoredumpList.size();
         if (nCount == 0) {
             qCWarning(logBackend) << QString("Report coredump info failed, timeRange: '%1 ---- %2', no matching data.")
-                                     .arg(LogSettings::instance()->getConfigLastReportTime().toString("yyyy-MM-dd hh:mm:ss"))
+                                     .arg(LogApplicationHelper::instance()->getLastReportTime().toString("yyyy-MM-dd hh:mm:ss"))
                                      .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
             qApp->exit(-1);
         } else {
@@ -830,7 +830,7 @@ void LogBackend::slot_coredumpFinished(int index)
                 };
 
                 Eventlogutils::GetInstance()->writeLogs(objCoredumpEvent);
-                LogSettings::instance()->saveLastRerportTime(latestCoredumpTime);
+                LogApplicationHelper::instance()->saveLastRerportTime(latestCoredumpTime);
                 qCInfo(logBackend) << QString("Successfully reported %1 crash messages in total.").arg(m_currentCoredumpList.size());
                 qApp->exit(0);
             });
@@ -1674,7 +1674,7 @@ bool LogBackend::reportCoredumpInfo()
 
     // 增量上报，每次上报，仅上报新增的崩溃信息，根据时间范围筛选出目标数据
     COREDUMP_FILTERS coreFilter;
-    QDateTime lastTime = LogSettings::instance()->getConfigLastReportTime();
+    QDateTime lastTime = LogApplicationHelper::instance()->getLastReportTime();
     if (!lastTime.isValid()) {
         TIME_RANGE timeRange = getTimeRange(ALL);
         coreFilter.timeFilterBegin = timeRange.begin;

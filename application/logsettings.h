@@ -56,8 +56,6 @@ public:
     QString m_logDirPath;
     QSize getConfigWinSize();
     void saveConfigWinSize(int w, int h);
-    QDateTime getConfigLastReportTime();
-    void saveLastRerportTime(const QDateTime& date);
     void saveLogDir(const QString &iKey, const QString &iDir);
     QString getLogDir(const QString &iKey);
 

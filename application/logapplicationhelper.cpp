@@ -12,6 +12,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLoggingCategory>
+#include <QDateTime>
 
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(logAppHelper, "org.deepin.log.viewer.application.helper")
@@ -25,6 +26,8 @@ std::mutex LogApplicationHelper::m_mutex;
 // 自研应用日志json配置文件目录
 const QString APP_LOG_CONFIG_PATH = "/usr/share/deepin-log-viewer/deepin-log.conf.d";
 
+const QString COREDUMP_REPORT_TIME = "coredumpReportTime";
+const QString COREDUMP_REPORT_TIME_GSETTING = "coredumpreporttime";
 /**
  * @brief LogApplicationHelper::LogApplicationHelper 构造函数，获取日志文件路径和应用名称
  * @param parent 父对象
@@ -602,6 +605,37 @@ bool LogApplicationHelper::isValidAppName(const QString &appName)
         return true;
 
     return false;
+}
+
+QDateTime LogApplicationHelper::getLastReportTime()
+{
+    QVariant time;
+
+#ifdef DTKCORE_CLASS_DConfigFile
+    time = m_pDConfig->value(COREDUMP_REPORT_TIME);
+#else
+    if (m_pGSettings) {
+        time = m_pGSettings->get(COREDUMP_REPORT_TIME_GSETTING);
+    }
+#endif
+
+    if (time.isValid()) {
+        return QDateTime::fromString(time.toString(), "yyyy-MM-dd hh:mm:ss");
+    }
+
+    return QDateTime();
+}
+
+void LogApplicationHelper::saveLastRerportTime(const QDateTime &date)
+{
+    QString str = date.toString("yyyy-MM-dd hh:mm:ss");
+
+#ifdef DTKCORE_CLASS_DConfigFile
+    m_pDConfig->setValue(COREDUMP_REPORT_TIME, str);
+#else
+    if (m_pGSettings)
+        m_pGSettings->set(COREDUMP_REPORT_TIME_GSETTING, str);
+#endif
 }
 
 //从应用包名转换为应用显示文本

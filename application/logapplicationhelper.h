@@ -62,6 +62,9 @@ public:
     // 验证是否为有效的应用名
     bool isValidAppName(const QString& appName);
 
+    QDateTime getLastReportTime();
+    void saveLastRerportTime(const QDateTime& date);
+
 private:
     explicit LogApplicationHelper(QObject *parent = nullptr);
 
