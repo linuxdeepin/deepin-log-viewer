@@ -1116,19 +1116,27 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
 
     // 常规级别有效性判断
+    int lId = -1;
     if (flag == JOURNAL || flag == Dmesg || flag == BOOT_KLU || flag == APP) {
-        if (!condition.isEmpty() && level2Id(condition) == -2) {
-            qCWarning(logBackend) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
-            return false;
+        if (!condition.isEmpty()) {
+            lId = level2Id(condition);
+            if (-2 == lId) {
+                qCWarning(logBackend) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
+                return false;
+            }
         }
 
     }
 
     // dnf级别有效性判断
+    DNFPRIORITY dnfLevel = DNFLVALL;
     if (flag == Dnf) {
-        if (!condition.isEmpty() && dnfLevel2Id(condition) == DNFINVALID) {
-            qCWarning(logBackend) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(supercrit), 1(crit), 2(error), 3(warning), 4(info), 5(debug), 6(trace)";
-            return false;
+        if (!condition.isEmpty()) {
+            dnfLevel = dnfLevel2Id(condition);
+            if (DNFINVALID == dnfLevel) {
+                qCWarning(logBackend) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(supercrit), 1(crit), 2(error), 3(warning), 4(info), 5(debug), 6(trace)";
+                return false;
+            }
         }
     }
 
@@ -1150,9 +1158,11 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
 
     // boot-shutdown-event event类型有效性判断
+    int normalEventType = -1;
     if (flag == Normal) {
         if (!condition.isEmpty()) {
-            if (normal2eventType(condition) == -1) {
+            normalEventType = normal2eventType(condition);
+            if (-1 == normalEventType) {
                 qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export login), 2(export boot), 3(shutdown)";
                 return false;
             }
@@ -1160,9 +1170,11 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
 
     // audit event有效性判断
+    int auditType = 0;
     if (flag == Audit) {
         if (!condition.isEmpty()) {
-            if (audit2eventType(condition) == -1) {
+            auditType = audit2eventType(condition);
+            if (-1 == auditType) {
                 qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(all), 1(ident auth), 2(discretionary access Contro), 3(mandatory access control), 4(remote), 5(doc audit), 6(other)";
                 return false;
             }
@@ -1172,7 +1184,6 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     qCInfo(logBackend) << "parsing ..." << "period:" << period << "condition:" << condition << "keyword:" << m_currentSearchStr;
 
     TIME_RANGE timeRange = getTimeRange(periodId);
-    int lId = level2Id(condition);
 
     // 解析器准备工作
     initParser();
@@ -1243,7 +1254,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     break;
     case Dnf: {
         DNF_FILTERS dnffilter;
-        dnffilter.levelfilter = dnfLevel2Id(condition);
+        dnffilter.levelfilter = dnfLevel;
         dnffilter.timeFilter = timeRange.begin;
         if (periodId == ALL)
             dnffilter.timeFilter = 0;
@@ -1277,7 +1288,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         m_normalFilter.searchstr = m_currentSearchStr;
         m_normalFilter.timeFilterBegin = timeRange.begin;
         m_normalFilter.timeFilterEnd = timeRange.end;
-        m_normalFilter.eventTypeFilter = normal2eventType(condition);
+        m_normalFilter.eventTypeFilter = normalEventType;
         m_normalCurrentIndex = m_pParser->parseByNormal(m_normalFilter);
     }
     break;
@@ -1285,7 +1296,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         m_auditFilter.searchstr = m_currentSearchStr;
         m_auditFilter.timeFilterBegin = timeRange.begin;
         m_auditFilter.timeFilterEnd = timeRange.end;
-        m_auditFilter.auditTypeFilter = audit2eventType(condition);
+        m_auditFilter.auditTypeFilter = auditType;
         m_auditCurrentIndex = m_pParser->parseByAudit(m_auditFilter);
     }
     break;
