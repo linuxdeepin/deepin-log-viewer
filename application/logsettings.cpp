@@ -12,7 +12,6 @@
 #include <QDateTime>
 #define MAINWINDOW_HEIGHT_NAME "logMainWindowHeightName"
 #define MAINWINDOW_WIDTH_NAME "logMainWindowWidthName"
-#define LAST_REPORT_TIME_NAME "lastReportTimeName"
 
 std::atomic<LogSettings *> LogSettings::m_instance;
 std::mutex LogSettings::m_mutex;
@@ -41,8 +40,6 @@ LogSettings::LogSettings(QObject *parent)
 
     m_logDirPath = infoPath.filePath("logdir-config.conf");
     m_logDirConfig = new QSettings(m_logDirPath, QSettings::IniFormat, this);
-
-
 }
 
 /**
@@ -83,23 +80,6 @@ void LogSettings::saveConfigWinSize(int w, int h)
     m_winInfoConfig->sync();
 }
 
-QDateTime LogSettings::getConfigLastReportTime()
-{
-    QVariant time = m_winInfoConfig->value(LAST_REPORT_TIME_NAME);
-    if (time.isValid()) {
-        return QDateTime::fromString(time.toString(), "yyyy-MM-dd hh:mm:ss");
-    }
-
-    return QDateTime();
-}
-
-void LogSettings::saveLastRerportTime(const QDateTime &date)
-{
-    QString str = date.toString("yyyy-MM-dd hh:mm:ss");
-    m_winInfoConfig->setValue(LAST_REPORT_TIME_NAME, str);
-    m_winInfoConfig->sync();
-}
-
 QMap<QString, QStringList> LogSettings::loadAuditMap()
 {
     QMap<QString, QStringList> auditType2EventType;
@@ -113,5 +93,3 @@ QMap<QString, QStringList> LogSettings::loadAuditMap()
 
     return auditType2EventType;
 }
-
-
