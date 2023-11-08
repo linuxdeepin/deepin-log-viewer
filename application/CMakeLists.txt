@@ -401,7 +401,6 @@ macro(install_symlink filepath wantsdir)
     execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_INSTALL_PREFIX}/lib/systemd/system/${filepath} ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath})
     install(FILES ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath} DESTINATION /etc/systemd/system/${wantsdir}/)
 endmacro(install_symlink)
-install_symlink(coredump-reporter.service multi-user.target.wants)
 install_symlink(coredump-reporter.timer timers.target.wants)
 
 #FILES       - deployed files.
