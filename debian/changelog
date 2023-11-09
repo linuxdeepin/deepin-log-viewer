@@ -1,3 +1,35 @@
+deepin-log-viewer (6.1.5) unstable; urgency=medium
+
+  * fix: Adjust the display rules of application names in the application list(Bug: 223969)
+  * feat: Rich command line export function
+  * feat: Command line export by condition
+  * fix: Remove command authentication
+  * fix: CLI export type logs to diretory(Bug: 225107)
+  * fix: CLI export return correct errcode(Bug: 225365)
+  * fix: fix export specify app log failed problem(Bug: 225077)
+  * fix: fix cli export kwin log failed problem(Bug: 225427)
+  * fix: ix cli export to no-write dir can not quit(Bug: 225553)
+  * fix: Add validity verification of cli export level parameters(Bug: 225567)
+  * fix: fix cli export app by keyword failed(Bug: 225573)
+  * fix: fix cli export '-e' parameter is required option
+  * fix: cli export -k can obtain parameters with spaces(Bug: 225795)
+  * fix: fix cli export audit log other bug contain MAC audit type log(Bug: 225793)
+  * fix: Resolve the issue of differences in content after changing audit log filtering criteria(Bug: 225791)
+  * feat: CLI export type log folder name with timestamp
+  * fix: Solve the problem of audit failure with keywords when exporting in cli
+  * fix: Improve the validity verification and judgment logic of cli export conditions
+  * fix: cli export -t&-d option cannot use together(Bug: 226569)
+  * fix: CLI export app log only export app log file(Bug: 226589)
+  * chore: Improve cli export input prompts(Bug: 226623)
+  * fix: Fix the issue of exporting the boot log as empty by level in cli(Bug: 226673)
+  * fix: fix journal app log can't show by period(Bug: 226727)
+  * feat: add report coredump feature(Task: 31473)
+  * fix: Fix the issue of no data in today's audit log exported by cli(Bug: 227109)
+  * fix: Coredump report time use is recorded by Dconfig/gsettings(Bug: 227219)
+  * fix: Fix the issue where restarting the machine after resetting the reportTime will immediately be modified(Bug: 227597)
+
+ -- Deepin Packages Builder <packages@deepin.org>  Thu, 09 Nov 2023 14:50:49 +0800
+
 deepin-log-viewer (6.1.4) unstable; urgency=medium
 
   * Fix the issue of low version iso app log not being displayed
