@@ -138,7 +138,7 @@ void LogCollectorMain::initUI()
 
     this->setCentralWidget(new DWidget());
 
-    m_hLayout = new QHBoxLayout(this);
+    m_hLayout = new QHBoxLayout();
 
     /** left frame */
     m_logCatelogue = new LogListView();
@@ -282,7 +282,7 @@ void LogCollectorMain::initSettings()
     if (!dir.exists()) {
         Utils::mkMutiDir(configpath);
     };
-    m_backend = new QSettingBackend(dir.filePath("config.conf"), m_settings);
+    m_backend = new QSettingBackend(dir.filePath("config.conf"));
     m_settings->setBackend(m_backend);
 }
 
