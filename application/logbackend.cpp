@@ -237,7 +237,7 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
                 parseType = "journal";
 
             QFileInfo fi(it2.second);
-            QString tmpSubCategoryOutPath = QString("%1/%2/").arg(categoryOutPath).arg(fi.baseName());
+            QString tmpSubCategoryOutPath = QString("%1/%2/").arg(categoryOutPath).arg(fi.completeBaseName());
             Utils::mkMutiDir(tmpSubCategoryOutPath);
 
             if (parseType == "file") {
