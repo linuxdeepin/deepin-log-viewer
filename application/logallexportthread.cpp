@@ -94,7 +94,7 @@ void LogAllExportThread::run()
                     paths.removeDuplicates();
                     if (paths.size() > 0) {
                         QFileInfo fi(it2.second);
-                        data.dir2Files[fi.baseName()] = paths;
+                        data.dir2Files[fi.completeBaseName()] = paths;
                     }
                 } else if (parseType == "journal") {
                     data.dir2Files[Utils::appName(it2.second)] = QStringList() << "journalctl_app";
