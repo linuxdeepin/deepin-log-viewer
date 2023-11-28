@@ -229,16 +229,17 @@ struct LOG_MSG_COREDUMP {
     QString exe;
     QString pid;
     QString storagePath;
+    QString stackInfo;
 
     QJsonObject toJson() {
         QJsonObject obj;
         obj.insert("sig", sig);
         obj.insert("dateTime", dateTime);
         obj.insert("coreFile", coreFile);
-        obj.insert("user", uid);
         obj.insert("exe", exe);
         obj.insert("pid", pid);
         obj.insert("storagePath", storagePath);
+        obj.insert("stackInfo", stackInfo);
 
         return obj;
     }

@@ -1223,6 +1223,11 @@ void LogAuthThread::handleCoredump()
                 m_process->waitForFinished(-1);
                 outInfoByte = m_process->readAllStandardOutput();
             }
+            // 解析第一条堆栈信息
+            QStringList strList = outInfoByte.split("Stack trace of thread");
+            if (strList.size() > 1) {
+                coredumpMsg.stackInfo = "Stack trace of thread" + strList[1];
+            }
             re.indexIn(outInfoByte);
             coredumpMsg.storagePath = re.cap(0).replace("Storage: ", "");
         } else {
