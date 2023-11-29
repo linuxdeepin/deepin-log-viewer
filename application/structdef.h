@@ -230,6 +230,7 @@ struct LOG_MSG_COREDUMP {
     QString pid;
     QString storagePath;
     QString stackInfo;
+    QString maps;
 
     QJsonObject toJson() {
         QJsonObject obj;
@@ -240,6 +241,7 @@ struct LOG_MSG_COREDUMP {
         obj.insert("pid", pid);
         obj.insert("storagePath", storagePath);
         obj.insert("stackInfo", stackInfo);
+        obj.insert("maps", maps);
 
         return obj;
     }

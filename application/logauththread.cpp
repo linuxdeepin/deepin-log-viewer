@@ -1230,6 +1230,23 @@ void LogAuthThread::handleCoredump()
             }
             re.indexIn(outInfoByte);
             coredumpMsg.storagePath = re.cap(0).replace("Storage: ", "");
+            
+            // get maps info
+            const QString &corePath = QString("/tmp/%1.dump").arg(QFileInfo(coredumpMsg.storagePath).fileName());
+            if (Utils::runInCmd) {
+                DLDBusHandler::instance()->readLog(QString("coredumpctl dump %1 -o %2").arg(coredumpMsg.pid).arg(corePath));
+                outInfoByte = DLDBusHandler::instance()->readLog(QString("readelf -n %1").arg(corePath));
+            } else {
+                m_process->start("pkexec", QStringList() << "logViewerAuth" << QStringList() << "coredumpctl-dump"
+                                 << coredumpMsg.pid << corePath << SharedMemoryManager::instance()->getRunnableKey());
+                m_process->waitForFinished(-1);
+                m_process->start("pkexec", QStringList() << "logViewerAuth" << QStringList() << "readelf"
+                                 << corePath << SharedMemoryManager::instance()->getRunnableKey());
+                m_process->waitForFinished(-1);
+                outInfoByte = m_process->readAllStandardOutput();
+            }
+            coredumpMsg.maps = outInfoByte;
+            QFile::remove(corePath);
         } else {
             coredumpMsg.storagePath = QString("coredump file is missing");
         }

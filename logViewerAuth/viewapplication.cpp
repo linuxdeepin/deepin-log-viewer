@@ -46,6 +46,13 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     } else if(fileList[0] == "coredumpctl-info"){
         arg << "-c"
             << QString("coredumpctl info %1").arg(fileList[1]);
+    } else if(fileList[0] == "coredumpctl-dump" && fileList.count() > 2){
+        arg << "-c"
+            << QString("coredumpctl dump %1 -o %2").arg(fileList[1]).arg(fileList[2]);
+    } else if(fileList[0] == "readelf" && fileList.count() > 1){
+        arg << "-c"
+            << QString("readelf -n %1").arg(fileList[1]);
+        useFinishedSignal = true;
     } else {
         arg << "-c" << QString("cat %1").arg(fileList[0]);
     }
