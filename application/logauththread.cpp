@@ -1232,7 +1232,7 @@ void LogAuthThread::handleCoredump()
             coredumpMsg.storagePath = re.cap(0).replace("Storage: ", "");
             
             // get maps info
-            const QString &corePath = QString("/tmp/%1.dump").arg(QFileInfo(coredumpMsg.storagePath).fileName());
+            const QString &corePath =  QDir::homePath() + QString("/%1.dump").arg(QFileInfo(coredumpMsg.storagePath).fileName());
             if (Utils::runInCmd) {
                 DLDBusHandler::instance()->readLog(QString("coredumpctl dump %1 -o %2").arg(coredumpMsg.pid).arg(corePath));
                 outInfoByte = DLDBusHandler::instance()->readLog(QString("readelf -n %1").arg(corePath));

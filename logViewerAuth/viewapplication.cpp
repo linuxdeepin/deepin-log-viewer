@@ -35,6 +35,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
         return ;
     }
     bool useFinishedSignal = false;
+    bool onlyExec = false;
     QStringList arg;
     if (fileList[0] == "dmesg") {
         arg << "-c"
@@ -49,6 +50,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     } else if(fileList[0] == "coredumpctl-dump" && fileList.count() > 2){
         arg << "-c"
             << QString("coredumpctl dump %1 -o %2").arg(fileList[1]).arg(fileList[2]);
+        onlyExec = true;
     } else if(fileList[0] == "readelf" && fileList.count() > 1){
         arg << "-c"
             << QString("readelf -n %1").arg(fileList[1]);
@@ -80,7 +82,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
             QStringList strList = QString(byte.replace('\u0000', "").replace("\x01", "")).split('\n', QString::SkipEmptyParts);
             std::cout << byte.replace('\u0000', "").data();
         });
-    } else {
+    } else if (!onlyExec) {
         connect(m_proc, &QProcess::readyReadStandardOutput, this, [ = ] {
             if (!getControlInfo().isStart)
             {
@@ -93,9 +95,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
         });
     }
 
-
     m_proc->start("/bin/bash", arg);
-
     m_proc->waitForFinished(-1);
     m_proc->close();
 }

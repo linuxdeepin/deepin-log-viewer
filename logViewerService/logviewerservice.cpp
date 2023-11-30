@@ -58,6 +58,8 @@ QString LogViewerService::readLog(const QString &filePath)
          !filePath.startsWith("/home") &&
          !filePath.startsWith("/root") &&
          !filePath.startsWith("coredumpctl info") &&
+         !filePath.startsWith("coredumpctl dump") &&
+         !filePath.startsWith("readelf") &&
          filePath != "coredump") ||
          filePath.contains(".."))  {
         return " ";
@@ -71,6 +73,18 @@ QString LogViewerService::readLog(const QString &filePath)
         return m_process.readAllStandardOutput();
     } else if (filePath.startsWith("coredumpctl info")) {
         // 通过后端服务，按进程号获取崩溃信息
+        m_process.start("/bin/bash", QStringList() << "-c" << filePath);
+        m_process.waitForFinished(-1);
+
+        return m_process.readAllStandardOutput();
+    } else if (filePath.startsWith("coredumpctl dump")) {
+        // 截取对应pid的dump文件到指定目录
+        m_process.start("/bin/bash", QStringList() << "-c" << filePath);
+        m_process.waitForFinished(-1);
+
+        return m_process.readAllStandardOutput();
+    } else if (filePath.startsWith("readelf")) {
+        // 获取dump文件偏移地址信息
         m_process.start("/bin/bash", QStringList() << "-c" << filePath);
         m_process.waitForFinished(-1);
 
