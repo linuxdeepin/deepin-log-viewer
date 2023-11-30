@@ -1,3 +1,14 @@
+deepin-log-viewer (6.1.6) unstable; urgency=medium
+
+  * fix: clear qt warning logs
+  * fix: Fix the issue of incomplete acquisition of file base names(Bug: 228425)
+  * feat: report coredump add stackinfo
+  * fix: not get core file maps (#237)
+    Thanks to groveer
+  * fix: Resolve the issue of failure to obtain stack maps address for crash information
+
+ -- Deepin Packages Builder <packages@deepin.org>  Thu, 30 Nov 2023 17:49:19 +0800
+
 deepin-log-viewer (6.1.5) unstable; urgency=medium
 
   * fix: Adjust the display rules of application names in the application list(Bug: 223969)
