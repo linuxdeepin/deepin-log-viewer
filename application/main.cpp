@@ -36,6 +36,12 @@ Q_LOGGING_CATEGORY(logAppMain, "org.deepin.log.viewer.main", QtInfoMsg)
 
 int main(int argc, char *argv[])
 {
+    // 检查是否开启预加载，防止黑客利用预加载的so库劫持日志后端服务干坏事
+    if (getenv("LD_PRELOAD")) {
+        qCritical() << "env LP_PRELOAD is illegal, please unset it.";
+        return -1;
+    }
+
     //在root下或者非deepin/uos环境下运行不会发生异常，需要加上XDG_CURRENT_DESKTOP=Deepin环境变量；
     if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")) {
         setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
