@@ -5,6 +5,7 @@ usr/bin/deepin-logger
 usr/lib/deepin-daemon/log-view-service
 usr/lib/systemd/system/coredump-reporter.service
 usr/lib/systemd/system/coredump-reporter.timer
+usr/lib/systemd/system/deepin-log-viewer-daemon.service
 /etc/systemd/system/timers.target.wants/coredump-reporter.timer
 usr/share/applications/deepin-log-viewer.desktop
 usr/share/dbus-1/system-services/com.deepin.logviewer.service
