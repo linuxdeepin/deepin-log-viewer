@@ -1,0 +1,11 @@
+[Unit]
+Description=Deepin Log Viewer Daemon
+
+[Service]
+Type=dbus
+BusName=com.deepin.logviewer.daemon
+ExecStart=/usr/lib/deepin-daemon/log-view-service
+CapabilityBoundingSet=~CAP_NET_RAW
+
+[Install]
+WantedBy=multi-user.target

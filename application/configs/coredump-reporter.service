@@ -2,8 +2,10 @@
 Description=deepin-log-viewer coredump report activities
 
 [Service]
-User=root
+
 ExecStart=/usr/bin/deepin-log-viewer --reportcoredump
+#CapabilityBoundingSet=CAP_SYS_ADMIN CAP_SYSLOG CAP_SYS_NICE CAP_SYS_PACCT CAP_MAC_OVERRIDE CAP_AUDIT_CONTROL CAP_AUDIT_READ CAP_AUDIT_WRITE
+CapabilityBoundingSet=~CAP_NET_RAW
 
 [Install]
 WantedBy=multi-user.target
