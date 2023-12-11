@@ -6,6 +6,7 @@ Type=dbus
 BusName=com.deepin.logviewer.daemon
 ExecStart=/usr/lib/deepin-daemon/log-view-service
 CapabilityBoundingSet=~CAP_NET_RAW
+MemoryLimit=8G
 
 [Install]
 WantedBy=multi-user.target
