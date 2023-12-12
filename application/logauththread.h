@@ -39,6 +39,7 @@ public:
     QString getStandardOutput();
     QString getStandardError();
     void setType(LOG_FLAG flag) { m_type = flag; }
+    void setParseMap(bool parseMap) { m_parseMap = parseMap; }
     void setFileterParam(const KWIN_FILTERS &iFIlters) { m_kwinFilters = iFIlters; }
     void setFileterParam(const XORG_FILTERS &iFIlters) { m_xorgFilters = iFIlters; }
     void setFileterParam(const DKPG_FILTERS &iFIlters) { m_dkpgFilters = iFIlters; }
@@ -158,6 +159,7 @@ private:
     /**
      * @brief m_threadIndex 当前线程标号
      */
+    bool m_parseMap = false; // 崩溃信息是否要解析map信息，即stackinfo
     int m_threadCount;
     //正在执行停止进程的变量，防止重复执行停止逻辑
     bool m_isStopProccess = false;

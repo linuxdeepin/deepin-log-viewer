@@ -1687,7 +1687,7 @@ bool LogBackend::reportCoredumpInfo()
     if (!m_pParser)
         initParser();
 
-    m_coredumpCurrentIndex = m_pParser->parseByCoredump(coreFilter);
+    m_coredumpCurrentIndex = m_pParser->parseByCoredump(coreFilter, true);
 
     return true;
 }

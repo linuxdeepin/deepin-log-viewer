@@ -47,7 +47,7 @@ public:
 
     int parseByAudit(const AUDIT_FILTERS &iAuditFilter);
 
-    int parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter);
+    int parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap = false);
 
     void createFile(const QString &output, int count);
     void stopAllLoad();

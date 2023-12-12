@@ -451,13 +451,14 @@ int LogFileParser::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
     return index;
 }
 
-int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter)
+int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap)
 {
     stopAllLoad();
     m_isCoredumpLoading = true;
     //qRegisterMetaType<QList<quint16>>("QList<LOG_MSG_COREDUMP>");
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(COREDUMP);
+    authThread->setParseMap(parseMap);
     authThread->setFileterParam(iCoredumpFilter);
     connect(authThread, &LogAuthThread::coredumpFinished, this,
             &LogFileParser::coredumpFinished);
