@@ -28,6 +28,11 @@ std::atomic<LogAuthThread *> LogAuthThread::m_instance;
 std::mutex LogAuthThread::m_mutex;
 int LogAuthThread::thread_count = 0;
 
+// 崩溃信号列表对应字符值
+const QStringList sigList = { "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1",
+        "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP",
+        "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGIO", "SIGPWR", "SIGSYS"};
+
 // DBUS传输文件大小阈值 100MB
 #define DBUS_THRESHOLD_MAX 100
 /**
@@ -1151,12 +1156,6 @@ void LogAuthThread::handleAudit()
 
 void LogAuthThread::handleCoredump()
 {
-    QStringList sigList;
-    sigList << "SIGHUP" << "SIGINT" << "SIGQUIT" << "SIGILL" << "SIGTRAP" << "SIGABRT" << "SIGBUS" << "SIGFPE" << "SIGKILL" << "SIGUSR1"
-            << "SIGSEGV" << "SIGUSR2" << "SIGPIPE" << "SIGALRM" << "SIGTERM" << "SIGSTKFLT" << "SIGCHLD" << "SIGCONT" << "SIGSTOP" << "SIGTSTP"
-            << "SIGTTIN" << "SIGTTOU" << "SIGURG" << "SIGXCPU" << "SIGXFSZ" << "SIGVTALRM" << "SIGPROF" << "SIGWINCH" << "SIGIO" << "SIGPWR"
-            << "SIGSYS";
-
     if (!m_canRun) {
         return;
     }
