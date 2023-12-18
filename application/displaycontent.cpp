@@ -2274,7 +2274,19 @@ void DisplayContent::slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list)
         return;
 
     m_coredumpList.append(list);
-    m_currentCoredumpList.append(filterCoredump(m_currentSearchStr, list));
+    QList<LOG_MSG_COREDUMP> filterList = filterCoredump(m_currentSearchStr, list);
+    m_currentCoredumpList.append(filterList);
+    //分页已到底部，来新数据时需要刷新到下一页
+    int value = m_treeView->verticalScrollBar()->value();
+    int maximum = m_treeView->verticalScrollBar()->maximum();
+    if (value == maximum && value > 0 && filterList.size() > 0) {
+        int rateValue = (m_treeViewLastScrollValue + 25) / SINGLE_LOAD;
+        int leftCnt = m_currentCoredumpList.count() - SINGLE_LOAD * rateValue;
+        int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
+        m_limitTag = rateValue;
+        insertCoredumpTable(m_currentCoredumpList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+    }
+
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
     if (m_firstLoadPageData && !m_currentCoredumpList.isEmpty()) {
         createCoredumpTable(m_currentCoredumpList);

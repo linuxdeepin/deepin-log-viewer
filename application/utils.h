@@ -5,6 +5,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 #define SINGLE_READ_CNT 500
+#define SINGLE_READ_CNT_COREDUMP 600
 #include <QObject>
 #include <QHash>
 /**
