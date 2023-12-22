@@ -1,3 +1,14 @@
+deepin-log-viewer (6.1.7) unstable; urgency=medium
+
+  * fix: Fix security vulnerabilities introduced by LD_PRELOAD(Bug: HW23-1232)
+  * feat: Rectification of DBus security coding standards
+  * fix: systemd service add memory limits 8G
+  * fix: coredump map info only parsed in report coredump(Bug: 233653)
+  * chore: Code review issue modification
+  * fix: Resolve the issue of incomplete display of crash logs(Bug: 234131)
+
+ -- houchengqiu <houchengqiu@uniontech.com>  Fri, 22 Dec 2023 13:21:34 +0800
+
 deepin-log-viewer (6.1.6) unstable; urgency=medium
 
   * fix: clear qt warning logs
