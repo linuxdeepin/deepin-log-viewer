@@ -175,6 +175,10 @@
         <source>Export failed</source>
         <translation>导出失败</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation>导出目录不可用，请选择其他目录进行导出操作。</translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -498,12 +502,72 @@
 <context>
     <name>main</name>
     <message>
-        <source>export logs</source>
-        <translation>导出日志</translation>
+        <source>Export logs to the specified path</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>export logs directory. if not set, default export to ~/Document.</source>
-        <translation>指定日志导出目录。若未设置此项，默认导出到~/文档。</translation>
+        <source>PATH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

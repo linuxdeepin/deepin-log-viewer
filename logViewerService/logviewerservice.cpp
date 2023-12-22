@@ -4,6 +4,16 @@
 
 #include "logviewerservice.h"
 
+#include <pwd.h>
+#include <unistd.h>
+
+#include <dgiofile.h>
+#include <dgiovolume.h>
+#include <dgiovolumemanager.h>
+
+#include <QMutex>
+#include <QUrl>
+#include <QRegularExpression>
 #include <QCoreApplication>
 #include <QDebug>
 #include <QStringList>
@@ -71,19 +81,19 @@ QString LogViewerService::readLog(const QString &filePath)
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("coredumpctl info")) {
+    } else if (filePath.startsWith("coredumpctl info") && !filePath.contains(";")) {
         // 通过后端服务，按进程号获取崩溃信息
         m_process.start("/bin/bash", QStringList() << "-c" << filePath);
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("coredumpctl dump")) {
+    } else if (filePath.startsWith("coredumpctl dump") && !filePath.contains(";")) {
         // 截取对应pid的dump文件到指定目录
         m_process.start("/bin/bash", QStringList() << "-c" << filePath);
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("readelf")) {
+    } else if (filePath.startsWith("readelf") && !filePath.contains(";")) {
         // 获取dump文件偏移地址信息
         m_process.start("/bin/bash", QStringList() << "-c" << filePath);
         m_process.waitForFinished(-1);
@@ -181,6 +191,81 @@ quint64 LogViewerService::getFileSize(const QString &filePath)
         return static_cast<quint64>(fi.size());
 
     return 0;
+}
+
+// 获取白名单导出路径
+QStringList LogViewerService::whiteListOutPaths()
+{
+    QStringList paths;
+    // 获取当前用户家目录
+    QString homePath = getAppUserHomePath();
+    if (!homePath.isEmpty())
+        paths.push_back(homePath);
+    // 获取外设挂载可写路径(包括smb路径)
+    paths << getExternalDevPaths();
+    // 获取临时目录
+    paths.push_back("/tmp");
+    return paths;
+}
+
+// 获取应用当前登录用户家目录
+QString LogViewerService::getAppUserHomePath()
+{
+    if (!calledFromDBus()) {
+        return "";
+    }
+
+    uint uid = connection().interface()->serviceUid(message().service()).value();
+    struct passwd* pwd = getpwuid(uid);
+    QString homePath = "/home/" + QString(pwd->pw_name);
+    return homePath;
+}
+
+// 获取外设挂载路径
+QStringList LogViewerService::getExternalDevPaths()
+{
+    QStringList devPaths;
+    const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = getMounts_safe();
+    for (auto mount : mounts) {
+        QString uri = mount->getRootFile()->uri();
+        QString scheme = QUrl(mount->getRootFile()->uri()).scheme();
+
+        // sbm路径判断，分为gvfs挂载和cifs挂载两种
+        QRegularExpression recifs("^file:///media/(.*)/smbmounts");
+        QRegularExpression regvfs("^file:///run/user/(.*)/gvfs|^/root/.gvfs");
+        if (recifs.match(uri).hasMatch() || regvfs.match(uri).hasMatch()) {
+            QString path = QUrl(uri).toLocalFile();
+            QFlags <QFileDevice::Permission> power = QFile::permissions(path);
+            if (power.testFlag(QFile::WriteUser))
+                devPaths.push_back(path);
+        }
+
+        // 外设路径判断
+        if ((scheme == "file") ||  //usb device
+                (scheme == "gphoto2") ||        //phone photo
+                (scheme == "mtp")) {            //android file
+            QExplicitlySharedDataPointer<DGioFile> locationFile = mount->getDefaultLocationFile();
+            QString path = locationFile->path();
+            if (path.startsWith("/media/")) {
+                QFlags <QFileDevice::Permission> power = QFile::permissions(path);
+                if (power.testFlag(QFile::WriteUser)) {
+                    devPaths.push_back(path);
+                }
+            }
+        }
+    }
+
+    return devPaths;
+}
+
+//可重入版本的getMounts
+QList<QExplicitlySharedDataPointer<DGioMount> > LogViewerService::getMounts_safe()
+{
+    static QMutex mutex;
+    mutex.lock();
+    auto result = DGioVolumeManager::getMounts();
+    mutex.unlock();
+    return result;
 }
 
 /*!
@@ -377,6 +462,12 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         return false;
     }
 
+    // 导出路径白名单检查
+    QStringList availablePaths = whiteListOutPaths();
+    if (!availablePaths.contains(outDirInfo.absoluteFilePath())) {
+        return false;
+    }
+
     QString outFullPath = "";
     QStringList arg = {"-c", ""};
     if (isFile) {
@@ -426,6 +517,10 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
 
 bool LogViewerService::isValidInvoker()
 {
+    if (!calledFromDBus()) {
+        return false;
+    }
+
     bool valid = false;
     QDBusConnection conn = connection();
     QDBusMessage msg = message();

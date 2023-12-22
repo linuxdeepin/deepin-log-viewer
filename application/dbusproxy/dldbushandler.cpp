@@ -62,6 +62,11 @@ QString DLDBusHandler::readLogInStream(const QString &token)
     return m_dbus->readLogInStream(token);
 }
 
+QStringList DLDBusHandler::whiteListOutPaths()
+{
+    return m_dbus->whiteListOutPaths();
+}
+
 /*!
  * \~chinese \brief DLDBusHandler::exitCode 返回进程状态
  * \~chinese \return 进程返回值

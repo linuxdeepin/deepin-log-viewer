@@ -175,6 +175,10 @@
         <source>Export failed</source>
         <translation>Az exportálás sikertelen</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -497,11 +501,71 @@
 <context>
     <name>main</name>
     <message>
-        <source>export logs</source>
+        <source>Export logs to the specified path</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>export logs directory. if not set, default export to ~/Document.</source>
+        <source>PATH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
