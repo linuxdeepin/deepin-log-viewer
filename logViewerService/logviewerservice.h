@@ -5,6 +5,8 @@
 #ifndef LOGVIEWERSERVICE_H
 #define LOGVIEWERSERVICE_H
 
+#include <dgiomount.h>
+
 #include <QObject>
 #include <QDBusContext>
 #include <QScopedPointer>
@@ -12,7 +14,7 @@
 #include <QTemporaryDir>
 
 class QTextStream;
-
+class DGioVolumeManager;
 class LogViewerService : public QObject
     , protected QDBusContext
 {
@@ -35,7 +37,14 @@ public Q_SLOTS:
     Q_SCRIPTABLE QString readLogInStream(const QString &token);
     Q_SCRIPTABLE bool isFileExist(const QString &filePath);
     Q_SCRIPTABLE quint64 getFileSize(const QString &filePath);
+    Q_SCRIPTABLE QStringList whiteListOutPaths();
 
+private:
+    // 获取应用当前登录用户家目录
+    QString getAppUserHomePath();
+    //获取外设挂载路径(包括smb路径)
+    QStringList getExternalDevPaths();
+    QList<QExplicitlySharedDataPointer<DGioMount>> getMounts_safe();
 private:
     QTemporaryDir tmpDir;
     QProcess m_process;

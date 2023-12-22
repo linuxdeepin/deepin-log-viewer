@@ -37,5 +37,8 @@
       <arg type="t" direction="out"/>
       <arg name="filePath" type="s" direction="in"/>
     </method>
+    <method name="whiteListOutPaths">
+      <arg type="as" direction="out"/>
+    </method>
   </interface>
 </node>

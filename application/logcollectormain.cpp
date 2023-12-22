@@ -17,6 +17,7 @@
 #include <DTitlebar>
 #include <DWindowOptionButton>
 #include <DWindowCloseButton>
+#include <DMessageManager>
 
 #include <QDateTime>
 #include <QDebug>
@@ -317,6 +318,17 @@ void LogCollectorMain::exportAllLogs()
     if (newPath.isEmpty()) {
         return;
     }
+
+    // 导出路径白名单检查
+    QFileInfo info(newPath);
+    QString outPath = info.path();
+    QStringList availablePaths =  DLDBusHandler::instance(this)->whiteListOutPaths();
+    if (!availablePaths.contains(outPath)) {
+        QString titleIcon = ICONPREFIX;
+        DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "warning_info.svg"), DApplication::translate("ExportMessage", "The export directory is not available. Please choose another directory for the export operation."));
+        return;
+    }
+
     //添加文件后缀
     if (!newPath.endsWith(".zip")) {
         newPath += ".zip";

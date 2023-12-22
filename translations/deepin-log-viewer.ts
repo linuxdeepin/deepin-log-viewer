@@ -175,6 +175,10 @@
         <source>Export failed</source>
         <translation>Export failed</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>File</name>

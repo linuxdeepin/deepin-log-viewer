@@ -105,6 +105,12 @@ public Q_SLOTS: // METHODS
         argumentList << QVariant::fromValue(filePath);
         return asyncCallWithArgumentList(QStringLiteral("getFileSize"), argumentList);
     }
+
+    inline QDBusPendingReply<QStringList> whiteListOutPaths()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("whiteListOutPaths"), argumentList);
+    }
 Q_SIGNALS: // SIGNALS
 };
 

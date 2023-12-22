@@ -39,6 +39,9 @@ find_package(Qt5 COMPONENTS
     Widgets
     DBus
 REQUIRED)
+pkg_check_modules(3rd_lib REQUIRED
+         gio-qt
+        )
 
 set(LINK_LIBS
     Qt5::Core
@@ -54,6 +57,7 @@ add_executable(${PROJECT_NAME} ${ALL_SOURCES} ${ALL_HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
     ${PROJECT_BINARY_DIR}
+    ${3rd_lib_INCLUDE_DIRS}
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${DtkWidget_INCLUDE_DIRS} ${OBJECT_BINARY_DIR})
@@ -61,6 +65,7 @@ target_link_libraries(${PROJECT_NAME}
     ${LINK_LIBS}
     ${DtkWidget_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
+    ${3rd_lib_LIBRARIES}
 )
 set(CMAKE_INSTALL_PREFIX /usr)
 

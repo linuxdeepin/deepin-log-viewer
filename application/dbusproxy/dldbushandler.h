@@ -24,6 +24,7 @@ public:
     quint64 getFileSize(const QString &filePath);
     QString openLogStream(const QString &filePath);
     QString readLogInStream(const QString &token);
+    QStringList whiteListOutPaths();
 
 private:
     explicit DLDBusHandler(QObject *parent = nullptr);
