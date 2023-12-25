@@ -1,3 +1,10 @@
+deepin-log-viewer (6.1.8) unstable; urgency=medium
+
+  * fix: Fix security vulnerabilities introduced by LD_PRELOAD 2nd(Bug: 234125)
+  * chore: Optimization of output path whitelist inspection methods(Bug: 236471)
+
+ -- houchengqiu <houchengqiu@uniontech.com>  Mon, 25 Dec 2023 17:17:00 +0800
+
 deepin-log-viewer (6.1.7) unstable; urgency=medium
 
   * fix: Fix security vulnerabilities introduced by LD_PRELOAD(Bug: HW23-1232)
