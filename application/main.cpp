@@ -165,14 +165,6 @@ int main(int argc, char *argv[])
                 return -1;
             }
 
-            // 导出路径白名单检查
-            QStringList availablePaths =  DLDBusHandler::instance(&a)->whiteListOutPaths();
-            if (!availablePaths.contains(outDir)) {
-                QString titleIcon = ICONPREFIX;
-                qCWarning(logAppMain) << qApp->translate("ExportMessage", "The export directory is not available. Please choose another directory for the export operation.");
-                return -1;
-            }
-
             if (!type.isEmpty() && type != "app" && !appName.isEmpty()) {
                 qCWarning(logAppMain) << QString("Option -d -t both exist, -t can only be set to 'app' type.");
                 return -1;
