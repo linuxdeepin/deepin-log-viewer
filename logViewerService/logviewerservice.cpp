@@ -463,8 +463,16 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     }
 
     // 导出路径白名单检查
+    QString outPath = outDirInfo.absoluteFilePath();
     QStringList availablePaths = whiteListOutPaths();
-    if (!availablePaths.contains(outDirInfo.absoluteFilePath())) {
+    bool bAvailable = false;
+    for (auto path : availablePaths) {
+        if (outPath.startsWith(path)) {
+            bAvailable = true;
+            break;
+        }
+    }
+    if (!bAvailable) {
         return false;
     }
 

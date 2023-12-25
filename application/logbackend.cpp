@@ -1595,6 +1595,20 @@ bool LogBackend::getOutDirPath(const QString &path)
             return false;
         }
 
+        // 导出路径白名单检查
+        QStringList availablePaths =  DLDBusHandler::instance()->whiteListOutPaths();
+        bool bAvailable = false;
+        for (auto path : availablePaths) {
+            if (tmpPath.startsWith(path)) {
+                bAvailable = true;
+                break;
+            }
+        }
+        if (!bAvailable) {
+            qCWarning(logBackend) << qApp->translate("ExportMessage", "The export directory is not available. Please choose another directory for the export operation.");
+            return false;
+        }
+
         m_outPath = tmpPath;
         qCInfo(logBackend) << "outPath:" << m_outPath;
         return true;

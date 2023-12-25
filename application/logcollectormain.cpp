@@ -323,7 +323,15 @@ void LogCollectorMain::exportAllLogs()
     QFileInfo info(newPath);
     QString outPath = info.path();
     QStringList availablePaths =  DLDBusHandler::instance(this)->whiteListOutPaths();
-    if (!availablePaths.contains(outPath)) {
+
+    bool bAvailable = false;
+    for (auto path : availablePaths) {
+        if (outPath.startsWith(path)) {
+            bAvailable = true;
+            break;
+        }
+    }
+    if (!bAvailable) {
         QString titleIcon = ICONPREFIX;
         DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "warning_info.svg"), DApplication::translate("ExportMessage", "The export directory is not available. Please choose another directory for the export operation."));
         return;
