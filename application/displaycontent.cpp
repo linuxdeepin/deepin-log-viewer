@@ -730,12 +730,12 @@ void DisplayContent::insertCoredumpTable(const QList<LOG_MSG_COREDUMP> &list, in
 
 /**
  * @brief DisplayContent::generateAppFile 触发获取应用日志数据线程
- * @param path 要获取的某一个应用的日志的日志文件路径
+ * @param app 要获取的某一个应用的项目名称
  * @param id 时间筛选id 对应BUTTONID枚举,0表示全部,1是今天,2是3天内,3是筛选1周内数据,4是筛选一个月内的,5是三个月
  * @param lId 等级筛选id,对应PRIORITY枚举,直接传入获取系统接口,-1表示全部等级不筛选,
  * @param iSearchStr 搜索关键字,现阶段不用,保留参数
  */
-void DisplayContent::generateAppFile(const QString &path, int id, int lId, const QString &iSearchStr)
+void DisplayContent::generateAppFile(const QString &app, int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
     appList.clear();
@@ -748,62 +748,55 @@ void DisplayContent::generateAppFile(const QString &path, int id, int lId, const
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime()); // get zero time
     createAppTableForm();
-    APP_FILTERS appFilter;
-    appFilter.path = path;
-    appFilter.lvlFilter = lId;
+    m_appFilter.app = app;
+    m_appFilter.lvlFilter = lId;
     switch (id) {
     case ALL:
-        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
         break;
     case ONE_DAY: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        appFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
-        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
+        m_appFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        m_appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case THREE_DAYS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        appFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
-        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
-
+        m_appFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        m_appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        appFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
-        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
+        m_appFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        m_appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        appFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
-        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
+        m_appFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        m_appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        appFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
-        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_appCurrentIndex = m_logFileParse.parseByApp(appFilter);
+        m_appFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
     }
     break;
     default:
         break;
     }
+
+    m_appCurrentIndex = m_logFileParse.parseByApp(m_appFilter);
 }
 
 /**
@@ -818,8 +811,8 @@ void DisplayContent::createAppTableForm()
                                         << DApplication::translate("Table", "Source")
                                         << DApplication::translate("Table", "Info"));
     m_treeView->setColumnWidth(0, LEVEL_WIDTH);
-    m_treeView->setColumnWidth(1, DATETIME_WIDTH + 20);
-    m_treeView->setColumnWidth(2, DEAMON_WIDTH);
+    m_treeView->setColumnWidth(1, DATETIME_WIDTH);
+    m_treeView->setColumnWidth(2, DEAMON_WIDTH + 28);
 }
 
 /**
@@ -1464,7 +1457,7 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
         QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
         generateOOCFile(path);
     } else {
-        emit sigDetailInfo(index, m_pModel, getAppName(m_curAppLog));
+        emit sigDetailInfo(index, m_pModel, getAppName(m_curApp));
     }
 }
 
@@ -1499,8 +1492,8 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
     } else if (treeData.contains(".cache")) {
         //        generateAppFile(treeData, btnId, lId);
     } else if (treeData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
-        if (!m_curAppLog.isEmpty()) {
-            generateAppFile(m_curAppLog, btnId, m_curLevel);
+        if (!m_curApp.isEmpty()) {
+            generateAppFile(m_curApp, btnId, m_curLevel);
         }
     } else if (treeData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) { // add by Airy
         generateXorgFile(btnId);
@@ -1523,14 +1516,16 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
 
 /**
  * @brief DisplayContent::slot_appLogs 根据应用日志应用类型变化触发应用日志获取线程
- * @param path 应用日志的路径
+ * @param btnId 周期Id
+ * @param app 应用项目名称
  */
-void DisplayContent::slot_appLogs(int btnId, const QString &path)
+void DisplayContent::slot_appLogs(int btnId, const QString &app)
 {
     appList.clear();
-    m_curAppLog = path;
+    m_curApp = app;
     m_curBtnId = btnId;
-    generateAppFile(path, m_curBtnId, m_curLevel);
+    m_appFilter.clear();
+    generateAppFile(app, m_curBtnId, m_curLevel);
 }
 
 /**
@@ -1702,7 +1697,7 @@ void DisplayContent::slot_exportClicked()
             break;
         case APP: {
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(appList.count()));
-            QString appName = getAppName(m_curAppLog);
+            QString appName = getAppName(m_curApp);
             exportThread->exportToTxtPublic(fileName, appList, labels, appName);
             break;
         }
@@ -1758,7 +1753,7 @@ void DisplayContent::slot_exportClicked()
             break;
         case APP: {
             PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(appList.count()));
-            QString appName = getAppName(m_curAppLog);
+            QString appName = getAppName(m_curApp);
             exportThread->exportToHtmlPublic(fileName, appList, labels, appName);
             break;
         }
@@ -1814,7 +1809,7 @@ void DisplayContent::slot_exportClicked()
             break;
         case APP: {
             PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(appList.count()));
-            QString appName = getAppName(m_curAppLog);
+            QString appName = getAppName(m_curApp);
             exportThread->exportToDocPublic(fileName, appList, labels, appName);
             break;
         }
@@ -1870,7 +1865,7 @@ void DisplayContent::slot_exportClicked()
             break;
         case APP: {
             PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(appList.count()));
-            QString appName = getAppName(m_curAppLog);
+            QString appName = getAppName(m_curApp);
             exportThread->exportToXlsPublic(fileName, appList, labels, appName);
             break;
         }
@@ -2179,7 +2174,7 @@ void DisplayContent::slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> 
     if (m_flag != APP || index != m_appCurrentIndex)
         return;
     appListOrigin.append(list);
-    appList.append(filterApp(m_currentSearchStr, list));
+    appList.append(filterApp(m_appFilter, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
     if (m_firstLoadPageData && !appList.isEmpty()) {
         createAppTable(appList);
@@ -2599,7 +2594,8 @@ void DisplayContent::slot_searchResult(const QString &str)
     break;
     case APP: {
         appList.clear();
-        appList = filterApp(m_currentSearchStr, appListOrigin);
+        m_appFilter.searchstr = m_currentSearchStr;
+        appList = filterApp(m_appFilter, appListOrigin);
         createAppTableForm();
         createAppTable(appList);
     }
@@ -2697,6 +2693,25 @@ void DisplayContent::slot_searchResult(const QString &str)
         setLoadState(DATA_COMPLETE);
         m_detailWgt->hideLine(false);
     }
+}
+
+/**
+ * @brief DisplayContent::slot_getSubmodule 应用日志筛选子模块型的选择槽函数,根据所选子模块显示对应应用日志内容
+ * @param tcbx 子模块的索引 0全部, > 0 显示指定子模块内容
+ */
+void DisplayContent::slot_getSubmodule(int tcbx)
+{
+    if (tcbx == 0)
+        m_appFilter.submodule = "";
+    else {
+        AppLogConfig logConfig = LogApplicationHelper::instance()->appLogConfig(m_appFilter.app);
+        int nSubModuleIndex = tcbx - 1;
+        if (logConfig.subModules.size() > 0 && nSubModuleIndex < logConfig.subModules.size())
+            m_appFilter.submodule = logConfig.subModules[nSubModuleIndex].name;
+    }
+    appList = filterApp(m_appFilter, appListOrigin);
+    createAppTableForm();
+    createAppTable(appList);
 }
 
 /**
@@ -2825,7 +2840,11 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
         item->setData(APP_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
         items << item;
-        item = new DStandardItem(getAppName(m_curAppLog));
+        //item = new DStandardItem(getAppName(m_curApp));
+        item = new DStandardItem(iList[i].subModule);
+        // 若取不到子模块名称，则显示为应用名称
+        if (iList[i].subModule.isEmpty())
+            item->setText(getAppName(m_curApp));
         item->setData(APP_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
         items << item;
@@ -3255,6 +3274,9 @@ void DisplayContent::clearAllFilter()
     m_currentSearchStr.clear();
     m_currentKwinFilter = {""};
     m_normalFilter.searchstr = "";
+    QString tmp = m_appFilter.submodule;
+    m_appFilter.clear();
+    m_appFilter.submodule = tmp;
 }
 
 /**
@@ -3416,16 +3438,37 @@ QList<LOG_MSG_KWIN> DisplayContent::filterKwin(const QString &iSearchStr, const 
     return rsList;
 }
 
-QList<LOG_MSG_APPLICATOIN> DisplayContent::filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList)
+QList<LOG_MSG_APPLICATOIN> DisplayContent::filterApp(APP_FILTERS appFilter, const QList<LOG_MSG_APPLICATOIN> &iList)
 {
     QList<LOG_MSG_APPLICATOIN> rsList;
-    if (iSearchStr.isEmpty()) {
+    if (appFilter.searchstr.isEmpty() && appFilter.submodule.isEmpty()) {
         return iList;
     }
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_MSG_APPLICATOIN msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.src.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
-            rsList.append(msg);
+
+    if (appFilter.submodule.isEmpty()) {
+        for (int i = 0; i < iList.size(); i++) {
+            LOG_MSG_APPLICATOIN msg = iList.at(i);
+            if (msg.dateTime.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.level.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.src.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.msg.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.subModule.contains(appFilter.searchstr, Qt::CaseInsensitive)) {
+                rsList.append(msg);
+            }
+        }
+    } else {
+        for (int i = 0; i < iList.size(); i++) {
+            LOG_MSG_APPLICATOIN msg = iList.at(i);
+            if (msg.dateTime.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.level.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.src.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.msg.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.subModule.contains(appFilter.searchstr, Qt::CaseInsensitive)) {
+                if (msg.subModule.compare(appFilter.submodule, Qt::CaseInsensitive) == 0) {
+                    rsList.append(msg);
+                }
+            }
+        }
     }
     return rsList;
 }

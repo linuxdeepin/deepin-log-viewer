@@ -198,10 +198,6 @@
         <translation>級別：</translation>
     </message>
     <message>
-        <source>Application list:</source>
-        <translation> 應用程式列表：</translation>
-    </message>
-    <message>
         <source>Status:</source>
         <translation>登入訊息</translation>
     </message>
@@ -239,6 +235,14 @@
     </message>
     <message>
         <source>Audit Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

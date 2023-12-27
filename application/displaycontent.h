@@ -70,7 +70,7 @@ private:
     void createKernTableForm();
     void createKernTable(const QList<LOG_MSG_JOURNAL> &list);
 
-    void generateAppFile(const QString &path, int id, int lId, const QString &iSearchStr = "");
+    void generateAppFile(const QString &app, int id, int lId, const QString &iSearchStr = "");
     void createAppTableForm();
     void createAppTable(const QList<LOG_MSG_APPLICATOIN> &list);
 
@@ -159,7 +159,7 @@ public slots:
     void slot_requestShowRightMenu(const QPoint &pos);
     void slot_tableItemClicked(const QModelIndex &index);
     void slot_BtnSelected(int btnId, int lId, QModelIndex idx);
-    void slot_appLogs(int btnId, const QString &path);
+    void slot_appLogs(int btnId, const QString &app);
 
     void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_exportClicked();
@@ -197,6 +197,7 @@ public slots:
     void slot_vScrollValueChanged(int valuePixel);
 
     void slot_searchResult(const QString &str);
+    void slot_getSubmodule(int tcbx);
     void slot_getLogtype(int tcbx); // add by Airy
     void slot_getAuditType(int tcbx);
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
@@ -229,7 +230,7 @@ public slots:
     QList<LOG_MSG_JOURNAL> filterKern(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_MSG_XORG> filterXorg(const QString &iSearchStr, const QList<LOG_MSG_XORG> &iList);
     QList<LOG_MSG_KWIN> filterKwin(const QString &iSearchStr, const QList<LOG_MSG_KWIN> &iList);
-    QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList);
+    QList<LOG_MSG_APPLICATOIN> filterApp(APP_FILTERS appFilter, const QList<LOG_MSG_APPLICATOIN> &iList);
     QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList);
     QList<LOG_FILE_OTHERORCUSTOM> filterOOC(const QString &iSearchStr, const QList<LOG_FILE_OTHERORCUSTOM> &iList);
@@ -282,9 +283,9 @@ private:
     QAction *m_act_refresh{ nullptr };
 
     /**
-     * @brief m_curAppLog 当前选中的应用的日志文件路径
+     * @brief m_curAppLog 当前选中的应用的项目名称
      */
-    QString m_curAppLog;
+    QString m_curApp;
 
     QString m_currentStatus;
 
@@ -404,6 +405,8 @@ private:
     bool m_firstLoadPageData = false;
     //启动日志当前筛选条件
     BOOT_FILTERS m_bootFilter = {"", ""};
+    // 应用日志当前筛选条件
+    APP_FILTERS m_appFilter;
     /**
      * @brief m_normalFilter 开关机日志当前筛选条件
      */

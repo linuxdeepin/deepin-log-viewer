@@ -198,10 +198,6 @@
         <translation>级别：</translation>
     </message>
     <message>
-        <source>Application list:</source>
-        <translation>应用列表：</translation>
-    </message>
-    <message>
         <source>Status:</source>
         <translation>状态：</translation>
     </message>
@@ -240,6 +236,14 @@
     <message>
         <source>Audit Type:</source>
         <translation>审计类型：</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>应用：</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>子模块：</translation>
     </message>
 </context>
 <context>

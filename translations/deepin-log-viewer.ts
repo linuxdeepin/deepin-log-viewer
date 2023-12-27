@@ -198,10 +198,6 @@
         <translation>Level:  </translation>
     </message>
     <message>
-        <source>Application list:</source>
-        <translation>Application list:</translation>
-    </message>
-    <message>
         <source>Status:</source>
         <translation>Status:</translation>
     </message>
@@ -239,7 +235,15 @@
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Audit Type:</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>Application:</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>Submodule:</translation>
     </message>
 </context>
 <context>

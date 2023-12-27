@@ -547,7 +547,7 @@ TEST_F(DisplayContentlx_UT, slot_appLogs_UT)
     EXPECT_NE(m_content, nullptr);
     EXPECT_EQ(m_content->appList.size(), 0)<<"check the status after slot_appLogs()";
     EXPECT_EQ(m_content->m_curBtnId, 1)<<"check the status after slot_appLogs()";
-    EXPECT_EQ(m_content->m_curAppLog,"~/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log")<<"check the status after slot_appLogs()";
+    EXPECT_EQ(m_content->m_curApp,"deepin-log-viewer")<<"check the status after slot_appLogs()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_dpkgData_UT)

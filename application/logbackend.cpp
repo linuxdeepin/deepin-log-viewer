@@ -800,7 +800,8 @@ void LogBackend::slot_coredumpFinished(int index)
             qCWarning(logBackend) << QString("Report coredump info failed, timeRange: '%1 ---- %2', no matching data.")
                                      .arg(LogApplicationHelper::instance()->getLastReportTime().toString("yyyy-MM-dd hh:mm:ss"))
                                      .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
-            qApp->exit(-1);
+            // 此处退出码不能为-1，否则systemctl --failed服务会将其判为失败的systemd服务
+            qApp->exit(0);
         } else {
 
             // 崩溃数据转json数据

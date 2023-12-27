@@ -411,12 +411,28 @@ void LogListView::truncateFile(QString path_)
 /**
  * @author Airy
  * @brief LogListView::slot_getAppPath  清空应用日志时，当前显示应用日志的目录由外部提供并赋予成员变量
- * @param path 要设置的当前应用路径
+ * @param app 要设置的当前应用项目名称
  */
-void LogListView::slot_getAppPath(int id, const QString &path)
+void LogListView::slot_getAppPath(int id, const QString &app)
 {
     Q_UNUSED(id);
-    g_path = path;
+
+    AppLogConfig appConfig = LogApplicationHelper::instance()->appLogConfig(app);
+    if (!appConfig.isValid())
+        g_path = "";
+    else {
+        std::vector<SubModuleConfig> vSubmodules = appConfig.subModules.toVector().toStdVector();
+        auto it = std::find_if(vSubmodules.begin(), vSubmodules.end(), [=](SubModuleConfig submodule) {
+            return submodule.logType == "file" && submodule.name == appConfig.name;
+        });
+
+        if (it != vSubmodules.end()) {
+            g_path = it->logPath;
+            return;
+        }
+
+        g_path = "";
+    }
 }
 
 Qt::FocusReason LogListView::focusReson()
@@ -457,6 +473,8 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             path = pathData;
         } else if (pathData == APP_TREE_DATA) {
             path = _path_;
+            g_clear->setEnabled(!path.isEmpty());
+            g_openForder->setEnabled(!path.isEmpty());
         }
 
         //显示当前日志目录

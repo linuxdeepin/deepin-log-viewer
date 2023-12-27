@@ -41,7 +41,7 @@ private:
     bool isFileExist(const QString &iFile);
     void initCustomLogItem();
 public slots:
-    void slot_getAppPath(int id, const QString &path); // add by Airy
+    void slot_getAppPath(int id, const QString &app); // add by Airy
     Qt::FocusReason focusReson();
     void showRightMenu(const QPoint &pos, bool isUsePoint);
     void requestshowRightMenu(const QPoint &pos);

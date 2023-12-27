@@ -9,7 +9,7 @@
 #include <QMap>
 #include <QObject>
 #include <QThread>
-
+#include <QMutex>
 #include <mutex>
 
 class QProcess;
@@ -22,7 +22,7 @@ class LogApplicationParseThread : public QThread
 public:
     explicit LogApplicationParseThread(QObject *parent = nullptr);
     ~LogApplicationParseThread() override;
-    void setParam(const APP_FILTERS &iFilter);
+    void setFilters(const APP_FILTERSList &iFilters);
     static int thread_count;
 signals:
     /**
@@ -36,8 +36,15 @@ public slots:
     void onProcFinished(int ret);
     void stopProccess();
     int getIndex();
+
+private:
+    bool parseByFile(const APP_FILTERS& app_filter);
+    bool parseByJournal(const APP_FILTERS& app_filter);
 protected:
+    QString getDateTimeFromStamp(const QString &str);
     void initMap();
+    void initJournalMap();
+    QString i2str(int prio);
     void initProccess();
     void run() override;
 
@@ -46,6 +53,7 @@ private:
      * @brief m_AppFiler 筛选条件结构体
      */
     APP_FILTERS m_AppFiler;
+    APP_FILTERSList m_AppFilers;
     //获取数据用的cat命令的process
     QProcess *m_process = nullptr;
     /**
@@ -53,9 +61,14 @@ private:
      */
     QMap<QString, int> m_levelDict;
     /**
+     * @brief m_journalMap journal等级数字对应字符串
+     */
+    QMap<int, QString> m_journalMap;
+    /**
      * @brief m_appList 获取的数据结果
      */
     QList<LOG_MSG_APPLICATOIN> m_appList;
+    QMutex mutex;
     /**
      * @brief m_canRun 是否可以继续运行的标记量，用于停止运行线程
      */

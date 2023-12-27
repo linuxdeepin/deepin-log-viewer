@@ -198,10 +198,6 @@
         <translation>Səviyyə:</translation>
     </message>
     <message>
-        <source>Application list:</source>
-        <translation>Tətbiq siyahısı:</translation>
-    </message>
-    <message>
         <source>Status:</source>
         <translation>Vəziyyət:</translation>
     </message>
@@ -239,6 +235,14 @@
     </message>
     <message>
         <source>Audit Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -294,26 +294,36 @@ int LogFileParser::parseByKern(const KERN_FILTERS &iKernFilter)
 
 int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
 {
-    // 根据应用名获取应用日志类型，缺省为log文件类型
-    QString appName = Utils::appName(iAPPFilter.path);
+    // 根据应用名获取应用日志配置信息
+    QString appName = iAPPFilter.app;
     AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
 
-    qCDebug(logFileParser) << QString("parsing app log, appName:%1 applogType:%2 path:%3").arg(appName).arg(appLogConfig.logType).arg(iAPPFilter.path);
+    APP_FILTERSList appFilterList;
+    if (appLogConfig.subModules.size() == 1) {
+        APP_FILTERS appFilter = iAPPFilter;
+        // 子模块名称与应用名称显示一致，并且仅有一个子模块，
+        // 则认为该应用与子模块同名称，来源列表显示为应用名称
+        if (appLogConfig.subModules[0].name == appLogConfig.name)
+            appFilter.submodule = "";
+        else
+            appFilter.submodule = appLogConfig.subModules[0].name;
+        appFilter.logType = appLogConfig.subModules[0].logType;
+        appFilter.path = appLogConfig.subModules[0].logPath;
+        appFilter.execPath = appLogConfig.subModules[0].execPath;
+        appFilterList.push_back(appFilter);
+    } else if (appLogConfig.subModules.size() > 1) {
+        for (auto submodule : appLogConfig.subModules) {
+            APP_FILTERS appFilter = iAPPFilter;
+            appFilter.submodule = submodule.name;
+            appFilter.logType = submodule.logType;
+            appFilter.filter = submodule.filter;
+            appFilter.path = submodule.logPath;
+            appFilter.execPath = submodule.execPath;
+            appFilterList.push_back(appFilter);
+        }
+    }
 
-    // 确定解析方式
-    QString parseType = "file";
-    if (appLogConfig.logType == "file" || !appLogConfig.isValid())
-        parseType = "file";
-    else if (appLogConfig.isValid() && appLogConfig.logType == "journal")
-        parseType = "journal";
-
-// DTKCore 5.6.8以下，不支持journal方式解析，指定按file方式解析应用日志
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 6, 8, 0))
-    parseType = "file";
-#endif
-
-    if (parseType == "file") {
-        // file方式解析应用日志(老流程)
+    if (appFilterList.size() > 0) {
         stopAllLoad();
         m_isAppLoading = true;
 
@@ -326,7 +336,7 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
                    &LogFileParser::appData);
         disconnect(this, &LogFileParser::stopApp, m_appThread,
                    &LogApplicationParseThread::stopProccess);
-        m_appThread->setParam(iAPPFilter);
+        m_appThread->setFilters(appFilterList);
         connect(m_appThread, &LogApplicationParseThread::appFinished, this,
                 &LogFileParser::appFinished);
         connect(m_appThread, &LogApplicationParseThread::appData, this,
@@ -337,40 +347,6 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
                 &QObject::deleteLater);
         int index = m_appThread->getIndex();
         m_appThread->start();
-        return index;
-    } else if (parseType == "journal") {
-        // journal方式解析应用日志
-        stopAllLoad();
-        emit stopJournalApp();
-
-        // 级别筛选
-        QStringList arg;
-        if (iAPPFilter.lvlFilter != LVALL) {
-            QString prio = QString("PRIORITY=%1").arg(iAPPFilter.lvlFilter);
-            arg.append(prio);
-        } else {
-            arg.append("all");
-        }
-
-        // 时间筛选
-        if (iAPPFilter.timeFilterBegin != -1) {
-            arg << QString::number(iAPPFilter.timeFilterBegin * 1000) << QString::number(iAPPFilter.timeFilterEnd * 1000);
-        }
-
-        // 应用筛选
-        arg << appName;
-
-        JournalAppWork* work = new JournalAppWork(this);
-
-        // 设置筛选条件参数
-        work->setArg(arg);
-
-        connect(work, &JournalAppWork::journalAppFinished, this, &LogFileParser::appFinished, Qt::QueuedConnection);
-        connect(work, &JournalAppWork::journalAppData, this, &LogFileParser::appData, Qt::QueuedConnection);
-        connect(this, &LogFileParser::stopJournalApp, work, &JournalAppWork::stopWork);
-
-        int index = work->getIndex();
-        QThreadPool::globalInstance()->start(work);
         return index;
     }
 
@@ -494,7 +470,6 @@ void LogFileParser::stopAllLoad()
     emit stopXlog();
     emit stopKwin();
     emit stopApp();
-    emit stopJournalApp();
     emit stopJournal();
     emit stopJournalBoot();
     emit stopNormal();
