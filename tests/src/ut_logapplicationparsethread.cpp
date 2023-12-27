@@ -84,7 +84,9 @@ TEST_F(LogApplicationParseThread_UT, UT_OnProcFinished_001){
 
 TEST_F(LogApplicationParseThread_UT, UT_SetParam_001){
     APP_FILTERS appfilter;
-    m_logAppThread->setParam(appfilter);
+    APP_FILTERSList appfilters;
+    appfilters << appfilter;
+    m_logAppThread->setFilters(appfilters);
     EXPECT_NE(m_logAppThread, nullptr);
     EXPECT_EQ(m_logAppThread->m_AppFiler.path, appfilter.path);
 }

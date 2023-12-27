@@ -156,6 +156,16 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
     return fontFamilyName;
 }
 
+QString Utils::getReplaceColorStr(const char *d)
+{
+    QByteArray byteChar(d);
+    byteChar = replaceEmptyByteArray(byteChar);
+    QString d_str = QString(byteChar);
+    d_str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+    d_str.replace(QRegExp("\\002"), "");
+    return  d_str;
+}
+
 /**
  * @brief Utils::replaceEmptyByteArray 替换从qproccess获取的日志信息的字符中的空字符串 替换 \u0000,不然QByteArray会忽略这以后的内容
  * @param iReplaceStr要替换的字符串

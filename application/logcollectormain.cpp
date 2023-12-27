@@ -383,6 +383,8 @@ void LogCollectorMain::initConnection()
             &DisplayContent::slot_dnfLevel);
     connect(m_topRightWgt, &FilterContent::sigCbxAppIdxChanged, m_midRightWgt,
             &DisplayContent::slot_appLogs);
+    connect(m_topRightWgt, &FilterContent::sigCbxSubModuleChanged, m_midRightWgt,
+            &DisplayContent::slot_getSubmodule); // add by Airy
 
     connect(m_topRightWgt, &FilterContent::sigExportInfo, m_midRightWgt,
             &DisplayContent::slot_exportClicked);

@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 #endif
 #else
     QDir dirCheck;
-    QString LogPath = QString("%1/%2/%3/Log/")
+    QString LogPath = QString("%1/%2/%3/")
                           .arg("/var/log")
                           .arg(qApp->organizationName())
                           .arg(qApp->applicationName());
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
     if (!dirCheck.exists(LogPath)) {
         dirCheck.mkpath(LogPath);
     }
-    QString serviceLogPath=LogPath+QString("deepin-log-viewer-service.log");
+    QString serviceLogPath=LogPath+QString("%1.log").arg(qApp->applicationName());
     Dtk::Core::DLogManager::setlogFilePath(serviceLogPath);
     Dtk::Core::DLogManager::registerConsoleAppender();
     Dtk::Core::DLogManager::registerFileAppender();

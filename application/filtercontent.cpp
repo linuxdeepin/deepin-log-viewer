@@ -35,6 +35,7 @@
 #define BUTTON_EXPORT_WIDTH_MIN 142
 #define FONT_20_MIN_WIDTH 821
 #define FONT_18_MIN_WIDTH 100
+#define LEVEL_COMBO_WIDTH 120
 DWIDGET_USE_NAMESPACE
 
 /**
@@ -103,7 +104,7 @@ void FilterContent::initUI()
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
     cbx_lv->view()->setAccessibleName("combobox_level_view");
-    cbx_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
+    cbx_lv->setMinimumSize(QSize(LEVEL_COMBO_WIDTH, BUTTON_HEIGHT_MIN));
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                      << DApplication::translate("ComboBox", "Emergency")
                      << DApplication::translate("ComboBox", "Alert")
@@ -139,7 +140,7 @@ void FilterContent::initUI()
     hLayout_all->addLayout(hLayout_dnf_lvl);
     // set all files under ~/.cache/deepin
     QHBoxLayout *hLayout_app = new QHBoxLayout;
-    appTxt = new DLabel(DApplication::translate("Label", "Application list:"), this);
+    appTxt = new DLabel(DApplication::translate("Label", "Application:"), this);
     cbx_app = new LogCombox(this);
     cbx_app->view()->setAccessibleName("combobox_app_view");
 
@@ -148,6 +149,19 @@ void FilterContent::initUI()
     hLayout_app->addWidget(cbx_app, 1);
     hLayout_app->setSpacing(6);
     hLayout_all->addLayout(hLayout_app);
+
+    // app submodules
+    QHBoxLayout *hLayout_submodule = new QHBoxLayout;
+    submoduleTxt = new DLabel(DApplication::translate("Label", "Submodule:"), this);
+    cbx_submodule = new LogCombox(this);
+    cbx_submodule->view()->setAccessibleName("combobox_submodule_view");
+
+    cbx_submodule->setMinimumSize(QSize(154, BUTTON_HEIGHT_MIN));
+    hLayout_submodule->addWidget(submoduleTxt);
+    hLayout_submodule->addWidget(cbx_submodule, 1);
+    hLayout_submodule->setSpacing(6);
+    hLayout_all->addLayout(hLayout_submodule);
+
 
     // add status item
     QHBoxLayout *hLayout_status = new QHBoxLayout;
@@ -263,17 +277,42 @@ void FilterContent::setAppComboBoxItem()
     cbx_app->clear();
     //获取应用列表
     auto *appHelper = LogApplicationHelper::instance();
-    QMap<QString, QString> _map = appHelper->getMap();
-    QMap<QString, QString>::const_iterator iter = _map.constBegin();
+    AppLogConfigList appConfigs =  appHelper->getAppLogConfigs();
     //添加数据进combox
-    while (iter != _map.constEnd()) {
-        cbx_app->addItem(iter.key());
-        //应用日志的路径为Qt::UserRole + 1
-        cbx_app->setItemData(cbx_app->count() - 1, iter.value(), Qt::UserRole + 1);
-        ++iter;
+    for (auto appConfig : appConfigs) {
+        // 没有子模块，不在应用列表显示
+        if (appConfig.subModules.size() == 0)
+            continue;
+
+        cbx_app->addItem(appConfig.transName);
+        // 应用日志的项目名称为Qt::UserRole + 1
+        cbx_app->setItemData(cbx_app->count() - 1, appConfig.name, Qt::UserRole + 1);
     }
+
     connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
 
+}
+
+void FilterContent::setSubmodulesComboBoxItem(const QString &app)
+{
+    AppLogConfig logConfig = LogApplicationHelper::instance()->appLogConfig(app);
+
+    // 子模块只有一个，则不显示子模块下拉框
+    if (logConfig.subModules.size() < 2) {
+        submoduleTxt->setVisible(false);
+        cbx_submodule->setVisible(false);
+    } else {
+        submoduleTxt->setVisible(true);
+        cbx_submodule->setVisible(true);
+        disconnect(cbx_submodule, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxSubmoduleChanged(int)));
+        cbx_submodule->clear();
+        cbx_submodule->addItem(DApplication::translate("ComboBox", "All"));
+        for (auto submodule : logConfig.subModules) {
+            cbx_submodule->addItem(submodule.name);
+        }
+        cbx_submodule->setCurrentText(DApplication::translate("ComboBox", "All"));
+        connect(cbx_submodule, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxSubmoduleChanged(int)));
+    }
 }
 
 /**
@@ -297,6 +336,9 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
 
     appTxt->setVisible(appListCbx);
     cbx_app->setVisible(appListCbx);
+
+    submoduleTxt->setVisible(false);
+    cbx_submodule->setVisible(false);
 
     dnflvTxt->setVisible(dnfCbx);
     cbx_dnf_lv->setVisible(dnfCbx);
@@ -344,14 +386,14 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
     if (cbx_lv->isVisible())
         cbx_lv->setCurrentIndex(iConifg.levelCbx);
     if (cbx_app->isVisible()) {
-        QString path = iConifg.appListCbx;
+        QString app = iConifg.appListCbx;
         int appCount =  cbx_app->count();
         int rsIndex = 0;
 
-        if (!path.isEmpty()) {
+        if (!app.isEmpty()) {
             //找原来选的选项的index,如果这个应用日志没了,就选第一个
             for (int i = 0; i < appCount; ++i) {
-                if (cbx_app->itemData(i, Qt::UserRole + 1).toString() == path) {
+                if (cbx_app->itemData(i, Qt::UserRole + 1).toString() == app) {
                     rsIndex = i;
                     break;
                 }
@@ -362,6 +404,19 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
             Q_EMIT cbx_app->currentIndexChanged(0);
         } else {
             cbx_app->setCurrentIndex(rsIndex);
+        }
+
+        if (cbx_submodule->isVisible()) {
+
+            int nSubIndex = 0;
+            //找原来选的选项的index,如果这个子模块没了,就选择所有
+            for (int i = 0; i < cbx_submodule->count(); ++i) {
+                if (cbx_submodule->itemText(i) == iConifg.app2Submodule[app]) {
+                    nSubIndex = i;
+                    break;
+                }
+            }
+            cbx_submodule->setCurrentIndex(nSubIndex);
         }
     }
 
@@ -791,13 +846,25 @@ void FilterContent::slot_cbxLvIdxChanged(int idx)
 void FilterContent::slot_cbxAppIdxChanged(int idx)
 {
     setChangedcomboxstate(!getLeftButtonState());
-    QString path = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
+    QString app = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
-    curConfig.appListCbx = path;
+    curConfig.appListCbx = app;
     //变化时改变记录选择选项的数据结构,以便下次还原
     setCurrentConfig(curConfig);
     //发出信号以供数据显示控件刷新数据
-    emit sigCbxAppIdxChanged(curConfig.dateBtn, path);
+    emit sigCbxAppIdxChanged(curConfig.dateBtn, app);
+
+    // 初始化子模块列表
+    setSubmodulesComboBoxItem(app);
+}
+
+void FilterContent::slot_cbxSubmoduleChanged(int idx)
+{
+    setChangedcomboxstate(true);
+    FILTER_CONFIG curConfig = m_config.value(m_currentType);
+    curConfig.app2Submodule[curConfig.appListCbx] = cbx_submodule->currentText();
+    setCurrentConfig(curConfig);
+    emit sigCbxSubModuleChanged(idx);
 }
 
 /**

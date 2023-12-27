@@ -127,6 +127,7 @@ struct LOG_MSG_BOOT {
 
 struct LOG_MSG_APPLICATOIN {
     QString dateTime;
+    QString subModule;
     QString level;
     QString src;
     QString msg;
@@ -268,8 +269,28 @@ struct APP_FILTERS {
     qint64 timeFilterBegin = -1 ;
     qint64 timeFilterEnd = -1;
     int lvlFilter;
+    QString app;
+    QString submodule;
+    QString logType = "file";
     QString path;
+    QString execPath;
+    QString filter;
+    QString searchstr = ""; //搜索关键字
+
+    void clear() {
+        timeFilterBegin = -1;
+        timeFilterEnd = -1;
+        lvlFilter = -1;
+        app = "";
+        submodule = "";
+        logType = "file";
+        path = "";
+        execPath = "";
+        filter = "";
+        searchstr = "";
+    }
 };
+typedef QList<APP_FILTERS> APP_FILTERSList;
 struct JOURNAL_FILTERS {
     int eventTypeFilter = -99;
     int timeFilter = -99;
@@ -328,12 +349,14 @@ struct AUDIT_FILTERS {
  */
 struct FILTER_CONFIG {
     int levelCbx = INF + 1; //等级筛选的筛选值
-    QString appListCbx = ""; //应用日志路径
+    QString appListCbx = ""; //应用项目名称
     int statusCbx = 0; //启动日志状态筛选下拉框的值
     int dateBtn = 0; //时间筛选按钮当前选择筛选按钮对应BUTTONID
     int typeCbx = 0;
     int auditCbx = 0;
     int dnfCbx = 5;
+    QMap<QString, QString> app2Submodule; //应用项目名称-子模块名称
+
 };
 enum BUTTONID {
     ALL = 0,
@@ -479,17 +502,50 @@ struct EXPORTALL_DATA {
     }
 };
 
+struct SubModuleConfig {
+    QString name;
+    QString filter;
+    QString execPath;
+    QString logType; // 日志类型分为file或journal
+    QString logPath;
+
+    SubModuleConfig()
+        : name("")
+        , filter("")
+        , execPath("")
+        , logType("journal")
+        , logPath("")
+    {
+
+    }
+
+    bool isValid() {
+        return !name.isEmpty();
+    }
+};
+typedef QList<SubModuleConfig> SubModuleConfigList;
+
 // 自研应用日志配置信息
 struct AppLogConfig {
 
     QString name;
+    QString transName;
+    QString group;
+    QString version; // json配置版本号
+
     QString execPath;
     QString logPath;
     QString logType; // 日志类型分为file或journal
+
     bool    visible;
+
+    SubModuleConfigList subModules;
 
     AppLogConfig()
         : name("")
+        , transName("")
+        , group("")
+        , version("V1.0")
         , execPath("")
         , logPath("")
         , logType("")
@@ -499,11 +555,11 @@ struct AppLogConfig {
     }
 
     bool contains(const QString& app) {
-        return name.contains(app) || execPath.contains(app);
+        return name == app;
     }
 
     bool isValid() {
-        return !name.isEmpty() && !execPath.isEmpty();
+        return !name.isEmpty();
     }
 };
 

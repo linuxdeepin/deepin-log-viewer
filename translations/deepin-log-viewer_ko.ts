@@ -198,10 +198,6 @@
         <translation>레벨:</translation>
     </message>
     <message>
-        <source>Application list:</source>
-        <translation>응용프로그램 목록:</translation>
-    </message>
-    <message>
         <source>Status:</source>
         <translation>상태:</translation>
     </message>
@@ -239,6 +235,14 @@
     </message>
     <message>
         <source>Audit Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

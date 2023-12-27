@@ -75,7 +75,7 @@ TEST(LogApplicationHelper_createDesktopFiles_UT, LogApplicationHelper_createDesk
     EXPECT_NE(p, nullptr);
     Stub stub;
     stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), stub_readLine);
-    stub.set(ADDR(LogApplicationHelper, parseField), stub_parseField);
+    stub.set(ADDR(LogApplicationHelper, generateTransName), stub_parseField);
     p->createDesktopFiles();
     p->deleteLater();
 }
@@ -86,7 +86,7 @@ TEST(LogApplicationHelper_createDesktopFiles_UT, LogApplicationHelper_createDesk
     EXPECT_NE(p, nullptr);
     Stub stub;
     stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), stub_readLine001);
-    stub.set(ADDR(LogApplicationHelper, parseField), stub_parseField);
+    stub.set(ADDR(LogApplicationHelper, generateTransName), stub_parseField);
     p->createDesktopFiles();
     p->deleteLater();
 }
@@ -127,7 +127,7 @@ TEST_P(LogApplicationHelper_parseField_UT, LogApplicationHelper_parseField_UT)
     EXPECT_NE(p, nullptr);
     LogApplicationHelper_parseField_UT_Param param = GetParam();
     QString path = param.isPathEmpty ? "" : "../sources/dde-calendar.log";
-    p->parseField(path, "dde-calendar.log", param.isDeepin, param.isGeneric, param.isName);
+    p->generateTransName(path, "dde-calendar.log", param.isDeepin, param.isGeneric, param.isName);
 
     p->deleteLater();
 }

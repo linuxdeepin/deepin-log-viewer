@@ -44,6 +44,8 @@ public:
     }
 
     QMap<QString, QString> getMap();
+    // 刷新并返回最新的应用配置信息
+    AppLogConfigList getAppLogConfigs();
 
     //根据包名获得显示名称
     QString transName(const QString &str);
@@ -58,6 +60,7 @@ public:
     QList<QStringList> getCustomLogList();
 
     AppLogConfig  appLogConfig(const QString& app);
+    bool isAppLogConfigExist(const QString& app);
 
     // 验证是否为有效的应用名
     bool isValidAppName(const QString& appName);
@@ -75,12 +78,18 @@ private:
 
     void createDesktopFiles();
     void createLogFiles();
+    void createTransLogFiles();
 
-    void parseField(const QString &path, const QString &name, bool isDeepin, bool isGeneric, bool isName);
+    void generateTransName(const QString &path, const QString &name, bool isDeepin, bool isGeneric, bool isName);
 
     QString getLogFile(const QString &path);
 
-    void loadAppLogConfigs();
+    void loadAppLogConfigsByJson();
+
+    AppLogConfig jsonAppLogConfig(const QString& app);
+    bool isJsonAppLogConfigExist(const QString& app);
+
+    void validityJsonLogPath(SubModuleConfig& submodule);
 
 signals:
     void sigValueChanged(const QString &key);
@@ -122,7 +131,11 @@ private:
     QString m_current_system_language;
 
     /**
-     * @brief m_appLogConfigs 应用日志配置信息
+     * @brief m_appLogConfigs 应用日志json配置信息
+     */
+    AppLogConfigList m_JsonAppLogConfigs;
+    /**
+     * @brief m_appLogConfigs 应用日志配置信息（包含json配置信息）
      */
     AppLogConfigList m_appLogConfigs;
     /**

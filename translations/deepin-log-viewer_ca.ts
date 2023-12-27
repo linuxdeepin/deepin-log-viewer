@@ -198,10 +198,6 @@
         <translation>Nivell:</translation>
     </message>
     <message>
-        <source>Application list:</source>
-        <translation>Llista d&apos;aplicacions:</translation>
-    </message>
-    <message>
         <source>Status:</source>
         <translation>Estat:</translation>
     </message>
@@ -239,6 +235,14 @@
     </message>
     <message>
         <source>Audit Type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

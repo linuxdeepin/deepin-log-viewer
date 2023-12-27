@@ -7,7 +7,6 @@
 
 #include "journalwork.h"
 #include "journalbootwork.h"
-#include "journalappwork.h"
 #include "logapplicationparsethread.h"
 #include "logauththread.h"
 #include "dbusproxy/dldbushandler.h"
@@ -97,7 +96,6 @@ signals:
     void stopApp();
     void stopJournal();
     void stopJournalBoot();
-    void stopJournalApp();
     void stopDnf();
     void stopDmesg();
     void stopOOC();
