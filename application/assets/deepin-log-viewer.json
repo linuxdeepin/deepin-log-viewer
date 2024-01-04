@@ -1,8 +1,22 @@
 {
-	"name": "deepin-log-viewer",
-	"exec": "/usr/bin/deepin-log-viewer",
-	"logType": "journal",
-	"logPath": "~/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log",
-	"visible": "1",
-	"version": "V1.0"
+    "name": "deepin-log-viewer",
+    "group": "",
+    "submodules": [
+		{
+			"name": "deepin-log-viewer",
+			"filter": "",
+			"exec": "/usr/bin/deepin-log-viewer",
+			"logType": "journal",
+			"logPath": ""
+		},
+		{
+			"name": "log-view-service-file",
+			"filter": "",
+			"exec": "/usr/lib/deepin-daemon/log-view-service",
+			"logType": "file",
+			"logPath": "/var/log/deepin/deepin-log-viewer-service/deepin-log-viewer-service.log"
+		}
+    ],
+    "visible": true,
+    "version": "V2.0"
 }

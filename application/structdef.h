@@ -282,7 +282,6 @@ struct APP_FILTERS {
         timeFilterEnd = -1;
         lvlFilter = -1;
         app = "";
-        submodule = "";
         logType = "file";
         path = "";
         execPath = "";
@@ -313,6 +312,13 @@ struct NORMAL_FILTERS {
     qint64 timeFilterEnd = -1; //筛选结束时间
     int eventTypeFilter = 0; //筛选类型, 有 0全部 1登陆 2开机 3关机
     QString searchstr = ""; //搜索关键字
+
+    void clear() {
+        timeFilterBegin = -1;
+        timeFilterEnd = -1;
+        eventTypeFilter = 0;
+        searchstr = "";
+    }
 };
 
 struct KERN_FILTERS {
@@ -342,6 +348,13 @@ struct AUDIT_FILTERS {
     qint64 timeFilterEnd = -1; //筛选结束时间
     int auditTypeFilter = 0; //筛选类型, 有 0全部 1身份鉴别 2自主访问控制 3强制访问控制 4远程连接 5文件审计
     QString searchstr = ""; //搜索关键字
+
+    void clear() {
+        timeFilterBegin = -1;
+        timeFilterEnd = -1;
+        auditTypeFilter = 0;
+        searchstr = "";
+    }
 };
 
 /**
@@ -478,6 +491,7 @@ enum COREDUMP_DISPLAY_COLUMN {
 struct EXPORTALL_DATA {
     QStringList files; // 日志文件原始路径
     QMap<QString, QStringList> dir2Files; //包含父目录的日志文件
+    QMap<QString, QStringList> dir2Cmds; //包含父目录的日志文件
     QStringList commands; // 需要用命令获得的日志
     QString logCategory; // 日志种类
 
@@ -487,12 +501,25 @@ struct EXPORTALL_DATA {
         , logCategory("")
     {
         dir2Files.clear();
+        dir2Cmds.clear();
     }
 
     // 统计存入二级目录文件的总数
     int dir2FilesCount() {
         int nCount = 0;
         QMapIterator<QString, QStringList> i(dir2Files);
+        while (i.hasNext()) {
+            i.next();
+            nCount += i.value().count();
+        }
+
+        return nCount;
+    }
+
+    // 统计存入二级目录文件的命令查询结果总数
+    int dir2CmdsCount() {
+        int nCount = 0;
+        QMapIterator<QString, QStringList> i(dir2Cmds);
         while (i.hasNext()) {
             i.next();
             nCount += i.value().count();
@@ -519,6 +546,17 @@ struct SubModuleConfig {
 
     }
 
+    QJsonObject toJson() {
+        QJsonObject obj;
+        obj.insert("name", name);
+        obj.insert("filter", filter);
+        obj.insert("execPath", execPath);
+        obj.insert("logType", logType);
+        obj.insert("logPath", logPath);
+
+        return obj;
+    }
+
     bool isValid() {
         return !name.isEmpty();
     }
@@ -533,10 +571,6 @@ struct AppLogConfig {
     QString group;
     QString version; // json配置版本号
 
-    QString execPath;
-    QString logPath;
-    QString logType; // 日志类型分为file或journal
-
     bool    visible;
 
     SubModuleConfigList subModules;
@@ -546,9 +580,6 @@ struct AppLogConfig {
         , transName("")
         , group("")
         , version("V1.0")
-        , execPath("")
-        , logPath("")
-        , logType("")
         , visible(true)
     {
 

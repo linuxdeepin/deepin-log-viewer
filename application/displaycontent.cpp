@@ -7,6 +7,7 @@
 #include "logexportthread.h"
 #include "logfileparser.h"
 #include "exportprogressdlg.h"
+#include "logbackend.h"
 #include "utils.h"
 #include "DebugTimeManager.h"
 
@@ -65,6 +66,8 @@ DisplayContent::DisplayContent(QWidget *parent)
     : DWidget(parent)
 
 {
+    m_pLogBackend = LogBackend::instance(this);
+
     initUI();
     initMap();
     initConnections();
@@ -226,68 +229,72 @@ void DisplayContent::initConnections()
             SLOT(slot_tableItemClicked(const QModelIndex &)));
 
     connect(this, &DisplayContent::sigDetailInfo, m_detailWgt, &logDetailInfoWidget::slot_DetailInfo);
-    connect(&m_logFileParse, &LogFileParser::dpkgFinished, this, &DisplayContent::slot_dpkgFinished,
+    connect(m_pLogBackend, &LogBackend::dpkgFinished, this, &DisplayContent::slot_dpkgFinished,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::dpkgData, this, &DisplayContent::slot_dpkgData,
+    connect(m_pLogBackend, &LogBackend::dpkgData, this, &DisplayContent::slot_dpkgData,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::xlogFinished, this, &DisplayContent::slot_XorgFinished,
+    connect(m_pLogBackend, &LogBackend::xlogFinished, this, &DisplayContent::slot_XorgFinished,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::xlogData, this, &DisplayContent::slot_xorgData,
-            Qt::QueuedConnection);
-
-    connect(&m_logFileParse, &LogFileParser::bootFinished, this, &DisplayContent::slot_bootFinished,
-            Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::bootData, this, &DisplayContent::slot_bootData,
+    connect(m_pLogBackend, &LogBackend::xlogData, this, &DisplayContent::slot_xorgData,
             Qt::QueuedConnection);
 
-    connect(&m_logFileParse, &LogFileParser::kernFinished, this, &DisplayContent::slot_kernFinished,
+    connect(m_pLogBackend, &LogBackend::bootFinished, this, &DisplayContent::slot_bootFinished,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::kernData, this, &DisplayContent::slot_kernData,
+    connect(m_pLogBackend, &LogBackend::bootData, this, &DisplayContent::slot_bootData,
             Qt::QueuedConnection);
 
-    connect(&m_logFileParse, &LogFileParser::journalFinished, this, &DisplayContent::slot_journalFinished,
+    connect(m_pLogBackend, &LogBackend::kernFinished, this, &DisplayContent::slot_kernFinished,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::journalData, this, &DisplayContent::slot_journalData,
+    connect(m_pLogBackend, &LogBackend::kernData, this, &DisplayContent::slot_kernData,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::journaBootlData, this, &DisplayContent::slot_journalBootData,
+
+    connect(m_pLogBackend, &LogBackend::journalFinished, this, &DisplayContent::slot_journalFinished,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::appFinished, this,
+    connect(m_pLogBackend, &LogBackend::journalData, this, &DisplayContent::slot_journalData,
+            Qt::QueuedConnection);
+    connect(m_pLogBackend, &LogBackend::journaBootlData, this, &DisplayContent::slot_journalBootData,
+            Qt::QueuedConnection);
+    connect(m_pLogBackend, &LogBackend::appFinished, this,
             &DisplayContent::slot_applicationFinished);
-    connect(&m_logFileParse, &LogFileParser::appData, this,
+    connect(m_pLogBackend, &LogBackend::appData, this,
             &DisplayContent::slot_applicationData);
 
-    connect(&m_logFileParse, &LogFileParser::kwinFinished, this, &DisplayContent::slot_kwinFinished,
+    connect(m_pLogBackend, &LogBackend::kwinFinished, this, &DisplayContent::slot_kwinFinished,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::kwinData, this, &DisplayContent::slot_kwinData,
+    connect(m_pLogBackend, &LogBackend::kwinData, this, &DisplayContent::slot_kwinData,
             Qt::QueuedConnection);
 
-    connect(&m_logFileParse, &LogFileParser::normalData, this, &DisplayContent::slot_normalData,
+    connect(m_pLogBackend, &LogBackend::normalData, this, &DisplayContent::slot_normalData,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::normalFinished, this, &DisplayContent::slot_normalFinished,
+    connect(m_pLogBackend, &LogBackend::normalFinished, this, &DisplayContent::slot_normalFinished,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::journalBootFinished, this, &DisplayContent::slot_journalBootFinished);
+    connect(m_pLogBackend, &LogBackend::journalBootFinished, this, &DisplayContent::slot_journalBootFinished);
 
     connect(m_treeView->verticalScrollBar(), &QScrollBar::valueChanged, this,
             &DisplayContent::slot_vScrollValueChanged);
-    connect(&m_logFileParse, &LogFileParser::proccessError, this, &DisplayContent::slot_logLoadFailed,
+    connect(m_pLogBackend, &LogBackend::proccessError, this, &DisplayContent::slot_logLoadFailed,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, SIGNAL(dnfFinished(QList<LOG_MSG_DNF>)), this, SLOT(slot_dnfFinished(QList<LOG_MSG_DNF>)));
-    connect(&m_logFileParse, &LogFileParser::dmesgFinished, this, &DisplayContent::slot_dmesgFinished,
+    connect(m_pLogBackend, SIGNAL(dnfFinished(QList<LOG_MSG_DNF>)), this, SLOT(slot_dnfFinished(QList<LOG_MSG_DNF>)));
+    connect(m_pLogBackend, &LogBackend::dmesgFinished, this, &DisplayContent::slot_dmesgFinished,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::OOCData, this, &DisplayContent::slot_OOCData,
+    connect(m_pLogBackend, &LogBackend::OOCData, this, &DisplayContent::slot_OOCData,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::OOCFinished, this, &DisplayContent::slot_OOCFinished,
-            Qt::QueuedConnection);
-
-    connect(&m_logFileParse, &LogFileParser::auditData, this, &DisplayContent::slot_auditData,
-            Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::auditFinished, this, &DisplayContent::slot_auditFinished,
+    connect(m_pLogBackend, &LogBackend::OOCFinished, this, &DisplayContent::slot_OOCFinished,
             Qt::QueuedConnection);
 
-    connect(&m_logFileParse, &LogFileParser::coredumpData, this, &DisplayContent::slot_coredumpData,
+    connect(m_pLogBackend, &LogBackend::auditData, this, &DisplayContent::slot_auditData,
             Qt::QueuedConnection);
-    connect(&m_logFileParse, &LogFileParser::coredumpFinished, this, &DisplayContent::slot_coredumpFinished,
+    connect(m_pLogBackend, &LogBackend::auditFinished, this, &DisplayContent::slot_auditFinished,
             Qt::QueuedConnection);
+
+    connect(m_pLogBackend, &LogBackend::coredumpData, this, &DisplayContent::slot_coredumpData,
+            Qt::QueuedConnection);
+    connect(m_pLogBackend, &LogBackend::coredumpFinished, this, &DisplayContent::slot_coredumpFinished,
+            Qt::QueuedConnection);
+
+    connect(m_pLogBackend, &LogBackend::sigResult, this, &DisplayContent::onExportResult);
+    connect(m_pLogBackend, &LogBackend::sigProgress, this, &DisplayContent::onExportProgress);
+    connect(m_pLogBackend, &LogBackend::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
 
     connect(m_treeView, &LogTreeView::customContextMenuRequested, this, &DisplayContent::slot_requestShowRightMenu);
     connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigValueChanged, this, &DisplayContent::slot_valueChanged_dConfig_or_gSetting);
@@ -323,11 +330,9 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     m_journalFilter.timeFilter = id;
     m_journalFilter.eventTypeFilter = lId;
     m_firstLoadPageData = true;
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     m_isDataLoadComplete = false;
-    jList.clear();
-    jListOrigin.clear();
     createJournalTableForm();
     setLoadState(DATA_LOADING);
     QDateTime dt = QDateTime::currentDateTime();
@@ -340,16 +345,13 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         arg.append("all");
     }
     switch (id) {
-    case ALL: {
-        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
-    }
-    break;
+    case ALL:
+        break;
     case ONE_DAY: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     }
     break;
     case THREE_DAYS: {
@@ -357,7 +359,6 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addDays(-2).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     }
     break;
     case ONE_WEEK: {
@@ -365,7 +366,6 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addDays(-6).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     }
     break;
     case ONE_MONTH: {
@@ -373,7 +373,6 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addMonths(-1).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     }
     break;
     case THREE_MONTHS: {
@@ -381,12 +380,15 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
         arg << QString::number(dtStart.addMonths(-3).toMSecsSinceEpoch() * 1000) << QString::number(dtEnd.toMSecsSinceEpoch() * 1000);
-        m_journalCurrentIndex = m_logFileParse.parseByJournal(arg);
     }
     break;
     default:
         break;
     }
+
+    if (id >= ALL && id <= THREE_MONTHS)
+        m_pLogBackend->parseByJournal(arg);
+
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalLevelColumn, LEVEL_WIDTH);
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalDaemonNameColumn, DEAMON_WIDTH);
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalDateTimeColumn, DATETIME_WIDTH);
@@ -434,10 +436,8 @@ void DisplayContent::createJournalTableForm()
 void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
-    dList.clear();
-    dListOrigin.clear();
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     setLoadState(DATA_LOADING);
     createDpkgTableForm();
     m_firstLoadPageData = true;
@@ -448,7 +448,6 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
 
     switch (id) {
     case ALL:
-        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
         break;
     case ONE_DAY: {
         QDateTime dtStart = dt;
@@ -456,7 +455,6 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         dpkgFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
     }
     break;
     case THREE_DAYS: {
@@ -465,7 +463,6 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         dpkgFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
     }
     break;
     case ONE_WEEK: {
@@ -474,7 +471,6 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         dpkgFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
     }
     break;
     case ONE_MONTH: {
@@ -483,7 +479,6 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         dpkgFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
     }
     break;
     case THREE_MONTHS: {
@@ -492,11 +487,14 @@ void DisplayContent::generateDpkgFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         dpkgFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         dpkgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_dpkgCurrentIndex = m_logFileParse.parseByDpkg(dpkgFilter);
     }
     break;
     default:
         break;
+    }
+
+    if (id >= ALL && id <= THREE_MONTHS) {
+        m_pLogBackend->parseByDpkg(dpkgFilter);
     }
 }
 
@@ -536,10 +534,8 @@ void DisplayContent::createDpkgTableForm()
 void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
-    kList.clear();
-    kListOrigin.clear();
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
     setLoadState(DATA_LOADING);
@@ -549,7 +545,6 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
     KERN_FILTERS kernFilter;
     switch (id) {
     case ALL:
-        m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
         break;
     case ONE_DAY: {
         QDateTime dtStart = dt;
@@ -557,7 +552,6 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         kernFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
     }
     break;
     case THREE_DAYS: {
@@ -566,7 +560,6 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         kernFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
     }
     break;
     case ONE_WEEK: {
@@ -575,7 +568,6 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         kernFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
     }
     break;
     case ONE_MONTH: {
@@ -584,7 +576,6 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         kernFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
     }
     break;
     case THREE_MONTHS: {
@@ -593,12 +584,14 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         kernFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         kernFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_kernCurrentIndex = m_logFileParse.parseByKern(kernFilter);
     }
     break;
     default:
         break;
     }
+
+    if (id >= ALL && id <= THREE_MONTHS)
+        m_pLogBackend->parseByKern(kernFilter);
 }
 
 /**
@@ -738,18 +731,19 @@ void DisplayContent::insertCoredumpTable(const QList<LOG_MSG_COREDUMP> &list, in
 void DisplayContent::generateAppFile(const QString &app, int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
-    appList.clear();
-    appListOrigin.clear();
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     setLoadState(DATA_LOADING);
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime()); // get zero time
     createAppTableForm();
-    m_appFilter.app = app;
-    m_appFilter.lvlFilter = lId;
+
+    APP_FILTERS appFilter;
+    appFilter.app = app;
+    appFilter.lvlFilter = lId;
+    appFilter.submodule = m_pLogBackend->m_appFilter.submodule;
     switch (id) {
     case ALL:
         break;
@@ -757,46 +751,48 @@ void DisplayContent::generateAppFile(const QString &app, int id, int lId, const 
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        m_appFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
-        m_appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        appFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case THREE_DAYS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        m_appFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
-        m_appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        appFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case ONE_WEEK: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        m_appFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
-        m_appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        appFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case ONE_MONTH: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        m_appFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
-        m_appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+        appFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        appFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case THREE_MONTHS: {
         QDateTime dtStart = dt;
         QDateTime dtEnd = dt;
         dtEnd.setTime(QTime(23, 59, 59, 999));
-        m_appFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        appFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
     }
     break;
     default:
         break;
     }
 
-    m_appCurrentIndex = m_logFileParse.parseByApp(m_appFilter);
+    m_pLogBackend->m_appFilter = appFilter;
+    if (id >= ALL && id <= THREE_MONTHS)
+        m_pLogBackend->parseByApp(appFilter);
 }
 
 /**
@@ -850,15 +846,13 @@ void DisplayContent::createBootTable(const QList<LOG_MSG_BOOT> &list)
 
 void DisplayContent::generateBootFile()
 {
-    bList.clear();
-    currentBootList.clear();
     setLoadState(DATA_LOADING);
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
     createBootTableForm();
-    m_bootCurrentIndex = m_logFileParse.parseByBoot();
+    m_pLogBackend->parseByBoot();
 }
 
 void DisplayContent::createXorgTableForm()
@@ -893,10 +887,8 @@ void DisplayContent::createXorgTable(const QList<LOG_MSG_XORG> &list)
  */
 void DisplayContent::generateXorgFile(int id)
 {
-    clearAllFilter();
-    xList.clear();
-    clearAllDatalist();
-    xListOrigin.clear();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     setLoadState(DATA_LOADING);
     QDateTime dt = QDateTime::currentDateTime();
     m_firstLoadPageData = true;
@@ -906,7 +898,6 @@ void DisplayContent::generateXorgFile(int id)
     XORG_FILTERS xorgFilter;
     switch (id) {
     case ALL:
-        m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
         break;
     case ONE_DAY: {
         QDateTime dtStart = dt;
@@ -914,7 +905,6 @@ void DisplayContent::generateXorgFile(int id)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         xorgFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
     }
     break;
     case THREE_DAYS: {
@@ -923,7 +913,6 @@ void DisplayContent::generateXorgFile(int id)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         xorgFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
     }
     break;
     case ONE_WEEK: {
@@ -932,7 +921,6 @@ void DisplayContent::generateXorgFile(int id)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         xorgFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
     }
     break;
     case ONE_MONTH: {
@@ -941,7 +929,6 @@ void DisplayContent::generateXorgFile(int id)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         xorgFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
     }
     break;
     case THREE_MONTHS: {
@@ -950,12 +937,14 @@ void DisplayContent::generateXorgFile(int id)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         xorgFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         xorgFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_xorgCurrentIndex = m_logFileParse.parseByXlog(xorgFilter);
     }
     break;
     default:
         break;
     }
+
+    if (id >= ALL && id <= THREE_MONTHS)
+        m_pLogBackend->parseByXlog(xorgFilter);
 }
 
 void DisplayContent::createKwinTableForm()
@@ -984,19 +973,16 @@ void DisplayContent::creatKwinTable(const QList<LOG_MSG_KWIN> &list)
 
 /**
  * @brief DisplayContent::generateKwinFile 触发获取Kwin日志数据线程
- * @param iFilters 获取线程筛选条件结构体
  */
 void DisplayContent::generateKwinFile(const KWIN_FILTERS &iFilters)
 {
-    clearAllFilter();
-    clearAllDatalist();
-    m_kwinList.clear();
-    m_currentKwinList.clear();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
     setLoadState(DATA_LOADING);
     createKwinTableForm();
-    m_kwinCurrentIndex = m_logFileParse.parseByKwin(iFilters);
+    m_pLogBackend->parseByKwin(iFilters);
 }
 
 void DisplayContent::createNormalTableForm()
@@ -1038,10 +1024,8 @@ void DisplayContent::createNormalTable(const QList<LOG_MSG_NORMAL> &list)
 // add by Airy
 void DisplayContent::generateNormalFile(int id)
 {
-    clearAllFilter();
-    clearAllDatalist();
-    norList.clear();
-    nortempList.clear();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     setLoadState(DATA_LOADING);
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
@@ -1052,46 +1036,47 @@ void DisplayContent::generateNormalFile(int id)
     QDateTime dtEnd = dt;
     dtEnd.setTime(QTime(23, 59, 59, 999));
 
+    NORMAL_FILTERS normalFilter;
+    normalFilter.eventTypeFilter = m_curNormalEventType;
     switch (id) {
     case ALL:
-        m_normalFilter.timeFilterEnd = -1;
-        m_normalFilter.timeFilterBegin = -1;
-        m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
+        normalFilter.timeFilterEnd = -1;
+        normalFilter.timeFilterBegin = -1;
         break;
     case ONE_DAY: {
-        m_normalFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
-        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
+        normalFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case THREE_DAYS: {
-        m_normalFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
-        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
+        normalFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case ONE_WEEK: {
-        m_normalFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
-        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
+        normalFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case ONE_MONTH: {
-        m_normalFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
-        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
+        normalFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     case THREE_MONTHS: {
-        m_normalFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
-        m_normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_normalCurrentIndex = m_logFileParse.parseByNormal(m_normalFilter);
+        normalFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        normalFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
     }
     break;
     default:
         break;
     }
-    nortempList = norList;
+
+    m_pLogBackend->m_normalFilter = normalFilter;
+    if (id >= ALL && id <= THREE_MONTHS)
+        m_pLogBackend->parseByNormal(normalFilter);
+
+    m_pLogBackend->nortempList = m_pLogBackend->norList;
 }
 
 /**
@@ -1187,8 +1172,8 @@ void DisplayContent::generateJournalBootFile(int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
     m_firstLoadPageData = true;
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     m_isDataLoadComplete = false;
     createJournalBootTableForm();
     setLoadState(DATA_LOADING);
@@ -1201,7 +1186,7 @@ void DisplayContent::generateJournalBootFile(int lId, const QString &iSearchStr)
     } else {
         arg.append("all");
     }
-    m_journalBootCurrentIndex = m_logFileParse.parseByJournalBoot(arg);
+    m_pLogBackend->parseByJournalBoot(arg);
     // default first row select
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalLevelColumn, LEVEL_WIDTH);
     m_treeView->setColumnWidth(JOURNAL_SPACE::journalDaemonNameColumn, DEAMON_WIDTH);
@@ -1293,8 +1278,8 @@ void DisplayContent::insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int 
 
 void DisplayContent::generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel)
 {
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     setLoadState(DATA_LOADING);
     createDnfForm();
     QDateTime dt = QDateTime::currentDateTime();
@@ -1328,7 +1313,9 @@ void DisplayContent::generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel)
     default:
         break;
     }
-    m_logFileParse.parseByDnf(dnffilter);
+
+    if (iDate >= ALL && iDate <= THREE_MONTHS)
+        m_pLogBackend->parseByDnf(dnffilter);
 }
 
 void DisplayContent::createDnfTable(const QList<LOG_MSG_DNF> &list)
@@ -1345,8 +1332,8 @@ void DisplayContent::createDnfTable(const QList<LOG_MSG_DNF> &list)
 
 void DisplayContent::generateDmesgFile(BUTTONID iDate, PRIORITY iLevel)
 {
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     setLoadState(DATA_LOADING);
     createDmesgForm();
     QDateTime dt = QDateTime::currentDateTime();
@@ -1380,7 +1367,9 @@ void DisplayContent::generateDmesgFile(BUTTONID iDate, PRIORITY iLevel)
     default:
         break;
     }
-    m_logFileParse.parseByDmesg(dmesgfilter);
+
+    if (iDate >= ALL && iDate <= THREE_MONTHS)
+        m_pLogBackend->parseByDmesg(dmesgfilter);
 }
 
 void DisplayContent::createDmesgTable(const QList<LOG_MSG_DMESG> &list)
@@ -1455,6 +1444,7 @@ void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 
     if (m_flag == OtherLog || m_flag == CustomLog) {
         QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
+        m_pLogBackend->setFlag(m_flag);
         generateOOCFile(path);
     } else {
         emit sigDetailInfo(index, m_pModel, getAppName(m_curApp));
@@ -1505,10 +1495,9 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     } else if (treeData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
         KWIN_FILTERS filter;
-        filter.msg = "";
         generateKwinFile(filter);
     } else if (treeData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
-        generateAuditFile(BUTTONID(m_curBtnId), AUDITTYPE(m_curLevel));
+        generateAuditFile(BUTTONID(m_curBtnId), AUDITTYPE(m_curAuditType));
     } else if(treeData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
         generateCoredumpFile(btnId);
     }
@@ -1521,10 +1510,10 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
  */
 void DisplayContent::slot_appLogs(int btnId, const QString &app)
 {
-    appList.clear();
     m_curApp = app;
     m_curBtnId = btnId;
-    m_appFilter.clear();
+    m_pLogBackend->m_appFilter.clear();
+    m_pLogBackend->m_appFilter.submodule = "";
     generateAppFile(app, m_curBtnId, m_curLevel);
 }
 
@@ -1541,10 +1530,10 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     if (m_curListIdx == index && (m_flag != KERN && m_flag != BOOT)) {
         return;
     }
-    m_currentKwinFilter = {""};
+
     m_curListIdx = index;
 
-    clearAllDatalist();
+    clearAllDatas();
 
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty())
@@ -1573,44 +1562,59 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         // default level is info so PRIORITY=6
         m_flag = JOURNAL;
+        m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = DPKG;
+        m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
-        xList.clear();
+        m_pLogBackend->xList.clear();
         m_flag = XORG;
+        m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = BOOT;
+        m_pLogBackend->setFlag(m_flag);
         generateBootFile();
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = KERN;
+        m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(".cache")) {
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
         m_pModel->clear(); // clicked parent node application, clear table contents
         m_flag = APP;
+        m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
-        norList.clear();
+        m_pLogBackend->norList.clear();
         m_flag = Normal;
+        m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Kwin;
+        m_pLogBackend->setFlag(m_flag);
         KWIN_FILTERS filter;
         filter.msg = "";
     } else if (itemData.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = BOOT_KLU;
+        m_pLogBackend->setFlag(m_flag);
         generateJournalBootFile(m_curLevel);
     } else if (itemData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dnf;
+        m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dmesg;
+        m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = OtherLog;
+        m_pLogBackend->setFlag(m_flag);
         generateOOCLogs(OOC_OTHER);
     } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = CustomLog;
+        m_pLogBackend->setFlag(m_flag);
         generateOOCLogs(OOC_CUSTOM);
     } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Audit;
+        m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = COREDUMP;
+        m_pLogBackend->setFlag(m_flag);
     }
 }
 
@@ -1622,9 +1626,6 @@ void DisplayContent::slot_exportClicked()
     LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
     connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
     connect(m_exportDlg, &ExportProgressDlg::buttonClicked, exportThread, &LogExportThread::stopImmediately);
-    connect(exportThread, &LogExportThread::sigResult, this, &DisplayContent::onExportResult);
-    connect(exportThread, &LogExportThread::sigProgress, this, &DisplayContent::onExportProgress);
-    connect(exportThread, &LogExportThread::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
 
     QString logName;
     if (m_curListIdx.isValid())
@@ -1639,7 +1640,7 @@ void DisplayContent::slot_exportClicked()
         fileName = DFileDialog::getSaveFileName(
                     this, DApplication::translate("File", "Export File"),
                     path,
-                    tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))"), &selectFilter);
+                    tr("TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)"), &selectFilter);
     } else {
         path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation) + logName + ".zip";
         fileName = DFileDialog::getSaveFileName(
@@ -1654,21 +1655,13 @@ void DisplayContent::slot_exportClicked()
         return;
     }
 
-    QFileInfo fi(fileName.left(fileName.lastIndexOf("/")));
-    if (!fi.isWritable()) {
-        exportThread->sigResult(false);
-        delete exportThread;
-        qCCritical(logDisplaycontent) <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
-        return;
-    }
-
     //限制当导出文件为空和导出doc和xls时用户改动后缀名导致导出问题，提示导出失败
     QFileInfo exportFile(fileName);
 
     QString exportSuffix = exportFile.suffix();
     QString selectSuffix = selectFilter.mid(selectFilter.lastIndexOf(".") + 1, selectFilter.size() - selectFilter.lastIndexOf(".") - 2);
     if (fileName.isEmpty()) {
-        exportThread->sigResult(false);
+        onExportResult(false);
         delete exportThread;
         return;
     }
@@ -1679,241 +1672,15 @@ void DisplayContent::slot_exportClicked()
     }
 
     m_exportDlg->show();
+
+    // 获取表头内容
     QStringList labels;
     for (int col = 0; col < m_pModel->columnCount(); ++col) {
         labels.append(m_pModel->horizontalHeaderItem(col)->text());
     }
-    //根据导出格式判断执行逻辑
-    if (selectFilter.contains("(*.txt)")) {
-        switch (m_flag) {
-        //根据导出日志类型执行正确的导出逻辑
-        case JOURNAL:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(jList.count()));
-            exportThread->exportToTxtPublic(fileName, jList, labels, m_flag);
-            break;
-        case BOOT_KLU:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(jBootList.count()));
-            exportThread->exportToTxtPublic(fileName, jBootList, labels, JOURNAL);
-            break;
-        case APP: {
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(appList.count()));
-            QString appName = getAppName(m_curApp);
-            exportThread->exportToTxtPublic(fileName, appList, labels, appName);
-            break;
-        }
-        case DPKG:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dList.count()));
-            exportThread->exportToTxtPublic(fileName, dList, labels);
-            break;
-        case BOOT:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(currentBootList.count()));
-            exportThread->exportToTxtPublic(fileName, currentBootList, labels);
-            break;
-        case XORG:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(xList.count()));
-            exportThread->exportToTxtPublic(fileName, xList, labels);
-            break;
-        case Normal:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(nortempList.count()));
-            exportThread->exportToTxtPublic(fileName, nortempList, labels);
-            break;
-        case KERN:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(kList.count()));
-            exportThread->exportToTxtPublic(fileName, kList, labels, m_flag);
-            break;
-        case Kwin:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(m_currentKwinList.count()));
-            exportThread->exportToTxtPublic(fileName, m_currentKwinList, labels);
-            break;
-        case Dmesg:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
-            exportThread->exportToTxtPublic(fileName, dmesgList, labels);
-            break;
-        case Dnf:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
-            exportThread->exportToTxtPublic(fileName, dnfList, labels);
-            break;
-        case Audit:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
-            exportThread->exportToTxtPublic(fileName, aList, labels);
-            break;
-        default:
-            break;
-        }
-        QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter.contains("(*.html)")) {
-        switch (m_flag) {
-        case JOURNAL:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(jList.count()));
-            exportThread->exportToHtmlPublic(fileName, jList, labels, m_flag);
-            break;
-        case BOOT_KLU:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(jBootList.count()));
-            exportThread->exportToHtmlPublic(fileName, jBootList, labels, JOURNAL);
-            break;
-        case APP: {
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(appList.count()));
-            QString appName = getAppName(m_curApp);
-            exportThread->exportToHtmlPublic(fileName, appList, labels, appName);
-            break;
-        }
-        case DPKG:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(dList.count()));
-            exportThread->exportToHtmlPublic(fileName, dList, labels);
-            break;
-        case BOOT:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(currentBootList.count()));
-            exportThread->exportToHtmlPublic(fileName, currentBootList, labels);
-            break;
-        case XORG:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(xList.count()));
-            exportThread->exportToHtmlPublic(fileName, xList, labels);
-            break;
-        case Normal:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(nortempList.count()));
-            exportThread->exportToHtmlPublic(fileName, nortempList, labels);
-            break;
-        case KERN:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(kList.count()));
-            exportThread->exportToHtmlPublic(fileName, kList, labels, m_flag);
-            break;
-        case Kwin:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(m_currentKwinList.count()));
-            exportThread->exportToHtmlPublic(fileName, m_currentKwinList, labels);
-            break;
-        case Dmesg:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
-            exportThread->exportToHtmlPublic(fileName, dmesgList, labels);
-            break;
-        case Dnf:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
-            exportThread->exportToHtmlPublic(fileName, dnfList, labels);
-            break;
-        case Audit:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
-            exportThread->exportToHtmlPublic(fileName, aList, labels);
-            break;
-        default:
-            break;
-        }
-        QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter.contains("(*.doc)")) {
-        switch (m_flag) {
-        case JOURNAL:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(jList.count()));
-            exportThread->exportToDocPublic(fileName, jList, labels, m_flag);
-            break;
-        case BOOT_KLU:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(jBootList.count()));
-            exportThread->exportToDocPublic(fileName, jBootList, labels, JOURNAL);
-            break;
-        case APP: {
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(appList.count()));
-            QString appName = getAppName(m_curApp);
-            exportThread->exportToDocPublic(fileName, appList, labels, appName);
-            break;
-        }
-        case DPKG:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(dList.count()));
-            exportThread->exportToDocPublic(fileName, dList, labels);
-            break;
-        case BOOT:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(currentBootList.count()));
-            exportThread->exportToDocPublic(fileName, currentBootList, labels);
-            break;
-        case XORG:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(xList.count()));
-            exportThread->exportToDocPublic(fileName, xList, labels);
-            break;
-        case Normal:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(nortempList.count()));
-            exportThread->exportToDocPublic(fileName, nortempList, labels);
-            break;
-        case KERN:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(kList.count()));
-            exportThread->exportToDocPublic(fileName, kList, labels, m_flag);
-            break;
-        case Kwin:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(m_currentKwinList.count()));
-            exportThread->exportToDocPublic(fileName, m_currentKwinList, labels);
-            break;
-        case Dmesg:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
-            exportThread->exportToDocPublic(fileName, dmesgList, labels);
-            break;
-        case Dnf:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
-            exportThread->exportToDocPublic(fileName, dnfList, labels);
-            break;
-        case Audit:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
-            exportThread->exportToDocPublic(fileName, aList, labels);
-            break;
-        default:
-            break;
-        }
-        QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter.contains("(*.xls)")) {
-        switch (m_flag) {
-        case JOURNAL:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jList.count()));
-            exportThread->exportToXlsPublic(fileName, jList, labels, m_flag);
-            break;
-        case BOOT_KLU:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jBootList.count()));
-            exportThread->exportToXlsPublic(fileName, jBootList, labels, JOURNAL);
-            break;
-        case APP: {
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(appList.count()));
-            QString appName = getAppName(m_curApp);
-            exportThread->exportToXlsPublic(fileName, appList, labels, appName);
-            break;
-        }
-        case DPKG:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(dList.count()));
-            exportThread->exportToXlsPublic(fileName, dList, labels);
-            break;
-        case BOOT:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(currentBootList.count()));
-            exportThread->exportToXlsPublic(fileName, currentBootList, labels);
-            break;
-        case XORG:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(xList.count()));
-            exportThread->exportToXlsPublic(fileName, xList, labels);
-            break;
-        case Normal:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(nortempList.count()));
-            exportThread->exportToXlsPublic(fileName, nortempList, labels);
-            break;
-        case KERN:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(kList.count()));
-            exportThread->exportToXlsPublic(fileName, kList, labels, m_flag);
-            break;
-        case Kwin:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(m_currentKwinList.count()));
-            exportThread->exportToXlsPublic(fileName, m_currentKwinList, labels);
-            break;
-        case Dmesg:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
-            exportThread->exportToXlsPublic(fileName, dmesgList, labels);
-            break;
-        case Dnf:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
-            exportThread->exportToXlsPublic(fileName, dnfList, labels);
-            break;
-        case Audit:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
-            exportThread->exportToXlsPublic(fileName, aList, labels);
-            break;
-        default:
-            break;
-        }
-        QThreadPool::globalInstance()->start(exportThread);
-    } else if (selectFilter.contains("(*.zip)") && m_flag == COREDUMP) {
-        PERF_PRINT_BEGIN("POINT-04", QString("format=zip count=%1").arg(aList.count()));
-        exportThread->exportToZipPublic(fileName, m_currentCoredumpList, labels);
-        QThreadPool::globalInstance()->start(exportThread);
-    }
+
+    // 后端导出当前页日志数据
+    m_pLogBackend->exportLogData(fileName, exportThread, labels);
 }
 
 /**
@@ -1922,36 +1689,34 @@ void DisplayContent::slot_exportClicked()
  */
 void DisplayContent::slot_statusChagned(const QString &status)
 {
-    m_bootFilter.statusFilter = status;
-    currentBootList = filterBoot(m_bootFilter, bList);
+    m_pLogBackend->m_bootFilter.statusFilter = status;
+    m_pLogBackend->currentBootList = LogBackend::filterBoot(m_pLogBackend->m_bootFilter, m_pLogBackend->bList);
     createBootTableForm();
-    createBootTable(currentBootList);
+    createBootTable(m_pLogBackend->currentBootList);
 }
 
 /**
  * @brief DisplayContent::slot_dpkgFinished 获取dpkg日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
  */
-void DisplayContent::slot_dpkgFinished(int index)
+void DisplayContent::slot_dpkgFinished()
 {
-    if (m_flag != DPKG || index != m_dpkgCurrentIndex)
+    if (m_flag != DPKG)
         return;
     m_isDataLoadComplete = true;
-    if (dList.isEmpty()) {
+    if (m_pLogBackend->dList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
-        createDpkgTableStart(dList);
+        createDpkgTableStart(m_pLogBackend->dList);
     }
 }
 
-void DisplayContent::slot_dpkgData(int index, QList<LOG_MSG_DPKG> list)
+void DisplayContent::slot_dpkgData(const QList<LOG_MSG_DPKG> &list)
 {
-    if (m_flag != DPKG || index != m_dpkgCurrentIndex)
+    if (m_flag != DPKG)
         return;
 
-    dListOrigin.append(list);
-    dList.append(filterDpkg(m_currentSearchStr, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !dList.isEmpty()) {
-        createDpkgTableStart(dList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createDpkgTableStart(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=dpkg");
     }
@@ -1960,26 +1725,25 @@ void DisplayContent::slot_dpkgData(int index, QList<LOG_MSG_DPKG> list)
 /**
  * @brief DisplayContent::slot_XorgFinished 获取xorg日志数据线程获取结束
  */
-void DisplayContent::slot_XorgFinished(int index)
+void DisplayContent::slot_XorgFinished()
 {
-    if (m_flag != XORG || index != m_xorgCurrentIndex)
+    if (m_flag != XORG)
         return;
     m_isDataLoadComplete = true;
-    if (xList.isEmpty()) {
+    if (m_pLogBackend->xList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
-        createXorgTable(xList);
+        createXorgTable(m_pLogBackend->xList);
     }
 }
 
-void DisplayContent::slot_xorgData(int index, QList<LOG_MSG_XORG> list)
+void DisplayContent::slot_xorgData(const QList<LOG_MSG_XORG> &list)
 {
-    if (m_flag != XORG || index != m_xorgCurrentIndex)
+    if (m_flag != XORG)
         return;
-    xListOrigin.append(list);
-    xList.append(filterXorg(m_currentSearchStr, list));
+
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !xList.isEmpty()) {
-        createXorgTable(xList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createXorgTable(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=xorg");
     }
@@ -1988,28 +1752,25 @@ void DisplayContent::slot_xorgData(int index, QList<LOG_MSG_XORG> list)
 /**
  * @brief DisplayContent::slot_bootFinished 获取启动日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
  */
-void DisplayContent::slot_bootFinished(int index)
+void DisplayContent::slot_bootFinished()
 {
-    if (m_flag != BOOT || index != m_bootCurrentIndex)
+    if (m_flag != BOOT)
         return;
     m_isDataLoadComplete = true;
-    if (currentBootList.isEmpty()) {
+    if (m_pLogBackend->currentBootList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
-        createBootTable(currentBootList);
+        createBootTable(m_pLogBackend->currentBootList);
     }
 }
 
-void DisplayContent::slot_bootData(int index, QList<LOG_MSG_BOOT> list)
+void DisplayContent::slot_bootData(const QList<LOG_MSG_BOOT> &list)
 {
-    if (m_flag != BOOT || index != m_bootCurrentIndex)
+    if (m_flag != BOOT)
         return;
 
-    bList.append(list);
-
-    currentBootList.append(filterBoot(m_bootFilter, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !currentBootList.isEmpty()) {
-        createBootTable(currentBootList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createBootTable(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=boot");
     }
@@ -2019,27 +1780,25 @@ void DisplayContent::slot_bootData(int index, QList<LOG_MSG_BOOT> list)
  * @brief DisplayContent::slot_kernFinished 获取内核日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
  * @param list 启动日志数据线程list
  */
-void DisplayContent::slot_kernFinished(int index)
+void DisplayContent::slot_kernFinished()
 {
-    if (m_flag != KERN || index != m_kernCurrentIndex)
+    if (m_flag != KERN)
         return;
     m_isDataLoadComplete = true;
-    if (kList.isEmpty()) {
+    if (m_pLogBackend->kList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
-        createKernTable(kList);
+        createKernTable(m_pLogBackend->kList);
     }
 }
 
-void DisplayContent::slot_kernData(int index, QList<LOG_MSG_JOURNAL> list)
+void DisplayContent::slot_kernData(const QList<LOG_MSG_JOURNAL> &list)
 {
-    if (m_flag != KERN || index != m_kernCurrentIndex)
+    if (m_flag != KERN)
         return;
 
-    kListOrigin.append(list);
-    kList.append(filterKern(m_currentSearchStr, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !kList.isEmpty()) {
-        createKernTable(kList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createKernTable(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=kern");
     }
@@ -2049,38 +1808,37 @@ void DisplayContent::slot_kernData(int index, QList<LOG_MSG_JOURNAL> list)
  * @brief DisplayContent::slot_kwinFinished 获取kwin日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
  * @param list kwin日志数据线程list
  */
-void DisplayContent::slot_kwinFinished(int index)
+void DisplayContent::slot_kwinFinished()
 {
-    if (m_flag != Kwin || index != m_kwinCurrentIndex)
+    if (m_flag != Kwin)
         return;
     m_isDataLoadComplete = true;
-    if (m_currentKwinList.isEmpty()) {
+    if (m_pLogBackend->m_currentKwinList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
-        creatKwinTable(m_currentKwinList);
+        creatKwinTable(m_pLogBackend->m_currentKwinList);
     }
 }
 
-void DisplayContent::slot_kwinData(int index, QList<LOG_MSG_KWIN> list)
+void DisplayContent::slot_kwinData(const QList<LOG_MSG_KWIN> &list)
 {
-    if (m_flag != Kwin || index != m_kwinCurrentIndex)
+    if (m_flag != Kwin)
         return;
-    m_kwinList.append(list);
-    m_currentKwinList.append(filterKwin(m_currentSearchStr, list));
-    if (m_firstLoadPageData && !m_currentKwinList.isEmpty()) {
-        creatKwinTable(m_currentKwinList);
+
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        creatKwinTable(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=kwin");
     }
 }
 
-void DisplayContent::slot_journalFinished(int index)
+void DisplayContent::slot_journalFinished()
 {
-    if (m_flag != JOURNAL || index != m_journalCurrentIndex)
+    if (m_flag != JOURNAL)
         return;
     m_isDataLoadComplete = true;
-    if (jList.isEmpty()) {
+    if (m_pLogBackend->jList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
-        createJournalTableStart(jList);
+        createJournalTableStart(m_pLogBackend->jList);
     }
 }
 
@@ -2088,9 +1846,8 @@ void DisplayContent::slot_dnfFinished(const QList<LOG_MSG_DNF> &list)
 {
     if (m_flag != Dnf)
         return;
-    dnfList = list;
-    dnfListOrigin = list;
-    createDnfTable(dnfList);
+
+    createDnfTable(list);
     PERF_PRINT_END("POINT-03", "type=dnf");
 }
 
@@ -2098,9 +1855,8 @@ void DisplayContent::slot_dmesgFinished(const QList<LOG_MSG_DMESG> &list)
 {
     if (m_flag != Dmesg)
         return;
-    dmesgList = list;
-    dmesgListOrigin = list;
-    createDmesgTable(dmesgList);
+
+    createDmesgTable(list);
     PERF_PRINT_END("POINT-03", "type=dmesg");
 }
 
@@ -2109,30 +1865,29 @@ void DisplayContent::slot_dmesgFinished(const QList<LOG_MSG_DMESG> &list)
  * @param index 槽函数发出线程的标记量序号
  * @param list 本次获取的500个或以下的数据
  */
-void DisplayContent::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
+void DisplayContent::slot_journalData(const QList<LOG_MSG_JOURNAL> &list)
 {
     //判断最近一次获取数据线程的标记量,和信号曹发来的sender的标记量作对比,如果相同才可以刷新,因为会出现上次的获取线程就算停下信号也发出来了
-    if (m_flag != JOURNAL || index != m_journalCurrentIndex)
+    if (m_flag != JOURNAL)
         return;
-    jListOrigin.append(list);
-    jList.append(filterJournal(m_currentSearchStr, list));
+
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !jList.isEmpty()) {
-        createJournalTableStart(jList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createJournalTableStart(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-01", "");
         PERF_PRINT_END("POINT-03", "type=system");
     }
 }
 
-void DisplayContent::slot_journalBootFinished(int index)
+void DisplayContent::slot_journalBootFinished()
 {
-    if (m_flag != BOOT_KLU || index != m_journalBootCurrentIndex)
+    if (m_flag != BOOT_KLU)
         return;
     m_isDataLoadComplete = true;
-    if (jBootList.isEmpty()) {
+    if (m_pLogBackend->jBootList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
-        createJournalBootTableStart(jBootList);
+        createJournalBootTableStart(m_pLogBackend->jBootList);
     }
 }
 
@@ -2141,15 +1896,14 @@ void DisplayContent::slot_journalBootFinished(int index)
  * @param index 槽函数发出线程的标记量序号
  * @param list 本次获取的500个或以下的数据
  */
-void DisplayContent::slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list)
+void DisplayContent::slot_journalBootData(const QList<LOG_MSG_JOURNAL> &list)
 {
-    if (m_flag != BOOT_KLU || index != m_journalBootCurrentIndex)
+    if (m_flag != BOOT_KLU)
         return;
-    jBootListOrigin.append(list);
-    jBootList.append(filterJournalBoot(m_currentSearchStr, list));
+
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !jBootList.isEmpty()) {
-        createJournalBootTableStart(jBootList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createJournalBootTableStart(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=boot_klu");
     }
@@ -2158,72 +1912,70 @@ void DisplayContent::slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list
 /**
  * @brief DisplayContent::slot_applicationFinished 获取应用日志数据线程结果的槽函数,把获取到的数据加入treeview的model中以显示
  */
-void DisplayContent::slot_applicationFinished(int index)
+void DisplayContent::slot_applicationFinished()
 {
-    if (m_flag != APP || index != m_appCurrentIndex)
+    if (m_flag != APP)
         return;
     m_isDataLoadComplete = true;
-    if (appList.isEmpty()) {
+    if (m_pLogBackend->appList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
-        createAppTable(appList);
+        createAppTable(m_pLogBackend->appList);
     }
 }
 
-void DisplayContent::slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> list)
+void DisplayContent::slot_applicationData(const QList<LOG_MSG_APPLICATOIN> &list)
 {
-    if (m_flag != APP || index != m_appCurrentIndex)
+    if (m_flag != APP)
         return;
-    appListOrigin.append(list);
-    appList.append(filterApp(m_appFilter, list));
+
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !appList.isEmpty()) {
-        createAppTable(appList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createAppTable(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=application");
     }
 }
 
-void DisplayContent::slot_normalFinished(int index)
+void DisplayContent::slot_normalFinished()
 {
-    if (m_flag != Normal || index != m_normalCurrentIndex)
+    if (m_flag != Normal)
         return;
     m_isDataLoadComplete = true;
-    if (nortempList.isEmpty()) {
+    if (m_pLogBackend->nortempList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
-        createNormalTable(nortempList);
+        createNormalTable(m_pLogBackend->nortempList);
     }
 }
 
-void DisplayContent::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
+void DisplayContent::slot_normalData(const QList<LOG_MSG_NORMAL> &list)
 {
-    if (m_flag != Normal || index != m_normalCurrentIndex)
+    if (m_flag != Normal)
         return;
-    norList.append(list);
-    nortempList.append(filterNomal(m_normalFilter, list));
+
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !nortempList.isEmpty()) {
-        createNormalTable(nortempList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createNormalTable(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=on_off");
     }
 }
 
-void DisplayContent::slot_OOCData(int index, const QString &data)
+void DisplayContent::slot_OOCData(const QString &data)
 {
-    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
+    if ((m_flag != OtherLog && m_flag != CustomLog))
         return;
 
     emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, data);
 }
 
-void DisplayContent::slot_auditFinished(int index, bool bShowTip/* = false*/)
+void DisplayContent::slot_auditFinished(bool bShowTip/* = false*/)
 {
-    if (m_flag != Audit || index != m_auditCurrentIndex)
+    if (m_flag != Audit)
         return;
     m_isDataLoadComplete = true;
-    if (aList.isEmpty()) {
+    if (m_pLogBackend->aList.isEmpty()) {
         if (bShowTip) {
-            createAuditTable(aList);
+            createAuditTable(m_pLogBackend->aList);
             QTimer::singleShot(50, this, [=]{
                 setLoadState(DATA_NOT_AUDIT_ADMIN);
             });
@@ -2231,68 +1983,63 @@ void DisplayContent::slot_auditFinished(int index, bool bShowTip/* = false*/)
             m_detailWgt->hideLine(true);
         } else {
             setLoadState(DATA_COMPLETE);
-            createAuditTable(aList);
+            createAuditTable(m_pLogBackend->aList);
         }
     }
 }
 
-void DisplayContent::slot_auditData(int index, QList<LOG_MSG_AUDIT> list)
+void DisplayContent::slot_auditData(const QList<LOG_MSG_AUDIT> &list)
 {
-    if (m_flag != Audit || index != m_auditCurrentIndex)
+    if (m_flag != Audit)
         return;
 
-    aListOrigin.append(list);
-    aList.append(filterAudit(m_auditFilter, list));
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !aList.isEmpty()) {
-        createAuditTable(aList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createAuditTable(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=audit");
     }
 }
 
-void DisplayContent::slot_coredumpFinished(int index)
+void DisplayContent::slot_coredumpFinished()
 {
-    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex)
+    if (m_flag != COREDUMP)
         return;
 
     m_isDataLoadComplete = true;
-    if (m_currentCoredumpList.isEmpty()) {
+    if (m_pLogBackend->m_currentCoredumpList.isEmpty()) {
         setLoadState(DATA_COMPLETE);
         emit setExportEnable(false);
-        createCoredumpTable(m_currentCoredumpList);
+        createCoredumpTable(m_pLogBackend->m_currentCoredumpList);
     }
 }
-void DisplayContent::slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list)
+void DisplayContent::slot_coredumpData(const QList<LOG_MSG_COREDUMP> &list, bool newData)
 {
-    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex)
+    if (m_flag != COREDUMP)
         return;
 
-    m_coredumpList.append(list);
-    QList<LOG_MSG_COREDUMP> filterList = filterCoredump(m_currentSearchStr, list);
-    m_currentCoredumpList.append(filterList);
     //分页已到底部，来新数据时需要刷新到下一页
     int value = m_treeView->verticalScrollBar()->value();
     int maximum = m_treeView->verticalScrollBar()->maximum();
-    if (value == maximum && value > 0 && filterList.size() > 0) {
+    if (value == maximum && value > 0 && newData) {
         int rateValue = (m_treeViewLastScrollValue + 25) / SINGLE_LOAD;
-        int leftCnt = m_currentCoredumpList.count() - SINGLE_LOAD * rateValue;
+        int leftCnt = list.count() - SINGLE_LOAD * rateValue;
         int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
         m_limitTag = rateValue;
-        insertCoredumpTable(m_currentCoredumpList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+        insertCoredumpTable(list, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
     }
 
     //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !m_currentCoredumpList.isEmpty()) {
-        createCoredumpTable(m_currentCoredumpList);
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createCoredumpTable(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=coredump");
     }
 }
 
-void DisplayContent::slot_OOCFinished(int index, int error)
+void DisplayContent::slot_OOCFinished(int error)
 {
-    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
+    if ((m_flag != OtherLog && m_flag != CustomLog))
         return;
     m_isDataLoadComplete = true;
     setLoadState(DATA_COMPLETE);
@@ -2340,11 +2087,11 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = jList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->jList.count() - SINGLE_LOAD * rateValue;
             //如果在页尾部则只加载最后一页的数量,否则加载单页全部数量
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
             //把数据加入model中
-            insertJournalTable(jList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertJournalTable(m_pLogBackend->jList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
@@ -2356,10 +2103,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = jBootList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->jBootList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertJournalBootTable(jBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertJournalBootTable(m_pLogBackend->jBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2369,9 +2116,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = appList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->appList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            insertApplicationTable(appList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertApplicationTable(m_pLogBackend->appList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2381,10 +2128,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = kList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->kList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertKernTable(kList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertKernTable(m_pLogBackend->kList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2394,10 +2141,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = dList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->dList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertDpkgTable(dList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertDpkgTable(m_pLogBackend->dList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
 
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
@@ -2408,9 +2155,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = xList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->xList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            insertXorgTable(xList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertXorgTable(m_pLogBackend->xList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2420,9 +2167,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = currentBootList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->currentBootList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            insertBootTable(currentBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertBootTable(m_pLogBackend->currentBootList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2432,9 +2179,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = m_currentKwinList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->m_currentKwinList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            insertKwinTable(m_currentKwinList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertKwinTable(m_pLogBackend->m_currentKwinList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2444,9 +2191,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = nortempList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->nortempList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            insertNormalTable(nortempList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertNormalTable(m_pLogBackend->nortempList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2456,9 +2203,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = dnfList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->dnfList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            insertDnfTable(dnfList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertDnfTable(m_pLogBackend->dnfList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(value);
         }
@@ -2468,10 +2215,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = dmesgList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->dmesgList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertDmesgTable(dmesgList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertDmesgTable(m_pLogBackend->dmesgList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(value);
         }
@@ -2482,10 +2229,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = oList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->oList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertOOCTable(oList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertOOCTable(m_pLogBackend->oList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2496,10 +2243,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = cList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->cList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertOOCTable(cList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertOOCTable(m_pLogBackend->cList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2510,10 +2257,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = aList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->aList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertAuditTable(aList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertAuditTable(m_pLogBackend->aList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2524,10 +2271,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
             if (m_limitTag >= rateValue)
                 return;
 
-            int leftCnt = m_currentCoredumpList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->m_currentCoredumpList.count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertCoredumpTable(m_currentCoredumpList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertCoredumpTable(m_pLogBackend->m_currentCoredumpList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2544,137 +2291,117 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
  */
 void DisplayContent::slot_searchResult(const QString &str)
 {
-    m_currentSearchStr = str;
+    m_pLogBackend->m_currentSearchStr = str;
     if (m_flag == NONE)
         return;
 
     switch (m_flag) {
     case JOURNAL: {
-        jList = jListOrigin;
-        jList.clear();
-        jList = filterJournal(m_currentSearchStr, jListOrigin);
+        m_pLogBackend->jList = m_pLogBackend->jListOrigin;
+        m_pLogBackend->jList.clear();
+        m_pLogBackend->jList = LogBackend::filterJournal(m_pLogBackend->m_currentSearchStr, m_pLogBackend->jListOrigin);
         //清空model和分页重新加载
         createJournalTableForm();
-        createJournalTableStart(jList);
+        createJournalTableStart(m_pLogBackend->jList);
     }
     break;
     case BOOT_KLU: {
-        jBootList.clear();
-        jBootList = filterJournalBoot(m_currentSearchStr, jBootListOrigin);
+        m_pLogBackend->jBootList.clear();
+        m_pLogBackend->jBootList = LogBackend::filterJournalBoot(m_pLogBackend->m_currentSearchStr, m_pLogBackend->jBootListOrigin);
         createJournalBootTableForm();
-        createJournalBootTableStart(jBootList);
+        createJournalBootTableStart(m_pLogBackend->jBootList);
     }
     break;
     case KERN: {
-        kList = filterKern(m_currentSearchStr, kListOrigin);
+        m_pLogBackend->kList = LogBackend::filterKern(m_pLogBackend->m_currentSearchStr, m_pLogBackend->kListOrigin);
         createKernTableForm();
-        createKernTable(kList);
+        createKernTable(m_pLogBackend->kList);
     }
     break;
     case BOOT: {
-        m_bootFilter.searchstr = m_currentSearchStr;
-        currentBootList = filterBoot(m_bootFilter, bList);
+        m_pLogBackend->m_bootFilter.searchstr = m_pLogBackend->m_currentSearchStr;
+        m_pLogBackend->currentBootList = LogBackend::filterBoot(m_pLogBackend->m_bootFilter, m_pLogBackend->bList);
         createBootTableForm();
-        createBootTable(currentBootList);
+        createBootTable(m_pLogBackend->currentBootList);
     }
     break;
     case XORG: {
-        xList.clear();
-        xList = filterXorg(m_currentSearchStr, xListOrigin);
+        m_pLogBackend->xList.clear();
+        m_pLogBackend->xList = LogBackend::filterXorg(m_pLogBackend->m_currentSearchStr, m_pLogBackend->xListOrigin);
         createXorgTableForm();
-        createXorgTable(xList);
+        createXorgTable(m_pLogBackend->xList);
     }
     break;
     case DPKG: {
-        dList.clear();
-        dList = filterDpkg(m_currentSearchStr, dListOrigin);
+        m_pLogBackend->dList.clear();
+        m_pLogBackend->dList = LogBackend::filterDpkg(m_pLogBackend->m_currentSearchStr, m_pLogBackend->dListOrigin);
         createDpkgTableForm();
-        createDpkgTableStart(dList);
+        createDpkgTableStart(m_pLogBackend->dList);
     }
     break;
     case APP: {
-        appList.clear();
-        m_appFilter.searchstr = m_currentSearchStr;
-        appList = filterApp(m_appFilter, appListOrigin);
+        m_pLogBackend->appList.clear();
+        m_pLogBackend->m_appFilter.searchstr = m_pLogBackend->m_currentSearchStr;
+        m_pLogBackend->appList = LogBackend::filterApp(m_pLogBackend->m_appFilter, m_pLogBackend->appListOrigin);
         createAppTableForm();
-        createAppTable(appList);
+        createAppTable(m_pLogBackend->appList);
     }
     break;
     case Normal: {
-        m_normalFilter.searchstr = m_currentSearchStr;
-        nortempList = filterNomal(m_normalFilter, norList);
+        m_pLogBackend->m_normalFilter.searchstr = m_pLogBackend->m_currentSearchStr;
+        m_pLogBackend->nortempList = LogBackend::filterNomal(m_pLogBackend->m_normalFilter, m_pLogBackend->norList);
         createNormalTableForm();
-        createNormalTable(nortempList);
+        createNormalTable(m_pLogBackend->nortempList);
     }
     break; // add by Airy
     case Kwin: {
-        m_currentKwinList.clear();
-        m_currentKwinList = filterKwin(m_currentSearchStr, m_kwinList);
+        m_pLogBackend->m_currentKwinList.clear();
+        m_pLogBackend->m_currentKwinList = LogBackend::filterKwin(m_pLogBackend->m_currentSearchStr, m_pLogBackend->m_kwinList);
         createKwinTableForm();
-        creatKwinTable(m_currentKwinList);
+        creatKwinTable(m_pLogBackend->m_currentKwinList);
     }
     break;
     case Dnf: {
-        dnfList = dnfListOrigin;
-        if (!m_currentSearchStr.isEmpty()) {
-            int cnt = dnfList.count();
-            for (int i = cnt - 1; i >= 0; --i) {
-                LOG_MSG_DNF msg = dnfList.at(i);
-                if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive)
-                        || msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive)
-                        || msg.level.contains(m_currentSearchStr, Qt::CaseInsensitive)) {
-                    continue;
-                } else {
-                    dnfList.removeAt(i);
-                }
-            }
-        }
+        m_pLogBackend->dnfList.clear();
+        m_pLogBackend->dnfList = LogBackend::filterDnf(m_pLogBackend->m_currentSearchStr, m_pLogBackend->dnfListOrigin);
         createDnfForm();
-        createDnfTable(dnfList);
+        createDnfTable(m_pLogBackend->dnfList);
     }
     break;
     case Dmesg: {
-        dmesgList = dmesgListOrigin;
-        if (!m_currentSearchStr.isEmpty()) {
-            int cnt = dmesgList.count();
-            for (int i = cnt - 1; i >= 0; --i) {
-                LOG_MSG_DMESG msg = dmesgList.at(i);
-                if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) || msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
-                    continue;
-                dmesgList.removeAt(i);
-            }
-        }
+        m_pLogBackend->dmesgList.clear();
+        m_pLogBackend->dmesgList = LogBackend::filterDmesg(m_pLogBackend->m_currentSearchStr, m_pLogBackend->dmesgListOrigin);
         createDmesgForm();
-        createDmesgTable(dmesgList);
+        createDmesgTable(m_pLogBackend->dmesgList);
     }
     break;
     case OtherLog: {
-        oList.clear();
-        oList = filterOOC(m_currentSearchStr, oListOrigin);
+        m_pLogBackend->oList.clear();
+        m_pLogBackend->oList = LogBackend::filterOOC(m_pLogBackend->m_currentSearchStr, m_pLogBackend->oListOrigin);
         createOOCTableForm();
-        createOOCTable(oList);
+        createOOCTable(m_pLogBackend->oList);
     }
     break;
     case CustomLog: {
-        cList.clear();
-        cList = filterOOC(m_currentSearchStr, cListOrigin);
+        m_pLogBackend->cList.clear();
+        m_pLogBackend->cList = LogBackend::filterOOC(m_pLogBackend->m_currentSearchStr, m_pLogBackend->cListOrigin);
         createOOCTableForm();
-        createOOCTable(cList);
+        createOOCTable(m_pLogBackend->cList);
     }
     break;
     case Audit: {
-        aList.clear();
-        m_auditFilter.searchstr = m_currentSearchStr;
-        aList = filterAudit(m_auditFilter, aListOrigin);
+        m_pLogBackend->aList.clear();
+        m_pLogBackend->m_auditFilter.searchstr = m_pLogBackend->m_currentSearchStr;
+        m_pLogBackend->aList = LogBackend::filterAudit(m_pLogBackend->m_auditFilter, m_pLogBackend->aListOrigin);
         createAuditTableForm();
-        createAuditTable(aList);
+        createAuditTable(m_pLogBackend->aList);
     }
     break;
     case COREDUMP: {
-        m_currentCoredumpList.clear();
-        m_currentCoredumpList = filterCoredump(m_currentSearchStr, m_coredumpList);
+        m_pLogBackend->m_currentCoredumpList.clear();
+        m_pLogBackend->m_currentCoredumpList = LogBackend::filterCoredump(m_pLogBackend->m_currentSearchStr, m_pLogBackend->m_coredumpList);
         createCoredumpTableForm();
-        createCoredumpTable(m_currentCoredumpList);
+        createCoredumpTable(m_pLogBackend->m_currentCoredumpList);
     }
     break;
     default:
@@ -2682,7 +2409,7 @@ void DisplayContent::slot_searchResult(const QString &str)
     }
     //如果搜索结果为空要显示无搜索结果提示
     if (0 == m_pModel->rowCount()) {
-        if (m_currentSearchStr.isEmpty()) {
+        if (m_pLogBackend->m_currentSearchStr.isEmpty()) {
             setLoadState(DATA_COMPLETE);
         } else {
             setLoadState(DATA_NO_SEARCH_RESULT);
@@ -2702,16 +2429,16 @@ void DisplayContent::slot_searchResult(const QString &str)
 void DisplayContent::slot_getSubmodule(int tcbx)
 {
     if (tcbx == 0)
-        m_appFilter.submodule = "";
+        m_pLogBackend->m_appFilter.submodule = "";
     else {
-        AppLogConfig logConfig = LogApplicationHelper::instance()->appLogConfig(m_appFilter.app);
+        AppLogConfig logConfig = LogApplicationHelper::instance()->appLogConfig(m_pLogBackend->m_appFilter.app);
         int nSubModuleIndex = tcbx - 1;
         if (logConfig.subModules.size() > 0 && nSubModuleIndex < logConfig.subModules.size())
-            m_appFilter.submodule = logConfig.subModules[nSubModuleIndex].name;
+            m_pLogBackend->m_appFilter.submodule = logConfig.subModules[nSubModuleIndex].name;
     }
-    appList = filterApp(m_appFilter, appListOrigin);
+    m_pLogBackend->appList = LogBackend::filterApp(m_pLogBackend->m_appFilter, m_pLogBackend->appListOrigin);
     createAppTableForm();
-    createAppTable(appList);
+    createAppTable(m_pLogBackend->appList);
 }
 
 /**
@@ -2720,18 +2447,20 @@ void DisplayContent::slot_getSubmodule(int tcbx)
  */
 void DisplayContent::slot_getLogtype(int tcbx)
 {
-    m_normalFilter.eventTypeFilter = tcbx;
-    nortempList = filterNomal(m_normalFilter, norList);
+    m_curNormalEventType = tcbx;
+    m_pLogBackend->m_normalFilter.eventTypeFilter = tcbx;
+    m_pLogBackend->nortempList = LogBackend::filterNomal(m_pLogBackend->m_normalFilter, m_pLogBackend->norList);
     createNormalTableForm();
-    createNormalTable(nortempList);
+    createNormalTable(m_pLogBackend->nortempList);
 }
 
 void DisplayContent::slot_getAuditType(int tcbx)
 {
-    m_auditFilter.auditTypeFilter = tcbx;
-    aList = filterAudit(m_auditFilter, aListOrigin);
+    m_curAuditType = tcbx;
+    m_pLogBackend->m_auditFilter.auditTypeFilter = tcbx;
+    m_pLogBackend->aList = LogBackend::filterAudit(m_pLogBackend->m_auditFilter, m_pLogBackend->aListOrigin);
     createAuditTableForm();
-    createAuditTable(aList);
+    createAuditTable(m_pLogBackend->aList);
 }
 
 /**
@@ -3266,289 +2995,14 @@ void DisplayContent::onExportFakeCloseDlg()
 }
 
 /**
- * @brief DisplayContent::clearAllFilter 清空当前所有的筛选条件成员变量(只限在本类中筛选的条件)
- */
-void DisplayContent::clearAllFilter()
-{
-    m_bootFilter = {"", ""};
-    m_currentSearchStr.clear();
-    m_currentKwinFilter = {""};
-    m_normalFilter.searchstr = "";
-    QString tmp = m_appFilter.submodule;
-    m_appFilter.clear();
-    m_appFilter.submodule = tmp;
-}
-
-/**
  * @brief DisplayContent::clearAllDatalist 清空所有获取的数据list
  */
-void DisplayContent::clearAllDatalist()
+void DisplayContent::clearAllDatas()
 {
     m_detailWgt->cleanText();
     m_pModel->clear();
-    jList.clear();
-    jListOrigin.clear();
-    dList.clear();
-    dListOrigin.clear();
-    xList.clear();
-    xListOrigin.clear();
-    bList.clear();
-    currentBootList.clear();
-    kList.clear();
-    kListOrigin.clear();
-    appList.clear();
-    appListOrigin.clear();
-    norList.clear();
-    nortempList.clear();
-    m_currentKwinList.clear();
-    m_kwinList.clear();
-    jBootList.clear();
-    jBootListOrigin.clear();
-    dnfList.clear();
-    dnfListOrigin.clear();
-    oList.clear();
-    oListOrigin.clear();
-    cList.clear();
-    cListOrigin.clear();
-    aList.clear();
-    aListOrigin.clear();
-    m_coredumpList.clear();
-    m_currentCoredumpList.clear();
-    malloc_trim(0);
-}
 
-QList<LOG_MSG_BOOT> DisplayContent::filterBoot(BOOT_FILTERS ibootFilter, const QList<LOG_MSG_BOOT> &iList)
-{
-    QList<LOG_MSG_BOOT> rsList;
-    bool isStatusFilterEmpty = ibootFilter.statusFilter.isEmpty();
-    if (isStatusFilterEmpty && ibootFilter.searchstr.isEmpty()) {
-        return iList;
-    } else {
-        for (int i = 0; i < iList.size(); i++) {
-            LOG_MSG_BOOT msg = iList.at(i);
-            QString _statusStr = msg.status;
-            if ((_statusStr.compare(ibootFilter.statusFilter, Qt::CaseInsensitive) != 0) && !isStatusFilterEmpty)
-                continue;
-            if ((msg.status.contains(ibootFilter.searchstr, Qt::CaseInsensitive)) || (msg.msg.contains(ibootFilter.searchstr, Qt::CaseInsensitive))) {
-                rsList.append(iList[i]);
-            }
-        }
-    }
-    return rsList;
-}
-
-QList<LOG_MSG_NORMAL> DisplayContent::filterNomal(NORMAL_FILTERS inormalFilter, QList<LOG_MSG_NORMAL> &iList)
-{
-    QList<LOG_MSG_NORMAL> rsList;
-    if (inormalFilter.searchstr.isEmpty() && inormalFilter.eventTypeFilter < 0) {
-        return iList;
-    }
-    int tcbx = inormalFilter.eventTypeFilter;
-    if (0 == tcbx) {
-        for (auto i = 0; i < iList.size(); i++) {
-            LOG_MSG_NORMAL msg = iList.at(i);
-            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
-                rsList.append(msg);
-            }
-        }
-    } else if (1 == tcbx) {
-        for (auto i = 0; i < iList.size(); i++) {
-            LOG_MSG_NORMAL msg = iList.at(i);
-            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
-                if (msg.eventType.compare("Boot", Qt::CaseInsensitive) != 0 && msg.eventType.compare("shutdown", Qt::CaseInsensitive) != 0 && msg.eventType.compare("runlevel", Qt::CaseInsensitive) != 0)
-                    rsList.append(msg);
-            }
-        }
-    } else if (2 == tcbx) {
-        for (auto i = 0; i < iList.size(); i++) {
-            LOG_MSG_NORMAL msg = iList.at(i);
-            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
-                if (iList[i].eventType.compare("Boot", Qt::CaseInsensitive) == 0)
-                    rsList.append(iList[i]);
-            }
-        }
-    } else if (3 == tcbx) {
-        for (auto i = 0; i < iList.size(); i++) {
-            LOG_MSG_NORMAL msg = iList.at(i);
-            if (msg.eventType.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.userName.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.dateTime.contains(inormalFilter.searchstr, Qt::CaseInsensitive) || msg.msg.contains(inormalFilter.searchstr, Qt::CaseInsensitive)) {
-                if (iList[i].eventType.compare("shutdown", Qt::CaseInsensitive) == 0)
-                    rsList.append(iList[i]);
-            }
-        }
-    }
-    return rsList;
-}
-
-QList<LOG_MSG_DPKG> DisplayContent::filterDpkg(const QString &iSearchStr, const QList<LOG_MSG_DPKG> &iList)
-{
-    QList<LOG_MSG_DPKG> rsList;
-    if (iSearchStr.isEmpty()) {
-        return iList;
-    }
-
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_MSG_DPKG msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive)) {
-            rsList.append(msg);
-        }
-    }
-    return rsList;
-}
-
-QList<LOG_MSG_JOURNAL> DisplayContent::filterKern(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList)
-{
-    QList<LOG_MSG_JOURNAL> rsList;
-    if (iSearchStr.isEmpty()) {
-        return iList;
-    }
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_MSG_JOURNAL msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive)) {
-            rsList.append(msg);
-        }
-    }
-    return rsList;
-}
-
-QList<LOG_MSG_XORG> DisplayContent::filterXorg(const QString &iSearchStr, const QList<LOG_MSG_XORG> &iList)
-{
-    QList<LOG_MSG_XORG> rsList;
-    if (iSearchStr.isEmpty()) {
-        return iList;
-    }
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_MSG_XORG msg = iList.at(i);
-        if (msg.offset.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
-            rsList.append(msg);
-    }
-    return rsList;
-}
-
-QList<LOG_MSG_KWIN> DisplayContent::filterKwin(const QString &iSearchStr, const QList<LOG_MSG_KWIN> &iList)
-{
-    QList<LOG_MSG_KWIN> rsList;
-    if (iSearchStr.isEmpty()) {
-        return iList;
-    }
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_MSG_KWIN msg = iList.at(i);
-        if (msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
-            rsList.append(msg);
-    }
-    return rsList;
-}
-
-QList<LOG_MSG_APPLICATOIN> DisplayContent::filterApp(APP_FILTERS appFilter, const QList<LOG_MSG_APPLICATOIN> &iList)
-{
-    QList<LOG_MSG_APPLICATOIN> rsList;
-    if (appFilter.searchstr.isEmpty() && appFilter.submodule.isEmpty()) {
-        return iList;
-    }
-
-    if (appFilter.submodule.isEmpty()) {
-        for (int i = 0; i < iList.size(); i++) {
-            LOG_MSG_APPLICATOIN msg = iList.at(i);
-            if (msg.dateTime.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.level.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.src.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.msg.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.subModule.contains(appFilter.searchstr, Qt::CaseInsensitive)) {
-                rsList.append(msg);
-            }
-        }
-    } else {
-        for (int i = 0; i < iList.size(); i++) {
-            LOG_MSG_APPLICATOIN msg = iList.at(i);
-            if (msg.dateTime.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.level.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.src.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.msg.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.subModule.contains(appFilter.searchstr, Qt::CaseInsensitive)) {
-                if (msg.subModule.compare(appFilter.submodule, Qt::CaseInsensitive) == 0) {
-                    rsList.append(msg);
-                }
-            }
-        }
-    }
-    return rsList;
-}
-
-QList<LOG_MSG_JOURNAL> DisplayContent::filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList)
-{
-    QList<LOG_MSG_JOURNAL> rsList;
-    if (iSearchStr.isEmpty()) {
-        return iList;
-    }
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_MSG_JOURNAL msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
-            rsList.append(msg);
-    }
-    return rsList;
-}
-
-QList<LOG_MSG_JOURNAL> DisplayContent::filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList)
-{
-    QList<LOG_MSG_JOURNAL> rsList;
-    if (iSearchStr.isEmpty()) {
-        return iList;
-    }
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_MSG_JOURNAL msg = iList.at(i);
-        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
-            rsList.append(msg);
-    }
-    return rsList;
-}
-
-QList<LOG_FILE_OTHERORCUSTOM> DisplayContent::filterOOC(const QString &iSearchStr, const QList<LOG_FILE_OTHERORCUSTOM> &iList)
-{
-    QList<LOG_FILE_OTHERORCUSTOM> rsList;
-    if (iSearchStr.isEmpty()) {
-        return iList;
-    }
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_FILE_OTHERORCUSTOM msg = iList.at(i);
-        if (msg.name.contains(iSearchStr, Qt::CaseInsensitive) || msg.path.contains(iSearchStr, Qt::CaseInsensitive))
-            rsList.append(msg);
-    }
-    return rsList;
-}
-
-QList<LOG_MSG_AUDIT> DisplayContent::filterAudit(AUDIT_FILTERS auditFilter, const QList<LOG_MSG_AUDIT> &iList)
-{
-    QList<LOG_MSG_AUDIT> rsList;
-    if (auditFilter.searchstr.isEmpty() && auditFilter.auditTypeFilter < -1) {
-        return iList;
-    }
-    int nAuditType = auditFilter.auditTypeFilter - 1;
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_MSG_AUDIT msg = iList.at(i);
-        if (msg.contains(auditFilter.searchstr) && (nAuditType == -1 || msg.filterAuditType(nAuditType))) {
-            rsList.append(msg);
-        }
-    }
-
-    return rsList;
-}
-QList<LOG_MSG_COREDUMP> DisplayContent::filterCoredump(const QString &iSearchStr, const QList<LOG_MSG_COREDUMP> &iList)
-{
-    QList<LOG_MSG_COREDUMP> rsList;
-    if (iSearchStr.isEmpty()) {
-        return iList;
-    }
-    for (int i = 0; i < iList.size(); i++) {
-        LOG_MSG_COREDUMP msg = iList.at(i);
-        if (msg.sig.contains(iSearchStr, Qt::CaseInsensitive)
-                || msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive)
-                || msg.coreFile.contains(iSearchStr, Qt::CaseInsensitive)
-                || msg.uid.contains(iSearchStr, Qt::CaseInsensitive)
-                || msg.exe.contains(iSearchStr, Qt::CaseInsensitive)) {
-            rsList.append(msg);
-        }
-    }
-
-    return rsList;
+    m_pLogBackend->clearAllDatalist();
 }
 
 /**
@@ -3676,53 +3130,65 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
     if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
         // default level is info so PRIORITY=6
         m_flag = JOURNAL;
+        m_pLogBackend->setFlag(m_flag);
         generateJournalFile(m_curBtnId, m_curLevel);
     } else if (itemData.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = DPKG;
+        m_pLogBackend->setFlag(m_flag);
         generateDpkgFile(m_curBtnId);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
-        xList.clear();
         m_flag = XORG;
+        m_pLogBackend->setFlag(m_flag);
         generateXorgFile(m_curBtnId);
     } else if (itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = BOOT;
+        m_pLogBackend->setFlag(m_flag);
         generateBootFile();
     } else if (itemData.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = KERN;
+        m_pLogBackend->setFlag(m_flag);
         generateKernFile(m_curBtnId);
     } else if (itemData.contains(".cache")) {
-        clearAllDatalist();
+        clearAllDatas();
     } else if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
-        clearAllDatalist();
+        clearAllDatas();
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {
-        norList.clear();
         m_flag = Normal;
+        m_pLogBackend->setFlag(m_flag);
         generateNormalFile(m_curBtnId);
     } else if (itemData.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Kwin;
+        m_pLogBackend->setFlag(m_flag);
         KWIN_FILTERS filter;
         filter.msg = "";
         generateKwinFile(filter);
     } else if (itemData.contains(BOOT_KLU_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = BOOT_KLU;
+        m_pLogBackend->setFlag(m_flag);
         generateJournalBootFile(m_curLevel);
     } else if (itemData.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dnf;
+        m_pLogBackend->setFlag(m_flag);
         generateDnfFile(BUTTONID(m_curBtnId), m_curDnfLevel);
     } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Dmesg;
+        m_pLogBackend->setFlag(m_flag);
         generateDmesgFile(BUTTONID(m_curBtnId), PRIORITY(m_curLevel));
     } else if (itemData.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = OtherLog;
+        m_pLogBackend->setFlag(m_flag);
         generateOOCLogs(OOC_OTHER);
     } else if (itemData.contains(CUSTOM_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = CustomLog;
+        m_pLogBackend->setFlag(m_flag);
         generateOOCLogs(OOC_CUSTOM);
     } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Audit;
-        generateAuditFile(m_curBtnId, m_curLevel);
+        m_pLogBackend->setFlag(m_flag);
+        generateAuditFile(m_curBtnId, m_curAuditType);
     } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = COREDUMP;
+        m_pLogBackend->setFlag(m_flag);
         generateCoredumpFile(m_curBtnId);
     }
 
@@ -3741,13 +3207,13 @@ void DisplayContent::generateOOCFile(const QString &path)
     setLoadState(DATA_LOADING);
     m_detailWgt->cleanText();
     m_isDataLoadComplete = false;
-    m_OOCCurrentIndex = m_logFileParse.parseByOOC(path);
+    m_pLogBackend->parseByOOC(path);
 }
 
 void DisplayContent::generateOOCLogs(const OOC_TYPE &type, const QString &iSearchStr/* = ""*/)
 {
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
 
     QList<QStringList> files;
     QList<LOG_FILE_OTHERORCUSTOM>* pListOrigin = nullptr;
@@ -3755,13 +3221,13 @@ void DisplayContent::generateOOCLogs(const OOC_TYPE &type, const QString &iSearc
 
     if (type == OOC_OTHER) {
         files = LogApplicationHelper::instance()->getOtherLogList();
-        pListOrigin = &oListOrigin;
-        pList = &oList;
+        pListOrigin = &(m_pLogBackend->oListOrigin);
+        pList = &(m_pLogBackend->oList);
     }
     else {
         files = LogApplicationHelper::instance()->getCustomLogList();
-        pListOrigin = &cListOrigin;
-        pList = &cList;
+        pListOrigin = &(m_pLogBackend->cListOrigin);
+        pList = &(m_pLogBackend->cList);
     }
 
     for (QStringList iter : files) {
@@ -3772,7 +3238,7 @@ void DisplayContent::generateOOCLogs(const OOC_TYPE &type, const QString &iSearc
         pListOrigin->append(logFileInfo);
     }
 
-    *pList = filterOOC(iSearchStr, *pListOrigin);
+    *pList = LogBackend::filterOOC(iSearchStr, *pListOrigin);
 
     createOOCTableForm();
     createOOCTable(*pList);
@@ -3806,8 +3272,8 @@ void DisplayContent::createOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list)
 void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr);
-    clearAllFilter();
-    clearAllDatalist();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
     setLoadState(DATA_LOADING);
@@ -3819,7 +3285,6 @@ void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchSt
 
     switch (id) {
     case ALL: {
-        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
     }
     break;
     case ONE_DAY: {
@@ -3828,7 +3293,6 @@ void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchSt
         dtEnd.setTime(QTime(23, 59, 59, 999));
         auditFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
     }
     break;
     case THREE_DAYS: {
@@ -3837,7 +3301,6 @@ void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchSt
         dtEnd.setTime(QTime(23, 59, 59, 999));
         auditFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
     }
     break;
     case ONE_WEEK: {
@@ -3846,7 +3309,6 @@ void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchSt
         dtEnd.setTime(QTime(23, 59, 59, 999));
         auditFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
     }
     break;
     case ONE_MONTH: {
@@ -3855,7 +3317,6 @@ void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchSt
         dtEnd.setTime(QTime(23, 59, 59, 999));
         auditFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
     }
     break;
     case THREE_MONTHS: {
@@ -3864,12 +3325,16 @@ void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchSt
         dtEnd.setTime(QTime(23, 59, 59, 999));
         auditFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         auditFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_auditCurrentIndex = m_logFileParse.parseByAudit(auditFilter);
     }
     break;
     default:
         break;
     }
+
+    m_pLogBackend->m_auditFilter = auditFilter;
+
+    if (id >= ALL && id <= THREE_MONTHS)
+        m_pLogBackend->parseByAudit(auditFilter);
 }
 
 void DisplayContent::createAuditTableForm()
@@ -3919,9 +3384,8 @@ void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
         return;
     }
 
-    clearAllFilter();
-    clearAllDatalist();
-    m_coredumpList.clear();
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
     setLoadState(DATA_LOADING);
@@ -3932,7 +3396,6 @@ void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
 
     switch (id) {
     case ALL:
-        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
         break;
     case ONE_DAY: {
         QDateTime dtStart = dt;
@@ -3940,7 +3403,6 @@ void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         coreFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
         coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
     }
     break;
     case THREE_DAYS: {
@@ -3949,7 +3411,6 @@ void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         coreFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
         coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
     }
     break;
     case ONE_WEEK: {
@@ -3958,7 +3419,6 @@ void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         coreFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
         coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
     }
     break;
     case ONE_MONTH: {
@@ -3967,7 +3427,6 @@ void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         coreFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
         coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
     }
     break;
     case THREE_MONTHS: {
@@ -3976,12 +3435,14 @@ void DisplayContent::generateCoredumpFile(int id, const QString &iSearchStr)
         dtEnd.setTime(QTime(23, 59, 59, 999));
         coreFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
         coreFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
-        m_coredumpCurrentIndex = m_logFileParse.parseByCoredump(coreFilter);
     }
     break;
     default:
         break;
     }
+
+    if (id >= ALL && id <= THREE_MONTHS)
+        m_pLogBackend->parseByCoredump(coreFilter);
 }
 void DisplayContent::createCoredumpTableForm()
 {

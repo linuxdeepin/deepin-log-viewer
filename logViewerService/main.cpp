@@ -37,7 +37,8 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     a.setOrganizationName("deepin");
     a.setApplicationName("deepin-log-viewer-service");
-#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
+//#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
+#if 0
     Dtk::Core::DLogManager::registerJournalAppender();
 #ifdef QT_DEBUG
     Dtk::Core::DLogManager::registerConsoleAppender();

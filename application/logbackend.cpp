@@ -15,6 +15,7 @@
 #include "eventlogutils.h"
 
 #include <sys/utsname.h>
+#include <malloc.h>
 
 #include <DSysInfo>
 
@@ -52,6 +53,72 @@ LogBackend::LogBackend(QObject *parent) : QObject(parent)
 
     m_cmdWorkDir = QDir::currentPath();
     Utils::m_mapAuditType2EventType = LogSettings::instance()->loadAuditMap();
+
+    initConnections();
+}
+
+void LogBackend::initConnections()
+{
+    connect(&m_logFileParser, &LogFileParser::dpkgFinished, this, &LogBackend::slot_dpkgFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::dpkgData, this, &LogBackend::slot_dpkgData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::xlogFinished, this, &LogBackend::slot_XorgFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::xlogData, this, &LogBackend::slot_xorgData,
+            Qt::QueuedConnection);
+
+    connect(&m_logFileParser, &LogFileParser::bootFinished, this, &LogBackend::slot_bootFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::bootData, this, &LogBackend::slot_bootData,
+            Qt::QueuedConnection);
+
+    connect(&m_logFileParser, &LogFileParser::kernFinished, this, &LogBackend::slot_kernFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::kernData, this, &LogBackend::slot_kernData,
+            Qt::QueuedConnection);
+
+    connect(&m_logFileParser, &LogFileParser::journalFinished, this, &LogBackend::slot_journalFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::journalData, this, &LogBackend::slot_journalData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::journaBootlData, this, &LogBackend::slot_journalBootData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::appFinished, this,
+            &LogBackend::slot_applicationFinished);
+    connect(&m_logFileParser, &LogFileParser::appData, this,
+            &LogBackend::slot_applicationData);
+
+    connect(&m_logFileParser, &LogFileParser::kwinFinished, this, &LogBackend::slot_kwinFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::kwinData, this, &LogBackend::slot_kwinData,
+            Qt::QueuedConnection);
+
+    connect(&m_logFileParser, &LogFileParser::normalData, this, &LogBackend::slot_normalData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::normalFinished, this, &LogBackend::slot_normalFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::journalBootFinished, this, &LogBackend::slot_journalBootFinished,
+            Qt::QueuedConnection);
+
+    connect(&m_logFileParser, &LogFileParser::proccessError, this, &LogBackend::slot_logLoadFailed,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, SIGNAL(dnfFinished(QList<LOG_MSG_DNF>)), this, SLOT(slot_dnfFinished(QList<LOG_MSG_DNF>)));
+    connect(&m_logFileParser, &LogFileParser::dmesgFinished, this, &LogBackend::slot_dmesgFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::OOCData, this, &LogBackend::slot_OOCData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::OOCFinished, this, &LogBackend::slot_OOCFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::auditData, this, &LogBackend::slot_auditData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::auditFinished, this, &LogBackend::slot_auditFinished,
+            Qt::QueuedConnection);
+
+    connect(&m_logFileParser, &LogFileParser::coredumpData, this, &LogBackend::slot_coredumpData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::coredumpFinished, this, &LogBackend::slot_coredumpFinished,
+            Qt::QueuedConnection);
 }
 
 void LogBackend::setCmdWorkDir(const QString &dirPath)
@@ -218,36 +285,20 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     }
     break;
     case APP: {
-        categoryOutPath = QString("%1/%2/").arg(m_outPath).arg("apps");
+        categoryOutPath = QString("%1/%2").arg(m_outPath).arg("apps");
         resetCategoryOutputPath(categoryOutPath);
 
-        QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
-        for (auto &it2 : appData.toStdMap()) {
-            QString appName = Utils::appName(it2.second);
-            if (appName.isEmpty())
+        bSuccess = false;
+        AppLogConfigList appConfigs = LogApplicationHelper::instance()->getAppLogConfigs();
+        for (auto appConfig : appConfigs) {
+            QString appName = appConfig.name;
+            // 隐藏的应用不导出日志
+            if (appName.isEmpty() || !appConfig.visible)
                 continue;
 
-            AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
-
-            // 确定解析方式
-            QString parseType = "";
-            if (appLogConfig.logType == "file" || !appLogConfig.isValid())
-                parseType = "file";
-            else if (appLogConfig.isValid() && appLogConfig.logType == "journal")
-                parseType = "journal";
-
-            QFileInfo fi(it2.second);
-            QString tmpSubCategoryOutPath = QString("%1/%2/").arg(categoryOutPath).arg(fi.completeBaseName());
-            Utils::mkMutiDir(tmpSubCategoryOutPath);
-
-            if (parseType == "file") {
-                QStringList logPaths = DLDBusHandler::instance(nullptr)->getFileInfo(it2.second);
-                logPaths.removeDuplicates();
-                for (auto &file: logPaths)
-                    DLDBusHandler::instance()->exportLog(tmpSubCategoryOutPath, file, true);
-            } else if (parseType == "journal") {
-                DLDBusHandler::instance()->exportLog(tmpSubCategoryOutPath, "journalctl_app", false);
-            }
+            // 逐个导出应用日志
+            if (exportAppLogs(categoryOutPath, appName) != -1)
+                bSuccess = true;
         }
     }
     break;
@@ -360,6 +411,8 @@ bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, co
 
     m_currentSearchStr = keyword;
 
+    m_sessionType = Export;
+
     // 解析数据
     if (!parseData(m_flag, period, condition)) {
         qCWarning(logBackend) << QString("parse data failed.");
@@ -378,60 +431,58 @@ int LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
     if (appName.isEmpty())
         return -1;
 
-    // 先查找是否有该应用相关日志
-    if (!LogApplicationHelper::instance()->isValidAppName(appName)) {
+    // 先查找是否有该应用相关日志配置
+    if (!LogApplicationHelper::instance()->isAppLogConfigExist(appName)) {
         qCWarning(logBackend) << QString("unknown app:%1 is invalid.").arg(appName);
-        return -1;
-    }
-
-    QString logPath = getApplogPath(appName);
-    if (logPath.isEmpty()) {
-        qCWarning(logBackend) << QString("app:%1 log path is null.").arg(appName);
         return -1;
     }
 
     qCInfo(logBackend) << QString("exporting %1 logs...").arg(appName);
 
-    bool bSuccess = true;
-    AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
-    // 确定解析方式
-    QString parseType = "";
-    if (appLogConfig.logType == "file" || !appLogConfig.isValid())
-        parseType = "file";
-    else if (appLogConfig.isValid() && appLogConfig.logType == "journal")
-        parseType = "journal";
-
     QString categoryOutPath = QString("%1/%2").arg(m_outPath).arg(appName);
-    if (parseType == "file") {
-        QStringList logPaths = DLDBusHandler::instance(nullptr)->getFileInfo(logPath);
-        logPaths.removeDuplicates();
 
-        if (logPaths.size() > 0) {
-            resetCategoryOutputPath(categoryOutPath);
+    bool bSuccess = false;
+    AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
+    for (int i = 0; i < appLogConfig.subModules.size(); i++) {
+        SubModuleConfig& submodule = appLogConfig.subModules[i];
+        QString subCategoryOutPath = QString("/%1/%2/").arg(categoryOutPath).arg(submodule.name);
+        if (appLogConfig.subModules.size() == 1 &&  submodule.name == appLogConfig.name)
+            subCategoryOutPath = categoryOutPath;
+        if (submodule.logType == "file") {
+            QStringList logPaths = DLDBusHandler::instance(nullptr)->getFileInfo(submodule.logPath);
+            logPaths.removeDuplicates();
+            if (logPaths.size() > 0) {
+                resetCategoryOutputPath(subCategoryOutPath);
 
-            for (auto &file: logPaths)
-                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
-        } else {
-            qCWarning(logBackend) << QString("app:%1 not found log files.").arg(appName);
-            bSuccess = false;
+                for (auto &file: logPaths)
+                    DLDBusHandler::instance()->exportLog(subCategoryOutPath, file, true);
+                bSuccess = true;
+            } else {
+                qCWarning(logBackend) << QString("app:%1 submodule:%2, logPath:%3 not found log files.").arg(appName).arg(submodule.name).arg(submodule.logPath);
+            }
+        } else if (submodule.logType == "journal") {
+            if (submodule.filter.endsWith("*"))
+                qCWarning(logBackend) << QString("app:%1 submodule:%2, Export journal logs with wildcard not supported.").arg(appName).arg(submodule.name);
+            else {
+                QJsonObject obj = submodule.toJson();
+                resetCategoryOutputPath(subCategoryOutPath);
+                DLDBusHandler::instance()->exportLog(subCategoryOutPath, QJsonDocument(obj).toJson(QJsonDocument::Compact), false);
+                bSuccess = true;
+            }
         }
-    } else if (parseType == "journal") {
-        resetCategoryOutputPath(categoryOutPath);
-
-        DLDBusHandler::instance()->exportLog(categoryOutPath, "journalctl_app", false);
     }
 
     Utils::resetToNormalAuth(categoryOutPath);
 
     if (bSuccess)
-        qCInfo(logBackend) << QString("export success.");
+        qCInfo(logBackend) << QString("export %1 logs success.").arg(appName) << "\n";
     else
-        qCInfo(logBackend) << QString("export failed.");
+        qCInfo(logBackend) << QString("export %1 logs failed.").arg(appName) << "\n";
 
     return bSuccess ? 0 : -1;
 }
 
-bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &appName, const QString &period, const QString &level, const QString &keyword)
+bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &appName, const QString &period, const QString &level, const QString &submodule, const QString &keyword)
 {
     if(!getOutDirPath(outDir))
         return false;
@@ -451,42 +502,34 @@ bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &
 
     // 级别有效性判断
     if (!level.isEmpty() && level2Id(level) == -2) {
-        qCWarning(logBackend) << "invalid 'level' parameter: " << level << "\nUSEAGE: 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
+        qCWarning(logBackend) << "invalid 'level' parameter: " << level << "\nUSEAGE: all(all), 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
         return false;
     }
 
-    qCInfo(logBackend) << "appName:" << appName << "period:" << period << "level:" << level << "keyword:" << keyword;
+    qCInfo(logBackend) << "appName:" << appName << "period:" << period << "level:" << level << "submodule" << submodule << "keyword:" << keyword;
 
     TIME_RANGE timeRange = getTimeRange(periodId);
 
-    // 先查找是否有该应用相关日志
-    if (!LogApplicationHelper::instance()->isValidAppName(appName)) {
+    // 先查找是否有该应用相关日志配置
+    if (!LogApplicationHelper::instance()->isAppLogConfigExist(appName)) {
         qCWarning(logBackend) << QString("unknown app:%1 is invalid.").arg(appName);
         return false;
     }
 
-    QString logPath = getApplogPath(appName);
-    if (logPath.isEmpty()) {
-        qCWarning(logBackend) << QString("app:%1 log path is null.").arg(appName);
-        return false;
-    }
-
-    // 解析器准备工作
-    initParser();
-    if (!m_pParser)
-        return false;
-
     m_flag = APP;
-    m_curAppLog = logPath;
+    m_curApp = appName;
     m_sessionType = Export;
     m_currentSearchStr = keyword;
 
-    APP_FILTERS appFilter;
-    appFilter.path = logPath;
-    appFilter.lvlFilter = level2Id(level);
-    appFilter.timeFilterBegin = timeRange.begin;
-    appFilter.timeFilterEnd = timeRange.end;
-    m_appCurrentIndex = m_pParser->parseByApp(appFilter);
+    m_appFilter.clear();
+    m_appFilter.app = appName;
+    m_appFilter.submodule = submodule;
+    m_appFilter.lvlFilter = level2Id(level);
+    m_appFilter.timeFilterBegin = timeRange.begin;
+    m_appFilter.timeFilterEnd = timeRange.end;
+    m_appFilter.searchstr = m_currentSearchStr;
+
+    m_appCurrentIndex = m_logFileParser.parseByApp(m_appFilter);
 
     return true;
 }
@@ -560,8 +603,10 @@ void LogBackend::slot_dpkgFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit dpkgFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -572,6 +617,10 @@ void LogBackend::slot_dpkgData(int index, QList<LOG_MSG_DPKG> list)
 
     dListOrigin.append(list);
     dList.append(filterDpkg(m_currentSearchStr, list));
+
+    if (View == m_sessionType) {
+        emit dpkgData(dList);
+    }
 }
 
 void LogBackend::slot_XorgFinished(int index)
@@ -580,8 +629,10 @@ void LogBackend::slot_XorgFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit xlogFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -592,6 +643,10 @@ void LogBackend::slot_xorgData(int index, QList<LOG_MSG_XORG> list)
 
     xListOrigin.append(list);
     xList.append(filterXorg(m_currentSearchStr, list));
+
+    if (View == m_sessionType) {
+        emit xlogData(xList);
+    }
 }
 
 void LogBackend::slot_bootFinished(int index)
@@ -600,8 +655,10 @@ void LogBackend::slot_bootFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit bootFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -612,6 +669,10 @@ void LogBackend::slot_bootData(int index, QList<LOG_MSG_BOOT> list)
 
     bList.append(list);
     currentBootList.append(filterBoot(m_bootFilter, list));
+
+    if (View == m_sessionType) {
+        emit bootData(currentBootList);
+    }
 }
 
 void LogBackend::slot_kernFinished(int index)
@@ -620,8 +681,10 @@ void LogBackend::slot_kernFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit kernFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -632,6 +695,10 @@ void LogBackend::slot_kernData(int index, QList<LOG_MSG_JOURNAL> list)
 
     kListOrigin.append(list);
     kList.append(filterKern(m_currentSearchStr, list));
+
+    if (View == m_sessionType) {
+        emit kernData(kList);
+    }
 }
 
 void LogBackend::slot_kwinFinished(int index)
@@ -640,8 +707,10 @@ void LogBackend::slot_kwinFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit kwinFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -651,6 +720,10 @@ void LogBackend::slot_kwinData(int index, QList<LOG_MSG_KWIN> list)
         return;
     m_kwinList.append(list);
     m_currentKwinList.append(filterKwin(m_currentSearchStr, list));
+
+    if (View == m_sessionType) {
+        emit kwinData(m_currentKwinList);
+    }
 }
 
 void LogBackend::slot_dnfFinished(const QList<LOG_MSG_DNF> &list)
@@ -662,8 +735,10 @@ void LogBackend::slot_dnfFinished(const QList<LOG_MSG_DNF> &list)
 
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit dnfFinished(dnfListOrigin);
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -677,8 +752,10 @@ void LogBackend::slot_dmesgFinished(const QList<LOG_MSG_DMESG> &list)
 
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit dmesgFinished(dmesgListOrigin);
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -688,8 +765,10 @@ void LogBackend::slot_journalFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit journalFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -699,8 +778,10 @@ void LogBackend::slot_journalBootFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit journalBootFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -711,6 +792,10 @@ void LogBackend::slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list)
 
     jBootListOrigin.append(list);
     jBootList.append(filterJournalBoot(m_currentSearchStr, list));
+
+    if (View == m_sessionType) {
+        emit journaBootlData(jBootList);
+    }
 }
 
 void LogBackend::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
@@ -721,6 +806,10 @@ void LogBackend::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
 
     jListOrigin.append(list);
     jList.append(filterJournal(m_currentSearchStr, list));
+
+    if (View == m_sessionType) {
+        emit journalData(jList);
+    }
 }
 
 void LogBackend::slot_applicationFinished(int index)
@@ -729,8 +818,10 @@ void LogBackend::slot_applicationFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit appFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -740,7 +831,11 @@ void LogBackend::slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> list
         return;
 
     appListOrigin.append(list);
-    appList.append(filterApp(m_currentSearchStr, list));
+    appList.append(filterApp(m_appFilter, list));
+
+    if (View == m_sessionType) {
+        emit appData(appList);
+    }
 }
 
 void LogBackend::slot_normalFinished(int index)
@@ -749,8 +844,10 @@ void LogBackend::slot_normalFinished(int index)
         return;
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit normalFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -760,6 +857,29 @@ void LogBackend::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
         return;
     norList.append(list);
     nortempList.append(filterNomal(m_normalFilter, list));
+
+    if (View == m_sessionType) {
+        emit normalData(nortempList);
+    }
+}
+
+void LogBackend::slot_OOCFinished(int index, int error)
+{
+    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
+        return;
+    m_isDataLoadComplete = true;
+
+    if (View == m_sessionType)
+        emit OOCFinished(error);
+}
+
+void LogBackend::slot_OOCData(int index, const QString &data)
+{
+    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
+        return;
+
+    if (View == m_sessionType)
+        emit OOCData(data);
 }
 
 void LogBackend::slot_auditFinished(int index, bool bShowTip)
@@ -770,9 +890,10 @@ void LogBackend::slot_auditFinished(int index, bool bShowTip)
         return;
     m_isDataLoadComplete = true;
 
-
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit auditFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     }
 }
 
@@ -783,6 +904,9 @@ void LogBackend::slot_auditData(int index, QList<LOG_MSG_AUDIT> list)
 
     aListOrigin.append(list);
     aList.append(filterAudit(m_auditFilter, list));
+
+    if (View == m_sessionType)
+        emit auditData(aList);
 }
 
 void LogBackend::slot_coredumpFinished(int index)
@@ -792,8 +916,10 @@ void LogBackend::slot_coredumpFinished(int index)
 
     m_isDataLoadComplete = true;
 
-    if (Export == m_sessionType) {
-        exportData();
+    if (View == m_sessionType) {
+        emit coredumpFinished();
+    } else if (Export == m_sessionType) {
+        executeCLIExport();
     } else if (Report == m_sessionType) {
         int nCount = m_currentCoredumpList.size();
         if (nCount == 0) {
@@ -845,31 +971,62 @@ void LogBackend::slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list)
         return;
 
     m_coredumpList.append(list);
-    m_currentCoredumpList.append(filterCoredump(m_currentSearchStr, list));
+    QList<LOG_MSG_COREDUMP> filterList = filterCoredump(m_currentSearchStr, list);
+    m_currentCoredumpList.append(filterList);
+
+    if (View == m_sessionType)
+        emit coredumpData(m_currentCoredumpList, !filterList.isEmpty());
 }
 
 void LogBackend::slot_logLoadFailed(const QString &iError)
 {
     qCWarning(logBackend) << "parse data failed. error: " << iError;
-    qApp->exit(-1);
+
+    if (View == m_sessionType)
+        emit proccessError(iError);
+    else if (Export == m_sessionType || Report == m_sessionType)
+        qApp->exit(-1);
 }
 
 void LogBackend::onExportProgress(int nCur, int nTotal)
 {
-    Q_UNUSED(nCur);
-    Q_UNUSED(nTotal);
+    if (View == m_sessionType) {
+        LogExportThread *exportThread = nullptr;
+        if (sender()) {
+            exportThread = qobject_cast<LogExportThread *>(sender());
+        }
+
+        //如果导出线程不再运行则不处理此信号
+        if (!exportThread || !exportThread->isProcessing()) {
+            return;
+        }
+
+        emit sigProgress(nCur, nTotal);
+    }
 }
 
 void LogBackend::onExportResult(bool isSuccess)
 {
-    Utils::resetToNormalAuth(m_outPath);
+    if (View == m_sessionType) {
+        emit sigResult(isSuccess);
+    } else if (Export == m_sessionType || Report == m_sessionType) {
+        Utils::resetToNormalAuth(m_outPath);
 
-    if (isSuccess) {
-        qCInfo(logBackend) << "export success.";
-        qApp->quit();
-    } else {
-        qCWarning(logBackend) << "export failed.";
-        qApp->exit(-1);
+        PERF_PRINT_END("POINT-04", "");
+        if (isSuccess) {
+            qCInfo(logBackend) << "export success.";
+            qApp->quit();
+        } else {
+            qCWarning(logBackend) << "export failed.";
+            qApp->exit(-1);
+        }
+    }
+}
+
+void LogBackend::onExportFakeCloseDlg()
+{
+    if (View == m_sessionType) {
+        emit sigProcessFull();
     }
 }
 
@@ -893,7 +1050,7 @@ QList<LOG_MSG_BOOT> LogBackend::filterBoot(BOOT_FILTERS ibootFilter, const QList
     return rsList;
 }
 
-QList<LOG_MSG_NORMAL> LogBackend::filterNomal(NORMAL_FILTERS inormalFilter, QList<LOG_MSG_NORMAL> &iList)
+QList<LOG_MSG_NORMAL> LogBackend::filterNomal(NORMAL_FILTERS inormalFilter, const QList<LOG_MSG_NORMAL> &iList)
 {
     QList<LOG_MSG_NORMAL> rsList;
     if (inormalFilter.searchstr.isEmpty() && inormalFilter.eventTypeFilter < 0) {
@@ -1008,6 +1165,41 @@ QList<LOG_MSG_APPLICATOIN> LogBackend::filterApp(const QString &iSearchStr, cons
     return rsList;
 }
 
+QList<LOG_MSG_APPLICATOIN> LogBackend::filterApp(APP_FILTERS appFilter, const QList<LOG_MSG_APPLICATOIN> &iList)
+{
+    QList<LOG_MSG_APPLICATOIN> rsList;
+    if (appFilter.searchstr.isEmpty() && appFilter.submodule.isEmpty()) {
+        return iList;
+    }
+
+    if (appFilter.submodule.isEmpty()) {
+        for (int i = 0; i < iList.size(); i++) {
+            LOG_MSG_APPLICATOIN msg = iList.at(i);
+            if (msg.dateTime.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.level.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.src.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.msg.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.subModule.contains(appFilter.searchstr, Qt::CaseInsensitive)) {
+                rsList.append(msg);
+            }
+        }
+    } else {
+        for (int i = 0; i < iList.size(); i++) {
+            LOG_MSG_APPLICATOIN msg = iList.at(i);
+            if (msg.dateTime.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.level.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.src.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.msg.contains(appFilter.searchstr, Qt::CaseInsensitive)
+                    || msg.subModule.contains(appFilter.searchstr, Qt::CaseInsensitive)) {
+                if (msg.subModule.compare(appFilter.submodule, Qt::CaseInsensitive) == 0) {
+                    rsList.append(msg);
+                }
+            }
+        }
+    }
+    return rsList;
+}
+
 QList<LOG_MSG_DNF> LogBackend::filterDnf(const QString &iSearchStr, const QList<LOG_MSG_DNF> &iList)
 {
     QList<LOG_MSG_DNF> rsList;
@@ -1016,9 +1208,9 @@ QList<LOG_MSG_DNF> LogBackend::filterDnf(const QString &iSearchStr, const QList<
     }
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_DNF msg = iList.at(i);
-        if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive)
-                || msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive)
-                || msg.level.contains(m_currentSearchStr, Qt::CaseInsensitive))
+        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.msg.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.level.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
     return rsList;
@@ -1033,7 +1225,7 @@ QList<LOG_MSG_DMESG> LogBackend::filterDmesg(const QString &iSearchStr, const QL
 
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_DMESG msg = iList.at(i);
-        if (msg.dateTime.contains(m_currentSearchStr, Qt::CaseInsensitive) || msg.msg.contains(m_currentSearchStr, Qt::CaseInsensitive))
+        if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
 
@@ -1063,6 +1255,20 @@ QList<LOG_MSG_JOURNAL> LogBackend::filterJournalBoot(const QString &iSearchStr, 
     for (int i = 0; i < iList.size(); i++) {
         LOG_MSG_JOURNAL msg = iList.at(i);
         if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
+            rsList.append(msg);
+    }
+    return rsList;
+}
+
+QList<LOG_FILE_OTHERORCUSTOM> LogBackend::filterOOC(const QString &iSearchStr, const QList<LOG_FILE_OTHERORCUSTOM> &iList)
+{
+    QList<LOG_FILE_OTHERORCUSTOM> rsList;
+    if (iSearchStr.isEmpty()) {
+        return iList;
+    }
+    for (int i = 0; i < iList.size(); i++) {
+        LOG_FILE_OTHERORCUSTOM msg = iList.at(i);
+        if (msg.name.contains(iSearchStr, Qt::CaseInsensitive) || msg.path.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
     return rsList;
@@ -1186,11 +1392,6 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
 
     TIME_RANGE timeRange = getTimeRange(periodId);
 
-    // 解析器准备工作
-    initParser();
-    if (!m_pParser)
-        return false;
-
     // 设置筛选条件，解析数据
     switch (flag) {
     case JOURNAL: {
@@ -1206,7 +1407,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
             arg << QString::number(timeRange.begin * 1000) << QString::number(timeRange.end *1000);
         }
 
-        m_journalCurrentIndex = m_pParser->parseByJournal(arg);
+        m_journalCurrentIndex = m_logFileParser.parseByJournal(arg);
     }
     break;
     case Dmesg: {
@@ -1216,7 +1417,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         if (periodId == ALL)
             dmesgfilter.timeFilter = 0;
 
-        m_pParser->parseByDmesg(dmesgfilter);
+        m_logFileParser.parseByDmesg(dmesgfilter);
     }
     break;
     case KERN: {
@@ -1224,7 +1425,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         kernFilter.timeFilterBegin = timeRange.begin;
         kernFilter.timeFilterEnd = timeRange.end;
 
-        m_kernCurrentIndex = m_pParser->parseByKern(kernFilter);
+        m_kernCurrentIndex = m_logFileParser.parseByKern(kernFilter);
     }
     break;
     case BOOT_KLU: {
@@ -1236,21 +1437,21 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
             arg.append("all");
         }
 
-        m_journalBootCurrentIndex = m_pParser->parseByJournalBoot(arg);
+        m_journalBootCurrentIndex = m_logFileParser.parseByJournalBoot(arg);
     }
     break;
     case BOOT: {
         m_bootFilter.searchstr = m_currentSearchStr;
         m_bootFilter.statusFilter = statusFilter;
 
-        m_bootCurrentIndex = m_pParser->parseByBoot();
+        m_bootCurrentIndex = m_logFileParser.parseByBoot();
     }
     break;
     case DPKG: {
         DKPG_FILTERS dpkgFilter;
         dpkgFilter.timeFilterBegin = timeRange.begin;
         dpkgFilter.timeFilterEnd = timeRange.end;
-        m_dpkgCurrentIndex = m_pParser->parseByDpkg(dpkgFilter);
+        m_dpkgCurrentIndex = m_logFileParser.parseByDpkg(dpkgFilter);
     }
     break;
     case Dnf: {
@@ -1260,18 +1461,18 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         if (periodId == ALL)
             dnffilter.timeFilter = 0;
 
-        m_pParser->parseByDnf(dnffilter);
+        m_logFileParser.parseByDnf(dnffilter);
     }
     break;
     case Kwin: {
         KWIN_FILTERS filter;
         filter.msg = "";
-        m_kwinCurrentIndex = m_pParser->parseByKwin(filter);
+        m_kwinCurrentIndex = m_logFileParser.parseByKwin(filter);
     }
     break;
     case XORG: {
         XORG_FILTERS xorgFilter;
-        m_xorgCurrentIndex = m_pParser->parseByXlog(xorgFilter);
+        m_xorgCurrentIndex = m_logFileParser.parseByXlog(xorgFilter);
     }
     break;
     case APP: {
@@ -1282,7 +1483,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         COREDUMP_FILTERS coreFilter;
         coreFilter.timeFilterBegin = timeRange.begin;
         coreFilter.timeFilterEnd = timeRange.end;
-        m_coredumpCurrentIndex = m_pParser->parseByCoredump(coreFilter);
+        m_coredumpCurrentIndex = m_logFileParser.parseByCoredump(coreFilter);
     }
     break;
     case Normal: {
@@ -1290,7 +1491,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         m_normalFilter.timeFilterBegin = timeRange.begin;
         m_normalFilter.timeFilterEnd = timeRange.end;
         m_normalFilter.eventTypeFilter = normalEventType;
-        m_normalCurrentIndex = m_pParser->parseByNormal(m_normalFilter);
+        m_normalCurrentIndex = m_logFileParser.parseByNormal(m_normalFilter);
     }
     break;
     case Audit: {
@@ -1298,7 +1499,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         m_auditFilter.timeFilterBegin = timeRange.begin;
         m_auditFilter.timeFilterEnd = timeRange.end;
         m_auditFilter.auditTypeFilter = auditType;
-        m_auditCurrentIndex = m_pParser->parseByAudit(m_auditFilter);
+        m_auditCurrentIndex = m_logFileParser.parseByAudit(m_auditFilter);
     }
     break;
     default:
@@ -1308,187 +1509,71 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     return true;
 }
 
-void LogBackend::exportData()
+void LogBackend::executeCLIExport()
 {
     if (!m_isDataLoadComplete)
         return;
 
     QString outPath = m_outPath;
-
-    LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
-    connect(exportThread, &LogExportThread::sigResult, this, &LogBackend::onExportResult);
-    connect(exportThread, &LogExportThread::sigProgress, this, &LogBackend::onExportProgress);
-
-    QString fileName = "";
-    QStringList labels;
-    bool bMatchedData = false;
+    QString filePath = "";
     switch (m_flag) {
     case JOURNAL: {
-        if (!jList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/system.txt";
-            labels << QCoreApplication::translate("Table", "Level")
-                   << QCoreApplication::translate("Table", "Process") // modified by Airy
-                   << QCoreApplication::translate("Table", "Date and Time")
-                   << QCoreApplication::translate("Table", "Info")
-                   << QCoreApplication::translate("Table", "User")
-                   << QCoreApplication::translate("Table", "PID");
-            exportThread->exportToTxtPublic(fileName, jList, labels, m_flag);
-        }
+            filePath = outPath + "/system.txt";
     }
     break;
     case Dmesg: {
-        if (!dmesgList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/dmesg.txt";
-            labels  << QCoreApplication::translate("Table", "Level")
-                    << QCoreApplication::translate("Table", "Date and Time")
-                    << QCoreApplication::translate("Table", "Info");
-            exportThread->exportToTxtPublic(fileName, dmesgList, labels);
-        }
+            filePath = outPath + "/dmesg.txt";
     }
     break;
     case KERN: {
-        if (!kList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/kernel.txt";
-            labels << QCoreApplication::translate("Table", "Date and Time")
-                   << QCoreApplication::translate("Table", "User")
-                   << QCoreApplication::translate("Table", "Process")
-                   << QCoreApplication::translate("Table", "Info");
-            exportThread->exportToTxtPublic(fileName, kList, labels, m_flag);
-        }
+            filePath = outPath + "/kernel.txt";
     }
     break;
     case BOOT_KLU: {
-        if (!jBootList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/boot_klu.txt";
-            labels << QCoreApplication::translate("Table", "Level")
-                   << QCoreApplication::translate("Table", "Process")
-                   << QCoreApplication::translate("Table", "Date and Time")
-                   << QCoreApplication::translate("Table", "Info")
-                   << QCoreApplication::translate("Table", "User")
-                   << QCoreApplication::translate("Table", "PID");
-            exportThread->exportToTxtPublic(fileName, jBootList, labels, JOURNAL);
-        }
+            filePath = outPath + "/boot_klu.txt";
     }
     break;
     case BOOT: {
-        if (!currentBootList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/boot.txt";
-            labels << QCoreApplication::translate("Table", "Status")
-                   << QCoreApplication::translate("Table", "Info");
-            exportThread->exportToTxtPublic(fileName, currentBootList, labels);
-        }
+            filePath = outPath + "/boot.txt";
     }
     break;
     case DPKG: {
-        if (!dList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/dpkg.txt";
-            labels << QCoreApplication::translate("Table", "Date and Time")
-                   << QCoreApplication::translate("Table", "Info")
-                   << QCoreApplication::translate("Table", "Action");
-            exportThread->exportToTxtPublic(fileName, dList, labels);
-        }
+            filePath = outPath + "/dpkg.txt";
     }
     break;
     case Dnf: {
-        if (!dnfList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/dnf.txt";
-            labels << QCoreApplication::translate("Table", "Level")
-                   << QCoreApplication::translate("Table", "Date and Time")
-                   << QCoreApplication::translate("Table", "Info");
-            exportThread->exportToTxtPublic(fileName, dnfList, labels);
-        }
+            filePath = outPath + "/dnf.txt";
     }
     break;
     case Kwin: {
-        if (!m_currentKwinList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/kwin.txt";
-            labels << QCoreApplication::translate("Table", "Info");
-            exportThread->exportToTxtPublic(fileName, m_currentKwinList, labels);
-        }
+            filePath = outPath + "/kwin.txt";
     }
     break;
     case XORG: {
-        if (!xList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/xorg.txt";
-            labels << QCoreApplication::translate("Table", "Offset")
-                   << QCoreApplication::translate("Table", "Info");
-            exportThread->exportToTxtPublic(fileName, xList, labels);
-        }
+            filePath = outPath + "/xorg.txt";
     }
     break;
     case APP: {
-        if (!appList.isEmpty()) {
-            bMatchedData = true;
-            QString appName = Utils::appName(m_curAppLog);
-            QString transAppName = LogApplicationHelper::instance()->transName(appName);
-            fileName = outPath + QString("/%1.txt").arg(appName);
-            labels << QCoreApplication::translate("Table", "Level")
-                   << QCoreApplication::translate("Table", "Date and Time")
-                   << QCoreApplication::translate("Table", "Source")
-                   << QCoreApplication::translate("Table", "Info");
-            exportThread->exportToTxtPublic(fileName, appList, labels, transAppName);
-        }
+            filePath = outPath + QString("/%1.txt").arg(m_appFilter.app);
     }
     break;
     case COREDUMP: {
-        if (!m_currentCoredumpList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/coredump.zip";
-            labels << QCoreApplication::translate("Table", "SIG")
-                   << QCoreApplication::translate("Table", "Date and Time")
-                   << QCoreApplication::translate("Table", "Core File")
-                   << QCoreApplication::translate("Table", "User Name ")
-                   << QCoreApplication::translate("Table", "EXE");
-            exportThread->exportToZipPublic(fileName, m_currentCoredumpList, labels);
-        }
+            filePath = outPath + "/coredump.zip";
     }
     break;
     case Normal: {
-        if (!nortempList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/boot-shutdown-event.txt";
-            labels << QCoreApplication::translate("Table", "Event Type")
-                   << QCoreApplication::translate("Table", "Username")
-                   << QCoreApplication::translate("Tbble", "Date and Time")
-                   << QCoreApplication::translate("Table", "Info");
-            exportThread->exportToTxtPublic(fileName, nortempList, labels);
-        }
+            filePath = outPath + "/boot-shutdown-event.txt";
     }
     break;
     case Audit: {
-        if (!aList.isEmpty()) {
-            bMatchedData = true;
-            fileName = outPath + "/audit.txt";
-            labels << QCoreApplication::translate("Table", "Event Type")
-                   << QCoreApplication::translate("Table", "Date and Time")
-                   << QCoreApplication::translate("Table", "Process")
-                   << QCoreApplication::translate("Table", "Status")
-                   << QCoreApplication::translate("Table", "Info");
-            exportThread->exportToTxtPublic(fileName, aList, labels);
-        }
+            filePath = outPath + "/audit.txt";
     }
     break;
     default:
     break;
     }
 
-    if (!bMatchedData) {
-        qCWarning(logBackend) << "No matching data..";
-        qApp->exit(-1);
-        return;
-    }
-
-    QThreadPool::globalInstance()->start(exportThread);
-    qCInfo(logBackend) << "exporting ...";
+    exportLogData(filePath);
 }
 
 void LogBackend::resetCategoryOutputPath(const QString &path)
@@ -1501,72 +1586,6 @@ void LogBackend::resetCategoryOutputPath(const QString &path)
     Utils::mkMutiDir(path);
 }
 
-void LogBackend::initParser()
-{
-    if (m_pParser)
-        return;
-
-    m_pParser = new LogFileParser();
-
-    connect(m_pParser, &LogFileParser::dpkgFinished, this, &LogBackend::slot_dpkgFinished,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::dpkgData, this, &LogBackend::slot_dpkgData,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::xlogFinished, this, &LogBackend::slot_XorgFinished,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::xlogData, this, &LogBackend::slot_xorgData,
-            Qt::QueuedConnection);
-
-    connect(m_pParser, &LogFileParser::bootFinished, this, &LogBackend::slot_bootFinished,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::bootData, this, &LogBackend::slot_bootData,
-            Qt::QueuedConnection);
-
-    connect(m_pParser, &LogFileParser::kernFinished, this, &LogBackend::slot_kernFinished,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::kernData, this, &LogBackend::slot_kernData,
-            Qt::QueuedConnection);
-
-    connect(m_pParser, &LogFileParser::journalFinished, this, &LogBackend::slot_journalFinished,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::journalData, this, &LogBackend::slot_journalData,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::journaBootlData, this, &LogBackend::slot_journalBootData,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::appFinished, this,
-            &LogBackend::slot_applicationFinished);
-    connect(m_pParser, &LogFileParser::appData, this,
-            &LogBackend::slot_applicationData);
-
-    connect(m_pParser, &LogFileParser::kwinFinished, this, &LogBackend::slot_kwinFinished,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::kwinData, this, &LogBackend::slot_kwinData,
-            Qt::QueuedConnection);
-
-    connect(m_pParser, &LogFileParser::normalData, this, &LogBackend::slot_normalData,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::normalFinished, this, &LogBackend::slot_normalFinished,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::journalBootFinished, this, &LogBackend::slot_journalBootFinished,
-            Qt::QueuedConnection);
-
-    connect(m_pParser, &LogFileParser::proccessError, this, &LogBackend::slot_logLoadFailed,
-            Qt::QueuedConnection);
-    connect(m_pParser, SIGNAL(dnfFinished(QList<LOG_MSG_DNF>)), this, SLOT(slot_dnfFinished(QList<LOG_MSG_DNF>)));
-    connect(m_pParser, &LogFileParser::dmesgFinished, this, &LogBackend::slot_dmesgFinished,
-            Qt::QueuedConnection);
-
-    connect(m_pParser, &LogFileParser::auditData, this, &LogBackend::slot_auditData,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::auditFinished, this, &LogBackend::slot_auditFinished,
-            Qt::QueuedConnection);
-
-    connect(m_pParser, &LogFileParser::coredumpData, this, &LogBackend::slot_coredumpData,
-            Qt::QueuedConnection);
-    connect(m_pParser, &LogFileParser::coredumpFinished, this, &LogBackend::slot_coredumpFinished,
-            Qt::QueuedConnection);
-}
-
 QString LogBackend::getOutDirPath() const
 {
     return m_outPath;
@@ -1574,6 +1593,9 @@ QString LogBackend::getOutDirPath() const
 
 bool LogBackend::getOutDirPath(const QString &path)
 {
+    if (path == m_outPath)
+        return true;
+
     QString tmpPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     if (!path.isEmpty())
         tmpPath = QDir::isRelativePath(path) ? (m_cmdWorkDir + "/" + path) : path;
@@ -1699,12 +1721,403 @@ bool LogBackend::reportCoredumpInfo()
         coreFilter.timeFilterEnd = QDateTime::currentDateTime().toMSecsSinceEpoch();
     }
 
-    if (!m_pParser)
-        initParser();
-
-    m_coredumpCurrentIndex = m_pParser->parseByCoredump(coreFilter, true);
+    m_coredumpCurrentIndex = m_logFileParser.parseByCoredump(coreFilter, true);
 
     return true;
+}
+
+void LogBackend::setFlag(const LOG_FLAG &flag)
+{
+    m_flag = flag;
+}
+
+/**
+ * @brief DisplayContent::clearAllFilter 清空当前所有的筛选条件成员变量(只限在本类中筛选的条件)
+ */
+void LogBackend::clearAllFilter()
+{
+    m_bootFilter = {"", ""};
+    m_currentSearchStr.clear();
+    m_bootFilter.searchstr = "";
+    m_normalFilter.clear();
+    m_appFilter.clear();
+    m_auditFilter.clear();
+}
+
+/**
+ * @brief DisplayContent::clearAllDatalist 清空所有获取的数据list
+ */
+void LogBackend::clearAllDatalist()
+{
+    jList.clear();
+    jListOrigin.clear();
+    dList.clear();
+    dListOrigin.clear();
+    xList.clear();
+    xListOrigin.clear();
+    bList.clear();
+    currentBootList.clear();
+    kList.clear();
+    kListOrigin.clear();
+    appList.clear();
+    appListOrigin.clear();
+    norList.clear();
+    nortempList.clear();
+    m_currentKwinList.clear();
+    m_kwinList.clear();
+    jBootList.clear();
+    jBootListOrigin.clear();
+    dnfList.clear();
+    dnfListOrigin.clear();
+    oList.clear();
+    oListOrigin.clear();
+    cList.clear();
+    cListOrigin.clear();
+    aList.clear();
+    aListOrigin.clear();
+    m_coredumpList.clear();
+    m_currentCoredumpList.clear();
+    malloc_trim(0);
+}
+
+void LogBackend::parseByJournal(const QStringList &arg)
+{
+    m_journalCurrentIndex = m_logFileParser.parseByJournal(arg);
+}
+
+void LogBackend::parseByJournalBoot(const QStringList &arg)
+{
+    m_journalBootCurrentIndex = m_logFileParser.parseByJournalBoot(arg);
+}
+
+void LogBackend::parseByDpkg(const DKPG_FILTERS &iDpkgFilter)
+{
+    m_dpkgCurrentIndex = m_logFileParser.parseByDpkg(iDpkgFilter);
+}
+
+void LogBackend::parseByXlog(const XORG_FILTERS &iXorgFilter)
+{
+    m_xorgCurrentIndex = m_logFileParser.parseByXlog(iXorgFilter);
+}
+
+void LogBackend::parseByBoot()
+{
+    m_bootCurrentIndex = m_logFileParser.parseByBoot();
+}
+
+void LogBackend::parseByKern(const KERN_FILTERS &iKernFilter)
+{
+    m_kernCurrentIndex = m_logFileParser.parseByKern(iKernFilter);
+}
+
+void LogBackend::parseByApp(const APP_FILTERS &iAPPFilter)
+{
+    m_appCurrentIndex = m_logFileParser.parseByApp(iAPPFilter);
+}
+
+void LogBackend::parseByDnf(DNF_FILTERS iDnfFilter)
+{
+    m_logFileParser.parseByDnf(iDnfFilter);
+}
+
+void LogBackend::parseByDmesg(DMESG_FILTERS iDmesgFilter)
+{
+    m_logFileParser.parseByDmesg(iDmesgFilter);
+}
+
+void LogBackend::parseByNormal(const NORMAL_FILTERS &iNormalFiler)
+{
+    m_normalCurrentIndex = m_logFileParser.parseByNormal(iNormalFiler);
+}
+
+void LogBackend::parseByKwin(const KWIN_FILTERS &iKwinfilter)
+{
+    m_kwinCurrentIndex = m_logFileParser.parseByKwin(iKwinfilter);
+}
+
+void LogBackend::parseByOOC(const QString &path)
+{
+    m_OOCCurrentIndex = m_logFileParser.parseByOOC(path);
+}
+
+void LogBackend::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
+{
+    m_auditCurrentIndex = m_logFileParser.parseByAudit(iAuditFilter);
+}
+
+void LogBackend::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap)
+{
+    m_coredumpCurrentIndex = m_logFileParser.parseByCoredump(iCoredumpFilter, parseMap);
+}
+
+void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportThread, const QStringList &strLabels)
+{
+    if (nullptr == exportThread) {
+        exportThread = new LogExportThread(m_isDataLoadComplete, this);
+    }
+    connect(exportThread, &LogExportThread::sigResult, this, &LogBackend::onExportResult);
+    connect(exportThread, &LogExportThread::sigProgress, this, &LogBackend::onExportProgress);
+    connect(exportThread, &LogExportThread::sigProcessFull, this, &LogBackend::onExportFakeCloseDlg);
+
+
+    QFileInfo fi(filePath.left(filePath.lastIndexOf("/")));
+    if (!fi.exists() || filePath.isEmpty()) {
+        qWarning(logBackend) <<  QString("outdir:%1 is not exists.").arg(fi.absoluteFilePath());
+        exportThread->sigResult(false);
+        delete exportThread;
+        return;
+    }
+    if (!fi.isWritable()) {
+        exportThread->sigResult(false);
+        delete exportThread;
+        qCCritical(logBackend) <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
+        return;
+    }
+
+    if (View != m_sessionType) {
+        if (!hasMatchedData(m_flag)) {
+            qCWarning(logBackend) << "No matching data..";
+            qApp->exit(-1);
+            return;
+        }
+    }
+
+    QStringList labels = strLabels;
+    if (labels.isEmpty())
+        labels = getLabels(m_flag);
+
+    if (filePath.endsWith(".txt")) {
+        switch (m_flag) {
+        //根据导出日志类型执行正确的导出逻辑
+        case JOURNAL:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(jList.count()));
+            exportThread->exportToTxtPublic(filePath, jList, labels, m_flag);
+            break;
+        case BOOT_KLU:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(jBootList.count()));
+            exportThread->exportToTxtPublic(filePath, jBootList, labels, JOURNAL);
+            break;
+        case APP: {
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(appList.count()));
+            QString transAppName = LogApplicationHelper::instance()->transName(m_appFilter.app);
+            exportThread->exportToTxtPublic(filePath, appList, labels, transAppName);
+            break;
+        }
+        case DPKG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dList.count()));
+            exportThread->exportToTxtPublic(filePath, dList, labels);
+            break;
+        case BOOT:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(currentBootList.count()));
+            exportThread->exportToTxtPublic(filePath, currentBootList, labels);
+            break;
+        case XORG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(xList.count()));
+            exportThread->exportToTxtPublic(filePath, xList, labels);
+            break;
+        case Normal:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(nortempList.count()));
+            exportThread->exportToTxtPublic(filePath, nortempList, labels);
+            break;
+        case KERN:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(kList.count()));
+            exportThread->exportToTxtPublic(filePath, kList, labels, m_flag);
+            break;
+        case Kwin:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(m_currentKwinList.count()));
+            exportThread->exportToTxtPublic(filePath, m_currentKwinList, labels);
+            break;
+        case Dmesg:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
+            exportThread->exportToTxtPublic(filePath, dmesgList, labels);
+            break;
+        case Dnf:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
+            exportThread->exportToTxtPublic(filePath, dnfList, labels);
+            break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToTxtPublic(filePath, aList, labels);
+            break;
+        default:
+            break;
+        }
+        QThreadPool::globalInstance()->start(exportThread);
+    } else if (filePath.endsWith(".html")) {
+        switch (m_flag) {
+        case JOURNAL:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(jList.count()));
+            exportThread->exportToHtmlPublic(filePath, jList, labels, m_flag);
+            break;
+        case BOOT_KLU:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(jBootList.count()));
+            exportThread->exportToHtmlPublic(filePath, jBootList, labels, JOURNAL);
+            break;
+        case APP: {
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(appList.count()));
+            QString transAppName = LogApplicationHelper::instance()->transName(m_appFilter.app);
+            exportThread->exportToHtmlPublic(filePath, appList, labels, transAppName);
+            break;
+        }
+        case DPKG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(dList.count()));
+            exportThread->exportToHtmlPublic(filePath, dList, labels);
+            break;
+        case BOOT:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(currentBootList.count()));
+            exportThread->exportToHtmlPublic(filePath, currentBootList, labels);
+            break;
+        case XORG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(xList.count()));
+            exportThread->exportToHtmlPublic(filePath, xList, labels);
+            break;
+        case Normal:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(nortempList.count()));
+            exportThread->exportToHtmlPublic(filePath, nortempList, labels);
+            break;
+        case KERN:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(kList.count()));
+            exportThread->exportToHtmlPublic(filePath, kList, labels, m_flag);
+            break;
+        case Kwin:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(m_currentKwinList.count()));
+            exportThread->exportToHtmlPublic(filePath, m_currentKwinList, labels);
+            break;
+        case Dmesg:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
+            exportThread->exportToHtmlPublic(filePath, dmesgList, labels);
+            break;
+        case Dnf:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
+            exportThread->exportToHtmlPublic(filePath, dnfList, labels);
+            break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToHtmlPublic(filePath, aList, labels);
+            break;
+        default:
+            break;
+        }
+        QThreadPool::globalInstance()->start(exportThread);
+    } else if (filePath.endsWith(".doc")) {
+        switch (m_flag) {
+        case JOURNAL:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(jList.count()));
+            exportThread->exportToDocPublic(filePath, jList, labels, m_flag);
+            break;
+        case BOOT_KLU:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(jBootList.count()));
+            exportThread->exportToDocPublic(filePath, jBootList, labels, JOURNAL);
+            break;
+        case APP: {
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(appList.count()));
+            QString transAppName = LogApplicationHelper::instance()->transName(m_appFilter.app);
+            exportThread->exportToDocPublic(filePath, appList, labels, transAppName);
+            break;
+        }
+        case DPKG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(dList.count()));
+            exportThread->exportToDocPublic(filePath, dList, labels);
+            break;
+        case BOOT:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(currentBootList.count()));
+            exportThread->exportToDocPublic(filePath, currentBootList, labels);
+            break;
+        case XORG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(xList.count()));
+            exportThread->exportToDocPublic(filePath, xList, labels);
+            break;
+        case Normal:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(nortempList.count()));
+            exportThread->exportToDocPublic(filePath, nortempList, labels);
+            break;
+        case KERN:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(kList.count()));
+            exportThread->exportToDocPublic(filePath, kList, labels, m_flag);
+            break;
+        case Kwin:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(m_currentKwinList.count()));
+            exportThread->exportToDocPublic(filePath, m_currentKwinList, labels);
+            break;
+        case Dmesg:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
+            exportThread->exportToDocPublic(filePath, dmesgList, labels);
+            break;
+        case Dnf:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
+            exportThread->exportToDocPublic(filePath, dnfList, labels);
+            break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToDocPublic(filePath, aList, labels);
+            break;
+        default:
+            break;
+        }
+        QThreadPool::globalInstance()->start(exportThread);
+    } else if (filePath.endsWith(".xls")) {
+        switch (m_flag) {
+        case JOURNAL:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jList.count()));
+            exportThread->exportToXlsPublic(filePath, jList, labels, m_flag);
+            break;
+        case BOOT_KLU:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(jBootList.count()));
+            exportThread->exportToXlsPublic(filePath, jBootList, labels, JOURNAL);
+            break;
+        case APP: {
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(appList.count()));
+            QString transAppName = LogApplicationHelper::instance()->transName(m_appFilter.app);
+            exportThread->exportToXlsPublic(filePath, appList, labels, transAppName);
+            break;
+        }
+        case DPKG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(dList.count()));
+            exportThread->exportToXlsPublic(filePath, dList, labels);
+            break;
+        case BOOT:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(currentBootList.count()));
+            exportThread->exportToXlsPublic(filePath, currentBootList, labels);
+            break;
+        case XORG:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(xList.count()));
+            exportThread->exportToXlsPublic(filePath, xList, labels);
+            break;
+        case Normal:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(nortempList.count()));
+            exportThread->exportToXlsPublic(filePath, nortempList, labels);
+            break;
+        case KERN:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(kList.count()));
+            exportThread->exportToXlsPublic(filePath, kList, labels, m_flag);
+            break;
+        case Kwin:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(m_currentKwinList.count()));
+            exportThread->exportToXlsPublic(filePath, m_currentKwinList, labels);
+            break;
+        case Dmesg:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
+            exportThread->exportToXlsPublic(filePath, dmesgList, labels);
+            break;
+        case Dnf:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dnfList.count()));
+            exportThread->exportToXlsPublic(filePath, dnfList, labels);
+            break;
+        case Audit:
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
+            exportThread->exportToXlsPublic(filePath, aList, labels);
+            break;
+        default:
+            break;
+        }
+        QThreadPool::globalInstance()->start(exportThread);
+    } else if (filePath.endsWith(".zip") && m_flag == COREDUMP) {
+        PERF_PRINT_BEGIN("POINT-04", QString("format=zip count=%1").arg(m_currentCoredumpList.count()));
+        exportThread->exportToZipPublic(filePath, m_currentCoredumpList, labels);
+        QThreadPool::globalInstance()->start(exportThread);
+    }
+
+    qCInfo(logBackend) << "exporting ...";
 }
 
 BUTTONID LogBackend::period2Enum(const QString &period)
@@ -1881,4 +2294,191 @@ QString LogBackend::getApplogPath(const QString &appName)
         logPath = LogApplicationHelper::instance()->getPathByAppId(appName);
 
     return logPath;
+}
+
+QStringList LogBackend::getLabels(const LOG_FLAG &flag)
+{
+    QStringList labels = QStringList();
+    switch (flag) {
+    case JOURNAL: {
+            labels << QCoreApplication::translate("Table", "Level")
+                   << QCoreApplication::translate("Table", "Process") // modified by Airy
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info")
+                   << QCoreApplication::translate("Table", "User")
+                   << QCoreApplication::translate("Table", "PID");
+    }
+    break;
+    case Dmesg: {
+            labels  << QCoreApplication::translate("Table", "Level")
+                    << QCoreApplication::translate("Table", "Date and Time")
+                    << QCoreApplication::translate("Table", "Info");
+    }
+    break;
+    case KERN: {
+            labels << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "User")
+                   << QCoreApplication::translate("Table", "Process")
+                   << QCoreApplication::translate("Table", "Info");
+    }
+    break;
+    case BOOT_KLU: {
+            labels << QCoreApplication::translate("Table", "Level")
+                   << QCoreApplication::translate("Table", "Process")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info")
+                   << QCoreApplication::translate("Table", "User")
+                   << QCoreApplication::translate("Table", "PID");
+    }
+    break;
+    case BOOT: {
+            labels << QCoreApplication::translate("Table", "Status")
+                   << QCoreApplication::translate("Table", "Info");
+    }
+    break;
+    case DPKG: {
+            labels << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info")
+                   << QCoreApplication::translate("Table", "Action");
+    }
+    break;
+    case Dnf: {
+            labels << QCoreApplication::translate("Table", "Level")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info");
+    }
+    break;
+    case Kwin: {
+            labels << QCoreApplication::translate("Table", "Info");
+    }
+    break;
+    case XORG: {
+            labels << QCoreApplication::translate("Table", "Offset")
+                   << QCoreApplication::translate("Table", "Info");
+    }
+    break;
+    case APP: {
+            labels << QCoreApplication::translate("Table", "Level")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Source")
+                   << QCoreApplication::translate("Table", "Info");
+    }
+    break;
+    case COREDUMP: {
+            labels << QCoreApplication::translate("Table", "SIG")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Core File")
+                   << QCoreApplication::translate("Table", "User Name ")
+                   << QCoreApplication::translate("Table", "EXE");
+    }
+    break;
+    case Normal: {
+            labels << QCoreApplication::translate("Table", "Event Type")
+                   << QCoreApplication::translate("Table", "Username")
+                   << QCoreApplication::translate("Tbble", "Date and Time")
+                   << QCoreApplication::translate("Table", "Info");
+    }
+    break;
+    case Audit: {
+            labels << QCoreApplication::translate("Table", "Event Type")
+                   << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "Process")
+                   << QCoreApplication::translate("Table", "Status")
+                   << QCoreApplication::translate("Table", "Info");
+    }
+    break;
+    default:
+    break;
+    }
+
+    return labels;
+}
+
+bool LogBackend::hasMatchedData(const LOG_FLAG &flag)
+{
+    bool bMatchedData = false;
+    switch (flag) {
+    case JOURNAL: {
+        if (!jList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case Dmesg: {
+        if (!dmesgList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case KERN: {
+        if (!kList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case BOOT_KLU: {
+        if (!jBootList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case BOOT: {
+        if (!currentBootList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case DPKG: {
+        if (!dList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case Dnf: {
+        if (!dnfList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case Kwin: {
+        if (!m_currentKwinList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case XORG: {
+        if (!xList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case APP: {
+        if (!appList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case COREDUMP: {
+        if (!m_currentCoredumpList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case Normal: {
+        if (!nortempList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case Audit: {
+        if (!aList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    default:
+    break;
+    }
+
+    return bMatchedData;
 }

@@ -127,6 +127,8 @@ FILE(GLOB allSource
      ../application/logapplication.cpp
      ../application/sharedmemorymanager.cpp
      ../application/logsettings.cpp
+     ../application/logbackend.cpp
+     ../application/eventlogutils.cpp
      ../application/wtmpparse.cpp
      ../application/DebugTimeManager.cpp
      ../application/logdetailedit.cpp

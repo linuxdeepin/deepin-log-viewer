@@ -70,34 +70,34 @@ void LogAllExportThread::run()
             data.files.append(KWIN_TREE_DATA);
         } else if (it.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "apps";
-            QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
-            for (auto &it2 : appData.toStdMap()) {
-                QString appName = Utils::appName(it2.second);
-                if (appName.isEmpty())
+            AppLogConfigList appConfigs = LogApplicationHelper::instance()->getAppLogConfigs();
+            for (auto appLogConfig : appConfigs) {
+                QString appName = appLogConfig.name;
+                if(appName.isEmpty() || !appLogConfig.visible)
                     continue;
-                AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
 
-                // 确定解析方式
-                QString parseType = "";
-                if (appLogConfig.logType == "file" || !appLogConfig.isValid())
-                    parseType = "file";
-                else if (appLogConfig.isValid() && appLogConfig.logType == "journal")
-                    parseType = "journal";
-
-                // DTKCore 5.6.8以下，不支持journal方式解析，指定按file方式解析应用日志
-#if (DTK_VERSION < DTK_VERSION_CHECK(5, 6, 8, 0))
-                parseType = "file";
-#endif
-
-                if (parseType == "file") {
-                    QStringList paths = DLDBusHandler::instance(nullptr)->getFileInfo(it2.second);
-                    paths.removeDuplicates();
-                    if (paths.size() > 0) {
-                        QFileInfo fi(it2.second);
-                        data.dir2Files[fi.completeBaseName()] = paths;
+                for (int i = 0; i < appLogConfig.subModules.size(); i++) {
+                    SubModuleConfig& submodule = appLogConfig.subModules[i];
+                    QString dir = appLogConfig.name;
+                    QString subDir = QString("%1/%2").arg(dir).arg(submodule.name);
+                    if (appLogConfig.subModules.size() == 1 &&  submodule.name == appLogConfig.name)
+                        subDir = dir;
+                    if (submodule.logType == "file") {
+                        QStringList logPaths = DLDBusHandler::instance(nullptr)->getFileInfo(submodule.logPath);
+                        logPaths.removeDuplicates();
+                        if (logPaths.size() > 0) {
+                            data.dir2Files[subDir] = logPaths;
+                        } else {
+                            qCWarning(logExportAll) << QString("app:%1 submodule:%2, logPath:%3 not found log files.").arg(appName).arg(submodule.name).arg(submodule.logPath);
+                        }
+                    } else if (submodule.logType == "journal") {
+                        if (submodule.filter.endsWith("*"))
+                            qCWarning(logExportAll) << QString("app:%1 submodule:%2, Export journal logs with wildcard not supported.").arg(appName).arg(submodule.name);
+                        else {
+                            QJsonObject obj = submodule.toJson();
+                            data.dir2Cmds[subDir] = QStringList() << QJsonDocument(obj).toJson(QJsonDocument::Compact);
+                        }
                     }
-                } else if (parseType == "journal") {
-                    data.dir2Files[Utils::appName(it2.second)] = QStringList() << "journalctl_app";
                 }
             }
         } else if (it.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
@@ -128,7 +128,7 @@ void LogAllExportThread::run()
         eList.push_back(data);
         data.files.removeDuplicates();
         data.commands.removeDuplicates();
-        nCount += data.files.size() + data.commands.size() + data.dir2FilesCount();
+        nCount += data.files.size() + data.commands.size() + data.dir2FilesCount() + data.dir2CmdsCount();
 
         //取消导出直接返回
         if (m_cancel) {
@@ -181,7 +181,30 @@ void LogAllExportThread::run()
                     QString tmpSubCategoryPath = QString("%1%2/").arg(tmpCategoryPath).arg(itMap.key());
                     Utils::mkMutiDir(tmpSubCategoryPath);
                     for (auto &path : itMap.value()) {
-                        DLDBusHandler::instance(this)->exportLog(tmpSubCategoryPath, path, path != "journalctl_app");
+                        DLDBusHandler::instance(this)->exportLog(tmpSubCategoryPath, path, true);
+                        emit updatecurrentProcess(currentProcess++);
+                        if (m_cancel) {
+                            break;
+                        }
+                    }
+                }
+            }
+        } else
+            break;
+
+        // 导出命令查询内容到二级目录
+        if (!m_cancel) {
+            QMapIterator<QString, QStringList> itMap(it.dir2Cmds);
+            while (itMap.hasNext()) {
+                itMap.next();
+                if (m_cancel)
+                    break;
+
+                if (itMap.value().size() > 0) {
+                    QString tmpSubCategoryPath = QString("%1%2/").arg(tmpCategoryPath).arg(itMap.key());
+                    Utils::mkMutiDir(tmpSubCategoryPath);
+                    for (auto &cmd : itMap.value()) {
+                        DLDBusHandler::instance(this)->exportLog(tmpSubCategoryPath, cmd, false);
                         emit updatecurrentProcess(currentProcess++);
                         if (m_cancel) {
                             break;

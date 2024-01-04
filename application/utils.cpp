@@ -442,7 +442,6 @@ void Utils::resetToNormalAuth(const QString &path)
 {
     QFileInfo fi(path);
     if (!path.isEmpty() && fi.exists()) {
-        qCDebug(logUtils) << "resetToNormalAuth path:" << path;
         QProcess procss;
         procss.setWorkingDirectory(path);
         QStringList arg = {"-c"};
