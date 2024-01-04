@@ -281,7 +281,7 @@ void FilterContent::setAppComboBoxItem()
     //添加数据进combox
     for (auto appConfig : appConfigs) {
         // 没有子模块，不在应用列表显示
-        if (appConfig.subModules.size() == 0)
+        if (appConfig.subModules.size() == 0 || !appConfig.visible)
             continue;
 
         cbx_app->addItem(appConfig.transName);
