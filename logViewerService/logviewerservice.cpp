@@ -24,6 +24,8 @@
 #include <QDBusConnectionInterface>
 #include <QStandardPaths>
 #include <QLoggingCategory>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service")
@@ -107,7 +109,6 @@ QString LogViewerService::readLog(const QString &filePath)
         //QByteArray -> QString 如果遇到0x00，会导致转换终止
         //replace("\x00", "")和replace("\u0000", "")无效
         //使用remove操作，性能损耗过大，因此遇到0x00 替换为 0x20(空格符)
-        qCInfo(logService) << "replace 0x00 to 0x20 begin";
         int replaceTimes = 0;
         for (int i = 0; i != byte.size(); ++i) {
             if (byte.at(i) == 0x00) {
@@ -115,7 +116,6 @@ QString LogViewerService::readLog(const QString &filePath)
                 replaceTimes++;
             }
         }
-        qCInfo(logService) << "replace 0x00 to 0x20   end. replaceTimes:" << replaceTimes;
         return QString::fromUtf8(byte);
     }
 }
@@ -493,20 +493,55 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         //复制文件
         arg[1].append(QString("cp %1 \"%2\";").arg(in, outDirInfo.absoluteFilePath()));
     } else {
-        auto it = m_commands.find(in);
-        if (it == m_commands.end()) {
-            qCWarning(logService) << "unknown command:" << in;
-            return false;
+        QString cmd;
+
+        // 判断输入是否为json字串
+        QJsonParseError parseError;
+        QJsonDocument document = QJsonDocument::fromJson(in.toUtf8(), &parseError);
+        if (parseError.error == QJsonParseError::NoError) {
+            if (document.isObject()) {
+                QJsonObject object = document.object();
+
+                QString submoduleName;
+                QString filter;
+                QString execPath;
+
+                if (object.contains("name"))
+                    submoduleName = object.value("name").toString();
+                if (object.contains("filter"))
+                    filter = object.value("filter").toString();
+                if (object.contains("execPath"))
+                    execPath = object.value("execPath").toString();
+
+                QString condition;
+                if (!execPath.isEmpty())
+                    condition += QString(" _EXE=%1").arg(execPath);
+                if (!filter.isEmpty())
+                    condition += QString(" CODE_CATEGORY=%1").arg(filter);
+                if (execPath.isEmpty() && filter.isEmpty())
+                    condition += QString(" SYSLOG_IDENTIFIER=%1").arg(submoduleName);
+
+                if (!condition.isEmpty()) {
+                    cmd = "journalctl" + condition;
+                    cmd += " -r";
+                    outFullPath = outDirInfo.absoluteFilePath() + submoduleName + ".log";
+                }
+            }
         }
 
-        QString cmd = it.value();
-        outFullPath = outDirInfo.absoluteFilePath() + in + ".log";
-        if (in == "journalctl_app") {
-            QString appName = outDirInfo.absoluteFilePath().split("/").at(outDirInfo.absoluteFilePath().split("/").size() - 2);
-            outFullPath = outDirInfo.absoluteFilePath() + appName + ".log";
-            cmd += QString(" SYSLOG_IDENTIFIER=%1").arg(appName);
+        // 判断输入是否为cmd命令
+        if (cmd.isEmpty()) {
+            auto it = m_commands.find(in);
+            if (it != m_commands.end()) {
+                cmd = it.value();
+                outFullPath = outDirInfo.absoluteFilePath() + in + ".log";
+            }
+        }
 
-            qCDebug(logService) << "journalctl app export cmd:" << cmd;
+        // 未解析出有效命令，返回
+        if (cmd.isEmpty()) {
+            qCWarning(logService) << "unknown command:" << in;
+            return false;
         }
 
         //结果重定向到文件

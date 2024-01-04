@@ -22,6 +22,11 @@ SharedMemoryManager::SharedMemoryManager(QObject *parent)
     init();
 }
 
+SharedMemoryManager *SharedMemoryManager::getInstance()
+{
+    return m_instance.load();
+}
+
 void SharedMemoryManager::setRunnableTag(ShareMemoryInfo iShareInfo)
 {
     m_commondM->lock();

@@ -77,8 +77,10 @@ LogFileParser::LogFileParser(QWidget *parent)
 LogFileParser::~LogFileParser()
 {
     stopAllLoad();
-    //释放共享内存
-    SharedMemoryManager::instance()->releaseMemory();
+    if (SharedMemoryManager::getInstance()) {
+        //释放共享内存
+        SharedMemoryManager::instance()->releaseMemory();
+    }
 }
 
 int LogFileParser::parseByJournal(const QStringList &arg)

@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
         QCommandLineOption statusOption(QStringList() << "s" << "status", DApplication::translate("main", "Export boot(no-klu) logs within a specified status"), DApplication::translate("main", "BOOT STATUS"));
         QCommandLineOption eventOption(QStringList() << "E" << "event", DApplication::translate("main", "Export boot-shutdown-event or audit logs within a specified event type"), DApplication::translate("main", "EVENT TYPE"));
         QCommandLineOption keywordOption(QStringList() << "k" << "search", DApplication::translate("main", "Export logs based on keywords search results"), DApplication::translate("main", "KEY WORD"));
+        QCommandLineOption submoduleOption(QStringList() << "m" << "submodule", DApplication::translate("main", "Export logs based on app submodel"), DApplication::translate("main", "SUBMODULE"));
         QCommandLineOption reportCoredumpOption(QStringList() << "reportcoredump", DApplication::translate("main", "Report coredump informations."));
 
         QCommandLineParser cmdParser;
@@ -77,6 +78,7 @@ int main(int argc, char *argv[])
         cmdParser.addOption(statusOption);
         cmdParser.addOption(eventOption);
         cmdParser.addOption(keywordOption);
+        cmdParser.addOption(submoduleOption);
         cmdParser.addOption(reportCoredumpOption);
 
         if (!cmdParser.parse(qApp->arguments())) {
@@ -93,6 +95,7 @@ int main(int argc, char *argv[])
         QString level = "";
         QString status = "";
         QString event = "";
+        QString submodule = "";
         QString keyword = "";
         if (cmdParser.isSet(typeOption))
             type = cmdParser.value(typeOption);
@@ -106,6 +109,8 @@ int main(int argc, char *argv[])
             status = cmdParser.value(statusOption);
         if (cmdParser.isSet(eventOption))
             event = cmdParser.value(eventOption);
+        if (cmdParser.isSet(submoduleOption))
+            submodule = cmdParser.value(submoduleOption);
         if (cmdParser.isSet(keywordOption)) {
             // Qt命令行解析器不能完整获取--key后的参数内容，
             // 此处做特殊处理，以便能完整获取--key后的参数内容
@@ -138,6 +143,7 @@ int main(int argc, char *argv[])
                     !level.isEmpty() ||
                     !status.isEmpty() ||
                     !event.isEmpty() ||
+                    !submodule.isEmpty() ||
                     !keyword.isEmpty() ||
                     cmdParser.isSet(exportOption)) {
                 qCWarning(logAppMain) << "Only reportcoreump option can set, please do not add other options.";
@@ -177,6 +183,7 @@ int main(int argc, char *argv[])
                     status.isEmpty() &&
                     event.isEmpty() &&
                     appName.isEmpty() &&
+                    submodule.isEmpty() &&
                     keyword.isEmpty()) {
                     int nRet = LogBackend::instance(&a)->exportTypeLogs(outDir, type);
                     return nRet;
@@ -211,11 +218,11 @@ int main(int argc, char *argv[])
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, "", status, keyword);
                     } else if (TYPE_APP == type) {
                         if (!status.isEmpty() || !event.isEmpty()) {
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'level' or 'keyword' parameters.").arg(type);
+                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'level' or 'keyword' or 'submodule' parameters.").arg(type);
                         } else if (!appName.isEmpty()) {
-                            bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, keyword);
+                            bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, submodule, keyword);
                         } else {
-                            qCWarning(logAppMain) << QString("Export logs by %1, filterd by 'period' or 'level' or 'keyword', currently not supported.").arg(type).arg(appName);
+                            qCWarning(logAppMain) << QString("Export logs by %1, filterd by 'period' or 'level' or 'keyword' or 'submodule', currently not supported.").arg(type).arg(appName);
                         }
                     } else if (TYPE_BSE == type || TYPE_AUDIT == type) {
                         // 开关机事件、审计日志 可按周期和事件类型导出
@@ -245,20 +252,21 @@ int main(int argc, char *argv[])
                     level.isEmpty() &&
                     status.isEmpty() &&
                     event.isEmpty() &&
+                    submodule.isEmpty() &&
                     keyword.isEmpty()) {
                     int nRet = LogBackend::instance(&a)->exportAppLogs(outDir, appName);
                     return nRet;
                 } else {
                     bool bRet = false;
                     if (!status.isEmpty() || !event.isEmpty())
-                        qCWarning(logAppMain) << QString("Export app logs, can only be filtered using 'period' or 'level' parameter.");
+                        qCWarning(logAppMain) << QString("Export app logs, can only be filtered using 'period' or 'level' or 'keyword' or 'submodule' parameter.");
                     else if (!period.isEmpty() || !level.isEmpty() || !keyword.isEmpty())
-                        bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, keyword);
+                        bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, submodule, keyword);
                     if (!bRet)
                         return -1;
                 }
             } else {
-                if (!period.isEmpty() || !level.isEmpty() || !status.isEmpty() || !event.isEmpty() || !keyword.isEmpty()) {
+                if (!period.isEmpty() || !level.isEmpty() || !status.isEmpty() || !event.isEmpty() || !submodule.isEmpty() || !keyword.isEmpty()) {
                     qCWarning(logAppMain) << "Export all logs by conditons currently is not supported.";
                     return -1;
                 }

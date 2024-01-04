@@ -29,6 +29,7 @@ public:
         }
         return sin;
     }
+    static SharedMemoryManager *getInstance();
     void setRunnableTag(ShareMemoryInfo iShareInfo);
     QString getRunnableKey();
     bool isAttached();

@@ -932,7 +932,7 @@ void LogAuthThread::handleAudit()
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
             if (!DLDBusHandler::instance(this)->isFileExist(m_FilePath.at(i))) {
-                emit kernFinished(m_threadCount);
+                emit auditFinished(m_threadCount);
                 return;
             }
         }

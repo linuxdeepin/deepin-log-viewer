@@ -876,7 +876,10 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_A
             LOG_MSG_APPLICATOIN jMsg = jList.at(i);
             out << labels.value(col++, "") << ":" << strTranslate(jMsg.level)  << " ";
             out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
-            out << labels.value(col++, "") << ":" << iAppName << " ";
+            if (!jMsg.subModule.isEmpty())
+                out << labels.value(col++, "") << ":" << iAppName + "_" + jMsg.subModule << " ";
+            else
+                out << labels.value(col++, "") << ":" << iAppName << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
             //导出进度信号

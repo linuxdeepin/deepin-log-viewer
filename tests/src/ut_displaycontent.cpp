@@ -6,6 +6,7 @@
 #include "../application/displaycontent.h"
 #include "../application/exportprogressdlg.h"
 #include "../application/utils.h"
+#include "../logbackend.h"
 #include "../application/logexportthread.h"
 #include "ut_stuballthread.h"
 #include "../application/DebugTimeManager.h"
@@ -545,7 +546,7 @@ TEST_F(DisplayContentlx_UT, slot_appLogs_UT)
     stub.set(ADDR(DisplayContent, generateAppFile), generateAppFileNull);
     m_content->slot_appLogs(1, "~/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log");
     EXPECT_NE(m_content, nullptr);
-    EXPECT_EQ(m_content->appList.size(), 0)<<"check the status after slot_appLogs()";
+    EXPECT_EQ(m_content->m_pLogBackend->appList.size(), 0)<<"check the status after slot_appLogs()";
     EXPECT_EQ(m_content->m_curBtnId, 1)<<"check the status after slot_appLogs()";
     EXPECT_EQ(m_content->m_curApp,"deepin-log-viewer")<<"check the status after slot_appLogs()";
 }
@@ -557,8 +558,8 @@ TEST_F(DisplayContentlx_UT, slot_dpkgData_UT)
     dpkgList.push_back(dpkgLog);
     m_content->m_flag = LOG_FLAG::DPKG;
     m_content->m_firstLoadPageData = true;
-    m_content->slot_dpkgData(-1, dpkgList);
-    EXPECT_NE(m_content->dListOrigin.size(), 0)<<"check the status after slot_dpkgData()";
+    m_content->slot_dpkgData(dpkgList);
+    EXPECT_NE(m_content->m_pLogBackend->dListOrigin.size(), 0)<<"check the status after slot_dpkgData()";
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::DPKG)<<"check the status after slot_dpkgData()";
 }
 
@@ -566,7 +567,7 @@ TEST_F(DisplayContentlx_UT, slot_XorgFinished_UT)
 {
     m_content->m_flag = LOG_FLAG::XORG;
     m_content->m_firstLoadPageData = true;
-    m_content->slot_XorgFinished(-1);
+    m_content->slot_XorgFinished();
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::XORG)<<"check the status after slot_XorgFinished()";
     EXPECT_EQ(m_content->m_isDataLoadComplete, true)<<"check the status after slot_XorgFinished()";
 }
@@ -578,9 +579,9 @@ TEST_F(DisplayContentlx_UT, slot_kernData_UT)
     kernList.push_back(kernLog);
     m_content->m_flag = LOG_FLAG::KERN;
     m_content->m_firstLoadPageData = true;
-    m_content->slot_kernData(-1, kernList);
+    m_content->slot_kernData(kernList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::KERN)<<"check the status after slot_kernData()";
-    EXPECT_NE(m_content->kListOrigin.size(),0)<<"check the status after slot_kernData()";
+    EXPECT_NE(m_content->m_pLogBackend->kListOrigin.size(),0)<<"check the status after slot_kernData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_kwinData_UT)
@@ -590,9 +591,9 @@ TEST_F(DisplayContentlx_UT, slot_kwinData_UT)
     kwinList.push_back(kwinLog);
     m_content->m_flag = LOG_FLAG::Kwin;
     m_content->m_firstLoadPageData = true;
-    m_content->slot_kwinData(-1, kwinList);
+    m_content->slot_kwinData(kwinList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::Kwin)<<"check the status after slot_kwinData()";
-    EXPECT_NE(m_content->m_kwinList.size(),0)<<"check the status after slot_kwinData()";
+    EXPECT_NE(m_content->m_pLogBackend->m_kwinList.size(),0)<<"check the status after slot_kwinData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_bootData_UT)
@@ -602,16 +603,16 @@ TEST_F(DisplayContentlx_UT, slot_bootData_UT)
     bootList.push_back(bootLog);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->m_firstLoadPageData = true;
-    m_content->slot_bootData(-1, bootList);
+    m_content->slot_bootData(bootList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::BOOT)<<"check the status after slot_bootData()";
-    EXPECT_NE(m_content->bList.size(), 0)<<"check the status after slot_bootData()";
+    EXPECT_NE(m_content->m_pLogBackend->bList.size(), 0)<<"check the status after slot_bootData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_journalFinished_UT)
 {
     m_content->m_flag = LOG_FLAG::JOURNAL;
     m_content->m_firstLoadPageData = true;
-    m_content->slot_journalFinished(-1);
+    m_content->slot_journalFinished();
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::JOURNAL)<<"check the status after slot_journalFinished()";
     EXPECT_EQ(m_content->m_isDataLoadComplete, true)<<"check the status after slot_journalFinished()";
 }
@@ -625,7 +626,7 @@ TEST_F(DisplayContentlx_UT, slot_dnfFinished_UT)
     m_content->m_firstLoadPageData = true;
     m_content->slot_dnfFinished(dnfList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dnf)<<"check the status after slot_dnfFinished()";
-    EXPECT_EQ(m_content->dnfList.size(), 1)<<"check the status after slot_dnfFinished()";
+    EXPECT_EQ(m_content->m_pLogBackend->dnfList.size(), 1)<<"check the status after slot_dnfFinished()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_dmesgFinished_UT)
@@ -637,16 +638,16 @@ TEST_F(DisplayContentlx_UT, slot_dmesgFinished_UT)
     m_content->m_firstLoadPageData = true;
     m_content->slot_dmesgFinished(dmesgList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dmesg)<<"check the status after slot_dmesgFinished()";
-    EXPECT_EQ(m_content->dmesgList.size(), 1)<<"check the status after slot_dmesgFinished()";
+    EXPECT_EQ(m_content->m_pLogBackend->dmesgList.size(), 1)<<"check the status after slot_dmesgFinished()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_normalFinished_UT)
 {
     m_content->m_flag = LOG_FLAG::Normal;
     m_content->m_firstLoadPageData = true;
-    m_content->slot_normalFinished(-1);
+    m_content->slot_normalFinished();
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::Normal)<<"check the status after slot_normalFinished()";
-    EXPECT_EQ(m_content->nortempList.size(), 0)<<"check the status after slot_normalFinished()";
+    EXPECT_EQ(m_content->m_pLogBackend->nortempList.size(), 0)<<"check the status after slot_normalFinished()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_searchResult_UT)
@@ -660,7 +661,7 @@ TEST_F(DisplayContentlx_UT, slot_searchResult_UT)
     m_content->m_flag = LOG_FLAG::NONE;
     m_content->slot_searchResult("test");
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::NONE)<<"check the status after  slot_searchResult()";
-    EXPECT_EQ(m_content->m_currentSearchStr, "test")<<"check the status after  slot_searchResult()";
+    EXPECT_EQ(m_content->m_pLogBackend->m_currentSearchStr, "test")<<"check the status after  slot_searchResult()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_BtnSelected_UT)
@@ -694,7 +695,6 @@ TEST_F(DisplayContentlx_UT, slot_logCatelogueClicked_UT){
     model->setData(model->index(1,0),"dmesg",Qt::UserRole + 66);
     m_content->slot_logCatelogueClicked(model->index(0,0));
     m_content->slot_logCatelogueClicked(model->index(1,0));
-    EXPECT_EQ(sizeof(m_content->m_currentKwinFilter), 8)<<"check the status after  slot_logCatelogueClicked()";
     EXPECT_EQ(m_content->m_curListIdx,model->index(1,0))<<"check the status after  slot_logCatelogueClicked()";
     m_content->m_curListIdx=model->index(0,0);
     m_content->m_flag=LOG_FLAG::Dmesg;
@@ -708,19 +708,19 @@ TEST_F(DisplayContentlx_UT, slot_xorgData_UT){
     LOG_MSG_XORG xorg={"20210202","test"};
     QList<LOG_MSG_XORG>listXorg;
     listXorg.append(xorg);
-    m_content->slot_xorgData(0,listXorg);
+    m_content->slot_xorgData(listXorg);
     m_content->m_flag=LOG_FLAG::XORG;
-    m_content->m_xorgCurrentIndex=1;
+    m_content->m_pLogBackend->m_xorgCurrentIndex=1;
     m_content->m_firstLoadPageData=true;
-    m_content->slot_xorgData(1,listXorg);
+    m_content->slot_xorgData(listXorg);
     EXPECT_EQ(m_content->m_flag,LOG_FLAG::XORG)<<"check the status after  slot_xorgData()";
-    EXPECT_NE(m_content->xListOrigin.size(), 0)<<"check the status after  slot_xorgData()";
+    EXPECT_NE(m_content->m_pLogBackend->xListOrigin.size(), 0)<<"check the status after  slot_xorgData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_journalBootFinished_UT){
     m_content->m_flag=LOG_FLAG::JOURNAL;
-    m_content->m_journalCurrentIndex=1;
-    m_content->slot_journalFinished(1);
+    m_content->m_pLogBackend->m_journalCurrentIndex=1;
+    m_content->slot_journalFinished();
     EXPECT_EQ(m_content->m_flag,LOG_FLAG::JOURNAL)<<"check the status after  slot_journalBootFinished()";
     EXPECT_EQ(m_content->m_isDataLoadComplete, true)<<"check the status after  slot_journalBootFinished()";
 }
@@ -732,11 +732,11 @@ TEST_F(DisplayContentlx_UT, slot_applicationData_UT){
     QList<LOG_MSG_APPLICATOIN>listApp;
     listApp.append(app);
     m_content->m_flag=LOG_FLAG::APP;
-    m_content->m_appCurrentIndex=1;
+    m_content->m_pLogBackend->m_appCurrentIndex=1;
     m_content->m_firstLoadPageData=true;
-    m_content->slot_applicationData(1,listApp);
+    m_content->slot_applicationData(listApp);
     EXPECT_EQ(m_content->m_flag,LOG_FLAG::APP)<<"check the status after slot_applicationData()";
-    EXPECT_NE(m_content->appListOrigin.size(),0)<<"check the status after slot_applicationData()";
+    EXPECT_NE(m_content->m_pLogBackend->appListOrigin.size(),0)<<"check the status after slot_applicationData()";
 }
 
 TEST_F(DisplayContentlx_UT, slot_logLoadFailed_UT){
@@ -749,13 +749,13 @@ TEST_F(DisplayContentlx_UT, filterNomal_UT){
     LOG_MSG_NORMAL normal={"20210202","waring","test","test"};
     QList<LOG_MSG_NORMAL>listNormal;
     listNormal.append(normal);
-    m_content->filterNomal(fiter,listNormal);
+    LogBackend::filterNomal(fiter,listNormal);
     fiter.eventTypeFilter=1;
-    m_content->filterNomal(fiter,listNormal);
+    LogBackend::filterNomal(fiter,listNormal);
     fiter.eventTypeFilter=2;
-    m_content->filterNomal(fiter,listNormal);
+    LogBackend::filterNomal(fiter,listNormal);
     fiter.eventTypeFilter=3;
-    m_content->filterNomal(fiter,listNormal);
+    LogBackend::filterNomal(fiter,listNormal);
     EXPECT_NE(m_content,nullptr)<<"check the status after filterNomal()";
 }
 
@@ -786,13 +786,13 @@ TEST_F(DisplayContentlx_UT, filterJournal_UT){
     LOG_MSG_JOURNAL journal={"20210202","waring","test","test","test","test"};
     QList<LOG_MSG_JOURNAL>listjournal;
     listjournal.append(journal);
-    QList<LOG_MSG_JOURNAL> list= m_content->filterJournal("",listjournal);
+    QList<LOG_MSG_JOURNAL> list= LogBackend::filterJournal("",listjournal);
     EXPECT_EQ(list.at(0).daemonId,"test")<<"check the status after filterJournal()";
     EXPECT_EQ(list.at(0).daemonName,"test")<<"check the status after filterJournal()";
     EXPECT_EQ(list.at(0).dateTime,"20210202")<<"check the status after filterJournal()";
     EXPECT_EQ(list.at(0).level,"test")<<"check the status after filterJournal()";
     EXPECT_EQ(list.at(0).msg,"test")<<"check the status after filterJournal()";
-    m_content->filterJournal("test",listjournal);
+    LogBackend::filterJournal("test",listjournal);
 }
 
 
@@ -826,7 +826,7 @@ TEST(DisplayContent_Constructor_UT, Dslot_normalData_UT_001)
     test.eventType = "type";
     p->m_flag = Normal;
     p->m_firstLoadPageData = true;
-    p->slot_normalData(-1, QList<LOG_MSG_NORMAL> {test});
+    p->slot_normalData(QList<LOG_MSG_NORMAL> {test});
     EXPECT_EQ(p->m_flag,LOG_FLAG::Normal)<<"check the status after slot_normalData()";
     delete p;
 }
@@ -1849,9 +1849,9 @@ TEST(DisplayContent_slot_dpkgFinished_UT, DisplayContent_slot_dpkgFinished_UT_00
         list.append(item);
     }
     p->m_flag = DPKG;
-    p->slot_dpkgFinished(p->m_dpkgCurrentIndex);
+    p->slot_dpkgFinished();
     p->m_flag = NONE;
-    p->slot_dpkgFinished(0);
+    p->slot_dpkgFinished();
     delete p;
 }
 
@@ -1872,9 +1872,9 @@ TEST(DisplayContent_slot_XorgFinished_UT, DisplayContent_slot_XorgFinished_UT_00
         list.append(item);
     }
     p->m_flag = XORG;
-    p->slot_XorgFinished(p->m_xorgCurrentIndex);
+    p->slot_XorgFinished();
     p->m_flag = NONE;
-    p->slot_XorgFinished(0);
+    p->slot_XorgFinished();
     p->deleteLater();
 }
 
@@ -1893,9 +1893,9 @@ TEST(DisplayContent_slot_bootFinished_UT, DisplayContent_slot_bootFinished_UT_00
         list.append(item);
     }
     p->m_flag = BOOT;
-    p->slot_bootFinished(p->m_bootCurrentIndex);
+    p->slot_bootFinished();
     p->m_flag = NONE;
-    p->slot_bootFinished(0);
+    p->slot_bootFinished();
     p->deleteLater();
 }
 TEST(DisplayContent_slot_kernFinished_UT, DisplayContent_slot_kernFinished_UT_001)
@@ -1917,9 +1917,9 @@ TEST(DisplayContent_slot_kernFinished_UT, DisplayContent_slot_kernFinished_UT_00
         list.append(item);
     }
     p->m_flag = KERN;
-    p->slot_kernFinished(p->m_kernCurrentIndex);
+    p->slot_kernFinished();
     p->m_flag = NONE;
-    p->slot_kernFinished(0);
+    p->slot_kernFinished();
     p->deleteLater();
 }
 TEST(DisplayContent_slot_kwinFinished_UT, DisplayContent_slot_kwinFinished_UT_001)
@@ -1936,9 +1936,9 @@ TEST(DisplayContent_slot_kwinFinished_UT, DisplayContent_slot_kwinFinished_UT_00
         list.append(item);
     }
     p->m_flag = Kwin;
-    p->slot_kwinFinished(p->m_kwinCurrentIndex);
+    p->slot_kwinFinished();
     p->m_flag = NONE;
-    p->slot_kwinFinished(0);
+    p->slot_kwinFinished();
     p->deleteLater();
 }
 
@@ -1949,7 +1949,7 @@ TEST(DisplayContent_slot_journalBootFinished_UT, DisplayContent_slot_journalBoot
     stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
-    p->slot_journalBootFinished(p->m_journalCurrentIndex);
+    p->slot_journalBootFinished();
     p->deleteLater();
 }
 
@@ -1962,13 +1962,13 @@ TEST(DisplayContent_slot_OOCFinished_UT, DisplayContent_slot_OOCFinished_UT_001)
     p->m_pModel->appendRow(QList<QStandardItem*>()<<new QStandardItem ()<<new QStandardItem ());
     p->m_treeView->selectionModel()->select(p->m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     p->m_treeView->setCurrentIndex(p->m_pModel->index(0, 0));
-    p->m_OOCCurrentIndex = 1;
+    p->m_pLogBackend->m_OOCCurrentIndex = 1;
     p->m_flag = OtherLog;
-    p->slot_OOCFinished(1);
-    p->slot_OOCFinished(1, 1);
+    p->slot_OOCFinished();
+    p->slot_OOCFinished();
     p->m_flag = CustomLog;
-    p->slot_OOCFinished(1);
-    p->slot_OOCFinished(1, 1);
+    p->slot_OOCFinished();
+    p->slot_OOCFinished();
     p->deleteLater();
 }
 
@@ -1981,11 +1981,11 @@ TEST(DisplayContent_slot_OOCData_UT, DisplayContent_slot_OOCData_UT_001)
     p->m_pModel->appendRow(QList<QStandardItem*>()<<new QStandardItem ()<<new QStandardItem ());
     p->m_treeView->selectionModel()->select(p->m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
     p->m_treeView->setCurrentIndex(p->m_pModel->index(0, 0));
-    p->m_OOCCurrentIndex = 1;
+    p->m_pLogBackend->m_OOCCurrentIndex = 1;
     p->m_flag = OtherLog;
-    p->slot_OOCData(1, "data");
+    p->slot_OOCData("data");
     p->m_flag = CustomLog;
-    p->slot_OOCData(1, "data");
+    p->slot_OOCData("data");
     p->deleteLater();
 }
 
@@ -2034,10 +2034,9 @@ TEST_P(DisplayContent_slot_journalData_UT, DisplayContent_slot_journalData_UT_00
     }
 
     p->m_flag = param.m_flag;
-    p->m_journalCurrentIndex = 0;
+    p->m_pLogBackend->m_journalCurrentIndex = 0;
     p->m_firstLoadPageData = param.m_firstLoadPageData;
-    int index = param.indexEqual ? 0 : 1;
-    p->slot_journalData(index, list);
+    p->slot_journalData(list);
     p->deleteLater();
 }
 
@@ -2086,10 +2085,10 @@ TEST_P(DisplayContent_slot_journalBootData_UT, DisplayContent_slot_journalBootDa
     }
 
     p->m_flag = param.m_flag;
-    p->m_journalBootCurrentIndex = 0;
+    p->m_pLogBackend->m_journalBootCurrentIndex = 0;
     p->m_firstLoadPageData = param.m_firstLoadPageData;
     int index = param.indexEqual ? 0 : 1;
-    p->slot_journalBootData(index, list);
+    p->slot_journalBootData(list);
     p->deleteLater();
 }
 
@@ -2110,9 +2109,9 @@ TEST(DisplayContent_slot_applicationFinished_UT, DisplayContent_slot_application
         list.append(item);
     }
     p->m_flag = APP;
-    p->slot_applicationFinished(p->m_appCurrentIndex);
+    p->slot_applicationFinished();
     p->m_flag = NONE;
-    p->slot_applicationFinished(0);
+    p->slot_applicationFinished();
     p->deleteLater();
 }
 
@@ -2124,9 +2123,9 @@ TEST(DisplayContent_slot_NormalFinished_UT, DisplayContent_NormalFinished_UT_001
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
     p->m_flag = Normal;
-    p->slot_normalFinished(p->m_normalCurrentIndex);
+    p->slot_normalFinished();
     p->m_flag = NONE;
-    p->slot_normalFinished(0);
+    p->slot_normalFinished();
     p->deleteLater();
 }
 TEST(DisplayContent_slot_themeChanged_UT, DisplayContent_slot_themeChanged_UT_001)
@@ -2274,7 +2273,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
             item.daemonName = "test_daemon";
             list.append(item);
         }
-        p->jBootListOrigin.append(list);
+        p->m_pLogBackend->jBootListOrigin.append(list);
         break;
     }
     case BOOT_KLU: {
@@ -2289,7 +2288,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
             item.daemonName = "test_daemon";
             list.append(item);
         }
-        p->jBootListOrigin.append(list);
+        p->m_pLogBackend->jBootListOrigin.append(list);
         break;
     }
     case KERN: {
@@ -2304,7 +2303,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
             item.daemonName = "test_daemon";
             list.append(item);
         }
-        p->kListOrigin.append(list);
+        p->m_pLogBackend->kListOrigin.append(list);
         break;
     }
     case BOOT: {
@@ -2318,7 +2317,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
             item.offset = "3.541";
             list.append(item);
         }
-        p->xListOrigin.append(list);
+        p->m_pLogBackend->xListOrigin.append(list);
         break;
     }
     case DPKG: {
@@ -2330,7 +2329,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
             item.action = "";
             list.append(item);
         }
-        p->dListOrigin.append(list);
+        p->m_pLogBackend->dListOrigin.append(list);
         break;
     }
     case APP: {
@@ -2343,7 +2342,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
             item.src = "test_src";
             list.append(item);
         }
-        p->appListOrigin.append(list);
+        p->m_pLogBackend->appListOrigin.append(list);
         break;
     }
     case Normal: {
@@ -2356,7 +2355,7 @@ TEST_P(DisplayContent_slot_searchResult_UT, DisplayContent_slot_searchResult_UT_
             item.msg = QString("msg%1").arg(i);
             list.append(item);
         }
-        p->m_kwinList.append(list);
+        p->m_pLogBackend->m_kwinList.append(list);
         break;
     }
     default:
@@ -2787,16 +2786,15 @@ TEST(DisplayContent_clearAllFilter_UT, DisplayContent_clearAllFilter_UT)
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
-    p->clearAllFilter();
+    p->m_pLogBackend->clearAllFilter();
 
-    EXPECT_EQ(p->m_bootFilter.searchstr, "");
-    EXPECT_EQ(p->m_bootFilter.statusFilter, "");
-    EXPECT_EQ(p->m_currentSearchStr.isEmpty(), true);
-    EXPECT_EQ(p->m_currentKwinFilter.msg, "");
-    EXPECT_EQ(p->m_normalFilter.searchstr, "");
-    EXPECT_EQ(p->m_normalFilter.timeFilterEnd, -1);
-    EXPECT_EQ(p->m_normalFilter.timeFilterBegin, -1);
-    EXPECT_EQ(p->m_normalFilter.eventTypeFilter, 0);
+    EXPECT_EQ(p->m_pLogBackend->m_bootFilter.searchstr, "");
+    EXPECT_EQ(p->m_pLogBackend->m_bootFilter.statusFilter, "");
+    EXPECT_EQ(p->m_pLogBackend->m_currentSearchStr.isEmpty(), true);
+    EXPECT_EQ(p->m_pLogBackend->m_normalFilter.searchstr, "");
+    EXPECT_EQ(p->m_pLogBackend->m_normalFilter.timeFilterEnd, -1);
+    EXPECT_EQ(p->m_pLogBackend->m_normalFilter.timeFilterBegin, -1);
+    EXPECT_EQ(p->m_pLogBackend->m_normalFilter.eventTypeFilter, 0);
     p->deleteLater();
 }
 
@@ -2806,27 +2804,27 @@ TEST(DisplayContent_clearAllDatalist_UT, DisplayContent_clearAllDatalist_UT)
     DisplayContent *p = new DisplayContent(nullptr);
     EXPECT_NE(p, nullptr);
 
-    p->clearAllDatalist();
+    p->clearAllDatas();
 
     EXPECT_EQ(p->m_pModel->rowCount(), 0);
     EXPECT_EQ(p->m_pModel->columnCount(), 0);
-    EXPECT_EQ(p->jList.size(), 0);
-    EXPECT_EQ(p->jListOrigin.size(), 0);
-    EXPECT_EQ(p->dListOrigin.size(), 0);
-    EXPECT_EQ(p->xList.size(), 0);
-    EXPECT_EQ(p->xListOrigin.size(), 0);
-    EXPECT_EQ(p->bList.size(), 0);
-    EXPECT_EQ(p->currentBootList.size(), 0);
-    EXPECT_EQ(p->kList.size(), 0);
-    EXPECT_EQ(p->kListOrigin.size(), 0);
-    EXPECT_EQ(p->appList.size(), 0);
-    EXPECT_EQ(p->appListOrigin.size(), 0);
-    EXPECT_EQ(p->norList.size(), 0);
-    EXPECT_EQ(p->nortempList.size(), 0);
-    EXPECT_EQ(p->m_currentKwinList.size(), 0);
-    EXPECT_EQ(p->m_kwinList.size(), 0);
-    EXPECT_EQ(p->jBootList.size(), 0);
-    EXPECT_EQ(p->jBootListOrigin.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->jList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->jListOrigin.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->dListOrigin.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->xList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->xListOrigin.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->bList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->currentBootList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->kList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->kListOrigin.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->appList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->appListOrigin.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->norList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->nortempList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->m_currentKwinList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->m_kwinList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->jBootList.size(), 0);
+    EXPECT_EQ(p->m_pLogBackend->jBootListOrigin.size(), 0);
     p->deleteLater();
 }
 
@@ -2863,7 +2861,7 @@ TEST_P(DisplayContent_filterBoot_UT, DisplayContent_filterBoot_UT)
         item.status = "OK";
         list.append(item);
     }
-    QList<LOG_MSG_BOOT> rslist = p->filterBoot(filter, list);
+    QList<LOG_MSG_BOOT> rslist = LogBackend::filterBoot(filter, list);
 
     EXPECT_EQ(rslist.size(), 100);
     p->deleteLater();
@@ -2905,7 +2903,7 @@ TEST_P(DisplayContent_filterNomal_UT, DisplayContent_filterNomal_UT)
         list.append(item);
     }
 
-    QList<LOG_MSG_NORMAL> rslist = p->filterNomal(filter, list);
+    QList<LOG_MSG_NORMAL> rslist = LogBackend::filterNomal(filter, list);
     int resultCount = (param.m_isEventTypeFilterEmpty && (!param.m_isMsgFilerEmpty)) ? 0 : 100;
 
     EXPECT_EQ(rslist.size(), resultCount);

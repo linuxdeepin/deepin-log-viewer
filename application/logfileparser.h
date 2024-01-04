@@ -29,10 +29,7 @@ public:
     int parseByJournalBoot(const QStringList &arg = QStringList());
 
     int parseByDpkg(const DKPG_FILTERS &iDpkgFilter);
-#if 0
-    void parseByXlog(QStringList &xList);
-    void parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms = 0);  // modifed by Airy for show period
-#endif
+
     int parseByXlog(const XORG_FILTERS &iXorgFilter);
     int parseByBoot();
     int parseByKern(const KERN_FILTERS &iKernFilter);
