@@ -161,7 +161,7 @@
 1. 在終端執行Gsettings配置設置命令，“[]”中填寫日誌文件路徑，比如：['a.log','b.log','c.log']。
 
 ```shell
-gsettings set com.deepin.log-viewer customlogfiles []
+gsettings set com.deepin.log.viewer customlogfiles []
 ```
 
 2. 在日誌收集工具界面，單擊**自定義日誌**，即可發現已有配置。
@@ -171,7 +171,7 @@ gsettings set com.deepin.log-viewer customlogfiles []
 1. 在終端執行Dconfig配置設置命令，"[]"中填寫日誌文件路徑，比如：["a.log","b.log","c.log"]
 
 ```shell
-dde-dconfig --set -a org.deepin.deepin-log-viewer -r org.deepin.deepin-log-viewer -k customLogFiles -v '["a.log","b.log","c.log"]'
+dde-dconfig --set -a org.deepin.log.viewer -r org.deepin.log.viewer -k customLogFiles -v '["a.log","b.log","c.log"]'
 ```
 
 2. 在日誌收集工具界面，單擊**自定義日誌**，即可發現已有配置。

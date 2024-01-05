@@ -6,6 +6,12 @@
 #define UTILS_H
 #define SINGLE_READ_CNT 500
 #define SINGLE_READ_CNT_COREDUMP 600
+
+#include "dtkcore_config.h"
+#ifdef DTKCORE_CLASS_DConfig
+#include <DConfig>
+#endif
+
 #include <QObject>
 #include <QHash>
 /**
@@ -70,5 +76,25 @@ public:
     static QString homePath;
     static bool runInCmd;
 };
+
+#ifdef DTKCORE_CLASS_DConfigFile
+class LoggerRules : public QObject {
+  Q_OBJECT
+public:
+  explicit LoggerRules(QObject *parent = nullptr);
+  ~LoggerRules();
+
+  void initLoggerRules();
+  inline QString rules() const { return m_rules; }
+  void setRules(const QString &rules);
+
+private:
+  void appendRules(const QString &rules);
+
+private:
+  QString m_rules;
+  Dtk::Core::DConfig *m_config;
+};
+#endif
 
 #endif

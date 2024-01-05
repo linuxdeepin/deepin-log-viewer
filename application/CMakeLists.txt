@@ -375,7 +375,7 @@ install(FILES assets/images/deepin-log-viewer.svg
 install(FILES assets/com.deepin.pkexec.logViewerAuth.policy
                     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 install(FILES assets/com.deepin.pkexec.logViewerTruncate.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
-install(FILES gschema/com.deepin.log-viewer.gschema.xml
+install(FILES gschema/com.deepin.log.viewer.gschema.xml
                 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)
 
 # Install files
@@ -390,7 +390,10 @@ install(FILES assets/auditRule.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/de
 install(FILES assets/deepin-logger DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 # Install log json config file.
-install(FILES assets/deepin-log-viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d)
+install(FILES configs/logconfig/deepin-log-viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d/)
+
+# Install debugmode json config file.
+install(FILES configs/debugconfig/org.deepin.log.viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-debug-config/deepin-debug-config.d/)
 
 # Install coredump report service&timer
 install(FILES ./configs/coredump-reporter.timer ./configs/coredump-reporter.service DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/system/)
@@ -401,15 +404,11 @@ macro(install_symlink filepath wantsdir)
 endmacro(install_symlink)
 install_symlink(coredump-reporter.timer timers.target.wants)
 
-#FILES       - deployed files.
-#BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.
-#APPID       - working for the app.
-#COMMONID    - working for common.
-#Only DConfig is supported by DTK, use DConfig
-set(APPID org.deepin.deepin-log-viewer)
-set(configFile configs/org.deepin.deepin-log-viewer.json)
+#安装DConfig配置
+set(APPID org.deepin.log.viewer)
+set(configFile configs/dconfig/org.deepin.log.viewer.json)
 if (DEFINED DSG_DATA_DIR)
-    dconfig_meta_files(APPID ${APPID} BASE configs FILES ${configFile})
+    dconfig_meta_files(APPID ${APPID} FILES ${configFile})
     message("-- DConfig is supported by DTK")
 else()
     install(FILES ${configFile} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dsg/configs/${APPID}/)

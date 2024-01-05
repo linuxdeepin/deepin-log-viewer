@@ -29,6 +29,8 @@ const QString APP_LOG_CONFIG_PATH = "/usr/share/deepin-log-viewer/deepin-log.con
 
 const QString COREDUMP_REPORT_TIME = "coredumpReportTime";
 const QString COREDUMP_REPORT_TIME_GSETTING = "coredumpreporttime";
+const QString DCONFIG_APPID = "org.deepin.log.viewer";
+const QString GSETTING_APPID = "com.deepin.log.viewer";
 /**
  * @brief LogApplicationHelper::LogApplicationHelper 构造函数，获取日志文件路径和应用名称
  * @param parent 父对象
@@ -154,7 +156,7 @@ void LogApplicationHelper::initCustomLog()
 #ifdef DTKCORE_CLASS_DConfigFile
     //初始化DConfig配置
     if (!m_pDConfig) {
-        m_pDConfig = Dtk::Core::DConfig::create("org.deepin.deepin-log-viewer", "org.deepin.deepin-log-viewer", "", this);
+        m_pDConfig = Dtk::Core::DConfig::create(DCONFIG_APPID, DCONFIG_APPID, "", this);
 
         // 判断配置是否有效
         if (!m_pDConfig->isValid()) {
@@ -193,8 +195,8 @@ void LogApplicationHelper::initCustomLog()
 
     //初始化gsetting配置
     if (!m_pGSettings) {
-        if (QGSettings::isSchemaInstalled("com.deepin.log-viewer")) {
-            m_pGSettings = new QGSettings("com.deepin.log-viewer", "/com/deepin/log-viewer/");
+        if (QGSettings::isSchemaInstalled(GSETTING_APPID.toUtf8())) {
+            m_pGSettings = new QGSettings(GSETTING_APPID.toUtf8(), "/com/deepin/log/viewer/");
 
             //监听key的value是否发生了变化
             connect(m_pGSettings, &QGSettings::changed, this, [ = ](const QString & key) {

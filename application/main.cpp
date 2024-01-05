@@ -55,6 +55,12 @@ int main(int argc, char *argv[])
         DLogManager::registerFileAppender();
 #endif
 
+#ifdef DTKCORE_CLASS_DConfigFile
+        //日志规则
+        LoggerRules logRules;
+        logRules.initLoggerRules();
+#endif
+
         QCommandLineOption exportOption(QStringList() << "e" << "export", DApplication::translate("main", "Export logs to the specified path"), DApplication::translate("main", "PATH"));
         QCommandLineOption typeOption(QStringList() << "t" << "type", DApplication::translate("main", "Export logs of specified types"), DApplication::translate("main", "TYPE"));
         QCommandLineOption appOption(QStringList() << "d" << "deepin-application", DApplication::translate("main", "Export logs of specified self-developed applications"), DApplication::translate("main", "SELF APPNAME"));
@@ -322,6 +328,12 @@ int main(int argc, char *argv[])
 #else
         DLogManager::registerConsoleAppender();
         DLogManager::registerFileAppender();
+#endif
+
+#ifdef DTKCORE_CLASS_DConfigFile
+    //日志规则
+    LoggerRules logRules;
+    logRules.initLoggerRules();
 #endif
         LogApplicationHelper::instance();
 
