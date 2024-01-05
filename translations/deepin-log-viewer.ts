@@ -146,11 +146,11 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
+        <source>zip(*.zip)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>zip(*.zip)</source>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -570,6 +570,14 @@
     </message>
     <message>
         <source>Report coredump informations.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

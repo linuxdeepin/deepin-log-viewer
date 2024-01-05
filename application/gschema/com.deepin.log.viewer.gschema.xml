@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
-    <schema id="com.deepin.log-viewer" path="/com/deepin/log-viewer/">
+    <schema id="com.deepin.log.viewer" path="/com/deepin/log/viewer/">
         <key type="as" name="customlogfiles">
             <default>[]
 	     </default>

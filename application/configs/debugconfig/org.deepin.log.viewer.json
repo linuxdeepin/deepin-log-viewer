@@ -1,0 +1,12 @@
+{
+  "name": "deepin-log-viewer",
+  "group": "",
+  "submodules": [
+    {
+      "name": "deepin-log-viewer",
+      "exec": "/usr/share/deepin-debug-config/shell/deepin-log-viewer_debug.sh"
+    }
+  ],
+  "reboot": 1,
+  "version": "V1.0"
+}

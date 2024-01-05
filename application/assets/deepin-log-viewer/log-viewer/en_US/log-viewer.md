@@ -148,6 +148,40 @@ You can run, close or create a shortcut for Log Viewer.
 3. Click a log, you can see its particular info below the list, including user, time, event type, username and info.
 ![0|powerevent](fig/powerevent.png)
 
+#### Other Logs
+
+1. On the main interface, click **Other Logs**.
+2. Other logs display the file name and modification date of the log file in a file list format. Display similar log files in folder format.
+3. After selecting a file, you can view its detailed content. Drag and drop the file list and detailed content boundary to synchronize and adjust the size of the two regions.
+
+![otherslog](fig/otherslog.png)
+
+
+### Custom logs
+
+The custom log function is to add log files to the log collection tool for viewing and exporting. Custom logging compatible with Gsettings and Dconfig configurations.
+
+**Gsettings configuration**
+
+1. Execute the Gsettings configuration setting command on the terminal, fill in the log file path in "[]", for example: ['a. log ',' b. log ',' c. log '].
+
+```shell
+gsettings set com.deepin.log.viewer customlogfiles []
+```
+
+2. On the main interface, click **Custom Log** to discover the existing configuration.
+
+**Dconfig configuration**
+
+1. Execute the Dconfig configuration setting command on the terminal, fill in the log file path in "[]", for example: ["a.log", "b. log", "c.log"]
+
+```shell
+dde-dconfig --set -a org.deepin.log.viewer -r org.deepin.log.viewer -k customLogFiles -v '["a.log","b.log","c.log"]'
+```
+
+2. On the main interface, click **Custom Log** to discover the existing configuration.
+
+
 ### Export Logs
 
 You can export logs to local computer so as to help you analyze, locate and solve problems.

@@ -35,6 +35,7 @@ Q_LOGGING_CATEGORY(logUtils, "org.deepin.log.viewer.utils")
 #else
 Q_LOGGING_CATEGORY(logUtils, "org.deepin.log.viewer.utils", QtInfoMsg)
 #endif
+const QString DCONFIG_APPID = "org.deepin.log.viewer";
 
 QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
@@ -450,3 +451,59 @@ void Utils::resetToNormalAuth(const QString &path)
         procss.waitForFinished(-1);
     }
 }
+
+
+#ifdef DTKCORE_CLASS_DConfigFile
+LoggerRules::LoggerRules(QObject *parent)
+    : QObject(parent), m_rules(""), m_config(nullptr) {
+}
+
+LoggerRules::~LoggerRules() { m_config->deleteLater(); }
+
+void LoggerRules::initLoggerRules()
+{
+    QByteArray logRules = qgetenv("QT_LOGGING_RULES");
+    qunsetenv("QT_LOGGING_RULES");
+
+    // set env
+    m_rules = logRules;
+    qCDebug(logUtils) << "Current system env log rules:" << logRules;
+
+    // set dconfig
+    m_config = Dtk::Core::DConfig::create(DCONFIG_APPID, DCONFIG_APPID);
+    qCDebug(logUtils) << "Current DConfig file is :" <<  m_config->name();
+    logRules = m_config->value("log_rules").toByteArray();
+    qCDebug(logUtils) << "Current app log rules :" << logRules;
+    appendRules(logRules);
+    setRules(m_rules);
+
+    // watch dconfig
+    connect(m_config, &Dtk::Core::DConfig::valueChanged, this, [this](const QString &key) {
+      if (key == "log_rules") {
+          setRules(m_config->value(key).toByteArray());
+          qCDebug(logUtils) << "value changed:" << key;
+      }
+    });
+}
+
+void LoggerRules::setRules(const QString &rules) {
+  auto tmpRules = rules;
+  m_rules = tmpRules.replace(";", "\n");
+  QLoggingCategory::setFilterRules(m_rules);
+}
+
+void LoggerRules::appendRules(const QString &rules) {
+  QString tmpRules = rules;
+  tmpRules = tmpRules.replace(";", "\n");
+  auto tmplist = tmpRules.split('\n');
+  for (int i = 0; i < tmplist.count(); i++)
+    if (m_rules.contains(tmplist.at(i))) {
+      tmplist.removeAt(i);
+      i--;
+    }
+  if (tmplist.isEmpty())
+    return;
+  m_rules.isEmpty() ? m_rules = tmplist.join("\n")
+                    : m_rules += "\n" + tmplist.join("\n");
+}
+#endif
