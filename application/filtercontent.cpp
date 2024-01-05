@@ -284,7 +284,10 @@ void FilterContent::setAppComboBoxItem()
         if (appConfig.subModules.size() == 0 || !appConfig.visible)
             continue;
 
-        cbx_app->addItem(appConfig.transName);
+        if (!appConfig.transName.isEmpty())
+            cbx_app->addItem(appConfig.transName);
+        else
+            cbx_app->addItem(appConfig.name);
         // 应用日志的项目名称为Qt::UserRole + 1
         cbx_app->setItemData(cbx_app->count() - 1, appConfig.name, Qt::UserRole + 1);
     }
