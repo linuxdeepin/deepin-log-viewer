@@ -1246,7 +1246,30 @@ void LogAuthThread::handleCoredump()
                     outInfoByte = m_process->readAllStandardOutput();
                 }
                 coredumpMsg.maps = outInfoByte;
+
                 QFile::remove(corePath);
+
+                // 获取二进制文件信息
+                m_process->start("/bin/bash", QStringList() << "-c" << QString("file %1").arg(coredumpMsg.exe));
+                m_process->waitForFinished(-1);
+                outInfoByte = m_process->readAllStandardOutput();
+                if (!outInfoByte.isEmpty())
+                    coredumpMsg.binaryInfo = outInfoByte;
+
+                // 获取包名
+                m_process->start("/bin/bash", QStringList() << "-c" << QString("dpkg -S %1").arg(coredumpMsg.exe));
+                m_process->waitForFinished(-1);
+                outInfoByte = m_process->readAllStandardOutput();
+                // 获取版本号
+                if (!outInfoByte.isEmpty()) {
+                    QString str = outInfoByte;
+                    m_process->start("/bin/bash", QStringList() << "-c" << QString("dpkg-query --show %1").arg(str.split(":").first()));
+                    m_process->waitForFinished(-1);
+                    outInfoByte = m_process->readAllStandardOutput();
+                    if (!outInfoByte.isEmpty()) {
+                        coredumpMsg.packgeVersion = QString(outInfoByte).simplified();
+                    }
+                }
             }
         } else {
             coredumpMsg.storagePath = QString("coredump file is missing");
