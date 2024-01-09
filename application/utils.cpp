@@ -467,13 +467,10 @@ void LoggerRules::initLoggerRules()
 
     // set env
     m_rules = logRules;
-    qCDebug(logUtils) << "Current system env log rules:" << logRules;
 
     // set dconfig
     m_config = Dtk::Core::DConfig::create(DCONFIG_APPID, DCONFIG_APPID);
-    qCDebug(logUtils) << "Current DConfig file is :" <<  m_config->name();
     logRules = m_config->value("log_rules").toByteArray();
-    qCDebug(logUtils) << "Current app log rules :" << logRules;
     appendRules(logRules);
     setRules(m_rules);
 
