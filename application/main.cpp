@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
         QCommandLineOption levelOption(QStringList() << "l" << "level", DApplication::translate("main", "Export logs within a specified debug level"), DApplication::translate("main", "LEVEL"));
         QCommandLineOption statusOption(QStringList() << "s" << "status", DApplication::translate("main", "Export boot(no-klu) logs within a specified status"), DApplication::translate("main", "BOOT STATUS"));
         QCommandLineOption eventOption(QStringList() << "E" << "event", DApplication::translate("main", "Export boot-shutdown-event or audit logs within a specified event type"), DApplication::translate("main", "EVENT TYPE"));
-        QCommandLineOption keywordOption(QStringList() << "k" << "search", DApplication::translate("main", "Export logs based on keywords search results"), DApplication::translate("main", "KEY WORD"));
+        QCommandLineOption keywordOption(QStringList() << "k" << "keyword", DApplication::translate("main", "Export logs based on keywords search results"), DApplication::translate("main", "KEY WORD"));
         QCommandLineOption submoduleOption(QStringList() << "m" << "submodule", DApplication::translate("main", "Export logs based on app submodel"), DApplication::translate("main", "SUBMODULE"));
         QCommandLineOption reportCoredumpOption(QStringList() << "reportcoredump", DApplication::translate("main", "Report coredump informations."));
 
@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
                     bool bRet = false;
                     if (!status.isEmpty() || !event.isEmpty())
                         qCWarning(logAppMain) << QString("Export app logs, can only be filtered using 'period' or 'level' or 'keyword' or 'submodule' parameter.");
-                    else if (!period.isEmpty() || !level.isEmpty() || !keyword.isEmpty())
+                    else if (!period.isEmpty() || !level.isEmpty() || !keyword.isEmpty() || !submodule.isEmpty())
                         bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, submodule, keyword);
                     if (!bRet)
                         return -1;
