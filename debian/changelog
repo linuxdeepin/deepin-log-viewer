@@ -1,3 +1,16 @@
+deepin-log-viewer (6.1.9) unstable; urgency=medium
+
+  * feat: Log specification adaptation 2nd
+  * feat: Log specification adaptation 2nd- merge export
+  * fix: Resolve the issue of JSON configuration not being able to control application visibility(Bug: 237801)
+  * feat: Debug mode log adaptation
+  * fix: Resolve the issue of blank items in the application list(Bug: 237785)
+  * feat: add package version information on crash burial point(Bug: 236991)
+  * fix: Change the JSON visible field to 0 in debugging mode configuration(Bug: 238925)
+  * fix: Fix the issue where using the - d parameter - m cannot export logs(Bug: 238967)
+
+ -- houchengqiu <houchengqiu@uniontech.com>  Wed, 10 Jan 2024 11:46:04 +0800
+
 deepin-log-viewer (6.1.8) unstable; urgency=medium
 
   * fix: Fix security vulnerabilities introduced by LD_PRELOAD 2nd(Bug: 234125)
