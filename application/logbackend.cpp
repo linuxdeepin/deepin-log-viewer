@@ -959,6 +959,10 @@ void LogBackend::slot_coredumpFinished(int index)
                 Eventlogutils::GetInstance()->writeLogs(objCoredumpEvent);
                 LogApplicationHelper::instance()->saveLastRerportTime(latestCoredumpTime);
                 qCInfo(logBackend) << QString("Successfully reported %1 crash messages in total.").arg(m_currentCoredumpList.size());
+
+                // 程序不能立即退出，需要等待埋点数据完整写入埋点log文件，否则埋点log文件没有崩溃埋点信息
+                QThread::msleep(1000);
+
                 qApp->exit(0);
             });
         }
