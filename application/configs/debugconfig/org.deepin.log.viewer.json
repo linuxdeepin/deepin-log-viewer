@@ -4,7 +4,7 @@
   "submodules": [
     {
       "name": "deepin-log-viewer",
-      "exec": "/usr/share/deepin-debug-config/shell/deepin-log-viewer_debug.sh"
+      "exec": "deepin-log-viewer_debug.sh"
     }
   ],
   "reboot": 0,
