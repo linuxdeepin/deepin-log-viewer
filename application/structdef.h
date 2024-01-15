@@ -247,7 +247,7 @@ struct LOG_MSG_COREDUMP {
         if (!maps.isEmpty()) {
             obj.insert("maps", maps);
         }
-        obj.insert("packgeVersion", packgeVersion);
+        obj.insert("packageVersion", packgeVersion);
         obj.insert("binaryInfo", binaryInfo);
 
         return obj;
