@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
         QCoreApplication a(argc, argv);
         a.setOrganizationName("deepin");
         a.setApplicationName("deepin-log-viewer");
+        a.setApplicationVersion(VERSION);
 
         DLogManager::registerConsoleAppender();
 
