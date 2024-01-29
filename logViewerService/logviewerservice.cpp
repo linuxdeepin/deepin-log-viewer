@@ -313,6 +313,14 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 
         nameFilter = appDir.mid(appDir.lastIndexOf("/") + 1, appDir.size() - 1);
         dir.setPath(appDir);
+        dir.setFilter(QDir::Files | QDir::NoSymLinks); //实现对文件的过滤
+        dir.setNameFilters(QStringList() << nameFilter + ".*"); //设置过滤
+        dir.setSorting(QDir::Time);
+
+        // 若该路径下未找到日志，则按日志文件名称来检索相关日志文件
+        QFileInfoList fileList = dir.entryInfoList();
+        if (fileList.size() == 0)
+            nameFilter = appFileInfo.completeBaseName();
     } else if (file == "audit"){
         dir.setPath("/var/log/audit");
         nameFilter = file;
