@@ -23,9 +23,9 @@
 #include <DStyle>
 #include <DSysInfo>
 
-static QString stub_getSystemInfo()
+static bool stub_isSEOpen()
 {
-    return "klu";
+    return true;
 }
 
 QVariant stub_data(int arole)
@@ -148,7 +148,7 @@ TEST(LogListView_initUI_UT, LogListView_initUI_UT_002)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
     stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
-    stub.set(ADDR(DBusManager, getSystemInfo), stub_getSystemInfo);
+    stub.set(ADDR(DBusManager, isSEOpen), stub_isSEOpen);
     stub.set(ADDR(Dtk::Core::DSysInfo, uosEditionType), stub_uosEulerEditionType);
     stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogListView *p = new LogListView(nullptr);

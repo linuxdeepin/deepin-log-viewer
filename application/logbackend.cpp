@@ -550,7 +550,7 @@ QStringList LogBackend::getLogTypes()
             m_logTypes.push_back(KERN_TREE_DATA);
         }
     }
-    if (DBusManager::isSpecialComType()) {
+    if (Utils::isWayland()) {
         m_logTypes.push_back(BOOT_KLU_TREE_DATA);
     } else {
         m_logTypes.push_back(BOOT_TREE_DATA);
@@ -562,8 +562,8 @@ QStringList LogBackend::getLogTypes()
             m_logTypes.push_back(DPKG_TREE_DATA);
         }
     }
-    //w515是新版本内核的panguv返回值  panguV是老版本
-    if (DBusManager::isSpecialComType()) {
+    //wayland环境才有kwin日志
+    if (Utils::isWayland()) {
         m_logTypes.push_back(KWIN_TREE_DATA);
     } else {
         m_logTypes.push_back(XORG_TREE_DATA);
@@ -1657,7 +1657,7 @@ LOG_FLAG LogBackend::type2Flag(const QString &type, QString& error)
         else
             flag = KERN;
     } else if (type == TYPE_BOOT) {
-        if (DBusManager::isSpecialComType())
+        if (Utils::isWayland())
             flag = BOOT_KLU;
         else
             flag = BOOT;
@@ -1672,12 +1672,12 @@ LOG_FLAG LogBackend::type2Flag(const QString &type, QString& error)
         else
             error = "Only server industry edition has dnf.log";
     } else if (type == TYPE_KWIN) {
-        if (DBusManager::isSpecialComType())
+        if (Utils::isWayland())
             flag = Kwin;
         else
             error = "Only wayland platform has kwin.log";
     } else if (type == TYPE_XORG) {
-        if (!DBusManager::isSpecialComType())
+        if (!Utils::isWayland())
             flag = XORG;
         else
             error = "Wayland platform has no Xorg.log";

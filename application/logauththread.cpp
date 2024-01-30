@@ -950,7 +950,7 @@ void LogAuthThread::handleAudit()
                 return;
             }
 
-            if (DBusManager::isSEOepn()) {
+            if (DBusManager::isSEOpen()) {
                 if (DBusManager::isAuditAdmin()) {
                     // 是审计管理员，需要鉴权，有错则传出空数据
                     if (!Utils::checkAuthorization("com.deepin.pkexec.logViewerAuth.self", QCoreApplication::instance()->applicationPid())) {
