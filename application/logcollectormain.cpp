@@ -293,7 +293,7 @@ void LogCollectorMain::exportAllLogs()
     if (false == authorization) {
         QString policyActionId = "";
         // 开启等保四，若当前用户是审计管理员，使用单用户审计管理员鉴权
-        if (DBusManager::isSEOepn() && DBusManager::isAuditAdmin())
+        if (DBusManager::isSEOpen() && DBusManager::isAuditAdmin())
             policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogsSelf";
         else
             // 其他情况，默认为多用户鉴权

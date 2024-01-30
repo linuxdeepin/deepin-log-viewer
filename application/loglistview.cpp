@@ -185,7 +185,7 @@ void LogListView::initUI()
             m_logTypes.push_back(KERN_TREE_DATA);
         }
     }
-    if (DBusManager::isSpecialComType()) {
+    if (Utils::isWayland()) {
         item = new QStandardItem(QIcon::fromTheme("dp_start"), DApplication::translate("Tree", "Boot Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Boot Log")); // add by Airy for bug 16245
@@ -225,8 +225,8 @@ void LogListView::initUI()
             m_logTypes.push_back(DPKG_TREE_DATA);
         }
     }
-    //w515是新版本内核的panguv返回值  panguV是老版本
-    if (DBusManager::isSpecialComType()) {
+    //wayland环境才有kwin日志
+    if (Utils::isWayland()) {
         item = new QStandardItem(QIcon::fromTheme("dp_kwin"), DApplication::translate("Tree", "Kwin Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
