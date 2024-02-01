@@ -1,3 +1,10 @@
+deepin-log-viewer (6.1.12) unstable; urgency=medium
+
+  * fix: Add -v option version info(Bug: 236241)
+  * fix: Adapt to the type of PGX log display(Bug: 240851)
+
+ -- houchengqiu <houchengqiu@uniontech.com>  Thu, 01 Feb 2024 14:09:32 +0800
+
 deepin-log-viewer (6.1.11) unstable; urgency=medium
 
   * fix: modify debug-config json
