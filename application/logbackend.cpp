@@ -1629,6 +1629,7 @@ bool LogBackend::getOutDirPath(const QString &path)
         }
         if (!bAvailable) {
             qCWarning(logBackend) << qApp->translate("ExportMessage", "The export directory is not available. Please choose another directory for the export operation.");
+            qCWarning(logBackend) << "outPath: " << tmpPath;
             return false;
         }
 

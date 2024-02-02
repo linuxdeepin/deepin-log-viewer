@@ -39,10 +39,10 @@ public Q_SLOTS:
     Q_SCRIPTABLE quint64 getFileSize(const QString &filePath);
     Q_SCRIPTABLE QStringList whiteListOutPaths();
 
-private:
-    // 获取应用当前登录用户家目录
-    QString getAppUserHomePath();
-    //获取外设挂载路径(包括smb路径)
+public:
+    // 获取用户家目录
+    QStringList getHomePaths();
+    // 获取外设挂载路径(包括smb路径)
     QStringList getExternalDevPaths();
     QList<QExplicitlySharedDataPointer<DGioMount>> getMounts_safe();
 private:
