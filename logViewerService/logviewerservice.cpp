@@ -197,10 +197,10 @@ quint64 LogViewerService::getFileSize(const QString &filePath)
 QStringList LogViewerService::whiteListOutPaths()
 {
     QStringList paths;
-    // 获取当前用户家目录
-    QString homePath = getAppUserHomePath();
-    if (!homePath.isEmpty())
-        paths.push_back(homePath);
+    // 获取用户家目录
+    QStringList homeList = getHomePaths();
+    if (!homeList.isEmpty())
+        paths << homeList;
     // 获取外设挂载可写路径(包括smb路径)
     paths << getExternalDevPaths();
     // 获取临时目录
@@ -208,17 +208,23 @@ QStringList LogViewerService::whiteListOutPaths()
     return paths;
 }
 
-// 获取应用当前登录用户家目录
-QString LogViewerService::getAppUserHomePath()
+// 获取用户家目录
+QStringList LogViewerService::getHomePaths()
 {
+    QStringList homeList;
+
     if (!calledFromDBus()) {
-        return "";
+        return homeList;
     }
 
-    uint uid = connection().interface()->serviceUid(message().service()).value();
-    struct passwd* pwd = getpwuid(uid);
-    QString homePath = "/home/" + QString(pwd->pw_name);
-    return homePath;
+    QFileInfoList infoList = QDir("/home").entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for (auto info : infoList) {
+        if (info.isDir())
+            homeList.push_back(info.absoluteFilePath());
+    }
+
+    qInfo() << "homeList: " << homeList;
+    return homeList;
 }
 
 // 获取外设挂载路径
