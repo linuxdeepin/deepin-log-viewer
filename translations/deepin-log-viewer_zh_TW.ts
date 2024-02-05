@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_TW">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_TW">
 <context>
     <name>Action</name>
     <message>
@@ -120,38 +118,38 @@
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>身份鑑別</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"></translation>
+        <translation>自主訪問控制</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"></translation>
+        <translation>強制訪問控制</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"></translation>
+        <translation>遠端連接</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"></translation>
+        <translation>文件審計</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>其他</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
-        <translation type="unfinished"></translation>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>zip(*.zip)</source>
-        <translation type="unfinished"></translation>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -177,7 +175,7 @@
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>匯出目錄不可用，請選擇其他目錄進行匯出操作。</translation>
     </message>
 </context>
 <context>
@@ -235,15 +233,15 @@
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>審計類型：</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"></translation>
+        <translation>應用：</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"></translation>
+        <translation>子模組：</translation>
     </message>
 </context>
 <context>
@@ -401,24 +399,24 @@
         <translation>修改日期</translation>
     </message>
     <message>
-        <source>Offset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Core File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>User Name </source>
-        <translation type="unfinished"></translation>
+        <translation>崩潰訊號</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"></translation>
+        <translation>行程</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>核心文件</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>使用者</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>偏移量</translation>
     </message>
 </context>
 <context>
@@ -476,18 +474,18 @@
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"></translation>
+        <translation>審計日誌</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"></translation>
+        <translation>崩潰日誌</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"></translation>
+        <translation>無法獲取崩潰資訊，請安裝 systemd-coredump。</translation>
     </message>
 </context>
 <context>
@@ -499,78 +497,87 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>目前系統安全等級為：高
+僅審計管理員可查看審計日誌</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>匯出日誌到指定目錄</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>匯出路徑</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>按日誌種類匯出日誌</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>日誌種類</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>按自研應用匯出日誌</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>自研應用名稱</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>按時間週期匯出日誌</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>週期</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>按除錯級別匯出日誌</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>除錯級別</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>啟動狀態</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>按狀態匯出啟動日誌(klu)</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>按事件類型匯出開關機事件/審計日誌</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>事件類型</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>按關鍵字匯出日誌</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>關鍵字</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>上報崩潰埋點資訊</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>按子模組匯出應用日誌</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>子模組</translation>
     </message>
 </context>
 <context>

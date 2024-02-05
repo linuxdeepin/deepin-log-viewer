@@ -70,7 +70,7 @@
 		<description xml:lang="es">autenticación</description>
 		<message xml:lang="es">La autenticación es necesaria para borrar el registro</message>
 		<description xml:lang="pl">uwierzytelnienie</description>
-		<message xml:lang="pl">Wymagane jest uwierzytelnienie do wyczyszczenia logów</message>
+		<message xml:lang="pl">Wymagane jest uwierzytelnienie do wyczyszczenia dziennika</message>
 		<description xml:lang="pt">autenticação</description>
 		<message xml:lang="pt">É necessária a autenticação para limpar o registo</message>
 		<description xml:lang="bo">དཔང་དཔྱད།</description>

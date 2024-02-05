@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="ug">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ug">
 <context>
     <name>Action</name>
     <message>
@@ -120,38 +118,38 @@
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>سالاھىيەت پەرقلەندۈرۈش</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"></translation>
+        <translation>ئۆز ئالدىغا زىيارەت قىلىشنى كونتروللاش</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"></translation>
+        <translation>مەجبۇرىي زىيارەتنى قىلىشنى كونتروللاش</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"></translation>
+        <translation>يىراقتىن ئۇلاش</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"></translation>
+        <translation>ھۆججەت تەكشۈرۈش</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>باشقا</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
-        <translation type="unfinished"></translation>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>zip(*.zip)</source>
-        <translation type="unfinished"></translation>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -177,7 +175,7 @@
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>چىقىرىدىغان مۇندەرىجىنى ئىشلەتكىلى بولمايدۇ، باشقا مۇندەرىجە تاللاپ مەشغۇلات قىلىڭ</translation>
     </message>
 </context>
 <context>
@@ -235,15 +233,15 @@
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>تەكشۈرۈش تىپى:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"></translation>
+        <translation>ئەپ:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"></translation>
+        <translation>بالا مودېل:</translation>
     </message>
 </context>
 <context>
@@ -394,31 +392,31 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>ھۆججەت نامى</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Offset</source>
-        <translation type="unfinished"></translation>
+        <translation>ئۆزگەرتكەن ۋاقىت:</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Core File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>User Name </source>
-        <translation type="unfinished"></translation>
+        <translation>سىگنال</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"></translation>
+        <translation>پىروگرامما</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>يادرولۇق ھۆججەت</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>ئىشلەتكۈچى</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>پىروگرامما</translation>
     </message>
 </context>
 <context>
@@ -468,109 +466,118 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"></translation>
+        <translation>باشقا كۈندىلىك خاتىرە</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"></translation>
+        <translation>كۈندىلىك خاتىرە بەلگىلەش</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"></translation>
+        <translation>تەكشۈرۈش خاتىرىسى</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"></translation>
+        <translation>گۇم بولۇش خاتىرىسى</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"></translation>
+        <translation>ئۇچۇرنى ئالالمىدى، systemd-coredump قاچىلاڭ.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"></translation>
+        <translation>كۆرۈش ھوقۇقى يوق</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>نۆۋەتتىكى سىستېما بىخەتەرلىك دەرىجىسى: يۇقىرى
+تەكشۈرگۈچى باشقۇرغۇچىلا تەكشۈرۈش خاتىرىسىنى كۆرەلەيدۇ</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>خاتىرىنى بەلگىلىگەن مۇندەرىجىگە چىقىرىش</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>چىقىرىش مۇندەرىجىسى</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>خاتىرە تۈرى بويىچە چىقىرىش</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>خاتىرە تۈرى</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>خاتىرىنى ئۆز ئالدىغا ئاچقان ئەپ بويىچە چىقىرىش</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>ئۆز ئالدىغا ئاچقان  ئەپ نامى</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>خاتىرىنى ۋاقىت دەۋرىيلىكى بويىچە چىقىرىش</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>دەۋرىيلىكى</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>خاتىرىنى تەڭشەش-سىناش دەرىجىسى بويىچە چىقىرىش</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>تەڭشەش-سىناش دەرىجىسى</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>قوزغىلىش ھالىتى</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>قوزغىلىش خاتىرىسىنى ھالىتى بويىچە چىقىرىش(klu)</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>ئېچىش-تاقاش خاتىرىسى/تەكشۈرۈش خاتىرىسىنى مەشغۇلات تۈرى بويىچە چىقىرىش</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>مەشغۇلات تۈرى</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>خاتىرىنى ھالقىلىق سۆز بويىچە چىقىرىش</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>ھالقىلىق سۆز</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>گۇم بولۇش نۇقتىسىنىڭ ئۇچۇرىنى يوللاش</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>خاتىرىنى بالا مودېل بويىچە چىقىرىش</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>بالا مودېل</translation>
     </message>
 </context>
 <context>
@@ -589,7 +596,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished">ھەر 1 مىنۇت {5 ?}</translation>
+        <translation>5 مىنۇت</translation>
     </message>
     <message>
         <source>No refresh</source>
