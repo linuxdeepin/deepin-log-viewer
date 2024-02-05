@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>Action</name>
     <message>
@@ -146,12 +144,12 @@
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</translation>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>zip(*.zip)</source>
-        <translation>zip(*.zip)</translation>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -405,6 +403,10 @@
         <translation>崩溃信号</translation>
     </message>
     <message>
+        <source>EXE</source>
+        <translation>进程</translation>
+    </message>
+    <message>
         <source>Core File</source>
         <translation>核心文件</translation>
     </message>
@@ -413,12 +415,8 @@
         <translation>用户</translation>
     </message>
     <message>
-        <source>EXE</source>
-        <translation>进程</translation>
-    </message>
-    <message>
         <source>Offset</source>
-        <translation>偏移量</translation>
+        <translation>进程</translation>
     </message>
 </context>
 <context>
@@ -507,71 +505,79 @@
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>导出日志到指定目录</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>导出路径</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>按日志种类导出日志</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>日志种类</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>按自研应用导出日志</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>自研应用名称</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>按时间周期导出日志</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>周期</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>按调试级别导出日志</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>调试级别</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>启动状态</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>按状态导出启动日志(klu)</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>按事件类型导出开关机事件/审计日志</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>事件类型</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>按关键词导出日志</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>关键词</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>上报崩溃埋点信息</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>按子模块导出应用日志</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>子模块</translation>
     </message>
 </context>
 <context>

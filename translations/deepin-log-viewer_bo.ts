@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="bo">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="bo">
 <context>
     <name>Action</name>
     <message>
@@ -120,38 +118,38 @@
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>ཐོབ་ཐང་དབྱེ་འབྱེད།</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"></translation>
+        <translation>རང་བདག་ལྟ་སྤྱོད་ཚོད་འཛིན།</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"></translation>
+        <translation>བཙན་ཤེད་ཀྱིས་ལྟ་སྤྱོད་ཚོད་འཛིན་བྱེད་པ།</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"></translation>
+        <translation>རྒྱང་སྦྲེལ།</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"></translation>
+        <translation>ཡིག་ཆ་རྩིས་བཤེར།</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>གཞན།</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
-        <translation type="unfinished"></translation>
+        <source>zip(*.zip)</source>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
-        <source>zip(*.zip)</source>
-        <translation type="unfinished"></translation>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -177,7 +175,7 @@
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཕྱིར་དྲངས་པའི་དཀར་ཆག་སྤྱོད་མི་རུང་། དཀར་ཆག་གཞན་བདམས་ནས་བཀོལ་སྤྱོད་བྱེད་རོགས།</translation>
     </message>
 </context>
 <context>
@@ -235,15 +233,15 @@
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>རྩིས་བཤེར་རིགས།</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"></translation>
+        <translation>ཉེར་སྤྱོད།</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"></translation>
+        <translation>བུ་ཆའི་མ་དཔེ།</translation>
     </message>
 </context>
 <context>
@@ -401,24 +399,24 @@
         <translation>བཟོ་བཅོས་དུས་ཚོད།</translation>
     </message>
     <message>
-        <source>Offset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Core File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>User Name </source>
-        <translation type="unfinished"></translation>
+        <translation>ཐོར་བའི་བརྡ་རྟགས།</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"></translation>
+        <translation>འཕེལ་རིམ།</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>ལྟེ་བའི་ཡིག་ཆ།</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>སྤྱོད་མཁན།</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>འཕེལ་རིམ།</translation>
     </message>
 </context>
 <context>
@@ -476,18 +474,18 @@
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"></translation>
+        <translation>རྩིས་བཤེར་ཉིན་ཐོ།</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"></translation>
+        <translation>ཐོར་བའི་ཉིན་ཐོ།</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཐོར་བའི་ཆ་འཕྲིན་རག་ཐབས་བྲལ། systemd-coredumpསྒྲིག་འཇུག་བྱེད་རོགས།</translation>
     </message>
 </context>
 <context>
@@ -499,78 +497,86 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>མིག་སྔའི་རྒྱུད་ཁོངས་ཀྱི་བདེ་འཇགས་རིམ་པ་ནི་མཐོ་བ་ཞེས་པ་ཡིན་པས། རྩིས་བཤེར་དོ་དམ་པ་ཁོ་ནས་རྩིས་བཤེར་ཉིན་ཐོ་ལ་བལྟས་ཆོག </translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>ཉིན་ཐོ་དག་དམིགས་བཙུགས་བྱས་པའི་དཀར་ཆག་ནང་འདྲེན་པ།</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>འདྲེན་ལམ།</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>ཉིན་ཐོའི་རིགས་ལྟར་ཉིན་ཐོ་འདྲེན་པ།</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>ཉིན་ཐོའི་རིགས།</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>རང་ངོས་ཀྱིས་ཞིབ་འཇུག་བྱས་པའི་ཉེར་སྤྱོད་ལྟར་ཉིན་ཐོ་འདྲེན་པ།</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>རང་ངོས་ཀྱིས་ཞིབ་འཇུག་བྱས་པའི་མིང་།</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>དུས་ཚོད་ཀྱི་རིམ་པ་ལྟར་ཉིན་ཐོ་འདྲེན་པ།</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>དུས་འཁོར།</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>སྒྲིག་སྦྱོར་རིམ་པ་ལྟར་ཉིན་ཐོ་འདྲེན་པ།</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>སྒྲིག་སྦྱོར་རིམ་པ།</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>འགོ་སློང་རྣམ་པ།</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>རྣམ་པ་ལྟར་ཉིན་ཐོ་འགོ་སློང་བ།(klu)</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>གནས་ཚུལ་གྱི་རིགས་གཞིར་བཟུང་གནས་ཚུལ་ལམ་རྩིས་བཤེར་ཉིན་ཐོ་འདྲེན་པ།</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>གནས་ཚུལ་གྱི་རིགས།</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>བརྡ་ཆད་གཙོ་བོ་གཞིར་བཟུང་ཉིན་ཐོ་འདྲེན་པ།</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>བརྡ་ཆད་གཙོ་བོ།</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>ཐོར་སའི་ཆ་འཕྲིན་གོང་ཞུ།</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>བུ་ཆའི་དཔེ་རྣམ་ལྟར་ཉེར་སྤྱོད་ཉིན་ཐོ་འདྲེན་པ།</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>བུ་ཆའི་དཔེ་རྣམ།</translation>
     </message>
 </context>
 <context>

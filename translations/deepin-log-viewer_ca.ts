@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="ca">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ca">
 <context>
     <name>Action</name>
     <message>
@@ -120,38 +118,38 @@
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Autenticació de la identiitat</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Control d&apos;accés discrecional</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"></translation>
+        <translation>Control d&apos;accés obligatori</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"></translation>
+        <translation>Remot</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"></translation>
+        <translation>Auditoria de documents</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Altres</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
-        <translation type="unfinished"></translation>
+        <source>zip(*.zip)</source>
+        <translation>zip (*.zip)</translation>
     </message>
     <message>
-        <source>zip(*.zip)</source>
-        <translation type="unfinished"></translation>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -177,7 +175,7 @@
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>El directori d&apos;exportació no està disponible. Si us plau, trieu un altre directori per a l&apos;operació d&apos;exportació.</translation>
     </message>
 </context>
 <context>
@@ -235,15 +233,15 @@
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipus d&apos;auditoria:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"></translation>
+        <translation>Aplicació:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"></translation>
+        <translation>Submòdul:</translation>
     </message>
 </context>
 <context>
@@ -394,31 +392,31 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nom del fitxer</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Offset</source>
-        <translation type="unfinished"></translation>
+        <translation>Hora de modificació</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Core File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>User Name </source>
-        <translation type="unfinished"></translation>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"></translation>
+        <translation>EXE</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>Fitxer de nucli</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>Nom d&apos;usuari</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>Forani</translation>
     </message>
 </context>
 <context>
@@ -468,109 +466,118 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Altres registres</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Registre personalitzat</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Registre d&apos;auditoria</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Registre d&apos;abocament del nucli</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"></translation>
+        <translation>No es pot obtenir la informació de l&apos;error. Instal·leu systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"></translation>
+        <translation>No teniu permís per veure-ho.</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>Nivell de seguretat del sistema actual: alt
+Només els administradors poden veure el registre d&apos;auditoria.</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta els registres al camí especificat</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>CAMÍ</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta registres dels tipus especificats</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>TIPUS</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta els registres d&apos;aplicacions de desenvolupament propi especificades</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>NOM DE L&apos;APLICACIÓ PRÒPIA</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta els registres d&apos;un període de temps especificat</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>PERÍODE</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta els registres dins d&apos;un nivell de depuració especificat.</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>NIVELL</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>ESTAT D&apos;ARRENCADA</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>Exporta els registres d&apos;arrencada (no-klu) d&apos;un estat especificat</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta registres d&apos;esdeveniments d&apos;apagada, d&apos;arrencada o d&apos;auditoria d&apos;un tipus d&apos;esdeveniment especificat</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>TIPUS D&apos;ESDEVENIMENT</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Exporta els registres basats en els resultats de la cerca de paraules clau</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>PARAULA CLAU</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Comunica la informació d&apos;abocament.</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>Exporta registres basats en el submodel d&apos;aplicació</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>SUBMÒDUL</translation>
     </message>
 </context>
 <context>
@@ -589,7 +596,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished">1 min {5 ?}</translation>
+        <translation>5 min</translation>
     </message>
     <message>
         <source>No refresh</source>

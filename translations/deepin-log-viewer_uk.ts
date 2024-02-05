@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="uk">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="uk">
 <context>
     <name>Action</name>
     <message>
@@ -120,38 +118,38 @@
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Розпізнавання профілю</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Дискреційне керування доступом</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"></translation>
+        <translation>Обов&apos;язкове керування доступом</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"></translation>
+        <translation>Віддалений</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"></translation>
+        <translation>Ревізування документів</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Інше</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html))</source>
-        <translation type="unfinished"></translation>
+        <source>zip(*.zip)</source>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
-        <source>zip(*.zip)</source>
-        <translation type="unfinished"></translation>
+        <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
+        <translation>текст (*.txt);; doc (*.doc);; xls (*.xls);; HTML (*.html)</translation>
     </message>
 </context>
 <context>
@@ -177,7 +175,7 @@
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Каталог експортування даних є недоступним. Будь ласка, виберіть інший каталог для дії з експортування.</translation>
     </message>
 </context>
 <context>
@@ -235,15 +233,15 @@
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип нагляду:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"></translation>
+        <translation>Програма:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"></translation>
+        <translation>Підмодуль:</translation>
     </message>
 </context>
 <context>
@@ -394,31 +392,31 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Назва файла</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Offset</source>
-        <translation type="unfinished"></translation>
+        <translation>Час внесення змін</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Core File</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>User Name </source>
-        <translation type="unfinished"></translation>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"></translation>
+        <translation>EXE</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>Основний файл</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>Ім&apos;я користувача</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>Зсув</translation>
     </message>
 </context>
 <context>
@@ -468,109 +466,118 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Інший журнал</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Нетиповий журнал</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал нагляду</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал дампу ядра</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не вдалося отримати дані щодо аварії. Будь ласка, встановіть systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"></translation>
+        <translation>У вас немає прав доступу для перегляду</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>Рівень захисту поточної системи: високий
+ журнал ревізії можуть переглядати лише адміністратори-ревізори</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати журнал до вказаного каталогу</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>ШЛЯХ</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати журнали вказаних типів</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>ТИП</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати журнали вказаних самостійно розроблених програм</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>НАЗВА ПРОГРАМИ</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати журнал за вказаний період часу</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>ПЕРІОД</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати журнали на вказаному рівні діагностики</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>РІВЕНЬ</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>СТАН ЗАВАНТАЖЕННЯ</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>Експортувати журнал завантаження за вказаним станом</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати журнал boot-shutdown-event або ревізій для вказаного типу подій</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>ТИП ПОДІЙ</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Експортувати журнал на основі результатів пошуку за ключовим словом</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>КЛЮЧОВЕ СЛОВО</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Повідомити дані дампів ядра.</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>Експортувати журнал для підмодуля програм</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>ПІДМОДУЛЬ</translation>
     </message>
 </context>
 <context>
@@ -589,7 +596,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished">1 хв. {5 ?}</translation>
+        <translation>5 хв.</translation>
     </message>
     <message>
         <source>No refresh</source>
