@@ -72,3 +72,15 @@ bool DBusManager::isAuditAdmin()
 
     return bIsAuditAdmin;
 }
+
+QString DBusManager::getHomePathByFreeDesktop()
+{
+    QString homePath;
+    QDBusInterface interface("org.freedesktop.login1", "/org/freedesktop/login1/user/self", "org.freedesktop.login1.User", QDBusConnection::systemBus());
+    QString userName = qvariant_cast<QString>(interface.property("Name"));
+
+    if (!userName.isEmpty())
+        homePath = "/home/" + userName;
+
+    return homePath;
+}

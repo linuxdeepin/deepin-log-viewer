@@ -4,6 +4,7 @@
 
 #include "utils.h"
 #include "logsettings.h"
+#include "dbusmanager.h"
 
 #include <math.h>
 #include <pwd.h>
@@ -41,7 +42,9 @@ QHash<QString, QPixmap> Utils::m_imgCacheHash;
 QHash<QString, QString> Utils::m_fontNameCache;
 QMap<QString, QStringList> Utils::m_mapAuditType2EventType;
 int Utils::specialComType = -1;
-QString Utils::homePath = QDir::homePath();
+// sudo权限运行deepin-log-viewer，QDir::homePath返回的是/root
+// 此种情况下，使用freedesktop dbus接口获取当前登录用户家目录，以便能正确导出日志
+QString Utils::homePath = (QDir::homePath() != "/root" ? QDir::homePath() : DBusManager::getHomePathByFreeDesktop());
 bool Utils::runInCmd = false;
 Utils::Utils(QObject *parent)
     : QObject(parent)

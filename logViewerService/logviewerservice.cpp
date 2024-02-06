@@ -223,7 +223,6 @@ QStringList LogViewerService::getHomePaths()
             homeList.push_back(info.absoluteFilePath());
     }
 
-    qInfo() << "homeList: " << homeList;
     return homeList;
 }
 
