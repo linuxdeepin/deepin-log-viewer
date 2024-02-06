@@ -170,8 +170,6 @@ int LogBackend::exportAllLogs(const QString &outDir)
     });
     QThreadPool::globalInstance()->start(thread);
 
-    Utils::resetToNormalAuth(m_outPath);
-
     return 0;
 }
 
@@ -1010,7 +1008,8 @@ void LogBackend::onExportResult(bool isSuccess)
     if (View == m_sessionType) {
         emit sigResult(isSuccess);
     } else if (Export == m_sessionType || Report == m_sessionType) {
-        Utils::resetToNormalAuth(m_outPath);
+        if (Export == m_sessionType)
+            Utils::resetToNormalAuth(m_exportFilePath);
 
         PERF_PRINT_END("POINT-04", "");
         if (isSuccess) {
@@ -2117,6 +2116,8 @@ void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportT
         exportThread->exportToZipPublic(filePath, m_currentCoredumpList, labels);
         QThreadPool::globalInstance()->start(exportThread);
     }
+
+    m_exportFilePath = filePath;
 
     qCInfo(logBackend) << "exporting ...";
 }

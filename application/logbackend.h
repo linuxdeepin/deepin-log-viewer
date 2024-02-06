@@ -232,6 +232,8 @@ private:
     QString m_outPath {""};
     QString m_cmdWorkDir {""};
 
+    QString m_exportFilePath {""};
+
 public:
 
     // 筛选条件

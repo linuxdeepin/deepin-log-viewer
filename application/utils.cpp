@@ -446,8 +446,13 @@ void Utils::resetToNormalAuth(const QString &path)
 {
     QFileInfo fi(path);
     if (!path.isEmpty() && fi.exists()) {
+        qInfo() << "resetToNormalAuth: " << path;
         QProcess procss;
-        procss.setWorkingDirectory(path);
+        if (fi.isDir())
+            procss.setWorkingDirectory(path);
+        else
+            procss.setWorkingDirectory(fi.absolutePath());
+
         QStringList arg = {"-c"};
         arg.append(QString("chmod -R 777 '%1'").arg(path));
         procss.start("/bin/bash", arg);
