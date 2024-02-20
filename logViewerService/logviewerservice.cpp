@@ -26,12 +26,57 @@
 #include <QLoggingCategory>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QTemporaryFile>
 
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service")
 #else
 Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service", QtInfoMsg)
 #endif
+
+/**
+   @brief 移除路径 \a dirPath 下的文件，注意，不会递归删除文件夹
+ */
+void removeDirFiles(const QString &dirPath)
+{
+    QDir dir(dirPath);
+    dir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
+    foreach(QString dirItem, dir.entryList()) {
+        if (!dir.remove(dirItem)) {
+            qCWarning(logService) << QString("Remove temporary dir file [%1] failed").arg(dirItem);
+        }
+    }
+}
+
+/**
+   @brief 将压缩源文件 \a sourceFile 解压到临时文件，临时文件由模板 \a tempFileTemplate 生成，
+        若文件创建异常，将返回空路径；正常解压返回临时文件路径。
+ */
+QString unzipToTempFile(const QString &sourceFile, const QString &tempFileTemplate)
+{
+    QProcess m_process;
+
+    // 每次创建临时文件，销毁由 QTemporaryDir 处理
+    QTemporaryFile tmpFile;
+    tmpFile.setAutoRemove(false);
+    tmpFile.setFileTemplate(tempFileTemplate);
+    tmpFile.open();
+    if (!tmpFile.open()) {
+        qCWarning(logService) << QString("Create temporary file [%1](FileTemplate:%2) failed: %3")
+                                 .arg(tmpFile.fileName()).arg(tempFileTemplate).arg(tmpFile.errorString());
+        return QString();
+    }
+
+    QString command = "gunzip";
+    QStringList args;
+    args.append("-c");
+    args.append(sourceFile);
+    m_process.setStandardOutputFile(tmpFile.fileName());
+    m_process.start(command, args);
+    m_process.waitForFinished(-1);
+
+    return tmpFile.fileName();
+}
 
 LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
@@ -298,10 +343,19 @@ void LogViewerService::quit()
  */
 QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 {
-    int fileNum = 0;
+    // 判断非法调用
+    if(!isValidInvoker()) {
+        return {};
+    }
+
     if (tmpDir.isValid()) {
         tmpDirPath = tmpDir.path();
+        // 每次解压前移除旧有的文件
+        if (unzip) {
+            removeDirFiles(tmpDirPath);
+        }
     }
+
     QStringList fileNamePath;
     QString nameFilter;
     QDir dir;
@@ -376,23 +430,19 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
         qCWarning(logService) << "it is not true path";
         return QStringList() << "";
     }
+
     dir.setFilter(QDir::Files | QDir::NoSymLinks); //实现对文件的过滤
     dir.setNameFilters(QStringList() << nameFilter + ".*"); //设置过滤
     dir.setSorting(QDir::Time);
     QFileInfoList fileList = dir.entryInfoList();
+    QString tempFileTemplate = tmpDirPath + QDir::separator() + "Log_extract_XXXXXX.txt";
+
     for (int i = 0; i < fileList.count(); i++) {
         if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
-            QProcess m_process;
-
-            QString command = "gunzip";
-            QStringList args;
-            args.append("-c");
-            args.append(fileList[i].absoluteFilePath());
-            m_process.setStandardOutputFile(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
-            m_process.start(command, args);
-            m_process.waitForFinished(-1);
-            fileNamePath.append(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
-            fileNum++;
+            QString unzipFile = unzipToTempFile(fileList[i].absoluteFilePath(), tempFileTemplate);
+            if (!unzipFile.isEmpty()) {
+                fileNamePath.append(unzipFile);
+            }
         }
         else {
             fileNamePath.append(fileList[i].absoluteFilePath());
@@ -408,10 +458,19 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
  */
 QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
 {
-    int fileNum = 0;
+    // 判断非法调用
+    if(!isValidInvoker()) {
+        return {};
+    }
+
     if (tmpDir.isValid()) {
         tmpDirPath = tmpDir.path();
+        // 每次解压前移除旧有的文件
+        if (unzip) {
+            removeDirFiles(tmpDirPath);
+        }
     }
+
     QStringList fileNamePath;
     QString nameFilter;
     QDir dir;
@@ -436,20 +495,14 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
     dir.setFilter(QDir::Files | QDir::NoSymLinks | QDir::Hidden); //实现对文件的过滤
     dir.setSorting(QDir::Time);
     fileList = dir.entryInfoList();
+    QString tempFileTemplate = tmpDirPath + QDir::separator() + "Log_extract_XXXXXX.txt";
 
     for (int i = 0; i < fileList.count(); i++) {
         if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
-            QProcess m_process;
-
-            QString command = "gunzip";
-            QStringList args;
-            args.append("-c");
-            args.append(fileList[i].absoluteFilePath());
-            m_process.setStandardOutputFile(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
-            m_process.start(command, args);
-            m_process.waitForFinished(-1);
-            fileNamePath.append(tmpDirPath + "/" + QString::number(fileNum) + ".txt");
-            fileNum++;
+            QString unzipFile = unzipToTempFile(fileList[i].absoluteFilePath(), tempFileTemplate);
+            if (!unzipFile.isEmpty()) {
+                fileNamePath.append(unzipFile);
+            }
         }
         else {
             fileNamePath.append(fileList[i].absoluteFilePath());
