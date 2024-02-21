@@ -267,12 +267,6 @@ void LogApplicationHelper::createDesktopFiles()
             if (lineStr.startsWith("Name", Qt::CaseInsensitive) && !isName) {
                 isName = true;
             }
-            if (lineStr.startsWith("NoDisplay")) {
-                QStringList noDisplayList = lineStr.split("=", QString::SkipEmptyParts);
-                if (noDisplayList.value(1, "") == "true") {
-                    canDisplay = false;
-                }
-            }
             if (lineStr.startsWith("Hidden")) {
                 QStringList hiddenList = lineStr.split("=", QString::SkipEmptyParts);
                 if (hiddenList.value(1, "") == "true") {
