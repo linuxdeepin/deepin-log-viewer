@@ -1,3 +1,14 @@
+deepin-log-viewer (6.1.13) unstable; urgency=medium
+
+  * fix: Resolve the issue of adding sudo not being able to export logs(Bug: 238985)
+  * chore: [TS] Update international translation files(Bug: 193739)
+  * fix: Resolve the issue of Sudo export logs being empty(Bug: 238985)
+  * fix: Fix the issue of parent directory permissions being changed during export
+  * fix: Unzip may overwrite linked file data(Bug: 243387)
+  * fix: fix app name can not show chinese
+
+ -- houchengqiu <houchengqiu@uniontech.com>  Thu, 22 Feb 2024 13:44:46 +0800
+
 deepin-log-viewer (6.1.12) unstable; urgency=medium
 
   * fix: Add -v option version info(Bug: 236241)
