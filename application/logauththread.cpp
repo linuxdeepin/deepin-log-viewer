@@ -1232,7 +1232,7 @@ void LogAuthThread::handleCoredump()
             
             // get maps info
             if (m_parseMap) {
-                const QString &corePath =  QDir::homePath() + QString("/%1.dump").arg(QFileInfo(coredumpMsg.storagePath).fileName());
+                const QString &corePath = QDir::tempPath() + QString("/%1.dump").arg(QFileInfo(coredumpMsg.storagePath).fileName());
                 if (Utils::runInCmd) {
                     DLDBusHandler::instance()->readLog(QString("coredumpctl dump %1 -o %2").arg(coredumpMsg.pid).arg(corePath));
                     outInfoByte = DLDBusHandler::instance()->readLog(QString("readelf -n %1").arg(corePath));
@@ -1246,8 +1246,6 @@ void LogAuthThread::handleCoredump()
                     outInfoByte = m_process->readAllStandardOutput();
                 }
                 coredumpMsg.maps = outInfoByte;
-
-                QFile::remove(corePath);
 
                 // 获取二进制文件信息
                 m_process->start("/bin/bash", QStringList() << "-c" << QString("file %1").arg(coredumpMsg.exe));

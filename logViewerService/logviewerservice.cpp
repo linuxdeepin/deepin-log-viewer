@@ -95,6 +95,8 @@ LogViewerService::~LogViewerService()
             delete eachPair.second;
         }
     }
+
+   clearTempFiles();
 }
 
 /*!
@@ -316,6 +318,17 @@ QList<QExplicitlySharedDataPointer<DGioMount> > LogViewerService::getMounts_safe
     auto result = DGioVolumeManager::getMounts();
     mutex.unlock();
     return result;
+}
+
+void LogViewerService::clearTempFiles()
+{
+    QDir dir(QDir::tempPath());
+    dir.setFilter(QDir::Files);
+    dir.setNameFilters(QStringList() << "*.lz4.dump");
+    QFileInfoList fiList = dir.entryInfoList();
+    for (auto fi : fiList) {
+        QFile::remove(fi.absoluteFilePath());
+    }
 }
 
 /*!
