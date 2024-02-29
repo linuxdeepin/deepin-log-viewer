@@ -310,6 +310,7 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
         else
             appFilter.submodule = appLogConfig.subModules[0].name;
         appFilter.logType = appLogConfig.subModules[0].logType;
+        appFilter.filter = appLogConfig.subModules[0].filter;
         appFilter.path = appLogConfig.subModules[0].logPath;
         appFilter.execPath = appLogConfig.subModules[0].execPath;
         appFilterList.push_back(appFilter);
