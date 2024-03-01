@@ -322,10 +322,17 @@ QList<QExplicitlySharedDataPointer<DGioMount> > LogViewerService::getMounts_safe
 
 void LogViewerService::clearTempFiles()
 {
-    QDir dir(QDir::tempPath());
-    dir.setFilter(QDir::Files);
-    dir.setNameFilters(QStringList() << "*.lz4.dump");
-    QFileInfoList fiList = dir.entryInfoList();
+    // 某些情况下，根目录会存在.config目录，需要清除
+    QDir dirConfig("/.config");
+    if (dirConfig.exists()) {
+        dirConfig.removeRecursively();
+    }
+
+    // 清除/tmp目录下lz4.dump文件
+    QDir dirTemp(QDir::tempPath());
+    dirTemp.setFilter(QDir::Files);
+    dirTemp.setNameFilters(QStringList() << "*.lz4.dump");
+    QFileInfoList fiList = dirTemp.entryInfoList();
     for (auto fi : fiList) {
         QFile::remove(fi.absoluteFilePath());
     }

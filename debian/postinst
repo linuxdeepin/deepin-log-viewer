@@ -1,0 +1,20 @@
+#!/bin/sh
+# postinst script 
+# see: dh_installdeb(1)
+
+# 删除.config下deepin-log-viewer相关目录
+if [ -d "$DPKG_ROOT/.config/deepin/deepin-log-viewer" ]; then
+    rm -rf "$DPKG_ROOT/.config/deepin/deepin-log-viewer"
+fi
+
+#若/.config目录下不存在任何文件(也可能包含空目录)，则删除/.config整个文件夹
+if [ -d $DPKG_ROOT/.config ]
+then
+	existFileCount=`find $DPKG_ROOT/.config -type f | wc -l`
+	if [ $existFileCount -eq 0 ]
+	then
+		rm -rf $DPKG_ROOT/.config
+	fi
+fi
+
+exit 0
