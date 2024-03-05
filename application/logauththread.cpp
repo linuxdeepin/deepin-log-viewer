@@ -1233,7 +1233,6 @@ void LogAuthThread::handleCoredump()
             // get maps info
             if (m_parseMap) {
                 const QString &corePath = QDir::tempPath() + QString("/%1.dump").arg(QFileInfo(coredumpMsg.storagePath).fileName());
-                qWarning() << "dumpPath: " << corePath;
                 if (Utils::runInCmd) {
                     DLDBusHandler::instance()->readLog(QString("coredumpctl dump %1 -o %2").arg(coredumpMsg.pid).arg(corePath));
                     outInfoByte = DLDBusHandler::instance()->readLog(QString("readelf -n %1").arg(corePath));
