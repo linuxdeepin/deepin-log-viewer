@@ -328,7 +328,8 @@ void LogViewerService::clearTempFiles()
     dirTemp.setNameFilters(QStringList() << "*.lz4.dump");
     QFileInfoList fiList = dirTemp.entryInfoList();
     for (auto fi : fiList) {
-        QFile::remove(fi.absoluteFilePath());
+        bool bRet = QFile::remove(fi.absoluteFilePath());
+        qWarning() << QString("dump: %1 remove: %2").arg(fi.absoluteFilePath()).arg(bRet);
     }
 }
 
