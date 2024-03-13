@@ -1,3 +1,11 @@
+deepin-log-viewer (6.1.14) unstable; urgency=medium
+
+  * fix: Fix the issue of filter option filtering without content when there is only one submodule(Bug: 244901)
+  * fix: Delete dump temporary file from service backend(Bug: 241927)
+  * fix: Remove the. config directory from the root directory(Bug: 244995)
+
+ -- houchengqiu <houchengqiu@uniontech.com>  Wed, 13 Mar 2024 15:00:43 +0800
+
 deepin-log-viewer (6.1.13) unstable; urgency=medium
 
   * fix: Resolve the issue of adding sudo not being able to export logs(Bug: 238985)
