@@ -112,6 +112,9 @@ public slots:
     //    void onFinished(int exitCode);
     //    void kernDataRecived();
 private:
+    QString readAppLogFromLastLines(const QString& filePath, const int& count);
+
+private:
 
     QStringList m_list;
     QString m_output;

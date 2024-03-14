@@ -22,6 +22,15 @@
 #include <signal.h>
 #include <unistd.h>
 #include <pwd.h>
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logAuthWork, "org.deepin.log.viewer.auth.work")
+#else
+Q_LOGGING_CATEGORY(logAuthWork, "org.deepin.log.viewer.auth.work", QtInfoMsg)
+#endif
 
 DGUI_USE_NAMESPACE
 std::atomic<LogAuthThread *> LogAuthThread::m_instance;
@@ -35,6 +44,12 @@ const QStringList sigList = { "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP"
 
 // DBUS传输文件大小阈值 100MB
 #define DBUS_THRESHOLD_MAX 100
+// 获取窗管崩溃时，其日志最后100行
+#define KWIN_LASTLINE_NUM 100
+// 窗管二进制可执行文件所在路径
+const QString KWAYLAND_EXE_PATH = "/usr/bin/kwin_wayland";
+const QString XWAYLAND_EXE_PATH = "/usr/bin/Xwayland";
+
 /**
  * @brief LogAuthThread::LogAuthThread 构造函数
  * @param parent 父对象
@@ -1273,6 +1288,24 @@ void LogAuthThread::handleCoredump()
             coredumpMsg.storagePath = QString("coredump file is missing");
         }
 
+        // 若为窗管崩溃，提取窗管最后100行日志到coredump信息中
+        if (coredumpMsg.exe == KWAYLAND_EXE_PATH || coredumpMsg.exe == XWAYLAND_EXE_PATH) {
+            // 窗管日志存放在用户家目录下，因此根据崩溃信息所属用户id获取用户家目录
+            uint userId = tmpList[5].toUInt();
+            QString userHomePath = Utils::getUserHomePathByUID(userId);
+            if (!userHomePath.isEmpty()) {
+                if (coredumpMsg.exe == KWAYLAND_EXE_PATH) {
+                    coredumpMsg.appLog = readAppLogFromLastLines(QString("%1/.kwin-old.log").arg(userHomePath), KWIN_LASTLINE_NUM);
+                    if (!coredumpMsg.appLog.isEmpty())
+                        qCInfo(logAuthWork) << QString("kwin crash log:\n").arg(coredumpMsg.appLog);
+                } else if (coredumpMsg.exe == XWAYLAND_EXE_PATH) {
+                    coredumpMsg.appLog = readAppLogFromLastLines(QString("%1/.xwayland.log.old").arg(userHomePath), KWIN_LASTLINE_NUM);
+                }
+            } else {
+                qCWarning(logAuthWork) << QString("uid:%1 homepath is empty.").arg(userId);
+            }
+        }
+
         coredumpList.append(coredumpMsg);
         //每获得600个数据就发出信号给控件加载
         if (coredumpList.count() % SINGLE_READ_CNT_COREDUMP == 0) {
@@ -1289,6 +1322,53 @@ void LogAuthThread::handleCoredump()
         emit coredumpData(m_threadCount, coredumpList);
     }
     emit coredumpFinished(m_threadCount);
+}
+
+QString LogAuthThread::readAppLogFromLastLines(const QString& filePath, const int& count)
+{
+    if (!QFile::exists(filePath)) {
+        qCWarning(logAuthWork) << QString("log not existed. path:%1").arg(filePath);
+        return "";
+    }
+
+    QStringList lines;
+    string line;
+
+    ifstream f(filePath.toStdString().c_str(), ios::ate);
+    if (f.is_open()) {
+        char c;
+        streampos size = f.tellg();
+        for (int var = 1; var <= size; var++) {
+            f.seekg(-var, ios::end);
+            f.get(c);
+
+            if (lines.size() >= count)
+                break;
+
+            if (c == 0) {
+                continue;
+            }
+
+            if (c == '\n') {
+                if (line.size() > 0) {
+                    lines.prepend(line.c_str());
+                }
+                line = "";
+            } else {
+                line = c + line;
+            }
+
+            c = 0;
+        }
+
+        if (line.size() > 0 && lines.size() < count) {
+            lines.prepend(line.c_str());
+        }
+
+        f.close();
+    }
+
+    return lines.join('\n');
 }
 
 /**

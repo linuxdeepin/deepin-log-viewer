@@ -3,8 +3,8 @@ Description=deepin-log-viewer coredump report timer
 
 [Timer]
 Unit=coredump-reporter.service
-OnUnitActiveSec=24h
-OnBootSec=30m
+OnUnitActiveSec=30s
+OnBootSec=30s
 
 [Install]
 WantedBy=timers.target

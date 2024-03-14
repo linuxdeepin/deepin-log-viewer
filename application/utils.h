@@ -62,6 +62,7 @@ public:
     static QString auditType(const QString& eventType);
     static double convertToMB(quint64 cap, const int size = 1024);
     static QString getUserNamebyUID(uint uid);  //根据uid获取用户名
+    static QString getUserHomePathByUID(uint uid); //根据uid获取用户家目录
     static QString getCurrentUserName();
     static bool isValidUserName(const QString &userName);
     static bool isCoredumpctlExist();  // is coredumpctl installed
