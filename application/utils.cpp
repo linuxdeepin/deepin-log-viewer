@@ -350,7 +350,24 @@ QString Utils::getUserNamebyUID(uint uid)
 {
     struct passwd * pwd;
     pwd = getpwuid(uid);
+    if (nullptr == pwd) {
+        qCWarning(logUtils) << QString("unknown uid:%1").arg(uid);
+        return "";
+    }
+
     return pwd->pw_name;
+}
+
+QString Utils::getUserHomePathByUID(uint uid)
+{
+    struct passwd * pwd;
+    pwd = getpwuid(uid);
+    if (nullptr == pwd) {
+        qCWarning(logUtils) << QString("unknown uid:%1").arg(uid);
+        return "";
+    }
+
+    return pwd->pw_dir;
 }
 
 QString Utils::getCurrentUserName()

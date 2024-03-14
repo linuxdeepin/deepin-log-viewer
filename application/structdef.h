@@ -234,6 +234,7 @@ struct LOG_MSG_COREDUMP {
     QString maps;
     QString packgeVersion;
     QString binaryInfo;
+    QString appLog;// 存放应用发生崩溃之前产生的应用日志
 
     QJsonObject toJson() {
         QJsonObject obj;
@@ -249,6 +250,8 @@ struct LOG_MSG_COREDUMP {
         }
         obj.insert("packageVersion", packgeVersion);
         obj.insert("binaryInfo", binaryInfo);
+        if (!appLog.isEmpty())
+            obj.insert("appLog", appLog);
 
         return obj;
     }
