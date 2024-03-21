@@ -1,3 +1,11 @@
+deepin-log-viewer (6.1.15) unstable; urgency=medium
+
+  * feat: kwin crash log buried point report(Task: 330013)
+  * chore: adjust coredump report interval
+  * fix: Correction of abnormal last reporting time
+
+ -- houchengqiu <houchengqiu@uniontech.com>  Thu, 21 Mar 2024 16:21:59 +0800
+
 deepin-log-viewer (6.1.14) unstable; urgency=medium
 
   * fix: Fix the issue of filter option filtering without content when there is only one submodule(Bug: 244901)
