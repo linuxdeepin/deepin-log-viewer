@@ -1712,6 +1712,15 @@ bool LogBackend::reportCoredumpInfo()
     // 增量上报，每次上报，仅上报新增的崩溃信息，根据时间范围筛选出目标数据
     COREDUMP_FILTERS coreFilter;
     QDateTime lastTime = LogApplicationHelper::instance()->getLastReportTime();
+    QDateTime curTime = QDateTime::currentDateTime();
+
+    // 异常的上次上报时间纠错
+    if (lastTime > curTime) {
+        qCWarning(logBackend) << QString("last report time:[%1] is invalid, reset to %2").arg(lastTime.toString("yyyy-MM-dd hh:mm:ss")).arg(curTime.toString("yyyy-MM-dd hh:mm:ss"));
+        lastTime = curTime;
+        LogApplicationHelper::instance()->saveLastRerportTime(curTime);
+    }
+
     if (!lastTime.isValid()) {
         TIME_RANGE timeRange = getTimeRange(ALL);
         coreFilter.timeFilterBegin = timeRange.begin;
