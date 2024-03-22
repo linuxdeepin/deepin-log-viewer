@@ -4,7 +4,7 @@ Description=deepin-log-viewer coredump report activities
 [Service]
 
 ExecStart=/usr/bin/deepin-log-viewer --reportcoredump
-CapabilityBoundingSet=~CAP_NET_RAW
+CapabilityBoundingSet=~
 MemoryLimit=8G
 
 [Install]
