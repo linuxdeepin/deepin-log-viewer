@@ -396,13 +396,7 @@ install(FILES configs/logconfig/deepin-log-viewer.json DESTINATION ${CMAKE_INSTA
 install(FILES configs/debugconfig/org.deepin.log.viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-debug-config/deepin-debug-config.d/)
 
 # Install coredump report service&timer
-install(FILES ./configs/coredump-reporter.timer ./configs/coredump-reporter.service DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/system/)
-macro(install_symlink filepath wantsdir)
-    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/link/${wantsdir}/)
-    execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_INSTALL_PREFIX}/lib/systemd/system/${filepath} ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath})
-    install(FILES ${PROJECT_BINARY_DIR}/link/${wantsdir}/${filepath} DESTINATION /etc/systemd/system/${wantsdir}/)
-endmacro(install_symlink)
-install_symlink(coredump-reporter.timer timers.target.wants)
+install(FILES ./configs/coredump-reporter.timer ./configs/coredump-reporter.service DESTINATION lib/systemd/user/)
 
 #安装DConfig配置
 set(APPID org.deepin.log.viewer)
