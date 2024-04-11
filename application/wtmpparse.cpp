@@ -154,7 +154,7 @@ utmp list_get_ele_and_del(QList<utmp > &list, char *value, int &rs)
     return temp;
 }
 
-char *show_end_time(long timeval)
+char *show_end_time(time_t timeval)
 {
     struct tm *t;
     char tt[256] = {0};
@@ -165,7 +165,7 @@ char *show_end_time(long timeval)
     return asctime(t);
 }
 
-char *show_start_time(long timeval)
+char *show_start_time(time_t timeval)
 {
     struct tm *t;
     char tt[256] = {0};
