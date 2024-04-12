@@ -1,3 +1,10 @@
+deepin-log-viewer (6.1.16) unstable; urgency=medium
+
+  * fix: The coredump reporter service switches from system mode to user mode
+  * fix: Repair failed in building with a 64-bit time_t on a 32-bit(Bug: 250313)
+
+ -- lijiaxuan <lijiaxuan@uniontech.com>  Fri, 12 Apr 2024 17:19:11 +0800
+
 deepin-log-viewer (6.1.15) unstable; urgency=medium
 
   * feat: kwin crash log buried point report(Task: 330013)
