@@ -5,6 +5,12 @@
       <arg type="s" direction="out"/>
       <arg name="filePath" type="s" direction="in"/>
     </method>
+    <method name="readLogLinesInRange">
+      <arg type="as" direction="out"/>
+      <arg name="filePath" type="s" direction="in"/>
+      <arg name="startLine" type="x" direction="in"/>
+      <arg name="lineCount" type="x" direction="in"/>
+    </method>
     <method name="exitCode">
       <arg type="i" direction="out"/>
     </method>
@@ -35,6 +41,10 @@
     </method>
     <method name="getFileSize"> 
       <arg type="t" direction="out"/>
+      <arg name="filePath" type="s" direction="in"/>
+    </method>
+    <method name="getLineCount"> 
+      <arg type="x" direction="out"/>
       <arg name="filePath" type="s" direction="in"/>
     </method>
     <method name="whiteListOutPaths">

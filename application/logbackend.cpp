@@ -59,6 +59,11 @@ LogBackend::LogBackend(QObject *parent) : QObject(parent)
 
 void LogBackend::initConnections()
 {
+    connect(&m_logFileParser, &LogFileParser::parseFinished, this, &LogBackend::slot_parseFinished,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::logData, this, &LogBackend::slot_logData,
+            Qt::QueuedConnection);
+
     connect(&m_logFileParser, &LogFileParser::dpkgFinished, this, &LogBackend::slot_dpkgFinished,
             Qt::QueuedConnection);
     connect(&m_logFileParser, &LogFileParser::dpkgData, this, &LogBackend::slot_dpkgData,
@@ -595,6 +600,42 @@ QStringList LogBackend::getLogTypes()
     return m_logTypes;
 }
 
+void LogBackend::slot_parseFinished(int index, LOG_FLAG type)
+{
+    if (m_flag != type || index != m_type2ThreadIndex[type])
+        return;
+    m_isDataLoadComplete = true;
+
+    if (View == m_sessionType) {
+        emit parseFinished(type);
+        // 分段导出，按关键词导出，存在进度条隐藏失败的情况，此处添加判断，若进度条还存在，则手动隐藏下
+        if (m_bExportProgressShow) {
+            m_bExportProgressShow = false;
+            emit sigResult(m_bExportResult);
+        }
+    } else if (Export == m_sessionType) {
+        // 导出当前解析到的数据
+        executeCLIExport(m_exportFilePath);
+
+        // 若有分段数据，开启分段导出
+        segementExport();
+    }
+}
+
+void LogBackend::slot_logData(int index, const QList<QString> &list, LOG_FLAG type)
+{
+    if (m_flag != type || index != m_type2ThreadIndex[type])
+        return;
+
+    m_type2LogDataOrigin[type].append(list);
+    QList<QString> filterData = filterLog(m_currentSearchStr, list);
+    m_type2LogData[type].append(filterData);
+
+    if (View == m_sessionType) {
+        emit logData(m_type2LogData[type], type, filterData.size());
+    }
+}
+
 void LogBackend::slot_dpkgFinished(int index)
 {
     if (m_flag != DPKG || index != m_dpkgCurrentIndex)
@@ -1007,7 +1048,13 @@ void LogBackend::onExportResult(bool isSuccess)
 {
     if (View == m_sessionType) {
         emit sigResult(isSuccess);
+        m_bExportProgressShow = false;
     } else if (Export == m_sessionType || Report == m_sessionType) {
+        if (m_bSegementExporting) {
+            m_bExportResult = isSuccess;
+            return;
+        }
+
         if (Export == m_sessionType)
             Utils::resetToNormalAuth(m_exportFilePath);
 
@@ -1420,11 +1467,15 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case KERN: {
-        KERN_FILTERS kernFilter;
-        kernFilter.timeFilterBegin = timeRange.begin;
-        kernFilter.timeFilterEnd = timeRange.end;
+        LOG_FILTER_BASE filter;
+        filter.type = flag;
+        filter.filePath = "kern";
+        filter.timeFilterBegin = timeRange.begin;
+        filter.timeFilterEnd = timeRange.end;
+        filter.segementIndex = 0;
+        m_type2Filter[flag] = filter;
 
-        m_kernCurrentIndex = m_logFileParser.parseByKern(kernFilter);
+        m_type2ThreadIndex[flag] = m_logFileParser.parse(filter);
     }
     break;
     case BOOT_KLU: {
@@ -1464,9 +1515,12 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case Kwin: {
-        KWIN_FILTERS filter;
-        filter.msg = "";
-        m_kwinCurrentIndex = m_logFileParser.parseByKwin(filter);
+        LOG_FILTER_BASE filter;
+        filter.type = flag;
+        filter.segementIndex = 0;
+        m_type2Filter[flag] = filter;
+
+        m_type2ThreadIndex[flag] = m_logFileParser.parse(filter);
     }
     break;
     case XORG: {
@@ -1508,68 +1562,70 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     return true;
 }
 
-void LogBackend::executeCLIExport()
+void LogBackend::executeCLIExport(const QString &originFilePath)
 {
     if (!m_isDataLoadComplete)
         return;
 
-    QString outPath = m_outPath;
-    QString filePath = "";
-    switch (m_flag) {
-    case JOURNAL: {
+    QString filePath = originFilePath;
+    if (originFilePath.isEmpty()) {
+        QString outPath = m_outPath;
+        switch (m_flag) {
+        case JOURNAL: {
             filePath = outPath + "/system.txt";
-    }
-    break;
-    case Dmesg: {
+        }
+            break;
+        case Dmesg: {
             filePath = outPath + "/dmesg.txt";
-    }
-    break;
-    case KERN: {
+        }
+            break;
+        case KERN: {
             filePath = outPath + "/kernel.txt";
-    }
-    break;
-    case BOOT_KLU: {
+        }
+            break;
+        case BOOT_KLU: {
             filePath = outPath + "/boot_klu.txt";
-    }
-    break;
-    case BOOT: {
+        }
+            break;
+        case BOOT: {
             filePath = outPath + "/boot.txt";
-    }
-    break;
-    case DPKG: {
+        }
+            break;
+        case DPKG: {
             filePath = outPath + "/dpkg.txt";
-    }
-    break;
-    case Dnf: {
+        }
+            break;
+        case Dnf: {
             filePath = outPath + "/dnf.txt";
-    }
-    break;
-    case Kwin: {
+        }
+            break;
+        case Kwin: {
             filePath = outPath + "/kwin.txt";
-    }
-    break;
-    case XORG: {
+        }
+            break;
+        case XORG: {
             filePath = outPath + "/xorg.txt";
-    }
-    break;
-    case APP: {
+        }
+            break;
+        case APP: {
             filePath = outPath + QString("/%1.txt").arg(m_appFilter.app);
-    }
-    break;
-    case COREDUMP: {
+        }
+            break;
+        case COREDUMP: {
             filePath = outPath + "/coredump.zip";
-    }
-    break;
-    case Normal: {
+        }
+            break;
+        case Normal: {
             filePath = outPath + "/boot-shutdown-event.txt";
-    }
-    break;
-    case Audit: {
+        }
+            break;
+        case Audit: {
             filePath = outPath + "/audit.txt";
-    }
-    break;
-    default:
-    break;
+        }
+            break;
+        default:
+            break;
+        }
     }
 
     exportLogData(filePath);
@@ -1745,6 +1801,8 @@ void LogBackend::setFlag(const LOG_FLAG &flag)
  */
 void LogBackend::clearAllFilter()
 {
+    m_type2Filter.clear();
+
     m_bootFilter = {"", ""};
     m_currentSearchStr.clear();
     m_bootFilter.searchstr = "";
@@ -1758,6 +1816,9 @@ void LogBackend::clearAllFilter()
  */
 void LogBackend::clearAllDatalist()
 {
+    m_type2LogData.clear();
+    m_type2LogDataOrigin.clear();
+
     jList.clear();
     jListOrigin.clear();
     dList.clear();
@@ -1787,6 +1848,12 @@ void LogBackend::clearAllDatalist()
     m_coredumpList.clear();
     m_currentCoredumpList.clear();
     malloc_trim(0);
+}
+
+void LogBackend::parse(LOG_FILTER_BASE &filter)
+{
+    m_type2ThreadIndex[filter.type] = m_logFileParser.parse(filter);
+    m_type2Filter[filter.type] = filter;
 }
 
 void LogBackend::parseByJournal(const QStringList &arg)
@@ -1859,15 +1926,69 @@ void LogBackend::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool p
     m_coredumpCurrentIndex = m_logFileParser.parseByCoredump(iCoredumpFilter, parseMap);
 }
 
+int LogBackend::loadSegementPage(int nSegementIndex, bool bSearching/* = false*/)
+{
+    if(nSegementIndex == -1)
+        return -1;
+
+    if (bSearching) {
+        // 搜索结果存在各分段数据只有几条的情况，因此进行分段搜索加载时，不能清空历史数据
+        if (m_type2LogDataOrigin[m_flag].size() > SEGEMENT_SIZE)
+            m_type2LogDataOrigin[m_flag].clear();
+        if (m_type2LogData[m_flag].size() > SEGEMENT_SIZE)
+            m_type2LogData[m_flag].clear();
+    } else {
+        clearAllDatalist();
+    }
+
+    m_type2Filter[m_flag].segementIndex = nSegementIndex;
+    parse(m_type2Filter[m_flag]);
+
+    return nSegementIndex;
+}
+
+int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
+{
+    qint64 totalLineCount = 0;
+    int nSegementIndex = -1;
+    if (type == KERN) {
+        QStringList filePaths = DLDBusHandler::instance(this)->getFileInfo("kern");
+        for (auto file: filePaths) {
+            totalLineCount += DLDBusHandler::instance(this)->getLineCount(file);
+        }
+    } else if (type == Kwin) {
+        totalLineCount = DLDBusHandler::instance(this)->getLineCount(KWIN_TREE_DATA);
+    }
+
+    qint64 currentLineCount = (m_type2Filter[type].segementIndex + (bNext ? 1 : 0)) * SEGEMENT_SIZE;
+
+    if (totalLineCount > currentLineCount) {
+        if (bNext)
+            nSegementIndex = ++m_type2Filter[type].segementIndex;
+        else if (currentLineCount > 0){
+            nSegementIndex = --m_type2Filter[type].segementIndex;
+        }
+    }
+
+    return nSegementIndex;
+}
+
 void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportThread, const QStringList &strLabels)
 {
     if (nullptr == exportThread) {
-        exportThread = new LogExportThread(m_isDataLoadComplete, this);
+        exportThread = new LogExportThread(this);
     }
     connect(exportThread, &LogExportThread::sigResult, this, &LogBackend::onExportResult);
     connect(exportThread, &LogExportThread::sigProgress, this, &LogBackend::onExportProgress);
     connect(exportThread, &LogExportThread::sigProcessFull, this, &LogBackend::onExportFakeCloseDlg);
 
+    // 分段导出需要激活追加导出标记
+    exportThread->enableAppendExport(m_bSegementExporting);
+
+    // 不是追加导出，则先清除原文件
+    if (!m_bSegementExporting && QFile::exists(filePath)) {
+        QFile::remove(filePath);
+    }
 
     QFileInfo fi(filePath.left(filePath.lastIndexOf("/")));
     if (!fi.exists() || filePath.isEmpty()) {
@@ -1885,9 +2006,15 @@ void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportT
 
     if (View != m_sessionType) {
         if (!hasMatchedData(m_flag)) {
-            qCWarning(logBackend) << "No matching data..";
-            qApp->exit(-1);
-            return;
+            if (m_bSegementExporting) {
+                // 分段导出时，某段未匹配到数据，也是正常的
+                delete exportThread;
+                return;
+            } else {
+                qCWarning(logBackend) << "No matching data..";
+                qApp->exit(-1);
+                return;
+            }
         }
     }
 
@@ -1929,12 +2056,9 @@ void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportT
             exportThread->exportToTxtPublic(filePath, nortempList, labels);
             break;
         case KERN:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(kList.count()));
-            exportThread->exportToTxtPublic(filePath, kList, labels, m_flag);
-            break;
         case Kwin:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(m_currentKwinList.count()));
-            exportThread->exportToTxtPublic(filePath, m_currentKwinList, labels);
+            PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(m_type2LogData[m_flag].count()));
+            exportThread->exportToTxtPublic(filePath, m_type2LogData[m_flag], labels, m_flag);
             break;
         case Dmesg:
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
@@ -1985,12 +2109,9 @@ void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportT
             exportThread->exportToHtmlPublic(filePath, nortempList, labels);
             break;
         case KERN:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(kList.count()));
-            exportThread->exportToHtmlPublic(filePath, kList, labels, m_flag);
-            break;
         case Kwin:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(m_currentKwinList.count()));
-            exportThread->exportToHtmlPublic(filePath, m_currentKwinList, labels);
+            PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(m_type2LogData[m_flag].count()));
+            exportThread->exportToHtmlPublic(filePath, m_type2LogData[m_flag], labels, m_flag);
             break;
         case Dmesg:
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
@@ -2041,12 +2162,9 @@ void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportT
             exportThread->exportToDocPublic(filePath, nortempList, labels);
             break;
         case KERN:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(kList.count()));
-            exportThread->exportToDocPublic(filePath, kList, labels, m_flag);
-            break;
         case Kwin:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(m_currentKwinList.count()));
-            exportThread->exportToDocPublic(filePath, m_currentKwinList, labels);
+            PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(m_type2LogData[m_flag].count()));
+            exportThread->exportToDocPublic(filePath, m_type2LogData[m_flag], labels, m_flag);
             break;
         case Dmesg:
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
@@ -2097,12 +2215,9 @@ void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportT
             exportThread->exportToXlsPublic(filePath, nortempList, labels);
             break;
         case KERN:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(kList.count()));
-            exportThread->exportToXlsPublic(filePath, kList, labels, m_flag);
-            break;
         case Kwin:
-            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(m_currentKwinList.count()));
-            exportThread->exportToXlsPublic(filePath, m_currentKwinList, labels);
+            PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(m_type2LogData[m_flag].count()));
+            exportThread->exportToXlsPublic(filePath, m_type2LogData[m_flag], labels, m_flag);
             break;
         case Dmesg:
             PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(dmesgList.count()));
@@ -2129,6 +2244,62 @@ void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportT
     m_exportFilePath = filePath;
 
     qCInfo(logBackend) << "exporting ...";
+}
+
+void LogBackend::segementExport()
+{
+    // 判断是否需要分段导出
+    int nSegementIndex = getNextSegementIndex(m_flag);
+    m_bSegementExporting = nSegementIndex != -1;
+
+    // 解析下一段数据
+    if (nSegementIndex != -1) {
+        // 记录任务状态
+        if (View == m_sessionType) {
+            m_lastSessionType = m_sessionType;
+            m_lastSegementIndex = nSegementIndex - 1;
+            m_sessionType = Export;
+            m_bExportProgressShow = true;
+        }
+        loadSegementPage(nSegementIndex);
+    } else {
+        // 还原任务状态
+        if (View == m_lastSessionType) {
+            m_sessionType = View;
+            // 还原查看界面数据内容到导出前的分段页
+            if (m_lastSegementIndex != -1) {
+                loadSegementPage(m_lastSegementIndex);
+            }
+        } else if (Export == m_sessionType) {
+            // 存在后端分段数据没有筛选结果的情况，此时不能触发正常的导出流程，需要添加延迟退出逻辑
+            QTimer::singleShot(1500, this, [=]{
+                onExportResult(m_bExportResult);
+            });
+        }
+    }
+}
+
+QList<QString> LogBackend::filterLog(const QString &iSearchStr, const QList<QString> &iList)
+{
+    QList<QString> rsList;
+    if (iSearchStr.isEmpty())
+        return iList;
+
+    QJsonParseError parseError;
+    for (auto data : iList) {
+        QJsonDocument document = QJsonDocument::fromJson(data.toUtf8(), &parseError);
+        if (parseError.error == QJsonParseError::NoError) {
+            if (document.isObject()) {
+                QJsonObject object = document.object();
+                for (auto it = object.constBegin(); it != object.end(); ++it) {
+                    if (it.value().toString().contains(iSearchStr, Qt::CaseInsensitive))
+                        rsList.append(data);
+                }
+            }
+        }
+    }
+
+    return rsList;
 }
 
 BUTTONID LogBackend::period2Enum(const QString &period)
@@ -2421,8 +2592,9 @@ bool LogBackend::hasMatchedData(const LOG_FLAG &flag)
         }
     }
     break;
+    case Kwin:
     case KERN: {
-        if (!kList.isEmpty()) {
+        if (!m_type2LogData[flag].isEmpty()) {
             bMatchedData = true;
         }
     }
@@ -2447,12 +2619,6 @@ bool LogBackend::hasMatchedData(const LOG_FLAG &flag)
     break;
     case Dnf: {
         if (!dnfList.isEmpty()) {
-            bMatchedData = true;
-        }
-    }
-    break;
-    case Kwin: {
-        if (!m_currentKwinList.isEmpty()) {
             bMatchedData = true;
         }
     }

@@ -167,6 +167,166 @@ QString LogViewerService::readLog(const QString &filePath)
     }
 }
 
+QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
+{
+    QStringList lines;
+
+    if (!isValidInvoker())
+        return lines;
+
+    //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
+    //部分设备是直接从root账户进入，因此还需要监控/root目录
+    if ((!filePath.startsWith("/var/log/") &&
+         !filePath.startsWith("/tmp") &&
+         !filePath.startsWith("/home") &&
+         !filePath.startsWith("/root")) ||
+            filePath.contains("..")) {
+        return lines;
+    }
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return lines;
+    }
+
+    if (bReverse) {
+        qint64 totalLineCount = getLineCount(filePath);
+        qint64 offsetLine = totalLineCount - startLine;// 获取倒序行的正序索引值
+
+        if (offsetLine < 0) {
+            qWarning() << "startLine has exceeded the maximum number of rows. reverse read:" << bReverse;
+            return lines;
+        }
+
+        if (offsetLine < lineCount)
+            lineCount = offsetLine;
+
+        startLine = offsetLine - lineCount;
+    }
+
+    // 估算起始位置
+    qint64 startPosition = findLineStartOffsetWithCaching(filePath, startLine);
+    if (!file.seek(startPosition)) {
+        file.close();
+        return lines;
+    }
+
+    QTextStream in(&file);
+    while (!in.atEnd() && lines.size() < lineCount) {
+        QString line = in.readLine();
+        if (line.contains('\x00'))
+            lines.append(line.replace(QChar('\x00'), ""));
+        else
+            lines.append(line);
+    }
+
+    file.close();
+
+    return lines;
+}
+
+qint64 LogViewerService::findLineStartOffsetWithCaching(const QString &filePath, qint64 targetLine) {
+
+    const int blockSize = 4096; // 设置块大小，可以根据实际情况调整
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return -1; // 无法打开文件
+    }
+
+    QByteArray block;
+    qint64 offset = 0;
+    qint64 currentLine = 0;
+    char *blockData = nullptr;
+    int blockPosition = 0;
+    int lineLength = 0;
+
+    while (currentLine <= targetLine) {
+        block = file.read(blockSize);
+        if (block.isEmpty()) {
+            break; // 到达文件末尾
+        }
+
+        blockData = block.data();
+        blockPosition = 0;
+        while (blockPosition < block.size()) {
+            char c = blockData[blockPosition++];
+            lineLength++;
+            if (c == '\n') { // 检测到换行符，增加行数
+                if (currentLine == targetLine) {
+                    // 如果找到目标行，返回当前偏移量减去换行符的字节数
+                    return offset + blockPosition - lineLength;
+                }
+                currentLine++;
+                lineLength = 0;
+            }
+        }
+
+        offset += block.size(); // 更新总偏移量
+    }
+
+    // 处理目标行为文本最后一行的情况
+    if (currentLine >= targetLine) {
+        if (offset > 0 && lineLength > 0)
+            return offset - lineLength;
+    }
+
+    file.close();
+
+    return -1; // 没有找到目标行
+}
+
+qint64 LogViewerService::getLineCount(const QString &filePath) {
+
+    if (!isValidInvoker())
+        return -1;
+
+    //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
+    //部分设备是直接从root账户进入，因此还需要监控/root目录
+    if ((!filePath.startsWith("/var/log/") &&
+         !filePath.startsWith("/tmp") &&
+         !filePath.startsWith("/home") &&
+         !filePath.startsWith("/root")) ||
+            filePath.contains("..")) {
+        return -1;
+    }
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        // 文件打开失败处理
+        return -1;
+    }
+
+    QByteArray buffer;
+    const int bufferSize = 4096; // 设置缓冲区大小，可以根据需要调整
+    char *data = new char[bufferSize];
+    qint64 lineCount = 0;
+    qint64 bytesRead;
+
+    // 读取文件内容，直到文件末尾
+    while ((bytesRead = file.read(data, bufferSize)) > 0) {
+        buffer.append(data, static_cast<int>(bytesRead));
+
+        // 在缓冲区中查找换行符并增加行数计数器
+        for (int i = 0; i < bytesRead; ++i) {
+            if (data[i] == '\n') {
+                ++lineCount;
+            }
+        }
+    }
+
+    delete[] data; // 释放缓冲区内存
+    file.close();
+
+    // 处理跨缓冲区的行（如果最后一行在缓冲区末尾被截断）
+    if (!buffer.isEmpty() && buffer.back() == '\r') {
+        ++lineCount;
+    } else if (file.size()) {
+        ++lineCount;
+    }
+
+    return lineCount;
+}
+
 /*!
  * \~chinese \brief LogViewerService::openLogStream 打开一个日志文件的流式读取通道
  * \~chinese \param filePath 文件路径

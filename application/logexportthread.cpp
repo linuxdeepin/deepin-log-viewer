@@ -35,10 +35,10 @@ Q_LOGGING_CATEGORY(logExport, "org.deepin.log.viewer.export.work", QtInfoMsg)
  * @brief LogExportThread::LogExportThread 导出日志线程类构造函数
  * @param parent 父对象
  */
-LogExportThread::LogExportThread(bool isDataComplete, QObject *parent)
+LogExportThread::LogExportThread(QObject *parent)
     :  QObject(parent),
        QRunnable(),
-       m_allLoadComplete(isDataComplete)
+       m_appendExport(false)
 {
     setAutoDelete(true);
     initMap();
@@ -53,6 +53,14 @@ LogExportThread::~LogExportThread()
 }
 
 /**
+ * @brief LogExportThread::enableAppendExport 是否追加导出
+ */
+void LogExportThread::enableAppendExport(bool bEnable/* = true*/)
+{
+    m_appendExport = bEnable;
+}
+
+/**
  * @brief LogExportThread::exportToTxtPublic 导出到日志txt格式配置函数对QStandardItemModel数据类型的重载
  * @param fileName 导出文件路径全称
  * @param pModel 要导出的数据源，为QStandardItemModel
@@ -64,6 +72,23 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, QStandardItemMo
     m_pModel = pModel;
     m_flag = flag;
     m_runMode = TxtModel;
+    m_canRunning = true;
+}
+
+/**
+ * @brief LogExportThread::exportToTxtPublic 导出到日志txt格式配置函数，对Json数据类型的重载（内核日志、窗管日志等）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为QString
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ */
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG flag)
+{
+    m_fileName = fileName;
+    m_logDataList = jList;
+    m_runMode = TxtJOURNAL;
+    m_labels = labels;
+    m_flag = flag;
     m_canRunning = true;
 }
 
@@ -221,6 +246,16 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, QStandardItemM
 
 }
 
+void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG flag)
+{
+    m_fileName = fileName;
+    m_logDataList = jList;
+    m_runMode = HtmlJOURNAL;
+    m_labels = labels;
+    m_flag = flag;
+    m_canRunning = true;
+}
+
 /**
  * @brief LogExportThread::exportToHtmlPublic 导出到日志html格式配置函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
  * @param fileName 导出文件路径全称
@@ -373,6 +408,16 @@ void LogExportThread::exportToDocPublic(const QString &fileName, QStandardItemMo
 
 }
 
+void LogExportThread::exportToDocPublic(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG iFlag)
+{
+    m_fileName = fileName;
+    m_logDataList = jList;
+    m_flag = iFlag;
+    m_labels = labels;
+    m_runMode = DocJOURNAL;
+    m_canRunning = true;
+}
+
 /**
  * @brief LogExportThread::exportToDocPublic导出到日志doc格式配置函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
  * @param fileName 导出文件路径全称
@@ -520,6 +565,16 @@ void LogExportThread::exportToXlsPublic(const QString &fileName, QStandardItemMo
     m_pModel = pModel;
     m_flag = flag;
     m_runMode = XlsModel;
+    m_canRunning = true;
+}
+
+void LogExportThread::exportToXlsPublic(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG iFlag)
+{
+    m_fileName = fileName;
+    m_logDataList = jList;
+    m_flag = iFlag;
+    m_labels = labels;
+    m_runMode = XlsJOURNAL;
     m_canRunning = true;
 }
 
@@ -741,6 +796,105 @@ bool LogExportThread::exportToTxt(const QString &fileName, QStandardItemModel *p
                 sigProgress(row + 1, pModel->rowCount());
             }
         }
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
+        fi.close();
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+    return m_canRunning;
+}
+
+/**
+ * @brief LogExportThread::exportToTxt 导出到日志txt格式配置函数，对Json数据类型的重载（内核日志、窗管日志等）
+ * @param fileName 导出文件路径全称
+ * @param jList 要导出的数据源 数据类型为QString
+ * @param labels 表头字符串
+ * @param flag  导出的日志类型
+ * @return 是否导出成功
+ */
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<QString> &jList,  const QStringList &labels, LOG_FLAG flag)
+{
+    //判断文件路径是否存在，不存在就返回错误
+    QFile fi(fileName);
+    if (!fi.open(m_appendExport ? (QIODevice::Append | QIODevice::WriteOnly) : QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
+    try {
+
+        QTextStream out(&fi);
+        //导出日志为系统日志时
+        if (flag == JOURNAL) {
+            for (int i = 0; i < jList.count(); i++) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+                if (!m_canRunning) {
+                    throw  QString(stopStr);
+                }
+                LOG_MSG_BASE jMsg;
+                jMsg.fromJson(jList[i]);
+                //导出各字段的描述和对应内容拼成目标字符串
+                out << QString(DApplication::translate("Table", "Level:")) << jMsg.level << " ";
+                out << QString(DApplication::translate("Table", "Process:")) << jMsg.daemonName << " ";
+                out << QString(DApplication::translate("Table", "Date and Time:")) << jMsg.dateTime << " ";
+                if (jMsg.msg.isEmpty()) {
+                    out << QString(DApplication::translate("Table", "Info:"))
+                        << QString(DApplication::translate("Table", "Null")) << " ";  // modify for bug
+                } else {
+                    out << QString(DApplication::translate("Table", "Info:")) << jMsg.msg << " ";
+                }
+                out << QString(DApplication::translate("Table", "User:")) << jMsg.hostName << " ";
+                out << QString(DApplication::translate("Table", "PID:")) << jMsg.daemonId << " ";
+                out << "\n";
+                //导出进度信号
+                sigProgress(i + 1, jList.count());
+            }
+        } else if (flag == KERN) {
+            //导出日志为内核日志时
+            for (int i = 0; i < jList.count(); i++) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+                if (!m_canRunning) {
+                    throw  QString(stopStr);
+                }
+                int col = 0;
+                LOG_MSG_BASE jMsg;
+                jMsg.fromJson(jList.at(i));
+                //导出各字段的描述和对应内容拼成目标字符串
+                out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
+                out << labels.value(col++, "") << ":" << jMsg.hostName << " ";
+                out << labels.value(col++, "") << ":" << jMsg.daemonName << " ";
+                out << labels.value(col++, "") << ":" << jMsg.msg << " ";
+                out << "\n";
+                //导出进度信号
+                sigProgress(i + 1, jList.count());
+            }
+        } else if (flag == Kwin) {
+            for (int i = 0; i < jList.count(); i++) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+                if (!m_canRunning) {
+                    throw  QString(stopStr);
+                }
+                //导出各字段的描述和对应内容拼成目标字符串
+                LOG_MSG_BASE jMsg;
+                jMsg.fromJson(jList.at(i));
+                int col = 0;
+                out << labels.value(col++, "") << ":" << jMsg.msg << " ";
+                out << "\n";
+                //导出进度信号
+                sigProgress(i + 1, jList.count());
+            }
+        }
+        //设置文件编码为utf8
+        out.setCodec(QTextCodec::codecForName("utf-8"));
+
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
         qCWarning(logExport) << "Export Stop" << ErrorStr;
@@ -1275,6 +1429,99 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_A
         return false;
     }
     fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+    return m_canRunning;
+}
+
+bool LogExportThread::exportToDoc(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG iFlag)
+{
+    try {
+        QString tempdir ;
+        if (iFlag == JOURNAL) {
+            tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/6column.dfw";
+        } else if (iFlag == KERN) {
+            tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/4column.dfw";
+        } else if (iFlag == Kwin) {
+            tempdir = "/usr/share/deepin-log-viewer/DocxTemplate/1column.dfw";
+        } else {
+            qCWarning(logExport) << "exportToDoc type is Wrong!";
+            return false;
+        }
+        if (!QFile(tempdir).exists()) {
+            qCWarning(logExport) << "export docx template is not exisits";
+            return  false;
+        }
+
+        DocxFactory:: WordProcessingMerger &l_merger = DocxFactory:: WordProcessingMerger::getInstance();
+
+
+        l_merger.load(tempdir.toStdString());
+        //往表头中添加表头描述，表头为第一行，数据则在下面
+        for (int col = 0; col < labels.count(); ++col) {
+            l_merger.setClipboardValue("tableRow", QString("column%1").arg(col + 1).toStdString(), labels.at(col).toStdString());
+
+        }
+        l_merger.paste("tableRow");
+        //计算导出进度条最后一段的长度，因为最后写入文件那一段没有进度，所以预先留出一段进度
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+        for (int row = 0; row < jList.count(); ++row) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_BASE message;
+            message.fromJson(jList.at(row));
+            //把数据填入表格单元格中
+            if (iFlag == JOURNAL) {
+                l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.level.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.daemonName.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), message.dateTime.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column5").toStdString(), message.hostName.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column6").toStdString(), message.daemonId.toStdString());
+            } else if (iFlag == KERN) {
+                l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.dateTime.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column2").toStdString(), message.hostName.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column3").toStdString(), message.daemonName.toStdString());
+                l_merger.setClipboardValue("tableRow", QString("column4").toStdString(), message.msg.toStdString());
+            } else if (iFlag == Kwin) {
+                l_merger.setClipboardValue("tableRow", QString("column1").toStdString(), message.msg.toStdString());
+            }
+            l_merger.paste("tableRow");
+            //导出进度信号
+            sigProgress(row + 1, jList.count() + end);
+        }
+        //保存，把拼好的xml写入文件中
+        QString fileNamex = fileName + "x";
+
+        QFile rsNameFile(fileName) ;
+        if (rsNameFile.exists()) {
+            rsNameFile.remove();
+        }
+        l_merger.save(fileNamex.toStdString());
+        QFile(fileNamex).rename(fileName);
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
+        if (!m_canRunning) {
+            Utils::checkAndDeleteDir(m_fileName);
+        }
+
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    //如果取消导出，则删除文件
+    if (!m_canRunning) {
+        Utils::checkAndDeleteDir(m_fileName);
+    }
+    //100%进度
+    sigProgress(100, 100);
+    //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
+    Utils::sleep(200);
     //导出成功，如果此时被停止，则发出导出失败信号
     emit sigResult(m_canRunning);
     return m_canRunning;
@@ -2136,6 +2383,132 @@ bool LogExportThread::exportToHtml(const QString &fileName, QStandardItemModel *
     return m_canRunning;
 }
 
+bool LogExportThread::exportToHtml(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG flag)
+{
+    QFile html(fileName);
+    //判断文件路径是否存在，不存在就返回错误
+    if (!html.open(m_appendExport ? (QIODevice::Append | QIODevice::WriteOnly) : QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
+    try {
+        //写网页头
+        html.write("<!DOCTYPE html>\n");
+        html.write("<html>\n");
+        html.write("<body>\n");
+        //写入表格标签
+        html.write("<table border=\"1\">\n");
+        // 写入内容
+        //日志类型为系统日志时
+        if (flag == JOURNAL) {
+            // 写入表头
+            QString title = QString("<tr><td>") + QString(DApplication::translate("Table", "Level")) +
+                            QString("</td><td>") + QString(DApplication::translate("Table", "Process")) +
+                            QString("</td><td>") +
+                            QString(DApplication::translate("Table", "Date and Time")) +
+                            QString("</td><td>") + QString(DApplication::translate("Table", "Info")) +
+                            QString("</td><td>") + QString(DApplication::translate("Table", "User")) +
+                            QString("</td><td>") + QString(DApplication::translate("Table", "PID")) +
+                            QString("</td></tr>");
+            html.write(title.toUtf8().data());
+            // 写入内容
+            for (int i = 0; i < jList.count(); i++) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+                if (!m_canRunning) {
+                    throw  QString(stopStr);
+                }
+                LOG_MSG_BASE jMsg;
+                jMsg.fromJson(jList.at(i));
+                htmlEscapeCovert(jMsg.msg);
+                //根据字段拼出每行的网页内容
+                QString info =
+                    QString("<tr><td>%1</td><td>%2</td><td>%3</td><td>%4</td><td>%5</td><td>%6</td></tr>")
+                    .arg(jMsg.level)
+                    .arg(jMsg.daemonName)
+                    .arg(jMsg.dateTime)
+                    .arg(jMsg.msg)
+                    .arg(jMsg.hostName)
+                    .arg(jMsg.daemonId);
+                html.write(info.toUtf8().data());
+                //导出进度信号
+                sigProgress(i + 1, jList.count());
+
+            }
+        } else if (flag == KERN) {
+            // 写入表头
+            html.write("<tr>");
+            for (int i = 0; i < labels.count(); ++i) {
+                QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
+                html.write(labelInfo.toUtf8().data());
+            }
+            //根据字段拼出每行的网页内容
+            html.write("</tr>");
+            for (int row = 0; row < jList.count(); ++row) {
+                if (!m_canRunning) {
+                    throw  QString(stopStr);
+                }
+                LOG_MSG_BASE jMsg;
+                jMsg.fromJson(jList.at(row));
+                html.write("<tr>");
+                QString info = QString("<td>%1</td>").arg(jMsg.dateTime);
+                html.write(info.toUtf8().data());
+                info = QString("<td>%1</td>").arg(jMsg.hostName);
+                html.write(info.toUtf8().data());
+                info = QString("<td>%1</td>").arg(jMsg.daemonName);
+                html.write(info.toUtf8().data());
+                info = QString("<td>%1</td>").arg(jMsg.msg);
+                html.write(info.toUtf8().data());
+                html.write("</tr>");
+                sigProgress(row + 1, jList.count());
+            }
+
+        } else if (flag == Kwin) {
+            // 写入表头
+            html.write("<tr>");
+            for (int i = 0; i < labels.count(); ++i) {
+                QString labelInfo = QString("<td>%1</td>").arg(labels.value(i));
+                html.write(labelInfo.toUtf8().data());
+            }
+            html.write("</tr>");
+            // 写入内容
+            for (int row = 0; row < jList.count(); ++row) {
+                //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+                if (!m_canRunning) {
+                    throw  QString(stopStr);
+                }
+                //根据字段拼出每行的网页内容
+                LOG_MSG_BASE jMsg;
+                jMsg.fromJson(jList.at(row));
+                htmlEscapeCovert(jMsg.msg);
+                html.write("<tr>");
+                QString info = QString("<td>%1</td>").arg(jMsg.msg);
+                html.write(info.toUtf8().data());
+                html.write("</tr>");
+                //导出进度信号
+                sigProgress(row + 1, jList.count());
+            }
+        }
+
+        html.write("</table>\n");
+        html.write("</body>\n");
+        html.write("</html>\n");
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
+        html.close();
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    html.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+    return m_canRunning;
+}
+
 /**
  * @brief LogExportThread::exportToHtml 导出到日志html格式函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
  * @param fileName 导出文件路径全称
@@ -2856,6 +3229,65 @@ bool LogExportThread::exportToHtml(const QString &fileName, const QList<LOG_MSG_
     return m_canRunning;
 }
 
+bool LogExportThread::exportToXls(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG iFlag)
+{
+    try {
+        auto currentXlsRow = 0;
+        lxw_workbook  *workbook  = workbook_new(fileName.toStdString().c_str());
+        lxw_worksheet *worksheet = workbook_add_worksheet(workbook, nullptr);
+        lxw_format *format = workbook_add_format(workbook);
+        format_set_bold(format);
+        for (int col = 0; col < labels.count(); ++col) {
+            worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col), labels.at(col).toStdString().c_str(), format);
+        }
+        ++currentXlsRow;
+        int end = static_cast<int>(jList.count() * 0.1 > 5 ? jList.count() * 0.1 : 5);
+
+        for (int row = 0; row < jList.count() ; ++row) {
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            LOG_MSG_BASE message;
+            message.fromJson(jList.at(row));
+            int col = 0;
+
+            if (iFlag == JOURNAL) {
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.level.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.daemonName.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.hostName.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.daemonId.toStdString().c_str(), nullptr);
+            } else if (iFlag == KERN) {
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.dateTime.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.hostName.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.daemonName.toStdString().c_str(), nullptr);
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
+            } else if (iFlag == Kwin) {
+                worksheet_write_string(worksheet, static_cast<lxw_row_t>(currentXlsRow), static_cast<lxw_col_t>(col++), message.msg.toStdString().c_str(), nullptr);
+            }
+
+            ++currentXlsRow;
+            sigProgress(row + 1, jList.count() + end);
+        }
+
+
+        workbook_close(workbook);
+        malloc_trim(0);
+        sigProgress(100, 100);
+    } catch (const QString &ErrorStr) {
+        qCWarning(logExport) << "Export Stop" << ErrorStr;
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    emit sigResult(m_canRunning);
+    return m_canRunning;
+
+}
+
 /**
  * @brief LogExportThread::exportToXls导出到日志xlsx格式函数，对LOG_MSG_JOURNAL数据类型的重载（指系统日志和内核日志）
  * @param fileName 导出文件路径全称
@@ -3463,7 +3895,10 @@ void LogExportThread::run()
         break;
     }
     case TxtJOURNAL: {
-        exportToTxt(m_fileName, m_jList, m_labels, m_flag);
+        if (m_flag == JOURNAL)
+            exportToTxt(m_fileName, m_jList, m_labels, m_flag);
+        else if (m_flag == KERN || m_flag == Kwin)
+            exportToTxt(m_fileName, m_logDataList, m_labels, m_flag);
         break;
     }
     case TxtAPP: {
@@ -3507,7 +3942,10 @@ void LogExportThread::run()
         break;
     }
     case HtmlJOURNAL: {
-        exportToHtml(m_fileName, m_jList, m_labels, m_flag);
+        if (m_flag == JOURNAL)
+            exportToHtml(m_fileName, m_jList, m_labels, m_flag);
+        else if (m_flag == KERN || m_flag == Kwin)
+            exportToHtml(m_fileName, m_logDataList, m_labels, m_flag);
         break;
     }
     case HtmlAPP: {
@@ -3547,7 +3985,10 @@ void LogExportThread::run()
     }
         break;
     case DocJOURNAL: {
-        exportToDoc(m_fileName, m_jList, m_labels, m_flag);
+        if (m_flag == JOURNAL)
+            exportToDoc(m_fileName, m_jList, m_labels, m_flag);
+        else if (m_flag == KERN || m_flag == Kwin)
+            exportToDoc(m_fileName, m_logDataList, m_labels, m_flag);
         break;
     }
     case DocAPP: {
@@ -3587,7 +4028,10 @@ void LogExportThread::run()
     }
         break;
     case XlsJOURNAL: {
-        exportToXls(m_fileName, m_jList, m_labels, m_flag);
+        if (m_flag == JOURNAL)
+            exportToXls(m_fileName, m_jList, m_labels, m_flag);
+        else if (m_flag == KERN || m_flag == Kwin)
+            exportToXls(m_fileName, m_logDataList, m_labels, m_flag);
         break;
     }
     case XlsAPP: {

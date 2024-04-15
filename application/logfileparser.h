@@ -32,6 +32,8 @@ public:
 
     int parseByXlog(const XORG_FILTERS &iXorgFilter);
     int parseByBoot();
+    // 通用解析入口，传入筛选参数，解析线程根据筛选参数吐出日志数据
+    int parse(LOG_FILTER_BASE &filter);
     int parseByKern(const KERN_FILTERS &iKernFilter);
     int parseByApp(const APP_FILTERS &iAPPFilter);
     void parseByDnf(DNF_FILTERS iDnfFilter);
@@ -45,10 +47,13 @@ public:
 
     int parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap = false);
 
-    void createFile(const QString &output, int count);
     void stopAllLoad();
 
 signals:
+    void parseFinished(int index, LOG_FLAG type);
+    void logData(int index, const QList<QString> &dataList, LOG_FLAG type);
+    void stop();
+
     void dpkgFinished(int index);
     void dpkgData(int index, QList<LOG_MSG_DPKG>);
     void xlogFinished(int index);
@@ -110,31 +115,8 @@ signals:
 public slots:
     void slog_proccessError(const QString &iError);
 private:
-    QString m_rootPasswd;
-
-    QMap<QString, QString> m_dateDict;
-    QMap<QString, int> m_levelDict;  // example:warning=>4
-
     LogOOCFileParseThread *m_OOCThread {nullptr};
     LogApplicationParseThread *m_appThread {nullptr};
-    journalWork *work {nullptr};
-    JournalBootWork *m_bootJournalWork{nullptr};
-    QProcess *m_pDkpgDataLoader{nullptr};
-    QProcess *m_pXlogDataLoader{nullptr};
-    QProcess *m_KwinDataLoader{nullptr};
-    bool m_isProcess = false;
-    qint64 m_selectTime {0};
-    bool m_isJournalLoading = false;
-    bool m_isDpkgLoading = false;
-    bool m_isXlogLoading = false;
-    bool m_isKwinLoading = false;
-    bool m_isBootLoading = false;
-    bool m_isKernLoading = false;
-    bool m_isAppLoading = false;
-    bool m_isNormalLoading = false;
-    bool m_isOOCLoading = false;
-    bool m_isAuditLoading = false;
-    bool m_isCoredumpLoading = false;
 };
 
 #endif  // LOGFILEPARSER_H

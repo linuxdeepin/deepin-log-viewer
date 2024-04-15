@@ -198,6 +198,9 @@ set (APP_CPP_FILES
      logallexportthread.cpp
      eventlogutils.cpp
      logbackend.cpp
+     parsethread/parsethreadbase.cpp
+     parsethread/parsethreadkern.cpp
+     parsethread/parsethreadkwin.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -236,6 +239,9 @@ set (APP_HEADERS_FILES
     eventlogutils.h
     logbackend.h
     accessible.h
+    parsethread/parsethreadbase.h
+    parsethread/parsethreadkern.h
+    parsethread/parsethreadkwin.h
     )
 
 # 5. 头文件

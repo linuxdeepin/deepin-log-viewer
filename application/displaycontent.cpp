@@ -229,6 +229,10 @@ void DisplayContent::initConnections()
             SLOT(slot_tableItemClicked(const QModelIndex &)));
 
     connect(this, &DisplayContent::sigDetailInfo, m_detailWgt, &logDetailInfoWidget::slot_DetailInfo);
+    connect(m_pLogBackend, &LogBackend::parseFinished, this, &DisplayContent::slot_parseFinished,
+            Qt::QueuedConnection);
+    connect(m_pLogBackend, &LogBackend::logData, this, &DisplayContent::slot_logData,
+            Qt::QueuedConnection);
     connect(m_pLogBackend, &LogBackend::dpkgFinished, this, &DisplayContent::slot_dpkgFinished,
             Qt::QueuedConnection);
     connect(m_pLogBackend, &LogBackend::dpkgData, this, &DisplayContent::slot_dpkgData,
@@ -298,6 +302,107 @@ void DisplayContent::initConnections()
 
     connect(m_treeView, &LogTreeView::customContextMenuRequested, this, &DisplayContent::slot_requestShowRightMenu);
     connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigValueChanged, this, &DisplayContent::slot_valueChanged_dConfig_or_gSetting);
+}
+
+void DisplayContent::createLogTable(const QList<QString> &list, LOG_FLAG type)
+{
+    m_limitTag = 0;
+
+    setLoadState(DATA_COMPLETE);
+    int end = list.count() > SINGLE_LOAD ? SINGLE_LOAD : list.count();
+    insertLogTable(list, 0, end, type);
+    QItemSelectionModel *p = m_treeView->selectionModel();
+    if (p)
+        p->select(m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    slot_tableItemClicked(m_pModel->index(0, 0));
+}
+
+void DisplayContent::insertLogTable(const QList<QString> &list, int start, int end, LOG_FLAG type)
+{
+    QList<QString> midList = list;
+    if (end > start) {
+        midList = midList.mid(start, end - start);
+    }
+
+    parseListToModel(midList, m_pModel, type);
+}
+
+void DisplayContent::parseListToModel(const QList<QString> &list, QStandardItemModel *oPModel, LOG_FLAG type)
+{
+    if (!oPModel) {
+        qCWarning(logDisplaycontent) << QString("log parse model is empty, type:%1").arg(type);
+        return;
+    }
+
+    if (list.isEmpty()) {
+        qCWarning(logDisplaycontent) << QString("log parse model data is empty, type:%1").arg(type);
+        return;
+    }
+
+    DStandardItem *item = nullptr;
+    QList<QStandardItem *> items;
+    int listCount = list.size();
+    for (int i = 0; i < listCount; i++) {
+        items.clear();
+        if (type == KERN) {
+            LOG_MSG_BASE data;
+            data.fromJson(list[i]);
+            item = new DStandardItem(data.dateTime);
+            item->setData(KERN_TABLE_DATA);
+            items << item;
+            item = new DStandardItem(data.hostName);
+            item->setData(KERN_TABLE_DATA);
+            items << item;
+            item = new DStandardItem(data.daemonName);
+            item->setData(KERN_TABLE_DATA);
+            items << item;
+            item = new DStandardItem(data.msg);
+            item->setData(KERN_TABLE_DATA);
+            items << item;
+        } else if (type == Kwin) {
+            LOG_MSG_BASE data;
+            data.fromJson(list[i]);
+            item = new DStandardItem(data.msg);
+            item->setData(KWIN_TABLE_DATA);
+            item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+            items << item;
+        }
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
+void DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bSearching/* = false*/)
+{
+    int nSegementIndex = m_pLogBackend->getNextSegementIndex(m_flag, bNext);
+    if(nSegementIndex == -1)
+        return;
+
+    if (!bSearching)
+        clearAllDatas();
+
+    m_firstLoadPageData = true;
+    m_isDataLoadComplete = false;
+
+    if (!bSearching)
+        setLoadState(DATA_LOADING);
+
+    if (bSearching) {
+        // 搜索结果超过分段单位大小后，才清空表格数据
+        if (m_pLogBackend->m_type2LogData[m_flag].size() > SEGEMENT_SIZE) {
+            if (m_flag == KERN)
+                createKernTableForm();
+            else if (m_flag == Kwin)
+                createKwinTableForm();
+        }
+    } else {
+        if (m_flag == KERN)
+            createKernTableForm();
+        else if (m_flag == Kwin)
+            createKwinTableForm();
+    }
+
+    m_pLogBackend->loadSegementPage(nSegementIndex, bSearching);
+    //m_treeView->setFocus();
 }
 
 /**
@@ -535,14 +640,15 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
     m_pLogBackend->clearAllFilter();
-    clearAllDatas();
-    m_firstLoadPageData = true;
-    m_isDataLoadComplete = false;
-    setLoadState(DATA_LOADING);
-    createKernTableForm();
+
+    // 填充筛选条件
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime()); // get zero time
-    KERN_FILTERS kernFilter;
+    LOG_FILTER_BASE kernFilter;
+    kernFilter.type = KERN;
+    kernFilter.filePath = "kern";
+    kernFilter.segementIndex = -1;
+
     switch (id) {
     case ALL:
         break;
@@ -590,8 +696,10 @@ void DisplayContent::generateKernFile(int id, const QString &iSearchStr)
         break;
     }
 
-    if (id >= ALL && id <= THREE_MONTHS)
-        m_pLogBackend->parseByKern(kernFilter);
+    if (id >= ALL && id <= THREE_MONTHS) {
+        m_pLogBackend->m_type2Filter[KERN] = kernFilter;
+        loadSegementPage();
+    }
 }
 
 /**
@@ -976,13 +1084,14 @@ void DisplayContent::creatKwinTable(const QList<LOG_MSG_KWIN> &list)
  */
 void DisplayContent::generateKwinFile(const KWIN_FILTERS &iFilters)
 {
+    Q_UNUSED(iFilters)
     m_pLogBackend->clearAllFilter();
-    clearAllDatas();
-    m_firstLoadPageData = true;
-    m_isDataLoadComplete = false;
-    setLoadState(DATA_LOADING);
-    createKwinTableForm();
-    m_pLogBackend->parseByKwin(iFilters);
+
+    LOG_FILTER_BASE filter;
+    filter.type = Kwin;
+    filter.segementIndex = -1;
+    m_pLogBackend->m_type2Filter[Kwin] = filter;
+    loadSegementPage();
 }
 
 void DisplayContent::createNormalTableForm()
@@ -1623,7 +1732,7 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
  */
 void DisplayContent::slot_exportClicked()
 {
-    LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
+    LogExportThread *exportThread = new LogExportThread(this);
     connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
     connect(m_exportDlg, &ExportProgressDlg::buttonClicked, exportThread, &LogExportThread::stopImmediately);
 
@@ -1681,6 +1790,9 @@ void DisplayContent::slot_exportClicked()
 
     // 后端导出当前页日志数据
     m_pLogBackend->exportLogData(fileName, exportThread, labels);
+
+    // 若有分段数据，开启分段导出
+    m_pLogBackend->segementExport();
 }
 
 /**
@@ -1693,6 +1805,40 @@ void DisplayContent::slot_statusChagned(const QString &status)
     m_pLogBackend->currentBootList = LogBackend::filterBoot(m_pLogBackend->m_bootFilter, m_pLogBackend->bList);
     createBootTableForm();
     createBootTable(m_pLogBackend->currentBootList);
+}
+
+void DisplayContent::slot_parseFinished(LOG_FLAG type)
+{
+    if (m_flag != type)
+        return;
+
+    m_isDataLoadComplete = true;
+    // 解析完成，依然没有数据，则创建空表显示，若有关键词搜索，则显示无搜索结果
+    if (m_pLogBackend->m_type2LogData[type].isEmpty()) {
+        if (!m_pLogBackend->m_currentSearchStr.isEmpty()) {
+            setLoadState(DATA_NO_SEARCH_RESULT);
+        } else {
+            setLoadState(DATA_COMPLETE);
+            createLogTable(m_pLogBackend->m_type2LogData[type], type);
+        }
+    }
+}
+
+void DisplayContent::slot_logData(const QList<QString> &list, LOG_FLAG type, bool newData/* = true*/)
+{
+    if (m_flag != type)
+        return;
+
+    //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        if (newData)
+            createLogTable(list, type);
+        m_firstLoadPageData = false;
+        PERF_PRINT_END("POINT-03", QString("type=%1").arg(type));
+    } else if (m_treeView->verticalScrollBar()->maximum() == 0) {
+        // 数据未填满表格显示区域，分段加载下一段数据，继续搜索和匹配
+        loadSegementPage(true, true);
+    }
 }
 
 /**
@@ -2080,6 +2226,20 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
     m_treeViewLastScrollValue = value;
     //算出现在滚动了多少页
     int rateValue = (value + 25) / SINGLE_LOAD;
+
+    // 滚动到顶部，启动向上分段加载
+    if (m_treeView->verticalScrollBar()->minimum() == m_treeView->verticalScrollBar()->value() && 0 == rateValue) {
+        loadSegementPage(false);
+        return;
+    }
+
+    // 滚动到底部，启动向下分段加载
+    int leftCount = m_pLogBackend->m_type2LogData[m_flag].count() - SINGLE_LOAD * rateValue;
+    if (m_treeView->verticalScrollBar()->maximum() == m_treeView->verticalScrollBar()->value() && leftCount <= 0) {
+        loadSegementPage();
+        return;
+    }
+
     switch (m_flag) {
     case JOURNAL: {
         //如果快滚到页底了就加载下一页数据到表格中
@@ -2128,10 +2288,10 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = m_pLogBackend->kList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->m_type2LogData[m_flag].count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
 
-            insertKernTable(m_pLogBackend->kList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertLogTable(m_pLogBackend->m_type2LogData[m_flag], SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end, m_flag);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2179,9 +2339,9 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
         if (value < SINGLE_LOAD * rateValue - 20 || value < SINGLE_LOAD * rateValue) {
             if (m_limitTag >= rateValue)
                 return;
-            int leftCnt = m_pLogBackend->m_currentKwinList.count() - SINGLE_LOAD * rateValue;
+            int leftCnt = m_pLogBackend->m_type2LogData[m_flag].count() - SINGLE_LOAD * rateValue;
             int end = leftCnt > SINGLE_LOAD ? SINGLE_LOAD : leftCnt;
-            insertKwinTable(m_pLogBackend->m_currentKwinList, SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end);
+            insertLogTable(m_pLogBackend->m_type2LogData[m_flag], SINGLE_LOAD * rateValue, SINGLE_LOAD * rateValue + end, m_flag);
             m_limitTag = rateValue;
             m_treeView->verticalScrollBar()->setValue(valuePixel);
         }
@@ -2312,10 +2472,23 @@ void DisplayContent::slot_searchResult(const QString &str)
         createJournalBootTableStart(m_pLogBackend->jBootList);
     }
     break;
+    case Kwin:
     case KERN: {
-        m_pLogBackend->kList = LogBackend::filterKern(m_pLogBackend->m_currentSearchStr, m_pLogBackend->kListOrigin);
-        createKernTableForm();
-        createKernTable(m_pLogBackend->kList);
+        if (m_pLogBackend->m_type2Filter[m_flag].segementIndex == 0) {
+            // 刚好在分段首页，直接搜索，同老逻辑一样
+            m_pLogBackend->m_type2LogData[m_flag] = LogBackend::filterLog(m_pLogBackend->m_currentSearchStr, m_pLogBackend->m_type2LogDataOrigin[m_flag]);
+            if (m_flag == KERN)
+                createKernTableForm();
+            else if (m_flag == Kwin)
+                createKwinTableForm();
+            createLogTable(m_pLogBackend->m_type2LogData[m_flag], m_flag);
+        } else if (m_pLogBackend->m_type2Filter[m_flag].segementIndex > 0) {
+            // 未在分段首页，重置索引，从头开始搜
+            m_pLogBackend->m_type2Filter[m_flag].segementIndex = -1;
+        }
+
+        // 尝试分段加载和搜索数据
+        loadSegementPage(true, m_pLogBackend->m_type2Filter[m_flag].segementIndex != -1);
     }
     break;
     case BOOT: {
@@ -2354,13 +2527,6 @@ void DisplayContent::slot_searchResult(const QString &str)
         createNormalTable(m_pLogBackend->nortempList);
     }
     break; // add by Airy
-    case Kwin: {
-        m_pLogBackend->m_currentKwinList.clear();
-        m_pLogBackend->m_currentKwinList = LogBackend::filterKwin(m_pLogBackend->m_currentSearchStr, m_pLogBackend->m_kwinList);
-        createKwinTableForm();
-        creatKwinTable(m_pLogBackend->m_currentKwinList);
-    }
-    break;
     case Dnf: {
         m_pLogBackend->dnfList.clear();
         m_pLogBackend->dnfList = LogBackend::filterDnf(m_pLogBackend->m_currentSearchStr, m_pLogBackend->dnfListOrigin);

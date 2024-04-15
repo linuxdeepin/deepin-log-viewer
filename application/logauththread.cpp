@@ -33,8 +33,6 @@ Q_LOGGING_CATEGORY(logAuthWork, "org.deepin.log.viewer.auth.work", QtInfoMsg)
 #endif
 
 DGUI_USE_NAMESPACE
-std::atomic<LogAuthThread *> LogAuthThread::m_instance;
-std::mutex LogAuthThread::m_mutex;
 int LogAuthThread::thread_count = 0;
 
 // 崩溃信号列表对应字符值
