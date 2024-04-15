@@ -60,6 +60,13 @@ private:
     void setTableViewData();
     void initConnections();
 
+    // 基于Json数据的建表接口
+    void createLogTable(const QList<QString>& list, LOG_FLAG type);
+    void insertLogTable(const QList<QString>& list, int start, int end, LOG_FLAG type);
+    void parseListToModel(const QList<QString>& list, QStandardItemModel *oPModel, LOG_FLAG type);
+
+    void loadSegementPage(bool bNext = true, bool bSearching = false);
+
     void generateJournalFile(int id, int lId, const QString &iSearchStr = "");
     void createJournalTableStart(const QList<LOG_MSG_JOURNAL> &list);
     void createJournalTableForm();
@@ -167,6 +174,9 @@ public slots:
 
     void slot_statusChagned(const QString &status);
 
+    // Json格式的日志数据处理接口
+    void slot_parseFinished(LOG_FLAG type);
+    void slot_logData(const QList<QString> &list, LOG_FLAG type, bool newData = true);
     void slot_dpkgFinished();
     void slot_dpkgData(const QList<LOG_MSG_DPKG> &list);
     void slot_XorgFinished();
@@ -285,10 +295,6 @@ private:
 
     //当前加载的日志类型
     LOG_FLAG m_flag {NONE};
-    /**
-     * @brief m_logFileParse 获取日志工具类对象
-     */
-    LogFileParser m_logFileParser;
 
     // 日志后端 解析、接收和转发日志数据
     LogBackend* m_pLogBackend;
@@ -323,8 +329,6 @@ private:
     bool m_isDataLoadComplete {false};
     //筛选条件
     QString selectFilter;
-
-    //bool m_isCoredumpctlExist = false;
 };
 
 #endif // DISPLAYCONTENT_H

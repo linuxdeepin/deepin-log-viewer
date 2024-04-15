@@ -12,6 +12,9 @@
 #include "wtmpparse.h"
 #include "logapplicationhelper.h"
 
+#include "parsethread/parsethreadkern.h"
+#include "parsethread/parsethreadkwin.h"
+
 #include <DMessageManager>
 
 #include <QDateTime>
@@ -43,23 +46,6 @@ DWIDGET_USE_NAMESPACE
 LogFileParser::LogFileParser(QWidget *parent)
     : QObject(parent)
 {
-    m_dateDict.clear();
-    m_dateDict.insert("Jan", "1月");
-    m_dateDict.insert("Feb", "2月");
-    m_dateDict.insert("Mar", "3月");
-    m_dateDict.insert("Apr", "4月");
-    m_dateDict.insert("May", "5月");
-    m_dateDict.insert("Jun", "6月");
-    m_dateDict.insert("Jul", "7月");
-    m_dateDict.insert("Aug", "8月");
-    m_dateDict.insert("Sep", "9月");
-    m_dateDict.insert("Oct", "10月");
-    m_dateDict.insert("Nov", "11月");
-    m_dateDict.insert("Dec", "12月");
-
-    // TODO::
-    m_levelDict.insert("Warning", WARN);
-    m_levelDict.insert("Debug", DEB);
     qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
     qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
     qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
@@ -86,34 +72,7 @@ LogFileParser::~LogFileParser()
 int LogFileParser::parseByJournal(const QStringList &arg)
 {
     stopAllLoad();
-    m_isJournalLoading = true;
 
-#if 0
-    m_currentJournalWork = journalWork::instance();
-
-    m_currentJournalWork->stopWork();
-//    journalWork   *work = new journalWork();
-//    m_currentJournalWork = work;
-    disconnect(m_currentJournalWork, SIGNAL(journalFinished()), this, SLOT(slot_journalFinished()));
-    disconnect(m_currentJournalWork, &journalWork::journalData, this, &LogFileParser::journalData);
-    m_currentJournalWork->setArg(arg);
-    connect(m_currentJournalWork, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()),
-            Qt::QueuedConnection);
-    connect(m_currentJournalWork, &journalWork::journalData, this, &LogFileParser::slot_journalData,
-            Qt::QueuedConnection);
-    connect(this, &LogFileParser::stopJournal, this, [ = ] {
-        if (m_currentJournalWork)
-        {
-            disconnect(m_currentJournalWork, SIGNAL(journalFinished()), this,  SLOT(slot_journalFinished()));
-            disconnect(m_currentJournalWork, &journalWork::journalData, this, &LogFileParser::slot_journalData);
-        }
-    });
-    m_currentJournalWork->start();
-    //QtConcurrent::run(work, &journalWork::doWork);
-    // QThreadPool::globalInstance()->start(work);
-
-#endif
-#if 1
     emit stopJournal();
     journalWork *work = new journalWork(this);
 
@@ -128,7 +87,6 @@ int LogFileParser::parseByJournal(const QStringList &arg)
     int index = work->getIndex();
     QThreadPool::globalInstance()->start(work);
     return index;
-#endif
 }
 
 int LogFileParser::parseByJournalBoot(const QStringList &arg)
@@ -225,39 +183,10 @@ int LogFileParser::parseByKwin(const KWIN_FILTERS &iKwinfilter)
     QThreadPool::globalInstance()->start(authThread);
     return index;
 }
-#if 0
-void LogFileParser::parseByXlog(QStringList &xList)
-{
-    QProcess proc;
-    proc.start("cat /var/log/Xorg.0.log");  // file path is fixed. so write cmd direct
-    proc.waitForFinished(-1);
-
-    if (isErroCommand(QString(proc.readAllStandardError())))
-        return;
-
-    QString output = proc.readAllStandardOutput();
-    proc.close();
-
-    for (QString str : output.split('\n')) {
-        if (str.startsWith("[")) {
-            //            xList.append(str);
-            xList.insert(0, str);
-        } else {
-            str += " ";
-            //            xList[xList.size() - 1] += str;
-            xList[0] += str;
-        }
-    }
-    createFile(output, xList.count());
-
-    emit xlogFinished();
-}
-#endif
 
 int LogFileParser::parseByBoot()
 {
     stopAllLoad();
-    m_isBootLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(BOOT);
 
@@ -274,10 +203,28 @@ int LogFileParser::parseByBoot()
     return index;
 }
 
+int LogFileParser::parse(LOG_FILTER_BASE &filter)
+{
+    stopAllLoad();
+
+    ParseThreadBase *parseWork = nullptr;
+    if (filter.type == KERN)
+        parseWork = new ParseThreadKern(this);
+    else if (filter.type == Kwin)
+        parseWork = new ParseThreadKwin(this);
+    if (parseWork) {
+        parseWork->setFilter(filter);
+        int index = parseWork->getIndex();
+        QThreadPool::globalInstance()->start(parseWork);
+        return index;
+    }
+
+    return -1;
+}
+
 int LogFileParser::parseByKern(const KERN_FILTERS &iKernFilter)
 {
     stopAllLoad();
-    m_isKernLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(KERN);
     QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("kern", false);
@@ -328,7 +275,6 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
 
     if (appFilterList.size() > 0) {
         stopAllLoad();
-        m_isAppLoading = true;
 
         m_appThread = new LogApplicationParseThread(this);
         quitLogAuththread(m_appThread);
@@ -393,7 +339,6 @@ void LogFileParser::parseByDmesg(DMESG_FILTERS iDmesgFilter)
 int LogFileParser::parseByOOC(const QString &path)
 {
     stopAllLoad();
-    m_isOOCLoading = true;
 
     m_OOCThread = new LogOOCFileParseThread(this);
     m_OOCThread->setParam(path);
@@ -413,7 +358,6 @@ int LogFileParser::parseByOOC(const QString &path)
 int LogFileParser::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
 {
     stopAllLoad();
-    m_isAuditLoading = true;
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(Audit);
     QStringList filePath = DLDBusHandler::instance(this)->getFileInfo("audit", false);
@@ -433,7 +377,6 @@ int LogFileParser::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
 int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap)
 {
     stopAllLoad();
-    m_isCoredumpLoading = true;
     //qRegisterMetaType<QList<quint16>>("QList<LOG_MSG_COREDUMP>");
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(COREDUMP);
@@ -449,24 +392,9 @@ int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool
     return index;
 }
 
-void LogFileParser::createFile(const QString &output, int count)
-{
-#if 1
-    Q_UNUSED(output)
-    Q_UNUSED(count)
-#else
-    // this is for test parser.
-    QFile fi("tempFile");
-    if (!fi.open(QIODevice::ReadWrite | QIODevice::Truncate))
-        return;
-    fi.write(output.toLatin1());
-    fi.write(QString::number(count).toLatin1());
-    fi.close();
-#endif
-}
-
 void LogFileParser::stopAllLoad()
 {
+    emit stop();
     emit stopKern();
     emit stopBoot();
     emit stopDpkg();

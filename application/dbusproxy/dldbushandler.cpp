@@ -52,6 +52,18 @@ QString DLDBusHandler::readLog(const QString &filePath)
     return m_dbus->readLog(filePath);
 }
 
+/*!
+ * \~chinese \brief DLDBusHandler::readLogLinesInRange 获取指定行数范围的日志内容，默认读取500条数据
+ * \~chinese \param filePath 文件路径
+ * \~chinese \param startLine 起始行
+ * \~chinese \param lineCount 获取行数
+ * \~chinese \return 读取的日志
+ */
+QStringList DLDBusHandler::readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
+{
+    return m_dbus->readLogLinesInRange(filePath, startLine, lineCount, bReverse);
+}
+
 QString DLDBusHandler::openLogStream(const QString &filePath)
 {
     return m_dbus->openLogStream(filePath);
@@ -123,4 +135,9 @@ bool DLDBusHandler::isFileExist(const QString &filePath)
 quint64 DLDBusHandler::getFileSize(const QString &filePath)
 {
     return m_dbus->getFileSize(filePath);
+}
+
+qint64 DLDBusHandler::getLineCount(const QString &filePath)
+{
+    return m_dbus->getLineCount(filePath);
 }

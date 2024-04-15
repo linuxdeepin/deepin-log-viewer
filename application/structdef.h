@@ -8,6 +8,8 @@
 #include <QDir>
 #include <QMap>
 #include <QJsonObject>
+#include <QJsonDocument>
+
 #include "utils.h"
 #define DPKG_TABLE_DATA "dpkgItemData"
 #define XORG_TABLE_DATA "XorgItemData"
@@ -410,7 +412,75 @@ enum LOG_FLAG {
     COREDUMP,
     NONE = 9999
 }; // modified by
-// Airy
+Q_DECLARE_METATYPE(LOG_FLAG)
+
+// 定义日志数据基础结构体，若有特殊字段，则从该基础结构体派生
+struct LOG_MSG_BASE {
+    LOG_FLAG type = NONE; // 所属日志类型
+    QString dateTime;
+    QString msg;
+    QString hostName;
+    QString daemonName;
+    QString daemonId;
+    QString level;
+
+    QJsonObject toJson() {
+        QJsonObject obj;
+        obj.insert("type", type);
+        obj.insert("dateTime", dateTime);
+        obj.insert("msg", msg);
+        obj.insert("hostName", hostName);
+        obj.insert("daemonName", daemonName);
+        obj.insert("daemonId", daemonId);
+        obj.insert("level", level);
+
+        return obj;
+    }
+
+    void fromJson(const QString& data) {
+        QJsonParseError parseError;
+        QJsonDocument document = QJsonDocument::fromJson(data.toUtf8(), &parseError);
+        if (parseError.error == QJsonParseError::NoError) {
+            if (document.isObject()) {
+                QJsonObject object = document.object();
+                if (object.contains("type"))
+                    this->type = static_cast<LOG_FLAG>(object.value("type").toInt());
+                if (object.contains("dateTime"))
+                    this->dateTime = static_cast<QString>(object.value("dateTime").toString());
+                if (object.contains("msg"))
+                    this->msg = static_cast<QString>(object.value("msg").toString());
+                if (object.contains("hostName"))
+                    this->hostName = static_cast<QString>(object.value("hostName").toString());
+                if (object.contains("daemonName"))
+                    this->daemonName = static_cast<QString>(object.value("daemonName").toString());
+                if (object.contains("daemonId"))
+                    this->daemonId = static_cast<QString>(object.value("daemonId").toString());
+                if (object.contains("level"))
+                    this->level = static_cast<QString>(object.value("level").toString());
+            }
+        }
+    }
+};
+Q_DECLARE_METATYPE(LOG_MSG_BASE)
+
+#define SEGEMENT_SIZE 60000
+
+struct LOG_FILTER_BASE {
+    LOG_FLAG type = NONE;
+    qint64 timeFilterBegin = -1 ;
+    qint64 timeFilterEnd = -1;
+    QString filePath;
+    int segementIndex;
+};
+
+Q_DECLARE_METATYPE(LOG_FILTER_BASE)
+
+struct LOG_FILTER_KERN : public LOG_FILTER_BASE {
+
+};
+
+Q_DECLARE_METATYPE(LOG_FILTER_KERN)
+
 namespace Log_Item_SPACE {
 enum LogItemDataRole {
     levelRole = Qt::UserRole + 6

@@ -68,6 +68,8 @@ public:
     // 清理日志数据缓存
     void clearAllDatalist();
 
+    // 解析日志通用新接口，便于后续扩展和维护
+    void parse(LOG_FILTER_BASE& filter);
 
     // 解析日志相关接口
     void parseByJournal(const QStringList &arg = QStringList());
@@ -90,10 +92,16 @@ public:
 
     void parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap = false);
 
+    int loadSegementPage(int nSegementIndex, bool bSearching = false);
+    // 分段加载，向上/向下滚动，计算分段索引 bNext为true，计算向下滚动后的分段索引
+    int getNextSegementIndex(LOG_FLAG type, bool bNext = true);
 
     void exportLogData(const QString &filePath, LogExportThread* exportThread = nullptr, const QStringList &strLabels = QStringList());
 
+    void segementExport();
+
     // 日志过滤相关接口
+    static QList<QString> filterLog(const QString &iSearchStr, const QList<QString> &iList);
     static QList<LOG_MSG_BOOT> filterBoot(BOOT_FILTERS ibootFilter, const QList<LOG_MSG_BOOT> &iList);
     static QList<LOG_MSG_NORMAL> filterNomal(NORMAL_FILTERS inormalFilter, const QList<LOG_MSG_NORMAL> &iList);
     static QList<LOG_MSG_DPKG> filterDpkg(const QString &iSearchStr, const QList<LOG_MSG_DPKG> &iList);
@@ -116,6 +124,9 @@ private:
 
 signals:
 
+    // Json格式的日志数据处理接口
+    void parseFinished(LOG_FLAG type);
+    void logData(const QList<QString>& list, LOG_FLAG type, bool newData = true);
     // 解析器路由信号
     void dpkgFinished();
     void dpkgData(const QList<LOG_MSG_DPKG>&);
@@ -173,6 +184,8 @@ signals:
     void sigResult(bool isSuccess);
     void sigProcessFull();
 private slots:
+    void slot_parseFinished(int index, LOG_FLAG type);
+    void slot_logData(int index, const QList<QString> &list, LOG_FLAG type);
     void slot_dpkgFinished(int index);
     void slot_dpkgData(int index, QList<LOG_MSG_DPKG> list);
     void slot_XorgFinished(int index);
@@ -212,7 +225,7 @@ private:
     // cli导出功能相关接口
     bool parseData(const LOG_FLAG &flag, const QString &period, const QString &condition);
 
-    void executeCLIExport();
+    void executeCLIExport(const QString &originFilePath = "");
 
     void resetCategoryOutputPath(const QString & path);
     bool getOutDirPath(const QString &path);
@@ -235,6 +248,18 @@ private:
     QString m_exportFilePath {""};
 
 public:
+
+    // 日志种类-----解析线程index 键值对
+    QMap<LOG_FLAG, int> m_type2ThreadIndex;
+
+    // 日志种类-----原始日志数据键值对 --为了统一日志数据存储方式，日志数据按json字串存储
+    QMap<LOG_FLAG, QList<QString>> m_type2LogDataOrigin;
+
+    // 日志种类-----筛选后日志数据键值对  --为了统一日志数据存储方式，日志数据按json字串存储
+    QMap<LOG_FLAG, QList<QString>> m_type2LogData;
+
+    // 日志种类-----筛选条件
+    QMap<LOG_FLAG, LOG_FILTER_BASE> m_type2Filter;
 
     // 筛选条件
     /**
@@ -351,7 +376,12 @@ private:
     QString m_curApp {""};
 
     SessionType m_sessionType { View };
-
+    SessionType m_lastSessionType { Unknown };
+    int m_lastSegementIndex { -1 };
+    bool m_bExportProgressShow { false };
+    bool m_bExportResult { false };
+    bool m_bSegementExporting {false};
+    
     //当前解析的日志类型
     LOG_FLAG m_flag {NONE};
 
@@ -375,7 +405,6 @@ private:
     int m_coredumpCurrentIndex {-1};
 
     bool m_isDataLoadComplete {false};
-    bool m_bNeedExport {false};
 };
 
 #endif // LOGBACKEND_H

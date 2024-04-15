@@ -17,7 +17,7 @@ class LogExportThread : public QObject, public QRunnable
 {
     Q_OBJECT
 public:
-    explicit LogExportThread(bool isDataComplete, QObject *parent = nullptr);
+    explicit LogExportThread(QObject *parent = nullptr);
     ~LogExportThread();
     /**
      * @brief The RUN_MODE enum 导出类型，用于执行时判断要执行的逻辑
@@ -71,7 +71,10 @@ public:
         NoneExportType = 9999 //任何行为
     };
 
+    void enableAppendExport(bool bEnable = true);
+
     void exportToTxtPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag);
+    void exportToTxtPublic(const QString &fileName, const QList<QString> &jList,  const QStringList &labels, LOG_FLAG flag);
     void exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,  const QStringList &labels, LOG_FLAG flag);
     void exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName);
     void exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels);
@@ -84,6 +87,7 @@ public:
     void exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels);
 
     void exportToHtmlPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag);
+    void exportToHtmlPublic(const QString &fileName, const QList<QString> &jList,  const QStringList &labels, LOG_FLAG flag);
     void exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,  const QStringList &labels, LOG_FLAG flag);
     void exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName);
     void exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels);
@@ -96,6 +100,7 @@ public:
     void exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels);
 
     void exportToDocPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag);
+    void exportToDocPublic(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG iFlag);
     void exportToDocPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList, const QStringList &labels, LOG_FLAG iFlag);
     void exportToDocPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName);
     void exportToDocPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels);
@@ -108,6 +113,7 @@ public:
     void exportToDocPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels);
 
     void exportToXlsPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag);
+    void exportToXlsPublic(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG iFlag);
     void exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList, const QStringList &labels, LOG_FLAG iFlag);
     void exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName);
     void exportToXlsPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels);
@@ -150,6 +156,7 @@ signals:
     void sigError(QString iError);
 private:
     bool exportToTxt(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag);
+    bool exportToTxt(const QString &fileName, const QList<QString> &jList,  const QStringList &labels, LOG_FLAG flag);
     bool exportToTxt(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,  const QStringList &labels, LOG_FLAG flag);
     bool exportToTxt(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName);
     bool exportToTxt(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels);
@@ -161,6 +168,7 @@ private:
     bool exportToTxt(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels);
     bool exportToTxt(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels);
 
+    bool exportToDoc(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG iFlag);
     bool exportToDoc(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList, const QStringList &labels, LOG_FLAG iFlag);
     bool exportToDoc(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, QString &iAppName);
     bool exportToDoc(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels);
@@ -173,6 +181,7 @@ private:
     bool exportToDoc(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels);
 
     bool exportToHtml(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag);
+    bool exportToHtml(const QString &fileName, const QList<QString> &jList,  const QStringList &labels, LOG_FLAG flag);
     bool exportToHtml(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,  const QStringList &labels, LOG_FLAG flag);
     bool exportToHtml(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, QString &iAppName);
     bool exportToHtml(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels);
@@ -184,6 +193,7 @@ private:
     bool exportToHtml(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels);
     bool exportToHtml(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels);
 
+    bool exportToXls(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG iFlag);
     bool exportToXls(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList, const QStringList &labels, LOG_FLAG iFlag);
     bool exportToXls(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, QString &iAppName);
     bool exportToXls(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels);
@@ -215,6 +225,9 @@ private:
     LOG_FLAG m_flag = NONE;
     //如果导出项文本标题
     QStringList m_labels;
+    // 通用json格式日志数据
+    QList<QString> m_logDataList;
+
     //系统日志数据源
     QList<LOG_MSG_JOURNAL> m_jList;
     //应用日志数据源
@@ -243,7 +256,7 @@ private:
     QString m_appName = "";
     //日志等级-显示文本键值对
     QMap<QString, QString> m_levelStrMap;
-    bool m_allLoadComplete;
+    bool m_appendExport {false};
 };
 
 #endif  // LOGEXPORTTHREAD_H
