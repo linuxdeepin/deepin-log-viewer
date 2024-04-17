@@ -371,11 +371,11 @@ void DisplayContent::parseListToModel(const QList<QString> &list, QStandardItemM
     }
 }
 
-void DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bSearching/* = false*/)
+int DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bSearching/* = false*/)
 {
     int nSegementIndex = m_pLogBackend->getNextSegementIndex(m_flag, bNext);
     if(nSegementIndex == -1)
-        return;
+        return -1;
 
     if (!bSearching)
         clearAllDatas();
@@ -383,8 +383,7 @@ void DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bSearching/* =
     m_firstLoadPageData = true;
     m_isDataLoadComplete = false;
 
-    if (!bSearching)
-        setLoadState(DATA_LOADING);
+    setLoadState(DATA_LOADING, bSearching);
 
     if (bSearching) {
         // 搜索结果超过分段单位大小后，才清空表格数据
@@ -402,7 +401,8 @@ void DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bSearching/* =
     }
 
     m_pLogBackend->loadSegementPage(nSegementIndex, bSearching);
-    //m_treeView->setFocus();
+
+    return nSegementIndex;
 }
 
 /**
@@ -2455,6 +2455,7 @@ void DisplayContent::slot_searchResult(const QString &str)
     if (m_flag == NONE)
         return;
 
+    bool bHasNext = false;
     switch (m_flag) {
     case JOURNAL: {
         m_pLogBackend->jList = m_pLogBackend->jListOrigin;
@@ -2488,7 +2489,8 @@ void DisplayContent::slot_searchResult(const QString &str)
         }
 
         // 尝试分段加载和搜索数据
-        loadSegementPage(true, m_pLogBackend->m_type2Filter[m_flag].segementIndex != -1);
+        int segementIndex = loadSegementPage(true, m_pLogBackend->m_type2Filter[m_flag].segementIndex != -1);
+        bHasNext = segementIndex != -1;
     }
     break;
     case BOOT: {
@@ -2578,7 +2580,8 @@ void DisplayContent::slot_searchResult(const QString &str)
         if (m_pLogBackend->m_currentSearchStr.isEmpty()) {
             setLoadState(DATA_COMPLETE);
         } else {
-            setLoadState(DATA_NO_SEARCH_RESULT);
+            if ((m_flag != KERN && m_flag != Kwin) || !bHasNext)
+                setLoadState(DATA_NO_SEARCH_RESULT);
         }
         m_detailWgt->cleanText();
         m_detailWgt->hideLine(true);
@@ -3044,7 +3047,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardIt
  * @brief DisplayContent::setLoadState 设置当前的显示状态
  * @param iState 显示状态
  */
-void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
+void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearching/* = false*/)
 {
     if (!m_spinnerWgt->isHidden()) {
         m_spinnerWgt->spinnerStop();
@@ -3078,7 +3081,8 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState)
             m_treeView->show();
         } else {
             m_detailWgt->show();
-            m_treeView->hide();
+            if (!bSearching)
+                m_treeView->hide();
         }
         break;
     }

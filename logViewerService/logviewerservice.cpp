@@ -296,35 +296,11 @@ qint64 LogViewerService::getLineCount(const QString &filePath) {
         return -1;
     }
 
-    QByteArray buffer;
-    const int bufferSize = 4096; // 设置缓冲区大小，可以根据需要调整
-    char *data = new char[bufferSize];
-    qint64 lineCount = 0;
-    qint64 bytesRead;
+    m_process.start("/bin/bash", QStringList() << "-c" << QString("wc -l %1").arg(filePath));
+    m_process.waitForFinished(-1);
 
-    // 读取文件内容，直到文件末尾
-    while ((bytesRead = file.read(data, bufferSize)) > 0) {
-        buffer.append(data, static_cast<int>(bytesRead));
-
-        // 在缓冲区中查找换行符并增加行数计数器
-        for (int i = 0; i < bytesRead; ++i) {
-            if (data[i] == '\n') {
-                ++lineCount;
-            }
-        }
-    }
-
-    delete[] data; // 释放缓冲区内存
-    file.close();
-
-    // 处理跨缓冲区的行（如果最后一行在缓冲区末尾被截断）
-    if (!buffer.isEmpty() && buffer.back() == '\r') {
-        ++lineCount;
-    } else if (file.size()) {
-        ++lineCount;
-    }
-
-    return lineCount;
+    QString result = m_process.readAllStandardOutput();
+    return  result.split(' ').first().toLongLong();
 }
 
 /*!
