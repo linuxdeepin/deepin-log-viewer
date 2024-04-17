@@ -65,7 +65,7 @@ private:
     void insertLogTable(const QList<QString>& list, int start, int end, LOG_FLAG type);
     void parseListToModel(const QList<QString>& list, QStandardItemModel *oPModel, LOG_FLAG type);
 
-    void loadSegementPage(bool bNext = true, bool bSearching = false);
+    int loadSegementPage(bool bNext = true, bool bSearching = false);
 
     void generateJournalFile(int id, int lId, const QString &iSearchStr = "");
     void createJournalTableStart(const QList<LOG_MSG_JOURNAL> &list);
@@ -228,7 +228,7 @@ public slots:
     void parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardItemModel *oPModel);
     QString getIconByname(const QString &str);
-    void setLoadState(LOAD_STATE iState);
+    void setLoadState(LOAD_STATE iState, bool bSearching = false);
     void onExportProgress(int nCur, int nTotal);
     void onExportResult(bool isSuccess);
     void onExportFakeCloseDlg();
