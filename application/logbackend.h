@@ -96,9 +96,9 @@ public:
     // 分段加载，向上/向下滚动，计算分段索引 bNext为true，计算向下滚动后的分段索引
     int getNextSegementIndex(LOG_FLAG type, bool bNext = true);
 
-    void exportLogData(const QString &filePath, LogExportThread* exportThread = nullptr, const QStringList &strLabels = QStringList());
-
+    void exportLogData(const QString &filePath, const QStringList &strLabels = QStringList());
     void segementExport();
+    void stopExportFromUI();
 
     // 日志过滤相关接口
     static QList<QString> filterLog(const QString &iSearchStr, const QList<QString> &iList);
@@ -127,6 +127,7 @@ signals:
     // Json格式的日志数据处理接口
     void parseFinished(LOG_FLAG type, int status = 0);
     void logData(const QList<QString>& list, LOG_FLAG type, bool newData = true);
+    void stopExport();
     // 解析器路由信号
     void dpkgFinished();
     void dpkgData(const QList<LOG_MSG_DPKG>&);

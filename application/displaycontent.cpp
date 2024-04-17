@@ -301,6 +301,10 @@ void DisplayContent::initConnections()
     connect(m_pLogBackend, &LogBackend::sigProgress, this, &DisplayContent::onExportProgress);
     connect(m_pLogBackend, &LogBackend::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
 
+    // 取消导出
+    connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, m_pLogBackend, &LogBackend::stopExportFromUI);
+    connect(m_exportDlg, &ExportProgressDlg::buttonClicked, m_pLogBackend, &LogBackend::stopExportFromUI);
+
     connect(m_treeView, &LogTreeView::customContextMenuRequested, this, &DisplayContent::slot_requestShowRightMenu);
     connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigValueChanged, this, &DisplayContent::slot_valueChanged_dConfig_or_gSetting);
 }
@@ -1733,10 +1737,6 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
  */
 void DisplayContent::slot_exportClicked()
 {
-    LogExportThread *exportThread = new LogExportThread(this);
-    connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
-    connect(m_exportDlg, &ExportProgressDlg::buttonClicked, exportThread, &LogExportThread::stopImmediately);
-
     QString logName;
     if (m_curListIdx.isValid())
         logName = QString("/%1").arg(m_curListIdx.data().toString());
@@ -1760,7 +1760,6 @@ void DisplayContent::slot_exportClicked()
     }
 
     if (fileName.isEmpty()) {
-        delete exportThread;
         DApplication::setActiveWindow(this);
         return;
     }
@@ -1772,7 +1771,6 @@ void DisplayContent::slot_exportClicked()
     QString selectSuffix = selectFilter.mid(selectFilter.lastIndexOf(".") + 1, selectFilter.size() - selectFilter.lastIndexOf(".") - 2);
     if (fileName.isEmpty()) {
         onExportResult(false);
-        delete exportThread;
         return;
     }
 
@@ -1790,7 +1788,7 @@ void DisplayContent::slot_exportClicked()
     }
 
     // 后端导出当前页日志数据
-    m_pLogBackend->exportLogData(fileName, exportThread, labels);
+    m_pLogBackend->exportLogData(fileName, labels);
 
     // 若有分段数据，开启分段导出
     m_pLogBackend->segementExport();
@@ -3090,7 +3088,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearc
             m_treeView->show();
         } else {
             m_detailWgt->show();
-            if (!bSearching)
+            if (!bSearching || m_pModel->rowCount() == 0)
                 m_treeView->hide();
         }
         break;

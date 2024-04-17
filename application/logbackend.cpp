@@ -1989,14 +1989,13 @@ int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
     return nSegementIndex;
 }
 
-void LogBackend::exportLogData(const QString &filePath, LogExportThread *exportThread, const QStringList &strLabels)
+void LogBackend::exportLogData(const QString &filePath, const QStringList &strLabels)
 {
-    if (nullptr == exportThread) {
-        exportThread = new LogExportThread(this);
-    }
+    LogExportThread *exportThread = new LogExportThread(this);
     connect(exportThread, &LogExportThread::sigResult, this, &LogBackend::onExportResult);
     connect(exportThread, &LogExportThread::sigProgress, this, &LogBackend::onExportProgress);
     connect(exportThread, &LogExportThread::sigProcessFull, this, &LogBackend::onExportFakeCloseDlg);
+    connect(this, &LogBackend::stopExport, exportThread, &LogExportThread::stopImmediately);
 
     // 分段导出需要激活追加导出标记
     exportThread->enableAppendExport(m_bSegementExporting);
@@ -2291,6 +2290,22 @@ void LogBackend::segementExport()
             QTimer::singleShot(1500, this, [=]{
                 onExportResult(m_bExportResult);
             });
+        }
+    }
+}
+
+void LogBackend::stopExportFromUI()
+{
+    emit stopExport();
+
+    //若界面正在分段导出，则停止导出
+    // TODO: 分段导出情况下，ExportThread::stopImmediately槽函数不能正常触发，暂时先这样修改
+    if (Export == m_sessionType) {
+        if (View == m_lastSessionType) {
+            m_sessionType = View;
+            m_bExportProgressShow = false;
+            m_bSegementExporting = false;
+            Utils::checkAndDeleteDir(m_exportFilePath);
         }
     }
 }
