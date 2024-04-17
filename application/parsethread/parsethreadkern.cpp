@@ -83,7 +83,7 @@ void ParseThreadKern::handleKern()
             m_process->waitForFinished(-1);
             //有错则传出空数据
             if (m_process->exitCode() != 0) {
-                emit parseFinished(m_threadCount, m_type);
+                emit parseFinished(m_threadCount, m_type, CancelAuth);
                 return;
             }
         }

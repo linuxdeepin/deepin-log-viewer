@@ -13,6 +13,7 @@
 #include "logapplicationhelper.h"
 #include "DebugTimeManager.h"
 #include "eventlogutils.h"
+#include "parsethread/parsethreadbase.h"
 
 #include <sys/utsname.h>
 #include <malloc.h>
@@ -600,14 +601,18 @@ QStringList LogBackend::getLogTypes()
     return m_logTypes;
 }
 
-void LogBackend::slot_parseFinished(int index, LOG_FLAG type)
+void LogBackend::slot_parseFinished(int index, LOG_FLAG type, int status)
 {
     if (m_flag != type || index != m_type2ThreadIndex[type])
         return;
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
-        emit parseFinished(type);
+        emit parseFinished(type, status);
+
+        if (status != ParseThreadBase::Normal)
+            return;
+
         // 分段导出，按关键词导出，存在进度条隐藏失败的情况，此处添加判断，若进度条还存在，则手动隐藏下
         if (m_bExportProgressShow) {
             m_bExportProgressShow = false;
@@ -616,6 +621,17 @@ void LogBackend::slot_parseFinished(int index, LOG_FLAG type)
     } else if (Export == m_sessionType) {
         // 导出当前解析到的数据
         executeCLIExport(m_exportFilePath);
+
+        // 异常情况，不再进行分段导出
+        if (status != ParseThreadBase::Normal) {
+            // 还原任务状态
+            if (View == m_lastSessionType) {
+                m_sessionType = View;
+                // 通知前端，处理进度条隐藏问题
+                emit parseFinished(type, status);
+            }
+            return;
+        }
 
         // 若有分段数据，开启分段导出
         segementExport();

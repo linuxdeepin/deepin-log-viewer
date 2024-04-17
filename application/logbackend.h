@@ -125,7 +125,7 @@ private:
 signals:
 
     // Json格式的日志数据处理接口
-    void parseFinished(LOG_FLAG type);
+    void parseFinished(LOG_FLAG type, int status = 0);
     void logData(const QList<QString>& list, LOG_FLAG type, bool newData = true);
     // 解析器路由信号
     void dpkgFinished();
@@ -184,7 +184,7 @@ signals:
     void sigResult(bool isSuccess);
     void sigProcessFull();
 private slots:
-    void slot_parseFinished(int index, LOG_FLAG type);
+    void slot_parseFinished(int index, LOG_FLAG type, int status);
     void slot_logData(int index, const QList<QString> &list, LOG_FLAG type);
     void slot_dpkgFinished(int index);
     void slot_dpkgData(int index, QList<LOG_MSG_DPKG> list);

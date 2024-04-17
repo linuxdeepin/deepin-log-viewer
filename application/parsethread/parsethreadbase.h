@@ -22,6 +22,12 @@ public:
     explicit ParseThreadBase(QObject *parent = nullptr);
     ~ParseThreadBase() override;
 
+    enum Status {
+        Normal = 0, //正常结束
+        CancelAuth, //取消鉴权
+        ForceStop //强制停止
+    };
+
     // 设置筛选条件
     virtual void setFilter(LOG_FILTER_BASE &filter);
 
@@ -38,7 +44,7 @@ signals:
      * @param index 当前线程的数字标号
      * @param type 日志种类
      */
-    void parseFinished(int index, LOG_FLAG type);
+    void parseFinished(int index, LOG_FLAG type, ParseThreadBase::Status status = Normal);
 
     /**
      * @brief logData 日志数据发送信号
@@ -83,5 +89,7 @@ protected:
     //正在执行停止进程的变量，防止重复执行停止逻辑
     bool m_isStopProccess = false;
 };
+
+Q_DECLARE_METATYPE(ParseThreadBase::Status)
 
 #endif  // PARSETHREADBASE_H

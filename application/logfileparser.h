@@ -50,7 +50,7 @@ public:
     void stopAllLoad();
 
 signals:
-    void parseFinished(int index, LOG_FLAG type);
+    void parseFinished(int index, LOG_FLAG type, int status);
     void logData(int index, const QList<QString> &dataList, LOG_FLAG type);
     void stop();
 

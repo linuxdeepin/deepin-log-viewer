@@ -10,6 +10,7 @@
 #include "logbackend.h"
 #include "utils.h"
 #include "DebugTimeManager.h"
+#include "parsethread/parsethreadbase.h"
 
 #include <DApplication>
 #include <DApplicationHelper>
@@ -1807,10 +1808,18 @@ void DisplayContent::slot_statusChagned(const QString &status)
     createBootTable(m_pLogBackend->currentBootList);
 }
 
-void DisplayContent::slot_parseFinished(LOG_FLAG type)
+void DisplayContent::slot_parseFinished(LOG_FLAG type, int status)
 {
     if (m_flag != type)
         return;
+
+    // 取消鉴权时，若导出进度条存在，则隐藏
+    if (status == ParseThreadBase::CancelAuth) {
+        if (m_exportDlg && !m_exportDlg->isHidden()) {
+            m_exportDlg->hide();
+            DApplication::setActiveWindow(this);
+        }
+    }
 
     m_isDataLoadComplete = true;
     // 解析完成，依然没有数据，则创建空表显示，若有关键词搜索，则显示无搜索结果

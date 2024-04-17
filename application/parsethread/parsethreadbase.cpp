@@ -25,6 +25,7 @@ ParseThreadBase::ParseThreadBase(QObject *parent)
     , QRunnable()
     , m_type(NONE)
 {
+    qRegisterMetaType<ParseThreadBase::Status>("ParseThreadBase::Status");
     //使用线程池启动该线程，跑完自己删自己
     setAutoDelete(true);
     //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
