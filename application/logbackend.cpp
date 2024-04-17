@@ -627,6 +627,9 @@ void LogBackend::slot_parseFinished(int index, LOG_FLAG type, int status)
             // 还原任务状态
             if (View == m_lastSessionType) {
                 m_sessionType = View;
+                m_bExportProgressShow = false;
+                m_bSegementExporting = false;
+                Utils::checkAndDeleteDir(m_exportFilePath);
                 // 通知前端，处理进度条隐藏问题
                 emit parseFinished(type, status);
             }
