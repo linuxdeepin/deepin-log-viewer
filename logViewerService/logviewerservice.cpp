@@ -299,8 +299,13 @@ qint64 LogViewerService::getLineCount(const QString &filePath) {
     m_process.start("/bin/bash", QStringList() << "-c" << QString("wc -l %1").arg(filePath));
     m_process.waitForFinished(-1);
 
+    qint64 lineCount = -1;
     QString result = m_process.readAllStandardOutput();
-    return  result.split(' ').first().toLongLong();
+    QStringList splitResult = result.split(' ');
+    if (splitResult.size() > 0)
+        lineCount = splitResult.first().toLongLong();
+
+    return lineCount;
 }
 
 /*!
