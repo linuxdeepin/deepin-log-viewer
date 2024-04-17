@@ -175,7 +175,7 @@ public slots:
     void slot_statusChagned(const QString &status);
 
     // Json格式的日志数据处理接口
-    void slot_parseFinished(LOG_FLAG type);
+    void slot_parseFinished(LOG_FLAG type, int status);
     void slot_logData(const QList<QString> &list, LOG_FLAG type, bool newData = true);
     void slot_dpkgFinished();
     void slot_dpkgData(const QList<LOG_MSG_DPKG> &list);
