@@ -35,7 +35,7 @@ void SharedMemoryManager::setRunnableTag(ShareMemoryInfo iShareInfo)
     if (m_pShareMemoryInfo) {
         m_pShareMemoryInfo->isStart = iShareInfo.isStart;
     } else {
-        qCWarning(logSM) << "conntrol mem is Not Attech ";
+        //qCWarning(logSM) << "conntrol mem is Not Attech ";
     }
     m_commondM->unlock();
 

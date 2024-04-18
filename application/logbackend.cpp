@@ -651,7 +651,8 @@ void LogBackend::slot_logData(int index, const QList<QString> &list, LOG_FLAG ty
     m_type2LogData[type].append(filterData);
 
     if (View == m_sessionType) {
-        emit logData(m_type2LogData[type], type, filterData.size());
+        // 只中转新增数据到界面
+        emit logData(filterData, type);
     }
 }
 
@@ -1945,24 +1946,25 @@ void LogBackend::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool p
     m_coredumpCurrentIndex = m_logFileParser.parseByCoredump(iCoredumpFilter, parseMap);
 }
 
-int LogBackend::loadSegementPage(int nSegementIndex, bool bSearching/* = false*/)
+int LogBackend::loadSegementPage(int nSegementIndex, bool bReset/* = true*/)
 {
     if(nSegementIndex == -1)
         return -1;
 
-    if (bSearching) {
+    if (bReset) {
+        clearAllDatalist();
+    } else {
         // 搜索结果存在各分段数据只有几条的情况，因此进行分段搜索加载时，不能清空历史数据
         if (m_type2LogDataOrigin[m_flag].size() > SEGEMENT_SIZE)
             m_type2LogDataOrigin[m_flag].clear();
         if (m_type2LogData[m_flag].size() > SEGEMENT_SIZE)
             m_type2LogData[m_flag].clear();
-    } else {
-        clearAllDatalist();
     }
 
     m_type2Filter[m_flag].segementIndex = nSegementIndex;
     parse(m_type2Filter[m_flag]);
 
+    qCDebug(logBackend) << QString("load seagement index: %1").arg(nSegementIndex);
     return nSegementIndex;
 }
 
@@ -2286,6 +2288,7 @@ void LogBackend::segementExport()
             m_sessionType = View;
             // 还原查看界面数据内容到导出前的分段页
             if (m_lastSegementIndex != -1) {
+                emit clearTable();
                 loadSegementPage(m_lastSegementIndex);
             }
         } else if (Export == m_sessionType) {
