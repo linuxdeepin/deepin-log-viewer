@@ -297,6 +297,8 @@ void DisplayContent::initConnections()
     connect(m_pLogBackend, &LogBackend::coredumpFinished, this, &DisplayContent::slot_coredumpFinished,
             Qt::QueuedConnection);
 
+    connect(m_pLogBackend, &LogBackend::clearTable, this, &DisplayContent::slot_clearTable);
+
     connect(m_pLogBackend, &LogBackend::sigResult, this, &DisplayContent::onExportResult);
     connect(m_pLogBackend, &LogBackend::sigProgress, this, &DisplayContent::onExportProgress);
     connect(m_pLogBackend, &LogBackend::sigProcessFull, this, &DisplayContent::onExportFakeCloseDlg);
@@ -376,36 +378,27 @@ void DisplayContent::parseListToModel(const QList<QString> &list, QStandardItemM
     }
 }
 
-int DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bSearching/* = false*/)
+int DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bReset/* = true*/)
 {
     int nSegementIndex = m_pLogBackend->getNextSegementIndex(m_flag, bNext);
     if(nSegementIndex == -1)
         return -1;
 
-    if (!bSearching)
+    if (bReset)
         clearAllDatas();
 
-    m_firstLoadPageData = true;
-    m_isDataLoadComplete = false;
+    setLoadState(DATA_LOADING, !bReset);
 
-    setLoadState(DATA_LOADING, bSearching);
-
-    if (bSearching) {
-        // 搜索结果超过分段单位大小后，才清空表格数据
-        if (m_pLogBackend->m_type2LogData[m_flag].size() > SEGEMENT_SIZE) {
-            if (m_flag == KERN)
-                createKernTableForm();
-            else if (m_flag == Kwin)
-                createKwinTableForm();
-        }
-    } else {
+    // 1.正常分段加载翻页，重置表格
+    // 2.搜索结果超过分段单位大小后，需要重置表格，显示下一页内容
+    if (bReset || (!bReset &&m_pLogBackend->m_type2LogData[m_flag].size() > SEGEMENT_SIZE)) {
         if (m_flag == KERN)
             createKernTableForm();
         else if (m_flag == Kwin)
             createKwinTableForm();
     }
 
-    m_pLogBackend->loadSegementPage(nSegementIndex, bSearching);
+    m_pLogBackend->loadSegementPage(nSegementIndex, bReset);
 
     return nSegementIndex;
 }
@@ -1811,41 +1804,66 @@ void DisplayContent::slot_parseFinished(LOG_FLAG type, int status)
     if (m_flag != type)
         return;
 
+    qCDebug(logDisplaycontent) << QString("parse finished m_type2LogData[%1] dataCount: %2 segement index: %3").arg(type).arg(m_pLogBackend->m_type2LogData[type].count()).arg(m_pLogBackend->m_type2Filter[type].segementIndex);
+
+    int nSegementIndex = -1;
     // 取消鉴权时，若导出进度条存在，则隐藏
     if (status == ParseThreadBase::CancelAuth) {
         if (m_exportDlg && !m_exportDlg->isHidden()) {
             m_exportDlg->hide();
             DApplication::setActiveWindow(this);
         }
+    } else {
+        // 分段加载逻辑处理
+        if (m_treeView->verticalScrollBar()->maximum() == 0) {
+            // 数据未填满表格显示区域，分段加载下一段数据
+            nSegementIndex = loadSegementPage(true, false);
+        }
     }
 
-    m_isDataLoadComplete = true;
-    // 解析完成，依然没有数据，则创建空表显示，若有关键词搜索，则显示无搜索结果
-    if (m_pLogBackend->m_type2LogData[type].isEmpty()) {
-        if (!m_pLogBackend->m_currentSearchStr.isEmpty()) {
-            setLoadState(DATA_NO_SEARCH_RESULT);
+    // 已加载到文件末尾，依然没有数据，则创建空表显示，若有关键词搜索，则显示无搜索结果
+    if (nSegementIndex == -1) {
+        if (m_pLogBackend->m_type2LogData[type].isEmpty()) {
+            if (!m_pLogBackend->m_currentSearchStr.isEmpty()) {
+                setLoadState(DATA_NO_SEARCH_RESULT);
+            } else {
+                setLoadState(DATA_COMPLETE);
+                createLogTable(m_pLogBackend->m_type2LogData[type], type);
+            }
+            m_detailWgt->cleanText();
+            m_detailWgt->hideLine(true);
         } else {
             setLoadState(DATA_COMPLETE);
-            createLogTable(m_pLogBackend->m_type2LogData[type], type);
+            m_detailWgt->hideLine(false);
         }
+
+        qCDebug(logDisplaycontent) << QString("parse/search end... type:[%1]").arg(type);
     }
 }
 
-void DisplayContent::slot_logData(const QList<QString> &list, LOG_FLAG type, bool newData/* = true*/)
+void DisplayContent::slot_logData(const QList<QString> &list, LOG_FLAG type)
 {
     if (m_flag != type)
         return;
 
-    //因为此槽会在同一次加载数据完成前触发数次,所以第一次收到数据需要更新界面状态,后面的话往model里塞数据就行
-    if (m_firstLoadPageData && !list.isEmpty()) {
-        if (newData)
+    if (!list.isEmpty()) {
+        int rowCount = m_pModel->rowCount();
+        if (rowCount == 0)
             createLogTable(list, type);
-        m_firstLoadPageData = false;
-        PERF_PRINT_END("POINT-03", QString("type=%1").arg(type));
-    } else if (m_treeView->verticalScrollBar()->maximum() == 0) {
-        // 数据未填满表格显示区域，分段加载下一段数据，继续搜索和匹配
-        loadSegementPage(true, true);
+        else if (rowCount < SINGLE_READ_CNT) {
+            int loadCount = SINGLE_READ_CNT - rowCount;
+            insertLogTable(list, 0, loadCount, type);
+        }
     }
+}
+
+void DisplayContent::slot_clearTable()
+{
+    m_pModel->clear();
+    if (m_flag == KERN)
+        createKernTableForm();
+    else if (m_flag == Kwin)
+        createKwinTableForm();
 }
 
 /**
@@ -2482,6 +2500,7 @@ void DisplayContent::slot_searchResult(const QString &str)
     break;
     case Kwin:
     case KERN: {
+        qCDebug(logDisplaycontent) << QString("search start... keyword:%1").arg(str);
         if (m_pLogBackend->m_type2Filter[m_flag].segementIndex == 0) {
             // 刚好在分段首页，直接搜索，同老逻辑一样
             m_pLogBackend->m_type2LogData[m_flag] = LogBackend::filterLog(m_pLogBackend->m_currentSearchStr, m_pLogBackend->m_type2LogDataOrigin[m_flag]);
@@ -2495,8 +2514,12 @@ void DisplayContent::slot_searchResult(const QString &str)
             m_pLogBackend->m_type2Filter[m_flag].segementIndex = -1;
         }
 
-        // 尝试分段加载和搜索数据
-        int segementIndex = loadSegementPage(true, m_pLogBackend->m_type2Filter[m_flag].segementIndex != -1);
+        // 显示转圈标记，加载中...
+        setLoadState(DATA_LOADING, true);
+
+        // 开启分段加载和搜索数据
+        // 若从头开始搜索，需要重置数据，相当于重新加载
+        int segementIndex = loadSegementPage(true, m_pLogBackend->m_type2Filter[m_flag].segementIndex == -1);
         bHasNext = segementIndex != -1;
     }
     break;
@@ -2593,8 +2616,10 @@ void DisplayContent::slot_searchResult(const QString &str)
         m_detailWgt->cleanText();
         m_detailWgt->hideLine(true);
     } else {
-        setLoadState(DATA_COMPLETE);
-        m_detailWgt->hideLine(false);
+        if ((m_flag != KERN && m_flag != Kwin) || !bHasNext) {
+            setLoadState(DATA_COMPLETE);
+            m_detailWgt->hideLine(false);
+        }
     }
 }
 
@@ -3111,9 +3136,11 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearc
     case DATA_NO_SEARCH_RESULT: {
         //如果为无搜索结果状态,则只显示无搜索结果的提示label
         m_treeView->show();
-        noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
-        noResultLabel->show();
-        noResultLabel->raise();
+        QTimer::singleShot(50, this, [=]{
+            noResultLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
+            noResultLabel->show();
+            noResultLabel->raise();
+        });
         //搜索结果为空，导出按钮置灰
         emit setExportEnable(false);
         break;

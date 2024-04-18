@@ -65,7 +65,7 @@ private:
     void insertLogTable(const QList<QString>& list, int start, int end, LOG_FLAG type);
     void parseListToModel(const QList<QString>& list, QStandardItemModel *oPModel, LOG_FLAG type);
 
-    int loadSegementPage(bool bNext = true, bool bSearching = false);
+    int loadSegementPage(bool bNext = true, bool bReset = true);
 
     void generateJournalFile(int id, int lId, const QString &iSearchStr = "");
     void createJournalTableStart(const QList<LOG_MSG_JOURNAL> &list);
@@ -176,7 +176,8 @@ public slots:
 
     // Json格式的日志数据处理接口
     void slot_parseFinished(LOG_FLAG type, int status);
-    void slot_logData(const QList<QString> &list, LOG_FLAG type, bool newData = true);
+    void slot_logData(const QList<QString> &list, LOG_FLAG type);
+    void slot_clearTable();
     void slot_dpkgFinished();
     void slot_dpkgData(const QList<LOG_MSG_DPKG> &list);
     void slot_XorgFinished();
