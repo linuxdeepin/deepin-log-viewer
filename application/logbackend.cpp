@@ -2300,7 +2300,7 @@ void LogBackend::segementExport()
         loadSegementPage(nSegementIndex);
     } else {
         // 分段导出完成，还原任务状态
-        if (View == m_lastSessionType) {
+        if (View == m_lastSessionType || View == m_sessionType) {
             m_sessionType = View;
             if (m_pSegementExportThread) {
                 // 结束分段导出线程，保存数据到文件
