@@ -135,6 +135,7 @@ FILE(GLOB allSource
      ../application/dbusproxy/dldbusinterface.cpp
      ../application/dbusproxy/dldbushandler.cpp
 #     ../application/viewsortfilter.cpp
+     ../application/logsegementexportthread.cpp
      ../application/logallexportthread.cpp
      ../application/parsethread/parsethreadbase.cpp
      ../application/parsethread/parsethreadkern.cpp
@@ -212,6 +213,7 @@ file(GLOB_RECURSE LVP_SOURCES
     "../application/wtmpparse.cpp"
     "../application/logapplicationhelper.cpp"
     "../application/logexportthread.cpp"
+    "../application/logsegementexportthread.cpp"
     "../application/parsethread/parsethreadbase.cpp"
     "../application/parsethread/parsethreadkern.cpp"
     "../application/parsethread/parsethreadkwin.cpp"
@@ -235,6 +237,7 @@ file(GLOB_RECURSE LVP_HEADERS
     "../application/structdef.h"
     "../application/logapplicationhelper.h"
     "../application/logexportthread.h"
+    "../application/logsegementexportthread.h"
     "../application/parsethread/parsethreadbase.h"
     "../application/parsethread/parsethreadkern.h"
     "../application/parsethread/parsethreadkwin.h"

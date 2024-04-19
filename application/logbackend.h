@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,6 +12,7 @@
 
 class LogFileParser;
 class LogExportThread;
+class LogSegementExportThread;
 class LogBackend : public QObject
 {
     Q_OBJECT
@@ -387,6 +388,8 @@ private:
     //当前解析的日志类型
     LOG_FLAG m_flag {NONE};
 
+    // 分段导出线程，用来导出doc、xls格式的日志
+    LogSegementExportThread *m_pSegementExportThread { nullptr };
     // 日志解析器
     LogFileParser m_logFileParser;
 
