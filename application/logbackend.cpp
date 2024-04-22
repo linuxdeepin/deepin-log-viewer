@@ -613,12 +613,6 @@ void LogBackend::slot_parseFinished(int index, LOG_FLAG type, int status)
 
         if (status != ParseThreadBase::Normal)
             return;
-
-        // 分段导出，按关键词导出，存在进度条隐藏失败的情况，此处添加判断，若进度条还存在，则手动隐藏下
-        if (m_bExportProgressShow) {
-            m_bExportProgressShow = false;
-            emit sigResult(m_bExportResult);
-        }
     } else if (Export == m_sessionType) {
         // 导出当前解析到的数据
         executeCLIExport(m_exportFilePath);
@@ -628,7 +622,6 @@ void LogBackend::slot_parseFinished(int index, LOG_FLAG type, int status)
             // 还原任务状态
             if (View == m_lastSessionType) {
                 m_sessionType = View;
-                m_bExportProgressShow = false;
                 m_bSegementExporting = false;
                 Utils::checkAndDeleteDir(m_exportFilePath);
                 // 通知前端，处理进度条隐藏问题
@@ -1050,14 +1043,20 @@ void LogBackend::slot_logLoadFailed(const QString &iError)
 
 void LogBackend::onExportProgress(int nCur, int nTotal)
 {
-    if (View == m_sessionType) {
-        LogExportThread *exportThread = nullptr;
-        if (sender()) {
-            exportThread = qobject_cast<LogExportThread *>(sender());
+    if (View == m_sessionType || View == m_lastSessionType) {
+        bool bExportThreadRunning = false;
+
+        // 获取导出线程对象
+        LogExportThread *exportThread = qobject_cast<LogExportThread *>(sender());
+        LogSegementExportThread* segementExportThread = qobject_cast<LogSegementExportThread *>(sender());
+        if (exportThread)
+            bExportThreadRunning = exportThread->isProcessing();
+        else if (segementExportThread) {
+            bExportThreadRunning = segementExportThread->isProcessing();
         }
 
         //如果导出线程不再运行则不处理此信号
-        if (!exportThread || !exportThread->isProcessing()) {
+        if (!bExportThreadRunning) {
             return;
         }
 
@@ -1069,13 +1068,7 @@ void LogBackend::onExportResult(bool isSuccess)
 {
     if (View == m_sessionType) {
         emit sigResult(isSuccess);
-        m_bExportProgressShow = false;
     } else if (Export == m_sessionType || Report == m_sessionType) {
-        if (m_bSegementExporting) {
-            m_bExportResult = isSuccess;
-            return;
-        }
-
         if (Export == m_sessionType)
             Utils::resetToNormalAuth(m_exportFilePath);
 
@@ -1982,6 +1975,9 @@ int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
         totalLineCount = DLDBusHandler::instance(this)->getLineCount(KWIN_TREE_DATA);
     }
 
+    // 计算分段段数
+    m_segementCount = static_cast<int>(totalLineCount / SEGEMENT_SIZE) + 1;
+    
     qint64 currentLineCount = (m_type2Filter[type].segementIndex + (bNext ? 1 : 0)) * SEGEMENT_SIZE;
 
     if (totalLineCount > currentLineCount) {
@@ -2031,12 +2027,16 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
     if (labels.isEmpty())
         labels = getLabels(m_flag);
 
-    LogExportThread *exportThread = nullptr;
-    if ((m_flag == KERN || m_flag == Kwin)
-            && (filePath.endsWith(".doc") || filePath.endsWith(".xls"))) {
+    if ((m_flag == KERN || m_flag == Kwin)) {
         // 初始化分段导出线程
         if (!m_pSegementExportThread) {
             m_pSegementExportThread = new LogSegementExportThread(this);
+            m_pSegementExportThread->enableAppendWrite();
+            // 导出到doc，最后一步写入文件耗时较长，总进度条需要额外+1
+            if (filePath.endsWith(".doc"))
+                m_pSegementExportThread->setTotalProcess(m_segementCount + 1);
+            else
+                m_pSegementExportThread->setTotalProcess(m_segementCount);
             connect(m_pSegementExportThread, &LogSegementExportThread::sigResult, this, &LogBackend::onExportResult);
             connect(m_pSegementExportThread, &LogSegementExportThread::sigProgress, this, &LogBackend::onExportProgress);
             connect(m_pSegementExportThread, &LogSegementExportThread::sigProcessFull, this, &LogBackend::onExportFakeCloseDlg);
@@ -2046,7 +2046,7 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
 
         m_pSegementExportThread->setParameter(filePath, m_type2LogData[m_flag], labels, m_flag);
     } else {
-        exportThread = new LogExportThread(this);
+        LogExportThread *exportThread = new LogExportThread(this);
         connect(exportThread, &LogExportThread::sigResult, this, &LogBackend::onExportResult);
         connect(exportThread, &LogExportThread::sigProgress, this, &LogBackend::onExportProgress);
         connect(exportThread, &LogExportThread::sigProcessFull, this, &LogBackend::onExportFakeCloseDlg);
@@ -2295,27 +2295,21 @@ void LogBackend::segementExport()
         if (View == m_sessionType) {
             m_lastSessionType = m_sessionType;
             m_sessionType = Export;
-            m_bExportProgressShow = true;
         }
         loadSegementPage(nSegementIndex);
     } else {
+        if (m_pSegementExportThread) {
+            // 结束分段导出线程，保存数据到文件
+            m_pSegementExportThread->stop();
+            m_pSegementExportThread = nullptr;
+        }
+
         // 分段导出完成，还原任务状态
         if (View == m_lastSessionType || View == m_sessionType) {
             m_sessionType = View;
-            if (m_pSegementExportThread) {
-                // 结束分段导出线程，保存数据到文件
-                m_pSegementExportThread->stop();
-                m_pSegementExportThread = nullptr;
-                m_bExportProgressShow = false;
-            }
             // 还原查看界面数据内容到导第一分段页
             emit clearTable();
             loadSegementPage(0);
-        } else if (Export == m_sessionType) {
-            // 存在后端分段数据没有筛选结果的情况，此时不能触发正常的导出流程，需要添加延迟退出逻辑
-            QTimer::singleShot(1500, this, [=]{
-                onExportResult(m_bExportResult);
-            });
         }
     }
 }
@@ -2334,7 +2328,10 @@ void LogBackend::stopExportFromUI()
             if (m_pSegementExportThread) {
                 m_pSegementExportThread = nullptr;
             }
-            m_bExportProgressShow = false;
+
+            // 重置进度条
+            emit sigProgress(0, 0);
+
             m_bSegementExporting = false;
             Utils::checkAndDeleteDir(m_exportFilePath);
 

@@ -36,6 +36,10 @@ public:
 
     // 设置导出数据
     void setParameter(const QString &fileName, const QList<QString> &jList, const QStringList& lables, LOG_FLAG flag);
+    // 设置是否追加写入QFile
+    void enableAppendWrite(const bool &bEnable = true) { m_bAppendWrite = bEnable; }
+    // 设置进度条总值
+    void setTotalProcess(const int &total) { m_nTotalProcess = total; }
 
     // 判断是否正在运行
     bool isProcessing();
@@ -72,8 +76,12 @@ private:
     QString getDocTemplatePath();
     void initXls();
 
+    bool exportTxt();
+    bool exportHtml();
     bool exportToDoc();
     bool exportToXls();
+
+    void htmlEscapeCovert(QString &htmlMsg);
 
     void saveDoc();
     void closeXls();
@@ -81,6 +89,9 @@ private:
 private:
     //导出文件路径
     QString m_fileName = "";
+
+    // QFile追加写入标记
+    bool m_bAppendWrite = false;
 
     //导出日志类型
     LOG_FLAG m_flag = NONE;
@@ -95,6 +106,7 @@ private:
     lxw_workbook  *m_pWorkbook { nullptr };
     lxw_worksheet *m_pWorksheet { nullptr };
     qint64 m_currentXlsRow { 0 };
+    
     //打开文件错误描述
     QString m_openErroStr = "export open file error";
     //强制停止导出描述信息
@@ -105,6 +117,9 @@ private:
     bool m_bStop { false };
     // 用来强制停止线程
     bool m_bForceStop { false };
+
+    int m_nCurProcess { 0 };
+    int m_nTotalProcess { 0 };
 };
 
 #endif  // LOGSEGEMENTEXPORTTHREAD_H
