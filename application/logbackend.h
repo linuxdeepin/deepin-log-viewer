@@ -381,9 +381,8 @@ private:
     SessionType m_sessionType { View };
     SessionType m_lastSessionType { Unknown };
     int m_lastSegementIndex { -1 };
-    bool m_bExportProgressShow { false };
-    bool m_bExportResult { false };
     bool m_bSegementExporting {false};
+    int m_segementCount { 0 };
     
     //当前解析的日志类型
     LOG_FLAG m_flag {NONE};
