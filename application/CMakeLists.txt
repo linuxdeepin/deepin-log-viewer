@@ -198,6 +198,7 @@ set (APP_CPP_FILES
      logallexportthread.cpp
      eventlogutils.cpp
      logbackend.cpp
+     logsegementexportthread.cpp
      parsethread/parsethreadbase.cpp
      parsethread/parsethreadkern.cpp
      parsethread/parsethreadkwin.cpp
@@ -239,6 +240,7 @@ set (APP_HEADERS_FILES
     eventlogutils.h
     logbackend.h
     accessible.h
+    logsegementexportthread.h
     parsethread/parsethreadbase.h
     parsethread/parsethreadkern.h
     parsethread/parsethreadkwin.h
