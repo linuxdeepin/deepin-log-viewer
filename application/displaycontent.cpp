@@ -58,7 +58,7 @@ Q_LOGGING_CATEGORY(logDisplaycontent, "org.deepin.log.viewer.display.content", Q
 #define STATUS_WIDTH 90
 #define DATETIME_WIDTH 175
 #define DEAMON_WIDTH 100
-
+#define TREE_NORMAL_HEIGHT 373
 /**
  * @brief DisplayContent::DisplayContent 初始化界面\等级数据和实际显示文字转换的数据结构\信号槽连接
  * @param parent
@@ -1815,7 +1815,7 @@ void DisplayContent::slot_parseFinished(LOG_FLAG type, int status)
         }
     } else {
         // 分段加载逻辑处理
-        if (m_treeView->verticalScrollBar()->maximum() == 0) {
+        if (m_treeView->verticalScrollBar()->maximum() == 0 || m_treeView->height() < TREE_NORMAL_HEIGHT) {
             // 数据未填满表格显示区域，分段加载下一段数据
             nSegementIndex = loadSegementPage(true, false);
         }
@@ -3174,6 +3174,7 @@ void DisplayContent::onExportResult(bool isSuccess)
 {
     QString titleIcon = ICONPREFIX;
     if (m_exportDlg && !m_exportDlg->isHidden()) {
+        m_exportDlg->updateProgressBarValue(0);
         m_exportDlg->hide();
     }
 
@@ -3216,18 +3217,15 @@ void DisplayContent::clearAllDatas()
  */
 void DisplayContent::onExportProgress(int nCur, int nTotal)
 {
-    LogExportThread *exportThread = nullptr;
-    if (sender()) {
-        exportThread = qobject_cast<LogExportThread *>(sender());
-    }
-    //如果导出线程不再运行则不处理此信号
-    if (!m_exportDlg || !exportThread || !exportThread->isProcessing()) {
+    if (!m_exportDlg) {
         return;
     }
+
     //弹窗
     if (m_exportDlg->isHidden()) {
         m_exportDlg->show();
     }
+
     m_exportDlg->setProgressBarRange(0, nTotal);
     m_exportDlg->updateProgressBarValue(nCur);
 }
