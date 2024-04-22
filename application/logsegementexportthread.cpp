@@ -59,7 +59,11 @@ void LogSegementExportThread::setParameter(const QString &fileName, const QList<
     m_flag = flag;
     m_labels = lables;
     m_bForceStop = false;
-    if (fileName.endsWith(".doc")) {
+    if (m_fileName.endsWith(".txt")) {
+        m_runMode = Txt;
+    } else if (fileName.endsWith(".html")) {
+        m_runMode = Html;
+    } else if (fileName.endsWith(".doc")) {
         m_runMode = Doc;
         if (!m_pDocMerger)
             initDoc();
@@ -153,7 +157,6 @@ void LogSegementExportThread::stop()
 void LogSegementExportThread::run()
 {
     qCDebug(logSegementExport) << "threadrun";
-    sigProgress(0, 100);
 
     QMutexLocker locker(&mutex);
     while(!m_bForceStop && !m_bStop) {
@@ -162,11 +165,18 @@ void LogSegementExportThread::run()
         } else {
             try {
                 switch (m_runMode) {
+                case Txt: {
+                    exportTxt();
+                    break;
+                }
+                case Html:{
+                    exportHtml();
+                    break;
+                }
                 case Doc: {
                     exportToDoc();
                     break;
                 }
-
                 case Xls: {
                     exportToXls();
                     break;
@@ -174,8 +184,10 @@ void LogSegementExportThread::run()
                 default:
                     break;
                 }
+                emit sigProgress(++m_nCurProcess, m_nTotalProcess);
                 m_logDataList.clear();
             } catch (const QString &ErrorStr) {
+                // 捕获到异常，导出失败，发出失败信号
                 qCWarning(logSegementExport) << "Export Stop" << ErrorStr;
                 emit sigResult(false);
                 if (ErrorStr != m_forceStopStr) {
@@ -188,7 +200,7 @@ void LogSegementExportThread::run()
     if (!m_bForceStop) {
         // 保存数据
         switch (m_runMode) {
-        case Doc:
+        case Doc: 
             saveDoc();
             break;
         case Xls:
@@ -198,8 +210,9 @@ void LogSegementExportThread::run()
             break;
         }
 
-        sigProgress(100, 100);
-        //延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
+        // 进度100%
+        emit sigProgress(m_nTotalProcess, m_nTotalProcess);
+        // 延时200ms再发送导出成功信号，关闭导出进度框，让100%的进度有时间显示
         Utils::sleep(200);
     }
 
@@ -212,13 +225,113 @@ void LogSegementExportThread::run()
     m_bForceStop = false;
 }
 
+bool LogSegementExportThread::exportTxt()
+{
+    //判断文件路径是否存在，不存在就返回错误
+    QFile fi(m_fileName);
+    if (!fi.open(m_bAppendWrite ? (QIODevice::Append | QIODevice::WriteOnly) : QIODevice::WriteOnly)) {
+        emit sigError(m_openErroStr);
+        return false;
+    }
+
+    QTextStream out(&fi);
+
+    for (int i = 0; i < m_logDataList.count(); i++) {
+        //导出逻辑启动停止控制，外部把m_forceStopStr置true时停止运行，抛出异常处理
+        if (m_bForceStop) {
+            fi.close();
+            throw  QString(m_forceStopStr);
+        }
+
+        int col = 0;
+        LOG_MSG_BASE jMsg;
+        jMsg.fromJson(m_logDataList[i]);
+        if (m_flag == KERN) {
+            out << m_labels.value(col++, "") << ":" << jMsg.dateTime << " ";
+            out << m_labels.value(col++, "") << ":" << jMsg.hostName << " ";
+            out << m_labels.value(col++, "") << ":" << jMsg.daemonName << " ";
+            out << m_labels.value(col++, "") << ":" << jMsg.msg << " ";
+            out << "\n";
+        } else if (m_flag == Kwin) {
+            out << m_labels.value(col++, "") << ":" << jMsg.msg << " ";
+            out << "\n";
+        }
+    }
+
+    //设置文件编码为utf8
+    out.setCodec(QTextCodec::codecForName("utf-8"));
+    fi.close();
+
+    return true;
+}
+
+bool LogSegementExportThread::exportHtml()
+{
+    QFile html(m_fileName);
+    //判断文件路径是否存在，不存在就返回错误
+    if (!html.open(m_bAppendWrite ? (QIODevice::Append | QIODevice::WriteOnly) : QIODevice::WriteOnly)) {
+        emit sigError(m_openErroStr);
+        return false;
+    }
+
+    //写网页头
+    html.write("<!DOCTYPE html>\n");
+    html.write("<html>\n");
+    html.write("<body>\n");
+    //写入表格标签
+    html.write("<table border=\"1\">\n");
+    //写入表头
+    html.write("<tr>");
+    for (int i = 0; i < m_labels.count(); ++i) {
+        QString labelInfo = QString("<td>%1</td>").arg(m_labels.value(i));
+        html.write(labelInfo.toUtf8().data());
+    }
+    //写入内容
+    //根据字段拼出每行的网页内容
+    html.write("</tr>");
+
+    for (int row = 0; row < m_logDataList.count(); ++row) {
+        if (m_bForceStop) {
+            html.close();
+            throw  QString(m_forceStopStr);
+        }
+        LOG_MSG_BASE jMsg;
+        jMsg.fromJson(m_logDataList.at(row));
+        htmlEscapeCovert(jMsg.msg);
+        html.write("<tr>");
+        if (m_flag == KERN) {
+            QString info = QString("<td>%1</td>").arg(jMsg.dateTime);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.hostName);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.daemonName);
+            html.write(info.toUtf8().data());
+            info = QString("<td>%1</td>").arg(jMsg.msg);
+            html.write(info.toUtf8().data());
+        } else if (m_flag == Kwin) {
+            QString info = QString("<td>%1</td>").arg(jMsg.msg);
+            html.write(info.toUtf8().data());
+        }
+        html.write("</tr>");
+    }
+
+    //写入结尾
+    html.write("</table>\n");
+    html.write("</body>\n");
+    html.write("</html>\n");
+
+    html.close();
+
+    return true;
+}
+
 bool LogSegementExportThread::exportToDoc()
 {
     if (!m_pDocMerger)
         return false;
 
     for (int row = 0; row < m_logDataList.count(); ++row) {
-        //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+        //导出逻辑启动停止控制，外部把m_forceStopStr置true时停止运行，抛出异常处理
         if (m_bForceStop) {
             throw  QString(m_forceStopStr);
         }
@@ -265,6 +378,16 @@ bool LogSegementExportThread::exportToXls()
     }
 
     return true;
+}
+
+void LogSegementExportThread::htmlEscapeCovert(QString &htmlMsg)
+{
+    //无法对所有转义字符进行转换，对常用转义字符转换
+    htmlMsg.replace("<", "&lt", Qt::CaseInsensitive);
+    htmlMsg.replace(">", "&gt", Qt::CaseInsensitive);
+    htmlMsg.replace("?", "&iexcl", Qt::CaseInsensitive);
+    htmlMsg.replace("￥", "&yen", Qt::CaseInsensitive);
+    htmlMsg.replace("|", "&brvbar", Qt::CaseInsensitive);
 }
 
 void LogSegementExportThread::saveDoc()
