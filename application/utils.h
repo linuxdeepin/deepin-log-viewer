@@ -14,6 +14,13 @@
 
 #include <QObject>
 #include <QHash>
+
+struct LOG_REPEAT_COREDUMP_INFO {
+    QString exePath = "";
+    int times = 1; // 出现次数
+    float repetitionRate = 0.0;
+};
+
 /**
  * @brief 公用工具静态函数类
  */
@@ -69,6 +76,12 @@ public:
     static QString getHomePath(const QString &userName = "");
     static QString appName(const QString &filePath);
     static void resetToNormalAuth(const QString &path);
+    // 统计所有崩溃记录重复次数
+    static QList<LOG_REPEAT_COREDUMP_INFO> countRepeatCoredumps(qint64 timeBegin = -1, qint64 timeEnd = -1);
+    // 获取高频重复崩溃记录exe路径名单
+    static QStringList getRepeatCoredumpExePaths();
+    // 更新高频重复崩溃记录exe路径到文件
+    static void updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &infos = QList<LOG_REPEAT_COREDUMP_INFO>());
     /**
      * @brief specialComType 是否是特殊机型，like huawei
      * 取值有3种（-1,0,>0），默认为-1（未知），0（不是特殊机型）,>0（特殊机型）

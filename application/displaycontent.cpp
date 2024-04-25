@@ -3061,7 +3061,7 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardIt
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
         items << item;
 
-        item = new DStandardItem(iList[i].uid);
+        item = new DStandardItem(iList[i].userName);
         item->setData(COREDUMP_TABLE_DATA);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
         items << item;

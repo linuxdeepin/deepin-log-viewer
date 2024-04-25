@@ -47,6 +47,10 @@
       <arg type="x" direction="out"/>
       <arg name="filePath" type="s" direction="in"/>
     </method>
+    <method name="executeCmd"> 
+      <arg type="s" direction="out"/>
+      <arg name="cmd" type="s" direction="in"/>
+    </method>
     <method name="whiteListOutPaths">
       <arg type="as" direction="out"/>
     </method>

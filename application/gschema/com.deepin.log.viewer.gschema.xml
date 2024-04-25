@@ -13,5 +13,11 @@
             <summary>Coredump report time</summary>
             <description>It is null by default. Record the time point of the last successful crash report, used to achieve incremental escalation</description>
         </key>
+        <key type="i" name="coredumpreportmax">
+            <range min="0" max="1000" />
+            <default>50</default>
+            <summary>Coredump report max</summary>
+            <description>It is 50 by default.The maximum number of crash messages reported at once</description>
+        </key>
     </schema>
 </schemalist>

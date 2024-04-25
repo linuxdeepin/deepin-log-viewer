@@ -120,6 +120,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("getLineCount"), argumentList);
     }
 
+    inline QDBusPendingReply<QString> executeCmd(const QString &cmd)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(cmd);
+        return asyncCallWithArgumentList(QStringLiteral("executeCmd"), argumentList);
+    }
+
     inline QDBusPendingReply<QStringList> whiteListOutPaths()
     {
         QList<QVariant> argumentList;

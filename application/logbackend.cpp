@@ -33,6 +33,12 @@ Q_LOGGING_CATEGORY(logBackend, "org.deepin.log.viewer.backend")
 Q_LOGGING_CATEGORY(logBackend, "org.deepin.log.viewer.backend", QtInfoMsg)
 #endif
 
+// 获取窗管崩溃时，其日志最后100行
+#define KWIN_LASTLINE_NUM 100
+// 窗管二进制可执行文件所在路径
+const QString KWAYLAND_EXE_PATH = "/usr/bin/kwin_wayland";
+const QString XWAYLAND_EXE_PATH = "/usr/bin/Xwayland";
+
 LogBackend *LogBackend::m_staticbackend = nullptr;
 
 LogBackend *LogBackend::instance(QObject *parent)
@@ -975,18 +981,57 @@ void LogBackend::slot_coredumpFinished(int index)
         executeCLIExport();
     } else if (Report == m_sessionType) {
         int nCount = m_currentCoredumpList.size();
+        QDateTime lastTime = LogApplicationHelper::instance()->getLastReportTime();
+        QDateTime curTime = QDateTime::currentDateTime();
         if (nCount == 0) {
             qCWarning(logBackend) << QString("Report coredump info failed, timeRange: '%1 ---- %2', no matching data.")
-                                     .arg(LogApplicationHelper::instance()->getLastReportTime().toString("yyyy-MM-dd hh:mm:ss"))
-                                     .arg(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss"));
+                                     .arg(lastTime.toString("yyyy-MM-dd hh:mm:ss"))
+                                     .arg(curTime.toString("yyyy-MM-dd hh:mm:ss"));
             // 此处退出码不能为-1，否则systemctl --failed服务会将其判为失败的systemd服务
             qApp->exit(0);
         } else {
+            // 统计所有崩溃重复次数
+            QJsonObject repeatObj;
+            QList<LOG_REPEAT_COREDUMP_INFO> repeatInfos = Utils::countRepeatCoredumps();
+            for (auto i : repeatInfos) {
+                repeatObj.insert(i.exePath, i.times);
+            }
+
+            // 更新高频崩溃应用exe路径名单（更新范围为上次上报到当前时间新产生的崩溃信息），并同步到配置文件中
+            QList<LOG_REPEAT_COREDUMP_INFO> repeatInfoInTimeRange = Utils::countRepeatCoredumps(lastTime.toMSecsSinceEpoch(), curTime.toMSecsSinceEpoch());
+            Utils::updateRepeatCoredumpExePaths(repeatInfoInTimeRange);
+            QStringList repeatCoredumpExePaths = Utils::getRepeatCoredumpExePaths();
+
+            // 获取最大上报条数
+            const int nMaxCoredumpReport = LogApplicationHelper::instance()->getMaxReportCoredump();
+
+            // 数据清洗，去重
+            QList<LOG_MSG_COREDUMP> afterCleanData;
+            for (const auto &data : m_currentCoredumpList) {
+                if (repeatCoredumpExePaths.indexOf(data.exe) != -1) {
+                    auto it = std::find_if(afterCleanData.begin(), afterCleanData.end(),[&](const LOG_MSG_COREDUMP &item) {
+                        return item.exe == data.exe;
+                    });
+
+                    // 清洗时，只保留最近的一条重复数据
+                    if (it != afterCleanData.end())
+                        continue;
+                }
+
+                afterCleanData.push_back(data);
+
+                // 限制要上报的崩溃数据条数，默认最多上报50条。若nMaxCoredumpReport <= 0，则取消最大上报条数限制
+                if (afterCleanData.size() > nMaxCoredumpReport && nMaxCoredumpReport > 0)
+                    break;
+            }
+
+            // 仅清洗后的数据，才解析崩溃详情数据
+            parseCoredumpDetailInfo(afterCleanData);
 
             // 崩溃数据转json数据
             QJsonArray objList;
             QDateTime latestCoredumpTime;
-            for (auto &data : m_currentCoredumpList) {
+            for (auto &data : afterCleanData) {
                 QDateTime coredumpTime = QDateTime::fromString(data.dateTime, "yyyy-MM-dd hh:mm:ss");
                 if (coredumpTime > latestCoredumpTime)
                     latestCoredumpTime = coredumpTime;
@@ -1006,12 +1051,14 @@ void LogBackend::slot_coredumpFinished(int index)
                     {"version", QCoreApplication::applicationVersion()},
                     {"event",  "log"},
                     {"target", "coredump"},
+                    {"coredumpListCount", DLDBusHandler::instance()->executeCmd("coredumpctl-list-count").toInt()},
+                    {"repeatCoredumps", repeatObj},
                     {"message", objList}
                 };
 
                 Eventlogutils::GetInstance()->writeLogs(objCoredumpEvent);
                 LogApplicationHelper::instance()->saveLastRerportTime(latestCoredumpTime);
-                qCInfo(logBackend) << QString("Successfully reported %1 crash messages in total.").arg(m_currentCoredumpList.size());
+                qCInfo(logBackend) << QString("Successfully reported %1 crash messages in total.").arg(afterCleanData.size());
                 qApp->exit(0);
             });
         }
@@ -1361,7 +1408,7 @@ QList<LOG_MSG_COREDUMP> LogBackend::filterCoredump(const QString &iSearchStr, co
         if (msg.sig.contains(iSearchStr, Qt::CaseInsensitive)
                 || msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive)
                 || msg.coreFile.contains(iSearchStr, Qt::CaseInsensitive)
-                || msg.uid.contains(iSearchStr, Qt::CaseInsensitive)
+                || msg.userName.contains(iSearchStr, Qt::CaseInsensitive)
                 || msg.exe.contains(iSearchStr, Qt::CaseInsensitive)) {
             rsList.append(msg);
         }
@@ -2721,4 +2768,62 @@ bool LogBackend::hasMatchedData(const LOG_FLAG &flag)
     }
 
     return bMatchedData;
+}
+
+void LogBackend::parseCoredumpDetailInfo(QList<LOG_MSG_COREDUMP> &list)
+{
+    QProcess process;
+    for (auto &data : list) {
+        QDateTime coredumpTime = QDateTime::fromString(data.dateTime, "yyyy-MM-dd hh:mm:ss");
+        // 解析coredump文件保存位置
+        if (data.coreFile != "missing") {
+            QString outInfoByte;
+            // get maps info
+            const QString &corePath = QDir::tempPath() + QString("/%1.dump").arg(QFileInfo(data.storagePath).fileName());
+            DLDBusHandler::instance()->readLog(QString("coredumpctl dump %1 -o %2").arg(data.pid).arg(corePath));
+            outInfoByte = DLDBusHandler::instance()->readLog(QString("readelf -n %1").arg(corePath));
+
+            data.maps = outInfoByte;
+
+            // 获取二进制文件信息
+            process.start("/bin/bash", QStringList() << "-c" << QString("file %1").arg(data.exe));
+            process.waitForFinished(-1);
+            outInfoByte = process.readAllStandardOutput();
+            if (!outInfoByte.isEmpty())
+                data.binaryInfo = outInfoByte;
+
+            // 获取包名
+            process.start("/bin/bash", QStringList() << "-c" << QString("dpkg -S %1").arg(data.exe));
+            process.waitForFinished(-1);
+            outInfoByte = process.readAllStandardOutput();
+            // 获取版本号
+            if (!outInfoByte.isEmpty()) {
+                QString str = outInfoByte;
+                process.start("/bin/bash", QStringList() << "-c" << QString("dpkg-query --show %1").arg(str.split(":").first()));
+                process.waitForFinished(-1);
+                outInfoByte = process.readAllStandardOutput();
+                if (!outInfoByte.isEmpty()) {
+                    data.packgeVersion = QString(outInfoByte).simplified();
+                }
+            }
+        }
+
+        // 若为窗管崩溃，提取窗管最后100行日志到coredump信息中
+        if (data.exe == KWAYLAND_EXE_PATH || data.exe == XWAYLAND_EXE_PATH) {
+            // 窗管日志存放在用户家目录下，因此根据崩溃信息所属用户id获取用户家目录
+            uint userId = data.uid.toUInt();
+            QString userHomePath = Utils::getUserHomePathByUID(userId);
+            if (!userHomePath.isEmpty()) {
+                if (data.exe == KWAYLAND_EXE_PATH) {
+                    data.appLog = DLDBusHandler::instance()->readLogLinesInRange(QString("%1/.kwin-old.log").arg(userHomePath), 0, KWIN_LASTLINE_NUM).join('\n');
+                    if (!data.appLog.isEmpty())
+                        qCInfo(logBackend) << QString("kwin crash log:%1").arg(data.appLog);
+                } else if (data.exe == XWAYLAND_EXE_PATH) {
+                    data.appLog = DLDBusHandler::instance()->readLogLinesInRange(QString("%1/.xwayland.log.old").arg(userHomePath), KWIN_LASTLINE_NUM).join('\n');
+                }
+            } else {
+                qCWarning(logBackend) << QString("uid:%1 homepath is empty.").arg(userId);
+            }
+        }
+    }
 }

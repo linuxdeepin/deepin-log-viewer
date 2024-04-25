@@ -24,6 +24,7 @@ public:
     bool isFileExist(const QString &filePath);
     quint64 getFileSize(const QString &filePath);
     qint64 getLineCount(const QString &filePath);
+    QString executeCmd(const QString &cmd);
     QString openLogStream(const QString &filePath);
     QString readLogInStream(const QString &token);
     QStringList whiteListOutPaths();
