@@ -22,6 +22,16 @@
             "permissions": "readwrite",
             "visibility": "private"
         },
+       "coredumpReportMax": {
+            "value": 50,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Coredump report max",
+            "name[zh_CN]": "一次上报的崩溃信息最大条数",
+            "description": "The maximum number of crash messages reported at once",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
 	"specialComType": {
             "value": -1,
             "serial": 0,

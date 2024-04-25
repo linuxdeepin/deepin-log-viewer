@@ -40,6 +40,8 @@ public Q_SLOTS:
     Q_SCRIPTABLE bool isFileExist(const QString &filePath);
     Q_SCRIPTABLE quint64 getFileSize(const QString &filePath);
     Q_SCRIPTABLE qint64 getLineCount(const QString &filePath);
+    // 仅能执行特定合法命令
+    Q_SCRIPTABLE QString executeCmd(const QString &cmd);
     Q_SCRIPTABLE QStringList whiteListOutPaths();
 
 public:

@@ -29,8 +29,14 @@ const QString APP_LOG_CONFIG_PATH = "/usr/share/deepin-log-viewer/deepin-log.con
 
 const QString COREDUMP_REPORT_TIME = "coredumpReportTime";
 const QString COREDUMP_REPORT_TIME_GSETTING = "coredumpreporttime";
+const QString COREDUMP_REPORT_MAX = "coredumpReportMax";
+const QString COREDUMP_REPORT_MAX_GSETTING = "coredumpreportmax";
 const QString DCONFIG_APPID = "org.deepin.log.viewer";
 const QString GSETTING_APPID = "com.deepin.log.viewer";
+
+// 默认崩溃上报最大条数
+#define MAX_COREDUMP_REPORT 50
+
 /**
  * @brief LogApplicationHelper::LogApplicationHelper 构造函数，获取日志文件路径和应用名称
  * @param parent 父对象
@@ -772,6 +778,22 @@ void LogApplicationHelper::saveLastRerportTime(const QDateTime &date)
     if (m_pGSettings)
         m_pGSettings->set(COREDUMP_REPORT_TIME_GSETTING, str);
 #endif
+}
+
+int LogApplicationHelper::getMaxReportCoredump()
+{
+    QVariant value(MAX_COREDUMP_REPORT);
+
+#ifdef DTKCORE_CLASS_DConfigFile
+    value = m_pDConfig->value(COREDUMP_REPORT_MAX);
+#else
+    if (m_pGSettings) {
+        time = m_pGSettings->get(COREDUMP_REPORT_MAX_GSETTING);
+    }
+#endif
+
+    qCWarning(logAppHelper) << "coredump report max:" << value.toInt();
+    return value.toInt();
 }
 
 //从应用包名转换为应用显示文本

@@ -42,11 +42,6 @@ const QStringList sigList = { "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP"
 
 // DBUS传输文件大小阈值 100MB
 #define DBUS_THRESHOLD_MAX 100
-// 获取窗管崩溃时，其日志最后100行
-#define KWIN_LASTLINE_NUM 100
-// 窗管二进制可执行文件所在路径
-const QString KWAYLAND_EXE_PATH = "/usr/bin/kwin_wayland";
-const QString XWAYLAND_EXE_PATH = "/usr/bin/Xwayland";
 
 /**
  * @brief LogAuthThread::LogAuthThread 构造函数
@@ -1219,22 +1214,19 @@ void LogAuthThread::handleCoredump()
             coredumpMsg.sig = tmpList[7];
         }
         //获取用户名
-        coredumpMsg.uid = Utils::getUserNamebyUID(tmpList[5].toUInt());
+        coredumpMsg.uid = tmpList[5];
+        coredumpMsg.userName = Utils::getUserNamebyUID(tmpList[5].toUInt());
         coredumpMsg.coreFile = tmpList[8];
-        coredumpMsg.exe = tmpList[9];
+        QString exePath = tmpList[9];
+        coredumpMsg.exe = exePath;
         coredumpMsg.pid = tmpList[4];
+
         // 解析coredump文件保存位置
         if (coredumpMsg.coreFile != "missing") {
             // 若coreFile状态为missing，表示文件已丢失，不继续解析文件位置
             QString outInfoByte;
-            if (Utils::runInCmd) {
-                outInfoByte = DLDBusHandler::instance()->readLog(QString("coredumpctl info %1").arg(coredumpMsg.pid));
-            } else {
-                m_process->start("pkexec", QStringList() << "logViewerAuth" << QStringList() << "coredumpctl-info"
-                                 << coredumpMsg.pid <<SharedMemoryManager::instance()->getRunnableKey());
-                m_process->waitForFinished(-1);
-                outInfoByte = m_process->readAllStandardOutput();
-            }
+            outInfoByte = DLDBusHandler::instance()->readLog(QString("coredumpctl info %1").arg(coredumpMsg.pid));
+
             // 解析第一条堆栈信息
             QStringList strList = outInfoByte.split("Stack trace of thread");
             if (strList.size() > 1) {
@@ -1242,66 +1234,8 @@ void LogAuthThread::handleCoredump()
             }
             re.indexIn(outInfoByte);
             coredumpMsg.storagePath = re.cap(0).replace("Storage: ", "");
-            
-            // get maps info
-            if (m_parseMap) {
-                const QString &corePath = QDir::tempPath() + QString("/%1.dump").arg(QFileInfo(coredumpMsg.storagePath).fileName());
-                if (Utils::runInCmd) {
-                    DLDBusHandler::instance()->readLog(QString("coredumpctl dump %1 -o %2").arg(coredumpMsg.pid).arg(corePath));
-                    outInfoByte = DLDBusHandler::instance()->readLog(QString("readelf -n %1").arg(corePath));
-                } else {
-                    m_process->start("pkexec", QStringList() << "logViewerAuth" << QStringList() << "coredumpctl-dump"
-                                     << coredumpMsg.pid << corePath << SharedMemoryManager::instance()->getRunnableKey());
-                    m_process->waitForFinished(-1);
-                    m_process->start("pkexec", QStringList() << "logViewerAuth" << QStringList() << "readelf"
-                                     << corePath << SharedMemoryManager::instance()->getRunnableKey());
-                    m_process->waitForFinished(-1);
-                    outInfoByte = m_process->readAllStandardOutput();
-                }
-                coredumpMsg.maps = outInfoByte;
-
-                // 获取二进制文件信息
-                m_process->start("/bin/bash", QStringList() << "-c" << QString("file %1").arg(coredumpMsg.exe));
-                m_process->waitForFinished(-1);
-                outInfoByte = m_process->readAllStandardOutput();
-                if (!outInfoByte.isEmpty())
-                    coredumpMsg.binaryInfo = outInfoByte;
-
-                // 获取包名
-                m_process->start("/bin/bash", QStringList() << "-c" << QString("dpkg -S %1").arg(coredumpMsg.exe));
-                m_process->waitForFinished(-1);
-                outInfoByte = m_process->readAllStandardOutput();
-                // 获取版本号
-                if (!outInfoByte.isEmpty()) {
-                    QString str = outInfoByte;
-                    m_process->start("/bin/bash", QStringList() << "-c" << QString("dpkg-query --show %1").arg(str.split(":").first()));
-                    m_process->waitForFinished(-1);
-                    outInfoByte = m_process->readAllStandardOutput();
-                    if (!outInfoByte.isEmpty()) {
-                        coredumpMsg.packgeVersion = QString(outInfoByte).simplified();
-                    }
-                }
-            }
         } else {
             coredumpMsg.storagePath = QString("coredump file is missing");
-        }
-
-        // 若为窗管崩溃，提取窗管最后100行日志到coredump信息中
-        if (coredumpMsg.exe == KWAYLAND_EXE_PATH || coredumpMsg.exe == XWAYLAND_EXE_PATH) {
-            // 窗管日志存放在用户家目录下，因此根据崩溃信息所属用户id获取用户家目录
-            uint userId = tmpList[5].toUInt();
-            QString userHomePath = Utils::getUserHomePathByUID(userId);
-            if (!userHomePath.isEmpty()) {
-                if (coredumpMsg.exe == KWAYLAND_EXE_PATH) {
-                    coredumpMsg.appLog = readAppLogFromLastLines(QString("%1/.kwin-old.log").arg(userHomePath), KWIN_LASTLINE_NUM);
-                    if (!coredumpMsg.appLog.isEmpty())
-                        qCInfo(logAuthWork) << QString("kwin crash log:\n").arg(coredumpMsg.appLog);
-                } else if (coredumpMsg.exe == XWAYLAND_EXE_PATH) {
-                    coredumpMsg.appLog = readAppLogFromLastLines(QString("%1/.xwayland.log.old").arg(userHomePath), KWIN_LASTLINE_NUM);
-                }
-            } else {
-                qCWarning(logAuthWork) << QString("uid:%1 homepath is empty.").arg(userId);
-            }
         }
 
         coredumpList.append(coredumpMsg);

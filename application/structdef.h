@@ -229,6 +229,7 @@ struct LOG_MSG_COREDUMP {
     QString dateTime;
     QString coreFile;
     QString uid;
+    QString userName;
     QString exe;
     QString pid;
     QString storagePath;

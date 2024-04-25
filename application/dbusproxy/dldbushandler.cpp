@@ -141,3 +141,8 @@ qint64 DLDBusHandler::getLineCount(const QString &filePath)
 {
     return m_dbus->getLineCount(filePath);
 }
+
+QString DLDBusHandler::executeCmd(const QString &cmd)
+{
+    return m_dbus->executeCmd(cmd);
+}
