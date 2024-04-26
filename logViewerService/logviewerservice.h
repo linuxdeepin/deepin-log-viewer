@@ -56,6 +56,8 @@ private:
     // 通过缓存块方式快速定位到指定行行首
     qint64 findLineStartOffsetWithCaching(const QString &filePath, qint64 targetLine);
 
+    qint64 findLineStartOffsetWithFile(const QString &filePath, qint64 targetLine);
+
 private:
     QTemporaryDir tmpDir;
     QProcess m_process;

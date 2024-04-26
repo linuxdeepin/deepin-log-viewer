@@ -6,6 +6,7 @@
 
 #include <pwd.h>
 #include <unistd.h>
+#include <fstream>
 
 #include <dgiofile.h>
 #include <dgiovolume.h>
@@ -273,6 +274,28 @@ qint64 LogViewerService::findLineStartOffsetWithCaching(const QString &filePath,
     file.close();
 
     return -1; // 没有找到目标行
+}
+
+qint64 LogViewerService::findLineStartOffsetWithFile(const QString &filePath, qint64 targetLine)
+{
+    std::ifstream file(filePath.toStdString());
+    if (!file.is_open()) {
+        return -1;
+    }
+
+    int currentLine = 0;
+    std::string line;
+    while (getline(file, line)) {
+        if (currentLine == targetLine) {
+            return (qint64)file.tellg() - line.length() - 1;
+        }
+        currentLine++;
+    }
+
+    // 关闭文件
+    file.close();
+
+    return -1;
 }
 
 qint64 LogViewerService::getLineCount(const QString &filePath) {
