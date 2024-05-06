@@ -67,6 +67,8 @@ public:
 
     QDateTime getLastReportTime();
     void saveLastRerportTime(const QDateTime& date);
+    // 获取崩溃上报最大条数，默认为50
+    int getMaxReportCoredump();
 
 private:
     explicit LogApplicationHelper(QObject *parent = nullptr);

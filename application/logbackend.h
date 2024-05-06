@@ -241,6 +241,7 @@ private:
     QString getApplogPath(const QString &appName);
     QStringList getLabels(const LOG_FLAG &flag);
     bool hasMatchedData(const LOG_FLAG &flag);
+    void parseCoredumpDetailInfo(QList<LOG_MSG_COREDUMP>& list);
 
 private:
     QStringList m_logTypes;

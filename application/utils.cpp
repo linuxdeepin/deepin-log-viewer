@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "logsettings.h"
 #include "dbusmanager.h"
+#include "dbusproxy/dldbushandler.h"
 
 #include <math.h>
 #include <pwd.h>
@@ -47,6 +48,14 @@ int Utils::specialComType = -1;
 // 2.systemd服务启动deepin-log-viewer，QDir::homePath返回的是/，因该方式下freedesktop dbus接口获取为空，只能将/root作为homePath
 QString Utils::homePath = ((QDir::homePath() != "/root" && QDir::homePath() != "/") ? QDir::homePath() : (QDir::homePath() == "/" ? "/root" : DBusManager::getHomePathByFreeDesktop()));
 bool Utils::runInCmd = false;
+
+// 高频重复崩溃记录exe路径名单
+//const QString COREDUMP_REPEAT_CONFIG_PATH = "/var/cache/deepin/deepin-log-viewer/repeatCoredumpApp.list";
+const QString COREDUMP_REPEAT_CONFIG_PATH = Utils::homePath + "/.cache/deepin/deepin-log-viewer/repeatCoredumpApp.list";
+const float COREDUMP_HIGH_REPETITION = 0.8f;
+const int COREDUMP_TIME_THRESHOLD = 3;
+
+
 Utils::Utils(QObject *parent)
     : QObject(parent)
 {
@@ -478,6 +487,109 @@ void Utils::resetToNormalAuth(const QString &path)
     }
 }
 
+QList<LOG_REPEAT_COREDUMP_INFO> Utils::countRepeatCoredumps(qint64 timeBegin, qint64 timeEnd)
+{
+    QList<LOG_REPEAT_COREDUMP_INFO> result;
+    QString data = DLDBusHandler::instance()->executeCmd("coredumpctl-list");
+    QStringList strList = data.split('\n', QString::SkipEmptyParts);
+    int total = 0;
+    for (int i = strList.size() - 1; i >= 0; --i) {
+        QString str = strList.at(i);
+        if (str.trimmed().isEmpty())
+            continue;
+        QStringList tmpList = str.split(" ", QString::SkipEmptyParts);
+        if (tmpList.count() < 10)
+            continue;
+
+        QDateTime dt = QDateTime::fromString(tmpList[1] + " " + tmpList[2], "yyyy-MM-dd hh:mm:ss");
+        if (timeBegin > 0 && timeEnd > 0) {
+            if (dt.toMSecsSinceEpoch() < timeBegin || dt.toMSecsSinceEpoch() > timeEnd)
+                continue;
+        }
+
+        total++;
+        QString exePath = tmpList[9];
+
+        auto it = std::find_if(result.begin(), result.end(), [&exePath](const LOG_REPEAT_COREDUMP_INFO& item){
+            return exePath == item.exePath;
+        });
+        if (it == result.end()) {
+            LOG_REPEAT_COREDUMP_INFO info;
+            info.exePath = exePath;
+            info.times = 1;
+            info.repetitionRate = 0.0;
+            result.push_back(info);
+        } else {
+            it->times++;
+        }
+    }
+
+    // 计算重复率
+    for (auto &info : result) {
+        if (info.times > 1) {
+            info.repetitionRate = static_cast<float>(info.times) / total;
+        }
+    }
+
+    return result;
+}
+
+QStringList Utils::getRepeatCoredumpExePaths()
+{
+    QFile file(COREDUMP_REPEAT_CONFIG_PATH);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return QStringList();
+
+    QString data = file.readAll();
+
+    file.close();
+
+    return data.split(' ');
+}
+
+void Utils::updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &infos)
+{
+    // 每隔24小时强制清空一次名单内容，以便重复的崩溃exe路径是最新的
+    QFileInfo fi(COREDUMP_REPEAT_CONFIG_PATH);
+    if (fi.birthTime().daysTo(QDateTime::currentDateTime()) >= 1) {
+        if (QFile::exists(COREDUMP_REPEAT_CONFIG_PATH))
+                QFile::remove(COREDUMP_REPEAT_CONFIG_PATH);
+    }
+
+    QDateTime bt = fi.birthTime();
+    // 目录不存在，则创建目录
+    if (!QFileInfo::exists(fi.absolutePath())) {
+        QDir dir;
+        dir.mkpath(fi.absolutePath());
+    }
+
+    // 确定当前时间范围的崩溃数据高频重复路径
+    QStringList newRepatExePaths;
+    for (auto info : infos) {
+        if (info.repetitionRate > COREDUMP_HIGH_REPETITION || info.times >= COREDUMP_TIME_THRESHOLD)
+            newRepatExePaths.push_back(info.exePath);
+    }
+
+    if (newRepatExePaths.size() == 0)
+        return;
+
+    QStringList curReaptExePaths = getRepeatCoredumpExePaths();
+    for (auto exePath : newRepatExePaths) {
+        if (curReaptExePaths.indexOf(exePath) == -1)
+            curReaptExePaths.push_back(exePath);
+    }
+
+    QFile file(COREDUMP_REPEAT_CONFIG_PATH);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qCWarning(logUtils) << "failed to open coredump repeat config file:" << COREDUMP_REPEAT_CONFIG_PATH;
+        return;
+    }
+
+    QTextStream out(&file);
+    out << curReaptExePaths.join(' ');
+
+    file.close();
+}
 
 #ifdef DTKCORE_CLASS_DConfigFile
 LoggerRules::LoggerRules(QObject *parent)

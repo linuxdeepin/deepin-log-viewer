@@ -35,6 +35,9 @@ Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service")
 Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service", QtInfoMsg)
 #endif
 
+// 读取崩溃应用maps信息最大行数
+#define COREDUMP_MAPS_MAX_LINES 200
+
 /**
    @brief 移除路径 \a dirPath 下的文件，注意，不会递归删除文件夹
  */
@@ -148,7 +151,20 @@ QString LogViewerService::readLog(const QString &filePath)
         m_process.start("/bin/bash", QStringList() << "-c" << filePath);
         m_process.waitForFinished(-1);
 
-        return m_process.readAllStandardOutput();
+        // 因原始maps信息过大，基本几百KB，埋点平台并不需要全量数据，仅取前200行maps信息即可
+        QTextStream in(m_process.readAllStandardOutput());
+        QStringList lines;
+        QString str;
+        while (!in.atEnd()) {
+            str  = in.readLine();
+
+            if (!str.isEmpty())
+                lines.push_back(str);
+            if (lines.count() >= COREDUMP_MAPS_MAX_LINES)
+                break;
+        }
+
+        return lines.join('\n').toUtf8();
     } else {
         m_process.start("cat", QStringList() << filePath);
         m_process.waitForFinished(-1);
@@ -357,6 +373,29 @@ qint64 LogViewerService::getLineCount(const QString &filePath) {
         lineCount = splitResult.first().toLongLong();
 
     return lineCount;
+}
+
+QString LogViewerService::executeCmd(const QString &cmd)
+{
+    QString result("");
+
+    if (!isValidInvoker())
+        return result;
+
+    QString validCmd;
+    if (cmd == "coredumpctl-list-count")
+        validCmd = "coredumpctl list | wc -l";
+    else if (cmd == "coredumpctl-list")
+        validCmd = "coredumpctl list";
+
+    if (!validCmd.isEmpty()) {
+        m_process.start("/bin/bash", QStringList() << "-c" << validCmd);
+        m_process.waitForFinished(-1);
+
+        result = m_process.readAllStandardOutput();
+    }
+
+    return result;
 }
 
 /*!
