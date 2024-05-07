@@ -133,19 +133,19 @@ QString LogViewerService::readLog(const QString &filePath)
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("coredumpctl info") && !filePath.contains(";")) {
+    } else if (filePath.startsWith("coredumpctl info") && !filePath.contains(";") && !filePath.contains("|")) {
         // 通过后端服务，按进程号获取崩溃信息
         m_process.start("/bin/bash", QStringList() << "-c" << filePath);
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("coredumpctl dump") && !filePath.contains(";")) {
+    } else if (filePath.startsWith("coredumpctl dump") && !filePath.contains(";") && !filePath.contains("|")) {
         // 截取对应pid的dump文件到指定目录
         m_process.start("/bin/bash", QStringList() << "-c" << filePath);
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("readelf") && !filePath.contains(";")) {
+    } else if (filePath.startsWith("readelf") && !filePath.contains(";") && !filePath.contains("|")) {
         // 获取dump文件偏移地址信息
         m_process.start("/bin/bash", QStringList() << "-c" << filePath);
         m_process.waitForFinished(-1);
@@ -749,6 +749,11 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             qCWarning(logService) << "in not file:" << in;
             return false;
         }
+
+        // 待拷贝文件名称包含特殊字符，cp 命令并不能正常执行，需要进行合法性检查
+        if (filein.fileName().contains(";") || filein.fileName().contains("|"))
+            return false;
+
         outFullPath = outDirInfo.absoluteFilePath() + filein.fileName();
         //复制文件
         arg[1].append(QString("cp %1 \"%2\";").arg(in, outDirInfo.absoluteFilePath()));
