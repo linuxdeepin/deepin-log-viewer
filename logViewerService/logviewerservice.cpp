@@ -6,6 +6,7 @@
 
 #include <pwd.h>
 #include <unistd.h>
+#include <fstream>
 
 #include <dgiofile.h>
 #include <dgiovolume.h>
@@ -183,6 +184,60 @@ QString LogViewerService::readLog(const QString &filePath)
     }
 }
 
+qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 startLine, QList<uint64_t>& lineIndexes, bool reverseOrder) {
+    std::ifstream file(filePath.toStdString());
+    if (!file.is_open()) {
+        // 文件不存在，返回错误
+        return -1;
+    }
+
+    std::string line;
+    uint64_t lineNumber = 0;
+    uint64_t startIndex = 0;
+
+    // TODO(pengfeixxx): If the index storage takes up too much memory, you can use differential 
+    // encoding to encode the array where the index is stored, and if it is still large, 
+    // you can continue to use Huffman encoding for the encoded array.
+    if (lineIndexes.empty()) {
+        // 从文件开头开始读取
+        while (std::getline(file, line)) {
+            lineNumber++;
+            lineIndexes.push_back(startIndex);
+            startIndex = file.tellg();
+            if (lineNumber > startLine && !reverseOrder) {
+                break;
+            }
+        }
+    } else {
+        if (startLine < lineIndexes.size() && !reverseOrder) {
+            return lineIndexes[startLine];
+        } else {
+            file.seekg(lineIndexes.last());
+            lineNumber = lineIndexes.size();
+            while (std::getline(file, line)) {
+                lineNumber++;
+                startIndex = file.tellg();
+                lineIndexes.push_back(startIndex);
+                if (lineNumber > startLine && !reverseOrder) {
+                    break;
+                }
+            }
+            if (reverseOrder)
+                lineIndexes.removeLast();
+        }
+    }
+
+    if (reverseOrder) {
+        startLine = lineIndexes.size() - startLine - 1;
+        if (startLine < 0)
+            return -1;
+        else
+            return lineIndexes.at(startLine);
+    }
+
+    return lineIndexes.at(startLine); // 返回给定起始行的索引
+}
+
 QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
 {
     QStringList lines;
@@ -202,26 +257,30 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
+        QString token = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Md5).toHex();
+        if (m_logLineIndex.contains(token))
+            m_logLineIndex.remove(token);
         return lines;
     }
 
-    if (bReverse) {
-        qint64 totalLineCount = getLineCount(filePath);
-        qint64 offsetLine = totalLineCount - startLine;// 获取倒序行的正序索引值
-
-        if (offsetLine < 0) {
-            qWarning() << "startLine has exceeded the maximum number of rows. reverse read:" << bReverse;
-            return lines;
-        }
-
-        if (offsetLine < lineCount)
-            lineCount = offsetLine;
-
-        startLine = offsetLine - lineCount;
+    qint64 startPosition = 0;
+    QString token = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Md5).toHex();
+    if (m_logLineIndex.contains(token)) {
+        startPosition = readFileAndReturnIndex(filePath, startLine, m_logLineIndex[token], bReverse);
+    } else {
+        QList<uint64_t> indexList;
+        startPosition = readFileAndReturnIndex(filePath, startLine, indexList, bReverse);
+        m_logLineIndex.insert(token, indexList);
     }
 
-    // 估算起始位置
-    qint64 startPosition = findLineStartOffsetWithCaching(filePath, startLine);
+    if (bReverse) {
+        int startLineCount = m_logLineIndex[token].size() - lineCount;
+        startPosition = startLineCount > 0 ? startLineCount : 0;
+    }
+
+    if (startPosition < 0)
+        return lines;
+
     if (!file.seek(startPosition)) {
         file.close();
         return lines;
