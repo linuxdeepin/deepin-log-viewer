@@ -58,12 +58,15 @@ private:
     // 通过缓存块方式快速定位到指定行行首
     qint64 findLineStartOffsetWithCaching(const QString &filePath, qint64 targetLine);
 
+    qint64 readFileAndReturnIndex(const QString &filePath, qint64 startLine, QList<uint64_t>& lineIndexes, bool reverseOrder);
+
 private:
     QTemporaryDir tmpDir;
     QProcess m_process;
     QString tmpDirPath;
     QMap<QString, QString> m_commands;
     QMap<QString, std::pair<QString, QTextStream*>> m_logMap;
+    QMap<QString, QList<uint64_t>> m_logLineIndex;
     /**
      * @brief isValidInvoker 检验调研者是否是日志
      * @return

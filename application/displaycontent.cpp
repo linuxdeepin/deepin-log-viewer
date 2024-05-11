@@ -2608,7 +2608,8 @@ void DisplayContent::slot_searchResult(const QString &str)
     //如果搜索结果为空要显示无搜索结果提示
     if (0 == m_pModel->rowCount()) {
         if (m_pLogBackend->m_currentSearchStr.isEmpty()) {
-            setLoadState(DATA_COMPLETE);
+            if (m_flag != KERN && m_flag != Kwin)
+                setLoadState(DATA_COMPLETE);
         } else {
             if ((m_flag != KERN && m_flag != Kwin) || !bHasNext)
                 setLoadState(DATA_NO_SEARCH_RESULT);
