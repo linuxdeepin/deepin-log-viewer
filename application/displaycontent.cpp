@@ -58,7 +58,7 @@ Q_LOGGING_CATEGORY(logDisplaycontent, "org.deepin.log.viewer.display.content", Q
 #define STATUS_WIDTH 90
 #define DATETIME_WIDTH 175
 #define DEAMON_WIDTH 100
-#define TREE_NORMAL_HEIGHT 373
+#define TREE_NORMAL_COUNT 50   //大致填满表格区域的行数
 /**
  * @brief DisplayContent::DisplayContent 初始化界面\等级数据和实际显示文字转换的数据结构\信号槽连接
  * @param parent
@@ -381,6 +381,7 @@ void DisplayContent::parseListToModel(const QList<QString> &list, QStandardItemM
 int DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bReset/* = true*/)
 {
     int nSegementIndex = m_pLogBackend->getNextSegementIndex(m_flag, bNext);
+    qDebug() << "loadSegementPage index:" << nSegementIndex;
     if(nSegementIndex == -1)
         return -1;
 
@@ -1815,7 +1816,7 @@ void DisplayContent::slot_parseFinished(LOG_FLAG type, int status)
         }
     } else {
         // 分段加载逻辑处理
-        if (m_treeView->verticalScrollBar()->maximum() == 0 || m_treeView->height() < TREE_NORMAL_HEIGHT) {
+        if (m_treeView->verticalScrollBar()->maximum() == 0 || m_pModel->rowCount() < TREE_NORMAL_COUNT) {
             // 数据未填满表格显示区域，分段加载下一段数据
             nSegementIndex = loadSegementPage(true, false);
         }
@@ -2259,8 +2260,7 @@ void DisplayContent::slot_vScrollValueChanged(int valuePixel)
     }
 
     // 滚动到底部，启动向下分段加载
-    int leftCount = m_pLogBackend->m_type2LogData[m_flag].count() - SINGLE_LOAD * rateValue;
-    if (m_treeView->verticalScrollBar()->maximum() == m_treeView->verticalScrollBar()->value() && leftCount <= 0) {
+    if (m_treeView->verticalScrollBar()->maximum() == m_treeView->verticalScrollBar()->value()) {
         loadSegementPage();
         return;
     }
