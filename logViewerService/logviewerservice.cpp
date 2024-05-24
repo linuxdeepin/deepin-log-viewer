@@ -130,7 +130,7 @@ QString LogViewerService::readLog(const QString &filePath)
 
     if (filePath == "coredump") {
         // 通过后端服务，读取系统下所有账户的崩溃日志信息
-        m_process.start("/bin/bash", QStringList() << "-c" << "coredumpctl list --no-pager");
+        m_process.start("coredumpctl", QStringList() << "list" << "--no-pager");
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
@@ -376,7 +376,7 @@ qint64 LogViewerService::getLineCount(const QString &filePath) {
         return -1;
     }
 
-    m_process.start("/bin/bash", QStringList() << "-c" << QString("wc -l %1").arg(filePath));
+    m_process.start("wc", QStringList() << "-l" << filePath);
     m_process.waitForFinished(-1);
 
     qint64 lineCount = -1;
@@ -395,15 +395,25 @@ QString LogViewerService::executeCmd(const QString &cmd)
     if (!isValidInvoker())
         return result;
 
-    QString validCmd;
-    if (cmd == "coredumpctl-list-count")
-        validCmd = "coredumpctl list | wc -l | awk '{print $1-1}'";
-    else if (cmd == "coredumpctl-list")
-        validCmd = "coredumpctl list";
+    QString cmdStr;
+    QStringList args;
+    if (cmd == "coredumpctl-list-count") {
+        cmdStr = "/bin/bash";
+        args << "-c";
+        args << "coredumpctl list | wc -l | awk '{print $1-1}'";
+    }
+    else if (cmd == "coredumpctl-list") {
+        cmdStr = "coredumpctl";
+        args << "list";
+    }
 
-    if (!validCmd.isEmpty()) {
-        m_process.start("/bin/bash", QStringList() << "-c" << validCmd);
-        m_process.waitForFinished(-1);
+    if (!cmdStr.isEmpty()) {
+        m_process.start(cmdStr, args);
+
+        if (!m_process.waitForFinished(-1)) {
+            qCWarning(logService()) << "invalid command:" << QString("%1 %2").arg(cmdStr).arg(args.join(' '));
+            return "";
+        }
 
         result = m_process.readAllStandardOutput();
     }
@@ -643,9 +653,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
         nameFilter = file;
     } else if (file == "coredump") {
         QProcess process;
-        QStringList args = {"-c", ""};
-        args[1].append("coredumpctl list");
-        process.start("/bin/bash", args);
+        process.start("coredumpctl", QStringList() << "list");
         process.waitForFinished(-1);
         QByteArray outByte = process.readAllStandardOutput();
         QStringList strList = QString(outByte.replace('\u0000', "").replace("\x01", "")).split('\n', QString::SkipEmptyParts);
@@ -665,8 +673,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
             QString storagePath = "";
             // 解析coredump文件保存位置
             if (coreFile != "missing") {
-                args[1] = QString("coredumpctl info %1").arg(pid);
-                process.start("/bin/bash", args);
+                process.start("coredumpctl", QStringList() << "info" << pid);
                 process.waitForFinished(-1);
                 QByteArray outInfoByte = process.readAllStandardOutput();
                 re.indexIn(outInfoByte);
