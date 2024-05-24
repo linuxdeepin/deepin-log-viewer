@@ -788,7 +788,7 @@ int LogApplicationHelper::getMaxReportCoredump()
     value = m_pDConfig->value(COREDUMP_REPORT_MAX);
 #else
     if (m_pGSettings) {
-        time = m_pGSettings->get(COREDUMP_REPORT_MAX_GSETTING);
+        value = m_pGSettings->get(COREDUMP_REPORT_MAX_GSETTING);
     }
 #endif
 
