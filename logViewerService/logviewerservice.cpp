@@ -134,21 +134,24 @@ QString LogViewerService::readLog(const QString &filePath)
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("coredumpctl info") && !filePath.contains(";") && !filePath.contains("|")) {
+    } else if (filePath.startsWith("coredumpctl info")) {
         // 通过后端服务，按进程号获取崩溃信息
-        m_process.start("/bin/bash", QStringList() << "-c" << filePath);
+        QStringList args = filePath.mid(QString("coredumpctl").count() + 1).split(' ');
+        m_process.start("coredumpctl", args);
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("coredumpctl dump") && !filePath.contains(";") && !filePath.contains("|")) {
+    } else if (filePath.startsWith("coredumpctl dump")) {
         // 截取对应pid的dump文件到指定目录
-        m_process.start("/bin/bash", QStringList() << "-c" << filePath);
+        QStringList args = filePath.mid(QString("coredumpctl").count() + 1).split(' ');
+        m_process.start("coredumpctl", args);
         m_process.waitForFinished(-1);
 
         return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("readelf") && !filePath.contains(";") && !filePath.contains("|")) {
+    } else if (filePath.startsWith("readelf")) {
         // 获取dump文件偏移地址信息
-        m_process.start("/bin/bash", QStringList() << "-c" << filePath);
+        QStringList args = filePath.mid(QString("readelf").count() + 1).split(' ');
+        m_process.start("readelf", args);
         m_process.waitForFinished(-1);
 
         // 因原始maps信息过大，基本几百KB，埋点平台并不需要全量数据，仅取前200行maps信息即可
@@ -394,7 +397,7 @@ QString LogViewerService::executeCmd(const QString &cmd)
 
     QString validCmd;
     if (cmd == "coredumpctl-list-count")
-        validCmd = "coredumpctl list | wc -l";
+        validCmd = "coredumpctl list | wc -l | awk '{print $1-1}'";
     else if (cmd == "coredumpctl-list")
         validCmd = "coredumpctl list";
 
@@ -798,7 +801,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     }
 
     QString outFullPath = "";
-    QStringList arg = {"-c", ""};
+    QString cmdExec = "";
     if (isFile) {
         //增加服务黑名单，只允许通过提权接口读取/var/log、/var/lib/systemd/coredump下，家目录下和临时目录下的文件
         if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home") && !in.startsWith("/var/lib/systemd/coredump"))
@@ -811,13 +814,9 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             return false;
         }
 
-        // 待拷贝文件名称包含特殊字符，cp 命令并不能正常执行，需要进行合法性检查
-        if (filein.fileName().contains(";") || filein.fileName().contains("|"))
-            return false;
-
         outFullPath = outDirInfo.absoluteFilePath() + filein.fileName();
         //复制文件
-        arg[1].append(QString("cp %1 \"%2\";").arg(in, outDirInfo.absoluteFilePath()));
+        cmdExec = QString("cp %1 %2").arg(in, outDirInfo.absoluteFilePath());
     } else {
         QString cmd;
 
@@ -870,15 +869,28 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             return false;
         }
 
-        //结果重定向到文件
-        arg[1].append(QString("%1 >& \"%2\";").arg(cmd, outFullPath));
+        cmdExec = QString("%1 >& \"%2\";").arg(cmd, outFullPath);
     }
-    //设置文件权限
-    arg[1].append(QString("chmod 777 \"%1\";").arg(outFullPath));
+
+    QString cmdStr = cmdExec.mid(0, cmdExec.indexOf(' '));
     QProcess process;
-    process.start("/bin/bash", arg);
+    if (cmdStr == "cp") {
+        QStringList args;
+        args << cmdExec.mid(cmdExec.indexOf(' ') + 1).split(' ');
+        process.start(cmdStr, args);
+    } else {
+        process.start("/bin/bash", QStringList() << "-c" << cmdExec);
+    }
+
+    if (!process.waitForFinished(-1)) {
+        qCWarning(logService) << "command error:" << cmdExec;
+        return false;
+    }
+
+    //设置文件权限
+    process.start("chmod", QStringList() << "777" << outFullPath);
     if (!process.waitForFinished()) {
-        qCWarning(logService) << "command error:" << arg;
+        qCWarning(logService) << QString("chmod 777 %1 failed.").arg(outFullPath);
         return false;
     }
     return true;
