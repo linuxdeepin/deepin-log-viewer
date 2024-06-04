@@ -99,8 +99,8 @@ void FilterContent::initUI()
     // set level info
     hLayout_all = new QHBoxLayout;
     QHBoxLayout *hLayout_lvl = new QHBoxLayout;
-    lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
-    lvTxt->setAccessibleName(DApplication::translate("Label", "Level:  "));
+    lvTxt = new DLabel(DApplication::translate("Label", "Level:"), this);
+    lvTxt->setAccessibleName(DApplication::translate("Label", "Level:"));
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
     cbx_lv->view()->setAccessibleName("combobox_level_view");
@@ -120,8 +120,8 @@ void FilterContent::initUI()
     hLayout_lvl->setSpacing(6);
     hLayout_all->addLayout(hLayout_lvl);
     QHBoxLayout *hLayout_dnf_lvl = new QHBoxLayout;
-    dnflvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
-    dnflvTxt->setAccessibleName("dnf" + DApplication::translate("Label", "Level:  "));
+    dnflvTxt = new DLabel(DApplication::translate("Label", "Level:"), this);
+    dnflvTxt->setAccessibleName("dnf" + DApplication::translate("Label", "Level:"));
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
     cbx_dnf_lv->view()->setAccessibleName("combobox_dnflevel_view");
@@ -144,7 +144,7 @@ void FilterContent::initUI()
     cbx_app = new LogCombox(this);
     cbx_app->view()->setAccessibleName("combobox_app_view");
 
-    cbx_app->setMinimumSize(QSize(180, BUTTON_HEIGHT_MIN));
+    cbx_app->setMinimumSize(QSize(160, BUTTON_HEIGHT_MIN));
     hLayout_app->addWidget(appTxt);
     hLayout_app->addWidget(cbx_app, 1);
     hLayout_app->setSpacing(6);
@@ -156,7 +156,7 @@ void FilterContent::initUI()
     cbx_submodule = new LogCombox(this);
     cbx_submodule->view()->setAccessibleName("combobox_submodule_view");
 
-    cbx_submodule->setMinimumSize(QSize(154, BUTTON_HEIGHT_MIN));
+    cbx_submodule->setMinimumSize(QSize(143, BUTTON_HEIGHT_MIN));
     hLayout_submodule->addWidget(submoduleTxt);
     hLayout_submodule->addWidget(cbx_submodule, 1);
     hLayout_submodule->setSpacing(6);
