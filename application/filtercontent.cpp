@@ -99,8 +99,8 @@ void FilterContent::initUI()
     // set level info
     hLayout_all = new QHBoxLayout;
     QHBoxLayout *hLayout_lvl = new QHBoxLayout;
-    lvTxt = new DLabel(DApplication::translate("Label", "Level:"), this);
-    lvTxt->setAccessibleName(DApplication::translate("Label", "Level:"));
+    lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
+    lvTxt->setAccessibleName(DApplication::translate("Label", "Level:  "));
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
     cbx_lv->view()->setAccessibleName("combobox_level_view");
@@ -120,8 +120,8 @@ void FilterContent::initUI()
     hLayout_lvl->setSpacing(6);
     hLayout_all->addLayout(hLayout_lvl);
     QHBoxLayout *hLayout_dnf_lvl = new QHBoxLayout;
-    dnflvTxt = new DLabel(DApplication::translate("Label", "Level:"), this);
-    dnflvTxt->setAccessibleName("dnf" + DApplication::translate("Label", "Level:"));
+    dnflvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
+    dnflvTxt->setAccessibleName("dnf" + DApplication::translate("Label", "Level:  "));
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
     cbx_dnf_lv->view()->setAccessibleName("combobox_dnflevel_view");
