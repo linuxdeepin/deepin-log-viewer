@@ -1,3 +1,19 @@
+deepin-log-viewer (6.1.18) unstable; urgency=medium
+
+  * feat: Segmented export supports doc and xls formats for export
+  * fix: Fix the issue of progress bar not displaying progress(Bug: 251937)
+  * feat: Crash report content optimization(Task: 10320240422)
+  * fix: Fix two security vulnerabilities(Bug: 253967)
+  * fix: Optimized file reading speed
+  * fix: Fix issues with abnormal search functionality
+  * fix: fix compile problem on longarrch
+  * fix: Security vulnerability reinforcement
+  * fix: remove /bin/bash in service if necessary
+  * fix: UI interface in English(Bug: 256789)
+  * fix: The "level" on the page is displayed as "level"(Bug: 260291)
+
+ -- houchengqiu <houchengqiu@uniontech.com>  Tue, 18 Jun 2024 16:00:41 +0800
+
 deepin-log-viewer (6.1.17) unstable; urgency=medium
 
   * perf: Optimization of kernel/window management log memory usage
