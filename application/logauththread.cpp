@@ -1249,6 +1249,7 @@ void LogAuthThread::handleCoredump()
     if (!m_canRun) {
         return;
     }
+
     //最后可能有余下不足600的数据
     if (coredumpList.count() >= 0) {
         emit coredumpData(m_threadCount, coredumpList);
