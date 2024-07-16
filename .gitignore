@@ -30,6 +30,7 @@ debian/*
 !debian/control
 !debian/compat
 !debian/source/*
+!debian/deepin-log-viewer.sysusers
 # cmake dir
 obj-x86_64-linux-gnu/*
 *.txt.user
