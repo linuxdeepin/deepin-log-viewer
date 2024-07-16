@@ -1,5 +1,7 @@
 [Unit]
 Description=Deepin Log Viewer Daemon
+Wants=dbus.socket
+After=dbus.socket
 
 [Service]
 Type=dbus
@@ -7,6 +9,11 @@ BusName=com.deepin.logviewer
 ExecStart=/usr/lib/deepin-daemon/log-view-service
 CapabilityBoundingSet=~CAP_NET_RAW
 MemoryLimit=8G
+# 非root有阻塞，deepin-daemon启动后不能通过/proc/pid/exe获取启动进程全路径，下一阶段再按deepin-dameon启动
+#User=deepin-daemon
+ProtectSystem=strict
+# 传参需要/home，比如导出日志到/home路径下，读取/home/$user/.cache下应用日志
+#ProtectHome=yes
 
 [Install]
 WantedBy=multi-user.target
