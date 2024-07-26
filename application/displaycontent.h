@@ -40,7 +40,8 @@ class DisplayContent : public Dtk::Widget::DWidget
         DATA_LOADING_K, //内核日志正在加载
         DATA_NO_SEARCH_RESULT, //搜索无记录
         DATA_NOT_AUDIT_ADMIN, // 提示不是审计管理员
-        COREDUMPCTL_NOT_INSTALLED //未安装coredumpctl工具
+        COREDUMPCTL_NOT_INSTALLED, //未安装coredumpctl工具
+        DATA_NO_PERMISSION //没有权限查看
     };
 
     enum OOC_TYPE {
@@ -258,6 +259,7 @@ private:
     // 不是审计管理员提示的label
     Dtk::Widget::DLabel *notAuditLabel {nullptr};
     Dtk::Widget::DLabel *noCoredumpctlLabel {nullptr};
+    Dtk::Widget::DLabel *noPermissionLabel {nullptr};
     //当前选中的日志类型的index
     QModelIndex m_curListIdx;
     //当前选中的treeview的index

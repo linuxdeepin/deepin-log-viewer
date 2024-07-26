@@ -122,6 +122,12 @@ void DisplayContent::initUI()
     DFontSizeManager::instance()->bind(noCoredumpctlLabel, DFontSizeManager::T4);
     noCoredumpctlLabel->setAlignment(Qt::AlignCenter);
 
+    noPermissionLabel = new DLabel(this);
+    DApplicationHelper::instance()->setPalette(noPermissionLabel, pa);
+    noPermissionLabel->setText(DApplication::translate("Warning", "You do not have permission to view it"));
+    DFontSizeManager::instance()->bind(noPermissionLabel, DFontSizeManager::T4);
+    noPermissionLabel->setAlignment(Qt::AlignCenter);
+
     //m_spinnerWgt,m_spinnerWgt_K
     m_spinnerWgt = new LogSpinnerWidget(this);
     m_spinnerWgt->setAccessibleName("spinnerWidget");
@@ -2137,7 +2143,8 @@ void DisplayContent::slot_OOCData(const QString &data)
     if ((m_flag != OtherLog && m_flag != CustomLog))
         return;
 
-    emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, data);
+    if (!m_treeView->selectionModel()->selectedRows().isEmpty())
+        emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, data);
 }
 
 void DisplayContent::slot_auditFinished(bool bShowTip/* = false*/)
@@ -2218,7 +2225,8 @@ void DisplayContent::slot_OOCFinished(int error)
 
     //未通过鉴权在日志区域显示文案：无权限查看
     if (error == 1) {
-        emit sigDetailInfo(m_treeView->selectionModel()->selectedRows().first(), m_pModel, DApplication::translate("Warning", "You do not have permission to view it"), error);
+        clearAllDatas();
+        setLoadState(DATA_NO_PERMISSION);
     }
 }
 
@@ -3099,6 +3107,9 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearc
     if (!noCoredumpctlLabel->isHidden()) {
         noCoredumpctlLabel->hide();
     }
+    if (!noPermissionLabel->isHidden()) {
+        noPermissionLabel->hide();
+    }
 
 //    if (!m_treeView->isHidden()) {
 //        m_treeView->hide();
@@ -3160,6 +3171,14 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearc
         noCoredumpctlLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         noCoredumpctlLabel->show();
         noCoredumpctlLabel->raise();
+        emit setExportEnable(false);
+        break;
+    }
+    case DATA_NO_PERMISSION: {
+        m_treeView->show();
+        noPermissionLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
+        noPermissionLabel->show();
+        noPermissionLabel->raise();
         emit setExportEnable(false);
         break;
     }
