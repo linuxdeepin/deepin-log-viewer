@@ -932,6 +932,21 @@ bool LogViewerService::isValidInvoker()
     if (valid)
         valid = ValidInvokerExePathList.contains(invokerPath);
 
+    // mnt判断
+    if (valid) {
+        QProcess process;
+        process.start("readlink", QStringList() << QString("/proc/%1/ns/mnt").arg(pid));
+        process.waitForFinished(-1);
+        QString appMnt = process.readAllStandardOutput();
+        process.start("readlink", QStringList() << QString("/proc/1/ns/mnt"));
+        process.waitForFinished(-1);
+        QString selfMnt = process.readAllStandardOutput();
+        valid = !selfMnt.isEmpty() && (selfMnt == appMnt);
+        if (!valid) {
+            qWarning() << QString("appMnt:%1 is not same as selfMnt:%2.").arg(appMnt).arg(selfMnt);
+        }
+    }
+
     //非法调用
     if (!valid) {
         sendErrorReply(QDBusError::ErrorType::Failed,
