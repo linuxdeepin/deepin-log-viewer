@@ -934,16 +934,13 @@ bool LogViewerService::isValidInvoker()
 
     // mnt判断
     if (valid) {
-        QProcess process;
-        process.start("readlink", QStringList() << QString("/proc/%1/ns/mnt").arg(pid));
-        process.waitForFinished(-1);
-        QString appMnt = process.readAllStandardOutput();
-        process.start("readlink", QStringList() << QString("/proc/1/ns/mnt"));
-        process.waitForFinished(-1);
-        QString selfMnt = process.readAllStandardOutput();
-        valid = !selfMnt.isEmpty() && (selfMnt == appMnt);
+        QFile initNsMntFile("/proc/1/ns/mnt");
+        QFile senderNsMntFile(QString("/proc/%1/ns/mnt").arg(pid));
+        auto initNsMnt = initNsMntFile.readLink().trimmed().remove(0, QString("/proc/1/ns/mnt").length());
+        auto senderNsMnt = senderNsMntFile.readLink().trimmed().remove(0, QString("/proc/%1/ns/mnt").arg(pid).length());
+        valid = !initNsMnt.isEmpty() && (initNsMnt == senderNsMnt);
         if (!valid) {
-            qWarning() << QString("appMnt:%1 is not same as selfMnt:%2.").arg(appMnt).arg(selfMnt);
+            qWarning() << QString("senderNsMnt:%1 is not same as initNsMnt:%2.").arg(senderNsMnt).arg(initNsMnt);
         }
     }
 
