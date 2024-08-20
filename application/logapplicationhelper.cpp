@@ -193,6 +193,7 @@ void LogApplicationHelper::initCustomLog()
         }
         m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
     }
+#endif
 
     //需要查询是否是特殊机型，例如hw机型
     if(m_pDConfig->keyList().contains("specialComType"))
