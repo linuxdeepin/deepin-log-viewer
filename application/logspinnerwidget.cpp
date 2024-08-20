@@ -25,10 +25,10 @@ void LogSpinnerWidget::initUI()
 
     //    QHBoxLayout *hh = new QHBoxLayout(this);
 
-    QHBoxLayout *h = new QHBoxLayout(this);
+    QHBoxLayout *h = new QHBoxLayout();
     h->addStretch(1);
 
-    QVBoxLayout *v = new QVBoxLayout(this);
+    QVBoxLayout *v = new QVBoxLayout();
     v->addStretch(1);
     v->addWidget(m_spinner);
     v->addStretch(1);

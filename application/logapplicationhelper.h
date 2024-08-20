@@ -5,8 +5,7 @@
 #ifndef LOGAPPLICATIONHELPER_H
 #define LOGAPPLICATIONHELPER_H
 
-#include "com_deepin_dde_daemon_launcherd.h"
-
+#include "structdef.h"
 #include "dtkcore_config.h"
 #ifdef DTKCORE_CLASS_DConfigFile
 #include <DConfig>
@@ -17,7 +16,7 @@
 #include <QGSettings/QGSettings>
 
 #include <mutex>
-using DBbusLauncher = com::deepin::dde::daemon::Launcher;
+
 /**
  * @brief The LogApplicationHelper class 获取应用日志文件路径信息工具类
  */
@@ -45,6 +44,8 @@ public:
     }
 
     QMap<QString, QString> getMap();
+    // 刷新并返回最新的应用配置信息
+    AppLogConfigList getAppLogConfigs();
 
     //根据包名获得显示名称
     QString transName(const QString &str);
@@ -58,6 +59,17 @@ public:
     //获取所有自定义日志文件列表(名称-路径)
     QList<QStringList> getCustomLogList();
 
+    AppLogConfig  appLogConfig(const QString& app);
+    bool isAppLogConfigExist(const QString& app);
+
+    // 验证是否为有效的应用名
+    bool isValidAppName(const QString& appName);
+
+    QDateTime getLastReportTime();
+    void saveLastRerportTime(const QDateTime& date);
+    // 获取崩溃上报最大条数，默认为50
+    int getMaxReportCoredump();
+
 private:
     explicit LogApplicationHelper(QObject *parent = nullptr);
 
@@ -68,10 +80,18 @@ private:
 
     void createDesktopFiles();
     void createLogFiles();
+    void createTransLogFiles();
 
-    void parseField(QString path, QString name, bool isDeepin, bool isGeneric, bool isName);
+    void generateTransName(const QString &path, const QString &name, bool isDeepin, bool isGeneric, bool isName);
 
-    QString getLogFile(QString path);
+    QString getLogFile(const QString &path);
+
+    void loadAppLogConfigsByJson();
+
+    AppLogConfig jsonAppLogConfig(const QString& app);
+    bool isJsonAppLogConfigExist(const QString& app);
+
+    void validityJsonLogPath(SubModuleConfig& submodule);
 
 signals:
     void sigValueChanged(const QString &key);
@@ -111,6 +131,15 @@ private:
      * @brief m_current_system_language 系统语言
      */
     QString m_current_system_language;
+
+    /**
+     * @brief m_appLogConfigs 应用日志json配置信息
+     */
+    AppLogConfigList m_JsonAppLogConfigs;
+    /**
+     * @brief m_appLogConfigs 应用日志配置信息（包含json配置信息）
+     */
+    AppLogConfigList m_appLogConfigs;
     /**
      * @brief m_instance 单例用的本类指针的原子性封装
      */
@@ -119,17 +148,13 @@ private:
      * @brief m_mutex 单例用的锁
      */
     static std::mutex m_mutex;
-    /**
-     * @brief m_DbusLauncher 获取所有应用信息的dbus接口
-     */
-    DBbusLauncher *m_DbusLauncher;
 
 #ifdef DTKCORE_CLASS_DConfigFile
     //dconfig,自定义日志配置
-    Dtk::Core::DConfig * m_pDConfig = nullptr;
+    Dtk::Core::DConfig *m_pDConfig = nullptr;
 #endif
     //gsettings,自定义日志配置
-    QGSettings * m_pGSettings = nullptr;
+    QGSettings *m_pGSettings = nullptr;
 };
 
 #endif  // LOGAPPLICATIONHELPER_H

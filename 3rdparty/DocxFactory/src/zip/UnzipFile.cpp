@@ -73,7 +73,7 @@ void UnzipFile::close()
 
 
 
-byte *UnzipFile::extractEntryToBuf(
+DocxFactory::byte *UnzipFile::extractEntryToBuf(
     const string   &p_path,
     size_t         &p_bufSize) const
 {
@@ -124,14 +124,14 @@ byte *UnzipFile::extractEntryToBuf(
     return l_buf;
 } // extract
 
-byte *UnzipFile::extractEntryToRaw(
+DocxFactory::byte *UnzipFile::extractEntryToRaw(
     const string   &p_path,
     int            &p_method,
     int            &p_level,
     FileInfo      *&p_fileInfo,
     size_t         &p_bufSize) const
 {
-    byte   *l_buf = NULL;
+    DocxFactory::byte   *l_buf = NULL;
     int     l_err;
 
     if (!m_fileOpen)

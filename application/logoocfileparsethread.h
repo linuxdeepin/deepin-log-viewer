@@ -22,20 +22,20 @@ class LogOOCFileParseThread : public QThread
 public:
     explicit LogOOCFileParseThread(QObject *parent = nullptr);
     ~LogOOCFileParseThread() override;
-    void setParam(QString &path);
+    void setParam(const QString &path);
     static int thread_count;
     void initProccess();
 
-    const QScopedPointer<QProcess> & getProcess() const {return m_process;}
-    const QString & getPath() const {return m_path;}
-    const QString & getFileData() const {return m_fileData;}
+    const QScopedPointer<QProcess> &getProcess() const {return m_process;}
+    const QString &getPath() const {return m_path;}
+    const QString &getFileData() const {return m_fileData;}
 
 signals:
     /**
      * @brief sigFinished 获取数据结束信号
      */
     void sigFinished(int index, int error = 0);
-    void sigData(int index, const QString & data);
+    void sigData(int index, const QString &data);
 public slots:
     void doWork();
     void stopProccess();
@@ -44,7 +44,7 @@ public:
 protected:
     void run() override;
     //鉴权
-    bool checkAuthentication(const QString & path);
+    bool checkAuthentication(const QString &path);
 
 private:
     /**

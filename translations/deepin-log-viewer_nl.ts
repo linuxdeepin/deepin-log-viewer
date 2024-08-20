@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Exporteren</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>Exporteren</translation>
     </message>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>Spoor</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>Identiteitsverificatie</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>Beperktetoegangscontrole</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>Verplichtetoegangscontrole</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>Op afstand</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>Documentaudit</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Overig</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation>zip (*.zip)</translation>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>Platte tekst (*.txt);; DOC (*.doc);; XLS (*.xls);; HTML (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>Het exporteren is mislukt</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation>De exportmap is niet beschikbaar - kies een andere map.</translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>Niveau:  </translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>Programmalijst:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -206,6 +230,18 @@
     <message>
         <source>Login record</source>
         <translation>Inlogmoment</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>Soort audit:</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>Programma:</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>Submodule:</translation>
     </message>
 </context>
 <context>
@@ -356,11 +392,31 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Bestandsnaam</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Tijdstip van wijziging</translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation>SIG</translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation>EXE</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>Core-bestand</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>Gebruikersnaam</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>Verschuiving</translation>
     </message>
 </context>
 <context>
@@ -410,18 +466,118 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Overig logboek</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Aangepast logboek</translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>Auditlogboek</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation>Coredump-logboek</translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation>Er kan geen crashinformatie worden verzameld - installeer systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>Je bent niet bevoegd om het logboek te bekijken</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation>Beveiligingsniveau van huidig systeem: hoog
+ Alleen beheerders kunnen het logboek bekijken</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation>Exporteer logboeken naar de opgegeven locatie</translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation>Locatie</translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation>Exporteer bepaalde logboeken</translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation>Soorten</translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation>Exporteer logboeken van bepaalde eigen programma&apos;s</translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation>Eigen programma&apos;s</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation>Exporteer logboeken uit een bepaalde periode</translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation>Periode</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation>Exporteer logboeken met een bepaald foutopsporingsniveau</translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation>Niveau</translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation>Opstartstatus</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>Exporteer opstartlogboeken (no-klu) met een bepaalde status</translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation>Exporteer logboeken met bepaalde gebeurtenissen</translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation>Gebeurtenissen</translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation>Exporteer logboeken met bepaalde trefwoorden</translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation>Trefwoorden</translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation>Meld coredump-informatie.</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>Exporteer logboeken van een bepaalde submodule</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>Submodule</translation>
     </message>
 </context>
 <context>
@@ -440,7 +596,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 min.</translation>
     </message>
     <message>
         <source>No refresh</source>
@@ -449,10 +605,6 @@
     <message>
         <source>Export All</source>
         <translation>Alles exporteren</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>Systeemlogboeken</translation>
     </message>
     <message>
         <source>Refresh Now</source>

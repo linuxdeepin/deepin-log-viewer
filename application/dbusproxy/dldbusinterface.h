@@ -78,6 +78,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("readLog"), argumentList);
     }
 
+    inline QDBusPendingReply<QStringList> readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(filePath) << QVariant::fromValue(startLine) << QVariant::fromValue(lineCount) << QVariant::fromValue(bReverse);
+        return asyncCallWithArgumentList(QStringLiteral("readLogLinesInRange"), argumentList);
+    }
+
     inline QDBusPendingReply<QString> openLogStream(const QString &filePath)
     {
         QList<QVariant> argumentList;
@@ -92,6 +99,39 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("readLogInStream"), argumentList);
     }
 
+    inline QDBusPendingReply<bool> isFileExist(const QString &filePath)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(filePath);
+        return asyncCallWithArgumentList(QStringLiteral("isFileExist"), argumentList);
+    }
+
+    inline QDBusPendingReply<quint64> getFileSize(const QString &filePath)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(filePath);
+        return asyncCallWithArgumentList(QStringLiteral("getFileSize"), argumentList);
+    }
+
+    inline QDBusPendingReply<qint64> getLineCount(const QString &filePath)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(filePath);
+        return asyncCallWithArgumentList(QStringLiteral("getLineCount"), argumentList);
+    }
+
+    inline QDBusPendingReply<QString> executeCmd(const QString &cmd)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(cmd);
+        return asyncCallWithArgumentList(QStringLiteral("executeCmd"), argumentList);
+    }
+
+    inline QDBusPendingReply<QStringList> whiteListOutPaths()
+    {
+        QList<QVariant> argumentList;
+        return asyncCallWithArgumentList(QStringLiteral("whiteListOutPaths"), argumentList);
+    }
 Q_SIGNALS: // SIGNALS
 };
 

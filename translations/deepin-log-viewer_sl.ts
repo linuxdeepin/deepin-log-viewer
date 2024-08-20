@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Izvozi</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>Izvozi</translation>
     </message>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>Sledi</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>Overitev identitete</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>Nadzor diskrecijskega dostopa</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>Nadzor mandatnega dostopa</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>Oddaljeno</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>Potrjevanje dokumenta</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Drugo</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"/>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>BESEDILO (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>Izvažanje ni uspelo</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>Nivo:</translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>Seznam programov:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -206,6 +230,18 @@
     <message>
         <source>Login record</source>
         <translation>Zapis prijave</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>Vrsta potrjevanja:</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -356,10 +392,30 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Ime datoteke</translation>
     </message>
     <message>
         <source>Time Modified</source>
+        <translation>Čas spremembe</translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Offset</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -374,31 +430,31 @@
     <name>Tree</name>
     <message>
         <source>System Log</source>
-        <translation>Sistemska beležka</translation>
+        <translation>Dnevnik sistema</translation>
     </message>
     <message>
         <source>Kernel Log</source>
-        <translation>Beležka jedra</translation>
+        <translation>Dnevnik jedra</translation>
     </message>
     <message>
         <source>Boot Log</source>
-        <translation>Zagonska beležka</translation>
+        <translation>Dnevnik zagona</translation>
     </message>
     <message>
         <source>dpkg Log</source>
-        <translation>Beležka dpkg</translation>
+        <translation>Dnevnik za dpkg</translation>
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation>Beležka Kwin</translation>
+        <translation>Dnevnik za Kwin</translation>
     </message>
     <message>
         <source>Xorg Log</source>
-        <translation>Beležka Xorg</translation>
+        <translation>Dnevnik za xorg</translation>
     </message>
     <message>
         <source>Application Log</source>
-        <translation>Programska beležka</translation>
+        <translation>Dnevnik programov</translation>
     </message>
     <message>
         <source>Boot-Shutdown Event</source>
@@ -406,14 +462,29 @@
     </message>
     <message>
         <source>dnf Log</source>
-        <translation>Beležka dnf </translation>
+        <translation>Dnevnik za dnf</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Drugi dnevnik</translation>
     </message>
     <message>
         <source>Custom Log</source>
+        <translation>Dnevnik po meri</translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>Dnevnik potrjevanja</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -421,6 +492,90 @@
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
+        <translation>Nimate pravice za ogled</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -428,35 +583,31 @@
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>Interval osveževanja</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>10 sec</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>1 min</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 min</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>Brez osveževanja</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation type="unfinished"/>
+        <translation>Izvozi vse</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>Osveži zdaj</translation>
     </message>
 </context>
 </TS>

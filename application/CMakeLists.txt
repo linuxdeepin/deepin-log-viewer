@@ -16,6 +16,7 @@ set(LINK_LIBS
     Qt5::Xml
     Qt5::DBus
     Qt5::Concurrent
+    Qt5::Network
 #${DtkWidget_LDFLAGS}
 #${DtkGui_LDFLAGS}
 #${DtkCore_LDFLAGS}
@@ -29,7 +30,7 @@ configure_file(config.h.in config.h @ONLY)
 
 
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -112,15 +113,14 @@ find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Xml REQUIRED)
+find_package(Qt5Network REQUIRED)
 find_package(Qt5Concurrent REQUIRED)
 find_package(Qt5DBus REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(DtkGui REQUIRED)
 find_package(DtkCore REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
-find_package(DFrameworkdbus REQUIRED)
 find_package(RapidJSON)
-pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
@@ -160,6 +160,7 @@ list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
 
 set (APP_CPP_FILES
      main.cpp
+     cliapplicationhelper.cpp
      filtercontent.cpp
      displaycontent.cpp
      logcollectormain.cpp
@@ -196,6 +197,11 @@ set (APP_CPP_FILES
 #     viewsortfilter.cpp
      logallexportthread.cpp
      eventlogutils.cpp
+     logbackend.cpp
+     logsegementexportthread.cpp
+     parsethread/parsethreadbase.cpp
+     parsethread/parsethreadkern.cpp
+     parsethread/parsethreadkwin.cpp
     )
 set (APP_QRC_FILES
 assets/resources.qrc
@@ -203,8 +209,9 @@ assets/resources.qrc
 
 
 set (APP_HEADERS_FILES
-   logcollectormain.h
-  displaycontent.h
+    cliapplicationhelper.h
+    logcollectormain.h
+    displaycontent.h
     logfileparser.h
     filtercontent.h
     structdef.h
@@ -231,6 +238,12 @@ set (APP_HEADERS_FILES
 #    viewsortfilter.h
     logallexportthread.h
     eventlogutils.h
+    logbackend.h
+    accessible.h
+    logsegementexportthread.h
+    parsethread/parsethreadbase.h
+    parsethread/parsethreadkern.h
+    parsethread/parsethreadkwin.h
     )
 
 # 5. 头文件
@@ -315,7 +328,6 @@ include_directories(${DtkCore_INCLUDE_DIRS})
 include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
-include_directories( ${DFrameworkDBus_INCLUDE_DIRS})
 include_directories( ${Boost_INCLUDE_DIRS})
 include_directories( ${ZLIB_INCLUDE_DIRS})
 message("ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS}")
@@ -323,7 +335,7 @@ include_directories( ${RapidJSON_INCLUDE_DIRS})
 #include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
 
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} ${Other_LIBRARIES} ${DFrameworkDBus_LIBRARIES}  -lsystemd -licui18n -licuuc  -ldl -fPIC)
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS} ${Other_LIBRARIES} -lsystemd -licui18n -licuuc  -ldl -fPIC)
 target_link_libraries(${EXE_NAME} ${DtkWidget_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${DtkCore_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${DtkGUI_LIBRARIES})
@@ -371,23 +383,34 @@ install(FILES assets/images/deepin-log-viewer.svg
 install(FILES assets/com.deepin.pkexec.logViewerAuth.policy
                     DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
 install(FILES assets/com.deepin.pkexec.logViewerTruncate.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
-install(FILES gschema/com.deepin.log-viewer.gschema.xml
+install(FILES gschema/com.deepin.log.viewer.gschema.xml
                 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)
 
 # Install files
 install(TARGETS ${EXE_NAME} DESTINATION bin)
 install(DIRECTORY assets/deepin-log-viewer
-                DESTINATION /usr/share/deepin-manual/manual-assets/application/)
+                DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-manual/manual-assets/application/)
 
-#FILES       - deployed files.
-#BASE        - used to get subpath, if it's empty, only copy files, and ignore it's subpath structure.
-#APPID       - working for the app.
-#COMMONID    - working for common.
-#Only DConfig is supported by DTK, use DConfig
-set(APPID org.deepin.deepin-log-viewer)
-set(configFile configs/org.deepin.deepin-log-viewer.json)
+# Install aduit rule config file.
+install(FILES assets/auditRule.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer)
+
+# Install cli script deepin-logger
+install(FILES assets/deepin-logger DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+
+# Install log json config file.
+install(FILES configs/logconfig/deepin-log-viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d/)
+
+# Install debugmode json config file.
+install(FILES configs/debugconfig/org.deepin.log.viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-debug-config/deepin-debug-config.d/)
+
+# Install coredump report service&timer
+install(FILES ./configs/coredump-reporter.timer ./configs/coredump-reporter.service DESTINATION lib/systemd/user/)
+
+#安装DConfig配置
+set(APPID org.deepin.log.viewer)
+set(configFile configs/dconfig/org.deepin.log.viewer.json)
 if (DEFINED DSG_DATA_DIR)
-    dconfig_meta_files(APPID ${APPID} BASE configs FILES ${configFile})
+    dconfig_meta_files(APPID ${APPID} FILES ${configFile})
     message("-- DConfig is supported by DTK")
 else()
     install(FILES ${configFile} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dsg/configs/${APPID}/)

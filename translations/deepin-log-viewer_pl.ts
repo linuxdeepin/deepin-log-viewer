@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Eksportuj</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>Eksportuj</translation>
     </message>
@@ -70,11 +66,11 @@
     </message>
     <message>
         <source>Emergency</source>
-        <translation>Zapasowy</translation>
+        <translation>Awaria</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation>Alarm</translation>
+        <translation>Alert</translation>
     </message>
     <message>
         <source>Critical</source>
@@ -102,7 +98,7 @@
     </message>
     <message>
         <source>Login</source>
-        <translation>Login</translation>
+        <translation>Logowanie</translation>
     </message>
     <message>
         <source>Boot</source>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>Ślad</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>Uwierzytelnienie tożsamości</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>Dowolna kontrola dostępu</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>Wymuszona kontrola dostępu</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>Zdalnie</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>Audyt dokumentu</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Inne</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation>zip(*.zip)</translation>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEKST (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>Błąd eksportu</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation>Ścieżka eksportu nie jest dostępna. Wybierz inny katalog, aby wykonać operacje.</translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>Poziom:</translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>Lista aplikacji:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -193,11 +217,11 @@
     </message>
     <message>
         <source>Username:</source>
-        <translation>Nazwa Użytkownika:</translation>
+        <translation>Nazwa użytkownika:</translation>
     </message>
     <message>
         <source>Boot record</source>
-        <translation>Wpis uruchomienia systemu</translation>
+        <translation>Zapis boot</translation>
     </message>
     <message>
         <source>Shutdown record</source>
@@ -205,7 +229,19 @@
     </message>
     <message>
         <source>Login record</source>
-        <translation>Wpis logowania do systemu</translation>
+        <translation>Wpisy logowania</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>Typ audytu:</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>Aplikacja:</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>Podmoduł:</translation>
     </message>
 </context>
 <context>
@@ -228,11 +264,11 @@
     </message>
     <message>
         <source>Emergency</source>
-        <translation>Zapasowy</translation>
+        <translation>Awaria</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation>Alarm</translation>
+        <translation>Alert</translation>
     </message>
     <message>
         <source>Critical</source>
@@ -266,7 +302,7 @@
     </message>
     <message>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation>Przeglądarka dzienników to przydatne narzędzie do przeglądania dzienników systemowych.</translation>
+        <translation>Przeglądarka dziennika to przydatne narzędzie do przeglądania dzienników systemowych.</translation>
     </message>
 </context>
 <context>
@@ -344,7 +380,7 @@
     </message>
     <message>
         <source>Null</source>
-        <translation>Zero</translation>
+        <translation>Null</translation>
     </message>
     <message>
         <source>User:</source>
@@ -356,11 +392,31 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa pliku</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Data modyfikacji</translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation>SIG</translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation>EXE</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>Plik główny</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>Nazwa użytkownika </translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>Offset</translation>
     </message>
 </context>
 <context>
@@ -378,7 +434,7 @@
     </message>
     <message>
         <source>Kernel Log</source>
-        <translation>Dziennik jądra</translation>
+        <translation>Dziennik kernela</translation>
     </message>
     <message>
         <source>Boot Log</source>
@@ -406,22 +462,122 @@
     </message>
     <message>
         <source>dnf Log</source>
-        <translation>Dziennik dpkg</translation>
+        <translation>Dziennik dnf</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Inne dzienniki</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Własne dzienniki</translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>Dziennik audytu</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation>Dziennik Coredump</translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation>Nie można uzyskać informacji o usterce, zainstaluj systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>Nie posiadasz uprawnień, aby to wyświetlić</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation>Poziom bezpieczeństwa tego systemu: wysoki
+ tylko administrator kontrolny może wyświetlić dziennik audytu</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation>Eksportuj dziennik do wybranej ścieżki</translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation>ŚCIEŻKA</translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation>Eksportuj dzienniki wybranego typu</translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation>TYP</translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation>Eksportuj dzienniki wybranych własnoręcznie stworzonych aplikacji</translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation>NAZWA APLIKACJI</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation>Eksportuj dzienniki w określonym przedziale czasu</translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation>OKRES</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation>Eksportuj dzienniki na określonym poziomie debug</translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation>POZIOM</translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation>STATUS BOOT</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>Eksportuj dzienniki boot(no-klu) z określonym statusem</translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation>Eksportuj zdarzenia zamknięcia systemu lub dzienniki audytu z określonym typem wydarzenia</translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation>TYP WYDARZENIA</translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation>Eksportuj dzienniki na podstawie wyszukiwania słów kluczowych</translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation>SŁOWO KLUCZOWE</translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation>Zgłoś informacje coredump.</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>Eksportuj dzienniki z określonym podmodułem aplikacji</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>PODMODUŁ</translation>
     </message>
 </context>
 <context>
@@ -432,15 +588,15 @@
     </message>
     <message>
         <source>10 sec</source>
-        <translation>10 sekund</translation>
+        <translation>10 sek</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation>1 minuta</translation>
+        <translation>1 min</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 min</translation>
     </message>
     <message>
         <source>No refresh</source>
@@ -449,10 +605,6 @@
     <message>
         <source>Export All</source>
         <translation>Eksportuj wszystko</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>Dziennik systemowy</translation>
     </message>
     <message>
         <source>Refresh Now</source>

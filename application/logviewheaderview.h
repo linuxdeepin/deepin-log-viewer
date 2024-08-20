@@ -15,7 +15,7 @@ DWIDGET_USE_NAMESPACE
 class LogViewHeaderView : public DHeaderView
 {
 public:
-    LogViewHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
+    explicit LogViewHeaderView(Qt::Orientation orientation, QWidget *parent = nullptr);
     ~LogViewHeaderView() override;
 
     QSize sizeHint() const override;

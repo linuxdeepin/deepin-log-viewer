@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">چىقىرىش</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>چىقىرىش</translation>
     </message>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>ئىز قوغلاش</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>سالاھىيەت پەرقلەندۈرۈش</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>ئۆز ئالدىغا زىيارەت قىلىشنى كونتروللاش</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>مەجبۇرىي زىيارەتنى قىلىشنى كونتروللاش</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>يىراقتىن ئۇلاش</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>ھۆججەت تەكشۈرۈش</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>باشقا</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"/>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>ھۆججەتننى چىقىرالمىدى</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation>چىقىرىدىغان مۇندەرىجىنى ئىشلەتكىلى بولمايدۇ، باشقا مۇندەرىجە تاللاپ مەشغۇلات قىلىڭ</translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>دەرىجىسى:</translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>ئەپ تىزىملىكى:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -206,6 +230,18 @@
     <message>
         <source>Login record</source>
         <translation>كىرىش خاتىرىسى</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>تەكشۈرۈش تىپى:</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>ئەپ:</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>بالا مودېل:</translation>
     </message>
 </context>
 <context>
@@ -356,11 +392,31 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>ھۆججەت نامى</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>ئۆزگەرتكەن ۋاقىت:</translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation>سىگنال</translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation>پىروگرامما</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>يادرولۇق ھۆججەت</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>ئىشلەتكۈچى</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>پىروگرامما</translation>
     </message>
 </context>
 <context>
@@ -410,18 +466,118 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>باشقا كۈندىلىك خاتىرە</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>كۈندىلىك خاتىرە بەلگىلەش</translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>تەكشۈرۈش خاتىرىسى</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation>گۇم بولۇش خاتىرىسى</translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation>ئۇچۇرنى ئالالمىدى، systemd-coredump قاچىلاڭ.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>كۆرۈش ھوقۇقى يوق</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation>نۆۋەتتىكى سىستېما بىخەتەرلىك دەرىجىسى: يۇقىرى
+تەكشۈرگۈچى باشقۇرغۇچىلا تەكشۈرۈش خاتىرىسىنى كۆرەلەيدۇ</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation>خاتىرىنى بەلگىلىگەن مۇندەرىجىگە چىقىرىش</translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation>چىقىرىش مۇندەرىجىسى</translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation>خاتىرە تۈرى بويىچە چىقىرىش</translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation>خاتىرە تۈرى</translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation>خاتىرىنى ئۆز ئالدىغا ئاچقان ئەپ بويىچە چىقىرىش</translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation>ئۆز ئالدىغا ئاچقان  ئەپ نامى</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation>خاتىرىنى ۋاقىت دەۋرىيلىكى بويىچە چىقىرىش</translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation>دەۋرىيلىكى</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation>خاتىرىنى تەڭشەش-سىناش دەرىجىسى بويىچە چىقىرىش</translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation>تەڭشەش-سىناش دەرىجىسى</translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation>قوزغىلىش ھالىتى</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>قوزغىلىش خاتىرىسىنى ھالىتى بويىچە چىقىرىش(klu)</translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation>ئېچىش-تاقاش خاتىرىسى/تەكشۈرۈش خاتىرىسىنى مەشغۇلات تۈرى بويىچە چىقىرىش</translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation>مەشغۇلات تۈرى</translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation>خاتىرىنى ھالقىلىق سۆز بويىچە چىقىرىش</translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation>ھالقىلىق سۆز</translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation>گۇم بولۇش نۇقتىسىنىڭ ئۇچۇرىنى يوللاش</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>خاتىرىنى بالا مودېل بويىچە چىقىرىش</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>بالا مودېل</translation>
     </message>
 </context>
 <context>
@@ -440,7 +596,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 مىنۇت</translation>
     </message>
     <message>
         <source>No refresh</source>
@@ -449,10 +605,6 @@
     <message>
         <source>Export All</source>
         <translation>ھەممىنى چىقىرىش</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>بارلىق سىستېما خاتىرىسى</translation>
     </message>
     <message>
         <source>Refresh Now</source>

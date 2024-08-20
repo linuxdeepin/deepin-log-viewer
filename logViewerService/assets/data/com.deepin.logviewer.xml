@@ -5,6 +5,12 @@
       <arg type="s" direction="out"/>
       <arg name="filePath" type="s" direction="in"/>
     </method>
+    <method name="readLogLinesInRange">
+      <arg type="as" direction="out"/>
+      <arg name="filePath" type="s" direction="in"/>
+      <arg name="startLine" type="x" direction="in"/>
+      <arg name="lineCount" type="x" direction="in"/>
+    </method>
     <method name="exitCode">
       <arg type="i" direction="out"/>
     </method>
@@ -28,6 +34,25 @@
     <method name="readLogInStream">
       <arg type="s" direction="out"/>
       <arg name="token" type="s" direction="in"/>
+    </method>
+    <method name="isFileExist"> 
+      <arg type="b" direction="out"/>
+      <arg name="filePath" type="s" direction="in"/>
+    </method>
+    <method name="getFileSize"> 
+      <arg type="t" direction="out"/>
+      <arg name="filePath" type="s" direction="in"/>
+    </method>
+    <method name="getLineCount"> 
+      <arg type="x" direction="out"/>
+      <arg name="filePath" type="s" direction="in"/>
+    </method>
+    <method name="executeCmd"> 
+      <arg type="s" direction="out"/>
+      <arg name="cmd" type="s" direction="in"/>
+    </method>
+    <method name="whiteListOutPaths">
+      <arg type="as" direction="out"/>
     </method>
   </interface>
 </node>

@@ -1,14 +1,7 @@
-%define pkgrelease  1
-%if 0%{?openeuler}
-%define specrelease %{pkgrelease}
-%else
-## allow specrelease to have configurable %%{?dist} tag in other distribution
-%define specrelease %{pkgrelease}%{?dist}
-%endif
-
+%define debug_package %{nil}
 Name:           deepin-log-viewer
-Version:        5.8.1.1
-Release:        %{specrelease}
+Version:        6.0.2
+Release:        1%{?dist}.01.zs
 Summary:        Log Viewer is a useful tool for viewing system logs
 License:        GPLv3+
 URL:            https://github.com/linuxdeepin/%{name}
@@ -24,7 +17,7 @@ BuildRequires: libicu-devel
 BuildRequires: qt5-rpm-macros
 BuildRequires: qt5-qtbase-devel
 BuildRequires: qt5-qttools-devel
-BuildRequires: pkgconfig(dframeworkdbus)
+BuildRequires: pkgconfig
 BuildRequires: gtest-devel
 BuildRequires: gmock-devel
 BuildRequires: kf5-kcodecs-devel
@@ -34,21 +27,30 @@ BuildRequires: boost-devel
 BuildRequires: minizip-devel
 BuildRequires: rapidjson-devel
 BuildRequires: libtool-ltdl-devel
-BuildRequires: fftw-libs
-
-
-
-
+BuildRequires: dtkcommon-devel
+BuildRequires: qt5-qtbase-private-devel
+BuildRequires: qt5-qtsvg-devel
+BuildRequires: zlib-devel
 
 %description
 Log Viewer is a useful tool for viewing system logs.
 
-%prep
-%autosetup
-# %setup -q
-####sed -i 's|lrelease|lrelease-qt5|' translations/translate_generation.sh
+%package logviewerplugin
+Summary: Log Viewer Plugin library
+%description logviewerplugin
+Deepin Log Viewer Plugin library.
 
-# %patch0 -p1
+%package logviewerplugin-devel
+Summary: Log Viewer Plugin library development headers
+%description logviewerplugin-devel
+Deepin Log Viewer Plugin library development headers.
+
+%prep
+%if 0%{?openeuler}
+%setup -q
+%else
+%autosetup -p1
+%endif
 
 %build
 export PATH=%{_qt5_bindir}:$PATH
@@ -59,13 +61,12 @@ mkdir build && pushd build
 popd
 
 %install
+%define _unpackaged_files_terminate_build 0
 %make_install -C build INSTALL_ROOT="%buildroot"
-
-
 
 %files
 %doc README.md
-%license LICENSE
+%license LICENSE.txt
 %{_bindir}/%{name}
 %{_bindir}/logViewerAuth
 %{_bindir}/logViewerTruncate
@@ -74,17 +75,22 @@ popd
 %{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 %{_datadir}/polkit-1/actions/*.policy
 %{_datadir}/deepin-manual/manual-assets/application/deepin-log-viewer/log-viewer/*
-
-/usr/lib/deepin-daemon/log-view-service
-/usr/share/dbus-1/system-services/com.deepin.logviewer.service
-/usr/share/dbus-1/system.d/com.deepin.logviewer.conf
+%{_prefix}/lib/deepin-daemon/log-view-service
+%{_datadir}/dbus-1/system-services/com.deepin.logviewer.service
+%{_datadir}/dbus-1/system.d/com.deepin.logviewer.conf
 %{_datadir}/%{name}/DocxTemplate/*.dfw
+%{_datadir}/dsg/configs/org.deepin.deepin-log-viewer/*.json
+%{_datadir}/glib-2.0/schemas/*.gschema.xml
 
+%files logviewerplugin
+%{_libdir}/liblogviewerplugin.so.*
 
+%files logviewerplugin-devel
+%{_includedir}/liblogviewerplugin
+%{_libdir}/liblogviewerplugin.so
+%{_libdir}/pkgconfig/liblogviewerplugin.pc
 
 %changelog
-* Mon Apr 19 2021 zhangdingwen <zhangdingwen@uniontech.com> - 5.9.1.1-1
-- init spec for euler
+* Mon Jun 13 2022 uoser <uoser@uniontech.com> - 6.0.2-1.01
+- update: update to 6.0.2-1.01
 
-* Tue May 28 2019 Robin Lee <cheeselee@fedoraproject.org> - 5.8.0.3-1
-- Update to 5.8.0.3

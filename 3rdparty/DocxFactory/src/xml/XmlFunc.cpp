@@ -113,9 +113,9 @@ void XmlFunc::saveDocToFile( const xercesc::DOMDocument* p_doc, const string& p_
 	}
 } // saveDocToFile
 
-byte* XmlFunc::saveDocToBuf( const xercesc::DOMDocument* p_doc, size_t& p_bufSize )
+DocxFactory::byte* XmlFunc::saveDocToBuf( const xercesc::DOMDocument* p_doc, size_t& p_bufSize )
 {
-	byte*							l_buf			= NULL;
+    DocxFactory::byte*							l_buf			= NULL;
 	xercesc::DOMImplementationLS*	l_impl			= NULL;
 	xercesc::DOMLSSerializer*		l_serializer	= NULL;
 	xercesc::DOMLSOutput*			l_outputStream	= NULL;
