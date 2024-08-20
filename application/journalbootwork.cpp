@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,6 +13,13 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QProcess>
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logJournalboot, "org.deepin.log.viewer.parse.boot.journal.work")
+#else
+Q_LOGGING_CATEGORY(logJournalboot, "org.deepin.log.viewer.parse.boot.journal.work", QtInfoMsg)
+#endif
 
 DWIDGET_USE_NAMESPACE
 
@@ -73,7 +80,7 @@ JournalBootWork::~JournalBootWork()
 void JournalBootWork::stopWork()
 {
     m_canRun = false;
-    qDebug() << "stopWorkb";
+    qCDebug(logJournalboot) << "stopWork";
 }
 
 /**
@@ -110,7 +117,7 @@ void JournalBootWork::setArg(QStringList arg)
  */
 void JournalBootWork::run()
 {
-    qDebug() << "JournalBootWork::run----threadrun";
+    qCDebug(logJournalboot) << "threadrun";
     doWork();
 
 }
@@ -131,7 +138,7 @@ void JournalBootWork::doWork()
         mutex.unlock();
         return;
     }
-#if 1
+
     int r;
     sd_journal *j ;
     if ((!m_canRun)) {
@@ -148,7 +155,7 @@ void JournalBootWork::doWork()
     //r为系统借口返回值，小于0则表示失败，直接返回
     if (r < 0) {
         QString errostr = QString("Failed to open journal: %1").arg(r);
-        qDebug() << errostr;
+        qCWarning(logJournalboot) << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -157,7 +164,7 @@ void JournalBootWork::doWork()
 
     if (r < 0) {
         QString errostr = QString("Failed to seek tail journal: %1").arg(r);
-        qDebug() << errostr;
+        qCWarning(logJournalboot) << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -174,7 +181,7 @@ void JournalBootWork::doWork()
             r = sd_journal_add_match(j, m_arg.at(0).toStdString().c_str(), 0);
         if (r < 0) {
             QString errostr = QString("Failed to add match journal: %1").arg(r);
-            qDebug() << errostr;
+            qCWarning(logJournalboot) << errostr;
             emit  journalBootError(errostr);
             return;
         }
@@ -201,12 +208,12 @@ void JournalBootWork::doWork()
         sd_journal_close(j);
         return;
     }
-    qDebug() << "match" << match;
+    qCDebug(logJournalboot) << "journal match condition:" << match;
     //增加筛选条件
     r = sd_journal_add_match(j, match, sizeof(match) - 1);
     if (r < 0) {
         QString errostr = QString("Failed to add match journal: %1").arg(r);
-        qDebug() << errostr;
+        qCWarning(logJournalboot) << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -214,7 +221,7 @@ void JournalBootWork::doWork()
     r =   sd_journal_add_conjunction(j);
     if (r < 0) {
         QString errostr = QString("Failed to add conjunction journal: %1").arg(r);
-        qDebug() << errostr;
+        qCWarning(logJournalboot) << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -276,7 +283,7 @@ void JournalBootWork::doWork()
         r = sd_journal_get_data(j, "_COMM", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.daemonName = "unknown";
-            qDebug() << logMsg.daemonId << "error code" << r;
+            qCWarning(logJournalboot) << logMsg.daemonId << "error code" << r;
         } else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
@@ -325,54 +332,6 @@ void JournalBootWork::doWork()
     emit journalBootFinished(m_threadIndex);
     //第一次加载时这个之后的代码都不执行?故放到最后
     sd_journal_close(j);
-
-#else
-    proc = new QProcess;
-    //! by time: --since="xxxx-xx-xx" --until="xxxx-xx-xx" exclude U
-    //! by priority: journalctl PRIORITY=x
-    proc->start("journalctl", m_arg);
-    proc->waitForFinished(-1);
-
-    QByteArray output = proc->readAllStandardOutput();
-    proc->close();
-
-    // reverse by time
-    QList<QByteArray> arrayList = output.split('\n');
-    for (auto i = arrayList.count() - 1; i >= 0; i--) {
-        QByteArray data = arrayList.at(i);
-        //    for (QByteArray data : output.split('\n')) {
-        if (data.isEmpty())
-            continue;
-
-        LOG_MSG_JOURNAL logMsg;
-
-        cnt++;
-
-        QJsonParseError erro;
-        QJsonDocument jsonDoc(QJsonDocument::fromJson(data, &erro));
-
-        if (erro.error != QJsonParseError::NoError) {
-            qDebug() << "erro" << erro.error << erro.errorString();
-            continue;
-        }
-        QJsonObject jsonObj = jsonDoc.object();
-        // fill field
-        QString dt = jsonObj.value("_SOURCE_REALTIME_TIMESTAMP").toString();
-        if (dt.isEmpty())
-            dt = jsonObj.value("__REALTIME_TIMESTAMP").toString();
-        logMsg.dateTime = getDateTimeFromStamp(dt);
-        logMsg.hostName = jsonObj.value("_HOSTNAME").toString();
-        logMsg.daemonName = jsonObj.value("_COMM").toString();
-        logMsg.daemonId = jsonObj.value("_PID").toString();
-        logMsg.msg = jsonObj.value("MESSAGE").toString();
-        logMsg.level = i2str(jsonObj.value("PRIORITY").toString().toInt());
-        logList.append(logMsg);
-        if (cnt == 500)
-            break;
-    }
-
-    emit journalFinished(logList);
-#endif
 }
 
 /**
@@ -396,10 +355,9 @@ QString JournalBootWork::getReplaceColorStr(const char *d)
  * @param str 接口获取的原始时间字符
  * @return  格式化的时间显示文本
  */
-QString JournalBootWork::getDateTimeFromStamp(QString str)
+QString JournalBootWork::getDateTimeFromStamp(const QString &str)
 {
     QString ret = "";
-    QString ums = str.right(6);
     QString dtstr = str.left(str.length() - 6);
     QDateTime dt = QDateTime::fromTime_t(dtstr.toUInt());
     ret = dt.toString("yyyy-MM-dd hh:mm:ss");  // + QString(".%1").arg(ums);

@@ -1,13 +1,20 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "DebugTimeManager.h"
 #include <QDateTime>
 #include <QDebug>
+#include <QLoggingCategory>
 
 #include <sys/time.h>
 #include <time.h>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logDebugTime, "org.deepin.log.viewer.debug.timemanager")
+#else
+Q_LOGGING_CATEGORY(logDebugTime, "org.deepin.log.viewer.debug.timemanager", QtInfoMsg)
+#endif
 
 DebugTimeManager::DebugTimeManager()
 {
@@ -43,7 +50,7 @@ void DebugTimeManager::endPointLinux(const QString &point, const QString &status
             return;
         }
         timespec diffTime =  diff(m_MapLinuxPoint[point].time, endTime);
-        qInfo() << QString("[GRABPOINT] %1 %2 %3 time=%4ms").arg(point).arg(m_MapLinuxPoint[point].desc).arg(status).arg(diffTime.tv_sec * 1000 + (diffTime.tv_nsec) / 1000000);
+        qCInfo(logDebugTime) << QString("[GRABPOINT] %1 %2 %3 time=%4s").arg(point).arg(m_MapLinuxPoint[point].desc).arg(status).arg(QString::number((diffTime.tv_sec * 1000 + (diffTime.tv_nsec) / 1000000) / 1000.0, 'g', 4));
         m_MapLinuxPoint.remove(point);
     }
 }

@@ -19,7 +19,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-LogPeriodButton::LogPeriodButton(const QString text, QWidget *parent)
+LogPeriodButton::LogPeriodButton(const QString &text, QWidget *parent)
     : DPushButton(text, parent)
 {
     this->setFocusPolicy(Qt::StrongFocus);

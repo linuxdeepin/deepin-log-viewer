@@ -1,4 +1,4 @@
 [D-BUS Service]
 Name=com.deepin.logviewer
-Exec=/usr/lib/deepin-daemon/log-view-service
-User=root
+Exec=/usr/bin/false
+SystemdService=deepin-log-viewer-daemon.service

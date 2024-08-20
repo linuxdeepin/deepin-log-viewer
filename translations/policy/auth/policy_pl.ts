@@ -1,10 +1,10 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="pl" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="pl">
 	<context>
 		<name>policy</name>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
 			<source>Authentication is required to view the log</source>
-			<translation>Wymagane jest uwierzytelnienie, aby móc przeglądać logi</translation>
+			<translation>Wymagane jest uwierzytelnienie, aby przeglądać dziennik</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
@@ -12,12 +12,32 @@
 			<translation>uwierzytelnienie</translation>
 		</message>
 		<message>
+			<location filename="com.deepin.pkexec.logViewerAuth.self!message" line="0"/>
+			<source>Authentication is required to view the log</source>
+			<translation>Wymagane jest uwierzytelnienie, aby przeglądać dziennik</translation>
+		</message>
+		<message>
+			<location filename="com.deepin.pkexec.logViewerAuth.self!description" line="0"/>
+			<source>authentication</source>
+			<translation>uwierzytelnienie</translation>
+		</message>
+		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 			<source>Authentication is required to export logs</source>
-			<translation>Wymagane jest uwierzytelnienie do eksportowania logów</translation>
+			<translation>Wymagane jest uwierzytelnienie do eksportu dziennika</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
+			<source>authentication</source>
+			<translation>uwierzytelnienie</translation>
+		</message>
+		<message>
+			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
+			<source>Authentication is required to export logs</source>
+			<translation>Wymagane jest uwierzytelnienie do eksportu dziennika</translation>
+		</message>
+		<message>
+			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>
 			<source>authentication</source>
 			<translation>uwierzytelnienie</translation>
 		</message>

@@ -16,8 +16,7 @@ TEST(DBusManager_GetSystemInfo_UT, DBusManager_GetSystemInfo_UT_001)
 {
     DBusManager *p = new DBusManager(nullptr);
     EXPECT_NE(p, nullptr);
-    QString info = p->getSystemInfo();
-    bool rs = (info == "" || info == "klu" || info == "panguV" || info == "pangu");
+    bool rs = p->isSEOpen();
     EXPECT_EQ(rs, true);
     delete p;
 }

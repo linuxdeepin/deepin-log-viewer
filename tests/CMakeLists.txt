@@ -25,7 +25,7 @@ set(LINK_LIBS
 ADD_COMPILE_OPTIONS(-fno-inline)
 set (PROJECT_NAME_TEST deepin-log-viewer-test)
 set (PROJECT_NAME_PLUGIN_TEST deepin-log-viewer-plugin-test)
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -89,8 +89,6 @@ find_package(DtkGui REQUIRED)
 find_package(DtkCore REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
 find_package(Qt5Test REQUIRED)
-find_package(DFrameworkdbus REQUIRED)
-pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
 add_definitions(${Qt5Test_DEFINITIONS})
 find_package(RapidJSON)
 find_package(Boost)
@@ -129,13 +127,19 @@ FILE(GLOB allSource
      ../application/logapplication.cpp
      ../application/sharedmemorymanager.cpp
      ../application/logsettings.cpp
+     ../application/logbackend.cpp
+     ../application/eventlogutils.cpp
      ../application/wtmpparse.cpp
      ../application/DebugTimeManager.cpp
      ../application/logdetailedit.cpp
      ../application/dbusproxy/dldbusinterface.cpp
      ../application/dbusproxy/dldbushandler.cpp
 #     ../application/viewsortfilter.cpp
+     ../application/logsegementexportthread.cpp
      ../application/logallexportthread.cpp
+     ../application/parsethread/parsethreadbase.cpp
+     ../application/parsethread/parsethreadkern.cpp
+     ../application/parsethread/parsethreadkwin.cpp
 )
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
@@ -195,6 +199,7 @@ file(GLOB_RECURSE LVP_SOURCES
     "../liblogviewerplugin/src/*.cpp"
     "../application/dbusproxy/dldbusinterface.cpp"
     "../application/dbusproxy/dldbushandler.cpp"
+    "../application/dbusmanager.cpp"
     "../application/exportprogressdlg.cpp"
     "../application/journalbootwork.cpp"
     "../application/journalwork.cpp"
@@ -203,15 +208,21 @@ file(GLOB_RECURSE LVP_SOURCES
     "../application/logauththread.cpp"
     "../application/logfileparser.cpp"
     "../application/sharedmemorymanager.cpp"
+    "../application/logsettings.cpp"
     "../application/utils.cpp"
     "../application/wtmpparse.cpp"
     "../application/logapplicationhelper.cpp"
     "../application/logexportthread.cpp"
+    "../application/logsegementexportthread.cpp"
+    "../application/parsethread/parsethreadbase.cpp"
+    "../application/parsethread/parsethreadkern.cpp"
+    "../application/parsethread/parsethreadkwin.cpp"
     )
 file(GLOB_RECURSE LVP_HEADERS
     "../liblogviewerplugin/src/*.h"
     "../application/dbusproxy/dldbusinterface.h"
     "../application/dbusproxy/dldbushandler.h"
+    "../application/dbusmanager.h"
     "../application/exportprogressdlg.h"
     "../application/journalbootwork.h"
     "../application/journalwork.h"
@@ -220,11 +231,16 @@ file(GLOB_RECURSE LVP_HEADERS
     "../application/logauththread.h"
     "../application/logfileparser.h"
     "../application/sharedmemorymanager.h"
+    "../application/logsettings.h"
     "../application/utils.h"
     "../application/wtmpparse.h"
     "../application/structdef.h"
     "../application/logapplicationhelper.h"
     "../application/logexportthread.h"
+    "../application/logsegementexportthread.h"
+    "../application/parsethread/parsethreadbase.h"
+    "../application/parsethread/parsethreadkern.h"
+    "../application/parsethread/parsethreadkwin.h"
     )
 #---------------------------------------------
 
@@ -242,7 +258,6 @@ include_directories(${DtkGui_INCLUDE_DIRS})
 include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Qt5TestLib_LIBRARIES})
-include_directories( ${DFrameworkDBus_INCLUDE_DIRS})
 include_directories( ${Boost_INCLUDE_DIRS})
 include_directories( ${ZLIB_INCLUDE_DIRS})
 include_directories( ${RapidJSON_INCLUDE_DIRS})
@@ -256,7 +271,7 @@ add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${APP_QM_FILE
 #添加插件单元测试进程
 add_executable (${PROJECT_NAME_PLUGIN_TEST} ${allPluginTestSource} ${LVP_HEADERS} ${LVP_SOURCES} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 
-target_link_libraries(${PROJECT_NAME_TEST} ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
+target_link_libraries(${PROJECT_NAME_TEST} ${LINK_LIBS} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
 #当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
 target_link_libraries(${PROJECT_NAME_TEST} ${ZLIB_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${Boost_LIBRARIES})
@@ -265,7 +280,7 @@ target_link_libraries(${PROJECT_NAME_TEST} ${RapidJSON_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${XercesC_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} PolkitQt5-1::Agent)
 
-target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${LINK_LIBS} ${DFrameworkDBus_LIBRARIES} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
+target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${LINK_LIBS} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} PolkitQt5-1::Agent)
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${ZLIB_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${XercesC_LIBRARIES})

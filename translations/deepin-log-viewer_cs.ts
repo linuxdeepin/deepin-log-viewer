@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Export</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>Export</translation>
     </message>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>Trace</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>Ověření identity</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>Rozvahové/posudkové řízení přístupu</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>Mandatorní řízení přístupu</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>Vzdálené</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>Audit dokumentu</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Ostatní</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"/>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; XLS (*.xls);; HTML (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>Export se nezdařil</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>Úroveň podrobností:  </translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>Seznam aplikací:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -207,6 +231,18 @@
         <source>Login record</source>
         <translation>Záznam událostí z přihlašování</translation>
     </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>Typ auditu:</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>Level</name>
@@ -236,7 +272,7 @@
     </message>
     <message>
         <source>Critical</source>
-        <translation>Kritický</translation>
+        <translation>Kritická</translation>
     </message>
     <message>
         <source>Notice</source>
@@ -356,10 +392,30 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Název souboru</translation>
     </message>
     <message>
         <source>Time Modified</source>
+        <translation>Okamžik změny</translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Offset</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -410,10 +466,25 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Jiný záznam</translation>
     </message>
     <message>
         <source>Custom Log</source>
+        <translation>Uživatelsky určený záznam událostí</translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>Auditní log</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -421,6 +492,90 @@
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
+        <translation>Nemáte oprávnění k zobrazení</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -428,35 +583,31 @@
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>Interval opakovaného načítání</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>10 sekund</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>1 minuta</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 minut</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>Nedonačítat</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation type="unfinished"/>
+        <translation>Exportovat vše</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>Načíst znovu nyní</translation>
     </message>
 </context>
 </TS>

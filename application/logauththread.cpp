@@ -8,6 +8,7 @@
 #include "sys/utsname.h"
 #include "wtmpparse.h"
 #include "dbusproxy/dldbushandler.h"
+#include "dbusmanager.h"
 
 #include <DGuiApplicationHelper>
 #include <DApplication>
@@ -18,11 +19,29 @@
 #include <utmp.h>
 #include <utmpx.h>
 #include <algorithm>
+#include <signal.h>
+#include <unistd.h>
+#include <pwd.h>
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logAuthWork, "org.deepin.log.viewer.auth.work")
+#else
+Q_LOGGING_CATEGORY(logAuthWork, "org.deepin.log.viewer.auth.work", QtInfoMsg)
+#endif
 
 DGUI_USE_NAMESPACE
-std::atomic<LogAuthThread *> LogAuthThread::m_instance;
-std::mutex LogAuthThread::m_mutex;
 int LogAuthThread::thread_count = 0;
+
+// 崩溃信号列表对应字符值
+const QStringList sigList = { "SIGHUP", "SIGINT", "SIGQUIT", "SIGILL", "SIGTRAP", "SIGABRT", "SIGBUS", "SIGFPE", "SIGKILL", "SIGUSR1",
+        "SIGSEGV", "SIGUSR2", "SIGPIPE", "SIGALRM", "SIGTERM", "SIGSTKFLT", "SIGCHLD", "SIGCONT", "SIGSTOP", "SIGTSTP",
+        "SIGTTIN", "SIGTTOU", "SIGURG", "SIGXCPU", "SIGXFSZ", "SIGVTALRM", "SIGPROF", "SIGWINCH", "SIGIO", "SIGPWR", "SIGSYS"};
+
+// DBUS传输文件大小阈值 100MB
+#define DBUS_THRESHOLD_MAX 100
 
 /**
  * @brief LogAuthThread::LogAuthThread 构造函数
@@ -97,15 +116,17 @@ void LogAuthThread::stopProccess()
     m_isStopProccess = true;
     //停止获取线程执行，标记量置false
     m_canRun = false;
-    //共享内存数据结构，用于和获取进程共享内存，数据为是否可执行进程，用于控制数据获取进程停止，因为这里会出现需要提权执行的进程，主进程没有权限停止提权进程，所以使用共享内存变量标记量控制提权进程停止
-    ShareMemoryInfo   shareInfo ;
-    //设置进程为不可执行
-    shareInfo.isStart = false;
-    //把数据付给共享内存中对应的变量
-    SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+    if (!Utils::runInCmd) {
+        //共享内存数据结构，用于和获取进程共享内存，数据为是否可执行进程，用于控制数据获取进程停止，因为这里会出现需要提权执行的进程，主进程没有权限停止提权进程，所以使用共享内存变量标记量控制提权进程停止
+        ShareMemoryInfo   shareInfo ;
+        //设置进程为不可执行
+        shareInfo.isStart = false;
+        //把数据付给共享内存中对应的变量
+        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+    }
     if (m_process) {
         m_process->kill();
-   }
+    }
 }
 
 void LogAuthThread::setFilePath(const QStringList &filePath)
@@ -129,7 +150,6 @@ QString LogAuthThread::startTime()
         startFile.close();
     }
 
-    qDebug() << "startStr" << startFile;
     startStr = startStr.split(" ").value(0, "");
     if (startStr.isEmpty()) {
         return "";
@@ -170,6 +190,12 @@ void LogAuthThread::run()
     case Dmesg:
         handleDmesg();
         break;
+    case Audit:
+        handleAudit();
+        break;
+    case COREDUMP:
+        handleCoredump();
+        break;
     default:
         break;
     }
@@ -195,26 +221,29 @@ void LogAuthThread::handleBoot()
         if (!m_canRun) {
             return;
         }
-        initProccess();
-        m_process->setProcessChannelMode(QProcess::MergedChannels);
-        //共享内存对应变量置true，允许进程内部逻辑运行
-        ShareMemoryInfo shareInfo;
-        shareInfo.isStart = true;
-        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-        //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-        m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
-        m_process->waitForFinished(-1);
-        if (m_process->exitCode() != 0) {
-            emit bootFinished(m_threadCount);
-            return;
+
+        if (!Utils::runInCmd) {
+            initProccess();
+            m_process->setProcessChannelMode(QProcess::MergedChannels);
+            //共享内存对应变量置true，允许进程内部逻辑运行
+            ShareMemoryInfo shareInfo;
+            shareInfo.isStart = true;
+            SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+            //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+            m_process->start("pkexec", QStringList() << "logViewerAuth"
+                             << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+            m_process->waitForFinished(-1);
+            if (m_process->exitCode() != 0) {
+                emit bootFinished(m_threadCount);
+                return;
+            }
         }
+
         QString byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
         byte.replace('\u0000', "").replace("\x01", "");
         QStringList strList = byte.split('\n', QString::SkipEmptyParts);
 
         //按换行分割
-        //    qInfo()<<strList.size()<<"_________________________";
         for (int j = strList.size() - 1; j >= 0; --j) {
             QString lineStr = strList.at(j);
             if (lineStr.startsWith("/dev") || lineStr.isEmpty())
@@ -274,27 +303,31 @@ void LogAuthThread::handleKern()
         if (!m_canRun) {
             return;
         }
-        initProccess();
-        if (!m_canRun) {
-            return;
+
+        if (!Utils::runInCmd) {
+            initProccess();
+            if (!m_canRun) {
+                return;
+            }
+            m_process->setProcessChannelMode(QProcess::MergedChannels);
+            if (!m_canRun) {
+                return;
+            }
+            //共享内存对应变量置true，允许进程内部逻辑运行
+            ShareMemoryInfo shareInfo;
+            shareInfo.isStart = true;
+            SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+            //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+            m_process->start("pkexec", QStringList() << "logViewerAuth"
+                             << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+            m_process->waitForFinished(-1);
+            //有错则传出空数据
+            if (m_process->exitCode() != 0) {
+                emit kernFinished(m_threadCount);
+                return;
+            }
         }
-        m_process->setProcessChannelMode(QProcess::MergedChannels);
-        if (!m_canRun) {
-            return;
-        }
-        //共享内存对应变量置true，允许进程内部逻辑运行
-        ShareMemoryInfo shareInfo;
-        shareInfo.isStart = true;
-        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-        //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-        m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
-        m_process->waitForFinished(-1);
-        //有错则传出空数据
-        if (m_process->exitCode() != 0) {
-            emit kernFinished(m_threadCount);
-            return;
-        }
+
         if (!m_canRun) {
             return;
         }
@@ -479,20 +512,11 @@ void LogAuthThread::handleKwin()
  */
 void LogAuthThread::handleXorg()
 {
-    qint64 curDtSecond = 0;
-    //xorg.0.log文件以当前boot的时间加上时间偏移量
-    QFile startFile("/proc/uptime");
-    QString startStr = "";
-    if (startFile.open(QFile::ReadOnly)) {
-        startStr = QString(startFile.readLine());
-        startFile.close();
-    }
-    startStr = startStr.split(" ").value(0, "");
     QList<LOG_MSG_XORG> xList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
             QFile file(m_FilePath.at(i)); // add by Airy
-            if (!file.exists() || !startFile.exists()) {
+            if (!file.exists()) {
                 emit proccessError(tr("Log file is empty"));
                 emit xorgFinished(m_threadCount);
                 return;
@@ -505,15 +529,6 @@ void LogAuthThread::handleXorg()
         QByteArray outByte = m_Log.toUtf8();
         if (!m_canRun) {
             return;
-        }
-        //多文件的情况下除了xorg.0.log文件其他文件的时间以文件创建的时间加上时间偏移量
-        QFileInfo fileInfo(m_FilePath.at(i));
-        if (i == 0) {
-            QDateTime curDt = QDateTime::currentDateTime();
-            curDtSecond = curDt.toMSecsSinceEpoch() - static_cast<int>(startStr.toDouble() * 1000);
-        } else {
-            QDateTime creatTime = fileInfo.birthTime();
-            curDtSecond = creatTime.toMSecsSinceEpoch();
         }
         if (!m_canRun) {
             return;
@@ -529,19 +544,11 @@ void LogAuthThread::handleXorg()
                 if (list.count() < 2)
                     continue;
                 QString timeStr = list[0];
-                QString msgInfo = list.mid(1, list.length() - 1).join("]");
-                // 把文件生成时间加上日志记录的毫秒数则为日志记录的时间
+                QString msgInfo = list.mid(1, list.length() - 1).join("]").trimmed();
+                // 仅显示时间偏移量（单位：秒
                 QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
-                qint64 tStrMesc = qint64(tStr.toDouble() * 1000);
-                qint64 realT = 0;
-                realT = curDtSecond + tStrMesc;
-                QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
-                if (m_xorgFilters.timeFilterBegin > 0 && m_xorgFilters.timeFilterEnd > 0) {
-                    if (realDt.toMSecsSinceEpoch() < m_xorgFilters.timeFilterBegin || realDt.toMSecsSinceEpoch() > m_xorgFilters.timeFilterEnd)
-                        continue;
-                }
                 LOG_MSG_XORG msg;
-                msg.dateTime = realDt.toString("yyyy-MM-dd hh:mm:ss.zzz");
+                msg.offset = tStr;
                 msg.msg = msgInfo + tempStr;
                 tempStr.clear();
                 xList.append(msg);
@@ -638,7 +645,6 @@ void LogAuthThread::handleDkpg()
 
 void LogAuthThread::handleNormal()
 {
-    qDebug() << "logAuthThread::handleNormal()";
     if (!m_canRun) {
         emit normalFinished(m_threadCount);
         return;
@@ -686,7 +692,6 @@ void LogAuthThread::handleNormal()
                 Nmsg.eventType = "Login";
             }
 
-            QString end_str;
             QString strFormat = "ddd MMM dd hh:mm";
 
             //修改时间格式转换方法，采用QDateTime 转换
@@ -698,7 +703,7 @@ void LogAuthThread::handleNormal()
                     count1++;
                 }
             } else {
-                Nmsg.msg = start_str + "  -  " + end_str;
+                Nmsg.msg = start_str + "  -  ";
             }
 
             QString n_time = QDateTime::fromTime_t(static_cast<uint>(utbufp->ut_time)).toString("yyyy-MM-dd hh:mm:ss");
@@ -736,14 +741,14 @@ void LogAuthThread::NormalInfoTime()
     shareInfo.isStart = true;
     SharedMemoryManager::instance()->setRunnableTag(shareInfo);
     m_process->setProcessChannelMode(QProcess::MergedChannels);
-    m_process->start("last -f /var/log/wtmp");
+    m_process->start("last", {"-f", "/var/log/wtmp"});
     m_process->waitForFinished(-1);
     QByteArray outByte = m_process->readAllStandardOutput();
     QByteArray byte = Utils::replaceEmptyByteArray(outByte);
     QTextStream stream(&byte);
     QByteArray encode;
     stream.setCodec(encode);
-    QString output = stream.readAll();
+    stream.readAll();
     QStringList l = QString(byte).split('\n');
     m_process->close();
     TimeList.clear();
@@ -775,7 +780,6 @@ void LogAuthThread::NormalInfoTime()
     std::reverse(TimeList.begin(), TimeList.end());
 }
 
-
 void LogAuthThread::handleDnf()
 {
     QList<LOG_MSG_DNF> dList;
@@ -797,11 +801,11 @@ void LogAuthThread::handleDnf()
         QString multiLine;
         //开启贪婪匹配，解析dnf全部字段:日期+事件+等级+主要内容
         QRegularExpression re("^(\\d{4}-[0-2]\\d-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d)\\S*\\s*(\\w*)\\s*(.*)$");
-        for (int i = allLog.size() - 1; i >= 0; --i) {
+        for (int j = allLog.size() - 1; j >= 0; --j) {
             if (!m_canRun) {
                 return;
             }
-            QString str = allLog.value(i);
+            QString str = allLog.value(j);
             QRegularExpressionMatch match = re.match(str);
             bool matchRes = match.hasMatch();
             if (matchRes) {
@@ -881,7 +885,7 @@ void LogAuthThread::handleDmesg()
     QTextStream stream(&byte);
     QByteArray encode;
     stream.setCodec(encode);
-    QString output = stream.readAll();
+    stream.readAll();
     QStringList l = QString(byte).split('\n');
     m_process->close();
     if (!m_canRun) {
@@ -928,6 +932,376 @@ void LogAuthThread::handleDmesg()
         }
     }
     emit dmesgFinished(dmesgList);
+}
+
+void LogAuthThread::handleAudit()
+{
+    QList<LOG_MSG_AUDIT> aList;
+    for (int i = 0; i < m_FilePath.count(); i++) {
+        if (!m_FilePath.at(i).contains("txt")) {
+            if (!DLDBusHandler::instance(this)->isFileExist(m_FilePath.at(i))) {
+                emit auditFinished(m_threadCount);
+                return;
+            }
+        }
+        if (!m_canRun) {
+            return;
+        }
+
+        if (!Utils::runInCmd) {
+            initProccess();
+            if (!m_canRun) {
+                return;
+            }
+            m_process->setProcessChannelMode(QProcess::MergedChannels);
+            if (!m_canRun) {
+                return;
+            }
+
+            if (DBusManager::isSEOpen()) {
+                if (DBusManager::isAuditAdmin()) {
+                    // 是审计管理员，需要鉴权，有错则传出空数据
+                    if (!Utils::checkAuthorization("com.deepin.pkexec.logViewerAuth.self", QCoreApplication::instance()->applicationPid())) {
+                        emit auditFinished(m_threadCount);
+                        return;
+                    }
+                } else {
+                    // 不是审计管理员，给出提示
+                    emit auditFinished(m_threadCount, true);
+                    return;
+                }
+            } else {
+                // 未开启等保四，鉴权逻辑同内核日志
+                ShareMemoryInfo shareInfo;
+                shareInfo.isStart = true;
+                SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+                //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+                m_process->start("pkexec", QStringList() << "logViewerAuth"
+                                 << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
+                m_process->waitForFinished(-1);
+                if (m_process->exitCode() != 0) {
+                    emit auditFinished(m_threadCount);
+                    return;
+                }
+            }
+        }
+
+        if (!m_canRun) {
+            return;
+        }
+
+        QString byte;
+        if (Utils::convertToMB(DLDBusHandler::instance(this)->getFileSize(m_FilePath.at(i))) > DBUS_THRESHOLD_MAX) {
+            // 日志文件超过100MB，使用文本流读取日志数据，避免DBUS接口被数据流量撑爆
+            auto token = DLDBusHandler::instance(this)->openLogStream(m_FilePath.at(i));
+            while(1) {
+                auto temp = DLDBusHandler::instance(this)->readLogInStream(token);
+
+                if(temp.isEmpty()) {
+                    break;
+                }
+
+                byte += temp;
+            }
+        } else {
+            byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        }
+
+        byte.replace('\u0000', "").replace("\x01", "");
+        QStringList strList = byte.split('\n', QString::SkipEmptyParts);
+
+        QRegularExpression re;
+        QRegularExpressionMatch match;
+        for (int j = strList.size() - 1; j >= 0; --j) {
+            if (!m_canRun) {
+                return;
+            }
+            QString str = strList.at(j);
+            if (str.isEmpty() || str.indexOf("type=") == -1)
+                continue;
+
+            LOG_MSG_AUDIT msg;
+            //删除颜色格式字符
+            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            // remove Useless characters
+            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            if (list.size() < 2)
+                continue;
+
+            // 事件类型
+            QString eventType = list[0].split("=").last();
+            msg.eventType = eventType;
+
+            // 审计类型
+            QString auditType = "";
+            // 根据事件类型识别审计类型
+            if (auditType.isEmpty())
+                auditType = Utils::auditType(msg.eventType);
+
+            // 根据事件类型未识别出审计类型
+            if (auditType.isEmpty()) {
+                // 判断是否为远程连接审计日志
+                re.setPattern("(?<=addr=)([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+                match = re.match(str);
+                if (match.hasMatch()) {
+                    QString addr = match.captured(0);
+                    if (QRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b").exactMatch(addr))
+                        auditType = Audit_Remote;
+                }
+
+                if (auditType.isEmpty()) {
+                     // 获取key值，识别出一些特殊的审计类型(主要为自定义的审计类型)
+                    re.setPattern("(?<=key=)([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+                    match = re.match(str);
+                    if (match.hasMatch()) {
+                        QString key = match.captured(0);
+                        key.replace("\"","");
+                        if (!key.isEmpty())
+                            auditType = Utils::auditType(key);
+                    }
+                }
+            }
+
+            // 审计类型依然为空，归为其他类型
+            if (auditType.isEmpty())
+                auditType = Audit_Other;
+
+            msg.auditType = auditType;
+
+            // 时间"(?<=msg=audit\()[^\.]*(?=\.)"
+            re.setPattern("(?<=msg=audit\\()[^\\.]*(?=\\.)");
+            match = re.match(str);
+            if (match.hasMatch()) {
+                QDateTime dateTime = QDateTime::fromTime_t(match.captured(0).toUInt());
+                qint64 iTime = dateTime.toMSecsSinceEpoch();
+                //对时间筛选
+                if (m_auditFilters.timeFilterBegin > 0 && m_auditFilters.timeFilterEnd > 0) {
+                    if (iTime < m_auditFilters.timeFilterBegin || iTime > m_auditFilters.timeFilterEnd)
+                        continue;
+                }
+                msg.dateTime = dateTime.toString("yyyy-MM-dd hh:mm:ss");
+            }
+
+            // 进程名
+            QString processName = "";
+            re.setPattern("(?<=comm=\\\")([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+            match = re.match(str);
+            if (match.hasMatch()) {
+                processName = match.captured(0);
+                processName.replace("\"","");
+            }
+
+            if (processName.isEmpty()) {
+                re.setPattern("(?<=exe=\\\")([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+                match = re.match(str);
+                if (match.hasMatch()) {
+                    processName = match.captured(0);
+                    processName.replace("\"","");
+                    processName = processName.split("/").last();
+                }
+            }
+
+            if (processName.isEmpty())
+                processName = "N/A";
+            msg.processName = processName;
+
+            // 状态
+            QString status = "";
+            re.setPattern("(?<=success=)([^= \"]+|(\"(\\\\\"|[^\"])*\"))");
+            match = re.match(str);
+            if (match.hasMatch()) {
+                status = match.captured(0);
+                if (status == "yes")
+                    status = "OK";
+                else
+                    status = "Failed";
+            }
+
+            if (status.isEmpty()) {
+                re.setPattern("(?<=res=)([^= ']+|('(\\\\'|[^'])*'))");
+                match = re.match(str);
+                if (match.hasMatch()) {
+                    status = match.captured(0);
+                    if (status == "success")
+                        status = "OK";
+                    else
+                        status = "Failed";
+                }
+
+                if (status.isEmpty())
+                    status = "OK";
+            }
+
+            msg.status = status;
+
+            // 信息，将“msg=audit(1688526389.214:61):”之后的内容作为详细信息
+            msg.msg = str.right(str.length() - str.indexOf("):") - 3);
+
+            // 原文
+            msg.origin = str;
+
+            aList.append(msg);
+            if (!m_canRun) {
+                return;
+            }
+            //每获得500个数据就发出信号给控件加载
+            if (aList.count() % SINGLE_READ_CNT == 0) {
+                emit auditData(m_threadCount, aList);
+                aList.clear();
+            }
+            if (!m_canRun) {
+                return;
+            }
+        }
+    }
+    //最后可能有余下不足500的数据
+    if (aList.count() >= 0) {
+        emit auditData(m_threadCount, aList);
+    }
+    emit auditFinished(m_threadCount);
+}
+
+void LogAuthThread::handleCoredump()
+{
+    if (!m_canRun) {
+        return;
+    }
+    QList<LOG_MSG_COREDUMP> coredumpList;
+
+    QString byte;
+    initProccess();
+    if (Utils::runInCmd) {
+        byte = DLDBusHandler::instance()->readLog("coredump");
+        byte = byte.replace('\u0000', "").replace("\x01", "");
+    } else {
+        m_process->start("pkexec", QStringList() << "logViewerAuth" <<
+                         QStringList() << "coredumpctl-list" << SharedMemoryManager::instance()->getRunnableKey());
+        m_process->waitForFinished(-1);
+        QByteArray outByte = m_process->readAllStandardOutput();
+        byte = Utils::replaceEmptyByteArray(outByte);
+    }
+
+    QStringList strList =  QString(byte).split('\n', QString::SkipEmptyParts);
+
+    QRegExp re("(Storage: )\\S+");
+    for (int i = strList.size() - 1; i >= 0 ; --i)  {
+        QString str = strList.at(i);
+        if (!m_canRun) {
+            return;
+        }
+        if (str.trimmed().isEmpty()) {
+            continue;
+        }
+        QStringList tmpList = str.split(" ", QString::SkipEmptyParts);
+        if (tmpList.count() < 10)
+            continue;
+
+        LOG_MSG_COREDUMP coredumpMsg;
+        coredumpMsg.dateTime = tmpList[1] + " " + tmpList[2];
+        QDateTime dt = QDateTime::fromString(coredumpMsg.dateTime, "yyyy-MM-dd hh:mm:ss");
+        if (m_coredumpFilters.timeFilterBegin > 0 && m_coredumpFilters.timeFilterEnd > 0) {
+            if (dt.toMSecsSinceEpoch() < m_coredumpFilters.timeFilterBegin
+                    || dt.toMSecsSinceEpoch() > m_coredumpFilters.timeFilterEnd)
+                continue;
+        }
+
+        // 获取信号名称
+        int sigId = tmpList[7].toInt();
+        if ( sigId <= sigList.size()) {
+            coredumpMsg.sig = sigList[sigId - 1];
+        } else {
+            coredumpMsg.sig = tmpList[7];
+        }
+        //获取用户名
+        coredumpMsg.uid = tmpList[5];
+        coredumpMsg.userName = Utils::getUserNamebyUID(tmpList[5].toUInt());
+        coredumpMsg.coreFile = tmpList[8];
+        QString exePath = tmpList[9];
+        coredumpMsg.exe = exePath;
+        coredumpMsg.pid = tmpList[4];
+
+        // 解析coredump文件保存位置
+        if (coredumpMsg.coreFile != "missing") {
+            // 若coreFile状态为missing，表示文件已丢失，不继续解析文件位置
+            QString outInfoByte;
+            outInfoByte = DLDBusHandler::instance()->readLog(QString("coredumpctl info %1").arg(coredumpMsg.pid));
+
+            // 解析第一条堆栈信息
+            QStringList strList = outInfoByte.split("Stack trace of thread");
+            if (strList.size() > 1) {
+                coredumpMsg.stackInfo = "Stack trace of thread" + strList[1];
+            }
+            re.indexIn(outInfoByte);
+            coredumpMsg.storagePath = re.cap(0).replace("Storage: ", "");
+        } else {
+            coredumpMsg.storagePath = QString("coredump file is missing");
+        }
+
+        coredumpList.append(coredumpMsg);
+        //每获得600个数据就发出信号给控件加载
+        if (coredumpList.count() % SINGLE_READ_CNT_COREDUMP == 0) {
+            emit coredumpData(m_threadCount, coredumpList);
+            coredumpList.clear();
+        }
+    }
+
+    if (!m_canRun) {
+        return;
+    }
+
+    //最后可能有余下不足600的数据
+    if (coredumpList.count() >= 0) {
+        emit coredumpData(m_threadCount, coredumpList);
+    }
+    emit coredumpFinished(m_threadCount);
+}
+
+QString LogAuthThread::readAppLogFromLastLines(const QString& filePath, const int& count)
+{
+    if (!QFile::exists(filePath)) {
+        qCWarning(logAuthWork) << QString("log not existed. path:%1").arg(filePath);
+        return "";
+    }
+
+    QStringList lines;
+    string line;
+
+    ifstream f(filePath.toStdString().c_str(), ios::ate);
+    if (f.is_open()) {
+        char c;
+        streampos size = f.tellg();
+        for (int var = 1; var <= size; var++) {
+            f.seekg(-var, ios::end);
+            f.get(c);
+
+            if (lines.size() >= count)
+                break;
+
+            if (c == 0) {
+                continue;
+            }
+
+            if (c == '\n') {
+                if (line.size() > 0) {
+                    lines.prepend(line.c_str());
+                }
+                line = "";
+            } else {
+                line = c + line;
+            }
+
+            c = 0;
+        }
+
+        if (line.size() > 0 && lines.size() < count) {
+            lines.prepend(line.c_str());
+        }
+
+        f.close();
+    }
+
+    return lines.join('\n');
 }
 
 /**

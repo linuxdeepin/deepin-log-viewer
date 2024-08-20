@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>Action</name>
     <message>
@@ -51,10 +53,6 @@
     <message>
         <source>3 months</source>
         <translation>3 months</translation>
-    </message>
-    <message>
-        <source>Export</source>
-        <translation type="vanished">Export</translation>
     </message>
     <message>
         <source>Export</source>
@@ -120,12 +118,40 @@
         <source>Trace</source>
         <translation>Trace</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -149,6 +175,10 @@
         <source>Export failed</source>
         <translation>Export failed</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +196,6 @@
     <message>
         <source>Level:  </source>
         <translation>Level:  </translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>Application list:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -206,6 +232,18 @@
     <message>
         <source>Login record</source>
         <translation>Login record</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>Audit Type:</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>Application:</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>Submodule:</translation>
     </message>
 </context>
 <context>
@@ -362,6 +400,26 @@
         <source>Time Modified</source>
         <translation>Time Modified</translation>
     </message>
+    <message>
+        <source>SIG</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -416,12 +474,111 @@
         <source>Custom Log</source>
         <translation>Custom Log</translation>
     </message>
+    <message>
+        <source>Audit Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
         <translation>You do not have permission to view it</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -449,10 +606,6 @@
     <message>
         <source>Export All</source>
         <translation>Export All</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>System Logs</translation>
     </message>
     <message>
         <source>Refresh Now</source>

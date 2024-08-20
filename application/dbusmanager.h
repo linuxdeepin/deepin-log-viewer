@@ -15,10 +15,12 @@ class DBusManager : public QObject
     Q_OBJECT
 public:
     explicit DBusManager(QObject *parent = nullptr);
-    static QString getSystemInfo();
-    static bool isGetedKlu ;
-    static QString isklusystemName ;
-
+    // 是否开启等保四
+    static bool isSEOpen();
+    // 开启等保四情况下，判断是否为审计管理员身份
+    static bool isAuditAdmin();
+    // 利用freedeskop获取当前用户家目录路径
+    static QString getHomePathByFreeDesktop();
 signals:
 
 public slots:

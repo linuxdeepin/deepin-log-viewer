@@ -15,6 +15,7 @@
 
 #include <QMap>
 #include <QThread>
+#include <QDebug>
 
 class LogFileParser : public QObject
 {
@@ -24,27 +25,35 @@ public:
     ~LogFileParser();
 
 
-    int parseByJournal(QStringList arg = QStringList());
-    int parseByJournalBoot(QStringList arg = QStringList());
+    int parseByJournal(const QStringList &arg = QStringList());
+    int parseByJournalBoot(const QStringList &arg = QStringList());
 
-    int parseByDpkg(DKPG_FILTERS &iDpkgFilter);
-#if 0
-    void parseByXlog(QStringList &xList);
-    void parseByXlog(QList<LOG_MSG_XORG> &xList, qint64 ms = 0);  // modifed by Airy for show period
-#endif
-    int parseByXlog(XORG_FILTERS &iXorgFilter);
+    int parseByDpkg(const DKPG_FILTERS &iDpkgFilter);
+
+    int parseByXlog(const XORG_FILTERS &iXorgFilter);
     int parseByBoot();
-    int parseByKern(KERN_FILTERS &iKernFilter);
-    int parseByApp(APP_FILTERS &iAPPFilter);
+    // 通用解析入口，传入筛选参数，解析线程根据筛选参数吐出日志数据
+    int parse(LOG_FILTER_BASE &filter);
+    int parseByKern(const KERN_FILTERS &iKernFilter);
+    int parseByApp(const APP_FILTERS &iAPPFilter);
     void parseByDnf(DNF_FILTERS iDnfFilter);
     void parseByDmesg(DMESG_FILTERS iDmesgFilter);
-    int parseByNormal(NORMAL_FILTERS &iNormalFiler);   // add by Airy
-    int parseByKwin(KWIN_FILTERS iKwinfilter);
-    int parseByOOC(QString & path);
-    void createFile(QString output, int count);
+    int parseByNormal(const NORMAL_FILTERS &iNormalFiler);   // add by Airy
+
+    int parseByKwin(const KWIN_FILTERS &iKwinfilter);
+    int parseByOOC(const QString &path);
+
+    int parseByAudit(const AUDIT_FILTERS &iAuditFilter);
+
+    int parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap = false);
+
     void stopAllLoad();
 
 signals:
+    void parseFinished(int index, LOG_FLAG type, int status);
+    void logData(int index, const QList<QString> &dataList, LOG_FLAG type);
+    void stop();
+
     void dpkgFinished(int index);
     void dpkgData(int index, QList<LOG_MSG_DPKG>);
     void xlogFinished(int index);
@@ -74,6 +83,12 @@ signals:
     void OOCFinished(int index, int error = 0);
     void OOCData(int index, const QString &data);
 
+    void auditFinished(int index, bool bShowTip = false);
+    void auditData(int index, QList<LOG_MSG_AUDIT>);
+
+    void coredumpFinished(int index);
+    void coredumpData(int index, QList<LOG_MSG_COREDUMP> iDataList);
+
     void stopKern();
     void stopBoot();
     void stopDpkg();
@@ -86,6 +101,7 @@ signals:
     void stopDnf();
     void stopDmesg();
     void stopOOC();
+    void stopCoredump();
     /**
      * @brief proccessError 获取日志文件失败错误信息传递信号，传递到主界面显示 DMessage tooltip
      * @param iError 错误字符
@@ -99,29 +115,8 @@ signals:
 public slots:
     void slog_proccessError(const QString &iError);
 private:
-    QString m_rootPasswd;
-
-    QMap<QString, QString> m_dateDict;
-    QMap<QString, int> m_levelDict;  // example:warning=>4
-
     LogOOCFileParseThread *m_OOCThread {nullptr};
     LogApplicationParseThread *m_appThread {nullptr};
-    journalWork *work {nullptr};
-    JournalBootWork *m_bootJournalWork{nullptr};
-    QProcess *m_pDkpgDataLoader{nullptr};
-    QProcess *m_pXlogDataLoader{nullptr};
-    QProcess *m_KwinDataLoader{nullptr};
-    bool m_isProcess = false;
-    qint64 m_selectTime {0};
-    bool m_isJournalLoading = false;
-    bool m_isDpkgLoading = false;
-    bool m_isXlogLoading = false;
-    bool m_isKwinLoading = false;
-    bool m_isBootLoading = false;
-    bool m_isKernLoading = false;
-    bool m_isAppLoading = false;
-    bool m_isNormalLoading = false;
-    bool m_isOOCLoading = false;
 };
 
 #endif  // LOGFILEPARSER_H

@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Vie</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>Vie</translation>
     </message>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>Jäljitys</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>Henkilöllisyyden todennus</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>Harkittu pääsynhallinta</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>Pakollinen pääsynhallinta</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>Etäyhteys</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>Asiakirjan tarkastus</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Muu</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation>zip(*.zip)</translation>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>Vienti epäonnistui</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation>Vientihakemisto ei ole käytettävissä. Valitse toinen hakemisto toimintoa varten.</translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>Taso:</translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>Sovellusluettelo:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -206,6 +230,18 @@
     <message>
         <source>Login record</source>
         <translation>Kirjautumiset</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>Tarkastustyyppi:</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>Sovellukset:</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>Alamoduuli:</translation>
     </message>
 </context>
 <context>
@@ -356,10 +392,30 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Tiedostonimi</translation>
     </message>
     <message>
         <source>Time Modified</source>
+        <translation>Muutosaika</translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation>SIG</translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation>EXE</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>Core-tiedosto</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>Käyttäjänimi</translation>
+    </message>
+    <message>
+        <source>Offset</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -410,18 +466,118 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Muu loki</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Mukautettu loki</translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>Tarkastuslogi:</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation>Coredump loki</translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation>Kaatumistietoja ei voi saada, asenna systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>Sinulla ei ole lupaa tarkastella sitä</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation>Järjestelmän suojaustaso: korkea
+Vain järjestelmänvalvojat voivat katsoa valvontalokia</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation>Vie lokit määriteltyyn polkuun</translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation>POLKU</translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation>Vie tietyntyyppiset lokit</translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation>TYYPPI</translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation>Vie itse kehitettyjen sovellusten lokit</translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation>OMA SOVELLUS</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation>Vie lokit tietyn ajan kuluessa</translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation>AJANJAKSO</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation>Vie lokit virheenkorjaustasolla</translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation>TASO</translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation>KÄYNNISTYSTILA</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>Vie boot(no-klu) -lokit määritetyssä tilassa</translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation>Vie boot-shutdown-event tai valvontalokit tietyn tapahtumatyypin sisällä</translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation>TAPAHTUMATYYPPI</translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation>Vie lokit hakutulosten perusteella</translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation>HAKUSANA</translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation>Ilmoita perustiedot.</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>Vie lokit sovelluksen alamoduulin perusteella</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>ALAMODUULI</translation>
     </message>
 </context>
 <context>
@@ -440,7 +596,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 min</translation>
     </message>
     <message>
         <source>No refresh</source>
@@ -449,10 +605,6 @@
     <message>
         <source>Export All</source>
         <translation>Vie kaikki</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>Järjestelmälokit</translation>
     </message>
     <message>
         <source>Refresh Now</source>

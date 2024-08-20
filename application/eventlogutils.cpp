@@ -7,6 +7,7 @@
 #include <QDir>
 #include <QLibraryInfo>
 #include <QJsonDocument>
+#include <QThread>
 
 Eventlogutils *Eventlogutils::m_pInstance = nullptr;
 Eventlogutils *Eventlogutils::GetInstance()

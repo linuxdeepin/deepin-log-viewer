@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">ཕྱིར་འདྲེན།</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>ཕྱིར་འདྲེན།</translation>
     </message>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>རྗེས་སྙེག</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>ཐོབ་ཐང་དབྱེ་འབྱེད།</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>རང་བདག་ལྟ་སྤྱོད་ཚོད་འཛིན།</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>བཙན་ཤེད་ཀྱིས་ལྟ་སྤྱོད་ཚོད་འཛིན་བྱེད་པ།</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>རྒྱང་སྦྲེལ།</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>ཡིག་ཆ་རྩིས་བཤེར།</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>གཞན།</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation>zip(*.zip)</translation>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>འདོན་མི་ཐུབ།</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation>ཕྱིར་དྲངས་པའི་དཀར་ཆག་སྤྱོད་མི་རུང་། དཀར་ཆག་གཞན་བདམས་ནས་བཀོལ་སྤྱོད་བྱེད་རོགས།</translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>རིམ་པ། </translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>ཉེར་སྤྱོད་རེའུ་མིག</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -206,6 +230,18 @@
     <message>
         <source>Login record</source>
         <translation>ཐོ་འཇུག་ཆ་འཕྲིན། </translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>རྩིས་བཤེར་རིགས།</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>ཉེར་སྤྱོད།</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>བུ་ཆའི་མ་དཔེ།</translation>
     </message>
 </context>
 <context>
@@ -356,11 +392,31 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>ཡིག་ཆའི་མིང་།</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>བཟོ་བཅོས་དུས་ཚོད།</translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation>ཐོར་བའི་བརྡ་རྟགས།</translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation>འཕེལ་རིམ།</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>ལྟེ་བའི་ཡིག་ཆ།</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>སྤྱོད་མཁན།</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>འཕེལ་རིམ།</translation>
     </message>
 </context>
 <context>
@@ -410,53 +466,148 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>ཉིན་ཐོ་གཞན།</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>རང་སྒྲུབ་ཉིན་ཐོ།</translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>རྩིས་བཤེར་ཉིན་ཐོ།</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation>ཐོར་བའི་ཉིན་ཐོ།</translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation>ཐོར་བའི་ཆ་འཕྲིན་རག་ཐབས་བྲལ། systemd-coredumpསྒྲིག་འཇུག་བྱེད་རོགས།</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>ལྟ་དབང་མེད།</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation>མིག་སྔའི་རྒྱུད་ཁོངས་ཀྱི་བདེ་འཇགས་རིམ་པ་ནི་མཐོ་བ་ཞེས་པ་ཡིན་པས། རྩིས་བཤེར་དོ་དམ་པ་ཁོ་ནས་རྩིས་བཤེར་ཉིན་ཐོ་ལ་བལྟས་ཆོག </translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation>ཉིན་ཐོ་དག་དམིགས་བཙུགས་བྱས་པའི་དཀར་ཆག་ནང་འདྲེན་པ།</translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation>འདྲེན་ལམ།</translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation>ཉིན་ཐོའི་རིགས་ལྟར་ཉིན་ཐོ་འདྲེན་པ།</translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation>ཉིན་ཐོའི་རིགས།</translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation>རང་ངོས་ཀྱིས་ཞིབ་འཇུག་བྱས་པའི་ཉེར་སྤྱོད་ལྟར་ཉིན་ཐོ་འདྲེན་པ།</translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation>རང་ངོས་ཀྱིས་ཞིབ་འཇུག་བྱས་པའི་མིང་།</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation>དུས་ཚོད་ཀྱི་རིམ་པ་ལྟར་ཉིན་ཐོ་འདྲེན་པ།</translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation>དུས་འཁོར།</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation>སྒྲིག་སྦྱོར་རིམ་པ་ལྟར་ཉིན་ཐོ་འདྲེན་པ།</translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation>སྒྲིག་སྦྱོར་རིམ་པ།</translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation>འགོ་སློང་རྣམ་པ།</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>རྣམ་པ་ལྟར་ཉིན་ཐོ་འགོ་སློང་བ།(klu)</translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation>གནས་ཚུལ་གྱི་རིགས་གཞིར་བཟུང་གནས་ཚུལ་ལམ་རྩིས་བཤེར་ཉིན་ཐོ་འདྲེན་པ།</translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation>གནས་ཚུལ་གྱི་རིགས།</translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation>བརྡ་ཆད་གཙོ་བོ་གཞིར་བཟུང་ཉིན་ཐོ་འདྲེན་པ།</translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation>བརྡ་ཆད་གཙོ་བོ།</translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation>ཐོར་སའི་ཆ་འཕྲིན་གོང་ཞུ།</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>བུ་ཆའི་དཔེ་རྣམ་ལྟར་ཉེར་སྤྱོད་ཉིན་ཐོ་འདྲེན་པ།</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>བུ་ཆའི་དཔེ་རྣམ།</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>གསར་སྒྱུར་ཕྱོད།</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>སྐར་ཆ་10རེ།</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>སྐར་མ་1རེ།</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>སྐར་མ་5</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>གསར་སྒྱུར་མི་བྱེད།</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation type="unfinished"/>
+        <translation>ཚང་མ་འདོན་པ།</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>ལམ་སེང་གསར་སྒྱུར།</translation>
     </message>
 </context>
 </TS>

@@ -10,7 +10,6 @@
 #include <QRunnable>
 #include <QMap>
 
-#include <mutex>
 /**
  * @brief The LogAuthThread class 启动日志 内核日志 kwin日志 xorg日志 dpkg日志获取线程
  */
@@ -21,31 +20,19 @@ public:
     explicit LogAuthThread(QObject *parent = nullptr);
     ~LogAuthThread() override;
 
-    static LogAuthThread *instance()
-    {
-        LogAuthThread *sin = m_instance.load();
-        if (!sin) {
-            std::lock_guard<std::mutex> lock(m_mutex);
-            sin = m_instance.load();
-            if (!sin) {
-                sin = new LogAuthThread();
-                m_instance.store(sin);
-            }
-        }
-        return sin;
-    }
     void initDnfLevelMap();
     void initLevelMap();
-    QString getStandardOutput();
-    QString getStandardError();
     void setType(LOG_FLAG flag) { m_type = flag; }
-    void setFileterParam(KWIN_FILTERS iFIlters) { m_kwinFilters = iFIlters; }
-    void setFileterParam(XORG_FILTERS iFIlters) { m_xorgFilters = iFIlters; }
-    void setFileterParam(DKPG_FILTERS iFIlters) { m_dkpgFilters = iFIlters; }
-    void setFileterParam(KERN_FILTERS iFIlters) { m_kernFilters = iFIlters; }
-    void setFileterParam(NORMAL_FILTERS iFIlters) { m_normalFilters = iFIlters; }
-    void setFileterParam(DNF_FILTERS iFIlters) { m_dnfFilters = iFIlters; }
-    void setFileterParam(DMESG_FILTERS iFIlters) { m_dmesgFilters = iFIlters; }
+    void setParseMap(bool parseMap) { m_parseMap = parseMap; }
+    void setFileterParam(const KWIN_FILTERS &iFIlters) { m_kwinFilters = iFIlters; }
+    void setFileterParam(const XORG_FILTERS &iFIlters) { m_xorgFilters = iFIlters; }
+    void setFileterParam(const DKPG_FILTERS &iFIlters) { m_dkpgFilters = iFIlters; }
+    void setFileterParam(const KERN_FILTERS &iFIlters) { m_kernFilters = iFIlters; }
+    void setFileterParam(const NORMAL_FILTERS &iFIlters) { m_normalFilters = iFIlters; }
+    void setFileterParam(const DNF_FILTERS &iFIlters) { m_dnfFilters = iFIlters; }
+    void setFileterParam(const DMESG_FILTERS &iFIlters) { m_dmesgFilters = iFIlters; }
+    void setFileterParam(const AUDIT_FILTERS &iFIlters) { m_auditFilters = iFIlters; }
+    void setFileterParam(const COREDUMP_FILTERS &iFIlters) { m_coredumpFilters = iFIlters; }
     void stopProccess();
     void setFilePath(const QStringList &filePath);
     int getIndex();
@@ -69,6 +56,8 @@ protected:
     void NormalInfoTime();
     void handleDnf();
     void handleDmesg();
+    void handleAudit();
+    void handleCoredump();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
     qint64 formatDateTime(QString y, QString t);
@@ -98,15 +87,19 @@ signals:
     void normalData(int index, QList<LOG_MSG_NORMAL> iDataList);
     void dnfFinished(QList<LOG_MSG_DNF> iKwinList);
     void dmesgFinished(QList<LOG_MSG_DMESG> iKwinList);
+    void auditFinished(int index, bool bShowTip = false);
+    void auditData(int index, QList<LOG_MSG_AUDIT> iDataList);
+    void coredumpFinished(int index);
+    void coredumpData(int index, QList<LOG_MSG_COREDUMP> iDataList);
     void proccessError(const QString &iError);
 public slots:
     //    void onFinished(int exitCode);
     //    void kernDataRecived();
 private:
+    QString readAppLogFromLastLines(const QString& filePath, const int& count);
 
-    QStringList m_list;
-    QString m_output;
-    QString m_error;
+private:
+
     /**
      * @brief m_type 当前线程获取日志数据的类型，用来指定不同的获取逻辑和返回结果
      */
@@ -133,17 +126,22 @@ private:
     NORMAL_FILTERS  m_normalFilters;
     DNF_FILTERS m_dnfFilters;
     DMESG_FILTERS m_dmesgFilters;
-    static std::atomic<LogAuthThread *> m_instance;
-    static std::mutex m_mutex;
+    /**
+     * @brief m_normalFilters 开关机日志筛选条件
+     */
+    AUDIT_FILTERS m_auditFilters;
+
+    COREDUMP_FILTERS m_coredumpFilters;
     //获取数据用的cat命令的process
     QScopedPointer<QProcess> m_process;
     /**
      * @brief m_canRun 是否可以继续运行的标记量，用于停止运行线程
      */
-    bool m_canRun = false;
+    std::atomic_bool m_canRun = false;
     /**
      * @brief m_threadIndex 当前线程标号
      */
+    bool m_parseMap = false; // 崩溃信息是否要解析map信息，即stackinfo
     int m_threadCount;
     //正在执行停止进程的变量，防止重复执行停止逻辑
     bool m_isStopProccess = false;

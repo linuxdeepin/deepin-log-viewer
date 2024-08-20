@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -12,8 +12,15 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QProcess>
+#include <QLoggingCategory>
 
 DWIDGET_USE_NAMESPACE
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logOOCParse, "org.deepin.log.viewer.parse.ooc.work")
+#else
+Q_LOGGING_CATEGORY(logOOCParse, "org.deepin.log.viewer.parse.ooc.work", QtInfoMsg)
+#endif
 
 int LogOOCFileParseThread::thread_count = 0;
 /**
@@ -36,7 +43,7 @@ LogOOCFileParseThread::~LogOOCFileParseThread()
     stopProccess();
 }
 
-void LogOOCFileParseThread::setParam(QString &path)
+void LogOOCFileParseThread::setParam(const QString &path)
 {
     m_path = path;
 }
@@ -54,22 +61,29 @@ void LogOOCFileParseThread::doWork()
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
 
+    if (m_path.isEmpty()) {
+        emit sigFinished(m_threadCount);
+        return;
+    }
+
     if (!checkAuthentication(m_path)) {
+        emit sigFinished(m_threadCount, 1);
         return;
     }
 
     QStringList filePath = DLDBusHandler::instance(this)->getOtherFileInfo(m_path);
     for (int i = 0; i < filePath.count(); i++) {
         if (!m_canRun) {
+            emit sigFinished(m_threadCount);
             return;
         }
 
         //鉴权
         if (!checkAuthentication(filePath.at(i))) {
+            emit sigFinished(m_threadCount, 1);
             return;
         }
 
-        //m_fileData += DLDBusHandler::instance(this)->readLog(filePath.at(i)) + "\n";
         m_fileData += DLDBusHandler::instance(this)->readLog(filePath.at(i));
         emit sigData(m_threadCount, m_fileData);
     }
@@ -78,7 +92,7 @@ void LogOOCFileParseThread::doWork()
 }
 
 //鉴权
-bool LogOOCFileParseThread::checkAuthentication(const QString & path)
+bool LogOOCFileParseThread::checkAuthentication(const QString &path)
 {
     //判断当前用户对文件是否可读
     QFlags <QFileDevice::Permission> power = QFile::permissions(path);
@@ -91,11 +105,10 @@ bool LogOOCFileParseThread::checkAuthentication(const QString & path)
         //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
         initProccess();
         m_process->start("pkexec", QStringList() << "logViewerAuth"
-                                                 << path << SharedMemoryManager::instance()->getRunnableKey());
+                         << path << SharedMemoryManager::instance()->getRunnableKey());
         m_process->waitForFinished(-1);
         //有错则传出空数据
         if (m_process->exitCode() != 0) {
-            emit sigFinished(m_threadCount, 1);
             return false;
         }
     }
@@ -139,7 +152,7 @@ bool LogOOCFileParseThread::checkAuthentication(const QString & path)
  */
 void LogOOCFileParseThread::run()
 {
-    qDebug() << "LogApplicationParseThread::run()---threadrun";
+    qCDebug(logOOCParse) << "threadrun";
     doWork();
 }
 
@@ -163,7 +176,7 @@ void LogOOCFileParseThread::stopProccess()
     SharedMemoryManager::instance()->setRunnableTag(shareInfo);
     if (m_process) {
         m_process->kill();
-   }
+    }
 }
 
 void LogOOCFileParseThread::initProccess()

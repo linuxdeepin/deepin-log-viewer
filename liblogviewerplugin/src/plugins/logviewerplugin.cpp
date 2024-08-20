@@ -155,7 +155,7 @@ bool LogViewerPlugin::exportAppLogFile(const QString &path, BUTTONID period, PRI
     }
     generateAppFile(m_curAppLog, period, level);
     connect(this, &LogViewerPlugin::sigAppFinished, this, [=](int index) {
-        qDebug() << "index:" << index << endl;
+        Q_UNUSED(index);
         exportLogFile(path);
     });
 
@@ -231,9 +231,9 @@ QString LogViewerPlugin::getAppName(const QString &filePath)
     return LogApplicationHelper::instance()->transName(ret);
 }
 
-void LogViewerPlugin::exportLogFile(QString path)
+void LogViewerPlugin::exportLogFile(const QString &path)
 {
-    LogExportThread *exportThread = new LogExportThread(m_isDataLoadComplete, this);
+    LogExportThread *exportThread = new LogExportThread(this);
     connect(exportThread, &LogExportThread::sigResult, this, &LogViewerPlugin::slot_exportResult);
 //    connect(m_exportDlg, &ExportProgressDlg::sigCloseBtnClicked, exportThread, &LogExportThread::stopImmediately);
 //    connect(m_exportDlg, &ExportProgressDlg::buttonClicked, exportThread, &LogExportThread::stopImmediately);

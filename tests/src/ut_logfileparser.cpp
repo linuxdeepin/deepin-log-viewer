@@ -412,13 +412,6 @@ public:
 //    EXPECT_NE(m_parser,nullptr);
 //}
 
-
-TEST_F(LogFileParser_UT, UT_CreateFile_001)
-{
-    m_parser->createFile("ddd", 1);
-    EXPECT_NE(m_parser,nullptr);
-}
-
 TEST_F(LogFileParser_UT, UT_ParseByJournal_001)
 {
     Stub stub;
@@ -437,7 +430,6 @@ TEST_F(LogFileParser_UT, UT_ParseByJournal_001)
     stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag001);
     stub.set(wtmp_close, stub_wtmp_close001);
     m_parser->parseByJournal();
-    EXPECT_EQ(m_parser->m_isJournalLoading,true)<<"check the status after parseByJournal()";
 }
 
 TEST_F(LogFileParser_UT, UT_parseByJournalBoot_001)
@@ -480,5 +472,4 @@ TEST_F(LogFileParser_UT, UT_parseByOOC_001)
     stub.set(wtmp_close, stub_wtmp_close001);
     QString path("test");
     m_parser->parseByOOC(path);
-    EXPECT_EQ(m_parser->m_isOOCLoading,true)<<"check the status after parseByJournal()";
 }
