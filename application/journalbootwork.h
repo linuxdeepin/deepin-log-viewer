@@ -80,7 +80,7 @@ public:
      */
     static int thread_index ;
 private:
-    QString getDateTimeFromStamp(QString str);
+    QString getDateTimeFromStamp(const QString &str);
     void initMap();
     QString i2str(int prio);
     /**
@@ -97,7 +97,7 @@ private:
     /**
      * @brief m_canRun  是否允许标记量，用于停止该线程
      */
-    bool m_canRun = false;
+    std::atomic_bool m_canRun = false;
     /**
      * @brief m_threadIndex 当前线程标号
      */

@@ -13,7 +13,7 @@ class LogIconButton : public QPushButton
 {
 public:
     explicit LogIconButton(QWidget *parent = nullptr);
-    explicit LogIconButton(QString text, QWidget *parent = nullptr);
+    explicit LogIconButton(const QString &text, QWidget *parent = nullptr);
 protected:
     QSize sizeHint() const override;
     void resizeEvent(QResizeEvent *e)override;

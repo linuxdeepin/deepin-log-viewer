@@ -77,7 +77,7 @@ protected:
     QString getAppName(const QString &filePath);
     //导出日志
     //path:导出路径
-    void exportLogFile(QString path);
+    void exportLogFile(const QString &path);
 
 private:
     /**

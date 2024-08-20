@@ -24,6 +24,7 @@
 #include <QDateTime>
 
 class ExportProgressDlg;
+class LogBackend;
 /**
  * @brief The DisplayContent class 主显示数据区域控件,包括数据表格和详情页
  */
@@ -38,6 +39,14 @@ class DisplayContent : public Dtk::Widget::DWidget
         DATA_COMPLETE, //加载完成
         DATA_LOADING_K, //内核日志正在加载
         DATA_NO_SEARCH_RESULT, //搜索无记录
+        DATA_NOT_AUDIT_ADMIN, // 提示不是审计管理员
+        COREDUMPCTL_NOT_INSTALLED, //未安装coredumpctl工具
+        DATA_NO_PERMISSION //没有权限查看
+    };
+
+    enum OOC_TYPE {
+        OOC_OTHER = 0, // 其他日志
+        OOC_CUSTOM     // 自定义日志
     };
 
 public:
@@ -52,69 +61,90 @@ private:
     void setTableViewData();
     void initConnections();
 
+    // 基于Json数据的建表接口
+    void createLogTable(const QList<QString>& list, LOG_FLAG type);
+    void insertLogTable(const QList<QString>& list, int start, int end, LOG_FLAG type);
+    void parseListToModel(const QList<QString>& list, QStandardItemModel *oPModel, LOG_FLAG type);
+
+    int loadSegementPage(bool bNext = true, bool bReset = true);
+
     void generateJournalFile(int id, int lId, const QString &iSearchStr = "");
-    void createJournalTableStart(QList<LOG_MSG_JOURNAL> &list);
+    void createJournalTableStart(const QList<LOG_MSG_JOURNAL> &list);
     void createJournalTableForm();
     void generateDpkgFile(int id, const QString &iSearchStr = "");
-    void createDpkgTableStart(QList<LOG_MSG_DPKG> &list);
+    void createDpkgTableStart(const QList<LOG_MSG_DPKG> &list);
     void createDpkgTableForm();
 
     void generateKernFile(int id, const QString &iSearchStr = "");
     void createKernTableForm();
-    void createKernTable(QList<LOG_MSG_JOURNAL> &list);
+    void createKernTable(const QList<LOG_MSG_JOURNAL> &list);
 
-    void generateAppFile(QString path, int id, int lId, const QString &iSearchStr = "");
+    void generateAppFile(const QString &app, int id, int lId, const QString &iSearchStr = "");
     void createAppTableForm();
-    void createAppTable(QList<LOG_MSG_APPLICATOIN> &list);
+    void createAppTable(const QList<LOG_MSG_APPLICATOIN> &list);
 
     void createBootTableForm();
-    void createBootTable(QList<LOG_MSG_BOOT> &list);
+    void createBootTable(const QList<LOG_MSG_BOOT> &list);
     void generateBootFile();
 
     void createXorgTableForm();
-    void createXorgTable(QList<LOG_MSG_XORG> &list);
+    void createXorgTable(const QList<LOG_MSG_XORG> &list);
     void generateXorgFile(int id); // add by Airy for peroid
 
     void createKwinTableForm();
-    void creatKwinTable(QList<LOG_MSG_KWIN> &list);
-    void generateKwinFile(KWIN_FILTERS iFilters);
+    void creatKwinTable(const QList<LOG_MSG_KWIN> &list);
+    void generateKwinFile(const KWIN_FILTERS &iFilters);
 
     void createNormalTableForm();
-    void createNormalTable(QList<LOG_MSG_NORMAL> &list); // add by Airy
+    void createNormalTable(const QList<LOG_MSG_NORMAL> &list); // add by Airy
     void generateNormalFile(int id); // add by Airy for peroid
 
     //其他日志或者自定义日志
-    void generateOOCFile(QString path);
+    void generateOOCFile(const QString &path);
+    void generateOOCLogs(const OOC_TYPE &type, const QString &iSearchStr = "");
     void createOOCTableForm();
-    void createOOCTable(const QList<QStringList> & list);
+    void createOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list);
+
+    // 审计日志
+    void generateAuditFile(int id, int lId, const QString &iSearchStr = "");
+    void createAuditTableForm();
+    void createAuditTable(const QList<LOG_MSG_AUDIT> &list);
+
+    //coredump log
+    void generateCoredumpFile(int id, const QString &iSearchStr = "");
+    void createCoredumpTableForm();
+    void createCoredumpTable(const QList<LOG_MSG_COREDUMP> &list);
 
     void insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
-    void insertApplicationTable(QList<LOG_MSG_APPLICATOIN> list, int start, int end);
-    void insertKernTable(QList<LOG_MSG_JOURNAL> list, int start,
+    void insertApplicationTable(const QList<LOG_MSG_APPLICATOIN> &list, int start, int end);
+    void insertKernTable(const QList<LOG_MSG_JOURNAL> &list, int start,
                          int end); // add by Airy for bug 12263
-    void insertDpkgTable(QList<LOG_MSG_DPKG> list, int start, int end);
-    void insertXorgTable(QList<LOG_MSG_XORG> list, int start, int end);
-    void insertBootTable(QList<LOG_MSG_BOOT> list, int start, int end);
-    void insertKwinTable(QList<LOG_MSG_KWIN> list, int start, int end);
-    void insertNormalTable(QList<LOG_MSG_NORMAL> list, int start, int end);
-    QString getAppName(QString filePath);
+    void insertDpkgTable(const QList<LOG_MSG_DPKG> &list, int start, int end);
+    void insertXorgTable(const QList<LOG_MSG_XORG> &list, int start, int end);
+    void insertBootTable(const QList<LOG_MSG_BOOT> &list, int start, int end);
+    void insertKwinTable(const QList<LOG_MSG_KWIN> &list, int start, int end);
+    void insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int start, int end);
+    void insertOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list, int start, int end);
+    void insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end);
+    void insertCoredumpTable(const QList<LOG_MSG_COREDUMP> &list, int start, int end);
+    QString getAppName(const QString &filePath);
 
     bool isAuthProcessAlive();
 
     void generateJournalBootFile(int lId, const QString &iSearchStr = "");
-    void createJournalBootTableStart(QList<LOG_MSG_JOURNAL> &list);
+    void createJournalBootTableStart(const QList<LOG_MSG_JOURNAL> &list);
     void createJournalBootTableForm();
     void insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int start, int end);
 
     void generateDnfFile(BUTTONID iDate, DNFPRIORITY iLevel);
-    void createDnfTable(QList<LOG_MSG_DNF> &list);
+    void createDnfTable(const QList<LOG_MSG_DNF> &list);
 
     void generateDmesgFile(BUTTONID iDate, PRIORITY iLevel);
-    void createDmesgTable(QList<LOG_MSG_DMESG> &list);
+    void createDmesgTable(const QList<LOG_MSG_DMESG> &list);
     void createDnfForm();
     void createDmesgForm();
-    void insertDmesgTable(QList<LOG_MSG_DMESG> list, int start, int end);
-    void insertDnfTable(QList<LOG_MSG_DNF> list, int start, int end);
+    void insertDmesgTable(const QList<LOG_MSG_DMESG> &list, int start, int end);
+    void insertDnfTable(const QList<LOG_MSG_DNF> &list, int start, int end);
 
 signals:
     void loadMoreInfo();
@@ -124,58 +154,71 @@ signals:
      * @param pModel 当前的model指针
      * @param name 当前应用日志选择的日志名称
      */
-    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name);
+    void sigDetailInfo(QModelIndex index, QStandardItemModel *pModel, QString name, const int error = 0);
     /**
      * @brief setExportEnable 是否允许导出信号
      * @param iEnable 是否允许导出
      */
     void setExportEnable(bool iEnable);
 
+    void sigCoredumpDetailInfo(QList<LOG_MSG_COREDUMP> cList);
+
 public slots:
     void slot_valueChanged_dConfig_or_gSetting(const QString &key);
     void slot_requestShowRightMenu(const QPoint &pos);
     void slot_tableItemClicked(const QModelIndex &index);
     void slot_BtnSelected(int btnId, int lId, QModelIndex idx);
-    void slot_appLogs(int btnId, QString path);
+    void slot_appLogs(int btnId, const QString &app);
 
     void slot_logCatelogueClicked(const QModelIndex &index);
     void slot_exportClicked();
 
-    void slot_statusChagned(QString status);
+    void slot_statusChagned(const QString &status);
 
-    void slot_dpkgFinished(int index);
-    void slot_dpkgData(int index, QList<LOG_MSG_DPKG> list);
-    void slot_XorgFinished(int index);
-    void slot_xorgData(int index, QList<LOG_MSG_XORG> list);
-    void slot_bootFinished(int index);
-    void slot_bootData(int index, QList<LOG_MSG_BOOT> list);
-    void slot_kernFinished(int index);
-    void slot_kernData(int index, QList<LOG_MSG_JOURNAL> list);
-    void slot_kwinFinished(int index);
-    void slot_kwinData(int index, QList<LOG_MSG_KWIN> list);
-    void slot_dnfFinished(QList<LOG_MSG_DNF> list);
-    void slot_dmesgFinished(QList<LOG_MSG_DMESG> list);
-    void slot_journalFinished(int index);
-    void slot_journalBootFinished(int index);
-    void slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list);
-    void slot_journalData(int index, QList<LOG_MSG_JOURNAL> list);
-    void slot_applicationFinished(int index);
-    void slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> list);
-    void slot_normalFinished(int index);
-    void slot_normalData(int index, QList<LOG_MSG_NORMAL> list);
-    void slot_OOCFinished(int index, int error = 0);
-    void slot_OOCData(int index, const QString & data);
+    // Json格式的日志数据处理接口
+    void slot_parseFinished(LOG_FLAG type, int status);
+    void slot_logData(const QList<QString> &list, LOG_FLAG type);
+    void slot_clearTable();
+    void slot_dpkgFinished();
+    void slot_dpkgData(const QList<LOG_MSG_DPKG> &list);
+    void slot_XorgFinished();
+    void slot_xorgData(const QList<LOG_MSG_XORG> &list);
+    void slot_bootFinished();
+    void slot_bootData(const QList<LOG_MSG_BOOT> &list);
+    void slot_kernFinished();
+    void slot_kernData(const QList<LOG_MSG_JOURNAL> &list);
+    void slot_kwinFinished();
+    void slot_kwinData(const QList<LOG_MSG_KWIN> &list);
+    void slot_dnfFinished(const QList<LOG_MSG_DNF> &list);
+    void slot_dmesgFinished(const QList<LOG_MSG_DMESG> &list);
+    void slot_journalFinished();
+    void slot_journalBootFinished();
+    void slot_journalBootData(const QList<LOG_MSG_JOURNAL> &list);
+    void slot_journalData(const QList<LOG_MSG_JOURNAL> &list);
+    void slot_applicationFinished();
+    void slot_applicationData(const QList<LOG_MSG_APPLICATOIN> &list);
+    void slot_normalFinished();
+    void slot_normalData(const QList<LOG_MSG_NORMAL> &list);
+    void slot_OOCFinished(int error = 0);
+    void slot_OOCData(const QString &data);
+    void slot_auditFinished(bool bShowTip = false);
+    void slot_auditData(const QList<LOG_MSG_AUDIT> &list);
+    void slot_coredumpFinished();
+    void slot_coredumpData(const QList<LOG_MSG_COREDUMP> &list, bool newData);
 
     void slot_logLoadFailed(const QString &iError);
     void slot_vScrollValueChanged(int valuePixel);
 
-    void slot_searchResult(QString str);
+    void slot_searchResult(const QString &str);
+    void slot_getSubmodule(int tcbx);
     void slot_getLogtype(int tcbx); // add by Airy
+    void slot_getAuditType(int tcbx);
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
     void slot_dnfLevel(DNFPRIORITY iLevel);
+
     //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
-    void parseListToModel(QList<LOG_MSG_DPKG> iList, QStandardItemModel *oPModel);
-    void parseListToModel(QList<LOG_MSG_BOOT> iList, QStandardItemModel *oPModel);
+    void parseListToModel(const QList<LOG_MSG_DPKG> &iList, QStandardItemModel *oPModel);
+    void parseListToModel(const QList<LOG_MSG_BOOT> &iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_XORG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_JOURNAL> iList, QStandardItemModel *oPModel);
@@ -184,23 +227,14 @@ public slots:
     void parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel);
-    QString getIconByname(QString str);
-    void setLoadState(LOAD_STATE iState);
+    void parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardItemModel *oPModel);
+    QString getIconByname(const QString &str);
+    void setLoadState(LOAD_STATE iState, bool bSearching = false);
     void onExportProgress(int nCur, int nTotal);
     void onExportResult(bool isSuccess);
     void onExportFakeCloseDlg();
-    void clearAllFilter();
-    void clearAllDatalist();
-
-    QList<LOG_MSG_BOOT> filterBoot(BOOT_FILTERS ibootFilter, QList<LOG_MSG_BOOT> &iList);
-    QList<LOG_MSG_NORMAL> filterNomal(NORMAL_FILTERS inormalFilter, QList<LOG_MSG_NORMAL> &iList);
-    QList<LOG_MSG_DPKG> filterDpkg(const QString &iSearchStr, QList<LOG_MSG_DPKG> &iList);
-    QList<LOG_MSG_JOURNAL> filterKern(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
-    QList<LOG_MSG_XORG> filterXorg(const QString &iSearchStr, QList<LOG_MSG_XORG> &iList);
-    QList<LOG_MSG_KWIN> filterKwin(const QString &iSearchStr, QList<LOG_MSG_KWIN> &iList);
-    QList<LOG_MSG_APPLICATOIN> filterApp(const QString &iSearchStr, QList<LOG_MSG_APPLICATOIN> &iList);
-    QList<LOG_MSG_JOURNAL> filterJournal(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
-    QList<LOG_MSG_JOURNAL> filterJournalBoot(const QString &iSearchStr, QList<LOG_MSG_JOURNAL> &iList);
+    void clearAllDatas();
 
 private:
     void resizeEvent(QResizeEvent *event);
@@ -222,6 +256,10 @@ private:
     logDetailInfoWidget *m_detailWgt {nullptr};
     //搜索无结果时显示无搜索结果提示的label
     Dtk::Widget::DLabel *noResultLabel {nullptr};
+    // 不是审计管理员提示的label
+    Dtk::Widget::DLabel *notAuditLabel {nullptr};
+    Dtk::Widget::DLabel *noCoredumpctlLabel {nullptr};
+    Dtk::Widget::DLabel *noPermissionLabel {nullptr};
     //当前选中的日志类型的index
     QModelIndex m_curListIdx;
     //当前选中的treeview的index
@@ -238,91 +276,32 @@ private:
      * @brief m_spinnerWgt_K 加载内核日志数据时转轮控件
      */
     LogSpinnerWidget *m_spinnerWgt_K; // add by Airy
+
+    // 列表右键菜单
+    QMenu *m_menu{ nullptr };
+    QAction *m_act_openForder{ nullptr };
+    QAction *m_act_refresh{ nullptr };
+
     /**
-     * @brief m_curAppLog 当前选中的应用的日志文件路径
+     * @brief m_curAppLog 当前选中的应用的项目名称
      */
-    QString m_curAppLog;
+    QString m_curApp;
 
-    QString m_currentStatus;
-
-    //当前选中的时间筛选选项
+    // 当前选中的时间筛选选项
     int m_curBtnId {ALL};
-    //当前选中的等级筛选选项
+    // 当前选中的等级筛选选项
     int m_curLevel {INF};
+    // 当前选中的审计类型选项
+    int m_curAuditType {0};
+    // 当前选中的开关机事件类型选项
+    int m_curNormalEventType{0};
 
     //当前加载的日志类型
     LOG_FLAG m_flag {NONE};
-    /**
-     * @brief m_logFileParse 获取日志工具类对象
-     */
-    LogFileParser m_logFileParse;
 
-    /**
-     * @brief jBootList 经过筛选完成的启动日志列表
-     */
-    /**
-     * @brief jBootListOrigin 未经过筛选的启动日志数据 journalctl --boot cmd.
-     */
-    QList<LOG_MSG_JOURNAL> jBootList, jBootListOrigin;
+    // 日志后端 解析、接收和转发日志数据
+    LogBackend* m_pLogBackend;
 
-    /**
-     * @brief jList 经过筛选完成的系统日志数据
-     */
-    /**
-     * @brief jListOrigin 未经过筛选的系统日志数据 journalctl cmd.
-     */
-    QList<LOG_MSG_JOURNAL> jList, jListOrigin;
-    /**
-     * @brief dList 经过筛选完成的dpkg日志数据
-     */
-    /**
-     * @brief dListOrigin 未经过筛选的dpkg日志数据  dpkg.log
-     */
-    QList<LOG_MSG_DPKG> dList, dListOrigin;
-    /**
-     * @brief xList 经过筛选完成的xorg日志数据
-     */
-    /**
-     * @brief xListOrigin 未经过筛选的xorg日志数据   Xorg.0.log
-     */
-    QList<LOG_MSG_XORG> xList, xListOrigin;
-    /**
-     * @brief currentBootList 经过筛选完成的启动日志数据
-     */
-    /**
-     * @brief bList 未经过筛选的启动日志数据   boot.log
-     */
-    QList<LOG_MSG_BOOT> bList, currentBootList;
-    /**
-     * @brief kList 经过筛选完成的内核日志数据
-     */
-    /**
-     * @brief kListOrigin 未经过筛选的内核日志数据   kern.log
-     */
-    QList<LOG_MSG_JOURNAL> kList, kListOrigin;
-    /**
-     * @brief appList 经过筛选完成的内核日志数据
-     */
-    /**
-     * @brief appListOrigin 未经过筛选的内核日志数据   ~/.cache/deepin/xxx.log(.xxx)
-     */
-    QList<LOG_MSG_APPLICATOIN> appList, appListOrigin;
-    /**
-     * @brief norList add 未经过筛选完成的开关机日志数据 by Airy
-     */
-    QList<LOG_MSG_NORMAL> norList;
-    /**
-     * @brief nortempList 经过筛选的开关机日志数据 add by Airy
-     */
-    QList<LOG_MSG_NORMAL> nortempList;
-    /**
-     * @brief m_currentKwinList add 经过筛选完成的kwin日志数据 by Airy /$HOME/.kwin.log
-     */
-    QList<LOG_MSG_KWIN> m_currentKwinList;
-    /**
-     * @brief m_kwinList 未经过筛选的开关机日志数据
-     */
-    QList<LOG_MSG_KWIN> m_kwinList;
     /**
      * @brief m_iconPrefix 图标资源文件路径前缀
      */
@@ -332,22 +311,11 @@ private:
      */
     QMap<QString, QString> m_icon_name_map;
 
-    //当前搜索关键字
-    QString m_currentSearchStr {""};
-    /**
-     * @brief m_currentKwinFilter kwin日志当前筛选条件
-     */
-    KWIN_FILTERS m_currentKwinFilter;
     //导出进度条弹框
     ExportProgressDlg *m_exportDlg {nullptr};
     //是否为第一次加载完成后收到数据,journalctl获取方式专用
     bool m_firstLoadPageData = false;
-    //启动日志当前筛选条件
-    BOOT_FILTERS m_bootFilter = {"", ""};
-    /**
-     * @brief m_normalFilter 开关机日志当前筛选条件
-     */
-    NORMAL_FILTERS m_normalFilter;
+
     //上次treeview滚筒条的值
     int m_treeViewLastScrollValue = -1;
     //当前的显示加载状态
@@ -358,23 +326,9 @@ private:
      * @brief m_journalFilter 当前系统日志筛选条件
      */
     JOURNAL_FILTERS m_journalFilter;
-    QList<LOG_MSG_DNF> dnfList, dnfListOrigin; //dnf.log
-    QList<LOG_MSG_DMESG> dmesgList, dmesgListOrigin; //dmesg cmd
+
     QMap<QString, QString> m_dnfIconNameMap;
     DNFPRIORITY m_curDnfLevel {INFO};
-    //当前系统日志获取进程标记量
-    int m_journalCurrentIndex {-1};
-    //当前klu启动日志获取进程标记量
-    int m_journalBootCurrentIndex {-1};
-    //当前启动日志获取进程标记量
-    int m_bootCurrentIndex {-1};
-    int m_dpkgCurrentIndex {-1};
-    int m_kernCurrentIndex {-1};
-    int m_normalCurrentIndex {-1};
-    int m_xorgCurrentIndex {-1};
-    int m_kwinCurrentIndex {-1};
-    int m_appCurrentIndex {-1};
-    int m_OOCCurrentIndex {-1};
     bool m_isDataLoadComplete {false};
     //筛选条件
     QString selectFilter;

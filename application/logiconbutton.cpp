@@ -17,7 +17,7 @@ LogIconButton::LogIconButton(QWidget *parent)
     this->setIconSize(QSize(32, 32));
 }
 
-LogIconButton::LogIconButton(QString text, QWidget *parent)
+LogIconButton::LogIconButton(const QString &text, QWidget *parent)
     : QPushButton(text, parent)
 {
     this->setFlat(true);

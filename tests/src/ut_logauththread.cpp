@@ -176,7 +176,7 @@ public:
     }
     void SetUp() //TEST跑之前会执行SetUp
     {
-        m_logAuthThread = LogAuthThread::instance();
+        m_logAuthThread = new LogAuthThread();
         qDebug() << "SetUp" << endl;
     }
     void TearDown() //TEST跑完之后会执行TearDown

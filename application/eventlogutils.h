@@ -15,6 +15,7 @@ public:
         CloseTime     = 1000000001,
         StartUp           = 1000000003,
         Quit            = 1000000004,
+        ReportCoredump = 1001100000
     };
 
     static Eventlogutils *GetInstance();

@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Exportar</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>Exportar</translation>
     </message>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>Rastrear</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"/>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>Texto (*.txt);; Documento (*.doc);; Planilha (*.xls);; Página Web (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>A exportação falhou</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>Nível:</translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>Lista de aplicativos:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -206,6 +230,18 @@
     <message>
         <source>Login record</source>
         <translation>Gravar login</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -362,6 +398,26 @@
         <source>Time Modified</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>SIG</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -416,11 +472,110 @@
         <source>Custom Log</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Audit Log</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -448,10 +603,6 @@
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>System Logs</source>
         <translation type="unfinished"/>
     </message>
     <message>

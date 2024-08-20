@@ -16,7 +16,6 @@ int wtmp_open(char *filename)
 int wtmp_open_back(char *filename)
 {
     fdWtmp = open(filename, O_RDONLY);
-    //    qDebug() << "fdWtmp" << fdWtmp;
     bpos = cur_rec = num_recs = 0;
     fpos = lseek(fdWtmp, 0, SEEK_END);
     return fdWtmp;
@@ -24,7 +23,6 @@ int wtmp_open_back(char *filename)
 
 int seek_end(void)
 {
-    //    qDebug() <<  lseek(0, fdWtmp, SEEK_END);
     return 0;
 }
 
@@ -61,8 +59,6 @@ int wtmp_reload_back(void)
 {
     int amt_read;
 
-//   qDebug() << "endsize" << endsize << NRECS << UTSIZE;
-
     off_t o;
     o = ((fpos - 1) / (NRECS * UTSIZE)) * (NRECS * UTSIZE);
     bpos = (int)(fpos - o);
@@ -98,7 +94,7 @@ void wtmp_close(void)
 
 struct utmp_list *st_list_init(void)
 {
-    struct utmp_list *list = (struct utmp_list *)malloc(sizeof(struct utmp_list));
+    struct utmp_list *list = static_cast<struct utmp_list *>(malloc(sizeof(struct utmp_list)));
     if (!list) {
         printf("struct utmp_list malloc failed\n");
         return NULL;
@@ -111,7 +107,7 @@ struct utmp_list *st_list_init(void)
 
 struct utmp *st_utmp_init(void)
 {
-    struct utmp *stUTMP = (struct utmp *)malloc(sizeof(struct utmp));
+    struct utmp *stUTMP = static_cast<struct utmp *>(malloc(sizeof(struct utmp)));
     if (!stUTMP) {
         printf("struct utmp malloc failed\n");
         return NULL;
@@ -158,7 +154,7 @@ utmp list_get_ele_and_del(QList<utmp > &list, char *value, int &rs)
     return temp;
 }
 
-char *show_end_time(long timeval)
+char *show_end_time(time_t timeval)
 {
     struct tm *t;
     char tt[256] = {0};
@@ -169,7 +165,7 @@ char *show_end_time(long timeval)
     return asctime(t);
 }
 
-char *show_start_time(long timeval)
+char *show_start_time(time_t timeval)
 {
     struct tm *t;
     char tt[256] = {0};

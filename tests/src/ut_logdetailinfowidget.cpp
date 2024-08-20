@@ -100,6 +100,6 @@ TEST(logDetailInfoWidget_slot_DetailInfo_UT, logDetailInfoWidget_slot_DetailInfo
 {
     logDetailInfoWidget *p = new logDetailInfoWidget(nullptr);
     EXPECT_NE(p, nullptr);
-    p->slot_DetailInfo(QModelIndex(), nullptr, "");
+    p->slot_DetailInfo(QModelIndex(), nullptr, "", 0);
     p->deleteLater();
 }

@@ -71,8 +71,7 @@ public:
     }
     void SetUp() //TEST跑之前会执行SetUp
     {
-        bool iscomplete = true;
-        exportThread = new LogExportThread(iscomplete);
+        exportThread = new LogExportThread();
         qDebug() << "SetUp" << endl;
     }
     void TearDown() //TEST跑完之后会执行TearDown
@@ -637,9 +636,7 @@ TEST_F(LogExportthread_UT, ExportRun_UT)
     QList<LOG_MSG_KWIN> m_kwinList {m_kwin};
     QList<LOG_MSG_DNF> m_dnfList {m_dnf};
     QList<LOG_MSG_DMESG> m_dmesgList {m_dmesg};
-    QString test = "test";
     exportThread->m_canRunning = false;
-    exportThread->m_allLoadComplete = true;
 
     exportThread->m_runMode = LogExportThread::HtmlModel;
     exportThread->run();

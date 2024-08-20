@@ -65,9 +65,10 @@ protected:
 
 private:
     void setAppComboBoxItem();
+    void setSubmodulesComboBoxItem(const QString &app);
 
     void setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period, bool needMove,
-                            bool typecbx = false, bool dnfCbx = false); // modified by Airy
+                            bool typecbx = false, bool dnfCbx = false, bool auditCbx = false); // modified by Airy
     void setSelection(FILTER_CONFIG iConifg);
 
     void setUeButtonSytle();
@@ -88,9 +89,14 @@ signals:
     void sigButtonClicked(int tId, int lId, QModelIndex idx);
     /**
      * @brief sigCbxAppIdxChanged 应用日志中应用选择下拉框触发信号
-     * @param path 当前选择的应用日志文件路径
+     * @param app 当前选择的应用项目名称
      */
-    void sigCbxAppIdxChanged(int btnId, QString path);
+    void sigCbxAppIdxChanged(int btnId, QString app);
+    /**
+     * @brief sigCbxSubModuleChanged 应用日志中子模塊选择下拉框触发信号
+     * @param tId 下拉框当前index
+     */
+    void sigCbxSubModuleChanged(int tId);
     /**
      * @brief sigExportInfo 导出按钮触发信号
      */
@@ -106,6 +112,11 @@ signals:
      */
     void sigLogtypeChanged(int tId);  // add by Airy
     /**
+     * @brief sigAuditTypeChanged  审计日志审计类型下拉框触发筛选信号
+     * @param tId 下拉框当前index
+     */
+    void sigAuditTypeChanged(int tId);
+    /**
      * @brief sigResizeWidth  当前控件应有宽度信号
      * @param iWidth 计算宽度
      */
@@ -118,8 +129,10 @@ public slots:
     void slot_exportButtonClicked();
     void slot_cbxLvIdxChanged(int idx);
     void slot_cbxAppIdxChanged(int idx);
+    void slot_cbxSubmoduleChanged(int idx);
     void slot_cbxStatusChanged(int idx);
     void slot_cbxLogTypeChanged(int idx);  // add  by Airy
+    void slot_cbxAuditTypeChanged(int idx);
     void setExportButtonEnable(bool iEnable);
     void slot_cbxDnfLvIdxChanged(int idx);
 
@@ -157,6 +170,14 @@ private:
      */
     LogCombox *cbx_app;
     /**
+     * @brief submoduleTxt 应用日志子模块筛选下拉框提示文字
+     */
+    Dtk::Widget::DLabel *submoduleTxt;
+    /**
+     * @brief cbx_submodule 应用日志子模块筛选下拉框
+     */
+    LogCombox *cbx_submodule;
+    /**
      * @brief statusTxt 启动日志状态筛选下拉框前面的提示文字
      */
     Dtk::Widget::DLabel *statusTxt;
@@ -172,6 +193,14 @@ private:
      * @brief typeCbx 开关机日志日志种类筛选下拉框
      */
     LogCombox *typeCbx;  // add by Airy
+    /**
+     * @brief typeTxt 审计日志审计类型筛选下拉框前面的提示文字
+     */
+    Dtk::Widget::DLabel *auditTypeTxt;
+    /**
+     * @brief typeCbx 审计日志审计类型筛选下拉框
+     */
+    LogCombox *auditTypeCbx;
     /**
      * @brief m_curTreeIndex 日志种类选择listview传进来的当前选择的日志种类信息
      */

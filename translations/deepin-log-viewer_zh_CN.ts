@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">导出</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>导 出</translation>
     </message>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>跟踪</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>身份鉴别</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>自主访问控制</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>强制访问控制</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>远程连接</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>文件审计</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>其他</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation type="unfinished"/>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>导出失败</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation>导出目录不可用，请选择其他目录进行导出操作。</translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>级别：</translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>应用列表：</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -206,6 +230,18 @@
     <message>
         <source>Login record</source>
         <translation>登录信息</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>审计类型：</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>应用：</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>子模块：</translation>
     </message>
 </context>
 <context>
@@ -362,6 +398,26 @@
         <source>Time Modified</source>
         <translation>修改日期</translation>
     </message>
+    <message>
+        <source>SIG</source>
+        <translation>崩溃信号</translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation>进程</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>核心文件</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>用户</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>进程</translation>
+    </message>
 </context>
 <context>
     <name>Tbble</name>
@@ -416,12 +472,112 @@
         <source>Custom Log</source>
         <translation>自定义日志</translation>
     </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>审计日志</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation>崩溃日志</translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation>无法获取崩溃信息，请安装 systemd-coredump。</translation>
+    </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
         <translation>无权限查看</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation>当前系统安全等级为：高
+仅审计管理员可查看审计日志</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation>导出日志到指定目录</translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation>导出路径</translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation>按日志种类导出日志</translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation>日志种类</translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation>按自研应用导出日志</translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation>自研应用名称</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation>按时间周期导出日志</translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation>周期</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation>按调试级别导出日志</translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation>调试级别</translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation>启动状态</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>按状态导出启动日志(klu)</translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation>按事件类型导出开关机事件/审计日志</translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation>事件类型</translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation>按关键词导出日志</translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation>关键词</translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation>上报崩溃埋点信息</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>按子模块导出应用日志</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>子模块</translation>
     </message>
 </context>
 <context>
@@ -449,10 +605,6 @@
     <message>
         <source>Export All</source>
         <translation>全部导出</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>系统全部日志</translation>
     </message>
     <message>
         <source>Refresh Now</source>

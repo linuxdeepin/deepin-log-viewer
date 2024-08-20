@@ -54,10 +54,6 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="vanished">Експортувати</translation>
-    </message>
-    <message>
-        <source>Export</source>
         <comment>button</comment>
         <translation>Експортувати</translation>
     </message>
@@ -120,9 +116,37 @@
         <source>Trace</source>
         <translation>Трасування</translation>
     </message>
+    <message>
+        <source>Identity authentication</source>
+        <translation>Розпізнавання профілю</translation>
+    </message>
+    <message>
+        <source>Discretionary Access Control</source>
+        <translation>Дискреційне керування доступом</translation>
+    </message>
+    <message>
+        <source>Mandatory access control</source>
+        <translation>Обов&apos;язкове керування доступом</translation>
+    </message>
+    <message>
+        <source>Remote</source>
+        <translation>Віддалений</translation>
+    </message>
+    <message>
+        <source>Document audit</source>
+        <translation>Ревізування документів</translation>
+    </message>
+    <message>
+        <source>Other</source>
+        <translation>Інше</translation>
+    </message>
 </context>
 <context>
     <name>DisplayContent</name>
+    <message>
+        <source>zip(*.zip)</source>
+        <translation>zip(*.zip)</translation>
+    </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
         <translation>текст (*.txt);; doc (*.doc);; xls (*.xls);; HTML (*.html)</translation>
@@ -149,6 +173,10 @@
         <source>Export failed</source>
         <translation>Не вдалося експортувати</translation>
     </message>
+    <message>
+        <source>The export directory is not available. Please choose another directory for the export operation.</source>
+        <translation>Каталог експортування даних є недоступним. Будь ласка, виберіть інший каталог для дії з експортування.</translation>
+    </message>
 </context>
 <context>
     <name>File</name>
@@ -166,10 +194,6 @@
     <message>
         <source>Level:  </source>
         <translation>Рівень: </translation>
-    </message>
-    <message>
-        <source>Application list:</source>
-        <translation>Список програм:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -206,6 +230,18 @@
     <message>
         <source>Login record</source>
         <translation>Запис входу</translation>
+    </message>
+    <message>
+        <source>Audit Type:</source>
+        <translation>Тип нагляду:</translation>
+    </message>
+    <message>
+        <source>Application:</source>
+        <translation>Програма:</translation>
+    </message>
+    <message>
+        <source>Submodule:</source>
+        <translation>Підмодуль:</translation>
     </message>
 </context>
 <context>
@@ -356,11 +392,31 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Назва файла</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Час внесення змін</translation>
+    </message>
+    <message>
+        <source>SIG</source>
+        <translation>SIG</translation>
+    </message>
+    <message>
+        <source>EXE</source>
+        <translation>EXE</translation>
+    </message>
+    <message>
+        <source>Core File</source>
+        <translation>Основний файл</translation>
+    </message>
+    <message>
+        <source>User Name </source>
+        <translation>Ім&apos;я користувача</translation>
+    </message>
+    <message>
+        <source>Offset</source>
+        <translation>Зсув</translation>
     </message>
 </context>
 <context>
@@ -410,18 +466,118 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Інший журнал</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Нетиповий журнал</translation>
+    </message>
+    <message>
+        <source>Audit Log</source>
+        <translation>Журнал нагляду</translation>
+    </message>
+    <message>
+        <source>Coredump Log</source>
+        <translation>Журнал дампу ядра</translation>
+    </message>
+</context>
+<context>
+    <name>Waring</name>
+    <message>
+        <source>Unable to obtain crash information, please install systemd-coredump.</source>
+        <translation>Не вдалося отримати дані щодо аварії. Будь ласка, встановіть systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>У вас немає прав доступу для перегляду</translation>
+    </message>
+    <message>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation>Рівень захисту поточної системи: високий
+ журнал ревізії можуть переглядати лише адміністратори-ревізори</translation>
+    </message>
+</context>
+<context>
+    <name>main</name>
+    <message>
+        <source>Export logs to the specified path</source>
+        <translation>Експортувати журнал до вказаного каталогу</translation>
+    </message>
+    <message>
+        <source>PATH</source>
+        <translation>ШЛЯХ</translation>
+    </message>
+    <message>
+        <source>Export logs of specified types</source>
+        <translation>Експортувати журнали вказаних типів</translation>
+    </message>
+    <message>
+        <source>TYPE</source>
+        <translation>ТИП</translation>
+    </message>
+    <message>
+        <source>Export logs of specified self-developed applications</source>
+        <translation>Експортувати журнали вказаних самостійно розроблених програм</translation>
+    </message>
+    <message>
+        <source>SELF APPNAME</source>
+        <translation>НАЗВА ПРОГРАМИ</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified time period</source>
+        <translation>Експортувати журнал за вказаний період часу</translation>
+    </message>
+    <message>
+        <source>PERIOD</source>
+        <translation>ПЕРІОД</translation>
+    </message>
+    <message>
+        <source>Export logs within a specified debug level</source>
+        <translation>Експортувати журнали на вказаному рівні діагностики</translation>
+    </message>
+    <message>
+        <source>LEVEL</source>
+        <translation>РІВЕНЬ</translation>
+    </message>
+    <message>
+        <source>BOOT STATUS</source>
+        <translation>СТАН ЗАВАНТАЖЕННЯ</translation>
+    </message>
+    <message>
+        <source>Export boot(no-klu) logs within a specified status</source>
+        <translation>Експортувати журнал завантаження за вказаним станом</translation>
+    </message>
+    <message>
+        <source>Export boot-shutdown-event or audit logs within a specified event type</source>
+        <translation>Експортувати журнал boot-shutdown-event або ревізій для вказаного типу подій</translation>
+    </message>
+    <message>
+        <source>EVENT TYPE</source>
+        <translation>ТИП ПОДІЙ</translation>
+    </message>
+    <message>
+        <source>Export logs based on keywords search results</source>
+        <translation>Експортувати журнал на основі результатів пошуку за ключовим словом</translation>
+    </message>
+    <message>
+        <source>KEY WORD</source>
+        <translation>КЛЮЧОВЕ СЛОВО</translation>
+    </message>
+    <message>
+        <source>Report coredump informations.</source>
+        <translation>Повідомити дані дампів ядра.</translation>
+    </message>
+    <message>
+        <source>Export logs based on app submodel</source>
+        <translation>Експортувати журнал для підмодуля програм</translation>
+    </message>
+    <message>
+        <source>SUBMODULE</source>
+        <translation>ПІДМОДУЛЬ</translation>
     </message>
 </context>
 <context>
@@ -440,7 +596,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 хв.</translation>
     </message>
     <message>
         <source>No refresh</source>
@@ -449,10 +605,6 @@
     <message>
         <source>Export All</source>
         <translation>Експортувати усе</translation>
-    </message>
-    <message>
-        <source>System Logs</source>
-        <translation>Журнал системи</translation>
     </message>
     <message>
         <source>Refresh Now</source>

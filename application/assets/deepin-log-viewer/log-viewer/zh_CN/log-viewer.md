@@ -142,6 +142,39 @@
 
 ![power_event](fig/power_event.png)
 
+#### 查看其它日志
+
+1. 在日志收集工具界面，单击 **其它日志**。
+2. 其它日志以文件列表方式展示日志文件的文件名称、修改日期。同类日志文件以文件夹方式展示。
+3. 选中某个文件后，可查看该文件的详细内容。拖拽文件列表和详细内容分界线，可以同步调整两区域大小。
+
+![otherslog](fig/otherslog.png)
+
+
+
+### 自定义日志
+
+自定义日志功能是将日志文件添加至日志收集工具进行查看、导出。自定义日志兼容Gsettings配置和Dconfig配置。
+
+**Gsettings配置**
+
+1. 在终端执行Gsettings配置设置命令，“[]”中填写日志文件路径，比如：['a.log','b.log','c.log']。
+
+```shell
+gsettings set com.deepin.log.viewer customlogfiles []
+```
+
+2. 在日志收集工具界面，单击**自定义日志**，即可发现已有配置。
+
+**Dconfig配置**
+
+1. 在终端执行Dconfig配置设置命令，"[]"中填写日志文件路径，比如：["a.log","b.log","c.log"]
+
+```shell
+dde-dconfig --set -a org.deepin.log.viewer -r org.deepin.log.viewer -k customLogFiles -v '["a.log","b.log","c.log"]'
+```
+
+2. 在日志收集工具界面，单击**自定义日志**，即可发现已有配置。
 
 ### 导出日志
 

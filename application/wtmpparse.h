@@ -48,9 +48,9 @@ void list_insert(QList<utmp *> &plist, struct utmp *value);
 
 utmp list_get_ele_and_del(QList<utmp > &list, char *value, int &rs);
 
-char *show_end_time(long timeval);
+char *show_end_time(time_t timeval);
 
-char *show_start_time(long timeval);
+char *show_start_time(time_t timeval);
 
 void show_base_info(struct utmp *uBuf);
 
