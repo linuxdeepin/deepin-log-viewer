@@ -1,3 +1,14 @@
+deepin-log-viewer (6.5.0) unstable; urgency=medium
+
+  * chore: Code format organization
+  * fix: Fix the issue of upgrade failure after enabling level protection(Bug: 258569)
+  * fix: Fix crashes when there is no permission to view other logs(Bug: 266019)
+  * fix: DBus calls authentication adds MNT check
+  * feat: adapt treeland(Influence: Treeland)
+  * fix: out-of-bounds access error
+
+ -- renbin <renbin@uniontech.com>  Wed, 21 Aug 2024 15:34:48 +0800
+
 deepin-log-viewer (6.1.18) unstable; urgency=medium
 
   * feat: Segmented export supports doc and xls formats for export
