@@ -40,6 +40,8 @@ public:
 private:
     bool isFileExist(const QString &iFile);
     void initCustomLogItem();
+
+    QStringList getAllFiles(const QString &file);
 public slots:
     void slot_getAppPath(int id, const QString &app); // add by Airy
     Qt::FocusReason focusReson();

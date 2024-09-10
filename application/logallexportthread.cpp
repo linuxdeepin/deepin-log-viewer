@@ -230,12 +230,10 @@ void LogAllExportThread::run()
 
     if (!m_cancel) {
         //打包日志文件
-        QProcess procss;
-        procss.setWorkingDirectory(tmpPath);
-        QStringList arg = {"-c"};
-        arg.append(QString("chmod -R 777 '%1';zip -r tmp.zip ./*;mv tmp.zip '%2';chmod 777 '%3'").arg(Utils::getAppDataPath()).arg(m_outfile).arg(m_outfile));
-        procss.start("/bin/bash", arg);
-        procss.waitForFinished(-1);
+        Utils::executeCmd("chmod", QStringList() << "-R" << "777" << Utils::getAppDataPath(), tmpPath);
+        Utils::executeCmd("zip", QStringList() << "-r" << "tmp.zip" << "./", tmpPath);
+        Utils::executeCmd("mv", QStringList() << "tmp.zip" << m_outfile, tmpPath);
+        Utils::executeCmd("chmod", QStringList() << "777" << m_outfile, tmpPath);
         currentProcess += 9;
         emit updatecurrentProcess(currentProcess);
     }

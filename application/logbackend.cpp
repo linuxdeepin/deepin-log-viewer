@@ -600,10 +600,10 @@ QStringList LogBackend::getLogTypes()
         m_logTypes.push_back(CUSTOM_TREE_DATA);
     }
 
-    // 审计日志文件存在，才加载和显示审计日志模块（审计日志文件需要root权限访问，因此在service服务中判断审计日志文件是否存在）
-    if (DLDBusHandler::instance(qApp)->isFileExist(AUDIT_TREE_DATA)) {
-        m_logTypes.push_back(AUDIT_TREE_DATA);
-    }
+    //audit
+    m_logTypes.push_back(AUDIT_TREE_DATA);
+
+    DLDBusHandler::instance(qApp)->whiteListOutPaths();
 
     return m_logTypes;
 }
@@ -2780,28 +2780,21 @@ void LogBackend::parseCoredumpDetailInfo(QList<LOG_MSG_COREDUMP> &list)
             QString outInfoByte;
             // get maps info
             const QString &corePath = QDir::tempPath() + QString("/%1.dump").arg(QFileInfo(data.storagePath).fileName());
-            DLDBusHandler::instance()->readLog(QString("coredumpctl dump %1 -o %2").arg(data.pid).arg(corePath));
-            outInfoByte = DLDBusHandler::instance()->readLog(QString("readelf -n %1").arg(corePath));
+            DLDBusHandler::instance()->executeCmd(QString("coredumpctl dump %1 -o %2").arg(data.pid).arg(corePath));
+            outInfoByte = DLDBusHandler::instance()->executeCmd(QString("readelf -n %1").arg(corePath));
 
             data.maps = outInfoByte;
 
             // 获取二进制文件信息
-            process.start("/bin/bash", QStringList() << "-c" << QString("file %1").arg(data.exe));
-            process.waitForFinished(-1);
-            outInfoByte = process.readAllStandardOutput();
+            outInfoByte = Utils::executeCmd("file", QStringList() << data.exe);
             if (!outInfoByte.isEmpty())
                 data.binaryInfo = outInfoByte;
-
             // 获取包名
-            process.start("/bin/bash", QStringList() << "-c" << QString("dpkg -S %1").arg(data.exe));
-            process.waitForFinished(-1);
-            outInfoByte = process.readAllStandardOutput();
+            outInfoByte = Utils::executeCmd("dpkg", QStringList() << "-S" << data.exe);
             // 获取版本号
             if (!outInfoByte.isEmpty()) {
                 QString str = outInfoByte;
-                process.start("/bin/bash", QStringList() << "-c" << QString("dpkg-query --show %1").arg(str.split(":").first()));
-                process.waitForFinished(-1);
-                outInfoByte = process.readAllStandardOutput();
+                outInfoByte = Utils::executeCmd("dpkg-query", QStringList() << "--show" << str.split(":").first());
                 if (!outInfoByte.isEmpty()) {
                     data.packgeVersion = QString(outInfoByte).simplified();
                 }

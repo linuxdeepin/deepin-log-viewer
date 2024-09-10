@@ -61,9 +61,12 @@ private:
     qint64 readFileAndReturnIndex(const QString &filePath, qint64 startLine, QList<uint64_t>& lineIndexes, bool reverseOrder);
 
 private:
+    bool checkAuthorization(const QString &actionId, qint64 applicationPid);
+private:
     QTemporaryDir tmpDir;
     QProcess m_process;
-    QString tmpDirPath;
+    QString m_tmpDirPath;
+    QString m_actionId;
     QMap<QString, QString> m_commands;
     QMap<QString, std::pair<QString, QTextStream*>> m_logMap;
     QMap<QString, QList<uint64_t>> m_logLineIndex;
@@ -71,7 +74,7 @@ private:
      * @brief isValidInvoker 检验调研者是否是日志
      * @return
      */
-    bool isValidInvoker();
+    bool isValidInvoker(bool checkAuth = false);
 };
 
 #endif // LOGVIEWERSERVICE_H
