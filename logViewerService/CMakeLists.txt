@@ -34,6 +34,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
 # Find the library
 find_package(PkgConfig REQUIRED)
 find_package(DtkGui REQUIRED)
+find_package(PolkitQt5-1)
 find_package(Qt5 COMPONENTS
     Core
     Widgets
@@ -66,6 +67,7 @@ target_link_libraries(${PROJECT_NAME}
     ${DtkWidget_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
     ${3rd_lib_LIBRARIES}
+    PolkitQt5-1::Agent
 )
 set(CMAKE_INSTALL_PREFIX /usr)
 
