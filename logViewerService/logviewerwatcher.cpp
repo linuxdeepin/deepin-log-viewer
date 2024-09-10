@@ -21,11 +21,21 @@ LogViewerWatcher::LogViewerWatcher():m_Timer(new QTimer (this))
 void LogViewerWatcher::onTimeOut()
 {
     QString cmd, outPut;
+    QStringList args;
     //判断deepin-log-viewer客户端是否存在，如果不存在退出服务。
-    cmd = QString("ps aux | grep -w deepin-log-viewer$");
-    outPut= executCmd(cmd);
-    int ret = outPut.length();
-    if (!ret)
+    cmd = "ps";
+    args << "aux";
+    outPut= executCmd(cmd, args);
+    bool bHasLogViewer = false;
+    QStringList rows = outPut.split('\n');
+    for (auto line : rows) {
+        QStringList items = line.split(' ');
+        if (items.contains("deepin-log-viewer")) {
+            bHasLogViewer = true;
+            break;
+        }
+    }
+    if (!bHasLogViewer)
         QCoreApplication::exit(0);
 }
 
@@ -33,10 +43,10 @@ void LogViewerWatcher::onTimeOut()
  * @brief 执行外部命令
  * @param strCmd:外部命令字符串
  */
-QString LogViewerWatcher::executCmd(const QString &strCmd)
+QString LogViewerWatcher::executCmd(const QString &strCmd, const QStringList &args)
 {
      QProcess proc;
-     proc.start("bash", QStringList() << "-c" << strCmd);
+     proc.start(strCmd, args);
      proc.waitForFinished(-1);
      return  proc.readAllStandardOutput();
 }

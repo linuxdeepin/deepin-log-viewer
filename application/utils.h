@@ -82,6 +82,8 @@ public:
     static QStringList getRepeatCoredumpExePaths();
     // 更新高频重复崩溃记录exe路径到文件
     static void updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &infos = QList<LOG_REPEAT_COREDUMP_INFO>());
+    // 执行cmd命令
+    static QByteArray executeCmd(const QString& cmd, const QStringList& args = QStringList(), const QString& workPath = QString());
     /**
      * @brief specialComType 是否是特殊机型，like huawei
      * 取值有3种（-1,0,>0），默认为-1（未知），0（不是特殊机型）,>0（特殊机型）

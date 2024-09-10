@@ -501,6 +501,10 @@
  audit only administrators can view the audit log</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>main</name>

@@ -3157,9 +3157,15 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearc
         emit setExportEnable(false);
         break;
     }
-    case DATA_NOT_AUDIT_ADMIN: {
+    case DATA_NOT_AUDIT_ADMIN:
+    case DATA_NO_AUDIT_LOG:{
         // 开启等保四时，若当前用户不是审计管理员，给出提示
         m_treeView->show();
+        if (iState == DATA_NOT_AUDIT_ADMIN) {
+            notAuditLabel->setText(DApplication::translate("Warning", "Security level for the current system: high\n audit only administrators can view the audit log"));
+        } else if (iState == DATA_NO_AUDIT_LOG) {
+            notAuditLabel->setText(DApplication::translate("Warning", "Audit log is not exist."));
+        }
         notAuditLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         notAuditLabel->show();
         notAuditLabel->raise();
@@ -3494,6 +3500,15 @@ void DisplayContent::createOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list)
 void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr);
+
+    // 若审计日志不存在，则显示审计日志不存在
+    if (!DLDBusHandler::instance(this)->isFileExist(AUDIT_TREE_DATA)) {
+        setLoadState(DATA_NO_AUDIT_LOG);
+        m_detailWgt->cleanText();
+        m_detailWgt->hideLine(true);
+        return;
+    }
+
     m_pLogBackend->clearAllFilter();
     clearAllDatas();
     m_firstLoadPageData = true;
