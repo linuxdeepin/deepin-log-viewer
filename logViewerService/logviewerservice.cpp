@@ -8,6 +8,9 @@
 #include <unistd.h>
 #include <fstream>
 
+#include <polkit-qt5-1/PolkitQt1/Authority>
+using namespace PolkitQt1;
+
 #include <dgiofile.h>
 #include <dgiovolume.h>
 #include <dgiovolumemanager.h>
@@ -37,6 +40,9 @@ Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service", QtInfoMsg)
 
 // 读取崩溃应用maps信息最大行数
 #define COREDUMP_MAPS_MAX_LINES 200
+
+const QString s_Action_View = "com.deepin.pkexec.logViewerAuth";
+const QString s_Action_Export = "com.deepin.pkexec.logViewerAuth.exportLogs";
 
 /**
    @brief 移除路径 \a dirPath 下的文件，注意，不会递归删除文件夹
@@ -90,6 +96,8 @@ LogViewerService::LogViewerService(QObject *parent)
     m_commands.insert("journalctl_system", "journalctl -r");
     m_commands.insert("journalctl_boot", "journalctl -b -r");
     m_commands.insert("journalctl_app", "journalctl");
+
+    m_actionId = s_Action_View;
 }
 
 LogViewerService::~LogViewerService()
@@ -110,7 +118,9 @@ LogViewerService::~LogViewerService()
  */
 QString LogViewerService::readLog(const QString &filePath)
 {
-    if(!isValidInvoker()) {
+    m_actionId = s_Action_View;
+
+    if(!isValidInvoker(true)) {
         return " ";
     }
 
@@ -119,72 +129,26 @@ QString LogViewerService::readLog(const QString &filePath)
     if ((!filePath.startsWith("/var/log/") &&
          !filePath.startsWith("/tmp") &&
          !filePath.startsWith("/home") &&
-         !filePath.startsWith("/root") &&
-         !filePath.startsWith("coredumpctl info") &&
-         !filePath.startsWith("coredumpctl dump") &&
-         !filePath.startsWith("readelf") &&
-         filePath != "coredump") ||
+         !filePath.startsWith("/root")) ||
          filePath.contains(".."))  {
         return " ";
     }
 
-    if (filePath == "coredump") {
-        // 通过后端服务，读取系统下所有账户的崩溃日志信息
-        m_process.start("coredumpctl", QStringList() << "list" << "--no-pager");
-        m_process.waitForFinished(-1);
+    m_process.start("cat", QStringList() << filePath);
+    m_process.waitForFinished(-1);
+    QByteArray byte = m_process.readAllStandardOutput();
 
-        return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("coredumpctl info")) {
-        // 通过后端服务，按进程号获取崩溃信息
-        QStringList args = filePath.mid(QString("coredumpctl").count() + 1).split(' ');
-        m_process.start("coredumpctl", args);
-        m_process.waitForFinished(-1);
-
-        return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("coredumpctl dump")) {
-        // 截取对应pid的dump文件到指定目录
-        QStringList args = filePath.mid(QString("coredumpctl").count() + 1).split(' ');
-        m_process.start("coredumpctl", args);
-        m_process.waitForFinished(-1);
-
-        return m_process.readAllStandardOutput();
-    } else if (filePath.startsWith("readelf")) {
-        // 获取dump文件偏移地址信息
-        QStringList args = filePath.mid(QString("readelf").count() + 1).split(' ');
-        m_process.start("readelf", args);
-        m_process.waitForFinished(-1);
-
-        // 因原始maps信息过大，基本几百KB，埋点平台并不需要全量数据，仅取前200行maps信息即可
-        QTextStream in(m_process.readAllStandardOutput());
-        QStringList lines;
-        QString str;
-        while (!in.atEnd()) {
-            str  = in.readLine();
-
-            if (!str.isEmpty())
-                lines.push_back(str);
-            if (lines.count() >= COREDUMP_MAPS_MAX_LINES)
-                break;
+    //QByteArray -> QString 如果遇到0x00，会导致转换终止
+    //replace("\x00", "")和replace("\u0000", "")无效
+    //使用remove操作，性能损耗过大，因此遇到0x00 替换为 0x20(空格符)
+    int replaceTimes = 0;
+    for (int i = 0; i != byte.size(); ++i) {
+        if (byte.at(i) == 0x00) {
+            byte[i] = 0x20;
+            replaceTimes++;
         }
-
-        return lines.join('\n').toUtf8();
-    } else {
-        m_process.start("cat", QStringList() << filePath);
-        m_process.waitForFinished(-1);
-        QByteArray byte = m_process.readAllStandardOutput();
-
-        //QByteArray -> QString 如果遇到0x00，会导致转换终止
-        //replace("\x00", "")和replace("\u0000", "")无效
-        //使用remove操作，性能损耗过大，因此遇到0x00 替换为 0x20(空格符)
-        int replaceTimes = 0;
-        for (int i = 0; i != byte.size(); ++i) {
-            if (byte.at(i) == 0x00) {
-                byte[i] = 0x20;
-                replaceTimes++;
-            }
-        }
-        return QString::fromUtf8(byte);
     }
+    return QString::fromUtf8(byte);
 }
 
 qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 startLine, QList<uint64_t>& lineIndexes, bool reverseOrder) {
@@ -243,6 +207,29 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
     return lineIndexes.at(startLine); // 返回给定起始行的索引
 }
 
+/**
+   @brief Polkit action authorization check.
+        Use com.deepin.pkexec.logViewerAuth.policy config file.
+        Default action id: "com.deepin.pkexec.logViewerAuth"
+   @note Available on linux/unix/macos platform.
+   @return check passed.
+ */
+bool LogViewerService::checkAuthorization(const QString &actionId, qint64 applicationPid)
+{
+#if defined (Q_OS_LINUX) || defined (Q_OS_UNIX) ||  defined (Q_OS_MAC)
+            PolkitQt1::Authority::Result ret = PolkitQt1::Authority::instance()->checkAuthorizationSync(
+                actionId, PolkitQt1::UnixProcessSubject(applicationPid), PolkitQt1::Authority::AllowUserInteraction);
+    if (PolkitQt1::Authority::Yes == ret) {
+        return true;
+    } else {
+        qWarning() << qPrintable("Policy authorization check failed!");
+        return false;
+    }
+#else
+    return true;
+#endif
+}
+
 QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
 {
     QStringList lines;
@@ -256,7 +243,7 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
          !filePath.startsWith("/tmp") &&
          !filePath.startsWith("/home") &&
          !filePath.startsWith("/root")) ||
-            filePath.contains("..")) {
+         filePath.contains("..")) {
         return lines;
     }
 
@@ -355,8 +342,8 @@ qint64 LogViewerService::findLineStartOffsetWithCaching(const QString &filePath,
     return -1; // 没有找到目标行
 }
 
-qint64 LogViewerService::getLineCount(const QString &filePath) {
-
+qint64 LogViewerService::getLineCount(const QString &filePath)
+{
     if (!isValidInvoker())
         return -1;
 
@@ -397,14 +384,22 @@ QString LogViewerService::executeCmd(const QString &cmd)
 
     QString cmdStr;
     QStringList args;
-    if (cmd == "coredumpctl-list-count") {
-        cmdStr = "/bin/bash";
-        args << "-c";
-        args << "coredumpctl list | wc -l | awk '{print $1-1}'";
-    }
-    else if (cmd == "coredumpctl-list") {
+    if (cmd.startsWith("coredumpctl-list")) {
+        // 通过后端服务，读取系统下所有账户的崩溃日志信息
         cmdStr = "coredumpctl";
-        args << "list";
+        args << "list" << "--no-pager";
+    } else if (cmd.startsWith("coredumpctl info")) {
+        // 通过后端服务，按进程号获取崩溃信息
+        cmdStr = "coredumpctl";
+        args = cmd.mid(QString("coredumpctl").count() + 1).split(' ');
+    } else if (cmd.startsWith("coredumpctl dump")) {
+        // 截取对应pid的dump文件到指定目录
+        cmdStr = "coredumpctl";
+        args = cmd.mid(QString("coredumpctl").count() + 1).split(' ');
+    } else if (cmd.startsWith("readelf")) {
+        // 获取dump文件偏移地址信息
+        cmdStr = "readelf";
+        args = cmd.mid(QString("readelf").count() + 1).split(' ');
     }
 
     if (!cmdStr.isEmpty()) {
@@ -415,7 +410,34 @@ QString LogViewerService::executeCmd(const QString &cmd)
             return "";
         }
 
-        result = m_process.readAllStandardOutput();
+        if (cmd == "coredumpctl-list-count") {
+            result = m_process.readAllStandardOutput();
+            QStringList rows = result.split('\n');
+            int nCnt = rows.size();
+            // 去掉表头和表尾行
+            if (nCnt > 2)
+                nCnt -= 2;
+            else
+                nCnt = 0;
+            result = QString::number(nCnt);
+        } else if (cmd.startsWith("readelf")) {
+            // 因原始maps信息过大，基本几百KB，埋点平台并不需要全量数据，仅取前200行maps信息即可
+            QTextStream in(m_process.readAllStandardOutput());
+            QStringList lines;
+            QString str;
+            while (!in.atEnd()) {
+                str  = in.readLine();
+
+                if (!str.isEmpty())
+                    lines.push_back(str);
+                if (lines.count() >= COREDUMP_MAPS_MAX_LINES)
+                    break;
+            }
+
+            result = lines.join('\n').toUtf8();
+        } else {
+            result = m_process.readAllStandardOutput();
+        }
     }
 
     return result;
@@ -481,6 +503,11 @@ QString LogViewerService::readLogInStream(const QString &token)
 
 bool LogViewerService::isFileExist(const QString &filePath)
 {
+    m_actionId = s_Action_View;
+
+    if (!isValidInvoker(true))
+        return false;
+
     QFile file(filePath);
     return file.exists();
 }
@@ -617,10 +644,10 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
     }
 
     if (tmpDir.isValid()) {
-        tmpDirPath = tmpDir.path();
+        m_tmpDirPath = tmpDir.path();
         // 每次解压前移除旧有的文件
         if (unzip) {
-            removeDirFiles(tmpDirPath);
+            removeDirFiles(m_tmpDirPath);
         }
     }
 
@@ -700,7 +727,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
     dir.setNameFilters(QStringList() << nameFilter + ".*"); //设置过滤
     dir.setSorting(QDir::Time);
     QFileInfoList fileList = dir.entryInfoList();
-    QString tempFileTemplate = tmpDirPath + QDir::separator() + "Log_extract_XXXXXX.txt";
+    QString tempFileTemplate = m_tmpDirPath + QDir::separator() + "Log_extract_XXXXXX.txt";
 
     for (int i = 0; i < fileList.count(); i++) {
         if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
@@ -729,10 +756,10 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
     }
 
     if (tmpDir.isValid()) {
-        tmpDirPath = tmpDir.path();
+        m_tmpDirPath = tmpDir.path();
         // 每次解压前移除旧有的文件
         if (unzip) {
-            removeDirFiles(tmpDirPath);
+            removeDirFiles(m_tmpDirPath);
         }
     }
 
@@ -760,7 +787,7 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
     dir.setFilter(QDir::Files | QDir::NoSymLinks | QDir::Hidden); //实现对文件的过滤
     dir.setSorting(QDir::Time);
     fileList = dir.entryInfoList();
-    QString tempFileTemplate = tmpDirPath + QDir::separator() + "Log_extract_XXXXXX.txt";
+    QString tempFileTemplate = m_tmpDirPath + QDir::separator() + "Log_extract_XXXXXX.txt";
 
     for (int i = 0; i < fileList.count(); i++) {
         if (QString::compare(fileList[i].suffix(), "gz", Qt::CaseInsensitive) == 0 && unzip) {
@@ -778,7 +805,9 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
 
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
-    if(!isValidInvoker()) { //非法调用
+    m_actionId = s_Action_Export;
+
+    if(!isValidInvoker(true)) { //非法调用
         return false;
     }
 
@@ -876,34 +905,38 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             return false;
         }
 
-        cmdExec = QString("%1 >& \"%2\";").arg(cmd, outFullPath);
+        cmdExec = cmd;
     }
 
     QString cmdStr = cmdExec.mid(0, cmdExec.indexOf(' '));
+    QStringList args;
+    args << cmdExec.mid(cmdExec.indexOf(' ') + 1).split(' ');
     QProcess process;
-    if (cmdStr == "cp") {
-        QStringList args;
-        args << cmdExec.mid(cmdExec.indexOf(' ') + 1).split(' ');
-        process.start(cmdStr, args);
-    } else {
-        process.start("/bin/bash", QStringList() << "-c" << cmdExec);
+    if (cmdStr != "cp") {
+        if (!QFile::exists(outFullPath)) {
+            qInfo() << "outFullPath:" << outFullPath << "not exist;";
+            QFile file(outFullPath);
+        }
+        process.setStandardOutputFile(outFullPath, QIODevice::WriteOnly);
     }
 
+    process.start(cmdStr, args);
     if (!process.waitForFinished(-1)) {
         qCWarning(logService) << "command error:" << cmdExec;
         return false;
     }
 
     //设置文件权限
-    process.start("chmod", QStringList() << "777" << outFullPath);
-    if (!process.waitForFinished()) {
+    QProcess newProcess;
+    newProcess.start("chmod", QStringList() << "777" << outFullPath);
+    if (!newProcess.waitForFinished()) {
         qCWarning(logService) << QString("chmod 777 %1 failed.").arg(outFullPath);
         return false;
     }
     return true;
 }
 
-bool LogViewerService::isValidInvoker()
+bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
 {
     if (!calledFromDBus()) {
         return false;
@@ -947,12 +980,24 @@ bool LogViewerService::isValidInvoker()
         }
     }
 
+    // pokit前端进程鉴权
+    bool bAuthValid = true;
+    QString strCheckAuthTip;
+    if (valid && checkAuth) {
+        bAuthValid = checkAuthorization(m_actionId, pid);
+        valid = bAuthValid;
+        if (!bAuthValid) {
+            strCheckAuthTip = "checkAuthorization failed.";
+            qWarning() << strCheckAuthTip;
+        }
+    }
     //非法调用
     if (!valid) {
         sendErrorReply(QDBusError::ErrorType::Failed,
-                       QString("(pid: %1)[%2] is not allowed to configrate firewall")
+                       QString("(pid: %1)[%2] is not allowed to configrate firewall. %3")
                        .arg(pid)
-                       .arg((invokerPath)));
+                       .arg((invokerPath))
+                       .arg(strCheckAuthTip));
         return false;
     }
     return true;

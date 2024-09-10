@@ -36,27 +36,35 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
     }
     bool useFinishedSignal = false;
     bool onlyExec = false;
+    QString cmd;
     QStringList arg;
     if (fileList[0] == "dmesg") {
-        arg << "-c"
-            << "dmesg -r";
+        cmd = "dmesg";
+        arg << "-r";
     } else if(fileList[0] == "coredumpctl-list"){
-        arg << "-c"
-            << "coredumpctl list --no-pager";
+        cmd = "coredumpctl";
+        arg << "list";
+        arg << "--no-pager";
         useFinishedSignal = true;
     } else if(fileList[0] == "coredumpctl-info"){
-        arg << "-c"
-            << QString("coredumpctl info %1").arg(fileList[1]);
+        cmd = "coredumpctl";
+        arg << "info";
+        arg << fileList[1];
     } else if(fileList[0] == "coredumpctl-dump" && fileList.count() > 2){
-        arg << "-c"
-            << QString("coredumpctl dump %1 -o %2").arg(fileList[1]).arg(fileList[2]);
+        cmd = "coredumpctl";
+        arg << "dump";
+        arg << fileList[1];
+        arg << "-o";
+        arg << fileList[2];
         onlyExec = true;
     } else if(fileList[0] == "readelf" && fileList.count() > 1){
-        arg << "-c"
-            << QString("readelf -n %1").arg(fileList[1]);
+        cmd = "readelf";
+        arg << "-n";
+        arg << fileList[1];
         useFinishedSignal = true;
     } else {
-        arg << "-c" << QString("cat %1").arg(fileList[0]);
+        cmd = "cat";
+        arg << fileList[0];
     }
     m_proc = new QProcess(this);
 
@@ -95,7 +103,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
         });
     }
 
-    m_proc->start("/bin/bash", arg);
+    m_proc->start(cmd, arg);
     m_proc->waitForFinished(-1);
     m_proc->close();
 }

@@ -883,9 +883,14 @@
 <context>
     <name>Warning</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="114"/>
+        <location filename="../application/displaycontent.cpp" line="115"/>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="3167"/>
+        <source>Audit log is not exist.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

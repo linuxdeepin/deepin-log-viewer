@@ -308,17 +308,17 @@ void LogListView::initUI()
         initCustomLogItem();
     }
 
-    // 审计日志文件存在，才加载和显示审计日志模块（审计日志文件需要root权限访问，因此在service服务中判断审计日志文件是否存在）
-    if (DLDBusHandler::instance(this)->isFileExist(AUDIT_TREE_DATA)) {
-        item = new QStandardItem(QIcon::fromTheme("dp_customlog"), DApplication::translate("Tree", "Audit Log"));
-        setIconSize(QSize(ICON_SIZE, ICON_SIZE));
-        item->setToolTip(DApplication::translate("Tree", "Audit Log"));
-        item->setData(AUDIT_TREE_DATA, ITEM_DATE_ROLE);
-        item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
-        item->setData(VListViewItemMargin, Dtk::MarginsRole);
-        m_pModel->appendRow(item);
-        m_logTypes.push_back(AUDIT_TREE_DATA);
-    }
+    // 审计日志 （因dbus安全整改要求，isFileExist接口需要进行polkit鉴权，因此调整为程序启动时默认显示审计日志）
+    item = new QStandardItem(QIcon::fromTheme("dp_customlog"), DApplication::translate("Tree", "Audit Log"));
+    setIconSize(QSize(ICON_SIZE, ICON_SIZE));
+    item->setToolTip(DApplication::translate("Tree", "Audit Log"));
+    item->setData(AUDIT_TREE_DATA, ITEM_DATE_ROLE);
+    item->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
+    item->setData(VListViewItemMargin, Dtk::MarginsRole);
+    m_pModel->appendRow(item);
+    m_logTypes.push_back(AUDIT_TREE_DATA);
+
+    DLDBusHandler::instance(this)->whiteListOutPaths();
 
     // set first item is select when app start
     if (m_pModel->rowCount() > 0) {
@@ -338,6 +338,25 @@ void LogListView::initCustomLogItem()
     m_customLogItem->setSizeHint(QSize(ITEM_WIDTH, ITEM_HEIGHT));
     m_customLogItem->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(m_customLogItem);
+}
+
+QStringList LogListView::getAllFiles(const QString &file)
+{
+    QStringList files;
+    if (file.contains("*")) {
+        QString path = file.left(file.lastIndexOf('/'));
+        QDir dir(path);
+        QStringList filters;
+        filters << file.split('/').last();
+        files = dir.entryList(filters, QDir::Files);
+
+        for (auto &file : files) {
+            file = path + "/" + file;
+        }
+    } else {
+        files << file;
+    }
+    return files;
 }
 
 void LogListView::setDefaultSelect()
@@ -399,17 +418,19 @@ void LogListView::truncateFile(QString path_)
 {
     QProcess prc;
     if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == KWIN_TREE_DATA) {
-        prc.start("pkexec", QStringList() << "logViewerTruncate" << path_.append("*"));
+        QStringList files = getAllFiles(path_.append("*"));
+        prc.start("pkexec", QStringList() << "logViewerTruncate" << files.join(' '));
     } else if (path_ == XORG_TREE_DATA) {
         path_ = "/var/log/Xorg*.log*";
-        prc.start("pkexec", QStringList() << "logViewerTruncate" << path_);
+        QStringList files = getAllFiles(path_);
+        prc.start("pkexec", QStringList() << "logViewerTruncate" << files.join(' '));
     } else if (path_ == DNF_TREE_DATA) {
         path_ = "/var/log/dnf*.log*";
-        prc.start("pkexec", QStringList() << "logViewerTruncate" << path_);
+        QStringList files = getAllFiles(path_);
+        prc.start("pkexec", QStringList() << "logViewerTruncate" << files.join(' '));
     } else {
-        QStringList arg;
-        arg << "-c" << QString("truncate -s 0 %1").arg(path_.append("*"));
-        prc.start("/bin/bash", arg);
+        QStringList files = getAllFiles(path_.append("*"));
+        prc.start("pkexec", QStringList() << "logViewerTruncate" << files.join(' '));
     }
 
     prc.waitForFinished();

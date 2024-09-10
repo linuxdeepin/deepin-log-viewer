@@ -22,16 +22,21 @@ int main(int argc, char *argv[])
     if (fileList.count() < 1) {
         return 0;
     }
+    QString cmd;
     QStringList arg;
     if (fileList[0] == "dmesg") {
-        arg << "-c"
-            << "dmesg -C";
+        cmd = "dmesg";
+        arg << "-C";
+
     } else {
-        arg << "-c" << QString("truncate -s 0 %1").arg(fileList[0]);
+        cmd = "truncate";
+        arg << "-s";
+        arg << "0";
+        arg << fileList[0].split(' ');
     }
 
     QProcess proc;
-    proc.start("/bin/bash", arg);
+    proc.start(cmd, arg);
     proc.waitForFinished(-1);
     //直接
     QByteArray byte =   proc.readAllStandardOutput();

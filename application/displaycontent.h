@@ -40,6 +40,7 @@ class DisplayContent : public Dtk::Widget::DWidget
         DATA_LOADING_K, //内核日志正在加载
         DATA_NO_SEARCH_RESULT, //搜索无记录
         DATA_NOT_AUDIT_ADMIN, // 提示不是审计管理员
+        DATA_NO_AUDIT_LOG,    // 提示没有审计日志
         COREDUMPCTL_NOT_INSTALLED, //未安装coredumpctl工具
         DATA_NO_PERMISSION //没有权限查看
     };
