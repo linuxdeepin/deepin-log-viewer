@@ -328,7 +328,7 @@
     </message>
     <message>
         <source>Date and Time</source>
-        <translation>Päivämäärä ja aika</translation>
+        <translation>Päivä ja aika</translation>
     </message>
     <message>
         <source>Info</source>
@@ -416,7 +416,7 @@
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Siirtymä</translation>
     </message>
 </context>
 <context>
