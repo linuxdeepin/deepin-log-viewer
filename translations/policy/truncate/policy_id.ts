@@ -9,7 +9,7 @@
 		<message>
 			<location filename="com.deepin.pkexec.logViewerTruncate!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>autentikasi</translation>
 		</message>
 	</context>
 </TS>
