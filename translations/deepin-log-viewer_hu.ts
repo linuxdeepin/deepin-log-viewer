@@ -268,7 +268,7 @@
     </message>
     <message>
         <source>Alert</source>
-        <translation>Figyelmeztetés</translation>
+        <translation>Riasztás</translation>
     </message>
     <message>
         <source>Critical</source>
@@ -298,7 +298,7 @@
     <name>Main</name>
     <message>
         <source>Log Viewer</source>
-        <translation>Napló Megjelenítő</translation>
+        <translation>Napló megjelenítő</translation>
     </message>
     <message>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
