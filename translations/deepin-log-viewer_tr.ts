@@ -149,7 +149,7 @@
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>METİN (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>Metin (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
