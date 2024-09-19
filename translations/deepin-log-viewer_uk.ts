@@ -74,7 +74,7 @@
     </message>
     <message>
         <source>Critical</source>
-        <translation>Критична</translation>
+        <translation>Критична помилка</translation>
     </message>
     <message>
         <source>Error</source>
@@ -205,7 +205,7 @@
     </message>
     <message>
         <source>User:</source>
-        <translation>Користувач: </translation>
+        <translation>Користувач:</translation>
     </message>
     <message>
         <source>PID:</source>
