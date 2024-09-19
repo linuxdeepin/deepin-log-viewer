@@ -16,7 +16,7 @@ filters:
     source_file: translations/policy/auth/policy.ts
     file_format: QT
     source_language: en_US
-    translation_files_expression:translations/policy/auth/policy_<lang>.ts
+    translation_files_expression: translations/policy/auth/policy_<lang>.ts
   - filter_type: file
     source_file: translations/policy/truncate/policy.ts
     file_format: QT
