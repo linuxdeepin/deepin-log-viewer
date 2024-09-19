@@ -328,7 +328,7 @@
     </message>
     <message>
         <source>Date and Time</source>
-        <translation>Dia i hora</translation>
+        <translation>Data i hora</translation>
     </message>
     <message>
         <source>Info</source>
