@@ -90,7 +90,7 @@
     </message>
     <message>
         <source>Info</source>
-        <translation>Të dhëna</translation>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Debug</source>
