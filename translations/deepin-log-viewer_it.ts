@@ -82,7 +82,7 @@
     </message>
     <message>
         <source>Warning</source>
-        <translation>Avviso</translation>
+        <translation>avviso</translation>
     </message>
     <message>
         <source>Notice</source>
