@@ -588,11 +588,6 @@ void Utils::updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &
     file.close();
 }
 
-#ifdef DTKCORE_CLASS_DConfigFile
-LoggerRules::LoggerRules(QObject *parent)
-    : QObject(parent), m_rules(""), m_config(nullptr) {
-}
-
 QByteArray Utils::executeCmd(const QString &cmd, const QStringList &args, const QString &workPath)
 {
     QProcess process;
@@ -613,6 +608,11 @@ QByteArray Utils::executeCmd(const QString &cmd, const QStringList &args, const 
         return QByteArray();
     }
     return outPut;
+}
+
+#ifdef DTKCORE_CLASS_DConfigFile
+LoggerRules::LoggerRules(QObject *parent)
+    : QObject(parent), m_rules(""), m_config(nullptr) {
 }
 
 LoggerRules::~LoggerRules() { m_config->deleteLater(); }
