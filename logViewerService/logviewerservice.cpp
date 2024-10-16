@@ -108,7 +108,41 @@ LogViewerService::~LogViewerService()
         }
     }
 
-   clearTempFiles();
+    clearTempFiles();
+}
+
+/*!
+ * \~chinese \brief LogViewerService::readLog 读取日志文件
+ * \~chinese \param fd 文件句柄
+ * \~chinese \return 读取的日志
+ */
+QString LogViewerService::readLog(const QDBusUnixFileDescriptor &fd)
+{
+    m_actionId = s_Action_View;
+
+    if(!isValidInvoker(true)) {
+        return " ";
+    }
+
+    QString log("");
+    // fd转文件
+    int fdi = fd.fileDescriptor();
+    if (fdi <= 0) {
+        return log;
+    }
+
+    QFile file;
+    if (!file.open(fdi, QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Failed to open file descriptor.";
+        return log;
+    }
+
+    QTextStream in(&file);
+    log = in.readAll();
+
+    file.close();
+
+    return log;
 }
 
 /*!
@@ -234,7 +268,10 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
 {
     QStringList lines;
 
-    if (!isValidInvoker())
+    m_actionId = s_Action_View;
+    
+    // 开启鉴权
+    if (!isValidInvoker(true))
         return lines;
 
     //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
@@ -948,6 +985,52 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
 
     //判断是否存在执行路径
     uint pid = conn.interface()->servicePid(msg.service()).value();
+
+    // 判断是否存在执行路径且是否存在于可调用者名单中
+    QFile initNsMntFile("/proc/1/ns/mnt");
+    QFile senderNsMntFile(QString("/proc/%1/ns/mnt").arg(pid));
+    auto initNsMnt = initNsMntFile.readLink().trimmed().remove(0, QString("/proc/1/ns/mnt").length());
+    auto senderNsMnt = senderNsMntFile.readLink().trimmed().remove(0, QString("/proc/%1/ns/mnt").arg(pid).length());
+    if (initNsMnt != senderNsMnt) {
+        sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls！！！！！");
+        return false;
+    }
+
+    //进制使用环境变量导入.so动态调用dbus接口
+    QProcess proc;
+    proc.start(QString("cat /proc/%1/maps").arg(pid));
+    proc.waitForStarted();
+    proc.waitForFinished();
+    QString maps = QString::fromLocal8Bit(proc.readAllStandardOutput()).trimmed();
+    proc.close();
+    QStringList libMaps = maps.split("\n", QString::SkipEmptyParts);
+    QStringList allParts;
+    for (const QString &part : libMaps) {
+        QStringList subParts = part.split(' ');
+        for (const QString &subPart : subParts) {
+            if (!subPart.isEmpty()) {
+                allParts.append(subPart);
+            }
+        }
+    }
+    for (int j = 0; j < allParts.count(); ++j) {
+        QString libStr = allParts.at(j);
+        QFileInfo info(libStr);
+        if (info.isFile()) {
+            QString fileName = info.fileName();
+            if (fileName.contains(".so")) {
+                QStringList libpath = libStr.split("/", QString::SkipEmptyParts);
+                if (libpath.count() > 2) {
+                    QString libhead = QString("/%1/%2").arg(libpath.at(0)).arg(libpath.at(1));
+                    if (libhead != "/usr/lib") {
+                        sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls！！！！！");
+                        return false;
+                    }
+                }
+            }
+        }
+    }
+
     QFileInfo f(QString("/proc/%1/exe").arg(pid));
     if (!f.exists()) {
         valid = false;
@@ -964,21 +1047,6 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
 
     if (valid)
         valid = ValidInvokerExePathList.contains(invokerPath);
-
-    // mnt判断
-    if (valid) {
-        QProcess process;
-        process.start("readlink", QStringList() << QString("/proc/%1/ns/mnt").arg(pid));
-        process.waitForFinished(-1);
-        QString appMnt = process.readAllStandardOutput();
-        process.start("readlink", QStringList() << QString("/proc/1/ns/mnt"));
-        process.waitForFinished(-1);
-        QString selfMnt = process.readAllStandardOutput();
-        valid = !selfMnt.isEmpty() && (selfMnt == appMnt);
-        if (!valid) {
-            qWarning() << QString("appMnt:%1 is not same as selfMnt:%2.").arg(appMnt).arg(selfMnt);
-        }
-    }
 
     // pokit前端进程鉴权
     bool bAuthValid = true;
