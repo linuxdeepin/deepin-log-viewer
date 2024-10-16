@@ -71,6 +71,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("quit"), argumentList);
     }
 
+    inline QDBusPendingReply<QString> readLog(const QDBusUnixFileDescriptor &fd)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(fd);
+        return asyncCallWithArgumentList(QStringLiteral("readLog"), argumentList);
+    }
+
     inline QDBusPendingReply<QString> readLog(const QString &filePath)
     {
         QList<QVariant> argumentList;
