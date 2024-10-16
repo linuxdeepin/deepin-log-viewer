@@ -3,7 +3,7 @@
   <interface name="com.deepin.logviewer">
     <method name="readLog">
       <arg type="s" direction="out"/>
-      <arg name="filePath" type="s" direction="in"/>
+      <arg name="fd" type="i" direction="in"/>
     </method>
     <method name="readLogLinesInRange">
       <arg type="as" direction="out"/>

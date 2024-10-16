@@ -49,7 +49,22 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
  */
 QString DLDBusHandler::readLog(const QString &filePath)
 {
-    return m_dbus->readLog(filePath);
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open file:" << filePath;
+        return QString("");
+    }
+    const int fd = file.handle();
+    if (fd <= 0) {
+        qWarning() << "originPath file fd error. file:" << filePath;
+        return QString("");
+    }
+
+    QDBusUnixFileDescriptor dbusFd(fd);
+    QString log = m_dbus->readLog(dbusFd);
+
+    file.close();
+    return log;
 }
 
 /*!
