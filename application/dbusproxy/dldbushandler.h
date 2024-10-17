@@ -33,9 +33,15 @@ private:
     explicit DLDBusHandler(QObject *parent = nullptr);
 
 private:
+    QString createFilePathCacheFile(const QString& logFilePath);
+    void releaseFilePathCacheFile(const QString &cacheFilePath);
+
+private:
     static DLDBusHandler *m_statichandeler;
     DeepinLogviewerInterface *m_dbus;
     QStringList filePath;
+
+    QTemporaryDir m_tempDir;
 };
 
 #endif // DLDBUSHANDLER_H
