@@ -145,6 +145,23 @@ QString LogViewerService::readLog(const QDBusUnixFileDescriptor &fd)
     return log;
 }
 
+QByteArray LogViewerService::processCatFile(const QString &filePath)
+{
+    m_process.start("cat", QStringList() << filePath);
+    m_process.waitForFinished(-1);
+    QByteArray byte = m_process.readAllStandardOutput();
+    return byte;
+}
+
+static QByteArray processCmdWithArgs(const QString &cmdStr, const QStringList &args)
+{
+    QProcess process;
+    process.start(cmdStr, args);
+    process.waitForFinished(-1);
+    QByteArray outByte = process.readAllStandardOutput();
+    return outByte;
+}
+
 /*!
  * \~chinese \brief LogViewerService::readLog 读取日志文件
  * \~chinese \param filePath 文件路径
@@ -168,9 +185,7 @@ QString LogViewerService::readLog(const QString &filePath)
         return " ";
     }
 
-    m_process.start("cat", QStringList() << filePath);
-    m_process.waitForFinished(-1);
-    QByteArray byte = m_process.readAllStandardOutput();
+    QByteArray byte = processCatFile(filePath);
 
     //QByteArray -> QString 如果遇到0x00，会导致转换终止
     //replace("\x00", "")和replace("\u0000", "")无效
@@ -400,16 +415,18 @@ qint64 LogViewerService::getLineCount(const QString &filePath)
         return -1;
     }
 
-    m_process.start("wc", QStringList() << "-l" << filePath);
-    m_process.waitForFinished(-1);
-
     qint64 lineCount = -1;
-    QString result = m_process.readAllStandardOutput();
+    QString result = processCmdWithArgs("wc", QStringList() << "-l" << filePath);
     QStringList splitResult = result.split(' ');
     if (splitResult.size() > 0)
         lineCount = splitResult.first().toLongLong();
 
     return lineCount;
+}
+
+void LogViewerService::processCmdArgs(const QString &cmdStr, const QStringList &args)
+{
+    m_process.start(cmdStr, args);
 }
 
 QString LogViewerService::executeCmd(const QString &cmd)
@@ -440,7 +457,7 @@ QString LogViewerService::executeCmd(const QString &cmd)
     }
 
     if (!cmdStr.isEmpty()) {
-        m_process.start(cmdStr, args);
+        processCmdArgs(cmdStr, args);
 
         if (!m_process.waitForFinished(-1)) {
             qCWarning(logService()) << "invalid command:" << QString("%1 %2").arg(cmdStr).arg(args.join(' '));
@@ -716,10 +733,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
         dir.setPath("/var/log/audit");
         nameFilter = file;
     } else if (file == "coredump") {
-        QProcess process;
-        process.start("coredumpctl", QStringList() << "list");
-        process.waitForFinished(-1);
-        QByteArray outByte = process.readAllStandardOutput();
+        QByteArray outByte = processCmdWithArgs("coredumpctl", QStringList() << "list");
         QStringList strList = QString(outByte.replace('\u0000', "").replace("\x01", "")).split('\n', QString::SkipEmptyParts);
 
         QRegExp re("(Storage: )\\S+");
@@ -737,9 +751,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
             QString storagePath = "";
             // 解析coredump文件保存位置
             if (coreFile != "missing") {
-                process.start("coredumpctl", QStringList() << "info" << pid);
-                process.waitForFinished(-1);
-                QByteArray outInfoByte = process.readAllStandardOutput();
+                QByteArray outInfoByte = processCmdWithArgs("coredumpctl", QStringList() << "info" << pid);
                 re.indexIn(outInfoByte);
                 storagePath = re.cap(0).replace("Storage: ", "");
             }
@@ -838,6 +850,20 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
         }
     }
     return fileNamePath;
+}
+
+static bool processExportLog(const QString &cmdStr, const QString &outFullPath,const QStringList &args)
+{
+    QProcess process;
+    if (cmdStr != "cp") {
+        process.setStandardOutputFile(outFullPath, QIODevice::WriteOnly);
+    }
+
+    process.start(cmdStr, args);
+    if (!process.waitForFinished(-1)) {
+        return false;
+    }
+    return true;
 }
 
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
@@ -948,17 +974,15 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     QString cmdStr = cmdExec.mid(0, cmdExec.indexOf(' '));
     QStringList args;
     args << cmdExec.mid(cmdExec.indexOf(' ') + 1).split(' ');
-    QProcess process;
+
     if (cmdStr != "cp") {
         if (!QFile::exists(outFullPath)) {
             qInfo() << "outFullPath:" << outFullPath << "not exist;";
             QFile file(outFullPath);
         }
-        process.setStandardOutputFile(outFullPath, QIODevice::WriteOnly);
     }
 
-    process.start(cmdStr, args);
-    if (!process.waitForFinished(-1)) {
+    if (!processExportLog(cmdStr,outFullPath, args)) {
         qCWarning(logService) << "command error:" << cmdExec;
         return false;
     }
