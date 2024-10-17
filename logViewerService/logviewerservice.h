@@ -77,6 +77,8 @@ private:
      * @return
      */
     bool isValidInvoker(bool checkAuth = false);
+    QByteArray processCatFile(const QString &filePath);
+    void processCmdArgs(const QString &cmdStr, const QStringList &args);
 };
 
 #endif // LOGVIEWERSERVICE_H
