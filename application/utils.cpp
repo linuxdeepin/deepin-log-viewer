@@ -588,13 +588,13 @@ void Utils::updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &
     file.close();
 }
 
-QByteArray Utils::executeCmd(const QString &cmd, const QStringList &args, const QString &workPath)
+static QByteArray processCmdWithArgs(const QString &cmdStr, const QString &workPath, const QStringList &args)
 {
     QProcess process;
     if (!workPath.isEmpty())
         process.setWorkingDirectory(workPath);
 
-    process.setProgram(cmd);
+    process.setProgram(cmdStr);
     process.setArguments(args);
     process.setEnvironment({"LANG=en_US.UTF-8", "LANGUAGE=en_US"});
     process.start();
@@ -608,6 +608,11 @@ QByteArray Utils::executeCmd(const QString &cmd, const QStringList &args, const 
         return QByteArray();
     }
     return outPut;
+}
+
+QByteArray Utils::executeCmd(const QString &cmdStr, const QStringList &args, const QString &workPath)
+{
+    return processCmdWithArgs(cmdStr, workPath,  args);
 }
 
 #ifdef DTKCORE_CLASS_DConfigFile
