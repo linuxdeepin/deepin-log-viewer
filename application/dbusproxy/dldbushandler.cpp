@@ -49,14 +49,15 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
  */
 QString DLDBusHandler::readLog(const QString &filePath)
 {
-    QFile file(filePath);
+    QString tempFilePath = createFilePathCacheFile(filePath);
+    QFile file(tempFilePath);
     if (!file.open(QIODevice::ReadOnly)) {
-        qWarning() << "Failed to open file:" << filePath;
+        qWarning() << "Failed to open filePath cache file:" << tempFilePath;
         return QString("");
     }
     const int fd = file.handle();
     if (fd <= 0) {
-        qWarning() << "originPath file fd error. file:" << filePath;
+        qWarning() << "originPath file fd error. filePath cache file:" << tempFilePath;
         return QString("");
     }
 
@@ -64,6 +65,8 @@ QString DLDBusHandler::readLog(const QString &filePath)
     QString log = m_dbus->readLog(dbusFd);
 
     file.close();
+    releaseFilePathCacheFile(tempFilePath);
+
     return log;
 }
 
@@ -76,7 +79,25 @@ QString DLDBusHandler::readLog(const QString &filePath)
  */
 QStringList DLDBusHandler::readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
 {
-    return m_dbus->readLogLinesInRange(filePath, startLine, lineCount, bReverse);
+    QString tempFilePath = createFilePathCacheFile(filePath);
+    QFile file(tempFilePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open filePath cache file:" << tempFilePath;
+        return QStringList();
+    }
+    const int fd = file.handle();
+    if (fd <= 0) {
+        qWarning() << "originPath file fd error. filePath cache file:" << tempFilePath;
+        return QStringList();
+    }
+
+    QDBusUnixFileDescriptor dbusFd(fd);
+    QStringList lines = m_dbus->readLogLinesInRange(dbusFd, startLine, lineCount, bReverse);
+
+    file.close();
+    releaseFilePathCacheFile(tempFilePath);
+
+    return lines;
 }
 
 QString DLDBusHandler::openLogStream(const QString &filePath)
@@ -160,4 +181,27 @@ qint64 DLDBusHandler::getLineCount(const QString &filePath)
 QString DLDBusHandler::executeCmd(const QString &cmd)
 {
     return m_dbus->executeCmd(cmd);
+}
+
+QString DLDBusHandler::createFilePathCacheFile(const QString &logFilePath)
+{
+    QString tempFilePath = m_tempDir.path() + QDir::separator() + "Log_file_path.txt";
+
+    QFile tmpFile(tempFilePath);
+    if (!tmpFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qWarning() << "Failed to open temp file:" << tmpFile;
+        return QString("");
+    }
+
+    QTextStream in(&tmpFile);
+    in << logFilePath;
+    tmpFile.close();
+
+    return tempFilePath;
+}
+
+void DLDBusHandler::releaseFilePathCacheFile(const QString &cacheFilePath)
+{
+    if (!cacheFilePath.isEmpty())
+        QFile::remove(cacheFilePath);
 }

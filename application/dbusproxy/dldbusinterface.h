@@ -85,6 +85,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("readLog"), argumentList);
     }
 
+    inline QDBusPendingReply<QStringList> readLogLinesInRange(const QDBusUnixFileDescriptor &fd, qint64 startLine, qint64 lineCount, bool bReverse)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(fd) << QVariant::fromValue(startLine) << QVariant::fromValue(lineCount) << QVariant::fromValue(bReverse);
+        return asyncCallWithArgumentList(QStringLiteral("readLogLinesInRange"), argumentList);
+    }
+
     inline QDBusPendingReply<QStringList> readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
     {
         QList<QVariant> argumentList;

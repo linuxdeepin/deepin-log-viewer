@@ -133,12 +133,17 @@ QString LogViewerService::readLog(const QDBusUnixFileDescriptor &fd)
 
     QFile file;
     if (!file.open(fdi, QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open file descriptor.";
+        qWarning() << "Failed to open file path cache file descriptor.";
         return log;
     }
 
     QTextStream in(&file);
-    log = in.readAll();
+    QString targetFilePath = in.readAll();
+
+    if (!targetFilePath.isEmpty())
+        log = readLog(targetFilePath);
+    else
+        qWarning() << "target log file path is empty.";
 
     file.close();
 
@@ -277,6 +282,45 @@ bool LogViewerService::checkAuthorization(const QString &actionId, qint64 applic
 #else
     return true;
 #endif
+}
+
+/*!
+ * \~chinese \brief LogViewerService::readLogLinesInRange 分段读取日志文件
+ * \~chinese \param fd 文件句柄
+ * \~chinese \return 读取的日志
+ */
+QStringList LogViewerService::readLogLinesInRange(const QDBusUnixFileDescriptor &fd, qint64 startLine, qint64 lineCount, bool bReverse)
+{
+    m_actionId = s_Action_View;
+
+    if(!isValidInvoker(true)) {
+        return QStringList();
+    }
+
+    QStringList lines;
+    // fd转文件
+    int fdi = fd.fileDescriptor();
+    if (fdi <= 0) {
+        return lines;
+    }
+
+    QFile file;
+    if (!file.open(fdi, QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Failed to open file path cache file descriptor.";
+        return lines;
+    }
+
+    QTextStream in(&file);
+    QString targetFilePath = in.readAll();
+
+    if (!targetFilePath.isEmpty())
+        lines = readLogLinesInRange(targetFilePath, startLine, lineCount, bReverse);
+    else
+        qWarning() << "target log file path is empty.";
+
+    file.close();
+
+    return lines;
 }
 
 QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
