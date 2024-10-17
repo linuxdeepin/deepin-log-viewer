@@ -30,7 +30,7 @@ Q_SIGNALS:
 public Q_SLOTS:
     Q_SCRIPTABLE QString readLog(const QDBusUnixFileDescriptor &fd);
     // 获取指定行数范围的日志内容
-    Q_SCRIPTABLE QStringList readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse);
+    Q_SCRIPTABLE QStringList readLogLinesInRange(const QDBusUnixFileDescriptor &fd, qint64 startLine, qint64 lineCount, bool bReverse);
     Q_SCRIPTABLE int exitCode();
     Q_SCRIPTABLE void quit();
     Q_SCRIPTABLE QStringList getFileInfo(const QString &file, bool unzip = true);
@@ -54,6 +54,7 @@ public:
 
 private:
     QString readLog(const QString &filePath);
+    Q_SCRIPTABLE QStringList readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse);
     // 清理临时目录下一些缓存文件，如解压后dump文件等（前端可能没权限删除，因此统一放到后端清理）
     void clearTempFiles();
 
