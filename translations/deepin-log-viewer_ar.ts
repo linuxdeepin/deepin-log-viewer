@@ -7,7 +7,7 @@
     </message>
     <message>
         <source>Clear log</source>
-        <translation>سجل نظيف</translation>
+        <translation>تنظيف السجل</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -23,7 +23,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>تؤكد</translation>
+        <translation>تأكيد</translation>
     </message>
 </context>
 <context>
@@ -110,42 +110,42 @@
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>خطر للغاية</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>تتبع</translation>
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"/>
+        <translation>مصادقة الهوية</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"/>
+        <translation>التحكم التقديري في الصلاحية</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"/>
+        <translation>التحكم الإلزامي في الصلاحية</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"/>
+        <translation>عن بعد</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"/>
+        <translation>تدقيق المستند</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>أخرى</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
@@ -156,7 +156,7 @@
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>جاري التصدير ...</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -167,15 +167,15 @@
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>تم التصدير بنجاح</translation>
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>فشلت عملية التصدير</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"/>
+        <translation>مجلد التصدير غير متوفر. الرجاء اختيار مجلد آخر لعملية التصدير.</translation>
     </message>
 </context>
 <context>
@@ -193,7 +193,7 @@
     </message>
     <message>
         <source>Level:  </source>
-        <translation type="unfinished"/>
+        <translation>المستوى:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -205,7 +205,7 @@
     </message>
     <message>
         <source>User:</source>
-        <translation>المستعمل :</translation>
+        <translation>المستخدم:</translation>
     </message>
     <message>
         <source>PID:</source>
@@ -233,15 +233,15 @@
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"/>
+        <translation>نوع التدقيق:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"/>
+        <translation>التطبيق:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>الوحدة الفرعية:</translation>
     </message>
 </context>
 <context>
@@ -280,18 +280,18 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>تتبع</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>خطر للغاية</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
         <source>Log file is empty</source>
-        <translation type="unfinished"/>
+        <translation>ملف السجل فارغ</translation>
     </message>
 </context>
 <context>
@@ -309,7 +309,7 @@
     <name>SearchBar</name>
     <message>
         <source>No search results</source>
-        <translation>لا يوجد نتائج لبحثك</translation>
+        <translation>لا يوجد نتائج لبحث</translation>
     </message>
     <message>
         <source>Search</source>
@@ -368,7 +368,7 @@
     </message>
     <message>
         <source>Process:</source>
-        <translation>التنفيذ:</translation>
+        <translation>معالجة:</translation>
     </message>
     <message>
         <source>Date and Time:</source>
@@ -392,11 +392,11 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>اسم الملف</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>وقت التعديل</translation>
     </message>
     <message>
         <source>SIG</source>
@@ -404,15 +404,15 @@
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"/>
+        <translation>EXE</translation>
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>ملف أساسي</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>اسم المستخدم</translation>
     </message>
     <message>
         <source>Offset</source>
@@ -466,15 +466,15 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>سجل للأشياء الأخرى</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>سجل مخصص</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"/>
+        <translation>سجل التدقيق</translation>
     </message>
     <message>
         <source>Coredump Log</source>
@@ -492,31 +492,32 @@
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>ليس لديك الصلاحية للإطلاع عليه</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"/>
+        <translation>مستوى الأمان للنظام الحالي: مرتفع 
+يمكن لمسؤولي التدقيق فقط عرض سجل التدقيق</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات إلى المسار المحدد</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"/>
+        <translation>المسار</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات التي تحتوي على أنواع محددة</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"/>
+        <translation>النوع</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
@@ -528,23 +529,23 @@
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات التي تقع خلال فترة زمنية محددة</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"/>
+        <translation>المدة</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات التي تحتوي عاى مستوى معين من التصحيح</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"/>
+        <translation>المستوى</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"/>
+        <translation>حالة الإقلاع</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
@@ -556,15 +557,15 @@
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"/>
+        <translation>نوع الحدث</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات التي تحتوي على نتائج البحث معينة</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"/>
+        <translation>كلمات مفتاحية</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
@@ -576,38 +577,38 @@
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"/>
+        <translation>الوحدة الفرعية</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>معدل التحديث</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>10 ثواني</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>دقيقة واحدة</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 دقائق</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>بدون تحديث</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
+        <translation>تصدير الكل</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>تحديث الآن</translation>
     </message>
 </context>
 </TS>
