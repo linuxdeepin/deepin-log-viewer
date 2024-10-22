@@ -90,7 +90,7 @@
     </message>
     <message>
         <source>Info</source>
-        <translation>Info</translation>
+        <translation>Hollësi</translation>
     </message>
     <message>
         <source>Debug</source>
@@ -149,7 +149,7 @@
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEKS (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>TEKST (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -256,7 +256,7 @@
     </message>
     <message>
         <source>Info</source>
-        <translation>Info</translation>
+        <translation>Hollësi</translation>
     </message>
     <message>
         <source>Error</source>
@@ -332,7 +332,7 @@
     </message>
     <message>
         <source>Info</source>
-        <translation>Info</translation>
+        <translation>Hollësi</translation>
     </message>
     <message>
         <source>User</source>
@@ -450,7 +450,7 @@
     </message>
     <message>
         <source>Xorg Log</source>
-        <translation>Regjistër Xorg</translation>
+        <translation>Regjistër Xorg-u</translation>
     </message>
     <message>
         <source>Application Log</source>
@@ -485,7 +485,7 @@
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation>S’u arrit të merrej informacion vithisjeje, ju lutemi, instaloni systemd-coredump.</translation>
+        <translation>S’u arrit të merreshin hollësi vithisjeje, ju lutemi, instaloni systemd-coredump.</translation>
     </message>
 </context>
 <context>
@@ -588,15 +588,15 @@
     </message>
     <message>
         <source>10 sec</source>
-        <translation>10 sek.</translation>
+        <translation>10s</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation>1 min.</translation>
+        <translation>1m</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation>5 min</translation>
+        <translation>5m</translation>
     </message>
     <message>
         <source>No refresh</source>
