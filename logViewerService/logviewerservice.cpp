@@ -328,7 +328,7 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
     QStringList lines;
 
     m_actionId = s_Action_View;
-    
+
     // 开启鉴权
     if (!isValidInvoker(true))
         return lines;
@@ -599,15 +599,17 @@ QString LogViewerService::readLogInStream(const QString &token)
     return result;
 }
 
-bool LogViewerService::isFileExist(const QString &filePath)
+QString LogViewerService::isFileExist(const QString &filePath)
 {
     m_actionId = s_Action_View;
 
     if (!isValidInvoker(true))
-        return false;
+        return QString("");
 
-    QFile file(filePath);
-    return file.exists();
+    if (QFile::exists(filePath))
+        return QString("exist");
+
+    return QString("");
 }
 
 quint64 LogViewerService::getFileSize(const QString &filePath)
@@ -1043,9 +1045,9 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
 
 bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
 {
-    if (!calledFromDBus()) {
-        return false;
-    }
+   if (!calledFromDBus()) {
+       return false;
+   }
 
     bool valid = false;
     QDBusConnection conn = connection();
