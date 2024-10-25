@@ -132,6 +132,12 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
             }
             //按行解析
             QByteArray outByte = DLDBusHandler::instance(this)->readLog(filePath[i]).toUtf8();
+            // dbus鉴权失败，不再继续解析
+            if (outByte.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
+                mutex.unlock();
+                emit appFinished(m_threadCount);
+                return false;
+            }
             QString output = Utils::replaceEmptyByteArray(outByte);
             QStringList strList = QString(output ).split('\n', QString::SkipEmptyParts);
             //开启贪婪匹配
