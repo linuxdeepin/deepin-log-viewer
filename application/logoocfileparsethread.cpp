@@ -84,7 +84,13 @@ void LogOOCFileParseThread::doWork()
             return;
         }
 
-        m_fileData += DLDBusHandler::instance(this)->readLog(filePath.at(i));
+        QString m_Log = DLDBusHandler::instance(this)->readLog(filePath.at(i));
+        m_fileData += m_Log;
+        // dbus鉴权失败，不再继续解析
+        if (m_Log.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
+            emit sigFinished(m_threadCount);
+            return;
+        }
         emit sigData(m_threadCount, m_fileData);
     }
 
