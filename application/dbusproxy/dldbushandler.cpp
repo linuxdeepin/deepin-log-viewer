@@ -165,7 +165,8 @@ bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isF
 
 bool DLDBusHandler::isFileExist(const QString &filePath)
 {
-    return m_dbus->isFileExist(filePath);
+    QString ret = m_dbus->isFileExist(filePath);
+    return ret == "exist";
 }
 
 quint64 DLDBusHandler::getFileSize(const QString &filePath)
