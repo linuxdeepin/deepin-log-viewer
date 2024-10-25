@@ -416,7 +416,7 @@
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Desvio</translation>
     </message>
 </context>
 <context>
@@ -525,7 +525,7 @@ auditoria: somente os administradores podem visualizar o registro de auditoria</
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>SELF APPNAME</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
