@@ -36,7 +36,7 @@
       <arg name="token" type="s" direction="in"/>
     </method>
     <method name="isFileExist"> 
-      <arg type="b" direction="out"/>
+      <arg type="s" direction="out"/>
       <arg name="filePath" type="s" direction="in"/>
     </method>
     <method name="getFileSize"> 

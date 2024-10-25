@@ -113,7 +113,7 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("readLogInStream"), argumentList);
     }
 
-    inline QDBusPendingReply<bool> isFileExist(const QString &filePath)
+    inline QDBusPendingReply<QString> isFileExist(const QString &filePath)
     {
         QList<QVariant> argumentList;
         argumentList << QVariant::fromValue(filePath);
