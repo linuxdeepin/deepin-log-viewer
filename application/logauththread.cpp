@@ -526,6 +526,11 @@ void LogAuthThread::handleXorg()
             return;
         }
         QString m_Log = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        // dbus鉴权失败，不再继续解析
+        if (m_Log.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
+            emit xorgFinished(m_threadCount);
+            return;
+        }
         QByteArray outByte = m_Log.toUtf8();
         if (!m_canRun) {
             return;
@@ -589,6 +594,11 @@ void LogAuthThread::handleDkpg()
         }
 
         QString m_Log = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
+        // dbus鉴权失败，不再继续解析
+        if (m_Log.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
+            emit dpkgFinished(m_threadCount);
+            return;
+        }
         QByteArray outByte = m_Log.toUtf8();
         if (!m_canRun) {
             return;
@@ -793,6 +803,11 @@ void LogAuthThread::handleDnf()
             return;
         }
         QByteArray outByte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i)).toUtf8();
+        // dbus鉴权失败，不再继续解析
+        if (outByte.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
+            emit dnfFinished(dList);
+            return;
+        }
         QString output = Utils::replaceEmptyByteArray(outByte);
         QStringList allLog = output.split('\n');
         //dnf日志数据结构
