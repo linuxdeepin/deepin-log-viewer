@@ -274,11 +274,6 @@ bool Utils::isWayland()
     }
 }
 
-bool Utils::isTreeland()
-{
-    return qEnvironmentVariable("DDE_CURRENT_COMPOSITOR") == QStringLiteral("TreeLand");
-}
-
 bool Utils::sleep(unsigned int msec)
 {
     QTime dieTime = QTime::currentTime().addMSecs(static_cast<int>(msec));

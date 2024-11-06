@@ -59,7 +59,6 @@ public:
     static bool deleteDir(const QString &iFilePath);
     static void replaceColorfulFont(QString *iStr);
     static bool isWayland();
-    static bool isTreeland();
     static bool sleep(unsigned int msec);
     //创建多级文件夹
     static QString mkMutiDir(const QString &path);
