@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.1) unstable; urgency=medium
+
+  * remove kwayland-shell env 
+
+ -- Liu zheng <liuzheng@uniontech.com>  Wed, 06 Nov 2024 17:17:32 +0800
+
 deepin-log-viewer (6.5.0) unstable; urgency=medium
 
   * chore: Code format organization
