@@ -33,6 +33,7 @@
 #include <QShortcut>
 #include <QAbstractButton>
 #define ITEM_HEIGHT 40
+#define ITEM_HEIGHT_COMPACT 24
 #define ITEM_WIDTH 108
 #define ICON_SIZE 16
 
@@ -136,6 +137,12 @@ LogListView::LogListView(QWidget *parent)
     });
 
     connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigValueChanged, this, &LogListView::slot_valueChanged_dConfig_or_gSetting);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    // 紧凑模式信号处理
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &LogListView::updateSizeMode);
+    updateSizeMode();
+#endif
 }
 
 /**
@@ -589,6 +596,27 @@ void LogListView::slot_valueChanged_dConfig_or_gSetting(const QString &key)
             }
             m_pModel->removeRow(m_customLogItem->row());
             m_customLogItem = nullptr;
+        }
+    }
+}
+
+void LogListView::updateSizeMode()
+{
+    int nItemHeight = ITEM_HEIGHT;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    if (DGuiApplicationHelper::isCompactMode())
+        nItemHeight = ITEM_HEIGHT_COMPACT;
+    else
+        nItemHeight = ITEM_HEIGHT;
+#else
+    nItemHeight = ITEM_HEIGHT;
+#endif
+
+    if (m_pModel) {
+        int nCount = m_pModel->rowCount();
+        for (int i = 0; i < nCount; i++) {
+            QStandardItem* item = m_pModel->item(i);
+            item->setSizeHint(QSize(ITEM_WIDTH, nItemHeight));
         }
     }
 }
