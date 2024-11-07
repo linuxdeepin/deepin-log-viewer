@@ -32,6 +32,7 @@
 
 #define BUTTON_WIDTH_MIN 68
 #define BUTTON_HEIGHT_MIN 36
+#define BUTTON_HEIGHT_MIN_COMPACT 24
 #define BUTTON_EXPORT_WIDTH_MIN 142
 #define FONT_20_MIN_WIDTH 821
 #define FONT_18_MIN_WIDTH 100
@@ -250,6 +251,11 @@ void FilterContent::initConnections()
     connect(typeCbx, SIGNAL(currentIndexChanged(int)), this,
             SLOT(slot_cbxLogTypeChanged(int)));  // add by Airy
     connect(auditTypeCbx, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAuditTypeChanged(int)));
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    // 紧凑模式信号处理
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &FilterContent::updateSizeMode);
+    updateSizeMode();
+#endif
 }
 
 /**
@@ -955,4 +961,39 @@ void FilterContent::setLeftButtonState(bool value)
 void FilterContent::setChangedcomboxstate(bool value)
 {
     m_bIsCombox = value;
+}
+
+void FilterContent::updateSizeMode()
+{
+    int nBtnHeight = BUTTON_HEIGHT_MIN;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    if (DGuiApplicationHelper::isCompactMode())
+        nBtnHeight = BUTTON_HEIGHT_MIN_COMPACT;
+    else
+        nBtnHeight = BUTTON_HEIGHT_MIN;
+#else
+    nBtnHeight = BUTTON_HEIGHT_MIN;
+#endif
+
+    if (cbx_lv) {
+        cbx_lv->setMinimumSize(QSize(LEVEL_COMBO_WIDTH, nBtnHeight));
+    }
+    if (cbx_dnf_lv) {
+        cbx_dnf_lv->setMinimumSize(QSize(LEVEL_COMBO_WIDTH, nBtnHeight));
+    }
+    if (cbx_app) {
+        cbx_app->setMinimumSize(QSize(LEVEL_COMBO_WIDTH, nBtnHeight));
+    }
+    if (cbx_submodule) {
+        cbx_submodule->setMinimumSize(QSize(LEVEL_COMBO_WIDTH, nBtnHeight));
+    }
+    if (cbx_status) {
+        cbx_status->setMinimumSize(QSize(LEVEL_COMBO_WIDTH, nBtnHeight));
+    }
+    if (typeCbx) {
+        typeCbx->setMinimumSize(QSize(LEVEL_COMBO_WIDTH, nBtnHeight));
+    }
+    if (auditTypeCbx) {
+        auditTypeCbx->setMinimumSize(QSize(LEVEL_COMBO_WIDTH, nBtnHeight));
+    }
 }

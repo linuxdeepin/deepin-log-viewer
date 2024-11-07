@@ -21,6 +21,9 @@ DWIDGET_USE_NAMESPACE
 #define ICON_WIDTH 24
 #define ICON_HEIGHT 24
 
+#define ROW_HEIGHT 36
+#define ROW_HEIGHT_COMPACT 24
+
 LogViewItemDelegate::LogViewItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
 {
@@ -121,7 +124,16 @@ QSize LogViewItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                     const QModelIndex &index) const
 {
     QSize size = QStyledItemDelegate::sizeHint(option, index);
-    size.setHeight(36);
+    int nRowHeight = ROW_HEIGHT;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    if (DGuiApplicationHelper::isCompactMode())
+        nRowHeight = ROW_HEIGHT_COMPACT;
+    else
+        nRowHeight = ROW_HEIGHT;
+#else
+    nRowHeight = ROW_HEIGHT;
+#endif
+    size.setHeight(nRowHeight);
     return size;
 }
 /**

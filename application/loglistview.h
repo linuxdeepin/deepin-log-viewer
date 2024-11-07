@@ -47,6 +47,11 @@ public slots:
     void requestshowRightMenu(const QPoint &pos);
     void slot_valueChanged_dConfig_or_gSetting(const QString &key);
 
+private slots:
+    /**
+     * @brief 根据布局模式(紧凑)变更更新界面布局
+     */
+    void updateSizeMode();
 protected:
     void paintEvent(QPaintEvent *event) override;
     void currentChanged(const QModelIndex &current, const QModelIndex &previous) override;
