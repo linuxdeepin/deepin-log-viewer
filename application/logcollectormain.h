@@ -49,6 +49,11 @@ public slots:
      */
     void slotClearInfoandFocus();
 
+private slots:
+    /**
+     * @brief 根据布局模式(紧凑)变更更新界面布局
+     */
+    void updateSizeMode();
 protected:
     void closeEvent(QCloseEvent *event);
 
