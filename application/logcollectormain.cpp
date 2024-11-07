@@ -36,6 +36,9 @@
 #define LEFT_LIST_WIDTH 200
 DWIDGET_USE_NAMESPACE
 
+const int BUTTON_SIZE  = 36;
+const int BUTTON_SIZE_COMPACT = 24;
+
 //刷新间隔
 static const QString refreshIntervalKey = "base.RefreshInterval";
 /**
@@ -429,6 +432,12 @@ void LogCollectorMain::initConnection()
     connect(m_topRightWgt, &FilterContent::sigStatusChanged, this, &LogCollectorMain::slotClearInfoandFocus);
     //开关机日志下拉框选项切换清空搜索栏
     connect(m_topRightWgt, &FilterContent::sigLogtypeChanged, this, &LogCollectorMain::slotClearInfoandFocus);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    // 紧凑模式信号处理
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &LogCollectorMain::updateSizeMode);
+    updateSizeMode();
+#endif
 }
 
 void LogCollectorMain::slotClearInfoandFocus()
@@ -438,6 +447,26 @@ void LogCollectorMain::slotClearInfoandFocus()
         m_topRightWgt->setLeftButtonState(false);
     } else if (m_topRightWgt->getChangedcomboxstate()) {
         m_logCatelogue->setFocus();
+    }
+}
+
+void LogCollectorMain::updateSizeMode()
+{
+    int nBtnSize = BUTTON_SIZE;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    if (DGuiApplicationHelper::isCompactMode())
+        nBtnSize = BUTTON_SIZE_COMPACT;
+    else
+        nBtnSize = BUTTON_SIZE;
+#else
+    nBtnSize = BUTTON_SIZE;
+#endif
+
+    if (m_exportAllBtn) {
+        m_exportAllBtn->setFixedSize(QSize(nBtnSize, nBtnSize));
+    }
+    if (m_refreshBtn) {
+        m_refreshBtn->setFixedSize(QSize(nBtnSize, nBtnSize));
     }
 }
 

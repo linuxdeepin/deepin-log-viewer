@@ -16,6 +16,8 @@
 #include <DStyle>
 
 static const int kSpacingMargin = 4;
+#define ROW_HEIGHT 36
+#define ROW_HEIGHT_COMPACT 24
 
 LogViewHeaderView::LogViewHeaderView(Qt::Orientation orientation, QWidget *parent)
     : DHeaderView(orientation, parent)
@@ -27,6 +29,12 @@ LogViewHeaderView::LogViewHeaderView(Qt::Orientation orientation, QWidget *paren
     setDefaultAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     setFixedHeight(37);
     setFocusPolicy(Qt::NoFocus);
+
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    // 紧凑模式信号处理
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &LogViewHeaderView::updateSizeMode);
+    updateSizeMode();
+#endif
 }
 
 LogViewHeaderView::~LogViewHeaderView()
@@ -191,7 +199,16 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
 
 QSize LogViewHeaderView::sizeHint() const
 {
-    return QSize(width(), 36 + m_spacing);
+    int nRowHeight = ROW_HEIGHT;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    if (DGuiApplicationHelper::isCompactMode())
+        nRowHeight = ROW_HEIGHT_COMPACT;
+    else
+        nRowHeight = ROW_HEIGHT;
+#else
+    nRowHeight = ROW_HEIGHT;
+#endif
+    return QSize(width(), nRowHeight + m_spacing);
 }
 /**
  * @brief LogViewHeaderView::sectionSizeHint 根据是否有排序箭头返回逻辑字段合适的尺寸
@@ -215,4 +232,18 @@ int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
     } else {
         return fm.width(buf) + margin * 2;
     }
+}
+
+void LogViewHeaderView::updateSizeMode()
+{
+    int nRowHeight = ROW_HEIGHT;
+#ifdef DTKWIDGET_CLASS_DSizeMode
+    if (DGuiApplicationHelper::isCompactMode())
+        nRowHeight = ROW_HEIGHT_COMPACT;
+    else
+        nRowHeight = ROW_HEIGHT;
+#else
+    nRowHeight = ROW_HEIGHT;
+#endif
+    setFixedHeight(nRowHeight);
 }
