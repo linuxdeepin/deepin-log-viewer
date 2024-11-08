@@ -21,8 +21,8 @@ DWIDGET_USE_NAMESPACE
 #define ICON_WIDTH 24
 #define ICON_HEIGHT 24
 
-#define ROW_HEIGHT 36
-#define ROW_HEIGHT_COMPACT 24
+#define ROW_HEIGHT 38
+#define ROW_HEIGHT_COMPACT 26
 
 LogViewItemDelegate::LogViewItemDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
