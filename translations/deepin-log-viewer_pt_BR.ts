@@ -149,7 +149,7 @@
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>Texto (*.txt);; Documento (*.doc);; Planilha (*.xls);; Página Web (*.html)</translation>
+        <translation>Texto (*.txt);; Documento (*.doc);; Planilha (*.xls);; Página web (*.html)</translation>
     </message>
 </context>
 <context>
@@ -182,7 +182,7 @@
     <name>File</name>
     <message>
         <source>Export File</source>
-        <translation>Exportar Arquivo</translation>
+        <translation>Exportar arquivo</translation>
     </message>
 </context>
 <context>
@@ -201,7 +201,7 @@
     </message>
     <message>
         <source>Event Type:</source>
-        <translation>Tipo de Evento:</translation>
+        <translation>Tipo de evento:</translation>
     </message>
     <message>
         <source>User:</source>
@@ -217,7 +217,7 @@
     </message>
     <message>
         <source>Username:</source>
-        <translation>Nome de Usuário:</translation>
+        <translation>Nome de usuário:</translation>
     </message>
     <message>
         <source>Boot record</source>
@@ -328,7 +328,7 @@
     </message>
     <message>
         <source>Date and Time</source>
-        <translation>Data e Hora</translation>
+        <translation>Data e hora</translation>
     </message>
     <message>
         <source>Info</source>
@@ -356,11 +356,11 @@
     </message>
     <message>
         <source>Event Type</source>
-        <translation>Tipo de Evento</translation>
+        <translation>Tipo de evento</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation>Nome de Usuário</translation>
+        <translation>Nome de usuário</translation>
     </message>
     <message>
         <source>Level:</source>
@@ -372,7 +372,7 @@
     </message>
     <message>
         <source>Date and Time:</source>
-        <translation>Data e Hora:</translation>
+        <translation>Data e hora:</translation>
     </message>
     <message>
         <source>Info:</source>
@@ -423,7 +423,7 @@
     <name>Tbble</name>
     <message>
         <source>Date and Time</source>
-        <translation>Data e Hora</translation>
+        <translation>Data e hora</translation>
     </message>
 </context>
 <context>
@@ -588,15 +588,15 @@ auditoria: somente os administradores podem visualizar o registro de auditoria</
     </message>
     <message>
         <source>10 sec</source>
-        <translation>10 seg</translation>
+        <translation>10 segundos</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation>1 min</translation>
+        <translation>1 minuto</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation>5 min</translation>
+        <translation>5 minutos</translation>
     </message>
     <message>
         <source>No refresh</source>
