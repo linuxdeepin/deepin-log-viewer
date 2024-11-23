@@ -118,9 +118,7 @@ LogViewerService::~LogViewerService()
  */
 QString LogViewerService::readLog(const QDBusUnixFileDescriptor &fd)
 {
-    m_actionId = s_Action_View;
-
-    if(!isValidInvoker(true)) {
+    if(!checkAuth(s_Action_View)) {
         return " ";
     }
 
@@ -174,9 +172,7 @@ static QByteArray processCmdWithArgs(const QString &cmdStr, const QStringList &a
  */
 QString LogViewerService::readLog(const QString &filePath)
 {
-    m_actionId = s_Action_View;
-
-    if(!isValidInvoker(true)) {
+    if(!checkAuth(s_Action_View)) {
         return " ";
     }
 
@@ -291,9 +287,7 @@ bool LogViewerService::checkAuthorization(const QString &actionId, qint64 applic
  */
 QStringList LogViewerService::readLogLinesInRange(const QDBusUnixFileDescriptor &fd, qint64 startLine, qint64 lineCount, bool bReverse)
 {
-    m_actionId = s_Action_View;
-
-    if(!isValidInvoker(true)) {
+    if(!checkAuth(s_Action_View)) {
         return QStringList();
     }
 
@@ -327,10 +321,8 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
 {
     QStringList lines;
 
-    m_actionId = s_Action_View;
-
     // 开启鉴权
-    if (!isValidInvoker(true))
+    if (!checkAuth(s_Action_View))
         return lines;
 
     //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
@@ -601,9 +593,7 @@ QString LogViewerService::readLogInStream(const QString &token)
 
 QString LogViewerService::isFileExist(const QString &filePath)
 {
-    m_actionId = s_Action_View;
-
-    if (!isValidInvoker(true))
+    if (!checkAuth(s_Action_View))
         return QString("");
 
     if (QFile::exists(filePath))
@@ -914,9 +904,7 @@ static bool processExportLog(const QString &cmdStr, const QString &outFullPath,c
 
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
-    m_actionId = s_Action_Export;
-
-    if(!isValidInvoker(true)) { //非法调用
+    if(!checkAuth(s_Action_Export)) { //非法调用
         return false;
     }
 
@@ -1139,4 +1127,32 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
         return false;
     }
     return true;
+}
+
+bool LogViewerService::checkAuth(const QString &actionId)
+{
+    if (!calledFromDBus()) {
+        qWarning() << "called not from dbus.";
+        return false;
+    }
+
+    bool isRoot = connection().interface()->serviceUid(message().service()).value() == 0;
+    if (isRoot) {
+        qInfo() << "dbus caller is root progress.";
+        return  true;
+    }
+
+    uint pid = connection().interface()->servicePid(message().service()).value();
+
+    bool bAuthVaild = false;
+    bAuthVaild = checkAuthorization(actionId, pid);
+    if (!bAuthVaild) {
+        qWarning() << "checkAuthorization failed.";
+        sendErrorReply(QDBusError::ErrorType::Failed,
+                       QString("(pid: %1) is not allowed to configrate firewall. %3")
+                       .arg(pid)
+                       .arg("checkAuthorization failed."));
+    }
+
+    return  bAuthVaild;
 }
