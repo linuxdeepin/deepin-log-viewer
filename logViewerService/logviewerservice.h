@@ -78,6 +78,7 @@ private:
      * @return
      */
     bool isValidInvoker(bool checkAuth = false);
+    bool checkAuth(const QString &actionId);
     QByteArray processCatFile(const QString &filePath);
     void processCmdArgs(const QString &cmdStr, const QStringList &args);
 };
