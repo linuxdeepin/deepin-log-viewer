@@ -500,6 +500,10 @@
         <translation>Sicherheitslevel für das jetzige System: hoch
 Nur Audit-berechtigte Aadministratoren können das Audit-Log anschauen</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
