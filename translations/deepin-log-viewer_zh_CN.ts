@@ -500,6 +500,10 @@
         <translation>当前系统安全等级为：高
 仅审计管理员可查看审计日志</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
