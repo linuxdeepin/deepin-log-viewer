@@ -500,6 +500,10 @@
         <translation>Poziom bezpieczeństwa tego systemu: wysoki
  tylko administrator kontrolny może wyświetlić dziennik audytu</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
