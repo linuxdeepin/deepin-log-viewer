@@ -500,6 +500,10 @@
         <translation>A jelenlegi rendszer biztonsági szintje: magas
 csak a Rendszergazdák tekinthetik meg az ellenőrzési naplót</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
