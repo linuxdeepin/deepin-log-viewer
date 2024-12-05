@@ -388,7 +388,7 @@
     </message>
     <message>
         <source>PID:</source>
-        <translation>Identif. procesu (PID):</translation>
+        <translation>Identif. procesu:</translation>
     </message>
     <message>
         <source>File Name</source>

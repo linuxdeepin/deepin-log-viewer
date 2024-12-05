@@ -149,7 +149,7 @@
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>METİN (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>Metin (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -497,6 +497,10 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
         <translation type="unfinished"/>
     </message>
 </context>

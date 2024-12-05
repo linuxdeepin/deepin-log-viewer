@@ -500,6 +500,10 @@
         <translation>نۆۋەتتىكى سىستېما بىخەتەرلىك دەرىجىسى: يۇقىرى
 تەكشۈرگۈچى باشقۇرغۇچىلا تەكشۈرۈش خاتىرىسىنى كۆرەلەيدۇ</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>

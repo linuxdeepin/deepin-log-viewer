@@ -500,6 +500,10 @@
         <translation>Beveiligingsniveau van huidig systeem: hoog
  Alleen beheerders kunnen het logboek bekijken</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
