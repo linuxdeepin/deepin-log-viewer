@@ -500,6 +500,10 @@
         <translation>Järjestelmän suojaustaso: korkea
 Vain järjestelmänvalvojat voivat katsoa valvontalokia</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
