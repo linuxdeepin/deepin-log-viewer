@@ -500,6 +500,10 @@
         <translation>Nivell de seguretat del sistema actual: alt
 Només els administradors poden veure el registre d&apos;auditoria.</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
