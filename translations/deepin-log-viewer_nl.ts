@@ -502,7 +502,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Het auditlogboek bestaat niet.</translation>
     </message>
 </context>
 <context>
