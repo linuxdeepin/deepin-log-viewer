@@ -500,6 +500,10 @@
         <translation>Рівень захисту поточної системи: високий
  журнал ревізії можуть переглядати лише адміністратори-ревізори</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
