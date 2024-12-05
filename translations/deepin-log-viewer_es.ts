@@ -500,6 +500,10 @@
         <translation>Nivel de seguridad para el sistema actual: alto
 Los administradores de solo auditoria pueden ver el registro de auditoria.</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
