@@ -500,6 +500,10 @@
         <translation>Niveau de sécurité du système actuel : élevé
 audit seuls les administrateurs peuvent consulter le journal d&apos;audit</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
