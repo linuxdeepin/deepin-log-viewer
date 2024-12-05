@@ -502,7 +502,7 @@ csak a Rendszergazdák tekinthetik meg az ellenőrzési naplót</translation>
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Az auditnapló nem létezik.</translation>
     </message>
 </context>
 <context>
