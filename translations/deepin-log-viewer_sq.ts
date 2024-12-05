@@ -500,6 +500,10 @@
         <translation>Shkallë sigurie për sistemin e tanishëm: e lartë
  auditim: vetëm përgjegjësit mund të shohin regjistër auditimesh</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
