@@ -500,6 +500,10 @@
         <translation>مستوى الأمان للنظام الحالي: مرتفع 
 يمكن لمسؤولي التدقيق فقط عرض سجل التدقيق</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
