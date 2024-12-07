@@ -1,3 +1,20 @@
+deepin-log-viewer (6.5.3) unstable; urgency=medium
+
+  * fix: [cmd] Remove bash command invoke and DBus security reinforcement(Task: 362319)
+  * fix: fix 3 security vulnerabilities(Bug: 278915)
+  * fix: fix compile problem(Bug: 278915)
+  * chore: [security] strong the dbus interface(Task: 365257)
+  * fix: fix boot log no content problem(Bug: 278915)
+  * fix: Fixed the issue of repeatedly popping up authentication windows when exporting logs(Bug: 278819)
+  * fix: Fixed the issue of repeatedly popping up authentication windows when exporting logs 2nd(Bug: 278819)
+  * fix: Fixed the issue of multiple authentication windows popping up in audit logs(Bug: 281209)
+  * fix: Fixed the issue of multiple authentication windows popping up for certain types(Bug: 281209)
+  * fix: [theme] Resolve the issue of incorrect color display when switching themes on the log details page(Bug: 281647)
+  * fix: [ts] Xorg log offset international translation copywriting adjustment
+  * fix: Security reinforcement only authentication(TWB)
+
+ -- renbin <renbin@uniontech.com>  Sat, 07 Dec 2024 12:04:01 +0800
+
 deepin-log-viewer (6.5.2) unstable; urgency=medium
 
   * adapt compact mode 
