@@ -502,7 +502,7 @@ Només els administradors poden veure el registre d&apos;auditoria.</translation
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>El registre d&apos;auditoria no existeix.</translation>
     </message>
 </context>
 <context>
