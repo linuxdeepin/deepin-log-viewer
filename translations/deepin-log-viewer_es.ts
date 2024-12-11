@@ -502,7 +502,7 @@ Los administradores de solo auditoria pueden ver el registro de auditoria.</tran
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>El registro de auditoría no existe.</translation>
     </message>
 </context>
 <context>
