@@ -104,7 +104,7 @@ void FilterContent::initUI()
     lvTxt->setAccessibleName(DApplication::translate("Label", "Level:  "));
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
-    cbx_lv->view()->setAccessibleName("combobox_level_view");
+    //cbx_lv->view()->setAccessibleName("combobox_level_view");
     cbx_lv->setMinimumWidth(LEVEL_COMBO_WIDTH);
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                      << DApplication::translate("ComboBox", "Emergency")
@@ -125,7 +125,7 @@ void FilterContent::initUI()
     dnflvTxt->setAccessibleName("dnf" + DApplication::translate("Label", "Level:  "));
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
-    cbx_dnf_lv->view()->setAccessibleName("combobox_dnflevel_view");
+    //cbx_dnf_lv->view()->setAccessibleName("combobox_dnflevel_view");
     cbx_dnf_lv->setMinimumWidth(198);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Super critical"), SUPERCRITICAL);
@@ -143,7 +143,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application:"), this);
     cbx_app = new LogCombox(this);
-    cbx_app->view()->setAccessibleName("combobox_app_view");
+    //cbx_app->view()->setAccessibleName("combobox_app_view");
 
     cbx_app->setMinimumWidth(160);
     hLayout_app->addWidget(appTxt);
@@ -155,7 +155,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_submodule = new QHBoxLayout;
     submoduleTxt = new DLabel(DApplication::translate("Label", "Submodule:"), this);
     cbx_submodule = new LogCombox(this);
-    cbx_submodule->view()->setAccessibleName("combobox_submodule_view");
+    //cbx_submodule->view()->setAccessibleName("combobox_submodule_view");
 
     cbx_submodule->setMinimumWidth(143);
     hLayout_submodule->addWidget(submoduleTxt);
@@ -168,7 +168,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_status = new QHBoxLayout;
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
     cbx_status = new LogCombox(this);
-    cbx_status->view()->setAccessibleName("combobox_status_view");
+    //cbx_status->view()->setAccessibleName("combobox_status_view");
     cbx_status->setMinimumWidth(120);
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
                          << "Failed");
@@ -181,7 +181,7 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_type = new QHBoxLayout;
     typeTxt = new DLabel(DApplication::translate("Label", "Event Type:"), this);
     typeCbx = new LogCombox(this);
-    typeCbx->view()->setAccessibleName("combobox_eventtype_view");
+    //typeCbx->view()->setAccessibleName("combobox_eventtype_view");
     typeCbx->setMinimumWidth(120);
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                       << DApplication::translate("ComboBox", "Login")
