@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.4) unstable; urgency=medium
+
+  * treeland start app crash 
+
+ -- Liu zheng <liuzheng@uniontech.com>  Fri, 13 Dec 2024 17:12:28 +0800
+
 deepin-log-viewer (6.5.3) unstable; urgency=medium
 
   * fix: [cmd] Remove bash command invoke and DBus security reinforcement(Task: 362319)
