@@ -502,7 +502,7 @@ Vain järjestelmänvalvojat voivat katsoa valvontalokia</translation>
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Tarkastuslokia ei ole.</translation>
     </message>
 </context>
 <context>
