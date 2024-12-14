@@ -7,7 +7,7 @@
     </message>
     <message>
         <source>Clear log</source>
-        <translation>تنظيف السجل</translation>
+        <translation>سجل نظيف</translation>
     </message>
     <message>
         <source>Refresh</source>
@@ -23,7 +23,7 @@
     </message>
     <message>
         <source>Confirm</source>
-        <translation>تأكيد</translation>
+        <translation>تؤكد</translation>
     </message>
 </context>
 <context>
@@ -110,7 +110,7 @@
     </message>
     <message>
         <source>Super critical</source>
-        <translation>خطر للغاية</translation>
+        <translation>حرج جدا</translation>
     </message>
     <message>
         <source>Trace</source>
@@ -118,23 +118,23 @@
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation>مصادقة الهوية</translation>
+        <translation>تحديد الهوية</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation>التحكم التقديري في الصلاحية</translation>
+        <translation>رقابة اختيارية على الوصول</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation>التحكم الإلزامي في الصلاحية</translation>
+        <translation>رقابة إجبارية على الوصول</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation>عن بعد</translation>
+        <translation>عابر</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation>تدقيق المستند</translation>
+        <translation>تدقيق المستندات</translation>
     </message>
     <message>
         <source>Other</source>
@@ -145,7 +145,7 @@
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation>zip(*.zip)</translation>
+        <translation>اكسب (*.zip)</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
@@ -156,7 +156,7 @@
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation>جاري التصدير ...</translation>
+        <translation>التصدير...</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -171,11 +171,11 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation>فشلت عملية التصدير</translation>
+        <translation>فشل التصدير</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation>مجلد التصدير غير متوفر. الرجاء اختيار مجلد آخر لعملية التصدير.</translation>
+        <translation>مسار التصدير غير متاح. يرجى اختيار مجلد آخر لعملية التصدير.</translation>
     </message>
 </context>
 <context>
@@ -205,7 +205,7 @@
     </message>
     <message>
         <source>User:</source>
-        <translation>المستخدم:</translation>
+        <translation>المستعمل :</translation>
     </message>
     <message>
         <source>PID:</source>
@@ -241,7 +241,7 @@
     </message>
     <message>
         <source>Submodule:</source>
-        <translation>الوحدة الفرعية:</translation>
+        <translation>الشبكة الفرعية:</translation>
     </message>
 </context>
 <context>
@@ -280,11 +280,11 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation>تتبع</translation>
+        <translation>التتبع</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation>خطر للغاية</translation>
+        <translation>حرج جدا</translation>
     </message>
 </context>
 <context>
@@ -309,7 +309,7 @@
     <name>SearchBar</name>
     <message>
         <source>No search results</source>
-        <translation>لا يوجد نتائج لبحث</translation>
+        <translation>لا يوجد نتائج لبحثك</translation>
     </message>
     <message>
         <source>Search</source>
@@ -368,7 +368,7 @@
     </message>
     <message>
         <source>Process:</source>
-        <translation>معالجة:</translation>
+        <translation>التنفيذ:</translation>
     </message>
     <message>
         <source>Date and Time:</source>
@@ -396,11 +396,11 @@
     </message>
     <message>
         <source>Time Modified</source>
-        <translation>وقت التعديل</translation>
+        <translation>التاريخ والتعديل</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
@@ -408,15 +408,15 @@
     </message>
     <message>
         <source>Core File</source>
-        <translation>ملف أساسي</translation>
+        <translation>ملف النواة</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation>اسم المستخدم</translation>
+        <translation>اسم المستخدم </translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>التغيير</translation>
     </message>
 </context>
 <context>
@@ -446,7 +446,7 @@
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation type="unfinished"/>
+        <translation>سجل Kwin</translation>
     </message>
     <message>
         <source>Xorg Log</source>
@@ -462,11 +462,11 @@
     </message>
     <message>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>سجل dnf</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation>سجل للأشياء الأخرى</translation>
+        <translation>سجل آخر</translation>
     </message>
     <message>
         <source>Custom Log</source>
@@ -474,31 +474,31 @@
     </message>
     <message>
         <source>Audit Log</source>
-        <translation>سجل التدقيق</translation>
+        <translation>سجل تدقيق</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>سجل كوردمب</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>لم يتمكّن الحصول على معلومات الانهيار، يرجى تثبيت systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation>ليس لديك الصلاحية للإطلاع عليه</translation>
+        <translation>ليس لديك إذن لمشاهدته</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation>مستوى الأمان للنظام الحالي: مرتفع 
-يمكن لمسؤولي التدقيق فقط عرض سجل التدقيق</translation>
+        <translation>| - مستوى الأمان الحالي للنظام: مرتفع
+       يمكن لمسؤولي التدقيق فقط عرض سجل التدقيق</translation>
     </message>
     <message>
         <source>Audit log is not exist.</source>
@@ -513,11 +513,11 @@
     </message>
     <message>
         <source>PATH</source>
-        <translation>المسار</translation>
+        <translation>مسار</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation>تصدير السجلات التي تحتوي على أنواع محددة</translation>
+        <translation>تصدير السجلات من الأنواع المحددة</translation>
     </message>
     <message>
         <source>TYPE</source>
@@ -525,23 +525,23 @@
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات من التطبيقات الذاتية التي تم تطويرها</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>SELF APPNAME</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation>تصدير السجلات التي تقع خلال فترة زمنية محددة</translation>
+        <translation>تصدير السجلات ضمن فترة زمنية محددة</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation>المدة</translation>
+        <translation>الفترة</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation>تصدير السجلات التي تحتوي عاى مستوى معين من التصحيح</translation>
+        <translation>تصدير السجلات ضمن مستوى تصحيح محدد</translation>
     </message>
     <message>
         <source>LEVEL</source>
@@ -549,15 +549,15 @@
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation>حالة الإقلاع</translation>
+        <translation>حالة التشغيل</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"/>
+        <translation>تصدير سجلات التشغيل (لا-klu) ضمن حالة محددة</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"/>
+        <translation>تصدير أحداث التشغيل والإيقاف أو السجلات المراقبة ضمن نوع حدث محدد</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
@@ -565,38 +565,38 @@
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation>تصدير السجلات التي تحتوي على نتائج البحث معينة</translation>
+        <translation>تصدير السجلات بناءً على نتائج بحث الكلمات الرئيسية</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation>كلمات مفتاحية</translation>
+        <translation>كلمة رئيسية</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>إبلاغ معلومات تسرب الذاكرة المؤقتة</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات بناءً على نموذج التطبيق الفرعي</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation>الوحدة الفرعية</translation>
+        <translation>وحدة فرعية</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation>معدل التحديث</translation>
+        <translation>فاصل التحديث</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation>10 ثواني</translation>
+        <translation>10 ثوانٍ</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation>دقيقة واحدة</translation>
+        <translation>1 دقيقة</translation>
     </message>
     <message>
         <source>5 min</source>
@@ -604,7 +604,7 @@
     </message>
     <message>
         <source>No refresh</source>
-        <translation>بدون تحديث</translation>
+        <translation>لا تحديث</translation>
     </message>
     <message>
         <source>Export All</source>
@@ -612,7 +612,7 @@
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation>تحديث الآن</translation>
+        <translation>ترحيل الآن</translation>
     </message>
 </context>
 </TS>
