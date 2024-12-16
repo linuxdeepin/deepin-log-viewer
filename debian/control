@@ -7,7 +7,7 @@ Standards-Version: 4.1.3
 
 Package: deepin-log-viewer
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, deepin-security-loader
 Description:Log Viewer is a useful tool for viewing system logs.
  Log viewer is a tool that collects logs generated when an application
  is running, for example, logs generated when operating system and

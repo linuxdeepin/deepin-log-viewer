@@ -1,6 +1,6 @@
 [Desktop Entry]
 Categories=Utility
-Exec=deepin-log-viewer %f
+Exec=deepin-security-loader --group deepin-daemon -- /usr/libexec/deepin/deepin-log-viewer %f
 GenericName=Log Viewer
 GenericName[zh_CN]=日志收集工具
 Icon=deepin-log-viewer
