@@ -502,7 +502,7 @@ auditoria: somente os administradores podem visualizar o registro de auditoria</
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>O log de auditoria não existe.</translation>
     </message>
 </context>
 <context>
