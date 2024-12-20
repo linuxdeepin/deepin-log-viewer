@@ -32,6 +32,7 @@
 
 #define BUTTON_WIDTH_MIN 68
 #define BUTTON_HEIGHT_MIN 36
+#define BUTTON_HEIGHT_MIN_COMPACT 24
 #define BUTTON_EXPORT_WIDTH_MIN 142
 #define FONT_20_MIN_WIDTH 821
 #define FONT_18_MIN_WIDTH 100
@@ -104,7 +105,7 @@ void FilterContent::initUI()
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
     cbx_lv->view()->setAccessibleName("combobox_level_view");
-    cbx_lv->setMinimumSize(QSize(LEVEL_COMBO_WIDTH, BUTTON_HEIGHT_MIN));
+    cbx_lv->setMinimumWidth(LEVEL_COMBO_WIDTH);
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                      << DApplication::translate("ComboBox", "Emergency")
                      << DApplication::translate("ComboBox", "Alert")
@@ -125,7 +126,7 @@ void FilterContent::initUI()
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
     cbx_dnf_lv->view()->setAccessibleName("combobox_dnflevel_view");
-    cbx_dnf_lv->setMinimumSize(QSize(198, BUTTON_HEIGHT_MIN));
+    cbx_dnf_lv->setMinimumWidth(198);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Super critical"), SUPERCRITICAL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Critical"), CRITICAL);
@@ -144,7 +145,7 @@ void FilterContent::initUI()
     cbx_app = new LogCombox(this);
     cbx_app->view()->setAccessibleName("combobox_app_view");
 
-    cbx_app->setMinimumSize(QSize(160, BUTTON_HEIGHT_MIN));
+    cbx_app->setMinimumWidth(160);
     hLayout_app->addWidget(appTxt);
     hLayout_app->addWidget(cbx_app, 1);
     hLayout_app->setSpacing(6);
@@ -156,7 +157,7 @@ void FilterContent::initUI()
     cbx_submodule = new LogCombox(this);
     cbx_submodule->view()->setAccessibleName("combobox_submodule_view");
 
-    cbx_submodule->setMinimumSize(QSize(143, BUTTON_HEIGHT_MIN));
+    cbx_submodule->setMinimumWidth(143);
     hLayout_submodule->addWidget(submoduleTxt);
     hLayout_submodule->addWidget(cbx_submodule, 1);
     hLayout_submodule->setSpacing(6);
@@ -169,7 +170,6 @@ void FilterContent::initUI()
     cbx_status = new LogCombox(this);
     cbx_status->view()->setAccessibleName("combobox_status_view");
     cbx_status->setMinimumWidth(120);
-    cbx_status->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
                          << "Failed");
     hLayout_status->addWidget(statusTxt);
@@ -183,7 +183,6 @@ void FilterContent::initUI()
     typeCbx = new LogCombox(this);
     typeCbx->view()->setAccessibleName("combobox_eventtype_view");
     typeCbx->setMinimumWidth(120);
-    typeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                       << DApplication::translate("ComboBox", "Login")
                       << DApplication::translate("ComboBox", "Boot")
@@ -198,7 +197,6 @@ void FilterContent::initUI()
     auditTypeTxt = new DLabel(DApplication::translate("Label", "Audit Type:"), this);
     auditTypeCbx = new LogCombox(this);
     auditTypeCbx->setMinimumWidth(120);
-    auditTypeCbx->setMinimumSize(QSize(120, BUTTON_HEIGHT_MIN));
     auditTypeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                       << DApplication::translate("ComboBox", "Identity authentication")
                       << DApplication::translate("ComboBox", "Discretionary Access Control")
