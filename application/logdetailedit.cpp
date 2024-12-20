@@ -210,7 +210,7 @@ void logDetailEdit::mouseMoveEvent(QMouseEvent *e)
             m_stepSpeed /= sqrt(font.pointSize() * 4.0);
             change = m_stepSpeed * sqrt(abs(m_stepSpeed)) * 100;
 
-            // fix bug: https://pms.uniontech.com/zentao/bug-view-55665.html
+            // fix bug: 55665
             // 如果放到外面会屏蔽掉选中
             return; //此时屏蔽其他触控效果
         }
