@@ -1222,8 +1222,9 @@ void LogAuthThread::handleCoredump()
         }
 
         // 获取信号名称
-        int sigId = tmpList[7].toInt();
-        if ( sigId <= sigList.size()) {
+        bool isOk = false;
+        int sigId = tmpList[7].toInt(&isOk);
+        if (isOk && sigId >= 1 && sigId <= sigList.size()) {
             coredumpMsg.sig = sigList[sigId - 1];
         } else {
             coredumpMsg.sig = tmpList[7];
