@@ -38,7 +38,6 @@ obj-x86_64-linux-gnu/*
 *.supp
 # other
 *.qmake*
-*.qm
 Makefile
 moc_*
 

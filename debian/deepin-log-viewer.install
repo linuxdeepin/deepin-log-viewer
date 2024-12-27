@@ -1,4 +1,4 @@
-usr/libexec/deepin/deepin-log-viewer
+usr/bin/deepin-log-viewer
 usr/bin/logViewerAuth
 usr/bin/logViewerTruncate
 usr/bin/deepin-logger
