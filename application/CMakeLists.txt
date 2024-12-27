@@ -334,7 +334,6 @@ message("ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS}")
 include_directories( ${RapidJSON_INCLUDE_DIRS})
 #include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
-include(GNUInstallDirs)
 
 target_link_libraries(${EXE_NAME}  ${LINK_LIBS} ${Other_LIBRARIES} -lsystemd -licui18n -licuuc  -ldl -fPIC)
 target_link_libraries(${EXE_NAME} ${DtkWidget_LIBRARIES})
@@ -388,7 +387,7 @@ install(FILES gschema/com.deepin.log.viewer.gschema.xml
                 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)
 
 # Install files
-install(TARGETS ${EXE_NAME} DESTINATION ${CMAKE_INSTALL_LIBEXECDIR}/deepin)
+install(TARGETS ${EXE_NAME} DESTINATION bin)
 install(DIRECTORY assets/deepin-log-viewer
                 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-manual/manual-assets/application/)
 

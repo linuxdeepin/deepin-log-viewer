@@ -54,9 +54,5 @@
     <method name="whiteListOutPaths">
       <arg type="as" direction="out"/>
     </method>
-    <method name="SetAllowCaller">
-        <arg name="uniqueName" type="s" direction="in"/>
-        <arg name="result" type="b" direction="out"/>
-    </method>
   </interface>
 </node>

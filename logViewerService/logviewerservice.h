@@ -44,7 +44,6 @@ public Q_SLOTS:
     // 仅能执行特定合法命令
     Q_SCRIPTABLE QString executeCmd(const QString &cmd);
     Q_SCRIPTABLE QStringList whiteListOutPaths();
-    Q_SCRIPTABLE bool SetAllowCaller(const QString &uniqueName);
 
 public:
     // 获取用户家目录
@@ -66,9 +65,6 @@ private:
 
 private:
     bool checkAuthorization(const QString &actionId, qint64 applicationPid);
-    void initAllowedCallers();
-    void saveAllowedCallers();
-
 private:
     QTemporaryDir tmpDir;
     QProcess m_process;
@@ -77,13 +73,11 @@ private:
     QMap<QString, QString> m_commands;
     QMap<QString, std::pair<QString, QTextStream*>> m_logMap;
     QMap<QString, QList<uint64_t>> m_logLineIndex;
-    QStringList m_allowedCallers;
-
     /**
      * @brief isValidInvoker 检验调研者是否是日志
      * @return
      */
-    bool isValidInvoker(bool needAuth = false);
+    bool isValidInvoker(bool checkAuth = false);
     bool checkAuth(const QString &actionId);
     QByteArray processCatFile(const QString &filePath);
     void processCmdArgs(const QString &cmdStr, const QStringList &args);

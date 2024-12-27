@@ -34,100 +34,27 @@ Q_LOGGING_CATEGORY(logAppMain, "org.deepin.log.viewer.main")
 Q_LOGGING_CATEGORY(logAppMain, "org.deepin.log.viewer.main", QtInfoMsg)
 #endif
 
-bool initDBusAllowCaller(int argc, char *argv[])
-{
-    qCInfo(logAppMain) << "initDBusAllowCaller";
-    // 默认值
-    int writeFd = 3;
-    int readFd = 4;
-
-    for (int i = 1; i < argc; i++) {
-        QString arg = QString(argv[i]);
-        if (arg == "--fd1") {
-            if (i + 1 < argc) {
-                writeFd = QString(argv[i + 1]).toInt();
-                i++;
-            }
-        } else if (arg == "--fd2") {
-            if (i + 1 < argc) {
-                readFd = QString(argv[i + 1]).toInt();
-                i++;
-            }
-        }
-    }
-
-    // system bus获取UniqueName
-    QDBusConnection systemBus = QDBusConnection::systemBus();
-    QString uniqueName = systemBus.baseService();
-
-    // 构造允许调用的service列表
-    QJsonObject allowCallInfo {
-        { "UniqueName", uniqueName },
-        { "DestList", QJsonArray {
-                QJsonObject {
-                    { "DbusName", "com.deepin.logviewer" },
-                    { "DbusPath", "/com/deepin/logviewer" },
-                    { "DbusInterface", "com.deepin.logviewer" }
-                }
-            }
-        }
-    };
-
-    // 写入fd1
-    {
-        QFile writeFile;
-        if (!writeFile.open(writeFd, QIODevice::WriteOnly) || writeFile.write(QJsonDocument(allowCallInfo).toJson()) <= 0) {
-            qCWarning(logAppMain) << "Failed to write data to writeFd:" << writeFd;
-            return false;
-        }
-        writeFile.close();
-    }
-
-    // 读取fd2的结果
-    {
-        QFile readFile;
-        if (!readFile.open(readFd, QIODevice::ReadOnly)) {
-            qCWarning(logAppMain) << "Failed to open readFd:" << readFd;
-            return false;
-        }
-
-        QJsonDocument doc = QJsonDocument::fromJson(readFile.readAll());
-        QJsonObject result = doc.object();
-        readFile.close();
-
-        if (!result["Result"].toBool()) {
-            qCWarning(logAppMain) << "SetAllowCaller failed:" << result["Message"].toString();
-            return false;
-        }
-    }
-    return true;
-}
-
 int main(int argc, char *argv[])
 {
-#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
-        DLogManager::registerJournalAppender();
-#else
-        DLogManager::registerFileAppender();
-#endif
-
-    bool res = initDBusAllowCaller(argc, argv);
-    qCInfo(logAppMain) << "initDBusAllowCaller" << res;
-    bool isGui = res && argc == 5;
-
     //在root下或者非deepin/uos环境下运行不会发生异常，需要加上XDG_CURRENT_DESKTOP=Deepin环境变量；
     if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")) {
         setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
     }
 
     // 命令参数大于1，进行命令行处理
-    if (argc > 1 && !isGui) {
+    if (argc > 1) {
         QCoreApplication a(argc, argv);
         a.setOrganizationName("deepin");
         a.setApplicationName("deepin-log-viewer");
         a.setApplicationVersion(VERSION);
 
         DLogManager::registerConsoleAppender();
+
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
+        DLogManager::registerJournalAppender();
+#else
+        DLogManager::registerFileAppender();
+#endif
 
 #ifdef DTKCORE_CLASS_DConfigFile
         //日志规则
@@ -395,11 +322,13 @@ int main(int argc, char *argv[])
                     DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
 
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
+        DLogManager::registerJournalAppender();
 #ifdef QT_DEBUG
         DLogManager::registerConsoleAppender();
 #endif
 #else
         DLogManager::registerConsoleAppender();
+        DLogManager::registerFileAppender();
 #endif
 
 #ifdef DTKCORE_CLASS_DConfigFile
