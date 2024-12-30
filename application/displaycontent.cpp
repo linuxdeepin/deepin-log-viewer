@@ -13,7 +13,8 @@
 #include "parsethread/parsethreadbase.h"
 
 #include <DApplication>
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
+#include <DPaletteHelper>
 #include <DFileDialog>
 #include <DFontSizeManager>
 #include <DHorizontalLine>
@@ -102,28 +103,32 @@ void DisplayContent::initUI()
 
     //noResultLabel
     noResultLabel = new DLabel(this);
-    DPalette pa = DApplicationHelper::instance()->palette(noResultLabel);
+    DPalette pa = DPaletteHelper::instance()->palette(noResultLabel);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    DApplicationHelper::instance()->setPalette(noResultLabel, pa);
+    // DGuiApplicationHelper::instance()->setPalette(noResultLabel, pa);
+    noResultLabel->setPalette(pa);
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
     DFontSizeManager::instance()->bind(noResultLabel, DFontSizeManager::T4);
     noResultLabel->setAlignment(Qt::AlignCenter);
 
     //notAuditLabel
     notAuditLabel = new DLabel(this);
-    DApplicationHelper::instance()->setPalette(notAuditLabel, pa);
+    // DGuiApplicationHelper::instance()->setPalette(notAuditLabel, pa);
+    notAuditLabel->setPalette(pa);
     notAuditLabel->setText(DApplication::translate("Warning", "Security level for the current system: high\n audit only administrators can view the audit log"));
     DFontSizeManager::instance()->bind(notAuditLabel, DFontSizeManager::T4);
     notAuditLabel->setAlignment(Qt::AlignCenter);
 
     noCoredumpctlLabel = new DLabel(this);
-    DApplicationHelper::instance()->setPalette(noCoredumpctlLabel, pa);
+    // DGuiApplicationHelper::instance()->setPalette(noCoredumpctlLabel, pa);
+    noCoredumpctlLabel->setPalette(pa);
     noCoredumpctlLabel->setText(DApplication::translate("Waring", "Unable to obtain crash information, please install systemd-coredump."));
     DFontSizeManager::instance()->bind(noCoredumpctlLabel, DFontSizeManager::T4);
     noCoredumpctlLabel->setAlignment(Qt::AlignCenter);
 
     noPermissionLabel = new DLabel(this);
-    DApplicationHelper::instance()->setPalette(noPermissionLabel, pa);
+    // DGuiApplicationHelper::instance()->setPalette(noPermissionLabel, pa);
+    noPermissionLabel->setPalette(pa);
     noPermissionLabel->setText(DApplication::translate("Warning", "You do not have permission to view it"));
     DFontSizeManager::instance()->bind(noPermissionLabel, DFontSizeManager::T4);
     noPermissionLabel->setAlignment(Qt::AlignCenter);
@@ -1760,7 +1765,11 @@ void DisplayContent::slot_exportClicked()
     }
 
     if (fileName.isEmpty()) {
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         DApplication::setActiveWindow(this);
+        #else
+        this->activateWindow();
+        #endif
         return;
     }
 
@@ -1818,7 +1827,11 @@ void DisplayContent::slot_parseFinished(LOG_FLAG type, int status)
     if (status == ParseThreadBase::CancelAuth) {
         if (m_exportDlg && !m_exportDlg->isHidden()) {
             m_exportDlg->hide();
+            #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             DApplication::setActiveWindow(this);
+            #else
+            this->activateWindow();
+            #endif
         }
     } else {
         // 分段加载逻辑处理
@@ -3211,7 +3224,11 @@ void DisplayContent::onExportResult(bool isSuccess)
         DMessageManager::instance()->sendMessage(this->window(), QIcon(titleIcon + "warning_info.svg"), DApplication::translate("ExportMessage", "Export failed"));
     }
     PERF_PRINT_END("POINT-04", "");
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     DApplication::setActiveWindow(this);
+    #else
+    this->activateWindow();
+    #endif
 }
 
 /**

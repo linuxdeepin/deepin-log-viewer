@@ -15,7 +15,7 @@
 #include "accessible.h"
 
 #include <DApplication>
-#include <DApplicationSettings>
+// #include <DApplicationSettings>
 #include <DMainWindow>
 #include <DWidgetUtil>
 #include <DLog>

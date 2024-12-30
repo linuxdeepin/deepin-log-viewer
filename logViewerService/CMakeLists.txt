@@ -33,21 +33,24 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
 # Find the library
 find_package(PkgConfig REQUIRED)
-find_package(DtkGui REQUIRED)
-find_package(PolkitQt5-1)
-find_package(Qt5 COMPONENTS
-    Core
-    Widgets
-    DBus
-REQUIRED)
-pkg_check_modules(3rd_lib REQUIRED
-         gio-qt
-        )
+
+set(qt_required_components Core DBus Widgets)
+
+find_package(Qt${QT_DESIRED_VERSION} REQUIRED COMPONENTS ${qt_required_components})
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Core Gui REQUIRED)
+
+find_package(PolkitQt${QT_DESIRED_VERSION}-1)
+if (QT_DESIRED_VERSION MATCHES 5)
+    pkg_check_modules(Gio REQUIRED gio-qt)
+endif()
 
 set(LINK_LIBS
-    Qt5::Core
-    Qt5::DBus
-    ${DtkCore_LIBRARIES}
+    Qt${QT_DESIRED_VERSION}::Core
+    Qt${QT_DESIRED_VERSION}::DBus
+    Qt${QT_DESIRED_VERSION}::Widgets
+    Dtk${DTK_VERSION_MAJOR}::Core
+    Dtk${DTK_VERSION_MAJOR}::Gui
+    PolkitQt${QT_DESIRED_VERSION}-1::Agent
 )
 
 file(GLOB ALL_SOURCES "*.cpp")
@@ -56,18 +59,12 @@ file(GLOB ALL_HEADERS "*.h")
 include_directories(../application)
 add_executable(${PROJECT_NAME} ${ALL_SOURCES} ${ALL_HEADERS})
 target_include_directories(${PROJECT_NAME} PUBLIC
-    ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
-    ${PROJECT_BINARY_DIR}
-    ${3rd_lib_INCLUDE_DIRS}
+    ${Gio_INCLUDE_DIRS}
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${DtkWidget_INCLUDE_DIRS} ${OBJECT_BINARY_DIR})
 target_link_libraries(${PROJECT_NAME}
     ${LINK_LIBS}
-    ${DtkWidget_LIBRARIES}
-    ${Qt5Widgets_LIBRARIES}
-    ${3rd_lib_LIBRARIES}
-    PolkitQt5-1::Agent
+    ${Gio_LIBRARIES}
 )
 set(CMAKE_INSTALL_PREFIX /usr)
 

@@ -4,7 +4,8 @@
 
 #include "logperiodbutton.h"
 
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
+#include <DPaletteHelper>
 #include <DPalette>
 #include <DStyle>
 #include <DApplication>
@@ -40,17 +41,19 @@ Qt::FocusReason LogPeriodButton::getFocusReason()
     return m_reson;
 }
 
-void LogPeriodButton::enterEvent(QEvent *e)
+void LogPeriodButton::enterEvent(EnterEvent *e)
 {
     isEnter = true;
     DPushButton::enterEvent(e);
 }
 
-void LogPeriodButton::leaveEvent(QEvent *e)
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+void LogPeriodButton::leaveEvent(EnterEvent *e)
 {
     isEnter = false;
     DPushButton::leaveEvent(e);
 }
+#endif
 
 /**
  * @brief LogPeriodButton::paintEvent  通过鼠标是否在按钮上的状态绘hover效果 绘制焦点边框,屏蔽默认绘制事件,只在tabfoucus时绘制边框
@@ -66,7 +69,7 @@ void LogPeriodButton::paintEvent(QPaintEvent *event)
         this->setBackgroundRole(DPalette::Base);
 
         painter.setRenderHint(QPainter::Antialiasing);
-        DPalette pa = DApplicationHelper::instance()->palette(this);
+        DPalette pa = DPaletteHelper::instance()->palette(this);
         painter.setBrush(QBrush(pa.color(DPalette::Light)));
         QColor penColor = pa.color(DPalette::Base);
         painter.setPen(QPen(penColor));

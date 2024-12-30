@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logperiodbutton.h"
+#include "../../application/qtcompat.h"
 
 #include <gtest/gtest.h>
 #include <stub.h>
@@ -34,6 +35,7 @@ TEST(LogPeriodButton_getFocusReason_UT, LogPeriodButton_getFocusReason_UT_001)
     delete p;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 TEST(LogPeriodButton_enterEvent_UT, LogPeriodButton_enterEvent_UT_001)
 {
     LogPeriodButton *p = new LogPeriodButton("", nullptr);
@@ -55,6 +57,7 @@ TEST(LogPeriodButton_leaveEvent_UT, LogPeriodButton_leaveEvent_UT_001)
     delete e;
     delete p;
 }
+#endif
 
 //TEST(LogPeriodButton_paintEvent_UT, LogPeriodButton_paintEvent_UT_001)
 //{

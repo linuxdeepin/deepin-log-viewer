@@ -4,6 +4,7 @@
 
 #include "journalbootwork.h"
 #include "utils.h"
+#include "qtcompat.h"
 
 #include <DApplication>
 
@@ -344,8 +345,8 @@ QString JournalBootWork::getReplaceColorStr(const char *d)
     QByteArray byteChar(d);
     byteChar = Utils::replaceEmptyByteArray(byteChar);
     QString d_str = QString(byteChar);
-    d_str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-    d_str.replace(QRegExp("\\002"), "");
+    d_str.replace(REG_EXP("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+    d_str.replace(REG_EXP("\\002"), "");
     return  d_str;
 }
 
@@ -359,7 +360,7 @@ QString JournalBootWork::getDateTimeFromStamp(const QString &str)
 {
     QString ret = "";
     QString dtstr = str.left(str.length() - 6);
-    QDateTime dt = QDateTime::fromTime_t(dtstr.toUInt());
+    QDateTime dt = DATE_FOTIME(dtstr.toUInt());
     ret = dt.toString("yyyy-MM-dd hh:mm:ss");  // + QString(".%1").arg(ums);
     return ret;
 }

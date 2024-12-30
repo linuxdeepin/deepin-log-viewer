@@ -11,8 +11,9 @@
 #include "logspinnerwidget.h"
 #include "logtreeview.h"
 #include "structdef.h"
+#include "qtcompat.h"
 
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
 #include <DIconButton>
 #include <DLabel>
 #include <DSpinner>
@@ -322,7 +323,7 @@ private:
     //当前的显示加载状态
     DisplayContent::LOAD_STATE m_state;
     //系统日志上次获取的时间
-    QDateTime m_lastJournalGetTime {QDateTime::fromTime_t(0)};
+    QDateTime m_lastJournalGetTime { DATE_FOTIME(0) };
     /**
      * @brief m_journalFilter 当前系统日志筛选条件
      */

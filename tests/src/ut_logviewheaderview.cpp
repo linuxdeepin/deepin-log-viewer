@@ -29,7 +29,7 @@ public:
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_LogViewHeaderView = new LogViewHeaderView(Qt::Vertical);
-        qDebug() << "SetUp" << endl;
+        qDebug() << "SetUp";
     }
     void TearDown() //TEST跑完之后会执行TearDown
     {

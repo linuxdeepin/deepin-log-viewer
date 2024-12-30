@@ -8,6 +8,7 @@
 #include "structdef.h"
 #include "sharedmemorymanager.h"
 #include "wtmpparse.h"
+#include "../../application/qtcompat.h"
 
 #include <stub.h>
 
@@ -180,7 +181,7 @@ public:
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_parser = new LogFileParser();
-        qDebug() << "SetUp" << endl;
+        qDebug() << "SetUp" << ENDL;
     }
     void TearDown() //TEST跑完之后会执行TearDown
     {

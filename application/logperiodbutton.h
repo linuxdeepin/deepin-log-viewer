@@ -5,7 +5,8 @@
 #ifndef LOGPERIODBUTTON_H
 #define LOGPERIODBUTTON_H
 #include <DPushButton>
-#include <QEvent>
+
+#include "qtcompat.h"
 
 class LogPeriodButton : public Dtk::Widget::DPushButton
 {
@@ -14,8 +15,10 @@ public:
     void setStandardSize(int iStahndardWidth);
     Qt::FocusReason getFocusReason();
 protected:
-    void enterEvent(QEvent *e)override;
-    void leaveEvent(QEvent *e)override;
+    void enterEvent(EnterEvent *e)override;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    void leaveEvent(EnterEvent *e)override;
+#endif
     void paintEvent(QPaintEvent *event)override;
     void focusInEvent(QFocusEvent *event) override;
 private:

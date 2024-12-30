@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "parsethreadkern.h"
+#include "qtcompat.h"
 
 #include <QDebug>
 #include <QDateTime>
@@ -121,8 +122,8 @@ void ParseThreadKern::handleKern()
             QString str = strList.at(j);
             LOG_MSG_BASE msg;
             //删除颜色格式字符
-            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            str.replace(REG_EXP("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", SKIP_EMPTY_PARTS);
             if (list.size() < 5)
                 continue;
             //获取内核年份接口已添加，等待系统接口添加年份改变相关日志
