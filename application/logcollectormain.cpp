@@ -27,6 +27,7 @@
 #include <QSizePolicy>
 #include <QList>
 #include <QKeyEvent>
+#include <QActionGroup>
 
 #include <DAboutDialog>
 #include <DFileDialog>
@@ -478,7 +479,11 @@ void LogCollectorMain::initShortCut()
     // Resize Window --> Ctrl+Alt+F
     if (nullptr == m_scWndReize) {
         m_scWndReize = new QShortcut(this);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_scWndReize->setKey(Qt::CTRL + Qt::ALT + Qt::Key_F);
+#else
+        m_scWndReize->setKey(QKeyCombination(Qt::CTRL | Qt::ALT, Qt::Key_F));
+#endif
         m_scWndReize->setContext(Qt::ApplicationShortcut);
         m_scWndReize->setAutoRepeat(false);
 
@@ -496,7 +501,11 @@ void LogCollectorMain::initShortCut()
     // Find font --> Ctrl+F
     if (nullptr == m_scFindFont) {
         m_scFindFont = new QShortcut(this);
-        m_scFindFont->setKey(Qt::CTRL + Qt::Key_F);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        m_scWndReize->setKey(Qt::CTRL + Qt::Key_F);
+#else
+        m_scWndReize->setKey(QKeyCombination(Qt::CTRL, Qt::Key_F));
+#endif
         m_scFindFont->setContext(Qt::ApplicationShortcut);
         m_scFindFont->setAutoRepeat(false);
 
@@ -507,7 +516,11 @@ void LogCollectorMain::initShortCut()
     // export file --> Ctrl+E
     if (nullptr == m_scExport) {
         m_scExport = new QShortcut(this);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_scExport->setKey(Qt::CTRL + Qt::Key_E);
+#else
+        m_scExport->setKey(QKeyCombination(Qt::CTRL, Qt::Key_E));
+#endif
         m_scExport->setContext(Qt::ApplicationShortcut);
         m_scExport->setAutoRepeat(false);
 

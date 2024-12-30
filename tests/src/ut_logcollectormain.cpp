@@ -319,6 +319,7 @@ TEST(LogCollectorMain_switchRefreshActionTriggered_UT, LogCollectorMain_switchRe
     stub.set(test, LogCollectorMain_notify);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     ASSERT_TRUE(p);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QAction *action = new QAction(qApp->translate("titlebar", "5 min"));
     stub.set(ADDR(QList<QAction *>, indexOf), LogCollectorMain_int);
     p->switchRefreshActionTriggered(action);
@@ -326,6 +327,7 @@ TEST(LogCollectorMain_switchRefreshActionTriggered_UT, LogCollectorMain_switchRe
         p->m_refreshTimer->stop();
     }
     delete action;
+#endif
     p->deleteLater();
 }
 

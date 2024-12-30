@@ -8,7 +8,8 @@
 #include <DLabel>
 #include <DApplication>
 #include <DFontSizeManager>
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
+#include <DPaletteHelper>
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -30,9 +31,10 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     txtLabel->setAlignment(Qt::AlignCenter);
     //设置字号
     DFontSizeManager::instance()->bind(txtLabel, DFontSizeManager::T6);
-    DPalette pa = DApplicationHelper::instance()->palette(txtLabel);
+    DPalette pa = DPaletteHelper::instance()->palette(txtLabel);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::BrightText));
-    DApplicationHelper::instance()->setPalette(txtLabel, pa);
+    // DGuiApplicationHelper::instance()->setPalette(txtLabel, pa);
+    txtLabel->setPalette(pa);
     QVBoxLayout *pVLayouttxt = new QVBoxLayout();
     pVLayouttxt->setContentsMargins(0, 0, 0, 10);
     //pVLayouttxt->addSpacing(10);

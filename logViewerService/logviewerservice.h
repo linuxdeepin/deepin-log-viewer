@@ -5,14 +5,51 @@
 #ifndef LOGVIEWERSERVICE_H
 #define LOGVIEWERSERVICE_H
 
-#include <dgiomount.h>
-
 #include <QObject>
 #include <QDBusContext>
 #include <QScopedPointer>
 #include <QProcess>
 #include <QTemporaryDir>
 #include <QDBusUnixFileDescriptor>
+#include <QTextStream>
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <dgiomount.h>
+
+using DMount = DGioMount;
+
+#else
+class MountData : public QSharedData {
+public:
+    QString source;
+    QString target;
+    QString filesystemType;
+    QString options;
+};
+
+class Mount {
+public:
+    Mount() : d(new MountData) {}
+    Mount(const Mount& other) : d(other.d) {}
+    Mount(MountData* data) : d(data) {}
+
+    QString source() const { return d->source; }
+    QString target() const { return d->target; }
+    QString filesystemType() const { return d->filesystemType; }
+    QString options() const { return d->options; }
+
+    void setSource(const QString& source) { d->source = source; }
+    void setTarget(const QString& target) { d->target = target; }
+    void setFilesystemType(const QString& filesystemType) { d->filesystemType = filesystemType; }
+    void setOptions(const QString& options) { d->options = options; }
+
+private:
+    QExplicitlySharedDataPointer<MountData> d;
+};
+
+using DMount = Mount;
+
+#endif
 
 class QTextStream;
 class DGioVolumeManager;
@@ -50,7 +87,11 @@ public:
     QStringList getHomePaths();
     // 获取外设挂载路径(包括smb路径)
     QStringList getExternalDevPaths();
-    QList<QExplicitlySharedDataPointer<DGioMount>> getMounts_safe();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    QList<QExplicitlySharedDataPointer<DMount>> getMounts_safe();
+#else
+    QList<DMount> getMounts_safe();
+#endif
 
 private:
     QString readLog(const QString &filePath);

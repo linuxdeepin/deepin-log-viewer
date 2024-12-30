@@ -4,22 +4,6 @@ if (NOT DEFINED VERSION)
     set(VERSION 1.2.2)
 endif ()
 configure_file(../application/environments.h.in environments.h @ONLY)
-find_package(DtkWidget REQUIRED)
-find_package(DtkGui REQUIRED)
-find_package(DtkCore REQUIRED)
-set(LINK_LIBS
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Gui
-    Qt5::Xml
-    Qt5::DBus
-    Qt5::Concurrent
-    Qt5::Test
-    ${DtkWidget_LIBRARIES}
-    ${DtkCore_LIBRARIES}
-    ${DtkGUI_LIBRARIES}
-    PkgConfig::qgsettings
-)
 
 #可访问private
 ADD_COMPILE_OPTIONS(-fno-inline)
@@ -32,7 +16,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 #set(CMAKE_CXX_FLAGS "-g -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#${PROJECT_NAME_TEST}
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")#${PROJECT_NAME_TEST}
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-access-control")
 #编译生成覆盖环境
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
@@ -43,7 +27,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
-#-ldtkwidget -ldtkgui -ldtkcore
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "sw_64")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mieee")
 endif ()
@@ -78,23 +61,44 @@ configure_file(../application/config.h.in config.h @ONLY)
 add_definitions(-DUSE_POLKIT -DENABLE_INACTIVE_DISPLAY)
 # Find the library
 find_package(PkgConfig REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Xml REQUIRED)
-find_package(Qt5Concurrent REQUIRED)
-find_package(Qt5DBus REQUIRED)
-find_package(DtkWidget REQUIRED)
-find_package(DtkGui REQUIRED)
-find_package(DtkCore REQUIRED)
-find_package(Qt5LinguistTools REQUIRED)
-find_package(Qt5Test REQUIRED)
-add_definitions(${Qt5Test_DEFINITIONS})
+add_definitions(${Qt${QT_DESIRED_VERSION}Test_DEFINITIONS})
 find_package(RapidJSON)
 find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
-pkg_check_modules(qgsettings REQUIRED IMPORTED_TARGET gsettings-qt)
+find_package(PolkitQt${QT_DESIRED_VERSION}-1)
+
+set(qt_required_components Core DBus Gui Concurrent Test Xml Widgets)
+
+if (QT_DESIRED_VERSION MATCHES 6)
+    list(APPEND qt_required_components Core5Compat)
+else()
+    pkg_check_modules(Gsetting REQUIRED gsettings-qt)
+endif()
+
+find_package(Qt${QT_DESIRED_VERSION} REQUIRED COMPONENTS ${qt_required_components})
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Core Gui Widget REQUIRED)
+
+set(LINK_LIBS
+    Qt${QT_DESIRED_VERSION}::Core
+    Qt${QT_DESIRED_VERSION}::Xml
+    Qt${QT_DESIRED_VERSION}::DBus
+    Qt${QT_DESIRED_VERSION}::Gui
+    Qt${QT_DESIRED_VERSION}::Concurrent
+    Qt${QT_DESIRED_VERSION}::Test
+    Qt${QT_DESIRED_VERSION}::Widgets
+    Dtk${DTK_VERSION_MAJOR}::Widget
+    Dtk${DTK_VERSION_MAJOR}::Core
+    Dtk${DTK_VERSION_MAJOR}::Gui
+    PolkitQt${QT_DESIRED_VERSION}-1::Agent
+)
+
+if (QT_DESIRED_VERSION MATCHES 6)
+    list(APPEND LINK_LIBS Qt${QT_DESIRED_VERSION}::Core5Compat)
+else()
+    list(APPEND LINK_LIBS ${Gsetting_LIBRARIES})
+    include_directories(${Gsetting_INCLUDE_DIRS})
+endif()
 
 FILE(GLOB allSource
      ../application/filtercontent.cpp
@@ -241,6 +245,7 @@ file(GLOB_RECURSE LVP_HEADERS
     "../application/parsethread/parsethreadbase.h"
     "../application/parsethread/parsethreadkern.h"
     "../application/parsethread/parsethreadkwin.h"
+    "../application/qtcompat.h"
     )
 #---------------------------------------------
 
@@ -252,22 +257,17 @@ include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmp
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../application")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../liblogviewerplugin")
-include_directories(${DtkWidget_INCLUDE_DIRS})
-include_directories(${DtkCore_INCLUDE_DIRS})
-include_directories(${DtkGui_INCLUDE_DIRS})
-include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
-include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
-include_directories( ${Qt5TestLib_LIBRARIES})
+
 include_directories( ${Boost_INCLUDE_DIRS})
 include_directories( ${ZLIB_INCLUDE_DIRS})
 include_directories( ${RapidJSON_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
-find_package(PolkitQt5-1)
+
 include_directories(src)
 
-add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${APP_QM_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
+add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 #添加插件单元测试进程
 add_executable (${PROJECT_NAME_PLUGIN_TEST} ${allPluginTestSource} ${LVP_HEADERS} ${LVP_SOURCES} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 
@@ -278,10 +278,8 @@ target_link_libraries(${PROJECT_NAME_TEST} ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${RapidJSON_LIBRARIES})
 #target_link_libraries(${PROJECT_NAME_TEST} ${ImageMagick_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_TEST} ${XercesC_LIBRARIES})
-target_link_libraries(${PROJECT_NAME_TEST} PolkitQt5-1::Agent)
 
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${LINK_LIBS} -lsystemd -licui18n -licuuc ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES} pthread -ldl -fPIC)
-target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} PolkitQt5-1::Agent)
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${ZLIB_LIBRARIES})
 target_link_libraries(${PROJECT_NAME_PLUGIN_TEST} ${XercesC_LIBRARIES})
 

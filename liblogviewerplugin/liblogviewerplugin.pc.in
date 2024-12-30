@@ -11,4 +11,3 @@ Description: deepin log viewer plugins
 Version: @PROJECT_VERSION@
 Libs: -L${liblogviewerplugin} -llogviewerplugin
 Cflags: -I${includedir}
-Requires: Qt5Core Qt5Gui Qt5Widgets Qt5Svg Qt5DBus Qt5Concurrent Qt5PrintSupport dtkcore dtkwidget

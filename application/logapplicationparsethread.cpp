@@ -5,6 +5,7 @@
 #include "logapplicationparsethread.h"
 #include "utils.h"
 #include "dbusproxy/dldbushandler.h"
+#include "qtcompat.h"
 
 #include <DMessageBox>
 #include <DApplication>
@@ -139,7 +140,7 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
                 return false;
             }
             QString output = Utils::replaceEmptyByteArray(outByte);
-            QStringList strList = QString(output ).split('\n', QString::SkipEmptyParts);
+            QStringList strList = QString(output ).split('\n', SKIP_EMPTY_PARTS);
             //开启贪婪匹配
             QRegularExpression re("^(\\d{4}-[0-2]\\d-[0-3]\\d)\\D*([0-2]\\d:[0-5]\\d:[0-5]\\d.\\d*)[^A-Za-z]*([A-Za-z]*)[^\\[]*[^\\]]*\\]*\\s*(.*)$");
 

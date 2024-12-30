@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "viewapplication.h"
+#include "../application/qtcompat.h"
 
 #include <QDebug>
 #include <QFile>
@@ -87,7 +88,7 @@ ViewApplication::ViewApplication(int &argc, char **argv): QCoreApplication(argc,
             }
 
             QByteArray byte =   m_proc->readAll();
-            QStringList strList = QString(byte.replace('\u0000', "").replace("\x01", "")).split('\n', QString::SkipEmptyParts);
+            QStringList strList = QString(byte.replace('\u0000', "").replace("\x01", "")).split('\n', SKIP_EMPTY_PARTS);
             std::cout << byte.replace('\u0000', "").data();
         });
     } else if (!onlyExec) {

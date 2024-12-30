@@ -7,7 +7,7 @@
 
 #include "structdef.h"
 
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
 #include <DStyledItemDelegate>
 #include <DListView>
 class QShortcut;

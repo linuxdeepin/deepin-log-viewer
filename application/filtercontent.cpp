@@ -11,7 +11,8 @@
 #include "structdef.h"
 
 #include <DApplication>
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
+#include <DPaletteHelper>
 #include <DComboBox>
 #include <DCommandLinkButton>
 #include <DFileDialog>
@@ -461,7 +462,7 @@ void FilterContent::paintEvent(QPaintEvent *event)
     QPen oldPen = painter.pen();
     //设置画笔颜色角色,根据主题变色
     painter.setRenderHint(QPainter::Antialiasing);
-    DPalette pa = DApplicationHelper::instance()->palette(this);
+    DPalette pa = DPaletteHelper::instance()->palette(this);
     painter.setBrush(QBrush(pa.color(DPalette::Base)));
     QColor penColor = pa.color(DPalette::FrameBorder);
     //设置透明度
@@ -621,12 +622,24 @@ void FilterContent::updateWordWrap()
         QFont standFont = m_allBtn->font();
         QFont standFontBig = standFont;
         standFont.setPointSizeF(13.5);
-        periodLabel->setText(QFontMetrics(periodLabel->font()).elidedText(DApplication::translate("Label", "Period:"), Qt::ElideRight, 1 + QFontMetrics(periodLabel->font()).width(DApplication::translate("Label", "Period:"))));
-        m_todayBtn->setText(QFontMetrics(m_todayBtn->font()).elidedText(DApplication::translate("Button", "Today"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "Today"))));
-        m_threeDayBtn->setText(QFontMetrics(m_threeDayBtn->font()).elidedText(DApplication::translate("Button", "3 days"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "3 days"))));
-        m_lastWeekBtn->setText(QFontMetrics(m_lastWeekBtn->font()).elidedText(DApplication::translate("Button", "1 week"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "1 week"))));
-        m_lastMonthBtn->setText(QFontMetrics(m_lastMonthBtn->font()).elidedText(DApplication::translate("Button", "1 month"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "1 month"))));
-        m_threeMonthBtn->setText(QFontMetrics(m_threeMonthBtn->font()).elidedText(DApplication::translate("Button", "3 months"), Qt::ElideRight, 1 + QFontMetrics(standFont).width(DApplication::translate("Button", "3 months"))));
+        QFontMetrics periodMetrics(periodLabel->font());
+        QFontMetrics metrics(standFont);
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        periodLabel->setText(QFontMetrics(periodLabel->font()).elidedText(DApplication::translate("Label", "Period:"), Qt::ElideRight, 1 + periodMetrics.width(DApplication::translate("Label", "Period:"))));
+        m_todayBtn->setText(QFontMetrics(m_todayBtn->font()).elidedText(DApplication::translate("Button", "Today"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "Today"))));
+        m_threeDayBtn->setText(QFontMetrics(m_threeDayBtn->font()).elidedText(DApplication::translate("Button", "3 days"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "3 days"))));
+        m_lastWeekBtn->setText(QFontMetrics(m_lastWeekBtn->font()).elidedText(DApplication::translate("Button", "1 week"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "1 week"))));
+        m_lastMonthBtn->setText(QFontMetrics(m_lastMonthBtn->font()).elidedText(DApplication::translate("Button", "1 month"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "1 month"))));
+        m_threeMonthBtn->setText(QFontMetrics(m_threeMonthBtn->font()).elidedText(DApplication::translate("Button", "3 months"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "3 months"))));
+#else
+        periodLabel->setText(QFontMetrics(periodLabel->font()).elidedText(DApplication::translate("Label", "Period:"), Qt::ElideRight, 1 + periodMetrics.horizontalAdvance(DApplication::translate("Label", "Period:"))));
+        m_todayBtn->setText(QFontMetrics(m_todayBtn->font()).elidedText(DApplication::translate("Button", "Today"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "Today"))));
+        m_threeDayBtn->setText(QFontMetrics(m_threeDayBtn->font()).elidedText(DApplication::translate("Button", "3 days"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "3 days"))));
+        m_lastWeekBtn->setText(QFontMetrics(m_lastWeekBtn->font()).elidedText(DApplication::translate("Button", "1 week"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "1 week"))));
+        m_lastMonthBtn->setText(QFontMetrics(m_lastMonthBtn->font()).elidedText(DApplication::translate("Button", "1 month"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "1 month"))));
+        m_threeMonthBtn->setText(QFontMetrics(m_threeMonthBtn->font()).elidedText(DApplication::translate("Button", "3 months"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "3 months"))));
+#endif
     }  else  {
         periodLabel->setText(DApplication::translate("Label", "Period:"));
         m_allBtn->setText(DApplication::translate("Button", "All"));

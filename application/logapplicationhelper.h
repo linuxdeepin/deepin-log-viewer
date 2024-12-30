@@ -13,7 +13,10 @@
 
 #include <QMap>
 #include <QObject>
-#include <QGSettings/QGSettings>
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <QGSettings>
+#endif
 
 #include <mutex>
 
@@ -153,8 +156,11 @@ private:
     //dconfig,自定义日志配置
     Dtk::Core::DConfig *m_pDConfig = nullptr;
 #endif
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     //gsettings,自定义日志配置
     QGSettings *m_pGSettings = nullptr;
+#endif
 };
 
 #endif  // LOGAPPLICATIONHELPER_H
