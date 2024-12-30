@@ -6,6 +6,7 @@
 #include "logsettings.h"
 #include "dbusmanager.h"
 #include "dbusproxy/dldbushandler.h"
+#include "qtcompat.h"
 
 #include <math.h>
 #include <pwd.h>
@@ -29,7 +30,11 @@
 #include <QLoggingCategory>
 #include <QDBusInterface>
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <polkit-qt5-1/PolkitQt1/Authority>
+#else
+#include <polkit-qt6-1/PolkitQt1/Authority>
+#endif
 using namespace PolkitQt1;
 
 #ifdef QT_DEBUG
@@ -175,8 +180,8 @@ QString Utils::getReplaceColorStr(const char *d)
     QByteArray byteChar(d);
     byteChar = replaceEmptyByteArray(byteChar);
     QString d_str = QString(byteChar);
-    d_str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-    d_str.replace(QRegExp("\\002"), "");
+    d_str.replace(REG_EXP("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+    d_str.replace(REG_EXP("\\002"), "");
     return  d_str;
 }
 
@@ -258,7 +263,7 @@ bool Utils::deleteDir(const QString &iFilePath)
 
 void Utils::replaceColorfulFont(QString *iStr)
 {
-    iStr->replace(QRegExp("[[0-9]{1,2}m"), "");
+    iStr->replace(REG_EXP("[[0-9]{1,2}m"), "");
 }
 
 bool Utils::isWayland()
@@ -318,10 +323,16 @@ QString Utils::osVersion()
     unlock->waitForFinished();
     auto output = unlock->readAllStandardOutput();
     auto str = QString::fromUtf8(output);
-    QRegExp re("\t.+\n");
+    REG_EXP re("\t.+\n");
     QString osVerStr;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     if (re.indexIn(str) > -1) {
         auto result = re.cap(0);
+#else
+    QRegularExpressionMatch match = re.match(str);
+    if (match.hasMatch()) {
+        auto result = match.captured(0);
+#endif
         osVerStr = result.remove(0, 1).remove(result.size() - 1, 1);
     }
     unlock->deleteLater();
@@ -488,13 +499,13 @@ QList<LOG_REPEAT_COREDUMP_INFO> Utils::countRepeatCoredumps(qint64 timeBegin, qi
 {
     QList<LOG_REPEAT_COREDUMP_INFO> result;
     QString data = DLDBusHandler::instance()->executeCmd("coredumpctl-list");
-    QStringList strList = data.split('\n', QString::SkipEmptyParts);
+    QStringList strList = data.split('\n', SKIP_EMPTY_PARTS);
     int total = 0;
     for (int i = strList.size() - 1; i >= 0; --i) {
         QString str = strList.at(i);
         if (str.trimmed().isEmpty())
             continue;
-        QStringList tmpList = str.split(" ", QString::SkipEmptyParts);
+        QStringList tmpList = str.split(" ", SKIP_EMPTY_PARTS);
         if (tmpList.count() < 10)
             continue;
 

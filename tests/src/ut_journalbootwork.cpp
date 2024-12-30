@@ -4,6 +4,7 @@
 
 #include "journalbootwork.h"
 #include "ut_stuballthread.h"
+#include "qtcompat.h"
 #include <stub.h>
 
 #include <DApplication>
@@ -173,16 +174,16 @@ public:
     //添加日志
     static void SetUpTestCase()
     {
-        qDebug() << "SetUpTestCase" << endl;
+        qDebug() << "SetUpTestCase" << ENDL;
     }
     static void TearDownTestCase()
     {
-        qDebug() << "TearDownTestCase" << endl;
+        qDebug() << "TearDownTestCase" << ENDL;
     }
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_bootWork = new JournalBootWork(nullptr);
-        qDebug() << "SetUp" << endl;
+        qDebug() << "SetUp" << ENDL;
     }
     void TearDown() //TEST跑完之后会执行TearDown
     {

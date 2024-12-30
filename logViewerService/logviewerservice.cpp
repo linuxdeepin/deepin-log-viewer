@@ -3,17 +3,21 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logviewerservice.h"
+#include "qtcompat.h"
 
 #include <pwd.h>
 #include <unistd.h>
 #include <fstream>
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <polkit-qt5-1/PolkitQt1/Authority>
-using namespace PolkitQt1;
-
 #include <dgiofile.h>
 #include <dgiovolume.h>
 #include <dgiovolumemanager.h>
+#else
+#include <polkit-qt6-1/PolkitQt1/Authority>
+#endif
+using namespace PolkitQt1;
 
 #include <QMutex>
 #include <QUrl>
@@ -481,15 +485,15 @@ QString LogViewerService::executeCmd(const QString &cmd)
     } else if (cmd.startsWith("coredumpctl info")) {
         // 通过后端服务，按进程号获取崩溃信息
         cmdStr = "coredumpctl";
-        args = cmd.mid(QString("coredumpctl").count() + 1).split(' ');
+        args = cmd.mid(QString("coredumpctl").size() + 1).split(' ');
     } else if (cmd.startsWith("coredumpctl dump")) {
         // 截取对应pid的dump文件到指定目录
         cmdStr = "coredumpctl";
-        args = cmd.mid(QString("coredumpctl").count() + 1).split(' ');
+        args = cmd.mid(QString("coredumpctl").size() + 1).split(' ');
     } else if (cmd.startsWith("readelf")) {
         // 获取dump文件偏移地址信息
         cmdStr = "readelf";
-        args = cmd.mid(QString("readelf").count() + 1).split(' ');
+        args = cmd.mid(QString("readelf").size() + 1).split(' ');
     }
 
     if (!cmdStr.isEmpty()) {
@@ -648,10 +652,18 @@ QStringList LogViewerService::getHomePaths()
 QStringList LogViewerService::getExternalDevPaths()
 {
     QStringList devPaths;
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = getMounts_safe();
+#else
+    const QList<DMount> mounts = getMounts_safe();
+#endif
     for (auto mount : mounts) {
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QString uri = mount->getRootFile()->uri();
-        QString scheme = QUrl(mount->getRootFile()->uri()).scheme();
+        #else
+        QString uri = mount.source();
+        #endif
+        QString scheme = QUrl(uri).scheme();
 
         // sbm路径判断，分为gvfs挂载和cifs挂载两种
         QRegularExpression recifs("^file:///media/(.*)/smbmounts");
@@ -667,8 +679,12 @@ QStringList LogViewerService::getExternalDevPaths()
         if ((scheme == "file") ||  //usb device
                 (scheme == "gphoto2") ||        //phone photo
                 (scheme == "mtp")) {            //android file
-            QExplicitlySharedDataPointer<DGioFile> locationFile = mount->getDefaultLocationFile();
-            QString path = locationFile->path();
+            // QExplicitlySharedDataPointer<DGioFile> locationFile = mount->getDefaultLocationFile();
+            #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+            QString path = mount->getDefaultLocationFile()->path();
+            #else
+            QString path = mount.target();
+            #endif
             if (path.startsWith("/media/")) {
                 QFlags <QFileDevice::Permission> power = QFile::permissions(path);
                 if (power.testFlag(QFile::WriteUser)) {
@@ -682,11 +698,38 @@ QStringList LogViewerService::getExternalDevPaths()
 }
 
 //可重入版本的getMounts
-QList<QExplicitlySharedDataPointer<DGioMount> > LogViewerService::getMounts_safe()
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+QList<QExplicitlySharedDataPointer<DMount>> LogViewerService::getMounts_safe()
+#else
+QList<DMount> LogViewerService::getMounts_safe()
+#endif
 {
     static QMutex mutex;
     mutex.lock();
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     auto result = DGioVolumeManager::getMounts();
+#else
+    QList<DMount> result;
+    QFile mountsFile("/proc/mounts");
+    if (mountsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&mountsFile);
+        while (!in.atEnd()) {
+            QString line = in.readLine();
+            QStringList parts = line.split(' ');
+            if (parts.size() >= 4) {
+                Mount mount(new MountData);
+                mount.setSource(parts.at(0));
+                mount.setTarget(parts.at(1));
+                mount.setFilesystemType(parts.at(2));
+                mount.setOptions(parts.at(3));
+                result.append(mount);
+            }
+        }
+        mountsFile.close();
+    } else {
+        qWarning() << "Failed to open /proc/mounts";
+    }
+#endif
     mutex.unlock();
     return result;
 }
@@ -770,15 +813,15 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
         nameFilter = file;
     } else if (file == "coredump") {
         QByteArray outByte = processCmdWithArgs("coredumpctl", QStringList() << "list");
-        QStringList strList = QString(outByte.replace('\u0000', "").replace("\x01", "")).split('\n', QString::SkipEmptyParts);
+        QStringList strList = QString(outByte.replace('\u0000', "").replace("\x01", "")).split('\n', SKIP_EMPTY_PARTS);
 
-        QRegExp re("(Storage: )\\S+");
+        REG_EXP re("(Storage: )\\S+");
         for (int i = strList.size() - 1; i >= 0; --i) {
             QString str = strList.at(i);
             if (str.trimmed().isEmpty())
                 continue;
 
-            QStringList tmpList = str.split(" ", QString::SkipEmptyParts);
+            QStringList tmpList = str.split(" ", SKIP_EMPTY_PARTS);
             if (tmpList.count() < 10)
                 continue;
 
@@ -788,8 +831,15 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
             // 解析coredump文件保存位置
             if (coreFile != "missing") {
                 QByteArray outInfoByte = processCmdWithArgs("coredumpctl", QStringList() << "info" << pid);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
                 re.indexIn(outInfoByte);
                 storagePath = re.cap(0).replace("Storage: ", "");
+#else
+                QRegularExpressionMatch match = re.match(outInfoByte);
+                if (match.hasMatch()) {
+                    storagePath = match.captured(0).replace("Storage: ", "");
+                }
+#endif
             }
 
             if (!storagePath.isEmpty()) {
@@ -1045,10 +1095,23 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
     uint pid = conn.interface()->servicePid(msg.service()).value();
 
     // 判断是否存在执行路径且是否存在于可调用者名单中
-    QFile initNsMntFile("/proc/1/ns/mnt");
-    QFile senderNsMntFile(QString("/proc/%1/ns/mnt").arg(pid));
-    auto initNsMnt = initNsMntFile.readLink().trimmed().remove(0, QString("/proc/1/ns/mnt").length());
-    auto senderNsMnt = senderNsMntFile.readLink().trimmed().remove(0, QString("/proc/%1/ns/mnt").arg(pid).length());
+    QFileInfo initNsMntFileInfo("/proc/1/ns/mnt");
+    QFileInfo senderNsMntFileInfo(QString("/proc/%1/ns/mnt").arg(pid));
+    QString initNsMnt;
+    QString senderNsMnt;
+
+    if (!initNsMntFileInfo.isSymLink() || !senderNsMntFileInfo.isSymLink()) {
+        sendErrorReply(QDBusError::ErrorType::Failed, "Invalid symlink！！！！！");
+        return false;
+    }
+    
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        initNsMnt = initNsMntFileInfo.symLinkTarget().trimmed();
+        senderNsMnt = senderNsMntFileInfo.symLinkTarget().trimmed();
+    #else
+        initNsMnt = initNsMntFileInfo.readLink().trimmed();
+        senderNsMnt = senderNsMntFileInfo.readLink().trimmed();
+    #endif
     if (initNsMnt != senderNsMnt) {
         sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls！！！！！");
         return false;
@@ -1061,7 +1124,7 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
     proc.waitForFinished();
     QString maps = QString::fromLocal8Bit(proc.readAllStandardOutput()).trimmed();
     proc.close();
-    QStringList libMaps = maps.split("\n", QString::SkipEmptyParts);
+    QStringList libMaps = maps.split("\n", SKIP_EMPTY_PARTS);
     QStringList allParts;
     for (const QString &part : libMaps) {
         QStringList subParts = part.split(' ');
@@ -1077,11 +1140,11 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
         if (info.isFile()) {
             QString fileName = info.fileName();
             if (fileName.contains(".so")) {
-                QStringList libpath = libStr.split("/", QString::SkipEmptyParts);
+                QStringList libpath = libStr.split("/", SKIP_EMPTY_PARTS);
                 if (libpath.count() > 2) {
                     QString libhead = QString("/%1/%2").arg(libpath.at(0)).arg(libpath.at(1));
                     if (libhead != "/usr/lib") {
-                        sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls！！！！！");
+                        sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls!");
                         return false;
                     }
                 }

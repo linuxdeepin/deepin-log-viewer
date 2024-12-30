@@ -171,16 +171,21 @@ void logDetailEdit::mouseReleaseEvent(QMouseEvent *e)
  */
 void logDetailEdit::mouseMoveEvent(QMouseEvent *e)
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    int pos = e->pos().y();
+#else
+    int pos = e->position().y();
+#endif
     if (Qt::MouseEventSynthesizedByQt == e->source()) {
-        m_end = e->y();
+        m_end = pos;
     }
 
     //单指滑动
     if (e->type() == QEvent::MouseMove && e->source() == Qt::MouseEventSynthesizedByQt) {
         const ulong diffTime = e->timestamp() - m_lastMouseTime;
-        const int diffpos = e->pos().y() - m_lastMousepos;
+        const int diffpos = pos - m_lastMousepos;
         m_lastMouseTime = e->timestamp();
-        m_lastMousepos = e->pos().y();
+        m_lastMousepos = pos;
 
         if (m_gestureAction == GA_slide) {
             QFont font = this->font();

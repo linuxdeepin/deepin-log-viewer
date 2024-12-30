@@ -4,6 +4,7 @@
 
 #include "logapplicationhelper.h"
 #include "utils.h"
+#include "qtcompat.h"
 
 #include <QDebug>
 #include <QDir>
@@ -198,7 +199,7 @@ void LogApplicationHelper::initCustomLog()
     if(m_pDConfig->keyList().contains("specialComType"))
         Utils::specialComType = m_pDConfig->value("specialComType").toInt();
 #endif
-
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     //初始化gsetting配置
     if (!m_pGSettings) {
         if (QGSettings::isSchemaInstalled(GSETTING_APPID.toUtf8())) {
@@ -226,6 +227,7 @@ void LogApplicationHelper::initCustomLog()
             qCWarning(logAppHelper) << "cannot find gsettings config file";
         }
     }
+#endif
 }
 
 /**
@@ -274,14 +276,14 @@ void LogApplicationHelper::createDesktopFiles()
                 isName = true;
             }
             if (lineStr.startsWith("Hidden")) {
-                QStringList hiddenList = lineStr.split("=", QString::SkipEmptyParts);
+                QStringList hiddenList = lineStr.split("=", SKIP_EMPTY_PARTS);
                 if (hiddenList.value(1, "") == "true") {
                     canDisplay = false;
                 }
             }
             QString currentDesktop(qgetenv("XDG_CURRENT_DESKTOP"));
             if (lineStr.startsWith("OnlyShowIn")) {
-                QString onlyShowValue = lineStr.split("=", QString::SkipEmptyParts).value(1, "");
+                QString onlyShowValue = lineStr.split("=", SKIP_EMPTY_PARTS).value(1, "");
                 if (onlyShowValue.contains(currentDesktop)) {
                     continue;
                 } else {
@@ -290,7 +292,7 @@ void LogApplicationHelper::createDesktopFiles()
             }
 
             if (lineStr.startsWith("NotShowIn")) {
-                QStringList notShowInList = lineStr.split("=", QString::SkipEmptyParts).value(1, "").split(";", QString::SkipEmptyParts);
+                QStringList notShowInList = lineStr.split("=", SKIP_EMPTY_PARTS).value(1, "").split(";", SKIP_EMPTY_PARTS);
                 if (std::any_of(notShowInList.begin(), notShowInList.end(), [currentDesktop](const auto & data) {
                 return data == currentDesktop;
             })) {
@@ -302,7 +304,7 @@ void LogApplicationHelper::createDesktopFiles()
                 continue;
             }
 
-            QStringList _x_vendor_list = lineStr.split("=", QString::SkipEmptyParts);
+            QStringList _x_vendor_list = lineStr.split("=", SKIP_EMPTY_PARTS);
             if (_x_vendor_list.count() != 2) {
                 continue;
             }
@@ -426,7 +428,7 @@ void LogApplicationHelper::generateTransName(const QString &path, const QString 
                 continue;
         }
 
-        QStringList gNameList = lineStr.split("=", QString::SkipEmptyParts);
+        QStringList gNameList = lineStr.split("=", SKIP_EMPTY_PARTS);
         if (gNameList.count() != 2)
             continue;
 
@@ -756,9 +758,11 @@ QDateTime LogApplicationHelper::getLastReportTime()
 #ifdef DTKCORE_CLASS_DConfigFile
     time = m_pDConfig->value(COREDUMP_REPORT_TIME);
 #else
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     if (m_pGSettings) {
         time = m_pGSettings->get(COREDUMP_REPORT_TIME_GSETTING);
     }
+#endif
 #endif
 
     if (time.isValid()) {
@@ -775,8 +779,10 @@ void LogApplicationHelper::saveLastRerportTime(const QDateTime &date)
 #ifdef DTKCORE_CLASS_DConfigFile
     m_pDConfig->setValue(COREDUMP_REPORT_TIME, str);
 #else
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     if (m_pGSettings)
         m_pGSettings->set(COREDUMP_REPORT_TIME_GSETTING, str);
+#endif
 #endif
 }
 
@@ -787,9 +793,11 @@ int LogApplicationHelper::getMaxReportCoredump()
 #ifdef DTKCORE_CLASS_DConfigFile
     value = m_pDConfig->value(COREDUMP_REPORT_MAX);
 #else
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     if (m_pGSettings) {
         value = m_pGSettings->get(COREDUMP_REPORT_MAX_GSETTING);
     }
+#endif
 #endif
 
     qCWarning(logAppHelper) << "coredump report max:" << value.toInt();

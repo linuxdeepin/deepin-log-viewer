@@ -7,6 +7,7 @@
 #include "sharedmemorymanager.h"
 #include "wtmpparse.h"
 #include "dldbushandler.h"
+#include "qtcompat.h"
 
 #include <stub.h>
 
@@ -132,15 +133,16 @@ qint64 dnfToMSecsSinceEpoch()
     return 1999999999999999999;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 int dmesgIndexIn(const QString &str, int offset = 0, QRegExp::CaretMode caretMode = QRegExp::CaretAtZero)
 {
+    Q_UNUSED(caretMode);
     Q_UNUSED(str);
     Q_UNUSED(offset);
-    Q_UNUSED(caretMode);
     return 1;
 }
 
-QString &dmesgReplace(const QRegExp &rx, const QString &after)
+QString &dmesgReplace(const REG_EXP &rx, const QString &after)
 {
     Q_UNUSED(rx);
     Q_UNUSED(after);
@@ -157,6 +159,7 @@ QStringList dmesgCapturedTexts()
                          << "test"
                          << "NID=0x8";
 }
+#endif
 
 void handleFile()
 {
@@ -168,16 +171,16 @@ public:
     //添加日志
     static void SetUpTestCase()
     {
-        qDebug() << "SetUpTestCase" << endl;
+        qDebug() << "SetUpTestCase" << ENDL;
     }
     static void TearDownTestCase()
     {
-        qDebug() << "TearDownTestCase" << endl;
+        qDebug() << "TearDownTestCase" << ENDL;
     }
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_logAuthThread = new LogAuthThread();
-        qDebug() << "SetUp" << endl;
+        qDebug() << "SetUp" << ENDL;
     }
     void TearDown() //TEST跑完之后会执行TearDown
     {
@@ -338,9 +341,12 @@ TEST_F(LogAuthThread_UT, UT_HandleKern_001)
     stub.set(ADDR(DLDBusHandler, readLogInStream), stub_dnfReadStream);
     stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), fileReadLine);
     stub.set(ADDR(QDateTime, toMSecsSinceEpoch), dnfToMSecsSinceEpoch);
-    stub.set(ADDR(QRegExp, indexIn), dmesgIndexIn);
-    stub.set((QString & (QString::*)(const QRegExp &, const QString &)) ADDR(QString, replace), dmesgReplace);
-    stub.set((QStringList(QRegExp::*)())ADDR(QRegExp, capturedTexts), dmesgCapturedTexts);
+
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    stub.set(ADDR(REG_EXP, indexIn), dmesgIndexIn);
+    stub.set((QStringList(REG_EXP::*)())ADDR(REG_EXP, capturedTexts), dmesgCapturedTexts);
+    stub.set((QString & (QString::*)(const REG_EXP &, const QString &)) ADDR(QString, replace), dmesgReplace);
+#endif
     m_logAuthThread->m_FilePath = QStringList() << "/test" << "/xorg.old";
     m_logAuthThread->m_canRun=true;
     m_logAuthThread->handleKern();
@@ -370,9 +376,12 @@ TEST_F(LogAuthThread_UT, UT_HandleDmesg_001)
     stub.set(ADDR(DLDBusHandler, readLog), stub_KernReadLog);
     stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), fileReadLine);
     stub.set(ADDR(QDateTime, toMSecsSinceEpoch), dnfToMSecsSinceEpoch);
-    stub.set(ADDR(QRegExp, indexIn), dmesgIndexIn);
-    stub.set((QString & (QString::*)(const QRegExp &, const QString &)) ADDR(QString, replace), dmesgReplace);
-    stub.set((QStringList(QRegExp::*)())ADDR(QRegExp, capturedTexts), dmesgCapturedTexts);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    stub.set(ADDR(REG_EXP, indexIn), dmesgIndexIn);
+    stub.set((QString & (QString::*)(const REG_EXP &, const QString &)) ADDR(QString, replace), dmesgReplace);
+    stub.set((QStringList(REG_EXP::*)())ADDR(REG_EXP, capturedTexts), dmesgCapturedTexts);
+#endif
+
     m_logAuthThread->m_FilePath = QStringList() << "/test"<< "/xorg.old";
     m_logAuthThread->m_canRun=true;
     m_logAuthThread->handleDmesg();
@@ -400,9 +409,11 @@ TEST_F(LogAuthThread_UT, handleBoot_UT_001)
     stub.set(ADDR(DLDBusHandler, readLog), stub_BootReadLog);
     stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), fileReadLine);
     stub.set(ADDR(QDateTime, toMSecsSinceEpoch), dnfToMSecsSinceEpoch);
-    stub.set(ADDR(QRegExp, indexIn), dmesgIndexIn);
-    stub.set((QString & (QString::*)(const QRegExp &, const QString &)) ADDR(QString, replace), dmesgReplace);
-    stub.set((QStringList(QRegExp::*)())ADDR(QRegExp, capturedTexts), dmesgCapturedTexts);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    stub.set(ADDR(REG_EXP, indexIn), dmesgIndexIn);
+    stub.set((QString & (QString::*)(const REG_EXP &, const QString &)) ADDR(QString, replace), dmesgReplace);
+    stub.set((QStringList(REG_EXP::*)())ADDR(REG_EXP, capturedTexts), dmesgCapturedTexts);
+#endif
     m_logAuthThread->m_FilePath = QStringList() << "/test"<< "/xorg.old";
     m_logAuthThread->m_canRun=true;
     m_logAuthThread->handleBoot();
@@ -430,9 +441,11 @@ TEST_F(LogAuthThread_UT, handleKwin_UT_001)
     stub.set(ADDR(DLDBusHandler, readLog), stub_BootReadLog);
     stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), fileReadLine);
     stub.set(ADDR(QDateTime, toMSecsSinceEpoch), dnfToMSecsSinceEpoch);
-    stub.set(ADDR(QRegExp, indexIn), dmesgIndexIn);
-    stub.set((QString & (QString::*)(const QRegExp &, const QString &)) ADDR(QString, replace), dmesgReplace);
-    stub.set((QStringList(QRegExp::*)())ADDR(QRegExp, capturedTexts), dmesgCapturedTexts);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    stub.set(ADDR(REG_EXP, indexIn), dmesgIndexIn);
+    stub.set((QString & (QString::*)(const REG_EXP &, const QString &)) ADDR(QString, replace), dmesgReplace);
+    stub.set((QStringList(REG_EXP::*)())ADDR(REG_EXP, capturedTexts), dmesgCapturedTexts);
+#endif
     m_logAuthThread->m_FilePath = QStringList() << "/test"<< "/xorg.old";
     m_logAuthThread->m_canRun=true;
     m_logAuthThread->handleKwin();
@@ -460,9 +473,11 @@ TEST_F(LogAuthThread_UT, handleDpkg_UT_001)
     stub.set(ADDR(DLDBusHandler, readLog), stub_BootReadLog);
     stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), fileReadLine);
     stub.set(ADDR(QDateTime, toMSecsSinceEpoch), dnfToMSecsSinceEpoch);
-    stub.set(ADDR(QRegExp, indexIn), dmesgIndexIn);
-    stub.set((QString & (QString::*)(const QRegExp &, const QString &)) ADDR(QString, replace), dmesgReplace);
-    stub.set((QStringList(QRegExp::*)())ADDR(QRegExp, capturedTexts), dmesgCapturedTexts);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    stub.set(ADDR(REG_EXP, indexIn), dmesgIndexIn);
+    stub.set((QString & (QString::*)(const REG_EXP &, const QString &)) ADDR(QString, replace), dmesgReplace);
+    stub.set((QStringList(REG_EXP::*)())ADDR(REG_EXP, capturedTexts), dmesgCapturedTexts);
+#endif
     m_logAuthThread->m_FilePath = QStringList() << "/test"<< "/xorg.old";
     m_logAuthThread->m_canRun=true;
     m_logAuthThread->handleDkpg();
@@ -490,9 +505,11 @@ TEST_F(LogAuthThread_UT, handleNormal_UT_001)
     stub.set(ADDR(DLDBusHandler, readLog), stub_BootReadLog);
     stub.set((QByteArray(QIODevice::*)(qint64))ADDR(QIODevice, readLine), fileReadLine);
     stub.set(ADDR(QDateTime, toMSecsSinceEpoch), dnfToMSecsSinceEpoch);
-    stub.set(ADDR(QRegExp, indexIn), dmesgIndexIn);
-    stub.set((QString & (QString::*)(const QRegExp &, const QString &)) ADDR(QString, replace), dmesgReplace);
-    stub.set((QStringList(QRegExp::*)())ADDR(QRegExp, capturedTexts), dmesgCapturedTexts);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    stub.set(ADDR(REG_EXP, indexIn), dmesgIndexIn);
+    stub.set((QString & (QString::*)(const REG_EXP &, const QString &)) ADDR(QString, replace), dmesgReplace);
+    stub.set((QStringList(REG_EXP::*)())ADDR(REG_EXP, capturedTexts), dmesgCapturedTexts);
+#endif
     m_logAuthThread->m_FilePath = QStringList() << "/test"<< "/xorg.old";
     m_logAuthThread->m_canRun=true;
     m_logAuthThread->handleNormal();

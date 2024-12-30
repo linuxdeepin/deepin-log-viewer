@@ -31,7 +31,7 @@ public:
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_treeView = new LogTreeView();
-        qDebug() << "SetUp" << endl;
+        qDebug() << "SetUp";
     }
     void TearDown() //TEST跑完之后会执行TearDown
     {

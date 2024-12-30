@@ -18,6 +18,7 @@
 #include <DStyle>
 #include <DApplication>
 #include <DSysInfo>
+#include <DPaletteHelper>
 
 #include <QItemSelectionModel>
 #include <QMargins>
@@ -125,10 +126,14 @@ LogListView::LogListView(QWidget *parent)
     initUI();
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &LogListView::customContextMenuRequested, this, &LogListView::requestshowRightMenu);
-    //DGuiApplicationHelper::ColorType ct = DApplicationHelper::instance()->themeType();
+    //DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::instance()->themeType();
 
     m_rightClickTriggerShortCut = new QShortcut(this);
-    m_rightClickTriggerShortCut->setKey(Qt::ALT + Qt::Key_M);
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        m_rightClickTriggerShortCut->setKey(Qt::ALT + Qt::Key_M);
+    #else
+        m_rightClickTriggerShortCut->setKey(QKeyCombination(Qt::ALT, Qt::Key_M));
+    #endif
     m_rightClickTriggerShortCut->setContext(Qt::WidgetShortcut);
     m_rightClickTriggerShortCut->setAutoRepeat(false);
     connect(m_rightClickTriggerShortCut, &QShortcut::activated, this, [this] {
@@ -382,11 +387,11 @@ bool LogListView::isFileExist(const QString &iFile)
  */
 void LogListView::paintEvent(QPaintEvent *event)
 {
-    DPalette pa = DApplicationHelper::instance()->palette(this);
+    DPalette pa = DPaletteHelper::instance()->palette(this);
     pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
-    pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
+    // pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
     this->setPalette(pa);
-    DApplicationHelper::instance()->setPalette(this, pa);
+    // DGuiApplicationHelper::instance()->setPalette(this, pa);
 
     this->setAutoFillBackground(true);
 
@@ -449,7 +454,9 @@ void LogListView::slot_getAppPath(int id, const QString &app)
     if (!appConfig.isValid())
         g_path = "";
     else {
-        std::vector<SubModuleConfig> vSubmodules = appConfig.subModules.toVector().toStdVector();
+        // std::vector<SubModuleConfig> vSubmodules = appConfig.subModules.toVector().toStdVector();
+        QVector<SubModuleConfig> qSubmodules = appConfig.subModules.toVector();
+        std::vector<SubModuleConfig> vSubmodules(qSubmodules.begin(), qSubmodules.end());
         auto it = std::find_if(vSubmodules.begin(), vSubmodules.end(), [=](SubModuleConfig submodule) {
             return submodule.logType == "file" && submodule.name == appConfig.name;
         });

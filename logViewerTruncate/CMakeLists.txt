@@ -8,7 +8,7 @@ project(logViewerTruncate)
 set (EXE_NAME logViewerTruncate)
 
 set(LINK_LIBS
-    Qt5::Core
+    Qt${QT_DESIRED_VERSION}::Core
 )
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -34,7 +34,8 @@ add_executable (${EXE_NAME}
 )
 
 # Find the library
-find_package(Qt5Core REQUIRED)
+# find_package(Qt5Core REQUIRED)
+find_package(Qt${QT_DESIRED_VERSION} REQUIRED COMPONENTS Core)
 set(CMAKE_INSTALL_PREFIX /usr)
 # Install files
 install(TARGETS ${EXE_NAME} DESTINATION bin)

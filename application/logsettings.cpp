@@ -4,6 +4,7 @@
 
 #include "logsettings.h"
 #include "utils.h"
+#include "qtcompat.h"
 
 #include <QStandardPaths>
 #include <QApplication>
@@ -87,7 +88,7 @@ QMap<QString, QStringList> LogSettings::loadAuditMap()
     QStringList auditTypes = auditConfig.childKeys();
     for (auto auditType : auditTypes) {
         QString value = auditConfig.value(auditType).toString();
-        QStringList strList = value.split('@', QString::SkipEmptyParts);
+        QStringList strList = value.split('@', SKIP_EMPTY_PARTS);
         auditType2EventType.insert(auditType, strList);
     }
 
