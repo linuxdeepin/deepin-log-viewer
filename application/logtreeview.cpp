@@ -8,7 +8,8 @@
 #include "logviewitemdelegate.h"
 
 #include <DApplication>
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
+#include <DPaletteHelper>
 #include <DStyledItemDelegate>
 #include <DStyle>
 
@@ -105,7 +106,7 @@ void LogTreeView::paintEvent(QPaintEvent *event)
     } else {
         cg = DPalette::Active;
     }
-    auto *dAppHelper = DApplicationHelper::instance();
+    auto *dAppHelper = DGuiApplicationHelper::instance();
     auto palette = dAppHelper->applicationPalette();
     QBrush bgBrush(palette.color(cg, DPalette::Base));
     //绘制背景
@@ -162,7 +163,7 @@ void LogTreeView::drawRow(QPainter *painter, const QStyleOptionViewItem &options
     auto palette = options.palette;
     QBrush background;
     if (!(index.row() & 1)) {
-        auto dpa = DApplicationHelper::instance()->palette(this);
+        auto dpa = DPaletteHelper::instance()->palette(this);
         background = dpa.color(DPalette::ItemBackground);
     } else {
         background = palette.color(cg, DPalette::Base);
@@ -210,23 +211,35 @@ void LogTreeView::keyPressEvent(QKeyEvent *event)
     }
 }
 
+
 bool LogTreeView::event(QEvent *e)
 {
     if (e->type() == QEvent::TouchBegin) {
         QTouchEvent *touchEvent = static_cast<QTouchEvent *>(e);
-        if (!m_isPressed && touchEvent && touchEvent->device() && touchEvent->device()->type() == QTouchDevice::TouchScreen && touchEvent->touchPointStates() == Qt::TouchPointPressed) {
-            QList<QTouchEvent::TouchPoint> points = touchEvent->touchPoints();
-            //dell触摸屏幕只有一个touchpoint 但却能捕获到pinchevent缩放手势?
-            if (points.count() == 1) {
-                QTouchEvent::TouchPoint p = points.at(0);
-                m_lastTouchBeginPos =  p.pos();
-                m_lastTouchTime = QTime::currentTime();
-                m_isPressed = true;
-
+        if (!m_isPressed && touchEvent) {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+            if (touchEvent->device() && touchEvent->device()->type() == QTouchDevice::TouchScreen) {
+                QList<QTouchEvent::TouchPoint> points = touchEvent->touchPoints();
+            
+#else
+            if (touchEvent->deviceType() == QInputDevice::DeviceType::TouchScreen) {
+                QList<QTouchEvent::TouchPoint> points = touchEvent->points();
+#endif
+                //dell触摸屏幕只有一个touchpoint 但却能捕获到pinchevent缩放手势?
+                if (points.count() == 1) {
+                    QTouchEvent::TouchPoint p = points.at(0);
+                    #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+                    m_lastTouchBeginPos = p.pos();
+                    #else
+                    m_lastTouchBeginPos = p.position();
+                    #endif
+                    m_lastTouchTime = QTime::currentTime();
+                    m_isPressed = true;
+                }
             }
         }
     }
-    return  DTreeView::event(e);
+    return DTreeView::event(e);
 }
 
 void LogTreeView::mouseMoveEvent(QMouseEvent *event)

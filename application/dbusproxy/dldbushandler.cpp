@@ -190,7 +190,7 @@ QString DLDBusHandler::createFilePathCacheFile(const QString &logFilePath)
 
     QFile tmpFile(tempFilePath);
     if (!tmpFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open temp file:" << tmpFile;
+        qWarning() << "Failed to open temp file:" << tempFilePath;
         return QString("");
     }
 

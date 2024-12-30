@@ -2,7 +2,33 @@ Source: deepin-log-viewer
 Section: utils
 Priority: optional
 Maintainer: Deepin Packages Builder <packages@deepin.org>
-Build-Depends: debhelper (>= 11),cmake, pkg-config, qtbase5-dev, qtchooser (>= 55-gc9562a1-1~),qt5-qmake, libdtkwidget-dev, libdtkgui-dev, qttools5-dev-tools, libqt5svg5-dev, libsystemd-dev, libicu-dev, qttools5-dev, libdframeworkdbus-dev, libgtest-dev, libgmock-dev, libkf5codecs-dev, libzip-dev, libxerces-c-dev, libboost-dev, libminizip-dev, rapidjson-dev, libltdl-dev, libpolkit-qt5-1-dev, libgsettings-qt-dev, libgio-qt-dev
+Build-Depends:
+ debhelper (>= 11),
+ cmake,
+ pkg-config,
+ qt6-5compat-dev | libgsettings-qt-dev,
+ qt6-base-dev | qtbase5-dev,
+ qt6-tools-dev-tools | qttools5-dev-tools,
+ qt6-tools-dev | qttools5-dev,
+ qt6-svg-dev | libqt5svg5-dev,
+ libdtk6widget-dev | libdtkwidget-dev,
+ libdtk6gui-dev | libdtkgui-dev,
+ libdtk6core-dev | libdtkcore-dev,
+ libdtk6declarative-dev | libdtkcore5-bin,
+ libkf6codecs-dev | libkf5codecs-dev,
+ libpolkit-qt6-1-dev | libpolkit-qt5-1-dev,
+ libsystemd-dev,
+ libicu-dev,
+ libdframeworkdbus-dev,
+ libgtest-dev,
+ libgmock-dev,
+ libzip-dev,
+ libxerces-c-dev,
+ libboost-dev,
+ libminizip-dev,
+ rapidjson-dev,
+ libltdl-dev,
+ libgio-qt-dev
 Standards-Version: 4.1.3
 
 Package: deepin-log-viewer

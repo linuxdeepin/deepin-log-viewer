@@ -9,21 +9,6 @@ endif ()
 #add_subdirectory(../3rdparty/QtXlsxWriter)
 configure_file(environments.h.in environments.h @ONLY)
 set (EXE_NAME deepin-log-viewer)
-set(LINK_LIBS
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Gui
-    Qt5::Xml
-    Qt5::DBus
-    Qt5::Concurrent
-    Qt5::Network
-#${DtkWidget_LDFLAGS}
-#${DtkGui_LDFLAGS}
-#${DtkCore_LDFLAGS}
-#    ${ICUIL18N_LIBRARIES}
-#    ${ICUUC_LIBRARIES}
-#     ${SYSTEMD_LIBRARIES}
-)
 
 configure_file(config.h.in config.h @ONLY)
 
@@ -37,7 +22,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 #set(CMAKE_CXX_FLAGS "-g -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#${EXE_NAME}
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")#${EXE_NAME}
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--as-needed -fPIE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++11")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
@@ -58,7 +43,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
-#-ldtkwidget -ldtkgui -ldtkcore
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "sw_64")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mieee")
 endif ()
@@ -76,11 +60,11 @@ if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
      execute_process(COMMAND deepin-desktop-ts-convert "ts2desktop" "assets/deepin-log-viewer.desktop.tmp" "../translations/desktop" "assets/deepin-log-viewer.desktop"
            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE desktop_trans_desktop2ts_var OUTPUT_VARIABLE desktop_trans_desktop2ts_out ERROR_VARIABLE desktop_trans_desktop2ts_error)
 
-    # generate qm files
-    execute_process(COMMAND bash "assets/translate_generation.sh"
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE trans_var OUTPUT_VARIABLE trans_out ERROR_VARIABLE trans_error)
-                message("trans_var ${trans_var} ")#trans_out ${trans_out} trans_error ${trans_error}
- execute_process(COMMAND deepin-policy-ts-convert "init" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy/auth"
+    # # generate qm files
+    # execute_process(COMMAND bash "assets/translate_generation.sh"
+    #                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE trans_var OUTPUT_VARIABLE trans_out ERROR_VARIABLE trans_error)
+    #             message("trans_var ${trans_var} ")#trans_out ${trans_out} trans_error ${trans_error}
+    execute_process(COMMAND deepin-policy-ts-convert "init" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy/auth"
                                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} RESULT_VARIABLE policy2ts_init_var OUTPUT_VARIABLE policy2ts_init_out ERROR_VARIABLE policy2ts_init_error)
 
     execute_process(COMMAND deepin-policy-ts-convert "policy2ts" "assets/com.deepin.pkexec.logViewerAuth.policy.tmp" "../translations/policy/auth"
@@ -109,54 +93,49 @@ endif ()
 add_definitions(-DUSE_POLKIT -DENABLE_INACTIVE_DISPLAY)
 # Find the library
 find_package(PkgConfig REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Xml REQUIRED)
-find_package(Qt5Network REQUIRED)
-find_package(Qt5Concurrent REQUIRED)
-find_package(Qt5DBus REQUIRED)
-find_package(DtkWidget REQUIRED)
-find_package(DtkGui REQUIRED)
-find_package(DtkCore REQUIRED)
-find_package(Qt5LinguistTools REQUIRED)
 find_package(RapidJSON)
 find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
-find_package(PolkitQt5-1)
-#pkg_check_modules(qgsettings REQUIRED IMPORTED_TARGET gsettings-qt)
+find_package(PolkitQt${QT_DESIRED_VERSION}-1)
 # IMPORTED_TARGET failed to work for some of libs under flatpak env
-pkg_check_modules(Other REQUIRED  gsettings-qt)
+
+set(qt_required_components Core DBus Gui Network Widgets Concurrent)
+
+if (QT_DESIRED_VERSION MATCHES 6)
+    list(APPEND qt_required_components Core5Compat)
+else()
+    pkg_check_modules(Gsetting REQUIRED gsettings-qt)
+endif()
+message("   >>> Build with DTK: ${DTK_VERSION_MAJOR}")
+
+find_package(Qt${QT_DESIRED_VERSION} REQUIRED COMPONENTS ${qt_required_components})
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Core Gui Widget REQUIRED)
+
+set(LINK_LIBS
+    Qt${QT_DESIRED_VERSION}::Core
+    Qt${QT_DESIRED_VERSION}::DBus
+    Qt${QT_DESIRED_VERSION}::Gui
+    Qt${QT_DESIRED_VERSION}::Network
+    Qt${QT_DESIRED_VERSION}::Widgets
+    Qt${QT_DESIRED_VERSION}::Concurrent
+    Dtk${DTK_VERSION_MAJOR}::Widget
+    Dtk${DTK_VERSION_MAJOR}::Core
+    Dtk${DTK_VERSION_MAJOR}::Gui
+    PolkitQt${QT_DESIRED_VERSION}-1::Agent
+)
+
+if (QT_DESIRED_VERSION MATCHES 6)
+    list(APPEND LINK_LIBS Qt${QT_DESIRED_VERSION}::Core5Compat)
+else()
+    list(APPEND LINK_LIBS ${Gsetting_LIBRARIES})
+    include_directories(${Gsetting_INCLUDE_DIRS})
+endif()
 
 message("XercesC_FOUND ${XercesC_FOUND}")
 message("zlib version: " ${ZLIB_LIBRARIES})
 
 list(APPEND LXW_PRIVATE_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS})
-
-#pkg_search_module(DtkWidget REQUIRED dtkwidget)
-#pkg_search_module(DtkGui REQUIRED dtkgui)
-#pkg_search_module(DtkCore REQUIRED dtkcore)
-#message(  "dtklib ${DtkWidget_LIBRARIES}
-#    ${DtkCore_LIBRARIES}
-#    ${DtkGUI_LIBRARIES}")
-
-
-#message(  "dtkLDFLAGS ${DtkWidget_LDFLAGS}
-#    ${DtkGui_LDFLAGS}
-#    ${DtkCore_LDFLAGS} ")
-#message(  "dtkinclude ${DtkWidget_INCLUDE_DIRS}
-#    ${DtkGui_INCLUDE_DIRS}
-#    ${DtkCore_INCLUDE_DIRS} ")
-#find_package(Icuil18n)
-#find_package(Icuuc)
-#find_package(Systemd)
-#if(ICUIL18N_FOUND)
-#    set(CMAKE_AUTORCC ON)
-#else(ICUIL18N_FOUND)
-#message(ICUIL18N_FOUND "ICUIL18N not found!")
-#endif(ICUIL18N_FOUND)
-
 
 set (APP_CPP_FILES
      main.cpp
@@ -244,6 +223,7 @@ set (APP_HEADERS_FILES
     parsethread/parsethreadbase.h
     parsethread/parsethreadkern.h
     parsethread/parsethreadkwin.h
+    qtcompat.h
     )
 
 # 5. 头文件
@@ -276,14 +256,12 @@ set (MINIZIP_SOURCES
     )
 
 file(GLOB TMPFILE_SOURCES  ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmpfileplus/*.c)
- file(GLOB MD5SOURCES   ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5/*.c)
+file(GLOB MD5SOURCES   ${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5/*.c)
 #---------------------------------------------
 #---------------DOCXFACTORY源码引入----------------------
 file(GLOB_RECURSE DOCXFAC_SOURCES  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.cpp" )
 file(GLOB_RECURSE DOCXFAC_SOURCES_C  "${PROJECT_SOURCE_DIR}/3rdparty/DocxFactory/src/*.c" )
 #-----------------------------------------------------
-#target_include_directories(${EXE_NAME}
-#     ${DtkWidget_INCLUDE_DIRS} ${OBJECT_BINARY_DIR})
 
 #file(GLOB_RECURSE application_source_files "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
 #set(CMAKE_INSTALL_PREFIX /usr)
@@ -307,15 +285,7 @@ foreach(_ts_file ${TS_FILES})
 endforeach()
 #lupdate end
 
-file (GLOB APP_TS_FILES translations/*.ts)
-
-#Generate the qm file
-set(APP_TRANS_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/translate_generation.sh")
-execute_process(COMMAND bash ${APP_TRANS_SCRIPT}
-    WORKING_DIRECTORY ${TS_DIR})
-qt5_create_translation(APP_QM_FILES ${APP_TS_FILES} ${APP_QM_FILES})
-
-add_executable (${EXE_NAME} ${APP_CPP_FILES}  ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${APP_QM_FILES}  ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES} )
+add_executable (${EXE_NAME} ${APP_CPP_FILES}  ${APP_QRC_FILES} ${DOCX_CPP_FILES} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES} )
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/docx")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/libxlsxwriter")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/DocxFactory/include")
@@ -323,11 +293,6 @@ include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/md5
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/minizip")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmpfileplus")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${DtkWidget_INCLUDE_DIRS})
-include_directories(${DtkCore_INCLUDE_DIRS})
-include_directories(${DtkGui_INCLUDE_DIRS})
-include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
-include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Boost_INCLUDE_DIRS})
 include_directories( ${ZLIB_INCLUDE_DIRS})
 message("ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS}")
@@ -335,18 +300,13 @@ include_directories( ${RapidJSON_INCLUDE_DIRS})
 #include_directories(${ImageMagick_INCLUDE_DIRS})
 include_directories(${XercesC_INCLUDE_DIRS})
 
-target_link_libraries(${EXE_NAME}  ${LINK_LIBS} ${Other_LIBRARIES} -lsystemd -licui18n -licuuc  -ldl -fPIC)
-target_link_libraries(${EXE_NAME} ${DtkWidget_LIBRARIES})
-target_link_libraries(${EXE_NAME} ${DtkCore_LIBRARIES})
-target_link_libraries(${EXE_NAME} ${DtkGUI_LIBRARIES})
+target_link_libraries(${EXE_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc  -ldl -fPIC)
 #当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
 target_link_libraries(${EXE_NAME} ${ZLIB_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${Boost_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${RapidJSON_LIBRARIES})
 #target_link_libraries(${EXE_NAME} ${ImageMagick_LIBRARIES})
 target_link_libraries(${EXE_NAME} ${XercesC_LIBRARIES})
-target_link_libraries(${EXE_NAME} PolkitQt5-1::Agent)
-
 
 #target_link_libraries(${EXE_NAME} ${CMAKE_BINARY_DIR}/3rdparty/libxlsxwriter/libxlsxwriter.a)
 
@@ -354,27 +314,18 @@ target_link_libraries(${EXE_NAME} PolkitQt5-1::Agent)
 
 #target_link_libraries(${EXE_NAME} ${Zint_LIBRARIES})
 #target_link_libraries(${EXE_NAME} ${RapidJSON_LIBRARIES})
-#include_directories(${Qt5Widgets_LIBRARIES}
-#                                               ${Qt5Core_LIBRARIES}
-#                                              ${Qt5DBus_LIBRARIES}
-#                                              ${PROJECT_BINARY_DIR}
-#                                              ${DtkWidget_INCLUDE_DIRS}
-#                                              ${DtkCore_LIBRARIES}
-#                                              ${DtkGUI_INCLUDE_DIRS}
-#                                              ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
-#                                              ${Qt5Xml_LIBRARIES})
-#target_include_directories(${EXE_NAME} PUBLIC ${Qt5Widgets_LIBRARIES}
-#                                               ${Qt5Core_LIBRARIES}
-#                                              ${Qt5DBus_LIBRARIES}
-#                                              ${PROJECT_BINARY_DIR}
-#                                              ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
-#                                              ${Qt5Xml_LIBRARIES})
 #install(FILES ${ICUIL18N_LIB} ${ICUUC_LIB} ${SYSTEMD_LIB} DESTINATION lib)
 #set(CMAKE_INSTALL_PREFIX /usr)
 
-file(GLOB APP_QM_FILES "../translations/*.qm")
+# translation files
+TRANSLATION_GENERATE(QM_FILES ${CMAKE_SOURCE_DIR}/translations)
+add_custom_target(${EXE_NAME}_qm_files DEPENDS ${QM_FILES})
+add_dependencies(${EXE_NAME} ${EXE_NAME}_qm_files)
+
+# Install translations
+install(FILES ${QM_FILES} DESTINATION share/${EXE_NAME}/translations)
+
 file(GLOB DOCXFAC_TEMPLATE "assets/doc_template/*.dfw")
-install(FILES ${APP_QM_FILES} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/translations)
 install(FILES assets/deepin-log-viewer.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 install(FILES ${DOCXFAC_TEMPLATE} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/DocxTemplate)
 install(FILES assets/com.deepin.pkexec.logViewerAuth.policy DESTINATION ${CMAKE_INSTALL_PREFIX}/share/polkit-1/actions)
@@ -410,7 +361,11 @@ install(FILES ./configs/coredump-reporter.timer ./configs/coredump-reporter.serv
 set(APPID org.deepin.log.viewer)
 set(configFile configs/dconfig/org.deepin.log.viewer.json)
 if (DEFINED DSG_DATA_DIR)
-    dconfig_meta_files(APPID ${APPID} FILES ${configFile})
+    if (DTK_VERSION_MAJOR EQUAL "6")
+        dtk_add_config_meta_files(APPID ${APPID} FILES ${configFile})
+    else()
+        dconfig_meta_files(APPID ${APPID} FILES ${configFile})
+    endif()
     message("-- DConfig is supported by DTK")
 else()
     install(FILES ${configFile} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/dsg/configs/${APPID}/)

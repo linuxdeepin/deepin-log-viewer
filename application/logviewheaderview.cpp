@@ -10,7 +10,7 @@
 #include <QPainterPath>
 
 #include <DApplication>
-#include <DApplicationHelper>
+#include <DGuiApplicationHelper>
 #include <DPalette>
 #include <DStyleHelper>
 #include <DStyle>
@@ -68,7 +68,7 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
     cg = DPalette::Active;
 #endif
 
-    DApplicationHelper *dAppHelper = DApplicationHelper::instance();
+    DGuiApplicationHelper *dAppHelper = DGuiApplicationHelper::instance();
     DPalette palette = dAppHelper->applicationPalette();
 
     DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
@@ -167,7 +167,7 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
 #else
     cg = DPalette::Active;
 #endif
-    DApplicationHelper *dAppHelper = DApplicationHelper::instance();
+    DGuiApplicationHelper *dAppHelper = DGuiApplicationHelper::instance();
     DPalette palette = dAppHelper->applicationPalette();
     painter.setRenderHints(QPainter::Antialiasing);
     DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
@@ -227,10 +227,18 @@ int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
         return -1;
     }
     QString buf = model()->headerData(logicalIndex, Qt::Horizontal, Qt::DisplayRole).toString();
+    int textWidth;
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    textWidth = fm.horizontalAdvance(buf); // 使用 horizontalAdvance 方法
+#else
+    textWidth = fm.width(buf); // 使用 width 方法
+#endif
+
     if (sortIndicatorSection() == logicalIndex) {
-        return fm.width(buf) + margin * 3 + 8;
+        return textWidth + margin * 3 + 8;
     } else {
-        return fm.width(buf) + margin * 2;
+        return textWidth + margin * 2;
     }
 }
 

@@ -8,12 +8,13 @@
 #include "WordProcessingMerger.h"
 #include "WordProcessingCompiler.h"
 #include "dbusproxy/dldbushandler.h"
+#include "qtcompat.h"
 
 #include <DApplication>
 
 #include <QDebug>
 #include <QFile>
-#include <QTextCodec>
+// #include <QTextCodec>
 #include <QTextStream>
 #include <QTextDocument>
 #include <QTextDocumentWriter>
@@ -893,7 +894,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<QString> 
             }
         }
         //设置文件编码为utf8
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
@@ -982,7 +987,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_J
             }
         }
         //设置文件编码为utf8
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
 
     } catch (const QString &ErrorStr) {
         //捕获到异常，导出失败，发出失败信号
@@ -1019,7 +1028,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_A
     }
     try {
         QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         for (int i = 0; i < jList.count(); i++) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -1073,7 +1086,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
     }
     try {
         QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         for (int i = 0; i < jList.count(); i++) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -1123,7 +1140,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_B
     }
     try {
         QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         for (int i = 0; i < jList.count(); i++) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -1172,7 +1193,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_X
     }
     try {
         QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         for (int i = 0; i < jList.count(); i++) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -1221,7 +1246,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_N
     }
     try {
         QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         for (int i = 0; i < jList.count(); i++) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -1271,7 +1300,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_K
     }
     try {
         QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         for (int i = 0; i < jList.count(); i++) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -1312,7 +1345,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
     }
     try {
         QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         for (int i = 0; i < jList.count(); i++) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -1356,7 +1393,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_D
     }
     try {
         QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         for (int i = 0; i < jList.count(); i++) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -1400,7 +1441,11 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_A
     }
     try {
         QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
         for (int i = 0; i < jList.count(); i++) {
             //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
             if (!m_canRunning) {
@@ -3820,11 +3865,11 @@ bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_C
             }
 
             QByteArray dd = procss.readAllStandardOutput();
-            QList<QString> lines = QString(dd).split('\n', QString::SkipEmptyParts);
-            for (const QString &line : qAsConst(lines)) {
+            QStringList lines = QString(dd).split('\n', SKIP_EMPTY_PARTS);
+            for (const QString &line : lines) {
                 int pos = line.indexOf(QLatin1Char('%'));
                 if (pos > 1) {
-                    int percentage = line.midRef(pos - 3, 3).toInt();
+                    int percentage = line.mid(pos - 3, 3).toInt();
                     sigProgress(percentage, 100);
                 }
             }

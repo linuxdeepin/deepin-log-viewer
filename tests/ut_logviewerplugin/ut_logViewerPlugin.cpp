@@ -4,6 +4,7 @@
 
 #include "../application/utils.h"
 #include "ut_logViewerPlugin.h"
+#include "../application/qtcompat.h"
 
 #include <stub.h>
 
@@ -15,7 +16,7 @@ LogViewerPlugin_UT::LogViewerPlugin_UT()
 void LogViewerPlugin_UT::SetUp()
 {
     m_instance = new LogViewerPlugin;
-    qDebug() << "SetUp" << endl;
+    qDebug() << "SetUp" << ENDL;
 }
 
 void LogViewerPlugin_UT::TearDown()
@@ -44,15 +45,15 @@ TEST_F(LogViewerPlugin_UT, generateAppFile_UT001)
     LogViewerPlugin *p = new LogViewerPlugin;
     p->generateAppFile(Utils::homePath + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log", ALL, INF, "");
     connect(p, &LogViewerPlugin::sigAppData, this, [=](int index, QList<LOG_MSG_APPLICATOIN> iList) {
-        qDebug() << "index:" << index << endl;
-        qDebug() << "appDatas:" << endl;
+        qDebug() << "index:" << index << ENDL;
+        qDebug() << "appDatas:" << ENDL;
         int listCount = iList.size();
         for (int i = 0; i < listCount; i++) {
             qDebug() << "datetime=" << iList[i].dateTime
                      << " level=" << iList[i].level
                      << " src=" << iList[i].src
                      << " msg=" << iList[i].msg
-                     << " detailInfo=" << iList[i].detailInfo << endl;
+                     << " detailInfo=" << iList[i].detailInfo << ENDL;
         }
     });
     connect(p, &LogViewerPlugin::sigAppFinished, p, &LogViewerPlugin::deleteLater);

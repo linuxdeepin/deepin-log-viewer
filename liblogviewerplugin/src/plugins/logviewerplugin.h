@@ -9,6 +9,7 @@
 #include "../application/logfileparser.h"
 #include "../application/exportprogressdlg.h"
 #include "../plugininterfaces/logviewerplugininterface.h"
+#include "../application/qtcompat.h"
 
 #include <QObject>
 
@@ -225,7 +226,7 @@ private:
     //当前的显示加载状态
     //DisplayContent::LOAD_STATE m_state;
     //系统日志上次获取的时间
-    QDateTime m_lastJournalGetTime {QDateTime::fromTime_t(0)};
+    QDateTime m_lastJournalGetTime { DATE_FOTIME(0) };
     /**
      * @brief m_journalFilter 当前系统日志筛选条件
      */

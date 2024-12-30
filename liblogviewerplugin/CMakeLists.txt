@@ -14,7 +14,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ldtkwidget -ldtkgui -ldtkcore")#${EXE_NAME}
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")#${EXE_NAME}
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--as-needed -fPIE")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++11")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
@@ -32,7 +32,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
-#-ldtkwidget -ldtkgui -ldtkcore
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "sw_64")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mieee")
 endif ()
@@ -44,33 +43,46 @@ add_definitions( -DLITE_DIV )
 add_definitions( -DUSE_UNIONIMAGE )
 add_definitions( -DCMAKE_BUILD )
 
-#Qt需要的包
-set(LINK_LIBS
-    Qt5::Core
-    Qt5::Widgets
-    Qt5::Gui
-    Qt5::Xml
-    Qt5::DBus
-    Qt5::Concurrent
-)
-
 #查找依赖的库
 find_package(PkgConfig REQUIRED)
-find_package(Qt5Widgets REQUIRED)
-find_package(Qt5Gui REQUIRED)
-find_package(Qt5Core REQUIRED)
-find_package(Qt5Xml REQUIRED)
-find_package(Qt5Concurrent REQUIRED)
-find_package(Qt5DBus REQUIRED)
-find_package(DtkWidget REQUIRED)
-find_package(DtkGui REQUIRED)
-find_package(DtkCore REQUIRED)
-find_package(Qt5LinguistTools REQUIRED)
 find_package(RapidJSON)
 find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
-find_package(PolkitQt5-1)
+
+find_package(PolkitQt${QT_DESIRED_VERSION}-1)
+
+set(qt_required_components Core DBus Gui Concurrent Xml Widgets)
+
+if (QT_DESIRED_VERSION MATCHES 6)
+    # list(APPEND qt_required_components Core5Compat)
+else()
+    pkg_check_modules(Gsetting REQUIRED gsettings-qt)
+endif()
+
+find_package(Qt${QT_DESIRED_VERSION} REQUIRED COMPONENTS ${qt_required_components})
+find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Core Gui Widget REQUIRED)
+
+set(LINK_LIBS
+    Qt${QT_DESIRED_VERSION}::Core
+    Qt${QT_DESIRED_VERSION}::Xml
+    Qt${QT_DESIRED_VERSION}::DBus
+    Qt${QT_DESIRED_VERSION}::Gui
+    Qt${QT_DESIRED_VERSION}::Concurrent
+    Qt${QT_DESIRED_VERSION}::Widgets
+    Dtk${DTK_VERSION_MAJOR}::Widget
+    Dtk${DTK_VERSION_MAJOR}::Core
+    Dtk${DTK_VERSION_MAJOR}::Gui
+    PolkitQt${QT_DESIRED_VERSION}-1::Agent
+)
+
+if (QT_DESIRED_VERSION MATCHES 6)
+    # list(APPEND LINK_LIBS Qt${QT_DESIRED_VERSION}::Core5Compat)
+else()
+    list(APPEND LINK_LIBS ${Gsetting_LIBRARIES})
+    include_directories(${Gsetting_INCLUDE_DIRS})
+endif()
+
 
 #设置输出目录
 #set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/../deepin-album/lib)
@@ -164,11 +176,6 @@ set(${TARGET_NAME} ${CMAKE_INSTALL_LIBDIR})
 include_directories(${CMAKE_INCLUDE_CURRENT_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${DtkWidget_INCLUDE_DIRS})
-include_directories(${DtkCore_INCLUDE_DIRS})
-include_directories(${DtkGui_INCLUDE_DIRS})
-include_directories( ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
-include_directories( ${Qt5Widgets_PRIVATE_INCLUDE_DIRS})
 include_directories( ${Boost_INCLUDE_DIRS})
 include_directories( ${ZLIB_INCLUDE_DIRS})
 message("ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIRS}")
@@ -179,15 +186,11 @@ include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/Doc
 
 #引用库
 target_link_libraries(${TARGET_NAME}  ${LINK_LIBS} -lsystemd -licui18n -licuuc  -ldl -fPIC)
-target_link_libraries(${TARGET_NAME} ${DtkWidget_LIBRARIES})
-target_link_libraries(${TARGET_NAME} ${DtkCore_LIBRARIES})
-target_link_libraries(${TARGET_NAME} ${DtkGUI_LIBRARIES})
 #当binutils>=2.22时，对于链接的静态库链接的静态库，cmake并不会递归链接，所以需要手动链接libxlsxwriter需要的lzlib
 target_link_libraries(${TARGET_NAME} ${ZLIB_LIBRARIES})
 target_link_libraries(${TARGET_NAME} ${Boost_LIBRARIES})
 target_link_libraries(${TARGET_NAME} ${RapidJSON_LIBRARIES})
 target_link_libraries(${TARGET_NAME} ${XercesC_LIBRARIES})
-target_link_libraries(${TARGET_NAME} PolkitQt5-1::Agent)
 
 include(GNUInstallDirs)
 configure_file(liblogviewerplugin.pc.in ${PROJECT_BINARY_DIR}/liblogviewerplugin.pc @ONLY)

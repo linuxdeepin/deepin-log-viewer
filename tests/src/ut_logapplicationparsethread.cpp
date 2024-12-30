@@ -6,6 +6,7 @@
 #include "logfileparser.h"
 #include "structdef.h"
 #include "dbusproxy/dldbushandler.h"
+#include "../../application/qtcompat.h"
 
 #include <stub.h>
 
@@ -22,7 +23,7 @@ QFileInfoList stub_entryInfoList(QDir::Filters filters, QDir::SortFlags sort)
     return m_list;
 }
 
-QStringList stub_split(QChar sep, QString::SplitBehavior behavior,
+QStringList stub_split(QChar sep, SPLIT_BH behavior,
                        Qt::CaseSensitivity cs)
 {
     return QStringList() << "t.em,s[.a]da[],m[.s]d,s[t.][,"
@@ -53,16 +54,16 @@ public:
     //添加日志
     static void SetUpTestCase()
     {
-        qDebug() << "SetUpTestCase" << endl;
+        qDebug() << "SetUpTestCase";
     }
     static void TearDownTestCase()
     {
-        qDebug() << "TearDownTestCase" << endl;
+        qDebug() << "TearDownTestCase";
     }
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_logAppThread = new LogApplicationParseThread();
-        qDebug() << "SetUp" << endl;
+        qDebug() << "SetUp";
     }
     void TearDown() //TEST跑完之后会执行TearDown
     {
@@ -113,7 +114,7 @@ TEST_F(LogApplicationParseThread_UT, stopProcess_UT)
 {
     Stub stub;
     stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryInfoList), stub_entryInfoList);
-    stub.set((QStringList(QString::*)(QChar, QString::SplitBehavior, Qt::CaseSensitivity) const)ADDR(QString, split), stub_split);
+    stub.set((QStringList(QString::*)(QChar, SPLIT_BH, Qt::CaseSensitivity) const)ADDR(QString, split), stub_split);
     stub.set(ADDR(DLDBusHandler, getFileInfo), stub_getAppFileInfo);
     stub.set(ADDR(DLDBusHandler, readLog), stub_readAppLog);
     m_logAppThread->stopProccess();

@@ -5,8 +5,8 @@
 #include "logdetailinfowidget.h"
 
 #include <DApplication>
-#include <DApplicationHelper>
 #include <DGuiApplicationHelper>
+#include <DPaletteHelper>
 #include <DFontSizeManager>
 #include <DLabel>
 #include <DStyle>
@@ -90,7 +90,7 @@ void logDetailInfoWidget::initUI()
     // init pointer
     m_daemonName = new DLabel(this);
     QFont font;
-    font.setWeight(63);
+    font.setWeight(static_cast<QFont::Weight>(63));
     m_daemonName->setFont(font);
     //设置字号
     DFontSizeManager::instance()->bind(m_daemonName, DFontSizeManager::T5);
@@ -234,7 +234,7 @@ void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 
     painter.setRenderHint(QPainter::Antialiasing);
     //设置背景颜色
-    DPalette pa = DApplicationHelper::instance()->palette(this);
+    DPalette pa = DPaletteHelper::instance()->palette(this);
     painter.setBrush(QBrush(pa.color(DPalette::Base)));
     QColor penColor = pa.color(DPalette::FrameBorder);
     penColor.setAlphaF(0.05);

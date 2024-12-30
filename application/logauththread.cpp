@@ -9,6 +9,7 @@
 #include "wtmpparse.h"
 #include "dbusproxy/dldbushandler.h"
 #include "dbusmanager.h"
+#include "qtcompat.h"
 
 #include <DGuiApplicationHelper>
 #include <DApplication>
@@ -241,7 +242,7 @@ void LogAuthThread::handleBoot()
 
         QString byte = DLDBusHandler::instance(this)->readLog(m_FilePath.at(i));
         byte.replace('\u0000', "").replace("\x01", "");
-        QStringList strList = byte.split('\n', QString::SkipEmptyParts);
+        QStringList strList = byte.split('\n', SKIP_EMPTY_PARTS);
 
         //按换行分割
         for (int j = strList.size() - 1; j >= 0; --j) {
@@ -249,13 +250,13 @@ void LogAuthThread::handleBoot()
             if (lineStr.startsWith("/dev") || lineStr.isEmpty())
                 continue;
             //删除颜色格式字符
-            lineStr.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            lineStr.replace(REG_EXP("\\#033\\[\\d+(;\\d+){0,2}m"), "");
             // remove Useless characters
-            lineStr.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            lineStr.replace(REG_EXP("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
             Utils::replaceColorfulFont(&lineStr);
             QStringList retList;
             LOG_MSG_BOOT bMsg;
-            retList = lineStr.split(" ", QString::SkipEmptyParts);
+            retList = lineStr.split(" ", SKIP_EMPTY_PARTS);
             if (retList.size() == 1) {
                 bMsg.msg = lineStr.trimmed();
                 bList.append(bMsg);
@@ -356,7 +357,7 @@ void LogAuthThread::handleKern()
         }
 
         byte.replace('\u0000', "").replace("\x01", "");
-        QStringList strList = byte.split('\n', QString::SkipEmptyParts);
+        QStringList strList = byte.split('\n', SKIP_EMPTY_PARTS);
         for (int j = strList.size() - 1; j >= 0; --j) {
             if (!m_canRun) {
                 return;
@@ -364,8 +365,8 @@ void LogAuthThread::handleKern()
             QString str = strList.at(j);
             LOG_MSG_JOURNAL msg;
             //删除颜色格式字符
-            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
-            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            str.replace(REG_EXP("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", SKIP_EMPTY_PARTS);
             if (list.size() < 5)
                 continue;
             //获取内核年份接口已添加，等待系统接口添加年份改变相关日志
@@ -477,7 +478,7 @@ void LogAuthThread::handleKwin()
         return;
     }
 
-    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+    QStringList strList =  QString(Utils::replaceEmptyByteArray(outByte)).split('\n', SKIP_EMPTY_PARTS);
 
     for (int i = strList.size() - 1; i >= 0 ; --i)  {
         QString str = strList.at(i);
@@ -538,20 +539,20 @@ void LogAuthThread::handleXorg()
         if (!m_canRun) {
             return;
         }
-        QStringList fileInfoList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+        QStringList fileInfoList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', SKIP_EMPTY_PARTS);
         QString tempStr = "";
         for (QStringList::Iterator k = fileInfoList.end() - 1; k != fileInfoList.begin() - 1; --k) {
             QString &str = *k;
             //清除颜色格式字符
-            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            str.replace(REG_EXP("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
             if (str.startsWith("[")) {
-                QStringList list = str.split("]", QString::SkipEmptyParts);
+                QStringList list = str.split("]", SKIP_EMPTY_PARTS);
                 if (list.count() < 2)
                     continue;
                 QString timeStr = list[0];
                 QString msgInfo = list.mid(1, list.length() - 1).join("]").trimmed();
                 // 仅显示时间偏移量（单位：秒
-                QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+                QString tStr = timeStr.split("[", SKIP_EMPTY_PARTS)[0].trimmed();
                 LOG_MSG_XORG msg;
                 msg.offset = tStr;
                 msg.msg = msgInfo + tempStr;
@@ -603,14 +604,14 @@ void LogAuthThread::handleDkpg()
         if (!m_canRun) {
             return;
         }
-        QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', QString::SkipEmptyParts);
+        QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', SKIP_EMPTY_PARTS);
         for (int j = strList.size() - 1; j >= 0; --j) {
             QString str = strList.at(j);
             if (!m_canRun) {
                 return;
             }
-            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-            QStringList m_strList = str.split(" ", QString::SkipEmptyParts);
+            str.replace(REG_EXP("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList m_strList = str.split(" ", SKIP_EMPTY_PARTS);
             if (m_strList.size() < 3)
                 continue;
 
@@ -705,7 +706,7 @@ void LogAuthThread::handleNormal()
             QString strFormat = "ddd MMM dd hh:mm";
 
             //修改时间格式转换方法，采用QDateTime 转换
-            QString start_str = locale.toString(QDateTime::fromTime_t(static_cast<uint>(utbufp->ut_time)), strFormat);
+            QString start_str = locale.toString(DATE_FOTIME(static_cast<uint>(utbufp->ut_time)), strFormat);
             //截止时间解析
             if (Nmsg.eventType == "Login" || Nmsg.eventType == "Boot") {
                 if (count1 <= TimeList.length() - 1) {
@@ -716,7 +717,7 @@ void LogAuthThread::handleNormal()
                 Nmsg.msg = start_str + "  -  ";
             }
 
-            QString n_time = QDateTime::fromTime_t(static_cast<uint>(utbufp->ut_time)).toString("yyyy-MM-dd hh:mm:ss");
+            QString n_time = DATE_FOTIME(static_cast<uint>(utbufp->ut_time)).toString("yyyy-MM-dd hh:mm:ss");
             Nmsg.dateTime = n_time;
             QDateTime nn_time = QDateTime::fromString(Nmsg.dateTime, "yyyy-MM-dd hh:mm:ss");
             if (m_normalFilters.timeFilterEnd > 0 && m_normalFilters.timeFilterBegin > 0) {
@@ -756,8 +757,10 @@ void LogAuthThread::NormalInfoTime()
     QByteArray outByte = m_process->readAllStandardOutput();
     QByteArray byte = Utils::replaceEmptyByteArray(outByte);
     QTextStream stream(&byte);
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QByteArray encode;
     stream.setCodec(encode);
+    #endif
     stream.readAll();
     QStringList l = QString(byte).split('\n');
     m_process->close();
@@ -898,8 +901,10 @@ void LogAuthThread::handleDmesg()
     QByteArray outByte = m_process->readAllStandardOutput();
     QByteArray byte = Utils::replaceEmptyByteArray(outByte);
     QTextStream stream(&byte);
+    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QByteArray encode;
     stream.setCodec(encode);
+    #endif
     stream.readAll();
     QStringList l = QString(byte).split('\n');
     m_process->close();
@@ -911,19 +916,28 @@ void LogAuthThread::handleDmesg()
         if (!m_canRun) {
             return;
         }
-        str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-        QRegExp dmesgExp("^\\<([0-7])\\>\\[\\s*[+-]?(0|([1-9]\\d*))(\\.\\d+)?\\](.*)");
+        str.replace(REG_EXP("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+        REG_EXP dmesgExp("^\\<([0-7])\\>\\[\\s*[+-]?(0|([1-9]\\d*))(\\.\\d+)?\\](.*)");
         //启用贪婪匹配
+        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         dmesgExp.setMinimal(false);
         int pos = dmesgExp.indexIn(str);
+        #else
+        dmesgExp.setPatternOptions(QRegularExpression::UseUnicodePropertiesOption);
+        int pos = dmesgExp.match(str).capturedStart();
+        #endif
         if (pos >= 0) {
+            #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             QStringList list = dmesgExp.capturedTexts();
+            #else
+            QStringList list = dmesgExp.match(str).capturedTexts();
+            #endif
             if (list.count() < 6)
                 continue;
             QString timeStr = list[3] + list[4];
             QString msgInfo = list[5].simplified();
             int levelOrigin = list[1].toInt();
-            QString tStr = timeStr.split("[", QString::SkipEmptyParts)[0].trimmed();
+            QString tStr = timeStr.split("[", SKIP_EMPTY_PARTS)[0].trimmed();
             qint64 realT = curDtSecond + qint64(tStr.toDouble() * 1000);
             QDateTime realDt = QDateTime::fromMSecsSinceEpoch(realT);
             if (realDt.toMSecsSinceEpoch() < m_dmesgFilters.timeFilter) // add by Airy
@@ -1023,7 +1037,7 @@ void LogAuthThread::handleAudit()
         }
 
         byte.replace('\u0000', "").replace("\x01", "");
-        QStringList strList = byte.split('\n', QString::SkipEmptyParts);
+        QStringList strList = byte.split('\n', SKIP_EMPTY_PARTS);
 
         QRegularExpression re;
         QRegularExpressionMatch match;
@@ -1037,10 +1051,10 @@ void LogAuthThread::handleAudit()
 
             LOG_MSG_AUDIT msg;
             //删除颜色格式字符
-            str.replace(QRegExp("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+            str.replace(REG_EXP("\\#033\\[\\d+(;\\d+){0,2}m"), "");
             // remove Useless characters
-            str.replace(QRegExp("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
-            QStringList list = str.split(" ", QString::SkipEmptyParts);
+            str.replace(REG_EXP("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            QStringList list = str.split(" ", SKIP_EMPTY_PARTS);
             if (list.size() < 2)
                 continue;
 
@@ -1061,7 +1075,12 @@ void LogAuthThread::handleAudit()
                 match = re.match(str);
                 if (match.hasMatch()) {
                     QString addr = match.captured(0);
-                    if (QRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b").exactMatch(addr))
+                    REG_EXP ipExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+                    #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+                    if (ipExp.exactMatch(addr))
+                    #else
+                    if (ipExp.match(addr).hasMatch())
+                    #endif
                         auditType = Audit_Remote;
                 }
 
@@ -1088,7 +1107,7 @@ void LogAuthThread::handleAudit()
             re.setPattern("(?<=msg=audit\\()[^\\.]*(?=\\.)");
             match = re.match(str);
             if (match.hasMatch()) {
-                QDateTime dateTime = QDateTime::fromTime_t(match.captured(0).toUInt());
+                QDateTime dateTime = DATE_FOTIME(match.captured(0).toUInt());
                 qint64 iTime = dateTime.toMSecsSinceEpoch();
                 //对时间筛选
                 if (m_auditFilters.timeFilterBegin > 0 && m_auditFilters.timeFilterEnd > 0) {
@@ -1197,9 +1216,9 @@ void LogAuthThread::handleCoredump()
         byte = Utils::replaceEmptyByteArray(outByte);
     }
 
-    QStringList strList =  QString(byte).split('\n', QString::SkipEmptyParts);
+    QStringList strList =  QString(byte).split('\n', SKIP_EMPTY_PARTS);
 
-    QRegExp re("(Storage: )\\S+");
+    REG_EXP re("(Storage: )\\S+");
     for (int i = strList.size() - 1; i >= 0 ; --i)  {
         QString str = strList.at(i);
         if (!m_canRun) {
@@ -1208,7 +1227,7 @@ void LogAuthThread::handleCoredump()
         if (str.trimmed().isEmpty()) {
             continue;
         }
-        QStringList tmpList = str.split(" ", QString::SkipEmptyParts);
+        QStringList tmpList = str.split(" ", SKIP_EMPTY_PARTS);
         if (tmpList.count() < 10)
             continue;
 
@@ -1248,8 +1267,15 @@ void LogAuthThread::handleCoredump()
             if (strList.size() > 1) {
                 coredumpMsg.stackInfo = "Stack trace of thread" + strList[1];
             }
+            #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
             re.indexIn(outInfoByte);
             coredumpMsg.storagePath = re.cap(0).replace("Storage: ", "");
+            #else
+            QRegularExpressionMatch match = re.match(outInfoByte);
+            if (match.hasMatch()) {
+                coredumpMsg.storagePath = match.captured(0).replace("Storage: ", "");
+            }
+            #endif
         } else {
             coredumpMsg.storagePath = QString("coredump file is missing");
         }

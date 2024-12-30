@@ -6,6 +6,7 @@
 #include "logperiodbutton.h"
 #include "structdef.h"
 #include "logcombox.h"
+#include "qtcompat.h"
 
 #include <QPaintEvent>
 #include <QEvent>
@@ -27,16 +28,16 @@ public:
     //添加日志
     static void SetUpTestCase()
     {
-        qDebug() << "SetUpTestCase" << endl;
+        qDebug() << "SetUpTestCase" << ENDL;
     }
     static void TearDownTestCase()
     {
-        qDebug() << "TearDownTestCase" << endl;
+        qDebug() << "TearDownTestCase" << ENDL;
     }
     void SetUp() //TEST跑之前会执行SetUp
     {
         m_filter = new FilterContent;
-        qDebug() << "SetUp" << endl;
+        qDebug() << "SetUp" << ENDL;
     }
     void TearDown() //TEST跑完之后会执行TearDown
     {

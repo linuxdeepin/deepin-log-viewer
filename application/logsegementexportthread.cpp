@@ -13,7 +13,7 @@
 
 #include <QDebug>
 #include <QFile>
-#include <QTextCodec>
+// #include <QTextCodec>
 #include <QTextStream>
 #include <QTextDocument>
 #include <QTextDocumentWriter>
@@ -259,7 +259,11 @@ bool LogSegementExportThread::exportTxt()
     }
 
     //设置文件编码为utf8
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+    out.setEncoding(QStringConverter::Utf8);
+#endif
     fi.close();
 
     return true;
