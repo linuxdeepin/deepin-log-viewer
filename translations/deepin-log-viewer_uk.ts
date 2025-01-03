@@ -502,7 +502,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Журналу ревізії не існує.</translation>
     </message>
 </context>
 <context>
