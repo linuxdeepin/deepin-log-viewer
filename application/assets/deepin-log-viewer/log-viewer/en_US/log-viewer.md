@@ -1,257 +1,162 @@
 # Log Viewer|deepin-log-viewer|
 
-## Overview 
+## Overview
 
-Log viewer is a tool that collects logs generated when an application is running, for example, logs generated when operating system and applications start up and run. You can do trouble-shooting and solve problems quickly by analyzing logs. 
+The log collection tool is a small utility responsible for collecting logs generated during program execution, such as relevant information about the operating system and applications during startup, operation, etc. By analyzing detailed log information, you can quickly find the cause of failures and resolve issues.
 
+## Getting Started
 
+You can run, close the log collection tool, or create shortcuts in the following ways.
 
-## Guide
+### Running the Log Collection Tool
 
-You can run, close or create a shortcut for Log Viewer.
+1. Click the launcher icon on the taskbar ![deepin_launcher](../common/deepin_launcher.svg) to enter the launcher interface.
 
-### Run Log Viewer 
+2. Scroll up or down with the mouse wheel or search to find the log collection tool icon ![deepin_log_viewer](../common/deepin_log_viewer.svg), and click to run it.
 
-1. Click ![deepin_launcher](../common/deepin_launcher.svg)on the Dock to enter the interface of launcher.
-2. Locate ![deepin_log_viewer](../common/deepin_log_viewer.svg) by scrolling the mouse wheel or searching "Log Viewer" in the Launcher interface and click it to run.
-3. Right-click![deepin_log_viewer](../common/deepin_log_viewer.svg) to:
-   - Select **Send to desktop** to create a shortcut on the desktop.
+3. Right-click on the icon, and you can:
 
-   - Select  **Send to dock** to fix it onto the dock.
+   - Click **Send to Desktop** to create a shortcut on the desktop.
+    - Click **Send to Taskbar** to pin the application to the taskbar.
+    - Click **Start Automatically** to add the application to the startup items, so it runs automatically when the computer starts.
 
-   - Select **Add to startup** to run it automatically when the computer is turned on.
+### Closing the Log Collection Tool
 
-### Exit Log Viewer 
+- In the log collection tool interface, click ![close_icon](../common/close_icon.svg) to exit the log collection tool.
+- Right-click on the taskbar ![deepin_log_viewer](../common/deepin_log_viewer.svg), and select **Close All** to exit the log collection tool.
+- In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg) and select **Exit** to close the tool.
 
-- On the main interface, click  ![close_icon](../common/close_icon.svg) to exit.
-- Right-click ![deepin_log_viewer](../common/deepin_log_viewer.svg) on the Dock, select **Close all** to exit.
-- On interface of Log Viewer, click ![icon_menu](../common/icon_menu.svg) and select **Exit** to exit.
+## Operations Introduction
 
-## Operations
+> ![attention](../common/attention.svg) The log collection tool supports the display of various log types. Due to differences in system versions or architectures, the available log types may vary. Please refer to the final page for the specific features.
+>
+> ![attention](../common/attention.svg) Depending on the log type, the available filtering options, whether the log can be displayed in the file manager, and whether log clearing is supported may differ. Please refer to the final page for specific functionalities.
+>
+> The following section will introduce the operation of the log collection tool with **system logs** and **kernel logs** as examples.
 
-### Search
+### Search Logs
 
-1. Click![search](../common/search.svg)in the search box.
-2. Input keywords. And the results are displayed after input. 
-3. Click ![close_icon](../common/close_icon.svg) to clear up current searching.
+1. In the log collection tool search box, click ![search](../common/search.svg).
+2. Enter keywords to display search results in real-time.
+3. Click ![close_icon](../common/close_icon.svg) to clear the search content.
 
+![search_log](./fig/search_log.png)
 
+### Filter Logs
 
-### Filter
+1. In the log collection tool’s top filter bar, select the option you want to filter by.
+2. After clicking or selecting a filter, the log collection tool will immediately display the filtered results.
 
- Filtering parameters include **period**, **level**, **status**, **application list** and **event type**.
-
-<table border="1">
-   <tr>
-    <th>Filtering Type</th>
- <th>Description </th>
-</tr>
-   <tr>
-    <td>Filtering by period</td>
-    <td>to filter in the order of log generating date
-      <ul>
-          <li>Options include: "All", "Today", "3 days", "1 week", "1 month", and "3 months". Default option is "All".</li>
-          <li>Applicable for: "period" is not displayed only for boot logs, other kinds of logs support filtering by period.</li>
-      </ul>
- </td>
-</tr>
-   <tr>
-    <td>Filtering by level</td>
-    <td>to filter by seriousness levels of events
-    <ul>
-          <li>Options include: "All", "Emergency", "Alert", "Critical", "Error", "Warning", "Notice", "Info"and "Debug". Default option is "Info".</li>
-          <li>Applicable for: system logs and application logs</li>
-      </ul>
-      <tr>
-    <td>Filtering by status</td>
-    <td>
-    <ul>
-          <li>Options include: "All", "OK", and "Failed". Default option is "All".</li>
-          <li>Applicable for: boot logs only</li>
-      </ul>
-          <tr>
-    <td>Filtering by application list: </td>
-    <td>to filter log files of applications, default option is the first one. 
-        Applicable for: application logs only.  </td>
-              <tr>
-    <td>Filtering by event type</td>
-    <td>
-    <ul>
-          <li>Options include:  "All", "Login", "Reboot", and "Shutdown", the default option is "all".  </li>
-          <li>Applicable for: boot-shutdown events only.</li>
-      </ul>
- </td>
-   </tr>
-   </table>
+![filter_log](./fig/filter_log.png)
 
 ### View Logs
 
-#### System Log
+1. In the log collection tool interface, click on the log type menu you wish to view, and the right-side list will display all logs of that type.
+2. Left-click on a log, and you can view the detailed information of the log in the lower section of the tool.
 
-1. On the main interface, click **System Log**. 
-2. You can see a list of system logs which are detailed by "Level", "Process", "Date and Time", and "Info".
-3. Click a log, you can see its particular info below the list, including process, time, user, PID, level and info.
+![syslog](./fig/syslog.png)
 
-![0|rsyslog](fig/rsyslog.png)
+### Custom Logs
 
-#### Kernel Log
+The custom log feature allows you to add log files to the log collection tool for viewing and exporting. Custom logs are compatible with both Gsettings and Dconfig configurations.
 
-1. On the main interface, click  **Kernel Log**.
-2. Input login password in the pop-up authentication window. 
-3. You can view the status and information of kernel logs.
-4. Click a log, you can see its particular info below the list, including process, time, user and info.
+**Gsettings Configuration**
 
-
-
-![0|kernlog](fig/kernlog.png)
-
-#### Boot Log
-
-1. On the main interface, click **Boot Log**.
-2. Input password in the popped up authentication window. 
-3. You can view the status and information of boot logs.
-4. Click a log, you can see its particular info below the list, including user, status and info.
-
-
-
-![0|bootlog](fig/bootlog.png)
-
-#### dpkg Log
-
-1. On the main interface, click **dpkg Log**. 
-2. You can view time and information of dpkg logs.
-3. Click a log, you can see its particular info below the list, including time, user, action and info.
-
-![0|dpkglog](fig/dpkglog.png)
-
-#### Xorg Log
-
-1. On the main interface, click **Xorg Log**.
-2. You can view time and information of Xorg logs.
-3. Click a log, you can see its particular info below the list, including user, time and info.
-
-![0|xorglog](fig/xorglog.png)
-
-#### Application Log
-
-1. On the main interface, click  **Application Log**.
-2. You can view level, time, source and information of application logs.
-3. Click a log, you can see its particular info below the list, including source, user, time, level and info.
-
-![0|applog](fig/applog.png)
-
-
-#### Boot-Shutdown Event
-
-1. On the main interface, click  **Boot-Shutdown Event**.
-2. You can view event type, username, time and information of boot-shutdown events.
-3. Click a log, you can see its particular info below the list, including user, time, event type, username and info.
-![0|powerevent](fig/powerevent.png)
-
-#### Other Logs
-
-1. On the main interface, click **Other Logs**.
-2. Other logs display the file name and modification date of the log file in a file list format. Display similar log files in folder format.
-3. After selecting a file, you can view its detailed content. Drag and drop the file list and detailed content boundary to synchronize and adjust the size of the two regions.
-
-![otherslog](fig/otherslog.png)
-
-
-### Custom logs
-
-The custom log function is to add log files to the log collection tool for viewing and exporting. Custom logging compatible with Gsettings and Dconfig configurations.
-
-**Gsettings configuration**
-
-1. Execute the Gsettings configuration setting command on the terminal, fill in the log file path in "[]", for example: ['a. log ',' b. log ',' c. log '].
+1. Execute the Gsettings configuration command in the terminal. Replace the “[]” with the log file paths, for example: ['a.log', 'b.log', 'c.log'].
 
 ```shell
 gsettings set com.deepin.log.viewer customlogfiles []
 ```
 
-2. On the main interface, click **Custom Log** to discover the existing configuration.
+1. In the log collection tool interface, click **Custom Logs**, and you will see the existing configuration.
 
-**Dconfig configuration**
+**Dconfig Configuration**
 
-1. Execute the Dconfig configuration setting command on the terminal, fill in the log file path in "[]", for example: ["a.log", "b. log", "c.log"]
+1. Execute the Dconfig configuration command in the terminal. Replace the “[]” with the log file paths, for example: ["a.log", "b.log", "c.log"].
 
 ```shell
 dde-dconfig --set -a org.deepin.log.viewer -r org.deepin.log.viewer -k customLogFiles -v '["a.log","b.log","c.log"]'
 ```
 
-2. On the main interface, click **Custom Log** to discover the existing configuration.
-
+1. In the log collection tool interface, click **Custom Logs**, and you will see the existing configuration.
 
 ### Export Logs
 
-You can export logs to local computer so as to help you analyze, locate and solve problems.
+The export log function allows you to export the log query results to the local system, helping you analyze, locate, and resolve issues.
 
-1. Select a log type and click **Export** in the upper right corner. 
-2. Input login password in the pop-up authentication window (if any) and click **Confirm**.
-3. Select the storing path in the pop-up window, and click **Save**.
+1. Select a log type and click the **Export** button in the upper-right corner of the interface.
+2. If a password authentication window pops up, enter your user login password and click **OK**.
+3. In the pop-up window, select the storage location and click **Save**.
 
->![icon](../common/notes.svg) Notes: you can also click the "Export All" button ![icon](../common/export.svg) on the title bar to export system logs, kernel logs, boot logs, dpkg logs, Xorg logs, application logs and logs of boot-shutdown events as well.
+> ![icon](../common/notes.svg) Note: You can also click the **Export All** button in the title bar ![icon](../common/export.svg) to export all logs.
 
-### Refresh
+![export_log](./fig/export_log.png)
 
-You can refresh the logs manually and automatically. For auto refresh, you can set the frequency.
+### Refresh Logs
 
-#### Manual Refresh
+Logs can be refreshed manually or automatically. The frequency of automatic refresh can be customized.
 
-Click the "Refresh Now" button ![icon](../common/refresh.svg) on the title bar, or right-click on a log type and select **Refresh** to reload the log list.
+#### Manual Log Refresh
 
-#### Auto Refresh
+Click the **Refresh** button in the title bar ![icon](../common/refresh.svg); or right-click on a log type and select **Refresh** to refresh the logs.
 
-1. Click ![icon_menu](../common/icon_menu.svg) > **Refresh interval** in the main interface.
-2. Select a proper refresh interval from **10 sec**, **1 min**, and **5 min**. Or select **No refresh** to stop auto refreshing.
+![refresh_log](./fig/refresh_log.png)
 
+#### Automatic Log Refresh
 
+1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg) > **Refresh Frequency**.
+2. Select the automatic refresh frequency: **Every 10 seconds**, **Every 1 minute**, or **Every 5 minutes** to refresh the logs. Select **Do not refresh** to stop automatic log refreshing.
+
+![auto_refresh](./fig/auto_refresh.png)
 
 ### Display in File Manager
 
-**Display in file manager** is only applicable for kernel log, boot log, dpkg log, Xorg log and application log.
+With the **Display in File Manager** feature, you can view the raw log files of certain logs.
 
-1. On the interface of Log Viewer, select a log type in the left panel and right-click.
-2. Select **Display in file manager**, the folder path of the current log will be opened. 
+1. In the log collection tool’s left-side navigation bar, right-click on a log type.
+2. Select **Display in File Manager** to navigate to the current log’s storage location.
 
-![display](fig/displayinfm.png)
+![show_in_fileManager](./fig/show_in_fileManager.png)
 
 ### Clear Log
 
-**Clear log** is only applicable for kernel log, boot log, dpkg log, Xorg log and application log.
+1. In the log collection tool’s left-side navigation bar, right-click on a log type.
+2. Select **Clear Log**.
+3. A prompt will appear asking you to confirm clearing the logs. Click **OK**.
+4. If a password authentication window pops up, enter your user login password and click **OK**.
 
-1. On the interface of File Manager, select a log type in the left panel and right-click.
-2. Select **Clear log**, click **Confirm** button in the pop-up window to clear current logs.
-3. If authentication window pops up, please input password to finish the operation.
-
+![delete_log](./fig/delete_log.png)
 
 ## Main Menu
 
-In the main menu, you can [set refresh intervals](#Auto Refresh), switch themes, view help manual, and so on.
+In the main menu, you can [set the refresh frequency](https://chatgpt.com/c/677b9ca1-43e8-8009-91e4-3cafdf878f9c#auto-refresh-logs), switch window themes, view the help manual, and more.
 
-### Theme
+### Themes
 
-The window theme includes Light Theme, Dark Theme and System Theme.
+The window themes include Light Theme, Dark Theme, and System Theme.
 
-1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
-2. Click **Theme** to select one.
-
+1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg).
+2. Select **Theme** and choose a theme color.
 
 ### Help
 
-Click Help to get the manual, which will help you further know and use Log Viewer.
+To view the help manual and further understand how to use the log collection tool:
 
-1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
-2. Click **Help** to view the manual.
-
+1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg).
+2. Select **Help**.
+3. View the log collection tool's help manual.
 
 ### About
 
-1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
-2. Click **About** to view version information and introduction about Log Viewer.
+1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg).
+2. Select **About**.
+3. View the version and introduction of the log collection tool.
 
 ### Exit
 
-1. Click ![icon_menu](../common/icon_menu.svg)on the interface.
-2. Click  **Exit**.
+1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg).
+2. Select **Exit**.
 
+------
+
+Let me know if you'd like any additional modifications!
