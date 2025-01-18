@@ -470,11 +470,11 @@
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Пользовательский журнал</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"/>
+        <translation>Журнал аудита</translation>
     </message>
     <message>
         <source>Coredump Log</source>
@@ -485,7 +485,7 @@
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>Не удается получить информацию о сбое, пожалуйста, установите systemd-coredump.</translation>
     </message>
 </context>
 <context>
@@ -497,7 +497,8 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"/>
+        <translation>Уровень безопасности для текущей системы: высокийуровень 
+аудита, только администраторы могут просматривать журнал аудита</translation>
     </message>
     <message>
         <source>Audit log is not exist.</source>
@@ -508,7 +509,7 @@
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Экспортируйте журналы по указанному пути</translation>
     </message>
     <message>
         <source>PATH</source>
