@@ -412,11 +412,11 @@
     </message>
     <message>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>имя пользователя</translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Смещение</translation>
     </message>
 </context>
 <context>
@@ -466,7 +466,7 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Другое бревно</translation>
     </message>
     <message>
         <source>Custom Log</source>
