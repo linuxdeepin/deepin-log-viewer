@@ -237,11 +237,11 @@
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"/>
+        <translation>Приложение:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>Подмодуль:</translation>
     </message>
 </context>
 <context>
@@ -392,15 +392,15 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Имя файла</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Измененное время</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>СИГНАЛ</translation>
     </message>
     <message>
         <source>EXE</source>
@@ -408,7 +408,7 @@
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>Основной файл</translation>
     </message>
     <message>
         <source>User Name </source>
