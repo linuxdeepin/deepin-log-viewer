@@ -1,3 +1,10 @@
+deepin-log-viewer (6.5.6) unstable; urgency=medium
+
+  * chore: New version 6.5.6.
+  * feat: Support Qt6 build.
+
+ -- re2zero <yangwu@uniontech.com>  Mon, 20 Jan 2025 16:30:43 +0800
+
 deepin-log-viewer (6.5.5) unstable; urgency=medium
 
   * chore: New version 6.5.5.
