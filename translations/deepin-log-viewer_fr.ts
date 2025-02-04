@@ -502,7 +502,7 @@ audit seuls les administrateurs peuvent consulter le journal d&apos;audit</trans
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Le journal d&apos;audit n&apos;existe pas.</translation>
     </message>
 </context>
 <context>
