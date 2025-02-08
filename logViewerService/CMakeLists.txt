@@ -40,9 +40,8 @@ find_package(Qt${QT_DESIRED_VERSION} REQUIRED COMPONENTS ${qt_required_component
 find_package(Dtk${DTK_VERSION_MAJOR} COMPONENTS Core Gui REQUIRED)
 
 find_package(PolkitQt${QT_DESIRED_VERSION}-1)
-if (QT_DESIRED_VERSION MATCHES 5)
-    pkg_check_modules(Gio REQUIRED gio-qt)
-endif()
+pkg_check_modules(Gio REQUIRED gio-qt${DTK_VERSION_MAJOR})
+
 
 set(LINK_LIBS
     Qt${QT_DESIRED_VERSION}::Core

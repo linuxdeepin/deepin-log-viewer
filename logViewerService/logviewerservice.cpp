@@ -9,11 +9,11 @@
 #include <unistd.h>
 #include <fstream>
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-#include <polkit-qt5-1/PolkitQt1/Authority>
 #include <dgiofile.h>
 #include <dgiovolume.h>
 #include <dgiovolumemanager.h>
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+#include <polkit-qt5-1/PolkitQt1/Authority>
 #else
 #include <polkit-qt6-1/PolkitQt1/Authority>
 #endif
@@ -652,17 +652,9 @@ QStringList LogViewerService::getHomePaths()
 QStringList LogViewerService::getExternalDevPaths()
 {
     QStringList devPaths;
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = getMounts_safe();
-#else
-    const QList<DMount> mounts = getMounts_safe();
-#endif
     for (auto mount : mounts) {
-        #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         QString uri = mount->getRootFile()->uri();
-        #else
-        QString uri = mount.source();
-        #endif
         QString scheme = QUrl(uri).scheme();
 
         // sbm路径判断，分为gvfs挂载和cifs挂载两种
@@ -679,12 +671,8 @@ QStringList LogViewerService::getExternalDevPaths()
         if ((scheme == "file") ||  //usb device
                 (scheme == "gphoto2") ||        //phone photo
                 (scheme == "mtp")) {            //android file
-            // QExplicitlySharedDataPointer<DGioFile> locationFile = mount->getDefaultLocationFile();
-            #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-            QString path = mount->getDefaultLocationFile()->path();
-            #else
-            QString path = mount.target();
-            #endif
+            QExplicitlySharedDataPointer<DGioFile> locationFile = mount->getDefaultLocationFile();
+            QString path = locationFile->path();
             if (path.startsWith("/media/")) {
                 QFlags <QFileDevice::Permission> power = QFile::permissions(path);
                 if (power.testFlag(QFile::WriteUser)) {
@@ -698,38 +686,11 @@ QStringList LogViewerService::getExternalDevPaths()
 }
 
 //可重入版本的getMounts
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-QList<QExplicitlySharedDataPointer<DMount>> LogViewerService::getMounts_safe()
-#else
-QList<DMount> LogViewerService::getMounts_safe()
-#endif
+QList<QExplicitlySharedDataPointer<DGioMount> > LogViewerService::getMounts_safe()
 {
     static QMutex mutex;
     mutex.lock();
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     auto result = DGioVolumeManager::getMounts();
-#else
-    QList<DMount> result;
-    QFile mountsFile("/proc/mounts");
-    if (mountsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        QTextStream in(&mountsFile);
-        while (!in.atEnd()) {
-            QString line = in.readLine();
-            QStringList parts = line.split(' ');
-            if (parts.size() >= 4) {
-                Mount mount(new MountData);
-                mount.setSource(parts.at(0));
-                mount.setTarget(parts.at(1));
-                mount.setFilesystemType(parts.at(2));
-                mount.setOptions(parts.at(3));
-                result.append(mount);
-            }
-        }
-        mountsFile.close();
-    } else {
-        qWarning() << "Failed to open /proc/mounts";
-    }
-#endif
     mutex.unlock();
     return result;
 }
@@ -1095,23 +1056,10 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
     uint pid = conn.interface()->servicePid(msg.service()).value();
 
     // 判断是否存在执行路径且是否存在于可调用者名单中
-    QFileInfo initNsMntFileInfo("/proc/1/ns/mnt");
-    QFileInfo senderNsMntFileInfo(QString("/proc/%1/ns/mnt").arg(pid));
-    QString initNsMnt;
-    QString senderNsMnt;
-
-    if (!initNsMntFileInfo.isSymLink() || !senderNsMntFileInfo.isSymLink()) {
-        sendErrorReply(QDBusError::ErrorType::Failed, "Invalid symlink！！！！！");
-        return false;
-    }
-    
-    #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-        initNsMnt = initNsMntFileInfo.symLinkTarget().trimmed();
-        senderNsMnt = senderNsMntFileInfo.symLinkTarget().trimmed();
-    #else
-        initNsMnt = initNsMntFileInfo.readLink().trimmed();
-        senderNsMnt = senderNsMntFileInfo.readLink().trimmed();
-    #endif
+    QFile initNsMntFile("/proc/1/ns/mnt");
+    QFile senderNsMntFile(QString("/proc/%1/ns/mnt").arg(pid));
+    auto initNsMnt = initNsMntFile.symLinkTarget().trimmed().remove(0, QString("/proc/1/ns/mnt").length());
+    auto senderNsMnt = senderNsMntFile.symLinkTarget().trimmed().remove(0, QString("/proc/%1/ns/mnt").arg(pid).length());
     if (initNsMnt != senderNsMnt) {
         sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls！！！！！");
         return false;
