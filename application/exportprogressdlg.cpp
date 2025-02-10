@@ -33,7 +33,6 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     DFontSizeManager::instance()->bind(txtLabel, DFontSizeManager::T6);
     DPalette pa = DPaletteHelper::instance()->palette(txtLabel);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::BrightText));
-    // DGuiApplicationHelper::instance()->setPalette(txtLabel, pa);
     txtLabel->setPalette(pa);
     QVBoxLayout *pVLayouttxt = new QVBoxLayout();
     pVLayouttxt->setContentsMargins(0, 0, 0, 10);
