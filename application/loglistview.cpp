@@ -391,7 +391,6 @@ void LogListView::paintEvent(QPaintEvent *event)
     pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
     // pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
     this->setPalette(pa);
-    // DGuiApplicationHelper::instance()->setPalette(this, pa);
 
     this->setAutoFillBackground(true);
 

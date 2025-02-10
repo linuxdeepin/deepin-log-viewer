@@ -227,13 +227,7 @@ int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
         return -1;
     }
     QString buf = model()->headerData(logicalIndex, Qt::Horizontal, Qt::DisplayRole).toString();
-    int textWidth;
-
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    textWidth = fm.horizontalAdvance(buf); // 使用 horizontalAdvance 方法
-#else
-    textWidth = fm.width(buf); // 使用 width 方法
-#endif
+    int textWidth = fm.horizontalAdvance(buf);
 
     if (sortIndicatorSection() == logicalIndex) {
         return textWidth + margin * 3 + 8;

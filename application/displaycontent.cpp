@@ -105,7 +105,6 @@ void DisplayContent::initUI()
     noResultLabel = new DLabel(this);
     DPalette pa = DPaletteHelper::instance()->palette(noResultLabel);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
-    // DGuiApplicationHelper::instance()->setPalette(noResultLabel, pa);
     noResultLabel->setPalette(pa);
     noResultLabel->setText(DApplication::translate("SearchBar", "No search results"));
     DFontSizeManager::instance()->bind(noResultLabel, DFontSizeManager::T4);
@@ -113,21 +112,18 @@ void DisplayContent::initUI()
 
     //notAuditLabel
     notAuditLabel = new DLabel(this);
-    // DGuiApplicationHelper::instance()->setPalette(notAuditLabel, pa);
     notAuditLabel->setPalette(pa);
     notAuditLabel->setText(DApplication::translate("Warning", "Security level for the current system: high\n audit only administrators can view the audit log"));
     DFontSizeManager::instance()->bind(notAuditLabel, DFontSizeManager::T4);
     notAuditLabel->setAlignment(Qt::AlignCenter);
 
     noCoredumpctlLabel = new DLabel(this);
-    // DGuiApplicationHelper::instance()->setPalette(noCoredumpctlLabel, pa);
     noCoredumpctlLabel->setPalette(pa);
     noCoredumpctlLabel->setText(DApplication::translate("Waring", "Unable to obtain crash information, please install systemd-coredump."));
     DFontSizeManager::instance()->bind(noCoredumpctlLabel, DFontSizeManager::T4);
     noCoredumpctlLabel->setAlignment(Qt::AlignCenter);
 
     noPermissionLabel = new DLabel(this);
-    // DGuiApplicationHelper::instance()->setPalette(noPermissionLabel, pa);
     noPermissionLabel->setPalette(pa);
     noPermissionLabel->setText(DApplication::translate("Warning", "You do not have permission to view it"));
     DFontSizeManager::instance()->bind(noPermissionLabel, DFontSizeManager::T4);

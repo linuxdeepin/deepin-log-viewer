@@ -302,9 +302,10 @@ int main(int argc, char *argv[])
         LogApplication a(argc, argv);
 
         qputenv("DTK_USE_SEMAPHORE_SINGLEINSTANCE", "1");
-
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
         //高分屏支持
         a.setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
         a.setAutoActivateWindows(true);
         a.loadTranslator();
         a.setOrganizationName("deepin");

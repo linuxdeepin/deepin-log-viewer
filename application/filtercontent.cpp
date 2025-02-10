@@ -239,7 +239,11 @@ void FilterContent::initUI()
  */
 void FilterContent::initConnections()
 {
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     connect(m_btnGroup, SIGNAL(buttonClicked(int)), this, SLOT(slot_buttonClicked(int)));
+#else
+    connect(m_btnGroup, &QButtonGroup::idClicked, this, &FilterContent::slot_buttonClicked);
+#endif
     connect(exportBtn, &DPushButton::clicked, this, &FilterContent::slot_exportButtonClicked);
     connect(cbx_dnf_lv, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxDnfLvIdxChanged(int)));
 
@@ -625,21 +629,12 @@ void FilterContent::updateWordWrap()
         QFontMetrics periodMetrics(periodLabel->font());
         QFontMetrics metrics(standFont);
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        periodLabel->setText(QFontMetrics(periodLabel->font()).elidedText(DApplication::translate("Label", "Period:"), Qt::ElideRight, 1 + periodMetrics.width(DApplication::translate("Label", "Period:"))));
-        m_todayBtn->setText(QFontMetrics(m_todayBtn->font()).elidedText(DApplication::translate("Button", "Today"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "Today"))));
-        m_threeDayBtn->setText(QFontMetrics(m_threeDayBtn->font()).elidedText(DApplication::translate("Button", "3 days"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "3 days"))));
-        m_lastWeekBtn->setText(QFontMetrics(m_lastWeekBtn->font()).elidedText(DApplication::translate("Button", "1 week"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "1 week"))));
-        m_lastMonthBtn->setText(QFontMetrics(m_lastMonthBtn->font()).elidedText(DApplication::translate("Button", "1 month"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "1 month"))));
-        m_threeMonthBtn->setText(QFontMetrics(m_threeMonthBtn->font()).elidedText(DApplication::translate("Button", "3 months"), Qt::ElideRight, 1 + metrics.width(DApplication::translate("Button", "3 months"))));
-#else
         periodLabel->setText(QFontMetrics(periodLabel->font()).elidedText(DApplication::translate("Label", "Period:"), Qt::ElideRight, 1 + periodMetrics.horizontalAdvance(DApplication::translate("Label", "Period:"))));
         m_todayBtn->setText(QFontMetrics(m_todayBtn->font()).elidedText(DApplication::translate("Button", "Today"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "Today"))));
         m_threeDayBtn->setText(QFontMetrics(m_threeDayBtn->font()).elidedText(DApplication::translate("Button", "3 days"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "3 days"))));
         m_lastWeekBtn->setText(QFontMetrics(m_lastWeekBtn->font()).elidedText(DApplication::translate("Button", "1 week"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "1 week"))));
         m_lastMonthBtn->setText(QFontMetrics(m_lastMonthBtn->font()).elidedText(DApplication::translate("Button", "1 month"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "1 month"))));
         m_threeMonthBtn->setText(QFontMetrics(m_threeMonthBtn->font()).elidedText(DApplication::translate("Button", "3 months"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "3 months"))));
-#endif
     }  else  {
         periodLabel->setText(DApplication::translate("Label", "Period:"));
         m_allBtn->setText(DApplication::translate("Button", "All"));
