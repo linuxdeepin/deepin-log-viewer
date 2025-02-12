@@ -165,13 +165,13 @@ bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isF
 
 bool DLDBusHandler::isFileExist(const QString &filePath)
 {
-    QDBusPendingReply<bool> reply = m_dbus->isFileExist(filePath);
+    QDBusPendingReply<QString> reply = m_dbus->isFileExist(filePath);
     reply.waitForFinished();
     bool bRet = false;
     if (reply.isError()) {
         qCWarning(logDBusHandler) << "call dbus iterface 'isFileExist()' failed. error info:" << reply.error().message();
     } else {
-        bRet = reply.value();
+        bRet = (reply.value() == "exist");
     }
     return bRet;
 }
