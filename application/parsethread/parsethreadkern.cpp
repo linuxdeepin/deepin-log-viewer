@@ -123,67 +123,54 @@ void ParseThreadKern::handleKern()
             LOG_MSG_BASE msg;
             //删除颜色格式字符
             str.replace(REG_EXP("\\#033\\[\\d+(;\\d+){0,2}m"), "");
+
+            // 以 "kernel:" 开始分割
+            int kernelIndex = str.indexOf("kernel:");
+            if (kernelIndex == -1) {
+                continue; // 如果没有找到 "kernel:"，则跳过该行
+            }
+            QString msgContent = str.mid(kernelIndex + 7); // 去掉 "kernel:" 及其前面的部分
+            str = str.left(kernelIndex); // 取 "kernel:" 前面的部分
+
             QStringList list = str.split(" ", SKIP_EMPTY_PARTS);
-            if (list.size() < 5)
+            if (list.size() < 2)
                 continue;
             //获取内核年份接口已添加，等待系统接口添加年份改变相关日志
             QStringList timeList;
-            if (list[0].contains("-")) {
-                timeList.append(list[0]);
-                timeList.append(list[1]);
-                iTime = formatDateTime(list[0], list[1]);
+            QString dateTimeStr = list[0];
+            bool isNewFormat = dateTimeStr.contains("T");
+            if (isNewFormat) {
+                QDateTime dateTime = QDateTime::fromString(dateTimeStr, Qt::ISODate);
+                if (!dateTime.isValid()) {
+                    dateTime = QDateTime::fromString(dateTimeStr, "yyyy-MM-ddTHH:mm:ss.zzzzzz+hh:mm");
+                }
+                timeList << dateTime.toString("yyyy-MM-dd") << dateTime.toString("HH:mm:ss");
+                iTime = dateTime.toMSecsSinceEpoch();
+
+                msg.hostName = list[1];
             } else {
-                timeList.append(list[0]);
-                timeList.append(list[1]);
-                timeList.append(list[2]);
-                iTime = formatDateTime(list[0], list[1], list[2]);
+                if (list[0].contains("-")) {
+                    timeList << list[0] << list[1];
+                    iTime = formatDateTime(list[0], list[1]);
+                    msg.hostName = list[2];
+                } else {
+                    timeList << list[0] << list[1] << list[2];
+                    iTime = formatDateTime(list[0], list[1], list[2]);
+                    msg.hostName = list[3];
+                }
             }
 
-            //对时间筛选
+            // 对时间筛选
             if (m_filter.timeFilterBegin > 0 && m_filter.timeFilterEnd > 0) {
                 if (iTime < m_filter.timeFilterBegin || iTime > m_filter.timeFilterEnd)
                     continue;
             }
 
             msg.dateTime = timeList.join(" ");
-            QStringList tmpList;
-            if (list[0].contains("-")) {
-                msg.hostName = list[2];
-                tmpList = list[3].split("[");
-            } else {
-                msg.hostName = list[3];
-                tmpList = list[4].split("[");
-            }
 
-            int m = 0;
-            //内核日志存在年份，解析用户名和进程id
-            if (list[0].contains("-")) {
-                if (tmpList.size() != 2) {
-                    msg.daemonName = list[3].split(":")[0];
-                } else {
-                    msg.daemonName = list[3].split("[")[0];
-                    QString id = list[3].split("[")[1];
-                    id.chop(2);
-                    msg.daemonId = id;
-                }
-                m = 4;
-            } else {//内核日志不存在年份,解析用户名和进程id
-                if (tmpList.size() != 2) {
-                    msg.daemonName = list[4].split(":")[0];
-                } else {
-                    msg.daemonName = list[4].split("[")[0];
-                    QString id = list[4].split("[")[1];
-                    id.chop(2);
-                    msg.daemonId = id;
-                }
-                m = 5;
-            }
-
-            QString msgInfo;
-            for (int k = m; k < list.size(); k++) {
-                msgInfo.append(list[k] + " ");
-            }
-            msg.msg = msgInfo;
+            msg.daemonName = "kernel";
+            msg.daemonId = "0";
+            msg.msg = msgContent.trimmed();
 
             dataList.append(QJsonDocument(msg.toJson()).toJson(QJsonDocument::Compact));
             if (!m_canRun) {
