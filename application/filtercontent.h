@@ -58,6 +58,7 @@ public:
      * @param value
      */
     void setChangedcomboxstate(bool value);
+
 protected:
     //  void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
