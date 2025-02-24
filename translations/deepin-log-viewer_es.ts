@@ -145,7 +145,7 @@
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
@@ -175,7 +175,7 @@
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"/>
+        <translation>El directorio de exportación no está disponible. Elija otro directorio para la operación .​</translation>
     </message>
 </context>
 <context>
@@ -237,11 +237,11 @@
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"/>
+        <translation>Aplicación:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>Submódulo:</translation>
     </message>
 </context>
 <context>
@@ -400,23 +400,23 @@
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"/>
+        <translation>EXE</translation>
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>Archivo principal</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>Nombre de usuario</translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Compensar</translation>
     </message>
 </context>
 <context>
@@ -478,14 +478,14 @@
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>Registro de volcado de núcleo</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>No se puede obtener información sobre el fallo, instale systemd-coredump.</translation>
     </message>
 </context>
 <context>
@@ -497,86 +497,91 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"/>
+        <translation>Nivel de seguridad para el sistema actual: alto
+Los administradores de solo auditoria pueden ver el registro de auditoria.</translation>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation>El registro de auditoría no existe.</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Exportar registros a la ruta especificada</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"/>
+        <translation>RUTA</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"/>
+        <translation>Exportar registros de tipos específicos</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"/>
+        <translation>TIPO</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"/>
+        <translation>Exportar registros de aplicaciones propias de desarrollo específico</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>NOMBRE DE LA APLICACIÓN PROPIA</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"/>
+        <translation>Exportar registros dentro de un período de tiempo específico</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"/>
+        <translation>PERÍODO</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"/>
+        <translation>Exportar registros dentro de un nivel de depuración específico</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"/>
+        <translation>NIVEL</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"/>
+        <translation>ESTADO DE ARRANQUE</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"/>
+        <translation>Exportar registros de arranque (no-klu) dentro de un estado específico</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"/>
+        <translation>Exportar eventos de apagado de arranque o registros de auditoría dentro de un tipo de evento específico</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"/>
+        <translation>TIPO DE EVENTO</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"/>
+        <translation>Exportar registros basados en resultados de búsqueda de palabras clave</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"/>
+        <translation>PALABRA CLAVE</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>Informar sobre el volcado de datos.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"/>
+        <translation>Exportar registros basados en el submodelo de la aplicación</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"/>
+        <translation>SUBMÓDULO</translation>
     </message>
 </context>
 <context>
