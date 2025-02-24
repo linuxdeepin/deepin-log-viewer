@@ -118,34 +118,34 @@
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"/>
+        <translation>Идентификация личности</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"/>
+        <translation>Дискреционный контроль доступа</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"/>
+        <translation>Обязательный контроль доступа</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"/>
+        <translation>Дистанционный</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"/>
+        <translation>Аудит документов</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Другой</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>почтовый индекс(*.почтовый индекс)</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
@@ -175,7 +175,7 @@
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"/>
+        <translation>Каталог экспорта недоступен. Пожалуйста, выберите другой каталог для операции экспорта.</translation>
     </message>
 </context>
 <context>
@@ -233,15 +233,15 @@
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"/>
+        <translation>Тип аудита:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"/>
+        <translation>Приложение:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>Подмодуль:</translation>
     </message>
 </context>
 <context>
@@ -392,15 +392,15 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Имя файла</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Измененное время</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>СИГНАЛ</translation>
     </message>
     <message>
         <source>EXE</source>
@@ -408,15 +408,15 @@
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>Основной файл</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>имя пользователя</translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Смещение</translation>
     </message>
 </context>
 <context>
@@ -466,15 +466,15 @@
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Другое бревно</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Пользовательский журнал</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"/>
+        <translation>Журнал аудита</translation>
     </message>
     <message>
         <source>Coredump Log</source>
@@ -485,7 +485,7 @@
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>Не удается получить информацию о сбое, пожалуйста, установите systemd-coredump.</translation>
     </message>
 </context>
 <context>
@@ -497,6 +497,11 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
+        <translation>Уровень безопасности для текущей системы: высокийуровень 
+аудита, только администраторы могут просматривать журнал аудита</translation>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -504,7 +509,7 @@
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Экспортируйте журналы по указанному пути</translation>
     </message>
     <message>
         <source>PATH</source>
