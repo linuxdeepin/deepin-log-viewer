@@ -74,7 +74,7 @@
     </message>
     <message>
         <source>Critical</source>
-        <translation>Критична</translation>
+        <translation>Критична помилка</translation>
     </message>
     <message>
         <source>Error</source>
@@ -205,7 +205,7 @@
     </message>
     <message>
         <source>User:</source>
-        <translation>Користувач: </translation>
+        <translation>Користувач:</translation>
     </message>
     <message>
         <source>PID:</source>
@@ -499,6 +499,10 @@
  audit only administrators can view the audit log</source>
         <translation>Рівень захисту поточної системи: високий
  журнал ревізії можуть переглядати лише адміністратори-ревізори</translation>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation>Журналу ревізії не існує.</translation>
     </message>
 </context>
 <context>
