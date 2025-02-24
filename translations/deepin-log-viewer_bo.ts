@@ -499,6 +499,10 @@
  audit only administrators can view the audit log</source>
         <translation>མིག་སྔའི་རྒྱུད་ཁོངས་ཀྱི་བདེ་འཇགས་རིམ་པ་ནི་མཐོ་བ་ཞེས་པ་ཡིན་པས། རྩིས་བཤེར་དོ་དམ་པ་ཁོ་ནས་རྩིས་བཤེར་ཉིན་ཐོ་ལ་བལྟས་ཆོག </translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>
