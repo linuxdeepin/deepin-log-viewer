@@ -82,7 +82,7 @@
     </message>
     <message>
         <source>Warning</source>
-        <translation>Avviso</translation>
+        <translation>avviso</translation>
     </message>
     <message>
         <source>Notice</source>
@@ -498,6 +498,10 @@ Localizzazione italiana a cura di Massimo A. Carofano.</translation>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
         <translation type="unfinished"/>
     </message>
 </context>

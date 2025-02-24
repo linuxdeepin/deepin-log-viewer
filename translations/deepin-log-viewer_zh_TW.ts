@@ -500,6 +500,10 @@
         <translation>目前系統安全等級為：高
 僅審計管理員可查看審計日誌</translation>
     </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>main</name>

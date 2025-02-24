@@ -328,7 +328,7 @@
     </message>
     <message>
         <source>Date and Time</source>
-        <translation>Dia i hora</translation>
+        <translation>Data i hora</translation>
     </message>
     <message>
         <source>Info</source>
@@ -499,6 +499,10 @@
  audit only administrators can view the audit log</source>
         <translation>Nivell de seguretat del sistema actual: alt
 Només els administradors poden veure el registre d&apos;auditoria.</translation>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation>El registre d&apos;auditoria no existeix.</translation>
     </message>
 </context>
 <context>

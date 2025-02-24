@@ -388,7 +388,7 @@
     </message>
     <message>
         <source>PID:</source>
-        <translation>Identif. procesu (PID):</translation>
+        <translation>Identif. procesu:</translation>
     </message>
     <message>
         <source>File Name</source>
@@ -497,6 +497,10 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
         <translation type="unfinished"/>
     </message>
 </context>
