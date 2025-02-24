@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>Action</name>
     <message>
@@ -147,7 +145,7 @@
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
@@ -418,7 +416,7 @@
     </message>
     <message>
         <source>Offset</source>
-        <translation>偏移量</translation>
+        <translation>进程</translation>
     </message>
 </context>
 <context>
@@ -504,7 +502,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation>审计日志不存在。</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
