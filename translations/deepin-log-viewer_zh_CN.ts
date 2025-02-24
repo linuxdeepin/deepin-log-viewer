@@ -416,7 +416,7 @@
     </message>
     <message>
         <source>Offset</source>
-        <translation>进程</translation>
+        <translation>偏移量</translation>
     </message>
 </context>
 <context>
@@ -502,7 +502,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>审计日志不存在。</translation>
     </message>
 </context>
 <context>
