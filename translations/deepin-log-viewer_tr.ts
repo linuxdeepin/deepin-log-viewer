@@ -175,7 +175,7 @@
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"/>
+        <translation>Dışa aktarma dizini mevcut değil. Lütfen dışa aktarma işlemi için başka bir dizin seçin.</translation>
     </message>
 </context>
 <context>
@@ -241,7 +241,7 @@
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>Alt modül:</translation>
     </message>
 </context>
 <context>
@@ -400,23 +400,23 @@
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"/>
+        <translation>EXE</translation>
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>Çekirdek Dosya</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>Kullanıcı adı</translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Offset</translation>
     </message>
 </context>
 <context>
@@ -478,14 +478,14 @@
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>Çekirdek dökümü günlüğü</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>Çökme bilgileri alınamadı, lütfen systemd-coredump&apos;ı yükleyin.</translation>
     </message>
 </context>
 <context>
@@ -497,7 +497,8 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"/>
+        <translation>Mevcut sistem için güvenlik seviyesi: yüksek
+yalnızca denetim yöneticileri denetim günlüğünü görüntüleyebilir</translation>
     </message>
     <message>
         <source>Audit log is not exist.</source>
@@ -508,63 +509,63 @@
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Günlükleri belirtilen yola aktar</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"/>
+        <translation>YOL</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"/>
+        <translation>Belirtilen türlerin günlüklerini dışa aktar</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"/>
+        <translation>TİP</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"/>
+        <translation>Belirtilen kendi geliştirdiğiniz uygulamaların günlüklerini dışa aktarın</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>KENDİ UYGULAMA ADI</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"/>
+        <translation>Günlükleri belirli bir zaman aralığında dışa aktarın</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"/>
+        <translation>SÜRE</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"/>
+        <translation>Belirtilen bir hata ayıklama düzeyi içinde günlükleri dışa aktarın</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"/>
+        <translation>SEVİYE</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"/>
+        <translation>ÖNYÜKLEME DURUMU</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"/>
+        <translation>Belirtilen bir durum içinde önyükleme(no-klu) günlüklerini dışa aktar</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"/>
+        <translation>Belirtilen bir olay türü içinde önyükleme-kapatma-olayı veya denetim günlüklerini dışa aktarın</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"/>
+        <translation>OLAY TÜRÜ</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"/>
+        <translation>Anahtar kelime arama sonuçlarına göre günlükleri dışa aktarın</translation>
     </message>
     <message>
         <source>KEY WORD</source>
@@ -572,7 +573,7 @@
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>Coredump bilgilerini bildirin.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
