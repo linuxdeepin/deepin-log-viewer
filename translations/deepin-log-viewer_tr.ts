@@ -502,7 +502,7 @@ yalnızca denetim yöneticileri denetim günlüğünü görüntüleyebilir</tran
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Denetim kaydı mevcut değil.</translation>
     </message>
 </context>
 <context>
@@ -569,7 +569,7 @@ yalnızca denetim yöneticileri denetim günlüğünü görüntüleyebilir</tran
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"/>
+        <translation>ANAHTAR KELİME</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
@@ -577,11 +577,11 @@ yalnızca denetim yöneticileri denetim günlüğünü görüntüleyebilir</tran
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"/>
+        <translation>Uygulama alt modeline göre günlükleri dışa aktarın</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"/>
+        <translation>ALT MODÜL</translation>
     </message>
 </context>
 <context>
