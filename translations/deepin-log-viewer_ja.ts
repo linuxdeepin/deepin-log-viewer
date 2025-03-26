@@ -126,7 +126,7 @@
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"/>
+        <translation>強制アクセス制御</translation>
     </message>
     <message>
         <source>Remote</source>
@@ -134,7 +134,7 @@
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"/>
+        <translation>ドキュメント監査</translation>
     </message>
     <message>
         <source>Other</source>
