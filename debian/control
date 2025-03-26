@@ -19,7 +19,6 @@ Build-Depends:
  libpolkit-qt6-1-dev | libpolkit-qt5-1-dev,
  libsystemd-dev,
  libicu-dev,
- libdframeworkdbus-dev,
  libgtest-dev,
  libgmock-dev,
  libzip-dev,
