@@ -3,118 +3,118 @@
     <name>Action</name>
     <message>
         <source>Display in file manager</source>
-        <translation type="unfinished"/>
+        <translation>ファイルマネージャーで表示</translation>
     </message>
     <message>
         <source>Clear log</source>
-        <translation type="unfinished"/>
+        <translation>ログをクリア</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>更新</translation>
     </message>
     <message>
         <source>Are you sure you want to clear the log?</source>
-        <translation type="unfinished"/>
+        <translation>ログをクリアしてもよろしいですか？</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>キャンセル</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>確認</translation>
     </message>
 </context>
 <context>
     <name>Button</name>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>すべて</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>今日</translation>
     </message>
     <message>
         <source>3 days</source>
-        <translation type="unfinished"/>
+        <translation>3日</translation>
     </message>
     <message>
         <source>1 week</source>
-        <translation type="unfinished"/>
+        <translation>1週</translation>
     </message>
     <message>
         <source>1 month</source>
-        <translation type="unfinished"/>
+        <translation>1ヶ月</translation>
     </message>
     <message>
         <source>3 months</source>
-        <translation type="unfinished"/>
+        <translation>3ヶ月</translation>
     </message>
     <message>
         <source>Export</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>エクスポート</translation>
     </message>
 </context>
 <context>
     <name>ComboBox</name>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>すべて</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation type="unfinished"/>
+        <translation>緊急</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation type="unfinished"/>
+        <translation>アラート</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation type="unfinished"/>
+        <translation>重大</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>エラー</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>警告</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation type="unfinished"/>
+        <translation>通知</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>情報</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation type="unfinished"/>
+        <translation>デバッグ</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation type="unfinished"/>
+        <translation>ログイン</translation>
     </message>
     <message>
         <source>Boot</source>
-        <translation type="unfinished"/>
+        <translation>ブート</translation>
     </message>
     <message>
         <source>Shutdown</source>
-        <translation type="unfinished"/>
+        <translation>シャットダウン</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>非常に重大</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>トレース</translation>
     </message>
     <message>
         <source>Identity authentication</source>
@@ -130,7 +130,7 @@
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"/>
+        <translation>リモート</translation>
     </message>
     <message>
         <source>Document audit</source>
@@ -138,44 +138,44 @@
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>その他</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation type="unfinished"/>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>エクスポートしています...</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>キャンセル</translation>
     </message>
 </context>
 <context>
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>エクスポートが完了しました</translation>
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>エクスポートできませんでした</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"/>
+        <translation>選択されたディレクトリは使用できません。その他のディレクトリを使用してもう一度エクスポート操作を行ってください。</translation>
     </message>
 </context>
 <context>
@@ -189,102 +189,102 @@
     <name>Label</name>
     <message>
         <source>Period:</source>
-        <translation type="unfinished"/>
+        <translation>期間:</translation>
     </message>
     <message>
         <source>Level:  </source>
-        <translation type="unfinished"/>
+        <translation>レベル:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>ステータス:</translation>
     </message>
     <message>
         <source>Event Type:</source>
-        <translation type="unfinished"/>
+        <translation>イベントタイプ:</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation type="unfinished"/>
+        <translation>ユーザー:</translation>
     </message>
     <message>
         <source>PID:</source>
-        <translation type="unfinished"/>
+        <translation>PID:</translation>
     </message>
     <message>
         <source>Action:</source>
-        <translation type="unfinished"/>
+        <translation>アクション:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation type="unfinished"/>
+        <translation>ユーザー名:</translation>
     </message>
     <message>
         <source>Boot record</source>
-        <translation type="unfinished"/>
+        <translation>ブートレコード</translation>
     </message>
     <message>
         <source>Shutdown record</source>
-        <translation type="unfinished"/>
+        <translation>シャットダウンレコード</translation>
     </message>
     <message>
         <source>Login record</source>
-        <translation type="unfinished"/>
+        <translation>ログインレコード</translation>
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"/>
+        <translation>監査タイプ:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"/>
+        <translation>アプリケーション:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>サブモジュール:</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>警告</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation type="unfinished"/>
+        <translation>デバッグ</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>情報</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>エラー</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation type="unfinished"/>
+        <translation>緊急</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation type="unfinished"/>
+        <translation>アラート</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation type="unfinished"/>
+        <translation>重大</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation type="unfinished"/>
+        <translation>通知</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>トレース</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>非常に重大</translation>
     </message>
 </context>
 <context>
@@ -298,7 +298,7 @@
     <name>Main</name>
     <message>
         <source>Log Viewer</source>
-        <translation type="unfinished"/>
+        <translation>ログビューア</translation>
     </message>
     <message>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
@@ -328,19 +328,19 @@
     </message>
     <message>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>日時</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>情報</translation>
     </message>
     <message>
         <source>User</source>
-        <translation type="unfinished"/>
+        <translation>ユーザー</translation>
     </message>
     <message>
         <source>PID</source>
-        <translation type="unfinished"/>
+        <translation>PID</translation>
     </message>
     <message>
         <source>Source</source>
@@ -384,15 +384,15 @@
     </message>
     <message>
         <source>User:</source>
-        <translation type="unfinished"/>
+        <translation>ユーザー:</translation>
     </message>
     <message>
         <source>PID:</source>
-        <translation type="unfinished"/>
+        <translation>PID:</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>ファイル名</translation>
     </message>
     <message>
         <source>Time Modified</source>
@@ -408,77 +408,77 @@
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>コアファイル</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>ユーザー名</translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>オフセット</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>日付と時刻</translation>
     </message>
 </context>
 <context>
     <name>Tree</name>
     <message>
         <source>System Log</source>
-        <translation type="unfinished"/>
+        <translation>システムログ</translation>
     </message>
     <message>
         <source>Kernel Log</source>
-        <translation type="unfinished"/>
+        <translation>カーネルログ</translation>
     </message>
     <message>
         <source>Boot Log</source>
-        <translation type="unfinished"/>
+        <translation>ブートログ</translation>
     </message>
     <message>
         <source>dpkg Log</source>
-        <translation type="unfinished"/>
+        <translation>dpkgログ</translation>
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation type="unfinished"/>
+        <translation>Kwinログ</translation>
     </message>
     <message>
         <source>Xorg Log</source>
-        <translation type="unfinished"/>
+        <translation>Xorgログ</translation>
     </message>
     <message>
         <source>Application Log</source>
-        <translation type="unfinished"/>
+        <translation>アプリケーションログ</translation>
     </message>
     <message>
         <source>Boot-Shutdown Event</source>
-        <translation type="unfinished"/>
+        <translation>ブート - シャットダウンログ</translation>
     </message>
     <message>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>dnfログ</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>その他のログ</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>カスタムログ</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"/>
+        <translation>監査ログ</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>コアダンプログ</translation>
     </message>
 </context>
 <context>
@@ -497,6 +497,10 @@
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -583,31 +587,31 @@
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>更新間隔</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>10秒</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>1分</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5分</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>更新しない</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
+        <translation>すべてエクスポート</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>今すぐ更新</translation>
     </message>
 </context>
 </TS>
