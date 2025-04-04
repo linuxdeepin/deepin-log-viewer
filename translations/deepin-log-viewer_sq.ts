@@ -122,19 +122,19 @@
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"/>
+        <translation>Kontrolli Diskretional</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"/>
+        <translation>Kontrolli Obligatorike</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"/>
+        <translation>Remote</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"/>
+        <translation>Audita Dokumente</translation>
     </message>
     <message>
         <source>Other</source>
@@ -380,7 +380,7 @@
     </message>
     <message>
         <source>Null</source>
-        <translation type="unfinished"/>
+        <translation>Nëjë</translation>
     </message>
     <message>
         <source>User:</source>
@@ -400,15 +400,15 @@
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"/>
+        <translation>EXE</translation>
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>Fajll Core</translation>
     </message>
     <message>
         <source>User Name </source>
@@ -416,7 +416,7 @@
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Offset</translation>
     </message>
 </context>
 <context>
@@ -502,7 +502,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Regjistro Audita nuk ekziston.</translation>
     </message>
 </context>
 <context>
@@ -529,7 +529,7 @@
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>SELF APPNEM</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
@@ -573,7 +573,7 @@
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>Raporto informacione për coredump.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
