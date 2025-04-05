@@ -502,7 +502,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation> rejuven نسخة الرقابة لا توجد.</translation>
     </message>
 </context>
 <context>
