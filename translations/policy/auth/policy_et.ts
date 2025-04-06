@@ -4,42 +4,42 @@
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
 			<source>Authentication is required to view the log</source>
-			<translation type="unfinished"/>
+			<translation>Logi kuvamiseks on vajalik autentimine</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>autentimine</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.self!message" line="0"/>
 			<source>Authentication is required to view the log</source>
-			<translation type="unfinished"/>
+			<translation>Logi kuvamiseks on vajalik autentimine</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.self!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>autentimine</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 			<source>Authentication is required to export logs</source>
-			<translation type="unfinished"/>
+			<translation>Logide eksportimiseks on vajalik autentimine</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>autentimine</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 			<source>Authentication is required to export logs</source>
-			<translation type="unfinished"/>
+			<translation>Logide eksportimiseks on vajalik autentimine</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>autentimine</translation>
 		</message>
 	</context>
 </TS>
