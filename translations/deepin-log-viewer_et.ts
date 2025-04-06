@@ -3,500 +3,506 @@
     <name>Action</name>
     <message>
         <source>Display in file manager</source>
-        <translation type="unfinished"/>
+        <translation>Näita failihalduris</translation>
     </message>
     <message>
         <source>Clear log</source>
-        <translation type="unfinished"/>
+        <translation>Tühista log</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>Värskenda</translation>
     </message>
     <message>
         <source>Are you sure you want to clear the log?</source>
-        <translation type="unfinished"/>
+        <translation>Kas oled kindel, et tahad tühista logi?
+</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Lõpetada</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Kinnita</translation>
     </message>
 </context>
 <context>
     <name>Button</name>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>Kõik</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Täna</translation>
     </message>
     <message>
         <source>3 days</source>
-        <translation type="unfinished"/>
+        <translation>3 päeva</translation>
     </message>
     <message>
         <source>1 week</source>
-        <translation type="unfinished"/>
+        <translation>1 nädal</translation>
     </message>
     <message>
         <source>1 month</source>
-        <translation type="unfinished"/>
+        <translation>1 kuu</translation>
     </message>
     <message>
         <source>3 months</source>
-        <translation type="unfinished"/>
+        <translation>3 kuu</translation>
     </message>
     <message>
         <source>Export</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Eksporti</translation>
     </message>
 </context>
 <context>
     <name>ComboBox</name>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>Kõik</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation type="unfinished"/>
+        <translation>Tõenäosuslik viga</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation type="unfinished"/>
+        <translation>Hoiatus</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation type="unfinished"/>
+        <translation>Kriitiline</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Viga</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>Vara</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation type="unfinished"/>
+        <translation>Hoiatus</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation type="unfinished"/>
+        <translation>Debug</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation type="unfinished"/>
+        <translation>Sisselogimine</translation>
     </message>
     <message>
         <source>Boot</source>
-        <translation type="unfinished"/>
+        <translation>Pärast sissejumist</translation>
     </message>
     <message>
         <source>Shutdown</source>
-        <translation type="unfinished"/>
+        <translation>Lülitamise pärast</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Super kriitiline</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Seitsme</translation>
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"/>
+        <translation>Tunnistamise autoriseerimine</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"/>
+        <translation>Vaba pääsukontroll</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"/>
+        <translation>Vajalik pääsukontroll</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"/>
+        <translation>Väga riiveldane</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"/>
+        <translation>Dokumenti kontroll</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Muidu</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>zip(*.zip</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation type="unfinished"/>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html</translation>
     </message>
 </context>
 <context>
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>Eksportimine...</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Katkesta</translation>
     </message>
 </context>
 <context>
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>Eksport on edukas</translation>
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Eksport ei õnnestunud</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"/>
+        <translation>Eksportimise kausta ei ole saadaval. Vali mõni teine kaust eksportimiseks.</translation>
     </message>
 </context>
 <context>
     <name>File</name>
     <message>
         <source>Export File</source>
-        <translation type="unfinished"/>
+        <translation>Eksporti fail</translation>
     </message>
 </context>
 <context>
     <name>Label</name>
     <message>
         <source>Period:</source>
-        <translation type="unfinished"/>
+        <translation>Periood:</translation>
     </message>
     <message>
         <source>Level:  </source>
-        <translation type="unfinished"/>
+        <translation>Tasand:  </translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>Staatus:</translation>
     </message>
     <message>
         <source>Event Type:</source>
-        <translation type="unfinished"/>
+        <translation>Sujuva tüüp:</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation type="unfinished"/>
+        <translation>Kasutaja:</translation>
     </message>
     <message>
         <source>PID:</source>
-        <translation type="unfinished"/>
+        <translation>PID:</translation>
     </message>
     <message>
         <source>Action:</source>
-        <translation type="unfinished"/>
+        <translation>Töö:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation type="unfinished"/>
+        <translation>Kasutajanimi:</translation>
     </message>
     <message>
         <source>Boot record</source>
-        <translation type="unfinished"/>
+        <translation>Start rekord</translation>
     </message>
     <message>
         <source>Shutdown record</source>
-        <translation type="unfinished"/>
+        <translation>Lülitusjuhtmised</translation>
     </message>
     <message>
         <source>Login record</source>
-        <translation type="unfinished"/>
+        <translation>Sisselogimisjuhtmised</translation>
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"/>
+        <translation>Ülevaatus tüüp:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"/>
+        <translation>Aplikaatsioon:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>Alammoduul:</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>Hoiatus</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation type="unfinished"/>
+        <translation>Tundmatu</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Viga</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation type="unfinished"/>
+        <translation>Aega-ajaline</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation type="unfinished"/>
+        <translation>Hoiatus</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation type="unfinished"/>
+        <translation>Kriitiline</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation type="unfinished"/>
+        <translation>Hoiatus</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Jälitus</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Ülalooline kriitiline</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
         <source>Log file is empty</source>
-        <translation type="unfinished"/>
+        <translation>Logifail on tühi</translation>
     </message>
 </context>
 <context>
     <name>Main</name>
     <message>
         <source>Log Viewer</source>
-        <translation type="unfinished"/>
+        <translation>Logide vaatamine</translation>
     </message>
     <message>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation type="unfinished"/>
+        <translation>Logide vaatamiseks on kasulik liikme.</translation>
     </message>
 </context>
 <context>
     <name>SearchBar</name>
     <message>
         <source>No search results</source>
-        <translation type="unfinished"/>
+        <translation>Otsimistulemusi ei leitud</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Otsi</translation>
     </message>
 </context>
 <context>
     <name>Table</name>
     <message>
         <source>Level</source>
-        <translation type="unfinished"/>
+        <translation>Tase</translation>
     </message>
     <message>
         <source>Process</source>
-        <translation type="unfinished"/>
+        <translation>Protsess</translation>
     </message>
     <message>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>Kuupäev ja kellaaeg</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>Info</translation>
     </message>
     <message>
         <source>User</source>
-        <translation type="unfinished"/>
+        <translation>Kasutaja</translation>
     </message>
     <message>
         <source>PID</source>
-        <translation type="unfinished"/>
+        <translation>PID</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"/>
+        <translation>Source</translation>
     </message>
     <message>
         <source>Action</source>
-        <translation type="unfinished"/>
+        <translation>Action</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Status</translation>
     </message>
     <message>
         <source>Event Type</source>
-        <translation type="unfinished"/>
+        <translation>Event Type</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"/>
+        <translation>Username</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation type="unfinished"/>
+        <translation>Tasandus:</translation>
     </message>
     <message>
         <source>Process:</source>
-        <translation type="unfinished"/>
+        <translation>Process:</translation>
     </message>
     <message>
         <source>Date and Time:</source>
-        <translation type="unfinished"/>
+        <translation>Kuupäev ja kellaaeg:</translation>
     </message>
     <message>
         <source>Info:</source>
-        <translation type="unfinished"/>
+        <translation>Info:</translation>
     </message>
     <message>
         <source>Null</source>
-        <translation type="unfinished"/>
+        <translation>Null</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation type="unfinished"/>
+        <translation>User:</translation>
     </message>
     <message>
         <source>PID:</source>
-        <translation type="unfinished"/>
+        <translation>PID:</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Failinimi</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Muutustegu aeg</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"/>
+        <translation>EXE</translation>
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>Kernealiit</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>Kasutajanimi</translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Shift</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>Kuupäev ja kellaaeg</translation>
     </message>
 </context>
 <context>
     <name>Tree</name>
     <message>
         <source>System Log</source>
-        <translation type="unfinished"/>
+        <translation>Süsteemilog</translation>
     </message>
     <message>
         <source>Kernel Log</source>
-        <translation type="unfinished"/>
+        <translation>Kernellog</translation>
     </message>
     <message>
         <source>Boot Log</source>
-        <translation type="unfinished"/>
+        <translation>Pärast käivitamist log</translation>
     </message>
     <message>
         <source>dpkg Log</source>
-        <translation type="unfinished"/>
+        <translation>dpkg Log</translation>
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation type="unfinished"/>
+        <translation>Kwin logi</translation>
     </message>
     <message>
         <source>Xorg Log</source>
-        <translation type="unfinished"/>
+        <translation>Xorg logi</translation>
     </message>
     <message>
         <source>Application Log</source>
-        <translation type="unfinished"/>
+        <translation>Aplikaatsioonilogi</translation>
     </message>
     <message>
         <source>Boot-Shutdown Event</source>
-        <translation type="unfinished"/>
+        <translation>Pärast käivitamist-lülitamist sündmus</translation>
     </message>
     <message>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>dnf logi</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Muu logi</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Mõeldud logi</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"/>
+        <translation>Tööturilogi</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>Coredump logi</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>Valemi andmete saamiseks ei suuda saavutada, palun installi sistem-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>Sinult ei ole õigust vaadata seda</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
+        <translation>Juridislik nivikusüsteem: kõrge
+ kontrolllogi vaatamiseks on vaja administratori õigusi</translation>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -504,110 +510,110 @@
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Eksporti logid määratud kataloogi</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"/>
+        <translation>KATALOOG</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"/>
+        <translation>Eksporti logid määratud tüübil</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"/>
+        <translation>TÜÜP</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"/>
+        <translation>Eksporti logid määratud isearendatud rakendustel</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>ISEENDA NIMI</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"/>
+        <translation>Eksporti logid määratud ajavahemikus</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"/>
+        <translation>AJVHÄMEK</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"/>
+        <translation>Eksporti logid määratud debug-saadetuse puhul</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"/>
+        <translation>SAADETUS</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"/>
+        <translation>KÄIVITAMISSTATUSE</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"/>
+        <translation>Eksporti käivitamis(logi) määratud olekus</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"/>
+        <translation>Eksporti käivitamis-lülitamis-sündmuste või kontrolllogid määratud sündmuse tüübil</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"/>
+        <translation>SOOMEETIITUÜP</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"/>
+        <translation>Eksportige logid mõistede otsingu tulemuste põhjal</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"/>
+        <translation>MOODUSTUS</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>Leidke veateateandmed.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"/>
+        <translation>Eksportige logid rakenduse alammodeli põhjal</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"/>
+        <translation>ALAMMODUL</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>Värskenduse intervall</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>10 sek</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>1 min</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 min</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>Ei värskenda</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
+        <translation>Eksportige kõik</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>Värskenda nüüd</translation>
     </message>
 </context>
 </TS>
