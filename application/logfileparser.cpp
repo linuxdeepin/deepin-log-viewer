@@ -262,6 +262,15 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
         appFilter.execPath = appLogConfig.subModules[0].execPath;
         appFilterList.push_back(appFilter);
     } else if (appLogConfig.subModules.size() > 1) {
+        // 使用一个空的filter获取没有设置子模块的日志
+        APP_FILTERS defaultFilter = iAPPFilter;
+        defaultFilter.submodule = "";
+        defaultFilter.filter = "";
+        // 使用file类型日志但没有设置日志路径，使用journalCtl尝试获取
+        if (defaultFilter.path.isEmpty() && defaultFilter.logType == "file")
+            defaultFilter.logType = "journal";
+        appFilterList.push_back(defaultFilter);
+
         for (auto submodule : appLogConfig.subModules) {
             APP_FILTERS appFilter = iAPPFilter;
             appFilter.submodule = submodule.name;
