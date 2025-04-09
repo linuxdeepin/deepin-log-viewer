@@ -1279,31 +1279,20 @@ QList<LOG_MSG_APPLICATOIN> LogBackend::filterApp(APP_FILTERS appFilter, const QL
         return iList;
     }
 
-    if (appFilter.submodule.isEmpty()) {
-        for (int i = 0; i < iList.size(); i++) {
-            LOG_MSG_APPLICATOIN msg = iList.at(i);
-            if (msg.dateTime.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.level.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.src.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.msg.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.subModule.contains(appFilter.searchstr, Qt::CaseInsensitive)) {
+    for (int i = 0; i < iList.size(); i++) {
+        LOG_MSG_APPLICATOIN msg = iList.at(i);
+        if (msg.subModule == "" && !appFilter.submodule.isEmpty())
+            continue;
+        if (msg.dateTime.contains(appFilter.searchstr, Qt::CaseInsensitive)
+            || msg.level.contains(appFilter.searchstr, Qt::CaseInsensitive)
+            || msg.src.contains(appFilter.searchstr, Qt::CaseInsensitive)
+            || msg.msg.contains(appFilter.searchstr, Qt::CaseInsensitive)
+            || msg.subModule.contains(appFilter.searchstr, Qt::CaseInsensitive)) {
+            if (appFilter.submodule.isEmpty() || msg.subModule.compare(appFilter.submodule, Qt::CaseInsensitive) == 0)
                 rsList.append(msg);
-            }
-        }
-    } else {
-        for (int i = 0; i < iList.size(); i++) {
-            LOG_MSG_APPLICATOIN msg = iList.at(i);
-            if (msg.dateTime.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.level.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.src.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.msg.contains(appFilter.searchstr, Qt::CaseInsensitive)
-                    || msg.subModule.contains(appFilter.searchstr, Qt::CaseInsensitive)) {
-                if (msg.subModule.compare(appFilter.submodule, Qt::CaseInsensitive) == 0) {
-                    rsList.append(msg);
-                }
-            }
         }
     }
+
     return rsList;
 }
 
