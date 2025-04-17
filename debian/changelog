@@ -1,3 +1,10 @@
+deepin-log-viewer (6.5.10) unstable; urgency=medium
+
+  * chore: update desktop file
+  * chore: update translations.
+
+ -- renbin <renbin@uniontech.com>  Thu, 17 Apr 2025 10:44:49 +0800
+
 deepin-log-viewer (6.5.9) unstable; urgency=medium
 
   * chore: New version 6.5.9.
