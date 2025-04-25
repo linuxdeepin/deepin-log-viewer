@@ -238,88 +238,98 @@ void LogApplicationHelper::createDesktopFiles()
     m_desktop_files.clear();
     m_en_trans_map.clear();
 
-    //在该目录下遍历所有desktop文件
-    QString path = "/usr/share/applications";
-    QDir dir(path);
-    if (!dir.exists())
-        return;
+    // 定义要搜索的目录列表
+    QStringList searchPaths = {
+        "/usr/share/applications",
+        "/var/lib/linglong/entries/share/applications"
+    };
 
-    QStringList fileInfoList = dir.entryList(QDir::Files | QDir::NoDotAndDotDot);
-    QStringList tempDesktopFiles;
     QStringList regStr {"deepin-", "dde-", "org.deepin", "com.deepin", "uos-"};
-    for (QString desktop : fileInfoList) {
-        //需要符合以deepin或者dde开头的应用
-        for (auto &it : regStr) {
-            if (desktop.contains(it)) {
-                tempDesktopFiles.append(desktop);
-                break;
-            }
-        }
-    }
-    for (QString var : tempDesktopFiles) {
-        QString filePath = path + "/" + var;
-        QFile fi(filePath);
-        if (!fi.open(QIODevice::ReadOnly))
+    
+    // 遍历所有搜索目录
+    for (const QString &path : searchPaths) {
+        QDir dir(path);
+        if (!dir.exists())
             continue;
-        bool isDeepin = false;
-        bool isGeneric = false;
-        bool isName = false;
-        bool canDisplay = true;
-        while (!fi.atEnd()) {
-            QString lineStr = fi.readLine();
-            lineStr.replace("\n", "");
 
-            if (lineStr.startsWith("GenericName", Qt::CaseInsensitive) && !isGeneric) {
-                isGeneric = true;
-            }
-            if (lineStr.startsWith("Name", Qt::CaseInsensitive) && !isName) {
-                isName = true;
-            }
-            if (lineStr.startsWith("Hidden")) {
-                QStringList hiddenList = lineStr.split("=", SKIP_EMPTY_PARTS);
-                if (hiddenList.value(1, "") == "true") {
-                    canDisplay = false;
+        QStringList fileInfoList = dir.entryList(QDir::Files | QDir::NoDotAndDotDot);
+        QStringList tempDesktopFiles;
+        
+        for (QString desktop : fileInfoList) {
+            //需要符合以deepin或者dde开头的应用
+            for (auto &it : regStr) {
+                if (desktop.contains(it)) {
+                    tempDesktopFiles.append(desktop);
+                    break;
                 }
-            }
-            QString currentDesktop(qgetenv("XDG_CURRENT_DESKTOP"));
-            if (lineStr.startsWith("OnlyShowIn")) {
-                QString onlyShowValue = lineStr.split("=", SKIP_EMPTY_PARTS).value(1, "");
-                if (onlyShowValue.contains(currentDesktop)) {
-                    continue;
-                } else {
-                    canDisplay = false;
-                }
-            }
-
-            if (lineStr.startsWith("NotShowIn")) {
-                QStringList notShowInList = lineStr.split("=", SKIP_EMPTY_PARTS).value(1, "").split(";", SKIP_EMPTY_PARTS);
-                if (std::any_of(notShowInList.begin(), notShowInList.end(), [currentDesktop](const auto & data) {
-                return data == currentDesktop;
-            })) {
-                    canDisplay = false;
-                }
-            }
-
-            if (!lineStr.contains("X-Deepin-Vendor", Qt::CaseInsensitive)) {
-                continue;
-            }
-
-            QStringList _x_vendor_list = lineStr.split("=", SKIP_EMPTY_PARTS);
-            if (_x_vendor_list.count() != 2) {
-                continue;
-            }
-
-            QString rval = _x_vendor_list[1];
-            if (0 == rval.compare("deepin", Qt::CaseInsensitive)) {
-                isDeepin = true;
-                break;
             }
         }
-        fi.close();
-        //转换插入应用包名和应用显示文本到数据结构
-        if (canDisplay) {
-            m_desktop_files.append(var);
-            generateTransName(filePath, var.split(QDir::separator()).last(), isDeepin, isGeneric, isName);
+        
+        for (QString var : tempDesktopFiles) {
+            QString filePath = path + "/" + var;
+            QFile fi(filePath);
+            if (!fi.open(QIODevice::ReadOnly))
+                continue;
+            bool isDeepin = false;
+            bool isGeneric = false;
+            bool isName = false;
+            bool canDisplay = true;
+            while (!fi.atEnd()) {
+                QString lineStr = fi.readLine();
+                lineStr.replace("\n", "");
+
+                if (lineStr.startsWith("GenericName", Qt::CaseInsensitive) && !isGeneric) {
+                    isGeneric = true;
+                }
+                if (lineStr.startsWith("Name", Qt::CaseInsensitive) && !isName) {
+                    isName = true;
+                }
+                if (lineStr.startsWith("Hidden")) {
+                    QStringList hiddenList = lineStr.split("=", SKIP_EMPTY_PARTS);
+                    if (hiddenList.value(1, "") == "true") {
+                        canDisplay = false;
+                    }
+                }
+                QString currentDesktop(qgetenv("XDG_CURRENT_DESKTOP"));
+                if (lineStr.startsWith("OnlyShowIn")) {
+                    QString onlyShowValue = lineStr.split("=", SKIP_EMPTY_PARTS).value(1, "");
+                    if (onlyShowValue.contains(currentDesktop)) {
+                        continue;
+                    } else {
+                        canDisplay = false;
+                    }
+                }
+
+                if (lineStr.startsWith("NotShowIn")) {
+                    QStringList notShowInList = lineStr.split("=", SKIP_EMPTY_PARTS).value(1, "").split(";", SKIP_EMPTY_PARTS);
+                    if (std::any_of(notShowInList.begin(), notShowInList.end(), [currentDesktop](const auto & data) {
+                    return data == currentDesktop;
+                })) {
+                        canDisplay = false;
+                    }
+                }
+
+                if (!lineStr.contains("X-Deepin-Vendor", Qt::CaseInsensitive)) {
+                    continue;
+                }
+
+                QStringList _x_vendor_list = lineStr.split("=", SKIP_EMPTY_PARTS);
+                if (_x_vendor_list.count() != 2) {
+                    continue;
+                }
+
+                QString rval = _x_vendor_list[1];
+                if (0 == rval.compare("deepin", Qt::CaseInsensitive)) {
+                    isDeepin = true;
+                    break;
+                }
+            }
+            fi.close();
+            //转换插入应用包名和应用显示文本到数据结构
+            if (canDisplay) {
+                m_desktop_files.append(var);
+                generateTransName(filePath, var.split(QDir::separator()).last(), isDeepin, isGeneric, isName);
+            }
         }
     }
 }
