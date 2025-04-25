@@ -1,3 +1,10 @@
+deepin-log-viewer (6.5.11) unstable; urgency=medium
+
+  * update version to 6.5.11
+  * Add linglong desktop file path.
+
+ -- dengzhongyuan <dengzhongyuan@uniontech.com>  Fri, 25 Apr 2025 17:10:21 +0800
+
 deepin-log-viewer (6.5.10) unstable; urgency=medium
 
   * chore: update desktop file
