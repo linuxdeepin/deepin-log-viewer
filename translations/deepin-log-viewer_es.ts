@@ -171,7 +171,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation>Exportar fallós</translation>
+        <translation>Fallo al exportar</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
