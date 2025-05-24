@@ -58,6 +58,7 @@ LogAuthThread::LogAuthThread(QObject *parent)
     //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
     thread_count++;
     m_threadCount = thread_count;
+    qCDebug(logAuthWork) << "LogAuthThread created, thread count:" << thread_count;
     initDnfLevelMap();
     initLevelMap();
 }
@@ -67,6 +68,7 @@ LogAuthThread::LogAuthThread(QObject *parent)
  */
 LogAuthThread::~LogAuthThread()
 {
+    qCDebug(logAuthWork) << "LogAuthThread destroyed";
     stopProccess();
 }
 void LogAuthThread::initDnfLevelMap()
@@ -165,6 +167,7 @@ void LogAuthThread::run()
 {
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
+    qCInfo(logAuthWork) << "LogAuthThread started processing, type:" << m_type;
     //根据类型成员变量执行对应日志的获取逻辑
     switch (m_type) {
     case KERN:
@@ -202,6 +205,7 @@ void LogAuthThread::run()
     }
 
     m_canRun = false;
+    qCInfo(logAuthWork) << "LogAuthThread finished processing";
 }
 
 #include <QFile>
@@ -210,6 +214,7 @@ void LogAuthThread::run()
  */
 void LogAuthThread::handleBoot()
 {
+    qCDebug(logAuthWork) << "Start processing boot logs, file count:" << m_FilePath.count();
     QList<LOG_MSG_BOOT> bList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
@@ -285,6 +290,7 @@ void LogAuthThread::handleBoot()
         emit bootData(m_threadCount, bList);
     }
     emit bootFinished(m_threadCount);
+    qCDebug(logAuthWork) << "Finished processing boot logs, total items:" << bList.count();
 }
 
 /**
@@ -292,6 +298,7 @@ void LogAuthThread::handleBoot()
  */
 void LogAuthThread::handleKern()
 {
+    qCDebug(logAuthWork) << "Start processing kernel logs, file count:" << m_FilePath.count();
     QList<LOG_MSG_JOURNAL> kList;
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
@@ -448,6 +455,7 @@ void LogAuthThread::handleKern()
         emit kernData(m_threadCount, kList);
     }
     emit kernFinished(m_threadCount);
+    qCDebug(logAuthWork) << "Finished processing kernel logs, total items:" << kList.count();
 }
 
 /**

@@ -4,6 +4,10 @@
 
 #include "exportprogressdlg.h"
 #include "structdef.h"
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logExportProgress)
+Q_LOGGING_CATEGORY(logExportProgress, "log.viewer.export.progress")
 
 #include <DLabel>
 #include <DApplication>
@@ -22,6 +26,7 @@
 ExportProgressDlg::ExportProgressDlg(DWidget *parent)
     : DDialog(parent)
 {
+    qCDebug(logExportProgress) << "Export progress dialog initializing...";
     setIcon(QIcon::fromTheme("deepin-log-viewer"));
 
     DWidget *pWidget = new DWidget(this);
@@ -62,8 +67,12 @@ ExportProgressDlg::ExportProgressDlg(DWidget *parent)
 void ExportProgressDlg::setProgressBarRange(int minValue, int maxValue)
 {
     if (m_pExportProgressBar != nullptr) {
-        if (maxValue > minValue)
+        if (maxValue > minValue) {
+            qCDebug(logExportProgress) << QString("Setting progress bar range: %1 to %2").arg(minValue).arg(maxValue);
             m_pExportProgressBar->setRange(minValue, maxValue);
+        } else {
+            qCWarning(logExportProgress) << "Invalid progress bar range:" << minValue << ">" << maxValue;
+        }
     }
 }
 
@@ -74,8 +83,11 @@ void ExportProgressDlg::setProgressBarRange(int minValue, int maxValue)
 void ExportProgressDlg::updateProgressBarValue(int curValue)
 {
     if (m_pExportProgressBar != nullptr) {
+        qCDebug(logExportProgress) << "Updating progress bar value:" << curValue;
         m_pExportProgressBar->setValue(curValue);
         update();
+    } else {
+        qCWarning(logExportProgress) << "Progress bar is null when trying to update value";
     }
 }
 
@@ -86,6 +98,7 @@ void ExportProgressDlg::updateProgressBarValue(int curValue)
 void ExportProgressDlg::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event)
+    qCDebug(logExportProgress) << "Export progress dialog closing, resetting progress bar";
     m_pExportProgressBar->setValue(m_pExportProgressBar->minimum());
     emit sigCloseBtnClicked();
 }

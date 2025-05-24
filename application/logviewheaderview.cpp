@@ -22,6 +22,7 @@ static const int kSpacingMargin = 4;
 LogViewHeaderView::LogViewHeaderView(Qt::Orientation orientation, QWidget *parent)
     : DHeaderView(orientation, parent)
 {
+    qInfo() << "Initializing LogViewHeaderView with orientation:" << orientation;
     m_option = new QStyleOptionHeader;
     viewport()->setAutoFillBackground(false);
     setStretchLastSection(true);
@@ -33,6 +34,7 @@ LogViewHeaderView::LogViewHeaderView(Qt::Orientation orientation, QWidget *paren
 #ifdef DTKWIDGET_CLASS_DSizeMode
     // 紧凑模式信号处理
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &LogViewHeaderView::updateSizeMode);
+    qDebug() << "Connected sizeModeChanged signal";
     updateSizeMode();
 #endif
 }
@@ -238,6 +240,7 @@ int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
 
 void LogViewHeaderView::updateSizeMode()
 {
+    qDebug() << "Updating size mode, compact:" << DGuiApplicationHelper::isCompactMode();
     int nRowHeight = ROW_HEIGHT;
 #ifdef DTKWIDGET_CLASS_DSizeMode
     if (DGuiApplicationHelper::isCompactMode())

@@ -64,6 +64,7 @@ const int COREDUMP_TIME_THRESHOLD = 3;
 Utils::Utils(QObject *parent)
     : QObject(parent)
 {
+    qCDebug(logUtils) << "Utils constructor";
 }
 
 Utils::~Utils()
@@ -72,11 +73,15 @@ Utils::~Utils()
 
 QString Utils::getQssContent(const QString &filePath)
 {
+    qCDebug(logUtils) << "Loading QSS content from:" << filePath;
     QFile file(filePath);
     QString qss;
 
     if (file.open(QIODevice::ReadOnly)) {
         qss = file.readAll();
+        qCDebug(logUtils) << "Successfully loaded QSS content";
+    } else {
+        qCWarning(logUtils) << "Failed to open QSS file:" << filePath << file.errorString();
     }
 
     return qss;
@@ -100,14 +105,13 @@ QString Utils::getAppDataPath()
 
 bool Utils::isFontMimeType(const QString &filePath)
 {
+    qCDebug(logUtils) << "Checking font MIME type for:" << filePath;
     const QString mimeName = QMimeDatabase().mimeTypeForFile(filePath).name();
-    ;
-
-    if (mimeName.startsWith("font/") || mimeName.startsWith("application/x-font")) {
-        return true;
-    }
-
-    return false;
+    
+    bool isFont = mimeName.startsWith("font/") || mimeName.startsWith("application/x-font");
+    qCDebug(logUtils) << "MIME type:" << mimeName << "isFont:" << isFont;
+    
+    return isFont;
 }
 
 bool Utils::isTextFileType(const QString &filePath)
@@ -214,15 +218,21 @@ Utils::CommandErrorType Utils::isErroCommand(const QString &str)
 
 bool Utils::checkAndDeleteDir(const QString &iFilePath)
 {
+    qCDebug(logUtils) << "Checking and deleting directory/file:" << iFilePath;
     QFileInfo tempFileInfo(iFilePath);
 
     if (tempFileInfo.isDir()) {
-        deleteDir(iFilePath);
-        return true;
+        bool result = deleteDir(iFilePath);
+        qCDebug(logUtils) << "Directory deletion result:" << result;
+        return result;
     } else if (tempFileInfo.isFile()) {
         QFile deleteFile(iFilePath);
-        return deleteFile.remove();
+        bool result = deleteFile.remove();
+        qCDebug(logUtils) << "File deletion result:" << result;
+        return result;
     }
+    
+    qCWarning(logUtils) << "Path is neither directory nor file:" << iFilePath;
     return false;
 }
 
@@ -309,11 +319,15 @@ QString Utils::mkMutiDir(const QString &path)
 
 bool Utils::checkAuthorization(const QString &actionId, qint64 applicationPid)
 {
+    qCDebug(logUtils) << "Checking authorization for action:" << actionId << "pid:" << applicationPid;
     Authority::Result result;
 
     result = Authority::instance()->checkAuthorizationSync(actionId, UnixProcessSubject(applicationPid),
                                                            Authority::AllowUserInteraction);
-    return result == Authority::Yes ? true : false;
+    bool authorized = result == Authority::Yes;
+    qCDebug(logUtils) << "Authorization result:" << authorized;
+    
+    return authorized;
 }
 
 QString Utils::osVersion()
@@ -416,15 +430,20 @@ bool Utils::isValidUserName(const QString &userName)
 
 bool Utils::isCoredumpctlExist()
 {
+    qCDebug(logUtils) << "Checking if coredumpctl exists";
     bool isCoredumpctlExist = false;
     QDir dir("/usr/bin");
     QStringList list = dir.entryList(QStringList() << (QString("coredumpctl") + "*"), QDir::NoDotAndDotDot | QDir::Files);
+    
     for (int i = 0; i < list.count(); i++) {
         if("coredumpctl" == list[i]) {
             isCoredumpctlExist = true;
+            qCDebug(logUtils) << "Found coredumpctl";
             break;
         }
     }
+    
+    qCDebug(logUtils) << "coredumpctl exists:" << isCoredumpctlExist;
     return isCoredumpctlExist;
 }
 

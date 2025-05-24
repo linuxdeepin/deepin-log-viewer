@@ -39,6 +39,8 @@ LogSegementExportThread::LogSegementExportThread(QObject *parent)
     :  QObject(parent),
        QRunnable()
 {
+    qCDebug(logSegementExport) << "Log export thread created";
+
     setAutoDelete(true);
 }
 /**
@@ -53,6 +55,8 @@ LogSegementExportThread::~LogSegementExportThread()
 
 void LogSegementExportThread::setParameter(const QString &fileName, const QList<QString> &jList, const QStringList &lables, LOG_FLAG flag)
 {
+    qCDebug(logSegementExport) << "Setting export parameters, file:" << fileName << "log count:" << jList.count() << "flag:" << flag;
+
     QMutexLocker locker(&mutex);
     m_fileName = fileName;
     m_logDataList = jList;
@@ -227,6 +231,8 @@ void LogSegementExportThread::run()
 
 bool LogSegementExportThread::exportTxt()
 {
+    qCDebug(logSegementExport) << "Starting text export to file:" << m_fileName;
+
     //判断文件路径是否存在，不存在就返回错误
     QFile fi(m_fileName);
     if (!fi.open(m_bAppendWrite ? (QIODevice::Append | QIODevice::WriteOnly) : QIODevice::WriteOnly)) {
@@ -266,11 +272,14 @@ bool LogSegementExportThread::exportTxt()
 #endif
     fi.close();
 
+    qCDebug(logSegementExport) << "Text export completed successfully";
     return true;
 }
 
 bool LogSegementExportThread::exportHtml()
 {
+    qCDebug(logSegementExport) << "Starting HTML export to file:" << m_fileName;
+
     QFile html(m_fileName);
     //判断文件路径是否存在，不存在就返回错误
     if (!html.open(m_bAppendWrite ? (QIODevice::Append | QIODevice::WriteOnly) : QIODevice::WriteOnly)) {
@@ -326,11 +335,14 @@ bool LogSegementExportThread::exportHtml()
 
     html.close();
 
+    qCDebug(logSegementExport) << "HTML export completed successfully";
     return true;
 }
 
 bool LogSegementExportThread::exportToDoc()
 {
+    qCDebug(logSegementExport) << "Starting DOC export to file:" << m_fileName;
+
     if (!m_pDocMerger)
         return false;
 
@@ -353,11 +365,14 @@ bool LogSegementExportThread::exportToDoc()
         m_pDocMerger->paste("tableRow");
     }
 
+    qCDebug(logSegementExport) << "DOC export completed successfully";
     return true;
 }
 
 bool LogSegementExportThread::exportToXls()
 {
+    qCDebug(logSegementExport) << "Starting XLS export to file:" << m_fileName;
+
     if (!m_pWorksheet)
         return false;
 
@@ -381,6 +396,7 @@ bool LogSegementExportThread::exportToXls()
         ++m_currentXlsRow;
     }
 
+    qCDebug(logSegementExport) << "XLS export completed successfully";
     return true;
 }
 

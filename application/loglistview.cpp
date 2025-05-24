@@ -123,6 +123,7 @@ void LogListDelegate::hideTooltipImmediately()
 LogListView::LogListView(QWidget *parent)
     : DListView(parent)
 {
+    qDebug() << "LogListView constructor entered";
     initUI();
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &LogListView::customContextMenuRequested, this, &LogListView::requestshowRightMenu);
@@ -155,6 +156,7 @@ LogListView::LogListView(QWidget *parent)
  */
 void LogListView::initUI()
 {
+    qDebug() << "LogListView::initUI() entered";
     this->setMinimumWidth(150);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setItemDelegate(new LogListDelegate(this));
@@ -406,11 +408,13 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
 {
     PERF_PRINT_BEGIN("POINT-03", "");
     if (current.row() < 0) {
+        qDebug() << "Invalid current row, exiting currentChanged";
         return;
     }
 
     emit itemChanged(current);
     DListView::currentChanged(current, previous);
+    qDebug() << "LogListView::currentChanged() exited";
 }
 
 /**
@@ -476,6 +480,7 @@ Qt::FocusReason LogListView::focusReson()
 
 void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
 {
+    qDebug() << "LogListView::showRightMenu() entered";
     QModelIndex idx = this->currentIndex();
     QString pathData = idx.data(ITEM_DATE_ROLE).toString();
     if (!this->selectionModel()->selectedIndexes().empty()) {

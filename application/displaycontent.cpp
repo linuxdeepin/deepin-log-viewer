@@ -66,13 +66,20 @@ Q_LOGGING_CATEGORY(logDisplaycontent, "org.deepin.log.viewer.display.content", Q
  */
 DisplayContent::DisplayContent(QWidget *parent)
     : DWidget(parent)
-
 {
+    qCDebug(logDisplaycontent) << "DisplayContent constructor start";
     m_pLogBackend = LogBackend::instance(this);
+    qCDebug(logDisplaycontent) << "LogBackend instance created";
 
     initUI();
+    qCDebug(logDisplaycontent) << "UI initialized";
+    
     initMap();
+    qCDebug(logDisplaycontent) << "Translation maps initialized";
+    
     initConnections();
+    
+    qCDebug(logDisplaycontent) << "DisplayContent constructor end";
 }
 
 /**
@@ -80,7 +87,10 @@ DisplayContent::DisplayContent(QWidget *parent)
  */
 DisplayContent::~DisplayContent()
 {
+    qCDebug(logDisplaycontent) << "DisplayContent destructor start";
     malloc_trim(0);
+    qCDebug(logDisplaycontent) << "Memory trimmed";
+    qCDebug(logDisplaycontent) << "DisplayContent destructor end";
 }
 /**
  * @brief DisplayContent::mainLogTableView  返回主表控件指针给外部调用
@@ -96,6 +106,7 @@ LogTreeView *DisplayContent::mainLogTableView()
  */
 void DisplayContent::initUI()
 {
+    qCDebug(logDisplaycontent) << "Initialize UI components start";
     // set table for display log data
     initTableView();
     m_treeView->setMinimumHeight(100);
@@ -233,6 +244,8 @@ void DisplayContent::initTableView()
  */
 void DisplayContent::initConnections()
 {
+    qCDebug(logDisplaycontent) << "Initialize signal-slot connections start";
+
     connect(m_treeView, SIGNAL(pressed(const QModelIndex &)), this,
             SLOT(slot_tableItemClicked(const QModelIndex &)));
 
@@ -316,6 +329,8 @@ void DisplayContent::initConnections()
 
     connect(m_treeView, &LogTreeView::customContextMenuRequested, this, &DisplayContent::slot_requestShowRightMenu);
     connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigValueChanged, this, &DisplayContent::slot_valueChanged_dConfig_or_gSetting);
+    qCDebug(logDisplaycontent) << "All signal-slot connections established";
+    qCDebug(logDisplaycontent) << "Initialize signal-slot connections end";
 }
 
 void DisplayContent::createLogTable(const QList<QString> &list, LOG_FLAG type)
@@ -343,8 +358,10 @@ void DisplayContent::insertLogTable(const QList<QString> &list, int start, int e
 
 void DisplayContent::parseListToModel(const QList<QString> &list, QStandardItemModel *oPModel, LOG_FLAG type)
 {
+    qCDebug(logDisplaycontent) << "Start parsing list to model, type:" << type << "item count:" << list.size();
+    
     if (!oPModel) {
-        qCWarning(logDisplaycontent) << QString("log parse model is empty, type:%1").arg(type);
+        qCCritical(logDisplaycontent) << QString("log parse model is empty, type:%1").arg(type);
         return;
     }
 
@@ -356,8 +373,13 @@ void DisplayContent::parseListToModel(const QList<QString> &list, QStandardItemM
     DStandardItem *item = nullptr;
     QList<QStandardItem *> items;
     int listCount = list.size();
+    qCDebug(logDisplaycontent) << "Processing" << listCount << "log items";
+    
     for (int i = 0; i < listCount; i++) {
         items.clear();
+        if (i % 100 == 0) {
+            qCDebug(logDisplaycontent) << "Processing item" << i << "of" << listCount;
+        }
         if (type == KERN) {
             LOG_MSG_BASE data;
             data.fromJson(list[i]);
@@ -387,15 +409,21 @@ void DisplayContent::parseListToModel(const QList<QString> &list, QStandardItemM
 
 int DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bReset/* = true*/)
 {
+    qCDebug(logDisplaycontent) << "Loading segment page, direction:" << (bNext ? "next" : "previous") << "reset:" << bReset;
     int nSegementIndex = m_pLogBackend->getNextSegementIndex(m_flag, bNext);
-    qDebug() << "loadSegementPage index:" << nSegementIndex;
-    if(nSegementIndex == -1)
+    qCDebug(logDisplaycontent) << "Segment page index:" << nSegementIndex;
+    if(nSegementIndex == -1) {
+        qCWarning(logDisplaycontent) << "Invalid segment index, no more data available";
         return -1;
+    }
 
-    if (bReset)
+    if (bReset) {
+        qCDebug(logDisplaycontent) << "Resetting data for new segment";
         clearAllDatas();
+    }
 
     setLoadState(DATA_LOADING, !bReset);
+    qCDebug(logDisplaycontent) << "Data loading state set";
 
     // 1.正常分段加载翻页，重置表格
     // 2.搜索结果超过分段单位大小后，需要重置表格，显示下一页内容
@@ -428,6 +456,7 @@ int DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bReset/* = true
 void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearchStr)
 {
     Q_UNUSED(iSearchStr)
+    qCDebug(logDisplaycontent) << "Start generating journal file, time filter:" << id << "level filter:" << lId;
     //系统日志上次获取的时间,和筛选条件一起判断,防止获取过于频繁
     if (m_lastJournalGetTime.msecsTo(QDateTime::currentDateTime()) < 500 && m_journalFilter.timeFilter == id && m_journalFilter.eventTypeFilter == lId) {
         qCWarning(logDisplaycontent) << "load journal log: repeat refrsh journal too fast!";
@@ -441,11 +470,13 @@ void DisplayContent::generateJournalFile(int id, int lId, const QString &iSearch
     m_journalFilter.timeFilter = id;
     m_journalFilter.eventTypeFilter = lId;
     m_firstLoadPageData = true;
+    qCDebug(logDisplaycontent) << "Clearing filters and previous data";
     m_pLogBackend->clearAllFilter();
     clearAllDatas();
     m_isDataLoadComplete = false;
     createJournalTableForm();
     setLoadState(DATA_LOADING);
+    qCDebug(logDisplaycontent) << "Journal table form created, loading data...";
     QDateTime dt = QDateTime::currentDateTime();
     dt.setTime(QTime());
     QStringList arg;
@@ -525,6 +556,7 @@ void DisplayContent::createJournalTableStart(const QList<LOG_MSG_JOURNAL> &list)
  */
 void DisplayContent::createJournalTableForm()
 {
+    qCDebug(logDisplaycontent) << "Creating journal log table form";
     m_pModel->clear();
 
     m_pModel->setHorizontalHeaderLabels(
@@ -1297,8 +1329,10 @@ void DisplayContent::generateJournalBootFile(int lId, const QString &iSearchStr)
     QStringList arg;
     if (lId != LVALL) {
         QString prio = QString("PRIORITY=%1").arg(lId);
+        qCDebug(logDisplaycontent) << "Setting priority filter:" << prio;
         arg.append(prio);
     } else {
+        qCDebug(logDisplaycontent) << "No priority filter set, loading all levels";
         arg.append("all");
     }
     m_pLogBackend->parseByJournalBoot(arg);
@@ -1548,20 +1582,26 @@ void DisplayContent::insertDnfTable(const QList<LOG_MSG_DNF> &list, int start, i
 void DisplayContent::slot_tableItemClicked(const QModelIndex &index)
 {
     if (!index.isValid()) {
+        qCDebug(logDisplaycontent) << "Invalid table item clicked, row:" << index.row() << "column:" << index.column();
         return;
     }
 
     if (m_curTreeIndex == index) {
+        qCDebug(logDisplaycontent) << "Same table item clicked, row:" << index.row() << "column:" << index.column() << "- skipping";
         return;
     }
 
     m_curTreeIndex = index;
 
     if (m_flag == OtherLog || m_flag == CustomLog) {
+        qCDebug(logDisplaycontent) << "Other/Custom log item clicked, row:" << index.row()
+                                  << "path:" << m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
         QString path = m_pModel->item(index.row(), 0)->data(Qt::UserRole + 2).toString();
         m_pLogBackend->setFlag(m_flag);
         generateOOCFile(path);
     } else {
+        qCDebug(logDisplaycontent) << "Log item clicked, row:" << index.row() << "column:" << index.column()
+                                  << ", type:" << m_flag << ", app:" << getAppName(m_curApp);
         emit sigDetailInfo(index, m_pModel, getAppName(m_curApp));
     }
 }

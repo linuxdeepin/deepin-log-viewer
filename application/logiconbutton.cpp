@@ -12,9 +12,11 @@
 LogIconButton::LogIconButton(QWidget *parent)
     : QPushButton(parent)
 {
+    qDebug() << "LogIconButton constructor entered";
     this->setFlat(true);
     this->setFocusPolicy(Qt::NoFocus);
     this->setIconSize(QSize(32, 32));
+    qDebug() << "LogIconButton constructor exited";
 }
 
 LogIconButton::LogIconButton(const QString &text, QWidget *parent)

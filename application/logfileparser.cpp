@@ -46,6 +46,7 @@ DWIDGET_USE_NAMESPACE
 LogFileParser::LogFileParser(QWidget *parent)
     : QObject(parent)
 {
+    qCDebug(logFileParser) << "LogFileParser constructor called";
     qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
     qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
     qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
@@ -62,20 +63,23 @@ LogFileParser::LogFileParser(QWidget *parent)
 
 LogFileParser::~LogFileParser()
 {
+    qCDebug(logFileParser) << "LogFileParser destructor called";
     stopAllLoad();
     if (SharedMemoryManager::getInstance()) {
-        //释放共享内存
+        qCDebug(logFileParser) << "Releasing shared memory";
         SharedMemoryManager::instance()->releaseMemory();
     }
 }
 
 int LogFileParser::parseByJournal(const QStringList &arg)
 {
+    qCDebug(logFileParser) << "Starting journal log parsing";
     stopAllLoad();
 
     emit stopJournal();
     journalWork *work = new journalWork(this);
 
+    qCDebug(logFileParser) << "Setting journal parser arguments";
     work->setArg(arg);
     auto a = connect(work, &journalWork::journalFinished, this, &LogFileParser::journalFinished,
                      Qt::QueuedConnection);
@@ -85,12 +89,14 @@ int LogFileParser::parseByJournal(const QStringList &arg)
     connect(this, &LogFileParser::stopJournal, work, &journalWork::stopWork);
 
     int index = work->getIndex();
+    qCDebug(logFileParser) << "Starting journal parser thread with index:" << index;
     QThreadPool::globalInstance()->start(work);
     return index;
 }
 
 int LogFileParser::parseByJournalBoot(const QStringList &arg)
 {
+    qCDebug(logFileParser) << "Starting journal boot log parsing";
     stopAllLoad();
     JournalBootWork *work = new JournalBootWork(this);
 
@@ -109,7 +115,7 @@ int LogFileParser::parseByJournalBoot(const QStringList &arg)
 
 int LogFileParser::parseByDpkg(const DKPG_FILTERS &iDpkgFilter)
 {
-
+    qCDebug(logFileParser) << "Starting dpkg log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(DPKG);
@@ -151,6 +157,7 @@ int LogFileParser::parseByXlog(const XORG_FILTERS &iXorgFilter)    // modifed by
 
 int LogFileParser::parseByNormal(const NORMAL_FILTERS &iNormalFiler)
 {
+    qCDebug(logFileParser) << "Starting normal log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(Normal);
@@ -169,6 +176,7 @@ int LogFileParser::parseByNormal(const NORMAL_FILTERS &iNormalFiler)
 
 int LogFileParser::parseByKwin(const KWIN_FILTERS &iKwinfilter)
 {
+    qCDebug(logFileParser) << "Starting kwin log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(Kwin);
@@ -186,6 +194,7 @@ int LogFileParser::parseByKwin(const KWIN_FILTERS &iKwinfilter)
 
 int LogFileParser::parseByBoot()
 {
+    qCDebug(logFileParser) << "Starting boot log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(BOOT);
@@ -224,6 +233,7 @@ int LogFileParser::parse(LOG_FILTER_BASE &filter)
 
 int LogFileParser::parseByKern(const KERN_FILTERS &iKernFilter)
 {
+    qCDebug(logFileParser) << "Starting kern log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(KERN);
@@ -243,6 +253,7 @@ int LogFileParser::parseByKern(const KERN_FILTERS &iKernFilter)
 
 int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
 {
+    qCDebug(logFileParser) << "Starting app log parsing for:" << iAPPFilter.app;
     // 根据应用名获取应用日志配置信息
     QString appName = iAPPFilter.app;
     AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
@@ -394,6 +405,7 @@ int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool
 
 void LogFileParser::stopAllLoad()
 {
+    qCDebug(logFileParser) << "Stopping all log parsers";
     emit stop();
     emit stopKern();
     emit stopBoot();
@@ -414,6 +426,7 @@ void LogFileParser::stopAllLoad()
 void LogFileParser::quitLogAuththread(QThread *iThread)
 {
     if (iThread && iThread->isRunning()) {
+        qCDebug(logFileParser) << "Stopping auth thread";
         iThread->quit();
         iThread->wait();
     }
@@ -433,6 +446,7 @@ void LogFileParser::quitLogAuththread(QThread *iThread)
  */
 void LogFileParser::slog_proccessError(const QString &iError)
 {
+    qCWarning(logFileParser) << "Log processing error:" << iError;
     emit proccessError(iError);
 }
 

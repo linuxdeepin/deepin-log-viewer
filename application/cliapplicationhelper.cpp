@@ -69,9 +69,11 @@ int CliApplicationHelper::waitTime = 3000;
 
 bool CliApplicationHelper::setSingleInstance(const QString &key, CliApplicationHelper::SingleScope singleScope)
 {
+    qCDebug(dgAppHelper) << "Setting up single instance with key:" << key << "and scope:" << singleScope;
     bool new_server = !_d_singleServer.exists();
 
     if (_d_singleServer->isListening()) {
+        qCDebug(dgAppHelper) << "Closing existing server instance";
         _d_singleServer->close();
     }
 
@@ -96,12 +98,14 @@ bool CliApplicationHelper::setSingleInstance(const QString &key, CliApplicationH
     }
 
     socket_key += key;
+    qCDebug(dgAppHelper) << "Generated socket key:" << socket_key;
     QString lockfile = socket_key;
     if (!lockfile.startsWith(QLatin1Char('/'))) {
         lockfile = QDir::cleanPath(QDir::tempPath());
         lockfile += QLatin1Char('/') + socket_key;
     }
     lockfile += QStringLiteral(".lock");
+    qCDebug(dgAppHelper) << "Using lock file:" << lockfile;
     static QScopedPointer <QLockFile> lock(new QLockFile(lockfile));
     // 同一个进程多次调用本接口使用最后一次设置的 key
     // FIX dcc 使用不同的 key 两次调用 setSingleInstance 后无法启动的问题
@@ -114,12 +118,14 @@ bool CliApplicationHelper::setSingleInstance(const QString &key, CliApplicationH
     }
 
     if (!lock->tryLock()) {
-        qCDebug(dgAppHelper) <<  "===> new client <===" << getpid();
+        qCInfo(dgAppHelper) << "Instance already running (pid:" << getpid() << "), connecting to existing instance";
         // 通知别的实例
         QLocalSocket socket;
+        qCDebug(dgAppHelper) << "Connecting to server at:" << socket_key;
         socket.connectToServer(socket_key);
 
         // 等待到有效数据时认为server实例有效
+        qCDebug(dgAppHelper) << "Waiting for server connection (timeout:" << CliApplicationHelper::waitTime << "ms)";
         if (socket.waitForConnected(CliApplicationHelper::waitTime) &&
                 socket.waitForReadyRead(CliApplicationHelper::waitTime)) {
             // 读取数据
@@ -139,12 +145,15 @@ bool CliApplicationHelper::setSingleInstance(const QString &key, CliApplicationH
         return false;
     }
 
+    qCInfo(dgAppHelper) << "Attempting to listen on socket:" << socket_key;
     if (!_d_singleServer->listen(socket_key)) {
-        qCWarning(dgAppHelper) << "listen failed:" <<  _d_singleServer->errorString();
+        qCCritical(dgAppHelper) << "Failed to listen on socket:" << socket_key
+                               << "- Error:" << _d_singleServer->errorString();
         return false;
     }
 
     if (new_server) {
+        qCInfo(dgAppHelper) << "Setting up new server connection handler for socket:" << socket_key;
         QObject::connect(_d_singleServer, &QLocalServer::newConnection, qApp, [] {
             QLocalSocket *instance = _d_singleServer->nextPendingConnection();
             // 先发送数据告诉新的实例自己收到了它的请求
@@ -153,6 +162,7 @@ bool CliApplicationHelper::setSingleInstance(const QString &key, CliApplicationH
                << qApp->applicationPid() // 进程id
                << qApp->arguments(); // 启动时的参数
 
+            qCDebug(dgAppHelper) << "New connection received, setting up readyRead handler";
             QObject::connect(instance, &QLocalSocket::readyRead, qApp, [instance] {
                 // 读取数据
                 QDataStream ds(instance);
@@ -164,13 +174,18 @@ bool CliApplicationHelper::setSingleInstance(const QString &key, CliApplicationH
                 ds >> version >> pid >> arguments;
                 instance->close();
 
-                qCInfo(dgAppHelper) << "New instance: pid=" << pid << "arguments=" << arguments;
+                qCInfo(dgAppHelper) << "New instance connected - pid:" << pid << "args:" << arguments;
 
                 // 通知新进程的信息
-                if (_globalHelper.exists() && _globalHelper->helper())
+                if (_globalHelper.exists() && _globalHelper->helper()) {
+                    qCDebug(dgAppHelper) << "Emitting newProcessInstance signal";
                     Q_EMIT _globalHelper->helper()->newProcessInstance(pid, arguments);
+                } else {
+                    qCWarning(dgAppHelper) << "Global helper not available to emit signal";
+                }
             });
 
+            qCDebug(dgAppHelper) << "Flushing data to new instance";
             instance->flush(); //发送数据给新的实例
         });
     }
@@ -181,20 +196,25 @@ bool CliApplicationHelper::setSingleInstance(const QString &key, CliApplicationH
 CliApplicationHelper::CliApplicationHelper()
     : QObject(nullptr)
 {
+    qCDebug(dgAppHelper) << "Creating CliApplicationHelper instance";
     // 跟随application销毁
     qAddPostRoutine(staticCleanApplication);
 }
 
 CliApplicationHelper::~CliApplicationHelper()
 {
+    qCDebug(dgAppHelper) << "Destroying CliApplicationHelper instance";
     _globalHelper->m_helper = nullptr;
 }
 
 
 void CliApplicationHelper::staticCleanApplication()
 {
-    if (_globalHelper.exists())
+    qCDebug(dgAppHelper) << "Cleaning up application helper resources";
+    if (_globalHelper.exists()) {
+        qCDebug(dgAppHelper) << "Found global helper instance, clearing it";
         _globalHelper->clear();
+    }
 }
 
 CliApplicationHelper *CliApplicationHelper::instance()

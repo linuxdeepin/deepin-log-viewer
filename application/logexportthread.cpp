@@ -41,14 +41,17 @@ LogExportThread::LogExportThread(QObject *parent)
        QRunnable(),
        m_appendExport(false)
 {
+    qCDebug(logExport) << "LogExportThread constructor";
     setAutoDelete(true);
     initMap();
+    qCDebug(logExport) << "LogExportThread initialized";
 }
 /**
  * @brief LogExportThread::~LogExportThread 析构函数
  */
 LogExportThread::~LogExportThread()
 {
+    qCDebug(logExport) << "LogExportThread destructor";
     //释放空闲内存
     malloc_trim(0);
 }
@@ -58,7 +61,9 @@ LogExportThread::~LogExportThread()
  */
 void LogExportThread::enableAppendExport(bool bEnable/* = true*/)
 {
+    qCDebug(logExport) << "Setting append export mode to:" << bEnable;
     m_appendExport = bEnable;
+    qCDebug(logExport) << "Append export mode set";
 }
 
 /**
@@ -69,11 +74,13 @@ void LogExportThread::enableAppendExport(bool bEnable/* = true*/)
  */
 void LogExportThread::exportToTxtPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
+    qCDebug(logExport) << "Start export to TXT, file:" << fileName << "model rows:" << pModel->rowCount();
     m_fileName = fileName;
     m_pModel = pModel;
     m_flag = flag;
     m_runMode = TxtModel;
     m_canRunning = true;
+    qCDebug(logExport) << "TXT export parameters set";
 }
 
 /**
@@ -85,12 +92,14 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, QStandardItemMo
  */
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG flag)
 {
+    qCDebug(logExport) << "Start export journal to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_logDataList = jList;
     m_runMode = TxtJOURNAL;
     m_labels = labels;
     m_flag = flag;
     m_canRunning = true;
+    qCDebug(logExport) << "Journal TXT export parameters set";
 }
 
 /**
@@ -102,13 +111,14 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<QSt
  */
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList,  const QStringList &labels, LOG_FLAG flag)
 {
+    qCDebug(logExport) << "Start export journal to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_jList = jList;
     m_runMode = TxtJOURNAL;
     m_labels = labels;
     m_flag = flag;
     m_canRunning = true;
-
+    qCDebug(logExport) << "Journal TXT export parameters set";
 }
 
 /**
@@ -120,12 +130,14 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
  */
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName)
 {
+    qCDebug(logExport) << "Start export app log to TXT, file:" << fileName << "app:" << iAppName << "items:" << jList.size();
     m_fileName = fileName;
     m_appList = jList;
     m_labels = labels;
     m_runMode = TxtAPP;
     m_canRunning = true;
     m_appName = iAppName;
+    qCDebug(logExport) << "App log TXT export parameters set";
 }
 
 /**
@@ -136,11 +148,13 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
  */
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export dpkg log to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_dpkgList = jList;
     m_labels = labels;
     m_runMode = TxtDPKG;
     m_canRunning = true;
+    qCDebug(logExport) << "Dpkg log TXT export parameters set";
 }
 
 /**
@@ -151,11 +165,13 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
  */
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export boot log to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_bootList = jList;
     m_labels = labels;
     m_runMode = TxtBOOT;
     m_canRunning = true;
+    qCDebug(logExport) << "Boot log TXT export parameters set";
 }
 
 /**
@@ -166,11 +182,13 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
  */
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export xorg log to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_xorgList = jList;
     m_labels = labels;
     m_runMode = TxtXORG;
     m_canRunning = true;
+    qCDebug(logExport) << "Xorg log TXT export parameters set";
 }
 
 
@@ -182,11 +200,13 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
  */
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export normal log to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_normalList = jList;
     m_labels = labels;
     m_runMode = TxtNORMAL;
     m_canRunning = true;
+    qCDebug(logExport) << "Normal log TXT export parameters set";
 }
 
 /**
@@ -197,38 +217,46 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
  */
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export kwin log to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_kwinList = jList;
     m_labels = labels;
     m_runMode = TxtKWIN;
     m_canRunning = true;
+    qCDebug(logExport) << "Kwin log TXT export parameters set";
 }
 
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export dnf log to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_dnfList = jList;
     m_labels = labels;
     m_runMode = TxtDNF;
     m_canRunning = true;
+    qCDebug(logExport) << "Dnf log TXT export parameters set. Run mode:" << m_runMode;
 }
 
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export dmesg log to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_dmesgList = jList;
     m_labels = labels;
     m_runMode = TxtDMESG;
     m_canRunning = true;
+    qCDebug(logExport) << "Dmesg log TXT export parameters set";
 }
 
 void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export audit log to TXT, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_alist = jList;
     m_labels = labels;
     m_runMode = TxtAUDIT;
     m_canRunning = true;
+    qCDebug(logExport) << "Audit log TXT export parameters set";
 }
 
 /**
@@ -239,22 +267,25 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
  */
 void LogExportThread::exportToHtmlPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
+    qCDebug(logExport) << "Start export to HTML, file:" << fileName << "model rows:" << pModel->rowCount();
     m_fileName = fileName;
     m_pModel = pModel;
     m_flag = flag;
     m_runMode = HtmlModel;
     m_canRunning = true;
-
+    qCDebug(logExport) << "HTML export parameters set";
 }
 
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG flag)
 {
+    qCDebug(logExport) << "Start export journal to HTML, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_logDataList = jList;
     m_runMode = HtmlJOURNAL;
     m_labels = labels;
     m_flag = flag;
     m_canRunning = true;
+    qCDebug(logExport) << "Journal HTML export parameters set";
 }
 
 /**
@@ -272,7 +303,7 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
     m_labels = labels;
     m_flag = flag;
     m_canRunning = true;
-
+    qCDebug(logExport) << "Journal HTML export parameters set";
 }
 
 /**
@@ -284,12 +315,14 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
  */
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_APPLICATOIN> &jList, const QStringList &labels, const QString &iAppName)
 {
+    qCDebug(logExport) << "Start export app log to HTML, file:" << fileName << "app:" << iAppName << "items:" << jList.size();
     m_fileName = fileName;
     m_appList = jList;
     m_labels = labels;
     m_runMode = HtmlAPP;
     m_canRunning = true;
     m_appName = iAppName;
+    qCDebug(logExport) << "App log HTML export parameters set";
 }
 
 /**
@@ -300,11 +333,13 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
  */
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_DPKG> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export dpkg log to HTML, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_dpkgList = jList;
     m_labels = labels;
     m_runMode = HtmlDPKG;
     m_canRunning = true;
+    qCDebug(logExport) << "Dpkg log HTML export parameters set";
 }
 
 /**
@@ -315,11 +350,13 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
  */
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_BOOT> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export boot log to HTML, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_bootList = jList;
     m_labels = labels;
     m_runMode = HtmlBOOT;
     m_canRunning = true;
+    qCDebug(logExport) << "Boot log HTML export parameters set";
 }
 
 /**
@@ -330,11 +367,13 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
  */
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_XORG> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export xorg log to HTML, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_xorgList = jList;
     m_labels = labels;
     m_runMode = HtmlXORG;
     m_canRunning = true;
+    qCDebug(logExport) << "Xorg log HTML export parameters set";
 }
 
 /**
@@ -345,11 +384,13 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
  */
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_NORMAL> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export normal log to HTML, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_normalList = jList;
     m_labels = labels;
     m_runMode = HtmlNORMAL;
     m_canRunning = true;
+    qCDebug(logExport) << "Normal log HTML export parameters set";
 }
 
 /**
@@ -360,19 +401,23 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
  */
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_KWIN> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export kwin log to HTML, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_kwinList = jList;
     m_labels = labels;
     m_runMode = HtmlKWIN;
     m_canRunning = true;
+    qCDebug(logExport) << "Kwin log HTML export parameters set";
 }
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_DNF> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export dnf log to HTML, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_dnfList = jList;
     m_labels = labels;
     m_runMode = HtmlDNF;
     m_canRunning = true;
+    qCDebug(logExport) << "Dnf log HTML export parameters set";
 }
 
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_DMESG> &jList, const QStringList &labels)
@@ -386,11 +431,13 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
 
 void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LOG_MSG_AUDIT> &jList, const QStringList &labels)
 {
+    qCDebug(logExport) << "Start export audit log to HTML, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_alist = jList;
     m_labels = labels;
     m_runMode = HtmlAUDIT;
     m_canRunning = true;
+    qCDebug(logExport) << "Audit log HTML export parameters set. Run mode:" << m_runMode;
 }
 
 /**
@@ -401,22 +448,25 @@ void LogExportThread::exportToHtmlPublic(const QString &fileName, const QList<LO
  */
 void LogExportThread::exportToDocPublic(const QString &fileName, QStandardItemModel *pModel, LOG_FLAG flag)
 {
+    qCDebug(logExport) << "Start export to DOC, file:" << fileName << "model rows:" << pModel->rowCount();
     m_fileName = fileName;
     m_pModel = pModel;
     m_flag = flag;
     m_runMode = DocModel;
     m_canRunning = true;
-
+    qCDebug(logExport) << "DOC export parameters set";
 }
 
 void LogExportThread::exportToDocPublic(const QString &fileName, const QList<QString> &jList, const QStringList &labels, LOG_FLAG iFlag)
 {
+    qCDebug(logExport) << "Start export to DOC, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_logDataList = jList;
     m_flag = iFlag;
     m_labels = labels;
     m_runMode = DocJOURNAL;
     m_canRunning = true;
+    qCDebug(logExport) << "DOC export parameters set";
 }
 
 /**
@@ -428,13 +478,14 @@ void LogExportThread::exportToDocPublic(const QString &fileName, const QList<QSt
  */
 void LogExportThread::exportToDocPublic(const QString &fileName, const QList<LOG_MSG_JOURNAL> &jList, const QStringList &labels, LOG_FLAG iFlag)
 {
+    qCDebug(logExport) << "Start export journal to DOC, file:" << fileName << "items:" << jList.size();
     m_fileName = fileName;
     m_jList = jList;
     m_flag = iFlag;
     m_labels = labels;
     m_runMode = DocJOURNAL;
     m_canRunning = true;
-
+    qCDebug(logExport) << "Journal DOC export parameters set";
 }
 
 /**

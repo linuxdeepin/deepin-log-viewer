@@ -10,6 +10,7 @@ DWIDGET_USE_NAMESPACE
 LogTableView::LogTableView(QWidget *parent)
     : DTableView(parent)
 {
+    qDebug() << "LogTableView created";
     this->setFocus();
 }
 
@@ -20,7 +21,7 @@ void LogTableView::focusInEvent(QFocusEvent *event)
 
 void LogTableView::focusOutEvent(QFocusEvent *event)
 {
-    qDebug() << "focus in";
+    qDebug() << "focus out";
     //    this->setFocus();
     //    DTableView::focusOutEvent(event);
 }

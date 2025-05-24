@@ -44,8 +44,10 @@ JournalBootWork::JournalBootWork(QStringList arg, QObject *parent)
     //增加获取参数
     m_arg.append("-o");
     m_arg.append("json");
-    if (!arg.isEmpty())
+    if (!arg.isEmpty()) {
         m_arg.append(arg);
+        qCDebug(logJournalboot) << "Added journal filter args:" << arg;
+    }
     //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
     thread_index++;
     m_threadIndex = thread_index;
@@ -73,6 +75,7 @@ JournalBootWork::~JournalBootWork()
 {
     logList.clear();
     m_map.clear();
+    qCDebug(logJournalboot) << "Cleaned up JournalBootWork resources";
 }
 
 /**
@@ -157,7 +160,7 @@ void JournalBootWork::doWork()
     if (r < 0) {
         QString errostr = QString("Failed to open journal: %1").arg(r);
         qCWarning(logJournalboot) << errostr;
-        emit  journalBootError(errostr);
+        emit journalBootError(errostr);
         return;
     }
     //从尾部开始读，这样出来数据是倒叙，符合需求
@@ -215,7 +218,7 @@ void JournalBootWork::doWork()
     if (r < 0) {
         QString errostr = QString("Failed to add match journal: %1").arg(r);
         qCWarning(logJournalboot) << errostr;
-        emit  journalBootError(errostr);
+        emit journalBootError(errostr);
         return;
     }
     //合并以上两个筛选条件 (等级和bootid)
@@ -261,7 +264,9 @@ void JournalBootWork::doWork()
                 continue;
         }
         logMsg.dateTime = getDateTimeFromStamp(dt);
-        //获取主机名
+        qCDebug(logJournalboot) << "Journal entry timestamp:" << logMsg.dateTime;
+
+        // 获取主机名
         r = sd_journal_get_data(j, "_HOSTNAME", reinterpret_cast<const void **>(&d), &l);
         if (r < 0)
             logMsg.hostName = "";
@@ -271,7 +276,8 @@ void JournalBootWork::doWork()
             strList.join("=");
             logMsg.hostName = strList.join("=");
         }
-        //获取进程号
+
+        // 获取进程号
         r = sd_journal_get_data(j, "_PID", reinterpret_cast<const void **>(&d), &l);
         if (r < 0)
             logMsg.daemonId = "";
@@ -280,7 +286,8 @@ void JournalBootWork::doWork()
             strList.removeFirst();
             logMsg.daemonId = strList.join("=");
         }
-        //获取进程名
+
+        // 获取进程名
         r = sd_journal_get_data(j, "_COMM", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.daemonName = "unknown";
@@ -291,7 +298,7 @@ void JournalBootWork::doWork()
             logMsg.daemonName = strList.join("=");
         }
 
-        //获取信息体
+        // 获取信息体
         r = sd_journal_get_data(j, "MESSAGE", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.msg = "";
@@ -302,7 +309,8 @@ void JournalBootWork::doWork()
             strList.join("=");
             logMsg.msg = strList.join("=");
         }
-        //获取等级
+
+        // 获取等级
         r = sd_journal_get_data(j, "PRIORITY", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             //有些时候的确会产生没有等级的日志，按照需求此时一律按调试处理，和journalctl 的筛选行为一致
