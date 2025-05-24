@@ -6,12 +6,14 @@
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QDebug>
 
 DWIDGET_USE_NAMESPACE
 
 LogSpinnerWidget::LogSpinnerWidget(QWidget *parent)
     : Dtk::Widget::DWidget(parent)
 {
+    qDebug() << "LogSpinnerWidget created";
     initUI();
 }
 /**
@@ -20,6 +22,7 @@ LogSpinnerWidget::LogSpinnerWidget(QWidget *parent)
  */
 void LogSpinnerWidget::initUI()
 {
+    qDebug() << "Initializing spinner UI";
     m_spinner = new DSpinner(this);
     m_spinner->setFixedSize(QSize(32, 32));
 
@@ -42,10 +45,12 @@ void LogSpinnerWidget::initUI()
 
 void LogSpinnerWidget::spinnerStart()
 {
+    qDebug() << "Starting spinner animation";
     m_spinner->start();
 }
 
 void LogSpinnerWidget::spinnerStop()
 {
+    qDebug() << "Stopping spinner animation";
     m_spinner->stop();
 }

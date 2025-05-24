@@ -18,22 +18,26 @@ Q_LOGGING_CATEGORY(logDebugTime, "org.deepin.log.viewer.debug.timemanager", QtIn
 
 DebugTimeManager::DebugTimeManager()
 {
+    qCDebug(logDebugTime) << "DebugTimeManager initialized";
 
 }
 
 void DebugTimeManager::clear()
 {
+    qCDebug(logDebugTime) << "Clearing all time points";
     m_MapPoint.clear();
     m_MapLinuxPoint.clear();
 }
 
 void DebugTimeManager::beginPointLinux(const QString &point, const QString &status)
 {
+    qCDebug(logDebugTime) << QString("Starting time point: %1 (%2)").arg(point).arg(status);
     PointInfoLinux info;
     info.desc = status;
     timespec beginTime;
     int result = clock_gettime(CLOCK_MONOTONIC, &beginTime);
     if (result) {
+        qCWarning(logDebugTime) << "Failed to get monotonic clock time";
         return;
     }
     info.time = beginTime;
@@ -57,6 +61,9 @@ void DebugTimeManager::endPointLinux(const QString &point, const QString &status
 
 timespec DebugTimeManager::diff(timespec start, timespec end)
 {
+    qCDebug(logDebugTime) << QString("Calculating time difference: start=%1.%2 end=%3.%4")
+        .arg(start.tv_sec).arg(start.tv_nsec)
+        .arg(end.tv_sec).arg(end.tv_nsec);
     timespec temp;
     temp.tv_sec = end.tv_sec - start.tv_sec;
     temp.tv_nsec = end.tv_nsec - start.tv_nsec;

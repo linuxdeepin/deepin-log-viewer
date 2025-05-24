@@ -37,7 +37,9 @@ Q_LOGGING_CATEGORY(logAppMain, "org.deepin.log.viewer.main", QtInfoMsg)
 int main(int argc, char *argv[])
 {
     //在root下或者非deepin/uos环境下运行不会发生异常，需要加上XDG_CURRENT_DESKTOP=Deepin环境变量；
+    qCDebug(logAppMain) << "Checking XDG_CURRENT_DESKTOP environment variable";
     if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")) {
+        qCInfo(logAppMain) << "Setting XDG_CURRENT_DESKTOP to Deepin";
         setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
     }
 
@@ -88,7 +90,9 @@ int main(int argc, char *argv[])
         cmdParser.addOption(submoduleOption);
         cmdParser.addOption(reportCoredumpOption);
 
+        qCDebug(logAppMain) << "Parsing command line arguments";
         if (!cmdParser.parse(qApp->arguments())) {
+            qCWarning(logAppMain) << "Failed to parse command line arguments";
             cmdParser.showHelp(-1);
         }
 
@@ -178,8 +182,9 @@ int main(int argc, char *argv[])
                 return -1;
             }
 
+            qCDebug(logAppMain) << "Validating export type and app name options";
             if (!type.isEmpty() && type != "app" && !appName.isEmpty()) {
-                qCWarning(logAppMain) << QString("Option -d -t both exist, -t can only be set to 'app' type.");
+                qCWarning(logAppMain) << "Option -d -t both exist, -t can only be set to 'app' type";
                 return -1;
             }
 
@@ -192,7 +197,9 @@ int main(int argc, char *argv[])
                     appName.isEmpty() &&
                     submodule.isEmpty() &&
                     keyword.isEmpty()) {
+                    qCDebug(logAppMain) << "Exporting logs of type:" << type;
                     int nRet = LogBackend::instance(&a)->exportTypeLogs(outDir, type);
+                    qCDebug(logAppMain) << "Export logs finished with code:" << nRet;
                     return nRet;
                 } else {
                     // 按筛选条件导出指定类型的日志
@@ -227,7 +234,11 @@ int main(int argc, char *argv[])
                         if (!status.isEmpty() || !event.isEmpty()) {
                             qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'level' or 'keyword' or 'submodule' parameters.").arg(type);
                         } else if (!appName.isEmpty()) {
+                            qCDebug(logAppMain) << "Exporting app logs with conditions - app:" << appName
+                                               << "period:" << period << "level:" << level
+                                               << "submodule:" << submodule << "keyword:" << keyword;
                             bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, submodule, keyword);
+                            qCDebug(logAppMain) << "Export app logs finished with result:" << bRet;
                         } else {
                             qCWarning(logAppMain) << QString("Export logs by %1, filterd by 'period' or 'level' or 'keyword' or 'submodule', currently not supported.").arg(type).arg(appName);
                         }
@@ -278,7 +289,9 @@ int main(int argc, char *argv[])
                     return -1;
                 }
                 // 未指定类型，默认导出所有日志
+                qCDebug(logAppMain) << "Exporting all logs to:" << outDir;
                 int nRet = LogBackend::instance(&a)->exportAllLogs(outDir);
+                qCDebug(logAppMain) << "Export all logs finished with code:" << nRet;
                 if (nRet != 0)
                     return nRet;
             }
@@ -335,16 +348,20 @@ int main(int argc, char *argv[])
 #endif
         LogApplicationHelper::instance();
 
+        qCDebug(logAppMain) << "Checking single instance for application:" << a.applicationName();
         if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
-                                                                  DGuiApplicationHelper::UserScope)) {
-            qCCritical(logAppMain) << "DGuiApplicationHelper::instance()->setSingleInstance";
+                                                                      DGuiApplicationHelper::UserScope)) {
+            qCCritical(logAppMain) << "Failed to set single instance for application:" << a.applicationName();
+            qCWarning(logAppMain) << "Another instance is already running, activating existing window";
             a.activeWindow();
             return 0;
         }
 
         // 显示GUI
+        qCInfo(logAppMain) << "Initializing main window";
         LogCollectorMain w;
         a.setMainWindow(&w);
+        qCDebug(logAppMain) << "Main window initialized and set";
 
         // 自动化标记由此开始
         QAccessible::installFactory(accessibleFactory);
@@ -361,8 +378,10 @@ int main(int argc, char *argv[])
             Eventlogutils::GetInstance()->writeLogs(objStartEvent);
         });
 
+        qCDebug(logAppMain) << "Showing main window and moving to center";
         w.show();
         Dtk::Widget::moveToCenter(&w);
+        qCInfo(logAppMain) << "Main window displayed successfully";
         bool result = a.exec();
         PERF_PRINT_END("POINT-02", "");
 

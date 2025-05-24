@@ -30,9 +30,11 @@ int LogOOCFileParseThread::thread_count = 0;
 LogOOCFileParseThread::LogOOCFileParseThread(QObject *parent)
     : QThread(parent)
 {
+    qCDebug(logOOCParse) << "Enter LogOOCFileParseThread constructor";
     //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
     thread_count++;
     m_threadCount = thread_count;
+    qCDebug(logOOCParse) << "Exit LogOOCFileParseThread constructor, thread count:" << thread_count;
 }
 
 /**
@@ -40,7 +42,9 @@ LogOOCFileParseThread::LogOOCFileParseThread(QObject *parent)
  */
 LogOOCFileParseThread::~LogOOCFileParseThread()
 {
+    qCDebug(logOOCParse) << "Enter LogOOCFileParseThread destructor";
     stopProccess();
+    qCDebug(logOOCParse) << "Exit LogOOCFileParseThread destructor";
 }
 
 void LogOOCFileParseThread::setParam(const QString &path)
@@ -58,6 +62,7 @@ int LogOOCFileParseThread::getIndex()
  */
 void LogOOCFileParseThread::doWork()
 {
+    qCDebug(logOOCParse) << "Enter LogOOCFileParseThread::doWork";
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
 
@@ -94,12 +99,15 @@ void LogOOCFileParseThread::doWork()
         emit sigData(m_threadCount, m_fileData);
     }
 
+    qCDebug(logOOCParse) << "Exit LogOOCFileParseThread::doWork";
     emit sigFinished(m_threadCount);
 }
 
 //鉴权
 bool LogOOCFileParseThread::checkAuthentication(const QString &path)
 {
+    qCDebug(logOOCParse) << "Enter checkAuthentication, path:" << path;
+
     //判断当前用户对文件是否可读
     QFlags <QFileDevice::Permission> power = QFile::permissions(path);
     if (!power.testFlag(QFile::ReadUser)) {
@@ -119,6 +127,7 @@ bool LogOOCFileParseThread::checkAuthentication(const QString &path)
         }
     }
 
+    qCDebug(logOOCParse) << "Exit checkAuthentication, result:" << (power.testFlag(QFile::ReadUser) ? "true" : "false");
     return true;
 }
 
@@ -167,6 +176,8 @@ void LogOOCFileParseThread::run()
  */
 void LogOOCFileParseThread::stopProccess()
 {
+    qCDebug(logOOCParse) << "Enter stopProccess";
+
     //防止正在执行时重复执行
     if (m_isStopProccess) {
         return;
@@ -183,6 +194,7 @@ void LogOOCFileParseThread::stopProccess()
     if (m_process) {
         m_process->kill();
     }
+    qCDebug(logOOCParse) << "Exit stopProccess";
 }
 
 void LogOOCFileParseThread::initProccess()

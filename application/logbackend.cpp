@@ -43,16 +43,19 @@ LogBackend *LogBackend::m_staticbackend = nullptr;
 
 LogBackend *LogBackend::instance(QObject *parent)
 {
+    qCDebug(logBackend) << "Getting LogBackend instance";
     if (parent != nullptr && m_staticbackend == nullptr) {
+        qCDebug(logBackend) << "Creating new LogBackend instance";
         m_staticbackend = new LogBackend(parent);
     }
 
+    qCDebug(logBackend) << "Returning LogBackend instance";
     return m_staticbackend;
 }
 
 LogBackend::~LogBackend()
 {
-
+    qCDebug(logBackend) << "Destroying LogBackend instance";
 }
 
 LogBackend::LogBackend(QObject *parent) : QObject(parent)
@@ -60,7 +63,10 @@ LogBackend::LogBackend(QObject *parent) : QObject(parent)
     getLogTypes();
 
     m_cmdWorkDir = QDir::currentPath();
+    qCInfo(logBackend) << "Set command working directory to:" << m_cmdWorkDir;
+    
     Utils::m_mapAuditType2EventType = LogSettings::instance()->loadAuditMap();
+    qCDebug(logBackend) << "Loaded audit type mapping";
 
     initConnections();
 }
@@ -143,8 +149,10 @@ void LogBackend::setCmdWorkDir(const QString &dirPath)
 
 int LogBackend::exportAllLogs(const QString &outDir)
 {
-    if(!getOutDirPath(outDir))
+    if(!getOutDirPath(outDir)) {
+        qCWarning(logBackend) << "Invalid output directory:" << outDir;
         return -1;
+    }
 
     PERF_PRINT_BEGIN("POINT-05", "export all logs");
     qCInfo(logBackend) << "exporting all logs begin.";
@@ -189,8 +197,10 @@ int LogBackend::exportAllLogs(const QString &outDir)
 int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 {
     // 输出目录有效性验证
-    if(!getOutDirPath(outDir))
+    if(!getOutDirPath(outDir)) {
+        qCWarning(logBackend) << "Invalid output directory:" << outDir;
         return -1;
+    }
 
     // 日志种类有效性验证
     QString error;
@@ -407,8 +417,10 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 
 bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, const QString &type, const QString &period, const QString &condition, const QString &keyword)
 {
-    if (!getOutDirPath(outDir))
+    if (!getOutDirPath(outDir)) {
+        qCWarning(logBackend) << "Invalid output directory:" << outDir;
         return false;
+    }
 
     // 日志种类有效性验证
     QString error;
@@ -436,11 +448,15 @@ bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, co
 
 int LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
 {
-    if(!getOutDirPath(outDir))
+    if(!getOutDirPath(outDir)) {
+        qCWarning(logBackend) << "Invalid output directory:" << outDir;
         return -1;
+    }
 
-    if (appName.isEmpty())
+    if (appName.isEmpty()) {
+        qCWarning(logBackend) << "Empty app name provided";
         return -1;
+    }
 
     // 先查找是否有该应用相关日志配置
     if (!LogApplicationHelper::instance()->isAppLogConfigExist(appName)) {
@@ -448,7 +464,7 @@ int LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
         return -1;
     }
 
-    qCInfo(logBackend) << QString("exporting %1 logs...").arg(appName);
+    qCInfo(logBackend) << "Exporting logs for app:" << appName;
 
     QString categoryOutPath = QString("%1/%2").arg(m_outPath).arg(appName);
 

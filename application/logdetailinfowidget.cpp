@@ -34,6 +34,7 @@ logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
     : DWidget(parent)
     , m_textBrowser(new logDetailEdit(this))
 {
+    qDebug() << "logDetailInfoWidget constructor called";
     initUI();
     //此控件不需要有焦点
     setFocusPolicy(Qt::NoFocus);
@@ -44,6 +45,7 @@ logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
  */
 void logDetailInfoWidget::cleanText()
 {
+    qDebug() << "Cleaning all text widgets";
     m_dateTime->hide();
 
     m_userName->hide();
@@ -79,6 +81,7 @@ void logDetailInfoWidget::cleanText()
  */
 void logDetailInfoWidget::hideLine(bool isHidden)
 {
+    qDebug() << "Setting horizontal line visibility:" << !isHidden;
     m_hline->setHidden(isHidden);
 }
 
@@ -87,6 +90,7 @@ void logDetailInfoWidget::hideLine(bool isHidden)
  */
 void logDetailInfoWidget::initUI()
 {
+    qDebug() << "Initializing UI components";
     // init pointer
     m_daemonName = new DLabel(this);
     QFont font;
@@ -408,11 +412,15 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
 {
     cleanText();
 
-    if (!index.isValid())
+    if (!index.isValid()) {
+        qWarning() << "Invalid index received in slot_DetailInfo";
         return;
+    }
 
-    if (nullptr == pModel)
+    if (nullptr == pModel) {
+        qWarning() << "Null model received in slot_DetailInfo";
         return;
+    }
 
     m_pModel = pModel;
 

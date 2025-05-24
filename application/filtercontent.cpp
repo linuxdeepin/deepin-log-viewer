@@ -30,6 +30,9 @@
 #include <QVBoxLayout>
 #include <QResizeEvent>
 #include <QPainterPath>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(logFilter, "org.deepin.log.viewer.filter")
 
 #define BUTTON_WIDTH_MIN 68
 #define BUTTON_HEIGHT_MIN 36
@@ -49,17 +52,24 @@ FilterContent::FilterContent(QWidget *parent)
     , m_curBtnId(ALL)
     , m_curLvCbxId(INF)
 {
+    qCDebug(logFilter) << "FilterContent constructor start";
+
     initUI();
     initConnections();
 }
 
-FilterContent::~FilterContent() {}
+FilterContent::~FilterContent()
+{
+    qCDebug(logFilter) << "FilterContent destructor";
+}
 
 /**
  * @brief FilterContent::initUI 初始化界面
  */
 void FilterContent::initUI()
 {
+    qCDebug(logFilter) << "Initializing filter UI components";
+
     QVBoxLayout *vLayout = new QVBoxLayout(this);
     // set period info
     hLayout_period = new QHBoxLayout;
@@ -220,6 +230,7 @@ void FilterContent::initUI()
     vLayout->addLayout(hLayout_all);
     vLayout->setSpacing(16);
     this->setLayout(vLayout);
+    qCDebug(logFilter) << "Setting initial selector visibility";
     setSelectorVisible(true, false, false, true, false);
     m_currentType = JOUR_TREE_DATA;
     //设置初始筛选选项
@@ -239,6 +250,8 @@ void FilterContent::initUI()
  */
 void FilterContent::initConnections()
 {
+    qCDebug(logFilter) << "Initializing signal-slot connections";
+
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     connect(m_btnGroup, SIGNAL(buttonClicked(int)), this, SLOT(slot_buttonClicked(int)));
 #else
@@ -260,6 +273,7 @@ void FilterContent::initConnections()
  */
 void FilterContent::shortCutExport()
 {
+    qCDebug(logFilter) << "Processing shortcut export request";
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
     bool canExport = true;
     if (exportBtn) {
@@ -275,6 +289,7 @@ void FilterContent::shortCutExport()
  */
 void FilterContent::setAppComboBoxItem()
 {
+    qCDebug(logFilter) << "Refreshing application combo box items";
     //必须先disconnect变动值的信号槽,因为改变下拉选项会几次触发currentIndexChanged信号,这不是我们想要的
     disconnect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
     cbx_app->clear();
@@ -334,6 +349,11 @@ void FilterContent::setSubmodulesComboBoxItem(const QString &app)
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
                                        bool needMove, bool typecbx, bool dnfCbx, bool auditCbx)
 {
+    qCDebug(logFilter) << "Updating selector visibility - Level:" << lvCbx
+                       << "App:" << appListCbx << "Status:" << statusCbx
+                       << "Period:" << period << "NeedMove:" << needMove
+                       << "Type:" << typecbx << "DNF:" << dnfCbx << "Audit:" << auditCbx;
+
     //先不立马更新界面,等全部更新好控件状态后再更新界面,否则会导致界面跳动
     setUpdatesEnabled(false);
     lvTxt->setVisible(lvCbx);

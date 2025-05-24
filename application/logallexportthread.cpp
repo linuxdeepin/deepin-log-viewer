@@ -19,10 +19,12 @@ LogAllExportThread::LogAllExportThread(const QStringList &types, const QString &
     , m_types(types)
     , m_outfile(outfile)
 {
+    qCDebug(logExportAll) << "LogAllExportThread created with types:" << types << "output file:" << outfile;
 }
 
 void LogAllExportThread::run()
 {
+    qCDebug(logExportAll) << "Export thread started";
     //判断权限
     qCInfo(logExportAll) << "outFile: " << m_outfile;
     QFileInfo info(m_outfile);
@@ -138,12 +140,14 @@ void LogAllExportThread::run()
     }
 
     if (eList.isEmpty()) {
+        qCWarning(logExportAll) << "No log types specified for export";
         emit exportFinsh(false);
         return;
     }
 
     //删除原文件
     if (info.exists() && !QFile::remove(m_outfile)) {
+        qCCritical(logExportAll) << "Failed to remove existing output file:" << m_outfile;
         emit exportFinsh(false);
         return;
     }
@@ -158,6 +162,7 @@ void LogAllExportThread::run()
     //创建临时目录
     Utils::mkMutiDir(tmpPath);
     for (auto &it : eList) {
+        qCDebug(logExportAll) << "Processing log category:" << it.logCategory;
         //复制文件到一级目录
         QString tmpCategoryPath = QString("%1%2/").arg(tmpPath).arg(it.logCategory);
         Utils::mkMutiDir(tmpCategoryPath);
@@ -229,6 +234,7 @@ void LogAllExportThread::run()
     }
 
     if (!m_cancel) {
+        qCDebug(logExportAll) << "Packaging exported logs into:" << m_outfile;
         //打包日志文件
         Utils::executeCmd("chmod", QStringList() << "-R" << "777" << Utils::getAppDataPath(), tmpPath);
         Utils::executeCmd("zip", QStringList() << "-r" << "tmp.zip" << "./", tmpPath);
@@ -242,7 +248,10 @@ void LogAllExportThread::run()
     dir.removeRecursively();
     //取消导出删除输出文件
     if (m_cancel) {
+        qCInfo(logExportAll) << "Export cancelled, removing output file";
         QFile::remove(m_outfile);
     }
-    emit exportFinsh(!m_cancel && QFileInfo(m_outfile).exists());
+    bool success = !m_cancel && QFileInfo(m_outfile).exists();
+    qCDebug(logExportAll) << "Export finished with status:" << success;
+    emit exportFinsh(success);
 }

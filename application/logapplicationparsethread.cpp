@@ -44,6 +44,8 @@ LogApplicationParseThread::LogApplicationParseThread(QObject *parent)
     //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
     thread_count++;
     m_threadCount = thread_count;
+    
+    qCDebug(logApp) << "Thread created with ID:" << m_threadCount;
 }
 
 /**
@@ -56,11 +58,14 @@ LogApplicationParseThread::~LogApplicationParseThread()
     m_journalMap.clear();
 
     if (m_process) {
+        qCDebug(logApp) << "Killing process for thread:" << m_threadCount;
         m_process->kill();
         m_process->close();
         delete  m_process;
         m_process = nullptr;
     }
+    
+    qCDebug(logApp) << "Thread destroyed with ID:" << m_threadCount;
 }
 
 void LogApplicationParseThread::setFilters(const APP_FILTERSList &iFilters)
@@ -90,28 +95,43 @@ int LogApplicationParseThread::getIndex()
  */
 void LogApplicationParseThread::doWork()
 {
+    qCDebug(logApp) << "Starting work for thread:" << m_threadCount;
+    
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
     mutex.lock();
     m_appList.clear();
     mutex.unlock();
 
+    qCDebug(logApp) << "Processing" << m_AppFilers.size() << "app filters";
+    
     // 遍历每个子模块对应的日志过滤配置项
     for (auto appFilter : m_AppFilers) {
+        qCDebug(logApp) << "Processing filter type:" << appFilter.logType
+                       << "for submodule:" << appFilter.submodule;
+                       
         if (appFilter.logType == "file") {
-            if (!parseByFile(appFilter))
+            if (!parseByFile(appFilter)) {
+                qCWarning(logApp) << "Failed to parse by file for submodule:"
+                                << appFilter.submodule;
                 return;
+            }
         } else if (appFilter.logType == "journal") {
-            if (!parseByJournal(appFilter))
+            if (!parseByJournal(appFilter)) {
+                qCWarning(logApp) << "Failed to parse by journal for submodule:"
+                                << appFilter.submodule;
                 return;
+            }
         }
     }
 
     //最后可能有余下不足500的数据
     if (m_appList.count() >= 0) {
+        qCDebug(logApp) << "Emitting" << m_appList.count() << "remaining app data";
         emit appData(m_threadCount, m_appList);
     }
 
+    qCDebug(logApp) << "Work completed for thread:" << m_threadCount;
     emit appFinished(m_threadCount);
 }
 
@@ -123,6 +143,7 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
     //connect(m_process, SIGNAL(finished(int)), m_process, SLOT(deleteLater()));
     //因为筛选信息中含有日志文件路径，所以不能为空，否则无法获取
     if (m_AppFiler.path.isEmpty()) {  //modified by Airy for bug 20457::if path is empty,item is not empty
+        qCWarning(logApp) << "Empty path for submodule:" << app_filter.submodule;
         emit appFinished(m_threadCount);
     } else {
         QStringList filePath = DLDBusHandler::instance(this)->getFileInfo(m_AppFiler.path);
@@ -135,6 +156,7 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
             QByteArray outByte = DLDBusHandler::instance(this)->readLog(filePath[i]).toUtf8();
             // dbus鉴权失败，不再继续解析
             if (outByte.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
+                qCWarning(logApp) << "D-Bus authorization failed for file:" << filePath[i];
                 mutex.unlock();
                 emit appFinished(m_threadCount);
                 return false;
@@ -208,6 +230,7 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
     m_AppFiler = app_filter;
 
     if ((!m_canRun)) {
+        qCWarning(logApp) << "Thread stopped before journal parsing";
         mutex.unlock();
         return false;
     }
@@ -216,6 +239,7 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
 
     sd_journal *j ;
     if ((!m_canRun)) {
+        qCWarning(logApp) << "Thread stopped before journal opening";
         mutex.unlock();
         return false;
     }
@@ -228,7 +252,7 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
     }
     //r为系统借口返回值，小于0则表示失败，直接返回
     if (r < 0) {
-        fprintf(stderr, "Failed to open journal: %s\n", strerror(-r));
+        qCCritical(logApp) << "Failed to open journal:" << strerror(-r);
         return false;
     }
     //从尾部开始读，这样出来数据是倒叙，符合需求
