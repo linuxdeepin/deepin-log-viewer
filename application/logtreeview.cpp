@@ -32,6 +32,7 @@ DWIDGET_USE_NAMESPACE
 LogTreeView::LogTreeView(QWidget *parent)
     : DTreeView(parent)
 {
+    qInfo() << "LogTreeView constructor initialized";
     initUI();
     connect(this->verticalScrollBar(), &QScrollBar::sliderPressed, this, [ = ] {
         if (QScroller::hasScroller(this))
@@ -63,6 +64,7 @@ int LogTreeView::singleRowHeight()
  */
 void LogTreeView::initUI()
 {
+    qInfo() << "Initializing LogTreeView UI components";
     m_itemDelegate = new LogViewItemDelegate(this);
     setItemDelegate(m_itemDelegate);
 

@@ -40,6 +40,12 @@ DWIDGET_USE_NAMESPACE
 const int BUTTON_SIZE  = 36;
 const int BUTTON_SIZE_COMPACT = 24;
 
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logCollector, "org.deepin.logger.collector")
+#else
+Q_LOGGING_CATEGORY(logCollector, "org.deepin.logger.collector", QtInfoMsg)
+#endif
+
 //刷新间隔
 static const QString refreshIntervalKey = "base.RefreshInterval";
 /**
@@ -49,11 +55,13 @@ static const QString refreshIntervalKey = "base.RefreshInterval";
 LogCollectorMain::LogCollectorMain(QWidget *parent)
     : DMainWindow(parent)
 {
+    qCDebug(logCollector) << "Initializing LogCollectorMain...";
     qRegisterMetaType<DNFPRIORITY>("DNFPRIORITY");
     initUI();
     initConnection();
 
     initShortCut();
+    qCDebug(logCollector) << "LogCollectorMain initialized successfully";
     //日志类型选择器选第一个
     m_logCatelogue->setDefaultSelect();
     //设置最小窗口尺寸
@@ -68,20 +76,25 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
  */
 LogCollectorMain::~LogCollectorMain()
 {
+    qCDebug(logCollector) << "Destroying LogCollectorMain...";
     /** delete when app quit */
     if (m_searchEdt) {
         delete m_searchEdt;
         m_searchEdt = nullptr;
+        qCDebug(logCollector) << "Search edit widget deleted";
     }
 
     if (m_backend) {
         delete m_backend;
         m_backend = nullptr;
+        qCDebug(logCollector) << "Settings backend deleted";
     }
     //如果窗体状态不是最大最小状态，则记录此时窗口尺寸到配置文件里，方便下次打开时恢复大小
     if (windowState() == Qt::WindowNoState) {
+        qCDebug(logCollector) << "Saving window size:" << width() << "x" << height();
         LogSettings::instance()->saveConfigWinSize(width(), height());
     }
+    qCDebug(logCollector) << "LogCollectorMain destroyed";
 }
 
 /**
@@ -89,6 +102,7 @@ LogCollectorMain::~LogCollectorMain()
  */
 void LogCollectorMain::initUI()
 {
+    qCDebug(logCollector) << "Initializing UI components...";
     /** add searchEdit */
     m_searchEdt = new DSearchEdit();
 
@@ -179,6 +193,7 @@ void LogCollectorMain::initUI()
 #endif
 
     m_originFilterWidth = m_topRightWgt->geometry().width();
+    qCDebug(logCollector) << "UI initialization completed. Original filter width:" << m_originFilterWidth;
 }
 
 void LogCollectorMain::initTitlebarExtensions()
@@ -239,19 +254,24 @@ void LogCollectorMain::initTitlebarExtensions()
 
 void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
 {
+    qCDebug(logCollector) << "Refresh interval changed, action:" << action->text();
     int index = m_refreshActions.indexOf(action);
     int timeInterval = 0;
     switch (index) {
     case 0:
         timeInterval = 10 * 1000; //10秒刷新
+        qCDebug(logCollector) << "Setting refresh interval to 10 seconds";
         break;
     case 1:
         timeInterval = 60 * 1000; //1分钟刷新
+        qCDebug(logCollector) << "Setting refresh interval to 1 minute";
         break;
     case 2:
         timeInterval = 5 * 60 * 1000; //5分钟刷新
+        qCDebug(logCollector) << "Setting refresh interval to 5 minutes";
         break;
     default:
+        qCDebug(logCollector) << "Disabling auto refresh";
         break;
     }
     //先停止刷新
@@ -293,20 +313,26 @@ void LogCollectorMain::initSettings()
 
 void LogCollectorMain::exportAllLogs()
 {
+    qCDebug(logCollector) << "Starting export all logs...";
     static bool authorization = false;
     if (false == authorization) {
         QString policyActionId = "";
         // 开启等保四，若当前用户是审计管理员，使用单用户审计管理员鉴权
-        if (DBusManager::isSEOpen() && DBusManager::isAuditAdmin())
+        if (DBusManager::isSEOpen() && DBusManager::isAuditAdmin()) {
             policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogsSelf";
-        else
+            qCDebug(logCollector) << "Using audit admin authorization";
+        } else {
             // 其他情况，默认为多用户鉴权
             policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogs";
+            qCDebug(logCollector) << "Using normal user authorization";
+        }
 
         if (!Utils::checkAuthorization(policyActionId, qApp->applicationPid())) {
+            qCWarning(logCollector) << "Authorization failed for policy:" << policyActionId;
             return;
         }
         authorization = true;
+        qCDebug(logCollector) << "Authorization passed";
     }
 
     // 时间
@@ -368,7 +394,10 @@ void LogCollectorMain::exportAllLogs()
     QThreadPool::globalInstance()->start(thread);
     m_exportDlg->exec();
     if (!exportcomplete) {
+        qCWarning(logCollector) << "Export cancelled by user";
         thread->slot_cancelExport();
+    } else {
+        qCInfo(logCollector) << "Export completed successfully";
     }
 }
 /**
@@ -476,9 +505,11 @@ void LogCollectorMain::updateSizeMode()
  */
 void LogCollectorMain::initShortCut()
 {
+    qCDebug(logCollector) << "Initializing shortcuts...";
     // Resize Window --> Ctrl+Alt+F
     if (nullptr == m_scWndReize) {
         m_scWndReize = new QShortcut(this);
+        qCDebug(logCollector) << "Created window resize shortcut";
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_scWndReize->setKey(Qt::CTRL + Qt::ALT + Qt::Key_F);
 #else

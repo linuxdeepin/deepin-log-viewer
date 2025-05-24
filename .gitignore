@@ -45,3 +45,15 @@ moc_*
 */coverage/*
 report/*
 
+# AI configures
+.ruru/
+.roo/
+.roomodes
+.kilocode/
+.cursors/
+
+# cmake output
+build/
+CMakeFiles/
+cmake_install.cmake
+CMakeCache.txt

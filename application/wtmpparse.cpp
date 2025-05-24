@@ -4,10 +4,21 @@
 
 #include "wtmpparse.h"
 #include <QDebug>
+#include <QLoggingCategory>
+
+#ifdef QT_DEBUG
+Q_LOGGING_CATEGORY(logWtmp, "org.deepin.log.viewer.wtmp.parse")
+#else
+Q_LOGGING_CATEGORY(logWtmp, "org.deepin.log.viewer.wtmp.parse", QtInfoMsg)
+#endif
 
 int wtmp_open(char *filename)
 {
+    qCDebug(logWtmp) << "Opening wtmp file:" << filename;
     fdWtmp = open(filename, O_RDONLY);
+    if (fdWtmp == -1) {
+        qCWarning(logWtmp) << "Failed to open wtmp file:" << filename << "error:" << strerror(errno);
+    }
     cur_rec = num_recs = 0;
     return fdWtmp;
 }
@@ -28,9 +39,15 @@ int seek_end(void)
 
 int wtmp_reload(void)
 {
+    qCDebug(logWtmp) << "Reloading wtmp data";
     int amt_read;
     amt_read = read(fdWtmp, utmpbuf, NRECS * UTSIZE);
+    if (amt_read == -1) {
+        qCWarning(logWtmp) << "Failed to read wtmp data, error:" << strerror(errno);
+        return 0;
+    }
     num_recs = amt_read / UTSIZE;
+    qCDebug(logWtmp) << "Read" << num_recs << "wtmp records";
 
     cur_rec = 0;
 
@@ -94,9 +111,10 @@ void wtmp_close(void)
 
 struct utmp_list *st_list_init(void)
 {
+    qCDebug(logWtmp) << "Initializing utmp list";
     struct utmp_list *list = static_cast<struct utmp_list *>(malloc(sizeof(struct utmp_list)));
     if (!list) {
-        printf("struct utmp_list malloc failed\n");
+        qCCritical(logWtmp) << "Failed to allocate memory for utmp_list";
         return NULL;
     }
 
@@ -179,6 +197,12 @@ char *show_start_time(time_t timeval)
 }
 void show_base_info(struct utmp *uBuf)
 {
+    qCDebug(logWtmp) << "Showing base info for utmp entry:"
+                    << "user:" << uBuf->ut_name
+                    << "line:" << uBuf->ut_line
+                    << "host:" << uBuf->ut_host
+                    << "type:" << uBuf->ut_type;
+                    
     printf("%-9.8s", uBuf->ut_name);
 
     if (uBuf->ut_type == BOOT_TIME)

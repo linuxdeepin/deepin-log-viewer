@@ -491,6 +491,7 @@ void LogApplicationHelper::loadAppLogConfigsByJson()
         qCWarning(logAppHelper) << QString("%1 does not exist.").arg(APP_LOG_CONFIG_PATH);
         return;
     }
+    qCDebug(logAppHelper) << "Loading app log configs from:" << APP_LOG_CONFIG_PATH;
 
     dir.setFilter(QDir::Files);
     dir.setNameFilters(QStringList() << "*.json");
@@ -506,6 +507,7 @@ void LogApplicationHelper::loadAppLogConfigsByJson()
         QJsonParseError parseError;
         QJsonDocument document = QJsonDocument::fromJson(data, &parseError);
         if (parseError.error == QJsonParseError::NoError) {
+            qCDebug(logAppHelper) << "Successfully parsed JSON config file:" << fi.fileName();
             if (document.isObject()) {
                 QJsonObject object = document.object();
 
@@ -776,8 +778,10 @@ QDateTime LogApplicationHelper::getLastReportTime()
 #endif
 
     if (time.isValid()) {
+        qCDebug(logAppHelper) << "Got last report time from config:" << time.toString();
         return QDateTime::fromString(time.toString(), "yyyy-MM-dd hh:mm:ss");
     }
+    qCDebug(logAppHelper) << "No valid last report time found in config";
 
     return QDateTime();
 }
@@ -785,6 +789,7 @@ QDateTime LogApplicationHelper::getLastReportTime()
 void LogApplicationHelper::saveLastRerportTime(const QDateTime &date)
 {
     QString str = date.toString("yyyy-MM-dd hh:mm:ss");
+    qCDebug(logAppHelper) << "Saving last report time:" << str;
 
 #ifdef DTKCORE_CLASS_DConfigFile
     m_pDConfig->setValue(COREDUMP_REPORT_TIME, str);
