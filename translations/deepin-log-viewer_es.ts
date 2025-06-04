@@ -396,7 +396,7 @@
     </message>
     <message>
         <source>Time Modified</source>
-        <translation>Hora de modificado</translation>
+        <translation>Fecha de modificación</translation>
     </message>
     <message>
         <source>SIG</source>
