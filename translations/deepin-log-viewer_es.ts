@@ -171,7 +171,7 @@
     </message>
     <message>
         <source>Export failed</source>
-        <translation>Exportar fallós</translation>
+        <translation>Fallo al exportar</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
@@ -396,7 +396,7 @@
     </message>
     <message>
         <source>Time Modified</source>
-        <translation>Hora de modificado</translation>
+        <translation>Fecha de modificación</translation>
     </message>
     <message>
         <source>SIG</source>
