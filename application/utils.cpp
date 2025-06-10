@@ -411,23 +411,6 @@ QString Utils::getCurrentUserName()
     return pwd->pw_name;
 }
 
-bool Utils::isValidUserName(const QString &userName)
-{
-    bool bValidUserName = false;
-    QDBusInterface interface("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts", QDBusConnection::systemBus());
-    QStringList userList = qvariant_cast< QStringList >(interface.property("UserList"));
-    for (auto strUser : userList) {
-        uint uid = strUser.mid(strUser.lastIndexOf("User") + 4).toUInt();
-        QString tempUserName = getUserNamebyUID(uid);
-        if(tempUserName == userName) {
-            bValidUserName = true;
-            break;
-        }
-    }
-
-    return bValidUserName;
-}
-
 bool Utils::isCoredumpctlExist()
 {
     qCDebug(logUtils) << "Checking if coredumpctl exists";
@@ -445,34 +428,6 @@ bool Utils::isCoredumpctlExist()
     
     qCDebug(logUtils) << "coredumpctl exists:" << isCoredumpctlExist;
     return isCoredumpctlExist;
-}
-
-QString Utils::getHomePath(const QString &userName)
-{
-    QString uName("");
-    if (!userName.isEmpty())
-        uName = userName;
-    else
-        uName = getCurrentUserName();
-
-    QString homePath = "";
-    if (isValidUserName(uName)) {
-        QProcess *unlock = new QProcess;
-        unlock->start("sh", QStringList() << "-c" << QString("cat /etc/passwd | grep %1").arg(uName));
-        unlock->waitForFinished();
-        auto output = unlock->readAllStandardOutput();
-        auto str = QString::fromUtf8(output);
-        homePath = str.mid(str.indexOf("::") + 2).split(":").first();
-    }
-
-    // 根据用户名获取家目录失败，默认采用QDir::homePath()作为homePath
-    QDir dir(homePath);
-    if (!dir.exists() || homePath.isEmpty())
-        homePath = QDir::homePath();
-
-    qCDebug(logUtils) << "userName: " << uName << "homePath:" << homePath;
-
-    return homePath;
 }
 
 QString Utils::appName(const QString &filePath)

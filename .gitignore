@@ -57,3 +57,7 @@ build/
 CMakeFiles/
 cmake_install.cmake
 CMakeCache.txt
+
+# AI
+.cursor
+.specstory
