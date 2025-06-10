@@ -71,9 +71,7 @@ public:
     static QString getUserNamebyUID(uint uid);  //根据uid获取用户名
     static QString getUserHomePathByUID(uint uid); //根据uid获取用户家目录
     static QString getCurrentUserName();
-    static bool isValidUserName(const QString &userName);
     static bool isCoredumpctlExist();  // is coredumpctl installed
-    static QString getHomePath(const QString &userName = "");
     static QString appName(const QString &filePath);
     static void resetToNormalAuth(const QString &path);
     // 统计所有崩溃记录重复次数
