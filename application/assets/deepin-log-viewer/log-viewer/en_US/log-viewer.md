@@ -1,162 +1,95 @@
-# Log Viewer|deepin-log-viewer|
-
+# Log Viewer | deepin-log-viewer
 ## Overview
-
-The log collection tool is a small utility responsible for collecting logs generated during program execution, such as relevant information about the operating system and applications during startup, operation, etc. By analyzing detailed log information, you can quickly find the cause of failures and resolve issues.
-
+The Log Collection Tool is a utility designed to gather logs generated during program execution, including information about operating system and application startup, operation, and other processes. By analyzing detailed log information, you can quickly identify the cause of issues and resolve them.
 ## Getting Started
-
-You can run, close the log collection tool, or create shortcuts in the following ways.
-
-### Running the Log Collection Tool
-
-1. Click the launcher icon on the taskbar ![deepin_launcher](../common/deepin_launcher.svg) to enter the launcher interface.
-
-2. Scroll up or down with the mouse wheel or search to find the log collection tool icon ![deepin_log_viewer](../common/deepin_log_viewer.svg), and click to run it.
-
-3. Right-click on the icon, and you can:
-
-   - Click **Send to Desktop** to create a shortcut on the desktop.
-    - Click **Send to Taskbar** to pin the application to the taskbar.
-    - Click **Start Automatically** to add the application to the startup items, so it runs automatically when the computer starts.
-
-### Closing the Log Collection Tool
-
-- In the log collection tool interface, click ![close_icon](../common/close_icon.svg) to exit the log collection tool.
-- Right-click on the taskbar ![deepin_log_viewer](../common/deepin_log_viewer.svg), and select **Close All** to exit the log collection tool.
-- In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg) and select **Exit** to close the tool.
-
-## Operations Introduction
-
-> ![attention](../common/attention.svg) The log collection tool supports the display of various log types. Due to differences in system versions or architectures, the available log types may vary. Please refer to the final page for the specific features.
+You can launch, exit, or create shortcuts for the Log Collection Tool using the following methods.
+### Launching deepin-log-viewer
+1. Click the Launcher icon ![deepin_launcher](../common/deepin_launcher.svg)on the taskbar to enter the Launcher interface.
+2. Scroll up and down with your mouse wheel or use the search function to locate the Log Collection Tool icon![deepin_log_viewer](../common/deepin_log_viewer.svg), then click to launch.
+3. Right-click the icon  ![deepin_log_viewer](../common/deepin_log_viewer.svg)to perform the following operations:
+   - Click **Send to Desktop** to create a desktop shortcut.
+   - Click **Pin to Taskbar** to pin the application to the taskbar.
+   - Click **Add to Startup** to include the application in startup items, allowing it to launch automatically when the computer boots.
+### Exiting deepin-log-viewer
+- On the main interface of the Log Collection Tool, click ! to exit.
+- Right-click the icon ![deepin_log_viewer](../common/deepin_log_viewer.svg) on the taskbar and select **Close All** to exit.
+- On the main interface of the Log Collection Tool, click ![icon_menu](../common/icon_menu.svg) and select **Exit** to quit the application.
+## Operation Guide
+> ![attention](../common/attention.svg) The Log Collection Tool supports displaying various types of logs. Depending on the system version or architecture, the available log types may vary. Please refer to the actual interface for specific functionalities.
 >
-> ![attention](../common/attention.svg) Depending on the log type, the available filtering options, whether the log can be displayed in the file manager, and whether log clearing is supported may differ. Please refer to the final page for specific functionalities.
+> ![attention](../common/attention.svg) Different log types may offer different filtering options, visibility in the file manager, and support for log clearing. Please refer to the actual interface for specific functionalities.
 >
-> The following section will introduce the operation of the log collection tool with **system logs** and **kernel logs** as examples.
-
-### Search Logs
-
-1. In the log collection tool search box, click ![search](../common/search.svg).
-2. Enter keywords to display search results in real-time.
-3. Click ![close_icon](../common/close_icon.svg) to clear the search content.
-
-![search_log](./fig/search_log.png)
-
-### Filter Logs
-
-1. In the log collection tool’s top filter bar, select the option you want to filter by.
-2. After clicking or selecting a filter, the log collection tool will immediately display the filtered results.
-
-![filter_log](./fig/filter_log.png)
-
-### View Logs
-
-1. In the log collection tool interface, click on the log type menu you wish to view, and the right-side list will display all logs of that type.
-2. Left-click on a log, and you can view the detailed information of the log in the lower section of the tool.
-
-![syslog](./fig/syslog.png)
-
+> The following sections will use system logs and kernel logs as examples to demonstrate how to use the Log Collection Tool.
+### Searching Logs
+1. In the search box of the Log Collection Tool, click ![search](../common/search.svg).
+2. Enter keywords to view real-time search results.
+3. Click ![close_icon](../common/close_icon.svg) to clear the search box.
+   ![search_log](fig/search_log.png)
+### Filtering Logs
+1. In the filter bar at the top of the Log Collection Tool, select the desired filtering options.
+2. After clicking or selecting the filter options, the Log Collection Tool will immediately display the filtered results.
+   ![filter_log](fig/filter_log.png)
+### Viewing Logs
+1. On the main interface of the Log Collection Tool, click the log type menu you wish to view. The right-side list will display all log entries of the selected type.
+2. Left-click a log entry to view its detailed information at the bottom of the tool.
+   ![rsylog](fig/syslog.png)
 ### Custom Logs
-
-The custom log feature allows you to add log files to the log collection tool for viewing and exporting. Custom logs are compatible with both Gsettings and Dconfig configurations.
-
+The Custom Logs feature allows you to add log files to the Log Collection Tool for viewing and exporting. Custom Logs support both Gsettings and Dconfig configurations.
 **Gsettings Configuration**
-
-1. Execute the Gsettings configuration command in the terminal. Replace the “[]” with the log file paths, for example: ['a.log', 'b.log', 'c.log'].
-
-```shell
-gsettings set com.deepin.log.viewer customlogfiles []
-```
-
-1. In the log collection tool interface, click **Custom Logs**, and you will see the existing configuration.
-
+1. Execute the Gsettings configuration command in the terminal, specifying the log file paths within square brackets, e.g., `['a.log','b.log','c.log']`.
+   ```shell
+   gsettings set com.deepin.log.viewer customlogfiles []
+   ```
+2. On the main interface of the Log Collection Tool, click **Custom Logs** to view the configured log files.
 **Dconfig Configuration**
-
-1. Execute the Dconfig configuration command in the terminal. Replace the “[]” with the log file paths, for example: ["a.log", "b.log", "c.log"].
-
-```shell
-dde-dconfig --set -a org.deepin.log.viewer -r org.deepin.log.viewer -k customLogFiles -v '["a.log","b.log","c.log"]'
-```
-
-1. In the log collection tool interface, click **Custom Logs**, and you will see the existing configuration.
-
-### Export Logs
-
-The export log function allows you to export the log query results to the local system, helping you analyze, locate, and resolve issues.
-
+1. Execute the Dconfig configuration command in the terminal, specifying the log file paths within square brackets, e.g., `["a.log","b.log","c.log"]`.
+   ```shell
+   dde-dconfig --set -a org.deepin.log.viewer -r org.deepin.log.viewer -k customLogFiles -v '["a.log","b.log","c.log"]'
+   ```
+2. On the main interface of the Log Collection Tool, click **Custom Logs** to view the configured log files.
+### Exporting Logs
+The Export Logs feature allows you to save log query results locally for analysis, troubleshooting, and problem resolution.
 1. Select a log type and click the **Export** button in the upper-right corner of the interface.
-2. If a password authentication window pops up, enter your user login password and click **OK**.
-3. In the pop-up window, select the storage location and click **Save**.
-
-> ![icon](../common/notes.svg) Note: You can also click the **Export All** button in the title bar ![icon](../common/export.svg) to export all logs.
-
-![export_log](./fig/export_log.png)
-
-### Refresh Logs
-
-Logs can be refreshed manually or automatically. The frequency of automatic refresh can be customized.
-
-#### Manual Log Refresh
-
-Click the **Refresh** button in the title bar ![icon](../common/refresh.svg); or right-click on a log type and select **Refresh** to refresh the logs.
-
-![refresh_log](./fig/refresh_log.png)
-
-#### Automatic Log Refresh
-
-1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg) > **Refresh Frequency**.
-2. Select the automatic refresh frequency: **Every 10 seconds**, **Every 1 minute**, or **Every 5 minutes** to refresh the logs. Select **Do not refresh** to stop automatic log refreshing.
-
-![auto_refresh](./fig/auto_refresh.png)
-
-### Display in File Manager
-
-With the **Display in File Manager** feature, you can view the raw log files of certain logs.
-
-1. In the log collection tool’s left-side navigation bar, right-click on a log type.
-2. Select **Display in File Manager** to navigate to the current log’s storage location.
-
-![show_in_fileManager](./fig/show_in_fileManager.png)
-
-### Clear Log
-
-1. In the log collection tool’s left-side navigation bar, right-click on a log type.
-2. Select **Clear Log**.
-3. A prompt will appear asking you to confirm clearing the logs. Click **OK**.
-4. If a password authentication window pops up, enter your user login password and click **OK**.
-
-![delete_log](./fig/delete_log.png)
-
+2. If a password authentication window appears, enter your login password and click **OK**.
+3. In the pop-up window, select a storage location and click **Save**.
+> ![icon](../common/notes.svg) Note: You can also click the full export button ![icon](../common/export.svg) on the title bar to export all logs.
+> ![export_log](fig/export_log.png)
+### Refreshing Logs
+Log refreshing can be done manually or automatically, with customizable intervals for automatic refresh.
+#### Manual Refresh
+Click the refresh button ![icon](../common/refresh.svg) on the title bar, or right-click a log type and select **Refresh** to manually refresh the log content.
+   ![refresh_log](fig/refresh_log.png)
+#### Automatic Refresh
+1. On the main interface of the Log Collection Tool, click ![icon_menu](../common/icon_menu.svg) > **Refresh Frequency**.
+2. Select an automatic refresh interval: **Every 10 seconds**, **Every 1 minute**, or **Every 5 minutes**. The Log Collection Tool will refresh automatically at the selected interval. Choose **Do Not Refresh** to disable automatic refresh.
+   ![auto_refresh](fig/auto_refresh.png)
+### Show in File Manager
+The **Show in File Manager** feature allows you to view the original log files for certain log types.
+1. In the left navigation bar of the Log Collection Tool, right-click a log type.
+2. Select **Show in File Manager** to navigate to the storage location of the current log.
+   ![show_in_fileManager](fig/show_in_fileManager.png)
+### Clearing Logs
+1. In the left navigation bar of the Log Collection Tool, right-click a log type.
+2. Select **Clear Logs**.
+3. A confirmation dialog ("Are you sure you want to clear the logs?") will appear. Click **OK**.
+4. If a password authentication window appears, enter your login password and click **OK**.
+   ![delete_log](fig/delete_log.png)
 ## Main Menu
-
-In the main menu, you can [set the refresh frequency](https://chatgpt.com/c/677b9ca1-43e8-8009-91e4-3cafdf878f9c#auto-refresh-logs), switch window themes, view the help manual, and more.
-
-### Themes
-
-The window themes include Light Theme, Dark Theme, and System Theme.
-
-1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg).
+In the main menu, you can [Set Refresh Frequency](#automatic-refresh), switch window themes, view the help manual, and more.
+### Theme
+Window themes include Light, Dark, and System themes.
+1. On the main interface of the Log Collection Tool, click ![icon_menu](../common/icon_menu.svg).
 2. Select **Theme** and choose a theme color.
-
 ### Help
-
-To view the help manual and further understand how to use the log collection tool:
-
-1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg).
+View the help manual to learn more about and use the Log Collection Tool.
+1. On the main interface of the Log Collection Tool, click ![icon_menu](../common/icon_menu.svg).
 2. Select **Help**.
-3. View the log collection tool's help manual.
-
+3. View the detailed help manual for the Log Collection Tool.
 ### About
-
-1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg).
+1. On the main interface of the Log Collection Tool, click ![icon_menu](../common/icon_menu.svg).
 2. Select **About**.
-3. View the version and introduction of the log collection tool.
-
+3. View the version information and feature descriptions of the Log Collection Tool.
 ### Exit
-
-1. In the log collection tool interface, click ![icon_menu](../common/icon_menu.svg).
+1. On the main interface of the Log Collection Tool, click ![icon_menu](../common/icon_menu.svg).
 2. Select **Exit**.
 
-------
-
-Let me know if you'd like any additional modifications!
