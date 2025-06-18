@@ -29,6 +29,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE")
 set (AUTH_CPP_FILES
         main.cpp
        viewapplication.cpp
