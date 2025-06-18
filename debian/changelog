@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.13) unstable; urgency=medium
+
+  * add compile flags.  
+
+ -- dengzhongyuan <dengzhongyuan@uniontech.com>  Wed, 18 Jun 2025 11:20:55 +0800
+
 deepin-log-viewer (6.5.12) unstable; urgency=medium
 
   * Update deepin-manual resources. 
