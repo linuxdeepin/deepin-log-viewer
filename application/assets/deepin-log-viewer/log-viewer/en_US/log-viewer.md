@@ -1,4 +1,4 @@
-# Log Viewer | deepin-log-viewer
+# Log Viewer|deepin-log-viewer|
 ## Overview
 The Log Collection Tool is a utility designed to gather logs generated during program execution, including information about operating system and application startup, operation, and other processes. By analyzing detailed log information, you can quickly identify the cause of issues and resolve them.
 ## Getting Started

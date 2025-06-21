@@ -1,4 +1,4 @@
-# 日誌收集工具 | deepin-log-viewer
+# 日誌收集工具|deepin-log-viewer|
 
 ## 概述
 
