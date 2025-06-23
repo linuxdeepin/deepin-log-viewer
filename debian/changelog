@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.16) unstable; urgency=medium
+
+  * chore: Update deepin-manual resources
+
+ -- dengzhongyuan <dengzhongyuan@uniontech.com>  Mon, 23 Jun 2025 14:40:56 +0800
+
 deepin-log-viewer (6.5.15) unstable; urgency=medium
 
   * update translations.
