@@ -501,7 +501,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>འོ་དུ་གྱི་རྗེས་འབྱུང་མེད།</translation>
     </message>
 </context>
 <context>
