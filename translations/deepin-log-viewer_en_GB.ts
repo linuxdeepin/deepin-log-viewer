@@ -110,42 +110,42 @@
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Super critical</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Trace</translation>
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"/>
+        <translation>Identity authentication</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"/>
+        <translation>Discretionary Access Control</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"/>
+        <translation>Mandatory access control</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"/>
+        <translation>Remote</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"/>
+        <translation>Document audit</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Other</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
@@ -156,7 +156,7 @@
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>Exporting...</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -167,15 +167,15 @@
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>Export successful</translation>
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Export failed</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"/>
+        <translation>The export directory is not available. Please choose another directory for the export operation.</translation>
     </message>
 </context>
 <context>
@@ -193,7 +193,7 @@
     </message>
     <message>
         <source>Level:  </source>
-        <translation type="unfinished"/>
+        <translation>Level: </translation>
     </message>
     <message>
         <source>Status:</source>
@@ -233,15 +233,15 @@
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"/>
+        <translation>Audit Type:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"/>
+        <translation>Application:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>Submodule:</translation>
     </message>
 </context>
 <context>
@@ -280,18 +280,18 @@
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Level</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Super critical</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
         <source>Log file is empty</source>
-        <translation type="unfinished"/>
+        <translation>Log file is empty</translation>
     </message>
 </context>
 <context>
@@ -302,33 +302,33 @@
     </message>
     <message>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation type="unfinished"/>
+        <translation>Log Viewer is a useful tool for viewing system logs.</translation>
     </message>
 </context>
 <context>
     <name>SearchBar</name>
     <message>
         <source>No search results</source>
-        <translation type="unfinished"/>
+        <translation>No search results</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Search</translation>
     </message>
 </context>
 <context>
     <name>Table</name>
     <message>
         <source>Level</source>
-        <translation type="unfinished"/>
+        <translation>Level</translation>
     </message>
     <message>
         <source>Process</source>
-        <translation type="unfinished"/>
+        <translation>Process</translation>
     </message>
     <message>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>Date and Time</translation>
     </message>
     <message>
         <source>Info</source>
@@ -336,51 +336,51 @@
     </message>
     <message>
         <source>User</source>
-        <translation type="unfinished"/>
+        <translation>User</translation>
     </message>
     <message>
         <source>PID</source>
-        <translation type="unfinished"/>
+        <translation>PID</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"/>
+        <translation>Source</translation>
     </message>
     <message>
         <source>Action</source>
-        <translation type="unfinished"/>
+        <translation>Action</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Status</translation>
     </message>
     <message>
         <source>Event Type</source>
-        <translation type="unfinished"/>
+        <translation>Event Type</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"/>
+        <translation>Username</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation type="unfinished"/>
+        <translation>Level:</translation>
     </message>
     <message>
         <source>Process:</source>
-        <translation type="unfinished"/>
+        <translation>Process:</translation>
     </message>
     <message>
         <source>Date and Time:</source>
-        <translation type="unfinished"/>
+        <translation>Date and Time:</translation>
     </message>
     <message>
         <source>Info:</source>
-        <translation type="unfinished"/>
+        <translation>Info:</translation>
     </message>
     <message>
         <source>Null</source>
-        <translation type="unfinished"/>
+        <translation>Null</translation>
     </message>
     <message>
         <source>User:</source>
@@ -392,222 +392,228 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>File Name</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Time Modified</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"/>
+        <translation>EXE</translation>
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>Core File</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>User Name </translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Offset</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>Date and Time</translation>
     </message>
 </context>
 <context>
     <name>Tree</name>
     <message>
         <source>System Log</source>
-        <translation type="unfinished"/>
+        <translation>System Log</translation>
     </message>
     <message>
         <source>Kernel Log</source>
-        <translation type="unfinished"/>
+        <translation>Kernel Log</translation>
     </message>
     <message>
         <source>Boot Log</source>
-        <translation type="unfinished"/>
+        <translation>Boot Log</translation>
     </message>
     <message>
         <source>dpkg Log</source>
-        <translation type="unfinished"/>
+        <translation>dpkg Log</translation>
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation type="unfinished"/>
+        <translation>Kwin Log</translation>
     </message>
     <message>
         <source>Xorg Log</source>
-        <translation type="unfinished"/>
+        <translation>Xorg Log</translation>
     </message>
     <message>
         <source>Application Log</source>
-        <translation type="unfinished"/>
+        <translation>Application Log</translation>
     </message>
     <message>
         <source>Boot-Shutdown Event</source>
-        <translation type="unfinished"/>
+        <translation>Boot-Shutdown Event</translation>
     </message>
     <message>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>dnf Log</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Other Log</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Custom Log</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"/>
+        <translation>Audit Log</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>Coredump Log</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>Unable to obtain crash information, please install systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>ليس لديك إذن لعرضه</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"/>
+        <translation>|-
+مستوى الأمان للنظام الحالي: مرتفع
+ يمكن للمشرفين فقط عرض سجل المراجعة</translation>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation>سجل المراجعة غير موجود</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات إلى المسار المحدد</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"/>
+        <translation>المسار</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات من نوع محدد</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"/>
+        <translation>النوع</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات الخاصة بالتطبيقات المطورة ذاتياً</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>التطبيق الذاتي</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات خلال فترة زمنية محددة</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"/>
+        <translation>الفترة</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات ضمن مستوى تحقق محدد</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"/>
+        <translation>المستوى</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"/>
+        <translation>حالة التشغيل</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"/>
+        <translation>تصدير سجلات التشغيل (لا-كلو) ضمن حالة محددة</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"/>
+        <translation>تصدير سجلات الحدث (التشغيل-الإيقاف) أو سجلات المراجعة ضمن نوع حدث محدد</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"/>
+        <translation>نوع الحدث</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات بناءً على نتائج بحث الكلمات المفتاحية</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"/>
+        <translation>الكلمة المفتاحية</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>تقرير معلومات التوقف المفاجئ.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"/>
+        <translation>تصدير السجلات بناءً على نموذج تطبيق فرعي</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"/>
+        <translation>النموذج الفرعي</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>فترة التحديث</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>10 ثانية</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>1 دقيقة</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 دقائق</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>لا تحديث</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
+        <translation>تصدير كل شيء</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>تحديث الآن</translation>
     </message>
 </context>
 </TS>
