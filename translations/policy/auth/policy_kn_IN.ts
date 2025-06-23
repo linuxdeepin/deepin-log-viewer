@@ -4,42 +4,42 @@
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
 			<source>Authentication is required to view the log</source>
-			<translation type="unfinished"/>
+			<translation>ಊಟಿಸುವ ದತ್ತಾಂಶಗಳನ್ನು ನೋಡಲು ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>ಅನುಮತಿ</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.self!message" line="0"/>
 			<source>Authentication is required to view the log</source>
-			<translation type="unfinished"/>
+			<translation>ಊಟಿಸುವ ದತ್ತಾಂಶಗಳನ್ನು ನೋಡಲು ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.self!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>ಅನುಮತಿ</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 			<source>Authentication is required to export logs</source>
-			<translation type="unfinished"/>
+			<translation>ಊಟಿಸುವ ದತ್ತಾಂಶಗಳನ್ನು ನಿರ್ಗಮಿಸಲು ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>ಅನುಮತಿ</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 			<source>Authentication is required to export logs</source>
-			<translation type="unfinished"/>
+			<translation>ಊಟಿಸುವ ದತ್ತಾಂಶಗಳನ್ನು ನಿರ್ಗಮಿಸಲು ಅನುಮತಿ ಅಗತ್ಯವಿದೆ</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>ಅನುಮತಿ</translation>
 		</message>
 	</context>
 </TS>
