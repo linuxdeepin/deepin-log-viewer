@@ -503,7 +503,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Auditiivlogi ei ole olemas.</translation>
     </message>
 </context>
 <context>
