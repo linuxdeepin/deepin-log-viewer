@@ -145,7 +145,7 @@
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>zip (*.zip)</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
@@ -502,7 +502,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>ئەھەمچىلىك ھەجىمى ئىشلەمەيدۇ</translation>
     </message>
 </context>
 <context>
