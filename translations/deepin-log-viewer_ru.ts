@@ -404,7 +404,7 @@
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"/>
+        <translation>Исполнение</translation>
     </message>
     <message>
         <source>Core File</source>
@@ -478,7 +478,7 @@
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>Журнал кердампа</translation>
     </message>
 </context>
 <context>
@@ -492,7 +492,7 @@
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>У вас нет разрешения на просмотр этого</translation>
     </message>
     <message>
         <source>Security level for the current system: high
@@ -502,7 +502,7 @@
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Журнал аудита не существует.</translation>
     </message>
 </context>
 <context>
@@ -513,75 +513,75 @@
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"/>
+        <translation>ПУТЬ</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать журналы указанных типов</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"/>
+        <translation>ТИП</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать журналы указанных самостоятельно разработанных приложений</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>САМО СОБСТВЕННОЕ НАЗВАНИЕ ПРИЛОЖЕНИЯ</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать журналы в течение указанного временного периода</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"/>
+        <translation>ПЕРИОД</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать журналы в указанном уровне отладки</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"/>
+        <translation>УРОВЕНЬ</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"/>
+        <translation>СТАТУС ЗАПУСКА</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать журналы запуска(без-клю) в указанном статусе</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать журналы запуска-выключения-события или аудита в указанном типе события</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"/>
+        <translation>ТИП СОБЫТИЯ</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать журналы на основе результатов поиска по ключевым словам</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"/>
+        <translation>КЛЮЧЕВОЕ СЛОВО</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>Составить отчет о кердампе.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"/>
+        <translation>Экспортировать журналы на основе подмодели приложения</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"/>
+        <translation>ПОДМОДУЛЬ</translation>
     </message>
 </context>
 <context>
@@ -600,7 +600,7 @@
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 мин</translation>
     </message>
     <message>
         <source>No refresh</source>
