@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.15) unstable; urgency=medium
+
+  * update translations.
+
+ -- Liuyangming <liuyangming@uniontech.com>  Mon, 23 Jun 2025 11:52:38 +0800
+
 deepin-log-viewer (6.5.14) unstable; urgency=medium
 
   * chore: Add compile flags for deepin-log-viewer

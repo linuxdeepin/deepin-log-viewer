@@ -1,613 +1,759 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="mn">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="mn">
 <context>
     <name>Action</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="188"/>
         <source>Display in file manager</source>
-        <translation type="unfinished"/>
+        <translation>Файлы барын дүрсэлдэх</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="489"/>
         <source>Clear log</source>
-        <translation type="unfinished"/>
+        <translation>Хүснэгтээ устгах</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="189"/>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>Шинэчлэх</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="539"/>
         <source>Are you sure you want to clear the log?</source>
-        <translation type="unfinished"/>
+        <translation>Хүснэгтээ устгахад итгэж байгаа бэ?</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="540"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Цуцлах</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="541"/>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>Хүсэлтийг нээнэ</translation>
     </message>
 </context>
 <context>
     <name>Button</name>
     <message>
+        <location filename="../application/filtercontent.cpp" line="80"/>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>Бүх</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="83"/>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>Өнөөдөр</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="86"/>
         <source>3 days</source>
-        <translation type="unfinished"/>
+        <translation>3 өдөр</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="89"/>
         <source>1 week</source>
-        <translation type="unfinished"/>
+        <translation>1 хоног</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="92"/>
         <source>1 month</source>
-        <translation type="unfinished"/>
+        <translation>1 сар</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="95"/>
         <source>3 months</source>
-        <translation type="unfinished"/>
+        <translation>3 сар</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="224"/>
         <source>Export</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>Экспорт</translation>
     </message>
 </context>
 <context>
     <name>ComboBox</name>
     <message>
+        <location filename="../application/filtercontent.cpp" line="120"/>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>Бүх</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="121"/>
         <source>Emergency</source>
-        <translation type="unfinished"/>
+        <translation>Хүндрэл</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="122"/>
         <source>Alert</source>
-        <translation type="unfinished"/>
+        <translation>Тэмцэл</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="123"/>
         <source>Critical</source>
-        <translation type="unfinished"/>
+        <translation>Хүндрэлтэй</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="124"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Худал</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="125"/>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>Хавх</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="126"/>
         <source>Notice</source>
-        <translation type="unfinished"/>
+        <translation>Шийдэл</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="127"/>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>Мэдээ</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="128"/>
         <source>Debug</source>
-        <translation type="unfinished"/>
+        <translation>Дэвсгэр</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="198"/>
         <source>Login</source>
-        <translation type="unfinished"/>
+        <translation>Нэвтрэх</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="199"/>
         <source>Boot</source>
-        <translation type="unfinished"/>
+        <translation>Төхөөрөмжөөс нэвтрэх</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="200"/>
         <source>Shutdown</source>
-        <translation type="unfinished"/>
+        <translation>Хаах</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="142"/>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Үнэнчээ хүндрэлтэй</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="148"/>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Хийх</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="212"/>
         <source>Identity authentication</source>
-        <translation type="unfinished"/>
+        <translation>Харагдах нэвтрэх</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="213"/>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"/>
+        <translation>Хүчинчлэлтэй үүргэлжлэн</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="214"/>
         <source>Mandatory access control</source>
-        <translation type="unfinished"/>
+        <translation>Хүчинчлэлгүй үүргэлжлэн</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="215"/>
         <source>Remote</source>
-        <translation type="unfinished"/>
+        <translation>Холбоотой</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="216"/>
         <source>Document audit</source>
-        <translation type="unfinished"/>
+        <translation>Документын шалгалт</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="217"/>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>Бусад</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="1800"/>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="1794"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation type="unfinished"/>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
     <name>ExportDlg</name>
     <message>
+        <location filename="../application/exportprogressdlg.cpp" line="35"/>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>Экспортулж байна...</translation>
     </message>
     <message>
+        <location filename="../application/exportprogressdlg.cpp" line="58"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Цуцлах</translation>
     </message>
 </context>
 <context>
     <name>ExportMessage</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3257"/>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>Экспорт амжилттай</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3260"/>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>Экспорт амжилтгүй</translation>
     </message>
     <message>
+        <location filename="../application/logbackend.cpp" line="1763"/>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"/>
+        <translation>Экспортын дүрэм байхгүй байна. Экспортын ажлыг хийхэд бусад дүрэм сонгоно уу.</translation>
     </message>
 </context>
 <context>
     <name>File</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="1792"/>
         <source>Export File</source>
-        <translation type="unfinished"/>
+        <translation>Файлыг Экспортох</translation>
     </message>
 </context>
 <context>
     <name>Label</name>
     <message>
+        <location filename="../application/filtercontent.cpp" line="76"/>
         <source>Period:</source>
-        <translation type="unfinished"/>
+        <translation>Хугацаа:</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="114"/>
         <source>Level:  </source>
-        <translation type="unfinished"/>
+        <translation>Үвш: </translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="180"/>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>Төстэй:</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="193"/>
         <source>Event Type:</source>
-        <translation type="unfinished"/>
+        <translation>Үйлдлийн төрөл:</translation>
     </message>
     <message>
+        <location filename="../application/logdetailinfowidget.cpp" line="132"/>
         <source>User:</source>
-        <translation type="unfinished"/>
+        <translation>Хэрэглэгч:</translation>
     </message>
     <message>
+        <location filename="../application/logdetailinfowidget.cpp" line="134"/>
         <source>PID:</source>
-        <translation type="unfinished"/>
+        <translation>PID:</translation>
     </message>
     <message>
+        <location filename="../application/logdetailinfowidget.cpp" line="138"/>
         <source>Action:</source>
-        <translation type="unfinished"/>
+        <translation>Үйлдэл:</translation>
     </message>
     <message>
+        <location filename="../application/logdetailinfowidget.cpp" line="143"/>
         <source>Username:</source>
-        <translation type="unfinished"/>
+        <translation>Хэрэглэгчийн нэр:</translation>
     </message>
     <message>
+        <location filename="../application/logdetailinfowidget.cpp" line="469"/>
         <source>Boot record</source>
-        <translation type="unfinished"/>
+        <translation>Төхөөрөмжлөх дүрэм</translation>
     </message>
     <message>
+        <location filename="../application/logdetailinfowidget.cpp" line="471"/>
         <source>Shutdown record</source>
-        <translation type="unfinished"/>
+        <translation>Хаах дүрэм</translation>
     </message>
     <message>
+        <location filename="../application/logdetailinfowidget.cpp" line="474"/>
         <source>Login record</source>
-        <translation type="unfinished"/>
+        <translation>Нэвтрэх дүрэм</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="208"/>
         <source>Audit Type:</source>
-        <translation type="unfinished"/>
+        <translation>Шалгалтын төрөл:</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="155"/>
         <source>Application:</source>
-        <translation type="unfinished"/>
+        <translation>Хэрэглэгчийн програм:</translation>
     </message>
     <message>
+        <location filename="../application/filtercontent.cpp" line="167"/>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>Хэсэг:</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="201"/>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>Дээд</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="202"/>
         <source>Debug</source>
-        <translation type="unfinished"/>
+        <translation>Дээд</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="203"/>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>Дээд</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="204"/>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>Дээд</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="208"/>
         <source>Emergency</source>
-        <translation type="unfinished"/>
+        <translation>Дээд</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="209"/>
         <source>Alert</source>
-        <translation type="unfinished"/>
+        <translation>Аларм</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="210"/>
         <source>Critical</source>
-        <translation type="unfinished"/>
+        <translation>Хүндрэлтэй</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="213"/>
         <source>Notice</source>
-        <translation type="unfinished"/>
+        <translation>Шийдвэрлэх</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="220"/>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>Харагдах</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="226"/>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>Үнэгүй хүндрэлтэй</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
+        <location filename="../application/logauththread.cpp" line="529"/>
         <source>Log file is empty</source>
-        <translation type="unfinished"/>
+        <translation>Харагдах файл хоосон</translation>
     </message>
 </context>
 <context>
     <name>Main</name>
     <message>
+        <location filename="../application/main.cpp" line="329"/>
         <source>Log Viewer</source>
-        <translation type="unfinished"/>
+        <translation>Харагдах үзүүлэгч</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="332"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation type="unfinished"/>
+        <translation>Харагдах үзүүлэгч нь систем харагдахыг үзэхэд туслах хэрэгсэл</translation>
     </message>
 </context>
 <context>
     <name>SearchBar</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="120"/>
         <source>No search results</source>
-        <translation type="unfinished"/>
+        <translation>Хайх үр дүнгүй</translation>
     </message>
     <message>
+        <location filename="../application/logcollectormain.cpp" line="109"/>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>Хайх</translation>
     </message>
 </context>
 <context>
     <name>Table</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="563"/>
         <source>Level</source>
-        <translation type="unfinished"/>
+        <translation>Үвш</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="564"/>
         <source>Process</source>
-        <translation type="unfinished"/>
+        <translation>Үйлдэл</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="565"/>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>Огноо болон цаг</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="566"/>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>Мэдээ</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="567"/>
         <source>User</source>
-        <translation type="unfinished"/>
+        <translation>Хэрэглэгч</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="568"/>
         <source>PID</source>
-        <translation type="unfinished"/>
+        <translation>PID</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="953"/>
         <source>Source</source>
-        <translation type="unfinished"/>
+        <translation>Алба</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="669"/>
         <source>Action</source>
-        <translation type="unfinished"/>
+        <translation>Үйлдэл</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3374"/>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>Төстэй</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="1140"/>
         <source>Event Type</source>
-        <translation type="unfinished"/>
+        <translation>Үйлдэлний төрөл</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="1141"/>
         <source>Username</source>
-        <translation type="unfinished"/>
+        <translation>Хэрэглэгчийн нэр</translation>
     </message>
     <message>
+        <location filename="../application/logexportthread.cpp" line="897"/>
         <source>Level:</source>
-        <translation type="unfinished"/>
+        <translation>Үвш:</translation>
     </message>
     <message>
+        <location filename="../application/logexportthread.cpp" line="898"/>
         <source>Process:</source>
-        <translation type="unfinished"/>
+        <translation>Үйлдэл:</translation>
     </message>
     <message>
+        <location filename="../application/logexportthread.cpp" line="899"/>
         <source>Date and Time:</source>
-        <translation type="unfinished"/>
+        <translation>Огноо болон цаг:</translation>
     </message>
     <message>
+        <location filename="../application/logexportthread.cpp" line="901"/>
         <source>Info:</source>
-        <translation type="unfinished"/>
+        <translation>Мэдээ:</translation>
     </message>
     <message>
+        <location filename="../application/logexportthread.cpp" line="902"/>
         <source>Null</source>
-        <translation type="unfinished"/>
+        <translation>Хоосон</translation>
     </message>
     <message>
+        <location filename="../application/logexportthread.cpp" line="906"/>
         <source>User:</source>
-        <translation type="unfinished"/>
+        <translation>Хэрэглэгч:</translation>
     </message>
     <message>
+        <location filename="../application/logexportthread.cpp" line="907"/>
         <source>PID:</source>
-        <translation type="unfinished"/>
+        <translation>PID:</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3532"/>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Файлын нэр</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3533"/>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>Өөрчлөгдсөн огноо</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3741"/>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>СИГ</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3745"/>
         <source>EXE</source>
-        <translation type="unfinished"/>
+        <translation>ЭКСЭ</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3743"/>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>Ядровы файл</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3744"/>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>Хэрэглэгчийн нэр</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="1009"/>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>Сайралт</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="1142"/>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>Огноо болон цаг</translation>
     </message>
 </context>
 <context>
     <name>Tree</name>
     <message>
+        <location filename="../application/loglistview.cpp" line="171"/>
         <source>System Log</source>
-        <translation type="unfinished"/>
+        <translation>Системийн журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="182"/>
         <source>Kernel Log</source>
-        <translation type="unfinished"/>
+        <translation>Ядрын журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="203"/>
         <source>Boot Log</source>
-        <translation type="unfinished"/>
+        <translation>Тоглоомын журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="232"/>
         <source>dpkg Log</source>
-        <translation type="unfinished"/>
+        <translation>dpkg-ийн журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="244"/>
         <source>Kwin Log</source>
-        <translation type="unfinished"/>
+        <translation>Kwin-ийн журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="253"/>
         <source>Xorg Log</source>
-        <translation type="unfinished"/>
+        <translation>Xorg-ийн журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="265"/>
         <source>Application Log</source>
-        <translation type="unfinished"/>
+        <translation>Хэрэглэгчийн журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="290"/>
         <source>Boot-Shutdown Event</source>
-        <translation type="unfinished"/>
+        <translation>Тоглоомын эхлэл-үгүй болгох үйлдэл</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="222"/>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>dnf-ийн журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="303"/>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Бусад журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="339"/>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Худалдааны журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="319"/>
         <source>Audit Log</source>
-        <translation type="unfinished"/>
+        <translation>Хүчинчлэлийн журнал</translation>
     </message>
     <message>
+        <location filename="../application/loglistview.cpp" line="278"/>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>Ядровын дамжуулалт</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="133"/>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>Хүрээлэнгүй болгосон мэдээлэл олдсонгүй, systemd-coredump-ыг бүрэн нэмээгүй болохыг хүсэе.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
+        <location filename="../application/displaycontent.cpp" line="139"/>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>Харах эрхгүй байна</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="3216"/>
+        <source>Audit log is not exist.</source>
+        <translation>Хүчинчлэлийн журнал байхгүй байна.</translation>
+    </message>
+    <message>
+        <location filename="../application/displaycontent.cpp" line="127"/>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"/>
+        <translation>Хүчинчлэлийн түвшин: өндөр
+ хүчинчлэлийн журналыг харах эрхтэй байх нь админ болно</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
+        <location filename="../application/main.cpp" line="67"/>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Харах эрхтэй байх нь админ болно</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="67"/>
         <source>PATH</source>
-        <translation type="unfinished"/>
+        <translation>Харах эрхтэй байх нь админ болно</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="68"/>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"/>
+        <translation>Харах эрхтэй байх нь админ болно</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="68"/>
         <source>TYPE</source>
-        <translation type="unfinished"/>
+        <translation>Харах эрхтэй байх нь админ болно</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="69"/>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"/>
+        <translation>Харах эрхтэй байх нь админ болно</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="69"/>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>Харах эрхтэй байх нь админ болно</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="70"/>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"/>
+        <translation>Харах эрхтэй байх нь админ болно</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="70"/>
         <source>PERIOD</source>
-        <translation type="unfinished"/>
+        <translation>Хугацэтгий</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="71"/>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"/>
+        <translation>Харагдаж буй дэбуг үзүүлэлд хамаарсан логыг экспортлох</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="71"/>
         <source>LEVEL</source>
-        <translation type="unfinished"/>
+        <translation>ҮЗҮҮЛЭЛ</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="72"/>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"/>
+        <translation>БООТ СТАТУС</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="72"/>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"/>
+        <translation>Харагдаж буй статусд хамаарсан бүтээгдэхүүн логыг экспортлох</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="73"/>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"/>
+        <translation>Харагдаж буй үйлдлийн төрөлд хамаарсан бүтээгдэхүүн-хөнгөнөөс хуваагдсан үйлдэл болон аудит логыг экспортлох</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="73"/>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"/>
+        <translation>ҮЙЛДЭЛ ТӨРӨЛ</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="74"/>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"/>
+        <translation>Хүүрэгчлэх үгсийн хайлшны үр дүнд бүтээгдэхүүн логыг экспортлох</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="74"/>
         <source>KEY WORD</source>
-        <translation type="unfinished"/>
+        <translation>ХҮҮРЭГЧЛЭХ ҮГ</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="76"/>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>Цордамп мэдээллийг дүн сонголтоо.</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="75"/>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"/>
+        <translation>Хэрэглэгчийн сабмоделд хамаарсан логыг экспортлох</translation>
     </message>
     <message>
+        <location filename="../application/main.cpp" line="75"/>
         <source>SUBMODULE</source>
-        <translation type="unfinished"/>
+        <translation>САБМӨДЭЛ</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
+        <location filename="../application/logcollectormain.cpp" line="202"/>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>Шинэчлэх хугацэтгий</translation>
     </message>
     <message>
+        <location filename="../application/logcollectormain.cpp" line="204"/>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>10 сек</translation>
     </message>
     <message>
+        <location filename="../application/logcollectormain.cpp" line="205"/>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>1 мин</translation>
     </message>
     <message>
+        <location filename="../application/logcollectormain.cpp" line="206"/>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 мин</translation>
     </message>
     <message>
+        <location filename="../application/logcollectormain.cpp" line="207"/>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>Шинэчлэхгүй</translation>
     </message>
     <message>
+        <location filename="../application/logcollectormain.cpp" line="234"/>
         <source>Export All</source>
-        <translation type="unfinished"/>
+        <translation>Бүгдийг Экспортлох</translation>
     </message>
     <message>
+        <location filename="../application/logcollectormain.cpp" line="240"/>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>Хүүхээ Шинэчлэ</translation>
     </message>
 </context>
 </TS>
