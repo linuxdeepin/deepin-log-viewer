@@ -4,12 +4,12 @@
 		<message>
 			<location filename="com.deepin.pkexec.logViewerTruncate!message" line="0"/>
 			<source>Authentication is required to clear the log</source>
-			<translation type="unfinished"/>
+			<translation>Overenie je vyžadované na vymazanie protokolu</translation>
 		</message>
 		<message>
 			<location filename="com.deepin.pkexec.logViewerTruncate!description" line="0"/>
 			<source>authentication</source>
-			<translation type="unfinished"/>
+			<translation>autentifikácia</translation>
 		</message>
 	</context>
 </TS>
