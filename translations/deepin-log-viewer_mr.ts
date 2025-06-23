@@ -3,611 +3,617 @@
     <name>Action</name>
     <message>
         <source>Display in file manager</source>
-        <translation type="unfinished"/>
+        <translation>फाइल मैनेजर मध्ये दर्शवा</translation>
     </message>
     <message>
         <source>Clear log</source>
-        <translation type="unfinished"/>
+        <translation>क्लियर लॉग</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="unfinished"/>
+        <translation>रिफ्रेश</translation>
     </message>
     <message>
         <source>Are you sure you want to clear the log?</source>
-        <translation type="unfinished"/>
+        <translation>तुम्ही लॉग क्लियर करायचं खातरजमा करतायचं?</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>रद्द करा</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation type="unfinished"/>
+        <translation>पुष्टी करा</translation>
     </message>
 </context>
 <context>
     <name>Button</name>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>सर्व</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation type="unfinished"/>
+        <translation>आज</translation>
     </message>
     <message>
         <source>3 days</source>
-        <translation type="unfinished"/>
+        <translation>तीन दिवस</translation>
     </message>
     <message>
         <source>1 week</source>
-        <translation type="unfinished"/>
+        <translation>एक आठवडा</translation>
     </message>
     <message>
         <source>1 month</source>
-        <translation type="unfinished"/>
+        <translation>एक महिना</translation>
     </message>
     <message>
         <source>3 months</source>
-        <translation type="unfinished"/>
+        <translation>तीन महिना</translation>
     </message>
     <message>
         <source>Export</source>
         <comment>button</comment>
-        <translation type="unfinished"/>
+        <translation>eksport</translation>
     </message>
 </context>
 <context>
     <name>ComboBox</name>
     <message>
         <source>All</source>
-        <translation type="unfinished"/>
+        <translation>सर्व</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation type="unfinished"/>
+        <translation>आपत्कालीन</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation type="unfinished"/>
+        <translation>ताजगी</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation type="unfinished"/>
+        <translation>गंभीर</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>त्रुटी</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>चेतावणी</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation type="unfinished"/>
+        <translation>अधिकार</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>माहिती</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation type="unfinished"/>
+        <translation>डेबग</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation type="unfinished"/>
+        <translation>लॉगिन</translation>
     </message>
     <message>
         <source>Boot</source>
-        <translation type="unfinished"/>
+        <translation>बूट</translation>
     </message>
     <message>
         <source>Shutdown</source>
-        <translation type="unfinished"/>
+        <translation>शूडाउन</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>अतिगंभीर</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>त्रास</translation>
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"/>
+        <translation>संस्कृती पुष्टी</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"/>
+        <translation>अनुचित प्रवेश नियंत्रण</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation type="unfinished"/>
+        <translation>अनिवार्य प्रवेश नियंत्रण</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation type="unfinished"/>
+        <translation>दूरगामी</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation type="unfinished"/>
+        <translation>दॉक्युमेंट अॅडिट</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation type="unfinished"/>
+        <translation>अ‍ॅल</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation type="unfinished"/>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation type="unfinished"/>
+        <translation>eksport करत आहे...</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>रद्द करा</translation>
     </message>
 </context>
 <context>
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation type="unfinished"/>
+        <translation>एक्सपोर्ट स्वीकृत</translation>
     </message>
     <message>
         <source>Export failed</source>
-        <translation type="unfinished"/>
+        <translation>एक्सपोर्ट अयशस्वी</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"/>
+        <translation>&gt;-
+ एक्सपोर्ट डिरेक्टरी उपलब्ध नाही. दूरगामी ऑपरेशनसाठी एक अ‍ॅल डिरेक्टरी निवडा.</translation>
     </message>
 </context>
 <context>
     <name>File</name>
     <message>
         <source>Export File</source>
-        <translation type="unfinished"/>
+        <translation>फाइल एक्सपोर्ट करा</translation>
     </message>
 </context>
 <context>
     <name>Label</name>
     <message>
         <source>Period:</source>
-        <translation type="unfinished"/>
+        <translation>कालावधी:</translation>
     </message>
     <message>
         <source>Level:  </source>
-        <translation type="unfinished"/>
+        <translation>स्तर: </translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation type="unfinished"/>
+        <translation>स्थिती:</translation>
     </message>
     <message>
         <source>Event Type:</source>
-        <translation type="unfinished"/>
+        <translation>घटना प्रकार:</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation type="unfinished"/>
+        <translation>वापरकर्ता:</translation>
     </message>
     <message>
         <source>PID:</source>
-        <translation type="unfinished"/>
+        <translation>PID:</translation>
     </message>
     <message>
         <source>Action:</source>
-        <translation type="unfinished"/>
+        <translation>कृया:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation type="unfinished"/>
+        <translation>वापरकर्ता नाव:</translation>
     </message>
     <message>
         <source>Boot record</source>
-        <translation type="unfinished"/>
+        <translation>सुरुवात रेकॉर्ड</translation>
     </message>
     <message>
         <source>Shutdown record</source>
-        <translation type="unfinished"/>
+        <translation>शटडाउन रेकॉर्ड</translation>
     </message>
     <message>
         <source>Login record</source>
-        <translation type="unfinished"/>
+        <translation>लॉगिन रेकॉर्ड</translation>
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation type="unfinished"/>
+        <translation>अॅडिट प्रकार:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation type="unfinished"/>
+        <translation>अ‍ॅप्लिकेशन:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation type="unfinished"/>
+        <translation>सबमॉड्युल:</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>Warning</source>
-        <translation type="unfinished"/>
+        <translation>चेतावून</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation type="unfinished"/>
+        <translation>डिबग</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>माहिती</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="unfinished"/>
+        <translation>त्रुटी</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation type="unfinished"/>
+        <translation>आपत्कालीन</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation type="unfinished"/>
+        <translation>अलर्ट</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation type="unfinished"/>
+        <translation>क्रिटिकल</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation type="unfinished"/>
+        <translation>नोटिस</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation type="unfinished"/>
+        <translation>ट्रेस</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation type="unfinished"/>
+        <translation>सुपर क्रिटिकल</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
         <source>Log file is empty</source>
-        <translation type="unfinished"/>
+        <translation>लॉग फाइल खाली आहे</translation>
     </message>
 </context>
 <context>
     <name>Main</name>
     <message>
         <source>Log Viewer</source>
-        <translation type="unfinished"/>
+        <translation>लॉग व्यूअर</translation>
     </message>
     <message>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation type="unfinished"/>
+        <translation>लॉग व्यूअर व्यस्त सिस्टम लॉग्स पाहण्यासाठी उपयुक्त उपकरण आहे.</translation>
     </message>
 </context>
 <context>
     <name>SearchBar</name>
     <message>
         <source>No search results</source>
-        <translation type="unfinished"/>
+        <translation>कोणतेही शोध न आढळले</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"/>
+        <translation>शोध</translation>
     </message>
 </context>
 <context>
     <name>Table</name>
     <message>
         <source>Level</source>
-        <translation type="unfinished"/>
+        <translation>स्तर</translation>
     </message>
     <message>
         <source>Process</source>
-        <translation type="unfinished"/>
+        <translation>प्रक्रिया</translation>
     </message>
     <message>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>तारीख आणि वेळ</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation type="unfinished"/>
+        <translation>माहिती</translation>
     </message>
     <message>
         <source>User</source>
-        <translation type="unfinished"/>
+        <translation>उपयोगकर्ता</translation>
     </message>
     <message>
         <source>PID</source>
-        <translation type="unfinished"/>
+        <translation>पी.आय.डी.</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"/>
+        <translation>मूळ</translation>
     </message>
     <message>
         <source>Action</source>
-        <translation type="unfinished"/>
+        <translation>कृती</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"/>
+        <translation>स्थिती</translation>
     </message>
     <message>
         <source>Event Type</source>
-        <translation type="unfinished"/>
+        <translation>प्रसिद्धी प्रकार</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"/>
+        <translation>उपयोगकर्ता नाव</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation type="unfinished"/>
+        <translation>स्तर:</translation>
     </message>
     <message>
         <source>Process:</source>
-        <translation type="unfinished"/>
+        <translation>प्रक्रिया:</translation>
     </message>
     <message>
         <source>Date and Time:</source>
-        <translation type="unfinished"/>
+        <translation>तारीख आणि वेळ:</translation>
     </message>
     <message>
         <source>Info:</source>
-        <translation type="unfinished"/>
+        <translation>माहिती:</translation>
     </message>
     <message>
         <source>Null</source>
-        <translation type="unfinished"/>
+        <translation>न्यूल</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation type="unfinished"/>
+        <translation>उपयोगकर्ता:</translation>
     </message>
     <message>
         <source>PID:</source>
-        <translation type="unfinished"/>
+        <translation>पी.आय.डी.:</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>फाइल नाव</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"/>
+        <translation>मोडिफायड वेळ</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"/>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"/>
+        <translation>EXE</translation>
     </message>
     <message>
         <source>Core File</source>
-        <translation type="unfinished"/>
+        <translation>फाइल</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation type="unfinished"/>
+        <translation>उपयोगकर्ता नाव</translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation type="unfinished"/>
+        <translation>ऑफसेट</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
         <source>Date and Time</source>
-        <translation type="unfinished"/>
+        <translation>तारीख आणि वेळ</translation>
     </message>
 </context>
 <context>
     <name>Tree</name>
     <message>
         <source>System Log</source>
-        <translation type="unfinished"/>
+        <translation>सिस्टम लॉग</translation>
     </message>
     <message>
         <source>Kernel Log</source>
-        <translation type="unfinished"/>
+        <translation>कर्नल लॉग</translation>
     </message>
     <message>
         <source>Boot Log</source>
-        <translation type="unfinished"/>
+        <translation>बूट लॉग</translation>
     </message>
     <message>
         <source>dpkg Log</source>
-        <translation type="unfinished"/>
+        <translation>डीप्कज लॉग</translation>
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation type="unfinished"/>
+        <translation>क्विन लॉग</translation>
     </message>
     <message>
         <source>Xorg Log</source>
-        <translation type="unfinished"/>
+        <translation>एक्सोर्ग लॉग</translation>
     </message>
     <message>
         <source>Application Log</source>
-        <translation type="unfinished"/>
+        <translation>अॅप्लिकेशन लॉग</translation>
     </message>
     <message>
         <source>Boot-Shutdown Event</source>
-        <translation type="unfinished"/>
+        <translation>बूट-ऑफ घटना</translation>
     </message>
     <message>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>डीएनएफ लॉग</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>अन्य लॉग</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>कस्टम लॉग</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"/>
+        <translation>ऑडिट लॉग</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>कोरडमप लॉग</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>क्रॅश इन्फॉर्मेशन मिळवू शकल नाही, systemd-coredump इंस्टॉल करा.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>त्याची तुम्हाला पहाता आणि वाचता अधिकार नाही</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"/>
+        <translation>|-
+कर्मचारी नाही तर आयुडिट लॉग पहाता आणि वाचता अधिकार नाही</translation>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation>ऑडिट लॉग अस्तित्वात नाही.</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>निश्चित मार्गावर लॉग एक्सपोर्ट करा</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"/>
+        <translation>मार्ग</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"/>
+        <translation>निश्चित प्रकारांचे लॉग एक्सपोर्ट करा</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"/>
+        <translation>प्रकार</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"/>
+        <translation>निश्चित स्व-विकसित अॅप्लिकेशनचे लॉग एक्सपोर्ट करा</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>स्व अॅप्लिकेशन नाव</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"/>
+        <translation>निश्चित कालावधीत लॉग एक्सपोर्ट करा</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"/>
+        <translation>કાળાવધ</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"/>
+        <translation>નિર્દિષ્ટ ડેબુગ સ્તર માટે લાઉગ નિકાલો</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"/>
+        <translation>સ્તર</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"/>
+        <translation>બૂટ સ્થિતિ</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"/>
+        <translation>નિર્દિષ્ટ સ્થિતિ માટે બૂટ(નો-ક્લુ) લોગ નિકાલો</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"/>
+        <translation>નિર્દિષ્ટ ઘટના પર બૂટ-સ્ટોપ ઘટના અથવા આઉટ લોગ નિકાલો</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"/>
+        <translation>ઘટના પ્રકાર</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"/>
+        <translation>શબ્દસમૂહ શોધ પરિણામ આધારે લોગ નિકાલો</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"/>
+        <translation>શબ્દસમૂહ</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>કોરડમ માહિતી પોર્ટ કરો.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"/>
+        <translation>એપ્લિકેશન સબમોડેલ આધારે લોગ નિકાલો</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"/>
+        <translation>સબમોડેલ</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>અપડેટ અંતરાલ</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>10 સેકન્ડ</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>1 મિનિટ</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 મિનિટ</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>કોઈ અપડેટ</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
+        <translation>બધા નિકાલો</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>હવે અપડેટ કરો</translation>
     </message>
 </context>
 </TS>
