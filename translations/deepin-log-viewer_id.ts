@@ -458,160 +458,162 @@
     </message>
     <message>
         <source>Boot-Shutdown Event</source>
-        <translation type="unfinished"/>
+        <translation>Peristiwa Boot-Shutdown</translation>
     </message>
     <message>
         <source>dnf Log</source>
-        <translation type="unfinished"/>
+        <translation>Log dnf</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation type="unfinished"/>
+        <translation>Log Lainnya</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation type="unfinished"/>
+        <translation>Log Kustom</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation type="unfinished"/>
+        <translation>Log Audit</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation type="unfinished"/>
+        <translation>Log Coredump</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"/>
+        <translation>Tidak dapat mengambil informasi crash, silakan instal systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"/>
+        <translation>Anda tidak memiliki izin untuk melihatnya</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"/>
+        <translation>|
+Tingkat keamanan untuk sistem saat ini: tinggi
+ hanya administrator dapat melihat log audit</translation>
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Log audit tidak ada.</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor log ke jalur yang ditentukan</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"/>
+        <translation>PATH</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor log dari jenis yang ditentukan</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"/>
+        <translation>TYPE</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor log dari aplikasi yang dikembangkan sendiri</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"/>
+        <translation>SELF APPNAME</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor log dalam periode waktu yang ditentukan</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"/>
+        <translation>PERIOD</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor log dalam tingkat debug yang ditentukan</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"/>
+        <translation>LEVEL</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"/>
+        <translation>STATUS BOOT</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor log boot(no-klu) dalam status yang ditentukan</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor log boot-shutdown-event atau log audit dalam jenis peristiwa yang ditentukan</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"/>
+        <translation>JENIS PERISTIWA</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor log berdasarkan hasil pencarian kata kunci</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"/>
+        <translation>KATA KUNCI</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"/>
+        <translation>Laporan informasi coredump.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor log berdasarkan submodel aplikasi</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"/>
+        <translation>SUBMODULE</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation type="unfinished"/>
+        <translation>Interval refresh</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation type="unfinished"/>
+        <translation>10 detik</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation type="unfinished"/>
+        <translation>1 menit</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation type="unfinished"/>
+        <translation>5 menit</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation type="unfinished"/>
+        <translation>Tidak muat ulang</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation type="unfinished"/>
+        <translation>Ekspor Semua</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation type="unfinished"/>
+        <translation>Muat Ulang Sekarang</translation>
     </message>
 </context>
 </TS>
