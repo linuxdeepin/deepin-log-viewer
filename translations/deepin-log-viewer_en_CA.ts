@@ -503,17 +503,17 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="3743"/>
         <source>Core File</source>
-        <translation>ملف النواة</translation>
+        <translation>Core File</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3744"/>
         <source>User Name </source>
-        <translation>اسم المستخدم </translation>
+        <translation>User Name </translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="1009"/>
         <source>Offset</source>
-        <translation>الانزياح</translation>
+        <translation>Offset</translation>
     </message>
 </context>
 <context>
@@ -521,7 +521,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1142"/>
         <source>Date and Time</source>
-        <translation>التاريخ والوقت</translation>
+        <translation>Date and Time</translation>
     </message>
 </context>
 <context>
@@ -529,67 +529,67 @@
     <message>
         <location filename="../application/loglistview.cpp" line="171"/>
         <source>System Log</source>
-        <translation>سجل الأنظمة</translation>
+        <translation>System Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="182"/>
         <source>Kernel Log</source>
-        <translation>سجل النواة</translation>
+        <translation>Kernel Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="203"/>
         <source>Boot Log</source>
-        <translation>سجل التشغيل</translation>
+        <translation>Boot Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="232"/>
         <source>dpkg Log</source>
-        <translation>سجل dpkg</translation>
+        <translation>dpkg Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="244"/>
         <source>Kwin Log</source>
-        <translation>سجل Kwin</translation>
+        <translation>Kwin Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="253"/>
         <source>Xorg Log</source>
-        <translation>سجل Xorg</translation>
+        <translation>Xorg Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="265"/>
         <source>Application Log</source>
-        <translation>سجل التطبيق</translation>
+        <translation>Application Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="290"/>
         <source>Boot-Shutdown Event</source>
-        <translation>حدث التشغيل-الإيقاف</translation>
+        <translation>Boot-Shutdown Event</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="222"/>
         <source>dnf Log</source>
-        <translation>سجل dnf</translation>
+        <translation>dnf Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="303"/>
         <source>Other Log</source>
-        <translation>سجل آخر</translation>
+        <translation>>Other Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="339"/>
         <source>Custom Log</source>
-        <translation>سجل مخصص</translation>
+        <translation>Custom Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="319"/>
         <source>Audit Log</source>
-        <translation>سجل المراجعة</translation>
+        <translation>Audit Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="278"/>
         <source>Coredump Log</source>
-        <translation>سجل تجميع النواة</translation>
+        <translation>Coredump Log</translation>
     </message>
 </context>
 <context>
@@ -597,7 +597,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="133"/>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation>غير قادر على الحصول على معلومات سقوط النظام، من فضلك تثبيت systemd-coredump.</translation>
+        <translation>Unable to obtain crash information, please install systemd-coredump.</translation>
     </message>
 </context>
 <context>
@@ -605,19 +605,17 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="139"/>
         <source>You do not have permission to view it</source>
-        <translation>ليس لديك صلاحية لعرضه</translation>
+        <translation>You do not have permission to view it</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3216"/>
         <source>Audit log is not exist.</source>
-        <translation>سجل المراجعة غير موجود.</translation>
+        <translation>Audit log is not exist.</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="127"/>
-        <source>Security level for the current system: high
- audit only administrators can view the audit log</source>
-        <translation>مستوى الأمان للنظام الحالي: مرتفع
- المراجعة فقط يمكن لمديري النظام عرض سجل المراجعة</translation>
+        <source>Security level for the current system: high audit only administrators can view the audit log</source>
+        <translation>Security level for the current system: high audit only administrators can view the audit log</translation>
     </message>
 </context>
 <context>
@@ -625,37 +623,37 @@
     <message>
         <location filename="../application/main.cpp" line="67"/>
         <source>Export logs to the specified path</source>
-        <translation>تصدير السجلات إلى المسار المحدد</translation>
+        <translation>Export logs to the specified path</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="67"/>
         <source>PATH</source>
-        <translation>مسار</translation>
+        <translation>PATH</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="68"/>
         <source>Export logs of specified types</source>
-        <translation>تصدير السجلات من نوع محدد</translation>
+        <translation>Export logs of specified types</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="68"/>
         <source>TYPE</source>
-        <translation>نوع</translation>
+        <translation>TYPE</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="69"/>
         <source>Export logs of specified self-developed applications</source>
-        <translation>تصدير السجلات من تطبيقات تم تطويرها ذاتيًا</translation>
+        <translation>Export logs of specified self-developed applications</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="69"/>
         <source>SELF APPNAME</source>
-        <translation>اسم التطبيق الذاتي</translation>
+        <translation>SELF APPNAME</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>Export logs within a specified time period</source>
-        <translation>تصدير السجلات ضمن فترة زمنية محددة</translation>
+        <translation>Export logs within a specified time period</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="70"/>
