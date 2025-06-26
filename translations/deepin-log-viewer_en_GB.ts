@@ -605,20 +605,17 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="139"/>
         <source>You do not have permission to view it</source>
-        <translation>ليس لديك إذن لعرضه</translation>
+        <translation>You do not have permission to view it</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3216"/>
         <source>Audit log is not exist.</source>
-        <translation>سجل المراجعة غير موجود</translation>
+        <translation>Audit log is not exist.</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="127"/>
-        <source>Security level for the current system: high
- audit only administrators can view the audit log</source>
-        <translation>|-
-مستوى الأمان للنظام الحالي: مرتفع
- يمكن للمشرفين فقط عرض سجل المراجعة</translation>
+        <source>Security level for the current system: high audit only administrators can view the audit log</source>
+        <translation>Security level for the current system: high audit only administrators can view the audit log</translation>
     </message>
 </context>
 <context>
@@ -626,97 +623,97 @@
     <message>
         <location filename="../application/main.cpp" line="67"/>
         <source>Export logs to the specified path</source>
-        <translation>تصدير السجلات إلى المسار المحدد</translation>
+        <translation>Export logs to the specified path</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="67"/>
         <source>PATH</source>
-        <translation>المسار</translation>
+        <translation>PATH</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="68"/>
         <source>Export logs of specified types</source>
-        <translation>تصدير السجلات من نوع محدد</translation>
+        <translation>Export logs of specified types</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="68"/>
         <source>TYPE</source>
-        <translation>النوع</translation>
+        <translation>TYPE</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="69"/>
         <source>Export logs of specified self-developed applications</source>
-        <translation>تصدير السجلات الخاصة بالتطبيقات المطورة ذاتياً</translation>
+        <translation>Export logs of specified self-developed applications</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="69"/>
         <source>SELF APPNAME</source>
-        <translation>التطبيق الذاتي</translation>
+        <translation>SELF APPNAME</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>Export logs within a specified time period</source>
-        <translation>تصدير السجلات خلال فترة زمنية محددة</translation>
+        <translation>Export logs within a specified time period</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>PERIOD</source>
-        <translation>الفترة</translation>
+        <translation>PERIOD</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="71"/>
         <source>Export logs within a specified debug level</source>
-        <translation>تصدير السجلات ضمن مستوى تحقق محدد</translation>
+        <translation>Export logs within a specified debug level</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="71"/>
         <source>LEVEL</source>
-        <translation>المستوى</translation>
+        <translation>LEVEL</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="72"/>
         <source>BOOT STATUS</source>
-        <translation>حالة التشغيل</translation>
+        <translation>BOOT STATUS</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="72"/>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation>تصدير سجلات التشغيل (لا-كلو) ضمن حالة محددة</translation>
+        <translation>Export boot(no-klu) logs within a specified status</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="73"/>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation>تصدير سجلات الحدث (التشغيل-الإيقاف) أو سجلات المراجعة ضمن نوع حدث محدد</translation>
+        <translation>Export boot-shutdown-event or audit logs within a specified event type</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="73"/>
         <source>EVENT TYPE</source>
-        <translation>نوع الحدث</translation>
+        <translation>EVENT TYPE</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="74"/>
         <source>Export logs based on keywords search results</source>
-        <translation>تصدير السجلات بناءً على نتائج بحث الكلمات المفتاحية</translation>
+        <translation>Export logs based on keywords search results</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="74"/>
         <source>KEY WORD</source>
-        <translation>الكلمة المفتاحية</translation>
+        <translation>KEY WORD</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="76"/>
         <source>Report coredump informations.</source>
-        <translation>تقرير معلومات التوقف المفاجئ.</translation>
+        <translation>Report coredump informations.</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="75"/>
         <source>Export logs based on app submodel</source>
-        <translation>تصدير السجلات بناءً على نموذج تطبيق فرعي</translation>
+        <translation>Export logs based on app submodel</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="75"/>
         <source>SUBMODULE</source>
-        <translation>النموذج الفرعي</translation>
+        <translation>SUBMODULE</translation>
     </message>
 </context>
 <context>
@@ -724,37 +721,37 @@
     <message>
         <location filename="../application/logcollectormain.cpp" line="202"/>
         <source>Refresh interval</source>
-        <translation>فترة التحديث</translation>
+        <translation>Refresh interval</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="204"/>
         <source>10 sec</source>
-        <translation>10 ثانية</translation>
+        <translation>10 sec</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="205"/>
         <source>1 min</source>
-        <translation>1 دقيقة</translation>
+        <translation>1 min</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="206"/>
         <source>5 min</source>
-        <translation>5 دقائق</translation>
+        <translation>5 min</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="207"/>
         <source>No refresh</source>
-        <translation>لا تحديث</translation>
+        <translation>No refresh</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="234"/>
         <source>Export All</source>
-        <translation>تصدير كل شيء</translation>
+        <translation>Export All</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="240"/>
         <source>Refresh Now</source>
-        <translation>تحديث الآن</translation>
+        <translation>Refresh Now</translation>
     </message>
 </context>
 </TS>
