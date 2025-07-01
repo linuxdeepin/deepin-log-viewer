@@ -24,7 +24,7 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>Автентикация е необходима за износяване на дневника</translation>
+		<translation>Автентикация е необходима за износяване на дневници</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
@@ -34,7 +34,7 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>Автентикация е необходима за износяване на дневника</translation>
+		<translation>Автентикация е необходима за износяване на дневници</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>

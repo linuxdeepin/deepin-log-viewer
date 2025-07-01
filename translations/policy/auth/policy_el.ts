@@ -4,42 +4,42 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>Η απαραίτητη προσομοίωση για την προβολή του καταγραφικού</translation>
+		<translation>Η προσβολή είναι απαραίτητη για την προβολή του καταγραφικού</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
 		<source>authentication</source>
-		<translation>προσομοίωση</translation>
+		<translation>προσβολή</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>Η απαραίτητη προσομοίωση για την προβολή του καταγραφικού</translation>
+		<translation>Η προσβολή είναι απαραίτητη για την προβολή του καταγραφικού</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!description" line="0"/>
 		<source>authentication</source>
-		<translation>προσομοίωση</translation>
+		<translation>προσβολή</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>Η απαραίτητη προσομοίωση για την εξαγωγή καταγραφικών</translation>
+		<translation>Η προσβολή είναι απαραίτητη για την έκδοση των καταγραφικών</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
 		<source>authentication</source>
-		<translation>προσομοίωση</translation>
+		<translation>προσβολή</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>Η απαραίτητη προσομοίωση για την εξαγωγή καταγραφικών</translation>
+		<translation>Η προσβολή είναι απαραίτητη για την έκδοση των καταγραφικών</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>
 		<source>authentication</source>
-		<translation>προσομοίωση</translation>
+		<translation>προσβολή</translation>
 	</message>
 </context>
 </TS>

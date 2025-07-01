@@ -4,42 +4,42 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>ການອະທິບາຍຂໍ້ມູນຕ້ອງມີການຢືນຢັນເພື່ອເບິ່ງບັນຊີ</translation>
+		<translation>ການເຊື່ອມຕໍ່ຕ້ອງມີຢູ່ເພື່ອເບິ່ງບັນຊີລາຍງານ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
 		<source>authentication</source>
-		<translation>ການອະທິບາຍຂໍ້ມູນ</translation>
+		<translation>ການເຊື່ອມຕໍ່</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>ການອະທິບາຍຂໍ້ມູນຕ້ອງມີການຢືນຢັນເພື່ອເບິ່ງບັນຊີ</translation>
+		<translation>ການເຊື່ມຕໍ່ຕ້ອງມີຢູ່ເພື່ອເບິ່ງບັນຊີລາຍງານ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!description" line="0"/>
 		<source>authentication</source>
-		<translation>ການອະທິບາຍຂໍ້ມູນ</translation>
+		<translation>ການເຊື່ອມຕໍ່</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>ການອະທິບາຍຂໍ້ມູນຕ້ອງມີການຢືນຢັນເພື່ອສົ່ງອອກບັນຊີ</translation>
+		<translation>ການເຊື່ອມຕໍ່ຕ້ອງມີຢູ່ເພື່ອສົ່ງອອກບັນຊີລາຍງານ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
 		<source>authentication</source>
-		<translation>ການອະທິບາຍຂໍ້ມູນ</translation>
+		<translation>ການເຊື່ອມຕໍ່</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>ການອະທິບາຍຂໍ້ມູນຕ້ອງມີການຢືນຢັນເພື່ອສົ່ງອອກບັນຊີ</translation>
+		<translation>ການເຊື່ອມຕໍ່ຕ້ອງມີຢູ່ເພື່ອສົ່ງອອກບັນຊີລາຍງານ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>
 		<source>authentication</source>
-		<translation>ການອະທິບາຍຂໍ້ມູນ</translation>
+		<translation>ການເຊື່ອມຕໍ່</translation>
 	</message>
 </context>
 </TS>

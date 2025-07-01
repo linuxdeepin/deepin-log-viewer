@@ -4,42 +4,42 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>Kailangan ang pag-authenticate upang makita ang log</translation>
+		<translation>Kailangan ang pagkakakilanlan upang maibigay ang log</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
 		<source>authentication</source>
-		<translation>paggawa ng authentication</translation>
+		<translation>pagkakakilanlan</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>Kailangan ang pag-authenticate upang makita ang log</translation>
+		<translation>Kailangan ang pagkakakilanlan upang maibigay ang log</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!description" line="0"/>
 		<source>authentication</source>
-		<translation>paggawa ng authentication</translation>
+		<translation>pagkakakilanlan</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>Kailangan ang pag-authenticate upang i-export ang mga log</translation>
+		<translation>Kailangan ang pagkakakilanlan upang i-export ang mga log</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
 		<source>authentication</source>
-		<translation>paggawa ng authentication</translation>
+		<translation>pagkakakilanlan</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>Kailangan ang pag-authenticate upang i-export ang mga log</translation>
+		<translation>Kailangan ang pagkakakilanlan upang i-export ang mga log</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>
 		<source>authentication</source>
-		<translation>paggawa ng authentication</translation>
+		<translation>pagkakakilanlan</translation>
 	</message>
 </context>
 </TS>

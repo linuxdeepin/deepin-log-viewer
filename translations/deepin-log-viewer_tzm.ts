@@ -1,146 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ja">
+<TS version="2.1" language="tzm">
 <context>
     <name>Action</name>
     <message>
         <source>Display in file manager</source>
-        <translation>ファイルマネージャーで表示</translation>
+        <translation>تَشْوُيْنْ فِي فَايل مَنِيْجِر</translation>
     </message>
     <message>
         <source>Clear log</source>
-        <translation>ログをクリア</translation>
+        <translation>تَزْرِيْفْ لُوج</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>更新</translation>
+        <translation>تَرْفَرِش</translation>
     </message>
     <message>
         <source>Are you sure you want to clear the log?</source>
-        <translation>ログをクリアしてもよろしいですか？</translation>
+        <translation>أَنْتَ مَعْرُوفْ أَنْتَ تَرْجُو تَزْرِيْفْ لُوج؟</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>キャンセル</translation>
+        <translation>تَرْجِع</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation>確認</translation>
+        <translation>تَأْكِد</translation>
     </message>
 </context>
 <context>
     <name>Button</name>
     <message>
         <source>All</source>
-        <translation>すべて</translation>
+        <translation>كُل</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation>今日</translation>
+        <translation>أَجْلِيْ</translation>
     </message>
     <message>
         <source>3 days</source>
-        <translation>3日</translation>
+        <translation>3 يَوْم</translation>
     </message>
     <message>
         <source>1 week</source>
-        <translation>1週</translation>
+        <translation>1 شَوْنَة</translation>
     </message>
     <message>
         <source>1 month</source>
-        <translation>1ヶ月</translation>
+        <translation>1 شَوْنَة</translation>
     </message>
     <message>
         <source>3 months</source>
-        <translation>3ヶ月</translation>
+        <translation>3 شَوْنَة</translation>
     </message>
     <message>
         <source>Export</source>
         <comment>button</comment>
-        <translation>エクスポート</translation>
+        <translation>تَصْدَر</translation>
     </message>
 </context>
 <context>
     <name>ComboBox</name>
     <message>
         <source>All</source>
-        <translation>すべて</translation>
+        <translation>كُل</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation>緊急</translation>
+        <translation>أَكْرَيْسِي</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation>アラート</translation>
+        <translation>أَلِرْت</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation>重大</translation>
+        <translation>كْرِتِكَل</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>エラー</translation>
+        <translation>إِرْرُور</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation>وَرْنِنْغ</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation>通知</translation>
+        <translation>نُوتِس</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>情報</translation>
+        <translation>إِنْفُو</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation>デバッグ</translation>
+        <translation>دِبُوْج</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation>ログイン</translation>
+        <translation>لُوْجِن</translation>
     </message>
     <message>
         <source>Boot</source>
-        <translation>ブート</translation>
+        <translation>بُوت</translation>
     </message>
     <message>
         <source>Shutdown</source>
-        <translation>シャットダウン</translation>
+        <translation>شُوْدَوْن</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation>非常に重大</translation>
+        <translation>سُبَرْ كْرِتِكَل</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation>トレース</translation>
+        <translation>تَرْسْ</translation>
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>أِدْنْتِيْ تِ أُثِنْتِكَشُون</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"></translation>
+        <translation>دِسْكْرِشُونِرِي تِ أَكْسِس كُنْتُرْل</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation>強制アクセス制御</translation>
+        <translation>مَانْدَتُرِي أَكْسِس كُنْتُرْل</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation>リモート</translation>
+        <translation>المسافة</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation>ドキュメント監査</translation>
+        <translation>مراجعة الوثيقة</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>その他</translation>
+        <translation>آخر</translation>
     </message>
 </context>
 <context>
@@ -151,63 +151,65 @@
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>متن (*.txt);; دوك (*.doc);; إكس إل إس (*.xls);; إتش تي إم إل (*.html)</translation>
     </message>
 </context>
 <context>
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation>エクスポートしています...</translation>
+        <translation>تخرج...</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>キャンセル</translation>
+        <translation>الإلغاء</translation>
     </message>
 </context>
 <context>
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation>エクスポートが完了しました</translation>
+        <translation>تخرج ناجح</translation>
     </message>
     <message>
         <source>Export failed</source>
-        <translation>エクスポートできませんでした</translation>
+        <translation>تخرج فاشل</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation>選択されたディレクトリは使用できません。その他のディレクトリを使用してもう一度エクスポート操作を行ってください。</translation>
+        <translation>&gt;-
+  الدليل المخصص للتخرج غير متاح. من فضلك اختر دليلًا آخر للتخرج.
+  تابع عملية التخرج.</translation>
     </message>
 </context>
 <context>
     <name>File</name>
     <message>
         <source>Export File</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج الملف</translation>
     </message>
 </context>
 <context>
     <name>Label</name>
     <message>
         <source>Period:</source>
-        <translation>期間:</translation>
+        <translation>الفترة:</translation>
     </message>
     <message>
         <source>Level:  </source>
-        <translation>レベル:</translation>
+        <translation>المستوى: </translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation>ステータス:</translation>
+        <translation>الحالة:</translation>
     </message>
     <message>
         <source>Event Type:</source>
-        <translation>イベントタイプ:</translation>
+        <translation>نوع الحدث:</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation>ユーザー:</translation>
+        <translation>المستخدم:</translation>
     </message>
     <message>
         <source>PID:</source>
@@ -215,405 +217,407 @@
     </message>
     <message>
         <source>Action:</source>
-        <translation>アクション:</translation>
+        <translation>الإجراء:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation>ユーザー名:</translation>
+        <translation>اسم المستخدم:</translation>
     </message>
     <message>
         <source>Boot record</source>
-        <translation>ブートレコード</translation>
+        <translation>تسجيل التشغيل</translation>
     </message>
     <message>
         <source>Shutdown record</source>
-        <translation>シャットダウンレコード</translation>
+        <translation>تسجيل الإيقاف</translation>
     </message>
     <message>
         <source>Login record</source>
-        <translation>ログインレコード</translation>
+        <translation>تسجيل الدخول</translation>
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation>監査タイプ:</translation>
+        <translation>نوع المراجعة:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation>アプリケーション:</translation>
+        <translation>التطبيق:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation>サブモジュール:</translation>
+        <translation>الوحدة الفرعية:</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation>تحذير</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation>デバッグ</translation>
+        <translation>تحقيق</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>情報</translation>
+        <translation>معلومات</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>エラー</translation>
+        <translation>خطأ</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation>緊急</translation>
+        <translation>طوارئ</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation>アラート</translation>
+        <translation>الايلت</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation>重大</translation>
+        <translation>كريدتيل</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation>通知</translation>
+        <translation>نوتيس</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation>トレース</translation>
+        <translation>تريس</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation>非常に重大</translation>
+        <translation>سبر كريدتيل</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
         <source>Log file is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>فلاي دو لوج هوا كايد</translation>
     </message>
 </context>
 <context>
     <name>Main</name>
     <message>
         <source>Log Viewer</source>
-        <translation>ログビューア</translation>
+        <translation>ماسج لوج</translation>
     </message>
     <message>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation type="unfinished"></translation>
+        <translation>ماسج لوج هوا اور ارقل ماسج لوج لتر نظرة فا تيسيم لوج.</translation>
     </message>
 </context>
 <context>
     <name>SearchBar</name>
     <message>
         <source>No search results</source>
-        <translation type="unfinished"></translation>
+        <translation>لا تسرك لجور</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>تسيرك</translation>
     </message>
 </context>
 <context>
     <name>Table</name>
     <message>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>سويت</translation>
     </message>
     <message>
         <source>Process</source>
-        <translation type="unfinished"></translation>
+        <translation>بروسس</translation>
     </message>
     <message>
         <source>Date and Time</source>
-        <translation>日時</translation>
+        <translation>تايت ون دو</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>情報</translation>
+        <translation>اينفو</translation>
     </message>
     <message>
         <source>User</source>
-        <translation>ユーザー</translation>
+        <translation>يوسر</translation>
     </message>
     <message>
         <source>PID</source>
-        <translation>PID</translation>
+        <translation>بيدي</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>سروس</translation>
     </message>
     <message>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>اكتيون</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>ستاتوس</translation>
     </message>
     <message>
         <source>Event Type</source>
-        <translation type="unfinished"></translation>
+        <translation>ايفنت تايب</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>يوسرنيم</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation type="unfinished"></translation>
+        <translation>سويت:</translation>
     </message>
     <message>
         <source>Process:</source>
-        <translation type="unfinished"></translation>
+        <translation>بروسس:</translation>
     </message>
     <message>
         <source>Date and Time:</source>
-        <translation type="unfinished"></translation>
+        <translation>تايت ون دو:</translation>
     </message>
     <message>
         <source>Info:</source>
-        <translation type="unfinished"></translation>
+        <translation>اينفو:</translation>
     </message>
     <message>
         <source>Null</source>
-        <translation type="unfinished"></translation>
+        <translation>نول</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation>ユーザー:</translation>
+        <translation>يوسر:</translation>
     </message>
     <message>
         <source>PID:</source>
-        <translation>PID:</translation>
+        <translation>بيدي:</translation>
     </message>
     <message>
         <source>File Name</source>
-        <translation>ファイル名</translation>
+        <translation>فلاي نيم</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>تايت موديفيد</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"></translation>
+        <translation>EXE</translation>
     </message>
     <message>
         <source>Core File</source>
-        <translation>コアファイル</translation>
+        <translation>Core File</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation>ユーザー名</translation>
+        <translation>User Name</translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation>オフセット</translation>
+        <translation>Offset</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
         <source>Date and Time</source>
-        <translation>日付と時刻</translation>
+        <translation>Date and Time</translation>
     </message>
 </context>
 <context>
     <name>Tree</name>
     <message>
         <source>System Log</source>
-        <translation>システムログ</translation>
+        <translation>System Log</translation>
     </message>
     <message>
         <source>Kernel Log</source>
-        <translation>カーネルログ</translation>
+        <translation>Kernel Log</translation>
     </message>
     <message>
         <source>Boot Log</source>
-        <translation>ブートログ</translation>
+        <translation>Boot Log</translation>
     </message>
     <message>
         <source>dpkg Log</source>
-        <translation>dpkgログ</translation>
+        <translation>dpkg Log</translation>
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation>Kwinログ</translation>
+        <translation>Kwin Log</translation>
     </message>
     <message>
         <source>Xorg Log</source>
-        <translation>Xorgログ</translation>
+        <translation>Xorg Log</translation>
     </message>
     <message>
         <source>Application Log</source>
-        <translation>アプリケーションログ</translation>
+        <translation>Application Log</translation>
     </message>
     <message>
         <source>Boot-Shutdown Event</source>
-        <translation>ブート - シャットダウンログ</translation>
+        <translation>Boot-Shutdown Event</translation>
     </message>
     <message>
         <source>dnf Log</source>
-        <translation>dnfログ</translation>
+        <translation>dnf Log</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation>その他のログ</translation>
+        <translation>Other Log</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation>カスタムログ</translation>
+        <translation>Custom Log</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation>監査ログ</translation>
+        <translation>Audit Log</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation>コアダンプログ</translation>
+        <translation>Coredump Log</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"></translation>
+        <translation>You can&apos;t get crash information, please install systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"></translation>
+        <translation>ما تقدر تقدر ترى هدا</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>|-
+Security level for the current system: high
+ audit only administrators can view the audit log</translation>
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>لا توجد سجل مراجعة.</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج السجلات إلى مسار محدد</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>PATH</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج السجلات من نوع محدد</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>TYPE</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج السجلات من تطبيقات مطورة ذاتيًا محددة</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>SELF APPNAME</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج السجلات خلال فترة زمنية محددة</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>دودا</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج السجلات مع مستوى تفاصيل محدد</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
+        <translation>مستوى</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>حالة التشغيل</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج سجلات التشغيل (لا كلو) مع حالة محددة</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج سجلات التشغيل (الإيقاف) أو سجلات المراجعة مع نوع حدث محدد</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>نوع الحدث</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج السجلات بناءً على نتائج بحث الكلمات المفتاحية</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>كلمة مفتاحية</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>تقرير معلومات التوقف.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"></translation>
+        <translation>تخرج السجلات بناءً على نموذج تطبيق فرعي</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"></translation>
+        <translation>نموذج فرعي</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation>更新間隔</translation>
+        <translation>فترة تحديث</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation>10秒</translation>
+        <translation>10 ثانية</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation>1分</translation>
+        <translation>1 دقيقة</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation>5分</translation>
+        <translation>5 دقائق</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation>更新しない</translation>
+        <translation>لا تحديث</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation>すべてエクスポート</translation>
+        <translation>تصدير جميعها</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation>今すぐ更新</translation>
+        <translation>تحديث الآن</translation>
     </message>
 </context>
 </TS>

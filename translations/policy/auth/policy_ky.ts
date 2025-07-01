@@ -4,42 +4,42 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>Журнал көрүү үчүн кире керек</translation>
+		<translation>Жазууды көрсөтүү үчүн аутентификация керек</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
 		<source>authentication</source>
-		<translation>кире</translation>
+		<translation>аутентификация</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>Журнал көрүү үчүн кире керек</translation>
+		<translation>Жазууды көрсөтүү үчүн аутентификация керек</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!description" line="0"/>
 		<source>authentication</source>
-		<translation>кире</translation>
+		<translation>аутентификация</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>Журналдарды экспорт кылыш үчүн кире керек</translation>
+		<translation>Жазууды экспорт кылуу үчүн аутентификация керек</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
 		<source>authentication</source>
-		<translation>кире</translation>
+		<translation>аутентификация</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>Журналдарды экспорт кылыш үчүн кире керек</translation>
+		<translation>Жазууды экспорт кылуу үчүн аутентификация керек</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>
 		<source>authentication</source>
-		<translation>кире</translation>
+		<translation>аутентификация</translation>
 	</message>
 </context>
 </TS>

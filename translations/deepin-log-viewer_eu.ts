@@ -1,146 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="ja">
+<TS version="2.1" language="eu">
 <context>
     <name>Action</name>
     <message>
         <source>Display in file manager</source>
-        <translation>ファイルマネージャーで表示</translation>
+        <translation>Kazut en administraturo de dosiero</translation>
     </message>
     <message>
         <source>Clear log</source>
-        <translation>ログをクリア</translation>
+        <translation>Purgar la log</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation>更新</translation>
+        <translation>Refreski</translation>
     </message>
     <message>
         <source>Are you sure you want to clear the log?</source>
-        <translation>ログをクリアしてもよろしいですか？</translation>
+        <translation>Ĉu vi certe volas purgi la log?</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>キャンセル</translation>
+        <translation>Anuligi</translation>
     </message>
     <message>
         <source>Confirm</source>
-        <translation>確認</translation>
+        <translation>Konfirmi</translation>
     </message>
 </context>
 <context>
     <name>Button</name>
     <message>
         <source>All</source>
-        <translation>すべて</translation>
+        <translation>Ĉiuj</translation>
     </message>
     <message>
         <source>Today</source>
-        <translation>今日</translation>
+        <translation>Hodiaŭ</translation>
     </message>
     <message>
         <source>3 days</source>
-        <translation>3日</translation>
+        <translation>3 tagoj</translation>
     </message>
     <message>
         <source>1 week</source>
-        <translation>1週</translation>
+        <translation>1 semajno</translation>
     </message>
     <message>
         <source>1 month</source>
-        <translation>1ヶ月</translation>
+        <translation>1 monato</translation>
     </message>
     <message>
         <source>3 months</source>
-        <translation>3ヶ月</translation>
+        <translation>3 monatoj</translation>
     </message>
     <message>
         <source>Export</source>
         <comment>button</comment>
-        <translation>エクスポート</translation>
+        <translation>Esporti</translation>
     </message>
 </context>
 <context>
     <name>ComboBox</name>
     <message>
         <source>All</source>
-        <translation>すべて</translation>
+        <translation>Ĉiuj</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation>緊急</translation>
+        <translation>Malkaŝa</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation>アラート</translation>
+        <translation>Averto</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation>重大</translation>
+        <translation>Kritika</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>エラー</translation>
+        <translation>Eraro</translation>
     </message>
     <message>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation>Averto</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation>通知</translation>
+        <translation>Noto</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>情報</translation>
+        <translation>Informo</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation>デバッグ</translation>
+        <translation>Debug</translation>
     </message>
     <message>
         <source>Login</source>
-        <translation>ログイン</translation>
+        <translation>Enlogi</translation>
     </message>
     <message>
         <source>Boot</source>
-        <translation>ブート</translation>
+        <translation>Malkaŝi</translation>
     </message>
     <message>
         <source>Shutdown</source>
-        <translation>シャットダウン</translation>
+        <translation>Malŝalti</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation>非常に重大</translation>
+        <translation>Supera kritika</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation>トレース</translation>
+        <translation>Traka</translation>
     </message>
     <message>
         <source>Identity authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Aŭtentikigo de identeco</translation>
     </message>
     <message>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Libera Aŭtorizado</translation>
     </message>
     <message>
         <source>Mandatory access control</source>
-        <translation>強制アクセス制御</translation>
+        <translation>Obligata Aŭtorizado</translation>
     </message>
     <message>
         <source>Remote</source>
-        <translation>リモート</translation>
+        <translation>Forsua</translation>
     </message>
     <message>
         <source>Document audit</source>
-        <translation>ドキュメント監査</translation>
+        <translation>Kontrola dokumento</translation>
     </message>
     <message>
         <source>Other</source>
-        <translation>その他</translation>
+        <translation>Alia</translation>
     </message>
 </context>
 <context>
@@ -151,63 +151,65 @@
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>Testo (*.txt);; Dokumento (*.doc);; Tabelas (*.xls);; HTML (*.html)</translation>
     </message>
 </context>
 <context>
     <name>ExportDlg</name>
     <message>
         <source>Exporting...</source>
-        <translation>エクスポートしています...</translation>
+        <translation>Esportando...</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>キャンセル</translation>
+        <translation>Anuluar</translation>
     </message>
 </context>
 <context>
     <name>ExportMessage</name>
     <message>
         <source>Export successful</source>
-        <translation>エクスポートが完了しました</translation>
+        <translation>Esportado sukcese</translation>
     </message>
     <message>
         <source>Export failed</source>
-        <translation>エクスポートできませんでした</translation>
+        <translation>Esportado mal sukcese</translation>
     </message>
     <message>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation>選択されたディレクトリは使用できません。その他のディレクトリを使用してもう一度エクスポート操作を行ってください。</translation>
+        <translation>&gt;-
+  La dosiera esportado ne estas disponebla. Bonvolu elekti alian dosieron por
+  la esportado operacio.</translation>
     </message>
 </context>
 <context>
     <name>File</name>
     <message>
         <source>Export File</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporti dosieron</translation>
     </message>
 </context>
 <context>
     <name>Label</name>
     <message>
         <source>Period:</source>
-        <translation>期間:</translation>
+        <translation>Perio:</translation>
     </message>
     <message>
         <source>Level:  </source>
-        <translation>レベル:</translation>
+        <translation>Nivel:</translation>
     </message>
     <message>
         <source>Status:</source>
-        <translation>ステータス:</translation>
+        <translation>Statuso:</translation>
     </message>
     <message>
         <source>Event Type:</source>
-        <translation>イベントタイプ:</translation>
+        <translation>Tipo de evento:</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation>ユーザー:</translation>
+        <translation>Uzanto:</translation>
     </message>
     <message>
         <source>PID:</source>
@@ -215,130 +217,130 @@
     </message>
     <message>
         <source>Action:</source>
-        <translation>アクション:</translation>
+        <translation>Agordo:</translation>
     </message>
     <message>
         <source>Username:</source>
-        <translation>ユーザー名:</translation>
+        <translation>Nomo de uzanto:</translation>
     </message>
     <message>
         <source>Boot record</source>
-        <translation>ブートレコード</translation>
+        <translation>Registrado de starto</translation>
     </message>
     <message>
         <source>Shutdown record</source>
-        <translation>シャットダウンレコード</translation>
+        <translation>Registrado de haltigo</translation>
     </message>
     <message>
         <source>Login record</source>
-        <translation>ログインレコード</translation>
+        <translation>Registrado de enlogado</translation>
     </message>
     <message>
         <source>Audit Type:</source>
-        <translation>監査タイプ:</translation>
+        <translation>Tipo de kontrola:</translation>
     </message>
     <message>
         <source>Application:</source>
-        <translation>アプリケーション:</translation>
+        <translation>Apliko:</translation>
     </message>
     <message>
         <source>Submodule:</source>
-        <translation>サブモジュール:</translation>
+        <translation>Submodulo:</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
         <source>Warning</source>
-        <translation>警告</translation>
+        <translation>Nivel</translation>
     </message>
     <message>
         <source>Debug</source>
-        <translation>デバッグ</translation>
+        <translation>Amona</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>情報</translation>
+        <translation>Debug</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation>エラー</translation>
+        <translation>Info</translation>
     </message>
     <message>
         <source>Emergency</source>
-        <translation>緊急</translation>
+        <translation>Eraro</translation>
     </message>
     <message>
         <source>Alert</source>
-        <translation>アラート</translation>
+        <translation>Alerto</translation>
     </message>
     <message>
         <source>Critical</source>
-        <translation>重大</translation>
+        <translation>Kritiko</translation>
     </message>
     <message>
         <source>Notice</source>
-        <translation>通知</translation>
+        <translation>Notiko</translation>
     </message>
     <message>
         <source>Trace</source>
-        <translation>トレース</translation>
+        <translation>Trace</translation>
     </message>
     <message>
         <source>Super critical</source>
-        <translation>非常に重大</translation>
+        <translation>Super kritiko</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
         <source>Log file is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Dosiero log estas malplena</translation>
     </message>
 </context>
 <context>
     <name>Main</name>
     <message>
         <source>Log Viewer</source>
-        <translation>ログビューア</translation>
+        <translation>Log Viewer</translation>
     </message>
     <message>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Log Viewer estas utila ilo por vizualigi sistemojn logojn.</translation>
     </message>
 </context>
 <context>
     <name>SearchBar</name>
     <message>
         <source>No search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Neniu serĉo rezultoj</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Serĉi</translation>
     </message>
 </context>
 <context>
     <name>Table</name>
     <message>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Nivelo</translation>
     </message>
     <message>
         <source>Process</source>
-        <translation type="unfinished"></translation>
+        <translation>Proceso</translation>
     </message>
     <message>
         <source>Date and Time</source>
-        <translation>日時</translation>
+        <translation>Data kaj tempo</translation>
     </message>
     <message>
         <source>Info</source>
-        <translation>情報</translation>
+        <translation>Informo</translation>
     </message>
     <message>
         <source>User</source>
-        <translation>ユーザー</translation>
+        <translation>Uzanto</translation>
     </message>
     <message>
         <source>PID</source>
@@ -346,47 +348,47 @@
     </message>
     <message>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonto</translation>
     </message>
     <message>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Agado</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Stato</translation>
     </message>
     <message>
         <source>Event Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Evento tipo</translation>
     </message>
     <message>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>Uzantonomo</translation>
     </message>
     <message>
         <source>Level:</source>
-        <translation type="unfinished"></translation>
+        <translation>Nivelo:</translation>
     </message>
     <message>
         <source>Process:</source>
-        <translation type="unfinished"></translation>
+        <translation>Proceso:</translation>
     </message>
     <message>
         <source>Date and Time:</source>
-        <translation type="unfinished"></translation>
+        <translation>Data kaj tempo:</translation>
     </message>
     <message>
         <source>Info:</source>
-        <translation type="unfinished"></translation>
+        <translation>Informo:</translation>
     </message>
     <message>
         <source>Null</source>
-        <translation type="unfinished"></translation>
+        <translation>Nul</translation>
     </message>
     <message>
         <source>User:</source>
-        <translation>ユーザー:</translation>
+        <translation>Uzanto:</translation>
     </message>
     <message>
         <source>PID:</source>
@@ -394,226 +396,228 @@
     </message>
     <message>
         <source>File Name</source>
-        <translation>ファイル名</translation>
+        <translation>Dosiero nomo</translation>
     </message>
     <message>
         <source>Time Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Tempo modifita</translation>
     </message>
     <message>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
+        <translation>SIG</translation>
     </message>
     <message>
         <source>EXE</source>
-        <translation type="unfinished"></translation>
+        <translation>EXE</translation>
     </message>
     <message>
         <source>Core File</source>
-        <translation>コアファイル</translation>
+        <translation>Fajlo de core</translation>
     </message>
     <message>
         <source>User Name </source>
-        <translation>ユーザー名</translation>
+        <translation>Nom de uzant</translation>
     </message>
     <message>
         <source>Offset</source>
-        <translation>オフセット</translation>
+        <translation>Ofseto</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
         <source>Date and Time</source>
-        <translation>日付と時刻</translation>
+        <translation>Data kaj tempo</translation>
     </message>
 </context>
 <context>
     <name>Tree</name>
     <message>
         <source>System Log</source>
-        <translation>システムログ</translation>
+        <translation>Log de sistemo</translation>
     </message>
     <message>
         <source>Kernel Log</source>
-        <translation>カーネルログ</translation>
+        <translation>Log de kernelo</translation>
     </message>
     <message>
         <source>Boot Log</source>
-        <translation>ブートログ</translation>
+        <translation>Log de boot</translation>
     </message>
     <message>
         <source>dpkg Log</source>
-        <translation>dpkgログ</translation>
+        <translation>Log de dpkg</translation>
     </message>
     <message>
         <source>Kwin Log</source>
-        <translation>Kwinログ</translation>
+        <translation>Log de Kwin</translation>
     </message>
     <message>
         <source>Xorg Log</source>
-        <translation>Xorgログ</translation>
+        <translation>Log de Xorg</translation>
     </message>
     <message>
         <source>Application Log</source>
-        <translation>アプリケーションログ</translation>
+        <translation>Log de aplikacio</translation>
     </message>
     <message>
         <source>Boot-Shutdown Event</source>
-        <translation>ブート - シャットダウンログ</translation>
+        <translation>Evento de boot-shutdown</translation>
     </message>
     <message>
         <source>dnf Log</source>
-        <translation>dnfログ</translation>
+        <translation>Log de dnf</translation>
     </message>
     <message>
         <source>Other Log</source>
-        <translation>その他のログ</translation>
+        <translation>Alia log</translation>
     </message>
     <message>
         <source>Custom Log</source>
-        <translation>カスタムログ</translation>
+        <translation>Log personala</translation>
     </message>
     <message>
         <source>Audit Log</source>
-        <translation>監査ログ</translation>
+        <translation>Log de audit</translation>
     </message>
     <message>
         <source>Coredump Log</source>
-        <translation>コアダンプログ</translation>
+        <translation>Log de coredump</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ne eblas ricevi informojn pri malgajaĵo, bonvolu instaligi systemd-coredump.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"></translation>
+        <translation>Vi ne havas permeson por vidi ĝin</translation>
     </message>
     <message>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>|-
+Nivelo de sekureco por la aktuala sistemo: alta
+audito nur administrantoj povas vidi la audit-logon</translation>
     </message>
     <message>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Audit-logo ne ekzistas.</translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporti logojn al la specifita vojo</translation>
     </message>
     <message>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>VOJO</translation>
     </message>
     <message>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporti logojn de specifitaj tipoj</translation>
     </message>
     <message>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>TIPO</translation>
     </message>
     <message>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporti logojn de specifitaj self-developitaj aplikacioj</translation>
     </message>
     <message>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>APLIKACIO DEZEMPLA</translation>
     </message>
     <message>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporti logojn dum specifita periodo de tempo</translation>
     </message>
     <message>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>PERIODO</translation>
     </message>
     <message>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta logar en un nivelo de debago specifiko</translation>
     </message>
     <message>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
+        <translation>NIVEL</translation>
     </message>
     <message>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>STATUS DE LARTE</translation>
     </message>
     <message>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta logar de larte(no-klu) en un status specifiko</translation>
     </message>
     <message>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta logar de eventu de larte-klozura aŭ auditu en un tipo de eventu specifiko</translation>
     </message>
     <message>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>TIPO DE EVENTU</translation>
     </message>
     <message>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta logar baze de rezultatoj de serĉo per parolaj kaptaj</translation>
     </message>
     <message>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>PAROLAJ KAPTAJ</translation>
     </message>
     <message>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Raportu informojn de coredump.</translation>
     </message>
     <message>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"></translation>
+        <translation>Esporta logar baze de submodelo de apliko</translation>
     </message>
     <message>
         <source>SUBMODULE</source>
-        <translation type="unfinished"></translation>
+        <translation>SUBMODELO</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
         <source>Refresh interval</source>
-        <translation>更新間隔</translation>
+        <translation>Intervalo de refresko</translation>
     </message>
     <message>
         <source>10 sec</source>
-        <translation>10秒</translation>
+        <translation>10 sekundo</translation>
     </message>
     <message>
         <source>1 min</source>
-        <translation>1分</translation>
+        <translation>1 minuto</translation>
     </message>
     <message>
         <source>5 min</source>
-        <translation>5分</translation>
+        <translation>5 minuto</translation>
     </message>
     <message>
         <source>No refresh</source>
-        <translation>更新しない</translation>
+        <translation>Sen refresko</translation>
     </message>
     <message>
         <source>Export All</source>
-        <translation>すべてエクスポート</translation>
+        <translation>Esporta Tutan</translation>
     </message>
     <message>
         <source>Refresh Now</source>
-        <translation>今すぐ更新</translation>
+        <translation>Refreski Nun</translation>
     </message>
 </context>
 </TS>

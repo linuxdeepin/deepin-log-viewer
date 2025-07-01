@@ -4,757 +4,619 @@
 <context>
     <name>Action</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="188"/>
         <source>Display in file manager</source>
-        <translation>بە نامەنی تەمەمکردنەر</translation>
+        <translation>Beyan dikarîna pîvan</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="489"/>
         <source>Clear log</source>
-        <translation>لۆگی ئەوەی کەردنەر</translation>
+        <translation>Guhardin log</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="189"/>
         <source>Refresh</source>
-        <translation>بەروبارکردن</translation>
+        <translation>Nûkirin</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="539"/>
         <source>Are you sure you want to clear the log?</source>
-        <translation>ئەوەی لۆگی کەردنەر دەتەوێت؟</translation>
+        <translation>Hûn dîsa wexta guhartin log?</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="540"/>
         <source>Cancel</source>
-        <translation>بەخەبەرکردن</translation>
+        <translation>Bekan</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="541"/>
         <source>Confirm</source>
-        <translation>تایید کردن</translation>
+        <translation>Bekan</translation>
     </message>
 </context>
 <context>
     <name>Button</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="80"/>
         <source>All</source>
-        <translation>همە</translation>
+        <translation>Hemî</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="83"/>
         <source>Today</source>
-        <translation>بەروەز</translation>
+        <translation>Berdar</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="86"/>
         <source>3 days</source>
-        <translation>3 ڕۆژ</translation>
+        <translation>3 girt</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="89"/>
         <source>1 week</source>
-        <translation>1 هەفتە</translation>
+        <translation>1 hûn</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="92"/>
         <source>1 month</source>
-        <translation>1 مانگ</translation>
+        <translation>1 meh</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="95"/>
         <source>3 months</source>
-        <translation>3 مانگ</translation>
+        <translation>3 meh</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="224"/>
         <source>Export</source>
         <comment>button</comment>
-        <translation>ئەوەی بەروونەکردن</translation>
+        <translation>Împort</translation>
     </message>
 </context>
 <context>
     <name>ComboBox</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="120"/>
         <source>All</source>
-        <translation>همە</translation>
+        <translation>Hemî</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="121"/>
         <source>Emergency</source>
-        <translation>بەرگرتن</translation>
+        <translation>Bîrî</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="122"/>
         <source>Alert</source>
-        <translation>هەڵدەست</translation>
+        <translation>Teyyîra</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="123"/>
         <source>Critical</source>
-        <translation>کریتیک</translation>
+        <translation>Kritical</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="124"/>
         <source>Error</source>
-        <translation>هەڵە</translation>
+        <translation>Girî</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="125"/>
         <source>Warning</source>
-        <translation>هەڵە دەرکەوتو</translation>
+        <translation>Teyyîra</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="126"/>
         <source>Notice</source>
-        <translation>نوتیس</translation>
+        <translation>Beyan</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="127"/>
         <source>Info</source>
-        <translation>ئەمەی</translation>
+        <translation>Info</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="128"/>
         <source>Debug</source>
-        <translation>دەbug</translation>
+        <translation>Debug</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="198"/>
         <source>Login</source>
-        <translation>لۆگین</translation>
+        <translation>Login</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="199"/>
         <source>Boot</source>
-        <translation>بۆوت</translation>
+        <translation>Boot</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="200"/>
         <source>Shutdown</source>
-        <translation>شاتداون</translation>
+        <translation>Shutdaw</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="142"/>
         <source>Super critical</source>
-        <translation>سەرکریتیک</translation>
+        <translation>Super kritical</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="148"/>
         <source>Trace</source>
-        <translation>تریس</translation>
+        <translation>Trace</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="212"/>
         <source>Identity authentication</source>
-        <translation>ئەیدەنتیتی ئەمەی</translation>
+        <translation>Îdentîtiya guhertina</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="213"/>
         <source>Discretionary Access Control</source>
-        <translation>دیسکریشنری ئەکسەس کنترول</translation>
+        <translation>Kontrola dîstansiyon</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="214"/>
         <source>Mandatory access control</source>
-        <translation>مەنداتوری ئەکسەس کنترول</translation>
+        <translation>Kontrola meydanî</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="215"/>
         <source>Remote</source>
-        <translation>بەرەوە</translation>
+        <translation>Rêzî</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="216"/>
         <source>Document audit</source>
-        <translation>دوكومنتی نەوەت</translation>
+        <translation>Peyamên belge</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="217"/>
         <source>Other</source>
-        <translation>دیگر</translation>
+        <translation>Diger</translation>
     </message>
 </context>
 <context>
     <name>DisplayContent</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1800"/>
         <source>zip(*.zip)</source>
         <translation>zip(*.zip)</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1794"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
+        <translation>Têx (*.txt);; Dok (*.doc);; Xls (*.xls);; Htm (*.html)</translation>
     </message>
 </context>
 <context>
     <name>ExportDlg</name>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="35"/>
         <source>Exporting...</source>
-        <translation>ئەنجام دەدەنە</translation>
+        <translation>Împort kirin...</translation>
     </message>
     <message>
-        <location filename="../application/exportprogressdlg.cpp" line="58"/>
         <source>Cancel</source>
-        <translation>بەخەوە</translation>
+        <translation>Bekan</translation>
     </message>
 </context>
 <context>
     <name>ExportMessage</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3257"/>
         <source>Export successful</source>
-        <translation>ئەنجام دەدەنەیە</translation>
+        <translation>Împortê karanî</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3260"/>
         <source>Export failed</source>
-        <translation>ئەنجام دەدەنە نەکردنە</translation>
+        <translation>Împortê karanî</translation>
     </message>
     <message>
-        <location filename="../application/logbackend.cpp" line="1763"/>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation>>-
- دەرەوەتی ئەنجام دەدەنە نەدەرەوەتە. لەوە دەرەوەتی دیگری بەرەوە ئەنجام دەدەنە.</translation>
+        <translation>&gt;-
+  Wê karanî qeymê nîşan dide. Dîroka din bi qeymê li ser karanî pêşkەشîne.</translation>
     </message>
 </context>
 <context>
     <name>File</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1792"/>
         <source>Export File</source>
-        <translation>فایلی ئەنجام دەدەنە</translation>
+        <translation>Împort Belge</translation>
     </message>
 </context>
 <context>
     <name>Label</name>
     <message>
-        <location filename="../application/filtercontent.cpp" line="76"/>
         <source>Period:</source>
-        <translation>پێرید:</translation>
+        <translation>Dîroka:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="114"/>
         <source>Level:  </source>
-        <translation>سەرەکیت: </translation>
+        <translation>Sermantî:  </translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="180"/>
         <source>Status:</source>
-        <translation>ستاتوس:</translation>
+        <translation>Karanî:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="193"/>
         <source>Event Type:</source>
-        <translation>تایپی ڤەیڤن:</translation>
+        <translation>Tîpa Pêşkەش:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="132"/>
         <source>User:</source>
-        <translation>کاروان:</translation>
+        <translation>Kurî:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="134"/>
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="138"/>
         <source>Action:</source>
-        <translation>ئەکسیۆن:</translation>
+        <translation>Karanî:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="143"/>
         <source>Username:</source>
-        <translation>نامی کاروان:</translation>
+        <translation>Navê Kurî:</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="469"/>
         <source>Boot record</source>
-        <translation>رەکۆردی بۆوت</translation>
+        <translation>Peyamên pêkîn</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="471"/>
         <source>Shutdown record</source>
-        <translation>رەکۆردی شووداون</translation>
+        <translation>Peyamên dîrokîn</translation>
     </message>
     <message>
-        <location filename="../application/logdetailinfowidget.cpp" line="474"/>
         <source>Login record</source>
-        <translation>رەکۆردی لۆگین</translation>
+        <translation>Peyamên dîrokîn</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="208"/>
         <source>Audit Type:</source>
-        <translation>تایپی نەوەت:</translation>
+        <translation>Tîpa Împort:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="155"/>
         <source>Application:</source>
-        <translation>ئەپلیکاسیۆن:</translation>
+        <translation>Pêşkەش:</translation>
     </message>
     <message>
-        <location filename="../application/filtercontent.cpp" line="167"/>
         <source>Submodule:</source>
-        <translation>زوبمودول:</translation>
+        <translation>Submodule:</translation>
     </message>
 </context>
 <context>
     <name>Level</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="201"/>
         <source>Warning</source>
-        <translation>نەوەت</translation>
+        <translation>Kesî</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="202"/>
         <source>Debug</source>
-        <translation>دەbug</translation>
+        <translation>Debug</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="203"/>
         <source>Info</source>
-        <translation>ئینفو</translation>
+        <translation>Info</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="204"/>
         <source>Error</source>
-        <translation>ئەرور</translation>
+        <translation>Kesî</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="208"/>
         <source>Emergency</source>
-        <translation>ئەمەرجەنسی</translation>
+        <translation>Kesî</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="209"/>
         <source>Alert</source>
-        <translation>هەقیقە</translation>
+        <translation>ئەڵERT</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="210"/>
         <source>Critical</source>
-        <translation>ئەمەجی</translation>
+        <translation>كۈرەك</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="213"/>
         <source>Notice</source>
-        <translation>نوتە</translation>
+        <translation>نوتىسى</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="220"/>
         <source>Trace</source>
-        <translation>تەرە</translation>
+        <translation>تەرك</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="226"/>
         <source>Super critical</source>
-        <translation>ئەمەجی بەزات</translation>
+        <translation>بەرەك</translation>
     </message>
 </context>
 <context>
     <name>LogAuthThread</name>
     <message>
-        <location filename="../application/logauththread.cpp" line="529"/>
         <source>Log file is empty</source>
-        <translation>پەڕگەی لۆگ خالی دەبێ</translation>
+        <translation>كىتاب ئەتەپ بەرەك</translation>
     </message>
 </context>
 <context>
     <name>Main</name>
     <message>
-        <location filename="../application/main.cpp" line="329"/>
         <source>Log Viewer</source>
-        <translation>بیناکردنی لۆگ</translation>
+        <translation>كىتاب كۆرۈشتى</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="332"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation>بیناکردنی لۆگ یەک چەندە کاری دەبێ بۆ نەخشەکردنی پەڕگەی لۆگەکانی سیستم.</translation>
+        <translation>كىتاب كۆرۈشتى سىستېم كىتابلىرىنى كۆرۈش ئۈچۈن كۆرۈنەرلىك ئاركىلىق.</translation>
     </message>
 </context>
 <context>
     <name>SearchBar</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="120"/>
         <source>No search results</source>
-        <translation>نەتەیجەی گەڕان</translation>
+        <translation>ئىزدەش نەتىجەسى بىلەن</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="109"/>
         <source>Search</source>
-        <translation>گەڕان</translation>
+        <translation>ئىزدە</translation>
     </message>
 </context>
 <context>
     <name>Table</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="563"/>
         <source>Level</source>
-        <translation>سەرەتە</translation>
+        <translation>سەۋەپ</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="564"/>
         <source>Process</source>
-        <translation>پرۆسەس</translation>
+        <translation>پىرۆس</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="565"/>
         <source>Date and Time</source>
-        <translation>تاریخ و کات</translation>
+        <translation>تەرەپ ۋە زامان</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="566"/>
         <source>Info</source>
-        <translation>ئینفۆ</translation>
+        <translation>مەلۇمات</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="567"/>
         <source>User</source>
-        <translation>کاروان</translation>
+        <translation>كىشى</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="568"/>
         <source>PID</source>
         <translation>PID</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="953"/>
         <source>Source</source>
-        <translation>گەرە</translation>
+        <translation>مەنبع</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="669"/>
         <source>Action</source>
-        <translation>کار</translation>
+        <translation>ئەمەل</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3374"/>
         <source>Status</source>
-        <translation>حەل</translation>
+        <translation>ھال</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1140"/>
         <source>Event Type</source>
-        <translation>نەشنەی کات</translation>
+        <translation>ئەرەم تىپى</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1141"/>
         <source>Username</source>
-        <translation>نامی کاروان</translation>
+        <translation>كىشى نىسىمى</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="897"/>
         <source>Level:</source>
-        <translation>سەرەتە:</translation>
+        <translation>سەۋەپ:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="898"/>
         <source>Process:</source>
-        <translation>پرۆسەس:</translation>
+        <translation>پىرۆس:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="899"/>
         <source>Date and Time:</source>
-        <translation>تاریخ و کات:</translation>
+        <translation>تەرەپ ۋە زامان:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="901"/>
         <source>Info:</source>
-        <translation>ئینفۆ:</translation>
+        <translation>مەلۇمات:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="902"/>
         <source>Null</source>
-        <translation>بەکارهێنەر</translation>
+        <translation>ھەقىقىي</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="906"/>
         <source>User:</source>
-        <translation>کاروان:</translation>
+        <translation>كىشى:</translation>
     </message>
     <message>
-        <location filename="../application/logexportthread.cpp" line="907"/>
         <source>PID:</source>
         <translation>PID:</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3532"/>
         <source>File Name</source>
-        <translation>ناوی پەڕگە</translation>
+        <translation>فەيل نىسىمى</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3533"/>
         <source>Time Modified</source>
-        <translation>کاتی تەمەمکردن</translation>
+        <translation>تەرمىن قىلغان زامان</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3741"/>
         <source>SIG</source>
-        <translation>سیج</translation>
+        <translation>SIG</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3745"/>
         <source>EXE</source>
-        <translation>اکسی</translation>
+        <translation>EXE</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3743"/>
         <source>Core File</source>
-        <translation>فایل کور</translation>
+        <translation>Fayl Core</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3744"/>
         <source>User Name </source>
-        <translation>نام کاربر</translation>
+        <translation>Navn User</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1009"/>
         <source>Offset</source>
-        <translation>آفست</translation>
+        <translation>Offset</translation>
     </message>
 </context>
 <context>
     <name>Tbble</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="1142"/>
         <source>Date and Time</source>
-        <translation>تاریخ و زمان</translation>
+        <translation>Tîra û Zaman</translation>
     </message>
 </context>
 <context>
     <name>Tree</name>
     <message>
-        <location filename="../application/loglistview.cpp" line="171"/>
         <source>System Log</source>
-        <translation>لۆگی سیستم</translation>
+        <translation>Girtîna Sisteme</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="182"/>
         <source>Kernel Log</source>
-        <translation>لۆگی کرnl</translation>
+        <translation>Girtîna Kernel</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="203"/>
         <source>Boot Log</source>
-        <translation>لۆگی بوت</translation>
+        <translation>Girtîna Boot</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="232"/>
         <source>dpkg Log</source>
-        <translation>لۆگی دپکج</translation>
+        <translation>Girtîna Dpkg</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="244"/>
         <source>Kwin Log</source>
-        <translation>لۆگی کوین</translation>
+        <translation>Girtîna Kwin</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="253"/>
         <source>Xorg Log</source>
-        <translation>لۆگی اکسورگ</translation>
+        <translation>Girtîna Xorg</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="265"/>
         <source>Application Log</source>
-        <translation>لۆگی ئەپلیکاسیۆن</translation>
+        <translation>Girtîna Program</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="290"/>
         <source>Boot-Shutdown Event</source>
-        <translation>ھەجمەت بوت-شوداون</translation>
+        <translation>Rûstîna Boot-Şutdown</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="222"/>
         <source>dnf Log</source>
-        <translation>لۆگی دنف</translation>
+        <translation>Girtîna Dnf</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="303"/>
         <source>Other Log</source>
-        <translation>لۆگی دیگر</translation>
+        <translation>Girtîna Dîğer</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="339"/>
         <source>Custom Log</source>
-        <translation>لۆگی کۆستم</translation>
+        <translation>Girtîna Xêrî</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="319"/>
         <source>Audit Log</source>
-        <translation>لۆگی اوتید</translation>
+        <translation>Girtîna Audit</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="278"/>
         <source>Coredump Log</source>
-        <translation>لۆگی کوردۆمپ</translation>
+        <translation>Girtîna Coredump</translation>
     </message>
 </context>
 <context>
     <name>Waring</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="133"/>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation>کرەش ئەمیشیانە بەکۆتەوە، لەوە بەکارھێنەرەکە بەکەوێت systemd-coredump</translation>
+        <translation>Kesînê crash information biqin, systemd-coredump bêşîn.</translation>
     </message>
 </context>
 <context>
     <name>Warning</name>
     <message>
-        <location filename="../application/displaycontent.cpp" line="139"/>
         <source>You do not have permission to view it</source>
-        <translation>تۆ نەدەوە بەکۆتەوە بۆ ئەمە ببینە</translation>
+        <translation>Hinînê zanîn biqin.</translation>
     </message>
     <message>
-        <location filename="../application/displaycontent.cpp" line="3216"/>
-        <source>Audit log is not exist.</source>
-        <translation>لۆگی اوتید نەدەوە بەکۆتەوە</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="127"/>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation>سەرەکی ھەجمەت سیستمەکە: ھاىش
- اوتید چەندە کاروانەرەکە بەکۆتەوە بۆ ئەمە ببینە</translation>
+        <translation>|-
+Dîwarê zanîn li ser sistemê: dîwar
+ audit bê şûna administratorên biqin.</translation>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>main</name>
     <message>
-        <location filename="../application/main.cpp" line="67"/>
         <source>Export logs to the specified path</source>
-        <translation>لۆگەکان بەکۆتەوە بۆ پەتەکەی دەستکاری شوو</translation>
+        <translation>Girtîn bi qeymeyîn path biqin.</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="67"/>
         <source>PATH</source>
-        <translation>پەتەکە</translation>
+        <translation>PATH</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="68"/>
         <source>Export logs of specified types</source>
-        <translation>لۆگەکان بەکۆتەوە بۆ چەندە چەندە گۆڕەکەی دەستکاری شوو</translation>
+        <translation>Girtîn bi qeymeyîn tîpan biqin.</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="68"/>
         <source>TYPE</source>
-        <translation>چانە</translation>
+        <translation>TYPE</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="69"/>
         <source>Export logs of specified self-developed applications</source>
-        <translation>لۆگەکان بەکۆتەوە بۆ چەندە ئەپلیکاسیۆنەکەی دەستکاری شوو</translation>
+        <translation>Girtîn bi qeymeyîn aplikasyonên qauto biqin.</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="69"/>
         <source>SELF APPNAME</source>
-        <translation>ئەپلیکاسیۆنەکەی دەستکاری شوو</translation>
+        <translation>SELF APPNAME</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="70"/>
         <source>Export logs within a specified time period</source>
-        <translation>لۆگەکان بەکۆتەوە بۆ چەندە چانەی زمانی دەستکاری شوو</translation>
+        <translation>Girtîn bi qeymeyîn zamanê biqin.</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="70"/>
         <source>PERIOD</source>
-        <translation>دەیەر</translation>
+        <translation>PERIOD</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="71"/>
         <source>Export logs within a specified debug level</source>
-        <translation>لە ئەنجامە ئەوەرە دەبەرە کە دەبەرە چەندە سەرە ئەوەرە کە دەبەرە</translation>
+        <translation>ئەنجامدان دەروازەکان بە چەندە دەگەڕەوە</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="71"/>
         <source>LEVEL</source>
-        <translation>سەرە</translation>
+        <translation>سەرەکى</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="72"/>
         <source>BOOT STATUS</source>
-        <translation>ستاتوسی بۆوت</translation>
+        <translation>بۇت سەرەكى</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="72"/>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation>لە ئەنجامە ئەوەرە دەبەرە کە دەبەرە چەندە سەرە ئەوەرە کە دەبەرە</translation>
+        <translation>Kontrola dîstansiyon</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="73"/>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation>لە ئەنجامە ئەوەرە دەبەرە کە دەبەرە چەندە سەرە ئەوەرە کە دەبەرە</translation>
+        <translation>Kontrola meydanî</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="73"/>
         <source>EVENT TYPE</source>
-        <translation>تیپی ھەدە</translation>
+        <translation>Tîpê event</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="74"/>
         <source>Export logs based on keywords search results</source>
-        <translation>لە ئەنجامە ئەوەرە دەبەرە کە دەبەرە چەندە کۆمارە ئەوەرە کە دەبەرە</translation>
+        <translation>Kontrola dîstansiyon</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="74"/>
         <source>KEY WORD</source>
-        <translation>کۆمارە</translation>
+        <translation>Kerma tîp</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="76"/>
         <source>Report coredump informations.</source>
-        <translation>دەبەرە چەندە چەکە کە دەبەرە</translation>
+        <translation>Raportê coredump</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="75"/>
         <source>Export logs based on app submodel</source>
-        <translation>لە ئەنجامە ئەوەرە دەبەرە کە دەبەرە چەندە چەکە چەکە کە دەبەرە</translation>
+        <translation>Kontrola meydanî</translation>
     </message>
     <message>
-        <location filename="../application/main.cpp" line="75"/>
         <source>SUBMODULE</source>
-        <translation>چەکە</translation>
+        <translation>Submodel</translation>
     </message>
 </context>
 <context>
     <name>titlebar</name>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="202"/>
         <source>Refresh interval</source>
-        <translation>دەیەری تەنیو</translation>
+        <translation>Dîroka têkiliyî</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="204"/>
         <source>10 sec</source>
-        <translation>10 چەکە</translation>
+        <translation>10 sek</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="205"/>
         <source>1 min</source>
-        <translation>1 دەیەر</translation>
+        <translation>1 min</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="206"/>
         <source>5 min</source>
-        <translation>5 دەیەر</translation>
+        <translation>5 min</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="207"/>
         <source>No refresh</source>
-        <translation>تەنیو نەدە</translation>
+        <translation>Têkiliyî nîne</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="234"/>
         <source>Export All</source>
-        <translation>دەبەرە ھەموو</translation>
+        <translation>Gava kî</translation>
     </message>
     <message>
-        <location filename="../application/logcollectormain.cpp" line="240"/>
         <source>Refresh Now</source>
-        <translation>تەنیو کەرە</translation>
+        <translation>Têkiliyî kî</translation>
     </message>
 </context>
 </TS>

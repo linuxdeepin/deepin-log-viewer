@@ -4,12 +4,12 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!message" line="0"/>
 		<source>Authentication is required to clear the log</source>
-		<translation>ការអនុញ្ញាតចូលគណនីត្រូវបានតម្រូវដើម្បីលុបប្រវត្តិការ</translation>
+		<translation>ការអាចុ্វធរណីតត្រូវបានប្រើដើម្បីសម្អាតប្រវត្តិកំណត់ហ៊ី</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!description" line="0"/>
 		<source>authentication</source>
-		<translation>ការអនុញ្ញាតចូលគណនី</translation>
+		<translation>ការអាចុ্វធរណីត</translation>
 	</message>
 </context>
 </TS>

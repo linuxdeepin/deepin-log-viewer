@@ -4,42 +4,42 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>ඇතුලත් කිරීම අවශ්‍ය වේ ලෝගය බලාපොරොත්තු වීමට</translation>
+		<translation>සැකසූ අතර දැක්වීමට අවශ්‍ය වේ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
 		<source>authentication</source>
-		<translation>ඇතුලත් කිරීම</translation>
+		<translation>සැකසූ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>ඇතුලත් කිරීම අවශ්‍ය වේ ලෝගය බලාපොරොත්තු වීමට</translation>
+		<translation>සැකසූ අතර දැක්වීමට අවශ්‍ය වේ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!description" line="0"/>
 		<source>authentication</source>
-		<translation>ඇතුලත් කිරීම</translation>
+		<translation>සැකසූ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>ඇතුලත් කිරීම අවශ්‍ය වේ ලෝගය ප්‍රකාශ කිරීමට</translation>
+		<translation>සැලසූ අතර යාම් සැකසූ අතර ප්‍රකාශ කිරීමට අවශ්‍ය වේ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
 		<source>authentication</source>
-		<translation>ඇතුලත් කිරීම</translation>
+		<translation>සැකසූ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>ඇතුලත් කිරීම අවශ්‍ය වේ ලෝගය ප්‍රකාශ කිරීමට</translation>
+		<translation>සැලසූ අතර යාම් සැකසූ අතර ප්‍රකාශ කිරීමට අවශ්‍ය වේ</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>
 		<source>authentication</source>
-		<translation>ඇතුලත් කිරීම</translation>
+		<translation>සැකසූ</translation>
 	</message>
 </context>
 </TS>

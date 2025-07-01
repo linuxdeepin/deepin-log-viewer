@@ -4,42 +4,42 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>اутھنٹیکیشن کی ضرورت ہے لوج کو دیکھنے کے لیے</translation>
+		<translation>دیکھنے کے لئے شناخت ضروری ہے</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth!description" line="0"/>
 		<source>authentication</source>
-		<translation>اوتھنٹیکیشن</translation>
+		<translation>شناخت</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!message" line="0"/>
 		<source>Authentication is required to view the log</source>
-		<translation>اوتھنٹیکیشن کی ضرورت ہے لوج کو دیکھنے کے لیے</translation>
+		<translation>دیکھنے کے لئے شناخت ضروری ہے</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.self!description" line="0"/>
 		<source>authentication</source>
-		<translation>اوتھنٹیکیشن</translation>
+		<translation>شناخت</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>اوتھنٹیکیشن کی ضرورت ہے لوج کو اخراج کرنے کے لیے</translation>
+		<translation>لوگ اخراج کرنے کے لئے شناخت ضروری ہے</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
 		<source>authentication</source>
-		<translation>اوتھنٹیکیشن</translation>
+		<translation>شناخت</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>اوتھنٹیکیشن کی ضرورت ہے لوج کو اخراج کرنے کے لیے</translation>
+		<translation>لوگ اخراج کرنے کے لئے شناخت ضروری ہے</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>
 		<source>authentication</source>
-		<translation>اوتھنٹیکیشن</translation>
+		<translation>شناخت</translation>
 	</message>
 </context>
 </TS>

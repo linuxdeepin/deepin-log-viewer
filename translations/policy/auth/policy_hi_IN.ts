@@ -24,7 +24,7 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>लॉग आउट करने के लिए एक्सपोर्ट करने के लिए एवेंट आवश्यक है</translation>
+		<translation>लॉग्स निर्यात करने के लिए संग्रह करना आवश्यक है</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogs!description" line="0"/>
@@ -34,7 +34,7 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!message" line="0"/>
 		<source>Authentication is required to export logs</source>
-		<translation>लॉग आउट करने के लिए एक्सपोर्ट करने के लिए एवेंट आवश्यक है</translation>
+		<translation>लॉग्स निर्यात करने के लिए प्रमाणीकरण आवश्यक है</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerAuth.exportLogsSelf!description" line="0"/>

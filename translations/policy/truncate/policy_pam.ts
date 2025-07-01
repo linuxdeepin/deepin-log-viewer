@@ -4,12 +4,12 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!message" line="0"/>
 		<source>Authentication is required to clear the log</source>
-		<translation>Kinangangay an pag-authentication para mapalubong an log</translation>
+		<translation>Dakdakon authentication para mapalas an log</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!description" line="0"/>
 		<source>authentication</source>
-		<translation>pag-authentication</translation>
+		<translation>authentication</translation>
 	</message>
 </context>
 </TS>

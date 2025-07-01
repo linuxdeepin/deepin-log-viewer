@@ -4,7 +4,7 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!message" line="0"/>
 		<source>Authentication is required to clear the log</source>
-		<translation>É necessário autenticação para limpar o log</translation>
+		<translation>A autentifikasi a bese a lëskeu log</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!description" line="0"/>

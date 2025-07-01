@@ -4,12 +4,12 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!message" line="0"/>
 		<source>Authentication is required to clear the log</source>
-		<translation>Хүүхэд нь дүрэм бүхий байх нь логыг хоцроох боломжтой</translation>
+		<translation>Хэрэглэгчийн нэр хэлбэрээр дүүргэх шаардлагатай</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!description" line="0"/>
 		<source>authentication</source>
-		<translation>хүүхэд</translation>
+		<translation>хэрэглэгчийн нэр хэлбэр</translation>
 	</message>
 </context>
 </TS>

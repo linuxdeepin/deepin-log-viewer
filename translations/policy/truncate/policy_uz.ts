@@ -4,12 +4,12 @@
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!message" line="0"/>
 		<source>Authentication is required to clear the log</source>
-		<translation>Logni to'liq qilish uchun autentifikatsiya talab qilinadi</translation>
+		<translation>Logni to&apos;liq qilish uchun avtorizatsiya kerak</translation>
 	</message>
 	<message>
 		<location filename="com.deepin.pkexec.logViewerTruncate!description" line="0"/>
 		<source>authentication</source>
-		<translation>autentifikatsiya</translation>
+		<translation>avtorizatsiya</translation>
 	</message>
 </context>
 </TS>
