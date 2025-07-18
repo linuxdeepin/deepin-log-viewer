@@ -32,7 +32,7 @@
 #include <QPainterPath>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(logFilter, "org.deepin.log.viewer.filter")
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 #define BUTTON_WIDTH_MIN 68
 #define BUTTON_HEIGHT_MIN 36
@@ -52,7 +52,7 @@ FilterContent::FilterContent(QWidget *parent)
     , m_curBtnId(ALL)
     , m_curLvCbxId(INF)
 {
-    qCDebug(logFilter) << "FilterContent constructor start";
+    qCDebug(logApp) << "FilterContent constructor start";
 
     initUI();
     initConnections();
@@ -60,7 +60,7 @@ FilterContent::FilterContent(QWidget *parent)
 
 FilterContent::~FilterContent()
 {
-    qCDebug(logFilter) << "FilterContent destructor";
+    qCDebug(logApp) << "FilterContent destructor called";
 }
 
 /**
@@ -68,7 +68,7 @@ FilterContent::~FilterContent()
  */
 void FilterContent::initUI()
 {
-    qCDebug(logFilter) << "Initializing filter UI components";
+    qCDebug(logApp) << "Initializing filter UI components";
 
     QVBoxLayout *vLayout = new QVBoxLayout(this);
     // set period info
@@ -230,7 +230,7 @@ void FilterContent::initUI()
     vLayout->addLayout(hLayout_all);
     vLayout->setSpacing(16);
     this->setLayout(vLayout);
-    qCDebug(logFilter) << "Setting initial selector visibility";
+    qCDebug(logApp) << "Setting initial selector visibility";
     setSelectorVisible(true, false, false, true, false);
     m_currentType = JOUR_TREE_DATA;
     //设置初始筛选选项
@@ -250,7 +250,7 @@ void FilterContent::initUI()
  */
 void FilterContent::initConnections()
 {
-    qCDebug(logFilter) << "Initializing signal-slot connections";
+    qCDebug(logApp) << "Initializing signal-slot connections";
 
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     connect(m_btnGroup, SIGNAL(buttonClicked(int)), this, SLOT(slot_buttonClicked(int)));
@@ -273,10 +273,11 @@ void FilterContent::initConnections()
  */
 void FilterContent::shortCutExport()
 {
-    qCDebug(logFilter) << "Processing shortcut export request";
+    qCDebug(logApp) << "Processing shortcut export request";
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
     bool canExport = true;
     if (exportBtn) {
+        qCDebug(logApp) << "Export button is enabled:" << exportBtn->isEnabled();
         canExport = exportBtn->isEnabled();
     }
     //判断现在导出按钮是否能够点击,不能点击时不可以导出
@@ -289,18 +290,21 @@ void FilterContent::shortCutExport()
  */
 void FilterContent::setAppComboBoxItem()
 {
-    qCDebug(logFilter) << "Refreshing application combo box items";
+    qCDebug(logApp) << "Refreshing application combo box items";
     //必须先disconnect变动值的信号槽,因为改变下拉选项会几次触发currentIndexChanged信号,这不是我们想要的
     disconnect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
     cbx_app->clear();
     //获取应用列表
     auto *appHelper = LogApplicationHelper::instance();
     AppLogConfigList appConfigs =  appHelper->getAppLogConfigs();
+    qCDebug(logApp) << "Found" << appConfigs.size() << "application configurations";
     //添加数据进combox
     for (auto appConfig : appConfigs) {
         // 没有子模块，不在应用列表显示
-        if (appConfig.subModules.size() == 0 || !appConfig.visible)
+        if (appConfig.subModules.size() == 0 || !appConfig.visible) {
+            qCDebug(logApp) << "Skipping app" << appConfig.name << "- no submodules or not visible";
             continue;
+        }
 
         if (!appConfig.transName.isEmpty())
             cbx_app->addItem(appConfig.transName);
@@ -311,18 +315,21 @@ void FilterContent::setAppComboBoxItem()
     }
 
     connect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)), Qt::UniqueConnection);
-
+    qCDebug(logApp) << "Application combo box updated with" << cbx_app->count() << "items";
 }
 
 void FilterContent::setSubmodulesComboBoxItem(const QString &app)
 {
+    qCDebug(logApp) << "Setting submodules for app:" << app;
     AppLogConfig logConfig = LogApplicationHelper::instance()->appLogConfig(app);
 
     // 子模块只有一个，则不显示子模块下拉框
     if (logConfig.subModules.size() < 2) {
+        qCDebug(logApp) << "App has less than 2 submodules, hiding submodule selector";
         submoduleTxt->setVisible(false);
         cbx_submodule->setVisible(false);
     } else {
+        qCDebug(logApp) << "App has" << logConfig.subModules.size() << "submodules, showing selector";
         submoduleTxt->setVisible(true);
         cbx_submodule->setVisible(true);
         disconnect(cbx_submodule, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxSubmoduleChanged(int)));
@@ -349,7 +356,7 @@ void FilterContent::setSubmodulesComboBoxItem(const QString &app)
 void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusCbx, bool period,
                                        bool needMove, bool typecbx, bool dnfCbx, bool auditCbx)
 {
-    qCDebug(logFilter) << "Updating selector visibility - Level:" << lvCbx
+    qCDebug(logApp) << "Updating selector visibility - Level:" << lvCbx
                        << "App:" << appListCbx << "Status:" << statusCbx
                        << "Period:" << period << "NeedMove:" << needMove
                        << "Type:" << typecbx << "DNF:" << dnfCbx << "Audit:" << auditCbx;
@@ -408,15 +415,18 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
  */
 void FilterContent::setSelection(FILTER_CONFIG iConifg)
 {
+    qCDebug(logApp) << "Setting selection";
     //控件不显示说明此情况下不需要给它设置值
     if (cbx_lv->isVisible())
         cbx_lv->setCurrentIndex(iConifg.levelCbx);
     if (cbx_app->isVisible()) {
+        qCDebug(logApp) << "cbx_app is visible";
         QString app = iConifg.appListCbx;
         int appCount =  cbx_app->count();
         int rsIndex = 0;
 
         if (!app.isEmpty()) {
+            qCDebug(logApp) << "app is not empty";
             //找原来选的选项的index,如果这个应用日志没了,就选第一个
             for (int i = 0; i < appCount; ++i) {
                 if (cbx_app->itemData(i, Qt::UserRole + 1).toString() == app) {
@@ -427,13 +437,15 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
             //不能直接connect再setCurrentIndex,而是要手动发出改变app的信号让其刷新,让combox自己发的话,如果原来的index是0他不发currentindexChanged信号
         }
         if (rsIndex == 0) {
+            qCDebug(logApp) << "rsIndex is 0";
             Q_EMIT cbx_app->currentIndexChanged(0);
         } else {
+            qCDebug(logApp) << "rsIndex is not 0";
             cbx_app->setCurrentIndex(rsIndex);
         }
 
         if (cbx_submodule->isVisible()) {
-
+            qCDebug(logApp) << "cbx_submodule is visible";
             int nSubIndex = 0;
             //找原来选的选项的index,如果这个子模块没了,就选择所有
             for (int i = 0; i < cbx_submodule->count(); ++i) {
@@ -464,13 +476,15 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
  */
 void FilterContent::setUeButtonSytle()
 {
+    qCDebug(logApp) << "Setting default button style to 'All'";
     for (QAbstractButton *abtn : m_btnGroup->buttons()) {
         LogPeriodButton *btn = static_cast<LogPeriodButton *>(abtn);
 
-        if (btn->objectName() == "allBtn")
+        if (btn->objectName() == "allBtn") {
+            qCDebug(logApp) << "Setting 'All' button as checked";
             btn->setChecked(true);
+        }
     }
-
 }
 
 /**
@@ -479,6 +493,7 @@ void FilterContent::setUeButtonSytle()
  */
 void FilterContent::paintEvent(QPaintEvent *event)
 {
+    // qCDebug(logApp) << "FilterContent::paintEvent called";
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -518,15 +533,19 @@ void FilterContent::paintEvent(QPaintEvent *event)
  */
 bool FilterContent::eventFilter(QObject *obj, QEvent *event)
 {
+    // qCDebug(logApp) << "FilterContent::eventFilter called";
     //判断是否为键盘按下事件
     if (event->type() == QEvent::KeyPress) {
+        qCDebug(logApp) << "FilterContent::eventFilter KeyPress";
         if (obj == m_allBtn) {
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             //左右按钮使焦点和选项变为两边的按钮,第一个按钮往左是最后一个按钮
             if(kev->key()==Qt::Key_Tab||kev->key()==Qt::Key_Backtab){
-               return false;
+                qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_allBtn Tab or Backtab";
+                return false;
             }
             if (kev->key() == Qt::Key_Right) {
+                qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_allBtn Right";
                 m_todayBtn->click();
                 m_todayBtn->setFocus(Qt::TabFocusReason);
             } else if (kev->key() == Qt::Key_Left) {
@@ -535,9 +554,11 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
             }
             return true;
         } else if (obj == m_todayBtn) {
+            qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_todayBtn";
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if(kev->key()==Qt::Key_Tab||kev->key()==Qt::Key_Backtab){
-               return false;
+                qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_todayBtn Tab or Backtab";
+                return false;
             }
             if (kev->key() == Qt::Key_Right) {
                 m_threeDayBtn->click();
@@ -548,9 +569,11 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
             }
             return true;
         } else if (obj == m_threeDayBtn) {
+            qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_threeDayBtn";
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if(kev->key()==Qt::Key_Tab||kev->key()==Qt::Key_Backtab){
-               return false;
+                qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_lastWeekBtn Tab or Backtab";
+                return false;
             }
             if (kev->key() == Qt::Key_Right) {
                 m_lastWeekBtn->click();
@@ -561,8 +584,10 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
             }
             return true;
         } else if (obj == m_lastWeekBtn) {
+            qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_lastWeekBtn";
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if(kev->key()==Qt::Key_Tab||kev->key()==Qt::Key_Backtab){
+                qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_lastWeekBtn Tab or Backtab";
                return false;
             }
             if (kev->key() == Qt::Key_Right) {
@@ -574,9 +599,11 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
             }
             return true;
         } else if (obj == m_lastMonthBtn) {
+            qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_lastMonthBtn";
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if(kev->key()==Qt::Key_Tab||kev->key()==Qt::Key_Backtab){
-               return false;
+                qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_threeMonthBtn Tab or Backtab";
+                return false;
             }
             if (kev->key() == Qt::Key_Right) {
                 m_threeMonthBtn->click();
@@ -588,9 +615,11 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
             return true;
         }  else if (obj == m_threeMonthBtn) {
             //最后一个按钮往右为第一个按钮,如此循环
+            qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_threeMonthBtn";
             auto *kev = dynamic_cast<QKeyEvent *>(event);
             if(kev->key()==Qt::Key_Tab||kev->key()==Qt::Key_Backtab){
-               return false;
+                qCDebug(logApp) << "FilterContent::eventFilter KeyPress m_threeMonthBtn Tab or Backtab";
+                return false;
             }
             if (kev->key() == Qt::Key_Right) {
                 m_allBtn->click();
@@ -612,6 +641,7 @@ bool FilterContent::eventFilter(QObject *obj, QEvent *event)
  */
 void FilterContent::resizeWidth()
 {
+    qCDebug(logApp) << "Calculating resize width";
     int periodWidth = 0;
     int periodCount = hLayout_period->count();
 
@@ -623,6 +653,7 @@ void FilterContent::resizeWidth()
             periodWidth += itemWidth;
         }
     }
+    qCDebug(logApp) << "Calculated period width:" << periodWidth;
     emit   sigResizeWidth(periodWidth);
 }
 
@@ -631,6 +662,7 @@ void FilterContent::resizeWidth()
  */
 void FilterContent::updateWordWrap()
 {
+    qCDebug(logApp) << "Updating word wrap for current width";
     int currentWidth = this->rect().width();
     setUpdatesEnabled(false);
     //12对应系统16字号，13.5对应系统18字号,15对应系统20字号
@@ -641,8 +673,10 @@ void FilterContent::updateWordWrap()
     } else {
         minWidth = FONT_20_MIN_WIDTH;
     }
+    qCDebug(logApp) << "Current width:" << currentWidth << "Min width:" << minWidth << "Font size:" << fontSize;
     //判断各字体下能塞下控件的最小宽度
     if ((currentWidth <= minWidth) && (hLayout_period->count() > 9)) {
+        qCDebug(logApp) << "Updating word wrap for current width";
         QFont standFont = m_allBtn->font();
         QFont standFontBig = standFont;
         standFont.setPointSizeF(13.5);
@@ -656,6 +690,7 @@ void FilterContent::updateWordWrap()
         m_lastMonthBtn->setText(QFontMetrics(m_lastMonthBtn->font()).elidedText(DApplication::translate("Button", "1 month"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "1 month"))));
         m_threeMonthBtn->setText(QFontMetrics(m_threeMonthBtn->font()).elidedText(DApplication::translate("Button", "3 months"), Qt::ElideRight, 1 + metrics.horizontalAdvance(DApplication::translate("Button", "3 months"))));
     }  else  {
+        qCDebug(logApp) << "Updating word wrap for current width";
         periodLabel->setText(DApplication::translate("Label", "Period:"));
         m_allBtn->setText(DApplication::translate("Button", "All"));
         m_todayBtn->setText(DApplication::translate("Button", "Today"));
@@ -672,8 +707,10 @@ void FilterContent::updateWordWrap()
  */
 void FilterContent::updateDataState()
 {
+    qCDebug(logApp) << "Updating data state for current type:" << m_currentType;
     //如果没有记录当前日志的选项,则给一个默认的
     if (!m_config.contains(m_currentType)) {
+        qCDebug(logApp) << "No config found for current type, creating default config";
         FILTER_CONFIG newConfig;
         m_config.insert(m_currentType, newConfig);
     }
@@ -687,6 +724,7 @@ void FilterContent::updateDataState()
  */
 void FilterContent::setCurrentConfig(FILTER_CONFIG iConifg)
 {
+    qCDebug(logApp) << "Setting current config for type:" << m_currentType;
     m_config.insert(m_currentType, iConifg);
 }
 
@@ -696,11 +734,15 @@ void FilterContent::setCurrentConfig(FILTER_CONFIG iConifg)
  */
 void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
 {
-    if (!index.isValid())
+    qCDebug(logApp) << "slot_logCatelogueClicked called";
+    if (!index.isValid()) {
+        qCDebug(logApp) << "slot_logCatelogueClicked index is not valid";
         return;
+    }
     //获取日志种类
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty()) {
+        qCDebug(logApp) << "slot_logCatelogueClicked itemData is empty";
         return;
     }
     setLeftButtonState(true);
@@ -708,54 +750,69 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     //根据日志种类改变布局
     this->setVisible(true);
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked APP_TREE_DATA";
         m_currentType = APP_TREE_DATA;
         this->setAppComboBoxItem();
         this->setSelectorVisible(true, true, false, true, false);
     } else if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked JOUR_TREE_DATA";
         m_currentType = JOUR_TREE_DATA;
         this->setSelectorVisible(true, false, false, true, false);
     } else if (itemData.contains(BOOT_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked BOOT_TREE_DATA";
         m_currentType = BOOT_TREE_DATA;
         this->setSelectorVisible(false, false, true, false, false);
     } else if (itemData.contains(KERN_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked KERN_TREE_DATA";
         m_currentType = KERN_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, true);
     } else if (itemData.contains(DPKG_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked DPKG_TREE_DATA";
         m_currentType = DPKG_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, true);
     } else if (itemData.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked XORG_TREE_DATA";
         m_currentType = XORG_TREE_DATA;
         this->setSelectorVisible(false, false, false, false,
                                  true);  // modified by Airy for showing  peroid
     } else if (itemData.contains(LAST_TREE_DATA, Qt::CaseInsensitive)) {  // add by Airy
+        qCDebug(logApp) << "slot_logCatelogueClicked LAST_TREE_DATA";
         m_currentType = LAST_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, false,
                                  true);  // modifed by Airy for showing peroid
     } else if (itemData.contains(KWIN_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked KWIN_TREE_DATA";
         m_currentType = KWIN_TREE_DATA;
         this->setSelectorVisible(false, false, false, false, false);
     } else if (itemData.contains(BOOT_KLU_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked BOOT_KLU_TREE_DATA";
         m_currentType = BOOT_KLU_TREE_DATA;
         this->setSelectorVisible(true, false, false, false, false);
     } else if (itemData.contains(DNF_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked DNF_TREE_DATA";
         m_currentType = DNF_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, false, false, true);
     } else if (itemData.contains(DMESG_TREE_DATA, Qt::CaseInsensitive)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked DMESG_TREE_DATA";
         m_currentType = DMESG_TREE_DATA;
         this->setSelectorVisible(true, false, false, true,
                                  false);
     } else if (itemData.contains(OTHER_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked OTHER_TREE_DATA";
         m_currentType = OTHER_TREE_DATA;
         //this->setSelectorVisible(false, false, false, true, false, false, true);
         this->setVisible(false);
     } else if (itemData.contains(CUSTOM_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked CUSTOM_TREE_DATA";
         m_currentType = CUSTOM_TREE_DATA;
         //this->setSelectorVisible(false, false, false, true, false, false, true);
         this->setVisible(false);
     } else if (itemData.contains(AUDIT_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked AUDIT_TREE_DATA";
         m_currentType = AUDIT_TABLE_DATA;
         this->setSelectorVisible(false, false, false, true, false, false, false, true);
     } else if (itemData.contains(COREDUMP_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked COREDUMP_TREE_DATA";
         m_currentType = COREDUMP_TREE_DATA;
         this->setSelectorVisible(false, false, false, true, true, false, false, false);
     }
@@ -763,6 +820,7 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
     //必须需要,因为会丢失当前焦点顺序
     LogListView *logList =  qobject_cast<LogListView *>(sender());
     if (logList) {
+        qCDebug(logApp) << "slot_logCatelogueClicked logList is not null";
         logList->setFocus();
     }
 
@@ -774,16 +832,21 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
  */
 void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
 {
-    if (!index.isValid())
+    qCDebug(logApp) << "slot_logCatelogueRefresh called";
+    if (!index.isValid()) {
+        qCDebug(logApp) << "slot_logCatelogueRefresh index is not valid";
         return;
+    }
 
     QString itemData = index.data(ITEM_DATE_ROLE).toString();
     if (itemData.isEmpty()) {
+        qCDebug(logApp) << "slot_logCatelogueRefresh itemData is empty";
         return;
     }
     setLeftButtonState(true);
     //现在只需处理应用日志刷新时需要刷新应用选择下拉列表的数据
     if (itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
+        qCDebug(logApp) << "slot_logCatelogueRefresh APP_TREE_DATA";
         //记录当前选择项目以便改变combox内容后可以选择原来的选项刷新
         //先disconnect防止改变combox内容时发出currentIndexChanged让主表获取
         disconnect(cbx_app, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAppIdxChanged(int)));
@@ -796,6 +859,7 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
     }
 
     if(itemData.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)){
+        qCDebug(logApp) << "slot_logCatelogueRefresh BOOT_TREE_DATA";
         Q_EMIT cbx_status->currentIndexChanged(m_config.value(m_currentType).statusCbx);
     }
 }
@@ -806,6 +870,7 @@ void FilterContent::slot_logCatelogueRefresh(const QModelIndex &index)
  */
 void FilterContent::slot_buttonClicked(int idx)
 {
+    qCDebug(logApp) << "slot_buttonClicked called";
     /** note: In order to adapt to the new scene, select time-period first,
      *        then select any log item, should display current log info.
      *        so comment this judge.
@@ -822,11 +887,13 @@ void FilterContent::slot_buttonClicked(int idx)
     case ONE_WEEK:
     case ONE_MONTH:
     case THREE_MONTHS: {
+        qCDebug(logApp) << "slot_buttonClicked ALL, ONE_DAY, THREE_DAYS, ONE_WEEK, ONE_MONTH, THREE_MONTHS";
         //根据选择时间发出当前选项变化信号
         m_curBtnId = idx;
         emit sigButtonClicked(idx, m_curLvCbxId, m_curTreeIndex);
     } break;
     case RESET: {
+        qCDebug(logApp) << "slot_buttonClicked RESET";
         m_curBtnId = ALL;
         if (itemData.contains(JOUR_TREE_DATA, Qt::CaseInsensitive) ||
                 itemData.contains(APP_TREE_DATA, Qt::CaseInsensitive)) {
@@ -846,6 +913,7 @@ void FilterContent::slot_buttonClicked(int idx)
  */
 void FilterContent::slot_exportButtonClicked()
 {
+    qCDebug(logApp) << "slot_exportButtonClicked called";
     QString itemData = m_curTreeIndex.data(ITEM_DATE_ROLE).toString();
     //当前日志种类不为空则发出导出数据信号给其他类处理
     if (!itemData.isEmpty())
@@ -858,6 +926,7 @@ void FilterContent::slot_exportButtonClicked()
  */
 void FilterContent::slot_cbxLvIdxChanged(int idx)
 {
+    qCDebug(logApp) << "slot_cbxLvIdxChanged called";
     setChangedcomboxstate(true);
     m_curLvCbxId = idx - 1;
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
@@ -874,6 +943,7 @@ void FilterContent::slot_cbxLvIdxChanged(int idx)
  */
 void FilterContent::slot_cbxAppIdxChanged(int idx)
 {
+    qCDebug(logApp) << "slot_cbxAppIdxChanged called";
     setChangedcomboxstate(!getLeftButtonState());
     QString app = cbx_app->itemData(idx, Qt::UserRole + 1).toString();
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
@@ -889,6 +959,7 @@ void FilterContent::slot_cbxAppIdxChanged(int idx)
 
 void FilterContent::slot_cbxSubmoduleChanged(int idx)
 {
+    qCDebug(logApp) << "slot_cbxSubmoduleChanged called";
     setChangedcomboxstate(true);
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.app2Submodule[curConfig.appListCbx] = cbx_submodule->currentText();
@@ -902,6 +973,7 @@ void FilterContent::slot_cbxSubmoduleChanged(int idx)
  */
 void FilterContent::slot_cbxStatusChanged(int idx)
 {
+    qCDebug(logApp) << "slot_cbxStatusChanged called";
     setChangedcomboxstate(!getLeftButtonState());
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.statusCbx = idx;
@@ -922,6 +994,7 @@ void FilterContent::slot_cbxStatusChanged(int idx)
  */
 void FilterContent::slot_cbxLogTypeChanged(int idx)
 {
+    qCDebug(logApp) << "slot_cbxLogTypeChanged called";
     setChangedcomboxstate(true);
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.typeCbx = idx;
@@ -931,6 +1004,7 @@ void FilterContent::slot_cbxLogTypeChanged(int idx)
 
 void FilterContent::slot_cbxAuditTypeChanged(int idx)
 {
+    qCDebug(logApp) << "slot_cbxAuditTypeChanged called";
     setChangedcomboxstate(true);
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
     curConfig.auditCbx = idx;
@@ -944,6 +1018,7 @@ void FilterContent::slot_cbxAuditTypeChanged(int idx)
  */
 void FilterContent::setExportButtonEnable(bool iEnable)
 {
+    qCDebug(logApp) << "setExportButtonEnable called";
     if (exportBtn) {
         exportBtn->setEnabled(iEnable);
     }
@@ -955,6 +1030,7 @@ void FilterContent::setExportButtonEnable(bool iEnable)
  */
 void FilterContent::slot_cbxDnfLvIdxChanged(int idx)
 {
+    qCDebug(logApp) << "slot_cbxDnfLvIdxChanged called";
     Q_UNUSED(idx)
     setChangedcomboxstate(!getLeftButtonState());
     FILTER_CONFIG curConfig = m_config.value(m_currentType);
@@ -965,20 +1041,24 @@ void FilterContent::slot_cbxDnfLvIdxChanged(int idx)
 
 bool FilterContent::getLeftButtonState()
 {
+    // qCDebug(logApp) << "getLeftButtonState called";
     return m_bIsClickLeftlistButton;
 }
 
 bool FilterContent::getChangedcomboxstate()
 {
+    // qCDebug(logApp) << "getChangedcomboxstate called";
     return m_bIsCombox;
 }
 
 void FilterContent::setLeftButtonState(bool value)
 {
+    // qCDebug(logApp) << "setLeftButtonState called";
     m_bIsClickLeftlistButton = value;
 }
 
 void FilterContent::setChangedcomboxstate(bool value)
 {
+    // qCDebug(logApp) << "setChangedcomboxstate called";
     m_bIsCombox = value;
 }

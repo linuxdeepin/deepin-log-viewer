@@ -29,22 +29,23 @@ DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 
 #ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logAppMain, "org.deepin.log.viewer.main")
+Q_LOGGING_CATEGORY(logApp, "org.deepin.log.viewer.main")
 #else
-Q_LOGGING_CATEGORY(logAppMain, "org.deepin.log.viewer.main", QtInfoMsg)
+Q_LOGGING_CATEGORY(logApp, "org.deepin.log.viewer.main", QtInfoMsg)
 #endif
 
 int main(int argc, char *argv[])
 {
     //在root下或者非deepin/uos环境下运行不会发生异常，需要加上XDG_CURRENT_DESKTOP=Deepin环境变量；
-    qCDebug(logAppMain) << "Checking XDG_CURRENT_DESKTOP environment variable";
+    // qCDebug(logApp) << "Checking XDG_CURRENT_DESKTOP environment variable";
     if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")) {
-        qCInfo(logAppMain) << "Setting XDG_CURRENT_DESKTOP to Deepin";
+        // qCInfo(logApp) << "Setting XDG_CURRENT_DESKTOP to Deepin";
         setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
     }
 
     // 命令参数大于1，进行命令行处理
     if (argc > 1) {
+        // qCDebug(logApp) << "Command line arguments:";
         QCoreApplication a(argc, argv);
         a.setOrganizationName("deepin");
         a.setApplicationName("deepin-log-viewer");
@@ -90,9 +91,9 @@ int main(int argc, char *argv[])
         cmdParser.addOption(submoduleOption);
         cmdParser.addOption(reportCoredumpOption);
 
-        qCDebug(logAppMain) << "Parsing command line arguments";
+        qCDebug(logApp) << "Parsing command line arguments";
         if (!cmdParser.parse(qApp->arguments())) {
-            qCWarning(logAppMain) << "Failed to parse command line arguments";
+            qCWarning(logApp) << "Failed to parse command line arguments";
             cmdParser.showHelp(-1);
         }
 
@@ -157,19 +158,22 @@ int main(int argc, char *argv[])
                     !submodule.isEmpty() ||
                     !keyword.isEmpty() ||
                     cmdParser.isSet(exportOption)) {
-                qCWarning(logAppMain) << "Only reportcoreump option can set, please do not add other options.";
+                qCWarning(logApp) << "Only reportcoreump option can set, please do not add other options.";
                 return -1;
             }
 
             Utils::runInCmd = true;
-            if (!LogBackend::instance(&a)->reportCoredumpInfo())
+            if (!LogBackend::instance(&a)->reportCoredumpInfo()) {
+                qCDebug(logApp) << "Failed to report coredump info";
                 return -1;
+            }
 
             return a.exec();
         } else if (cmdParser.isSet(exportOption)) {
-
+            qCDebug(logApp) << "Setting single instance for application:" << a.applicationName();
             if (!CliApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                                       CliApplicationHelper::UserScope)) {
+                qCDebug(logApp) << "Failed to set single instance for application:" << a.applicationName();
                 return 0;
             }
 
@@ -178,17 +182,18 @@ int main(int argc, char *argv[])
             // 若指定有导出目录，按指定目录导出
             QString outDir = cmdParser.value(exportOption);
             if (outDir.isEmpty()) {
-                qCWarning(logAppMain) << "plseae input outpath.";
+                qCWarning(logApp) << "plseae input outpath.";
                 return -1;
             }
 
-            qCDebug(logAppMain) << "Validating export type and app name options";
+            qCDebug(logApp) << "Validating export type and app name options";
             if (!type.isEmpty() && type != "app" && !appName.isEmpty()) {
-                qCWarning(logAppMain) << "Option -d -t both exist, -t can only be set to 'app' type";
+                qCWarning(logApp) << "Option -d -t both exist, -t can only be set to 'app' type";
                 return -1;
             }
 
             if (!type.isEmpty()) {
+                qCDebug(logApp) << "Exporting logs of type:" << type;
                 // 按类型导出日志
                 if (period.isEmpty() &&
                     level.isEmpty() &&
@@ -197,11 +202,12 @@ int main(int argc, char *argv[])
                     appName.isEmpty() &&
                     submodule.isEmpty() &&
                     keyword.isEmpty()) {
-                    qCDebug(logAppMain) << "Exporting logs of type:" << type;
+                    qCDebug(logApp) << "Exporting logs of type:" << type;
                     int nRet = LogBackend::instance(&a)->exportTypeLogs(outDir, type);
-                    qCDebug(logAppMain) << "Export logs finished with code:" << nRet;
+                    qCDebug(logApp) << "Export logs finished with code:" << nRet;
                     return nRet;
                 } else {
+                    qCDebug(logApp) << "Exporting logs of type:" << type << "with conditions";
                     // 按筛选条件导出指定类型的日志
                     bool bRet = false;
                     QString error("");
@@ -209,63 +215,66 @@ int main(int argc, char *argv[])
                     if (TYPE_SYSTEM == type || Dmesg == flag || TYPE_DNF == type){
                         // system、dmesg(centos下内核日志)、dnf 可按周期或级别导出
                         if (!status.isEmpty() || !event.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'level' or 'keyword' parameters.").arg(type);
+                            qCWarning(logApp) << QString("Export logs by %1, can only be filtered using 'period' or 'level' or 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, period, level, keyword);
                     } else if (BOOT_KLU == flag) {
                         // boot_klu级别导出
                         if (!status.isEmpty() || !event.isEmpty() || !period.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'level' or 'keyword' parameters.").arg(type);
+                            qCWarning(logApp) << QString("Export logs by %1, can only be filtered using 'level' or 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, period, level, keyword);
                     } else if (KERN == flag || TYPE_DPKG == type || TYPE_COREDUMP == type) {
                         // 内核、dpkg、崩溃日志 可按周期导出
                         if (!level.isEmpty() || !status.isEmpty() || !event.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'keyword' parameters.").arg(type);
+                            qCWarning(logApp) << QString("Export logs by %1, can only be filtered using 'period' or 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, period, "", keyword);
                     } else if (BOOT == flag) {
                         // 启动日志 可按状态导出
                         if (!period.isEmpty() || !level.isEmpty() || !event.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'status' or 'keyword' parameters.").arg(type);
+                            qCWarning(logApp) << QString("Export logs by %1, can only be filtered using 'status' or 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, "", status, keyword);
                     } else if (TYPE_APP == type) {
                         if (!status.isEmpty() || !event.isEmpty()) {
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'level' or 'keyword' or 'submodule' parameters.").arg(type);
+                            qCWarning(logApp) << QString("Export logs by %1, can only be filtered using 'period' or 'level' or 'keyword' or 'submodule' parameters.").arg(type);
                         } else if (!appName.isEmpty()) {
-                            qCDebug(logAppMain) << "Exporting app logs with conditions - app:" << appName
+                            qCDebug(logApp) << "Exporting app logs with conditions - app:" << appName
                                                << "period:" << period << "level:" << level
                                                << "submodule:" << submodule << "keyword:" << keyword;
                             bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, submodule, keyword);
-                            qCDebug(logAppMain) << "Export app logs finished with result:" << bRet;
+                            qCDebug(logApp) << "Export app logs finished with result:" << bRet;
                         } else {
-                            qCWarning(logAppMain) << QString("Export logs by %1, filterd by 'period' or 'level' or 'keyword' or 'submodule', currently not supported.").arg(type).arg(appName);
+                            qCWarning(logApp) << QString("Export logs by %1, filterd by 'period' or 'level' or 'keyword' or 'submodule', currently not supported.").arg(type).arg(appName);
                         }
                     } else if (TYPE_BSE == type || TYPE_AUDIT == type) {
                         // 开关机事件、审计日志 可按周期和事件类型导出
                         if (!level.isEmpty() || !status.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'period' or 'event' or 'keyword' parameters.").arg(type);
+                            qCWarning(logApp) << QString("Export logs by %1, can only be filtered using 'period' or 'event' or 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, period, event, keyword);
                     } else if (TYPE_XORG == type || TYPE_OTHER == type || TYPE_CUSTOM == type || TYPE_KWIN == type) {
                         // Xorg、Kwin 只能按关键字导出
                         if (!period.isEmpty() || !level.isEmpty() || !status.isEmpty() || !event.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, can only be filtered using 'keyword' parameters.").arg(type);
+                            qCWarning(logApp) << QString("Export logs by %1, can only be filtered using 'keyword' parameters.").arg(type);
                         else
                             bRet = LogBackend::instance(&a)->exportTypeLogsByCondition(outDir, type, period, event, keyword);
                     } else if (TYPE_OTHER == type || TYPE_CUSTOM == type) {
                         // 其他、自定义日志 不能按条件导出
                         if (!period.isEmpty() || !level.isEmpty() || !status.isEmpty() || !event.isEmpty())
-                            qCWarning(logAppMain) << QString("Export logs by %1, cannot be filtered by any parameters.").arg(type);
+                            qCWarning(logApp) << QString("Export logs by %1, cannot be filtered by any parameters.").arg(type);
                     } else {
-                        qCWarning(logAppMain) << error;
+                        qCWarning(logApp) << error;
                     }
 
-                    if (!bRet)
+                    if (!bRet) {
+                        qCDebug(logApp) << "Failed to export logs of type:" << type;
                         return -1;
+                    }
                 }
             } else if (!appName.isEmpty()) {
+                qCDebug(logApp) << "Exporting app logs with conditions - app:" << appName;
                 if (period.isEmpty() &&
                     level.isEmpty() &&
                     status.isEmpty() &&
@@ -273,36 +282,41 @@ int main(int argc, char *argv[])
                     submodule.isEmpty() &&
                     keyword.isEmpty()) {
                     int nRet = LogBackend::instance(&a)->exportAppLogs(outDir, appName);
+                    qCDebug(logApp) << "Export app logs finished with code:" << nRet;
                     return nRet;
                 } else {
                     bool bRet = false;
                     if (!status.isEmpty() || !event.isEmpty())
-                        qCWarning(logAppMain) << QString("Export app logs, can only be filtered using 'period' or 'level' or 'keyword' or 'submodule' parameter.");
+                        qCWarning(logApp) << QString("Export app logs, can only be filtered using 'period' or 'level' or 'keyword' or 'submodule' parameter.");
                     else if (!period.isEmpty() || !level.isEmpty() || !keyword.isEmpty() || !submodule.isEmpty())
                         bRet = LogBackend::instance(&a)->exportAppLogsByCondition(outDir, appName, period, level, submodule, keyword);
-                    if (!bRet)
+                    if (!bRet) {
+                        qCDebug(logApp) << "Failed to export app logs with conditions - app:" << appName;
                         return -1;
+                    }
                 }
             } else {
                 if (!period.isEmpty() || !level.isEmpty() || !status.isEmpty() || !event.isEmpty() || !submodule.isEmpty() || !keyword.isEmpty()) {
-                    qCWarning(logAppMain) << "Export all logs by conditons currently is not supported.";
+                    qCWarning(logApp) << "Export all logs by conditons currently is not supported.";
                     return -1;
                 }
                 // 未指定类型，默认导出所有日志
-                qCDebug(logAppMain) << "Exporting all logs to:" << outDir;
+                qCDebug(logApp) << "Exporting all logs to:" << outDir;
                 int nRet = LogBackend::instance(&a)->exportAllLogs(outDir);
-                qCDebug(logAppMain) << "Export all logs finished with code:" << nRet;
-                if (nRet != 0)
+                qCDebug(logApp) << "Export all logs finished with code:" << nRet;
+                if (nRet != 0) {
+                    qCDebug(logApp) << "Failed to export all logs to:" << outDir;
                     return nRet;
+                }
             }
 
             return a.exec();
         } else {
-            qCWarning(logAppMain) <<"Missing export path, please enter the '-e' parameter.";
+            qCWarning(logApp) <<"Missing export path, please enter the '-e' parameter.";
             return -1;
         }
     } else {
-
+        // qCDebug(logApp) << "No command line arguments, starting GUI application";
         PERF_PRINT_BEGIN("POINT-01", "");
 
         //klu下不使用opengl 使用OpenGLES,因为opengl基于x11 现在全面换wayland了
@@ -348,20 +362,20 @@ int main(int argc, char *argv[])
 #endif
         LogApplicationHelper::instance();
 
-        qCDebug(logAppMain) << "Checking single instance for application:" << a.applicationName();
+        qCDebug(logApp) << "Checking single instance for application:" << a.applicationName();
         if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),
                                                                       DGuiApplicationHelper::UserScope)) {
-            qCCritical(logAppMain) << "Failed to set single instance for application:" << a.applicationName();
-            qCWarning(logAppMain) << "Another instance is already running, activating existing window";
+            qCCritical(logApp) << "Failed to set single instance for application:" << a.applicationName();
+            qCWarning(logApp) << "Another instance is already running, activating existing window";
             a.activeWindow();
             return 0;
         }
 
         // 显示GUI
-        qCInfo(logAppMain) << "Initializing main window";
+        qCInfo(logApp) << "Initializing main window";
         LogCollectorMain w;
         a.setMainWindow(&w);
-        qCDebug(logAppMain) << "Main window initialized and set";
+        qCDebug(logApp) << "Main window initialized and set";
 
         // 自动化标记由此开始
         QAccessible::installFactory(accessibleFactory);
@@ -378,10 +392,10 @@ int main(int argc, char *argv[])
             Eventlogutils::GetInstance()->writeLogs(objStartEvent);
         });
 
-        qCDebug(logAppMain) << "Showing main window and moving to center";
+        qCDebug(logApp) << "Showing main window and moving to center";
         w.show();
         Dtk::Widget::moveToCenter(&w);
-        qCInfo(logAppMain) << "Main window displayed successfully";
+        qCInfo(logApp) << "Main window displayed successfully";
         bool result = a.exec();
         PERF_PRINT_END("POINT-02", "");
 

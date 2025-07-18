@@ -7,23 +7,30 @@
 #include <QStylePainter>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QLoggingCategory>
 
 #include <DStyle>
 #include <DApplication>
 
+Q_DECLARE_LOGGING_CATEGORY(logApp)
+
+
 LogCombox::LogCombox(QWidget *parent):
     DComboBox(parent)
 {
+    qCDebug(logApp) << "LogCombox constructor called";
     setFocusPolicy(Qt::TabFocus);
 }
 
 void LogCombox::setFocusReason(Qt::FocusReason iReson)
 {
+    qCDebug(logApp) << "LogCombox::setFocusReason called with reason:" << iReson;
     m_reson = iReson;
 }
 
 Qt::FocusReason LogCombox::getFocusReason()
 {
+    qCDebug(logApp) << "LogCombox::getFocusReason called, returning:" << m_reson;
     return m_reson;
 }
 /**
@@ -33,6 +40,7 @@ Qt::FocusReason LogCombox::getFocusReason()
  */
 void LogCombox::paintEvent(QPaintEvent *e)
 {
+    qCDebug(logApp) << "LogCombox::paintEvent called";
     DComboBox::paintEvent(e);
 //    if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
 //        DStylePainter painter(this);
@@ -61,7 +69,7 @@ void LogCombox::paintEvent(QPaintEvent *e)
 //        //.adjusted(1, 1, -1, -1)
 
 //        //painter.drawRoundedRect(borderRect, frame_radius, frame_radius);
-//        qDebug() << "tabcombox-------";
+//        qCDebug(logApp) << "tabcombox-------";
 //        style->drawPrimitive(DStyle::PE_FrameFocusRect, opt1, & painter, this);
 //    }
 }
@@ -72,7 +80,9 @@ void LogCombox::paintEvent(QPaintEvent *e)
  */
 void LogCombox::keyPressEvent(QKeyEvent *event)
 {
+    // qCDebug(logApp) << "LogCombox::keyPressEvent called with key:" << event->key();
     if ((event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)) {
+        qCDebug(logApp) << "Enter/Return key pressed, showing popup";
         showPopup();
     }
     DComboBox::keyPressEvent(event);
@@ -84,13 +94,16 @@ void LogCombox::keyPressEvent(QKeyEvent *event)
  */
 void LogCombox::focusInEvent(QFocusEvent *event)
 {
+    // qCDebug(logApp) << "LogCombox::focusInEvent called with reason:" << event->reason();
     if (event->reason() != Qt::PopupFocusReason) {
         m_reson = event->reason();
+        qCDebug(logApp) << "Focus reason updated to:" << m_reson;
     }
     DComboBox::focusInEvent(event);
 }
 
 void LogCombox::focusOutEvent(QFocusEvent *event)
 {
+    // qCDebug(logApp) << "LogCombox::focusOutEvent called with reason:" << event->reason();
     DComboBox::focusOutEvent(event);
 }

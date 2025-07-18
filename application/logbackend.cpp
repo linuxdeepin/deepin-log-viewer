@@ -27,11 +27,7 @@
 #include <QLoggingCategory>
 #include <QCoreApplication>
 
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logBackend, "org.deepin.log.viewer.backend")
-#else
-Q_LOGGING_CATEGORY(logBackend, "org.deepin.log.viewer.backend", QtInfoMsg)
-#endif
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 // 获取窗管崩溃时，其日志最后100行
 #define KWIN_LASTLINE_NUM 100
@@ -43,36 +39,38 @@ LogBackend *LogBackend::m_staticbackend = nullptr;
 
 LogBackend *LogBackend::instance(QObject *parent)
 {
-    qCDebug(logBackend) << "Getting LogBackend instance";
+    // qCDebug(logApp) << "Getting LogBackend instance";
     if (parent != nullptr && m_staticbackend == nullptr) {
-        qCDebug(logBackend) << "Creating new LogBackend instance";
+        qCDebug(logApp) << "Creating new LogBackend instance";
         m_staticbackend = new LogBackend(parent);
     }
 
-    qCDebug(logBackend) << "Returning LogBackend instance";
+    // qCDebug(logApp) << "Returning LogBackend instance";
     return m_staticbackend;
 }
 
 LogBackend::~LogBackend()
 {
-    qCDebug(logBackend) << "Destroying LogBackend instance";
+    qCDebug(logApp) << "Destroying LogBackend instance";
 }
 
 LogBackend::LogBackend(QObject *parent) : QObject(parent)
 {
+    qCDebug(logApp) << "LogBackend constructor called";
     getLogTypes();
 
     m_cmdWorkDir = QDir::currentPath();
-    qCInfo(logBackend) << "Set command working directory to:" << m_cmdWorkDir;
+    qCInfo(logApp) << "Set command working directory to:" << m_cmdWorkDir;
     
     Utils::m_mapAuditType2EventType = LogSettings::instance()->loadAuditMap();
-    qCDebug(logBackend) << "Loaded audit type mapping";
+    qCDebug(logApp) << "Loaded audit type mapping";
 
     initConnections();
 }
 
 void LogBackend::initConnections()
 {
+    qCDebug(logApp) << "LogBackend::initConnections called";
     connect(&m_logFileParser, &LogFileParser::parseFinished, this, &LogBackend::slot_parseFinished,
             Qt::QueuedConnection);
     connect(&m_logFileParser, &LogFileParser::logData, this, &LogBackend::slot_logData,
@@ -142,20 +140,26 @@ void LogBackend::initConnections()
 
 void LogBackend::setCmdWorkDir(const QString &dirPath)
 {
+    qCDebug(logApp) << "LogBackend::setCmdWorkDir called with path:" << dirPath;
     QDir dir(dirPath);
-    if (dir.exists())
+    if (dir.exists()) {
         m_cmdWorkDir = dirPath;
+        qCDebug(logApp) << "Command working directory set to:" << dirPath;
+    } else {
+        qCWarning(logApp) << "Directory does not exist:" << dirPath;
+    }
 }
 
 int LogBackend::exportAllLogs(const QString &outDir)
 {
+    qCDebug(logApp) << "LogBackend::exportAllLogs called";
     if(!getOutDirPath(outDir)) {
-        qCWarning(logBackend) << "Invalid output directory:" << outDir;
+        qCWarning(logApp) << "Invalid output directory:" << outDir;
         return -1;
     }
 
     PERF_PRINT_BEGIN("POINT-05", "export all logs");
-    qCInfo(logBackend) << "exporting all logs begin.";
+    qCInfo(logApp) << "exporting all logs begin.";
 
     // 时间
     QString dateTime = QDateTime::currentDateTime().toString("yyyyMMddHHmmss");
@@ -168,6 +172,7 @@ int LogBackend::exportAllLogs(const QString &outDir)
 
     // 添加文件后缀
     if (!fileFullPath.endsWith(".zip")) {
+        qCDebug(logApp) << "fileFullPath does not end with .zip";
         fileFullPath += ".zip";
     }
 
@@ -175,11 +180,11 @@ int LogBackend::exportAllLogs(const QString &outDir)
     thread->setAutoDelete(true);
     connect(thread, &LogAllExportThread::exportFinsh, this, [ = ](bool ret) {
         if (ret) {
-            qCInfo(logBackend) << "exporting all logs done.";
+            qCInfo(logApp) << "exporting all logs done.";
             PERF_PRINT_END("POINT-05", "cost");
             qApp->quit();
         } else {
-            qCWarning(logBackend) << "exporting all logs stoped.";
+            qCWarning(logApp) << "exporting all logs stoped.";
             // 导出失败，若为用户指定的新目录，应清除
             if (m_newDir) {
                 QDir odir(m_outPath);
@@ -196,9 +201,10 @@ int LogBackend::exportAllLogs(const QString &outDir)
 
 int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 {
+    qCDebug(logApp) << "LogBackend::exportTypeLogs called";
     // 输出目录有效性验证
     if(!getOutDirPath(outDir)) {
-        qCWarning(logBackend) << "Invalid output directory:" << outDir;
+        qCWarning(logApp) << "Invalid output directory:" << outDir;
         return -1;
     }
 
@@ -206,29 +212,32 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     QString error;
     m_flag = type2Flag(type, error);
     if (NONE == m_flag) {
-        qCWarning(logBackend) << error;
+        qCWarning(logApp) << error;
         return -1;
     }
 
     QString dateTime = QDateTime::currentDateTime().toString("yyyyMMddHHmmss");
     QString categoryOutPath = QString("%1/%2-%3/").arg(m_outPath).arg(type).arg(dateTime);
 
-    qCInfo(logBackend) << "exporting ... type:" << type;
+    qCInfo(logApp) << "exporting ... type:" << type;
     bool bSuccess = true;
     switch (m_flag) {
     case JOURNAL: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs JOURNAL";
         resetCategoryOutputPath(categoryOutPath);
 
         DLDBusHandler::instance()->exportLog(categoryOutPath, "journalctl_system", false);
     }
     break;
     case Dmesg: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs Dmesg";
         resetCategoryOutputPath(categoryOutPath);
 
         DLDBusHandler::instance()->exportLog(categoryOutPath, "dmesg", false);
     }
     break;
     case KERN: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs KERN";
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("kern", false);
         if (logPaths.size() > 0) {
             resetCategoryOutputPath(categoryOutPath);
@@ -236,18 +245,20 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else if (logPaths.size() == 0) {
-            qCWarning(logBackend) << "/var/log has not kern.log";
+            qCWarning(logApp) << "/var/log has not kern.log";
             bSuccess = false;
         }
     }
     break;
     case BOOT_KLU: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs BOOT_KLU";
         resetCategoryOutputPath(categoryOutPath);
 
         DLDBusHandler::instance()->exportLog(categoryOutPath, "journalctl_boot", false);
     }
     break;
     case BOOT: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs BOOT";
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("boot", false);
         if (!logPaths.isEmpty()) {
             resetCategoryOutputPath(categoryOutPath);
@@ -255,12 +266,13 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
-            qCWarning(logBackend) << "/var/log has not boot.log";
+            qCWarning(logApp) << "/var/log has not boot.log";
             bSuccess = false;
         }
     }
     break;
     case DPKG: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs DPKG";
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("dpkg", false);
         if (!logPaths.isEmpty()) {
             resetCategoryOutputPath(categoryOutPath);
@@ -268,12 +280,13 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
-            qCWarning(logBackend) << "/var/log has not dpkg.log";
+            qCWarning(logApp) << "/var/log has not dpkg.log";
             bSuccess = false;
         }
     }
     break;
     case Dnf: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs Dnf";
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("dnf", false);
         if (!logPaths.isEmpty()) {
             resetCategoryOutputPath(categoryOutPath);
@@ -281,18 +294,20 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
-            qCWarning(logBackend) << "/var/log has not dnf.log";
+            qCWarning(logApp) << "/var/log has not dnf.log";
             bSuccess = false;
         }
     }
     break;
     case Kwin: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs Kwin";
         resetCategoryOutputPath(categoryOutPath);
 
         DLDBusHandler::instance()->exportLog(categoryOutPath, KWIN_TREE_DATA, true);
     }
     break;
     case XORG: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs Xorg";
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("Xorg", false);
         if (!logPaths.isEmpty()) {
             resetCategoryOutputPath(categoryOutPath);
@@ -300,12 +315,13 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
-            qCWarning(logBackend) << "/var/log has not Xorg.log";
+            qCWarning(logApp) << "/var/log has not Xorg.log";
             bSuccess = false;
         }
     }
     break;
     case APP: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs APP";
         categoryOutPath = QString("%1/%2").arg(m_outPath).arg("apps");
         resetCategoryOutputPath(categoryOutPath);
 
@@ -324,6 +340,7 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     }
     break;
     case COREDUMP: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs COREDUMP";
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("coredump", false);
         if (!logPaths.isEmpty()) {
             resetCategoryOutputPath(categoryOutPath);
@@ -331,15 +348,16 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
-            qCWarning(logBackend) << "/var/log has no coredump logs";
+            qCWarning(logApp) << "/var/log has no coredump logs";
             bSuccess = false;
         }
     }
     break;
     case Normal: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs Normal";
         QFile file("/var/log/wtmp");
         if (!file.exists()) {
-            qCWarning(logBackend) << "/var/log has no boot shutdown event log";
+            qCWarning(logApp) << "/var/log has no boot shutdown event log";
             bSuccess = false;
         }
 
@@ -349,6 +367,7 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     }
     break;
     case OtherLog: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs OtherLog";
         categoryOutPath = QString("%1/%2/").arg(m_outPath).arg("others");
         resetCategoryOutputPath(categoryOutPath);
 
@@ -369,6 +388,7 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     }
     break;
     case CustomLog: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs CustomLog";
         auto customLogListPair = LogApplicationHelper::instance()->getCustomLogList();
         QStringList logPaths;
         for (auto &it2 : customLogListPair) {
@@ -383,12 +403,13 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
             }
         } else {
-            qCWarning(logBackend) << "no custom logs";
+            qCWarning(logApp) << "no custom logs";
             bSuccess = false;
         }
     }
     break;
     case Audit: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs Audit";
         QStringList logPaths = DLDBusHandler::instance()->getFileInfo("audit", false);
         if (!logPaths.isEmpty()) {
             resetCategoryOutputPath(categoryOutPath);
@@ -396,7 +417,7 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
             for (auto &file: logPaths)
                 DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
         } else {
-            qCWarning(logBackend) << "/var/log has no audit logs";
+            qCWarning(logApp) << "/var/log has no audit logs";
             bSuccess = false;
         }
     }
@@ -408,17 +429,18 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
     Utils::resetToNormalAuth(categoryOutPath);
 
     if (bSuccess)
-        qCInfo(logBackend) << QString("export success.");
+        qCInfo(logApp) << QString("export success.");
     else
-        qCInfo(logBackend) << QString("export failed.");
+        qCInfo(logApp) << QString("export failed.");
 
     return bSuccess ? 0 : -1;
 }
 
 bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, const QString &type, const QString &period, const QString &condition, const QString &keyword)
 {
+    qCDebug(logApp) << "LogBackend::exportTypeLogsByCondition called";
     if (!getOutDirPath(outDir)) {
-        qCWarning(logBackend) << "Invalid output directory:" << outDir;
+        qCWarning(logApp) << "Invalid output directory:" << outDir;
         return false;
     }
 
@@ -426,11 +448,11 @@ bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, co
     QString error;
     m_flag = type2Flag(type, error);
     if (NONE == m_flag) {
-        qCWarning(logBackend) << error;
+        qCWarning(logApp) << error;
         return false;
     }
 
-    qCInfo(logBackend) << "exporting ... type:" << type;
+    qCInfo(logApp) << "exporting ... type:" << type;
 
     m_currentSearchStr = keyword;
 
@@ -438,7 +460,7 @@ bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, co
 
     // 解析数据
     if (!parseData(m_flag, period, condition)) {
-        qCWarning(logBackend) << QString("parse data failed.");
+        qCWarning(logApp) << QString("parse data failed.");
         return false;
     }
 
@@ -448,23 +470,24 @@ bool LogBackend::LogBackend::exportTypeLogsByCondition(const QString &outDir, co
 
 int LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
 {
+    qCDebug(logApp) << "LogBackend::exportAppLogs called";
     if(!getOutDirPath(outDir)) {
-        qCWarning(logBackend) << "Invalid output directory:" << outDir;
+        qCWarning(logApp) << "Invalid output directory:" << outDir;
         return -1;
     }
 
     if (appName.isEmpty()) {
-        qCWarning(logBackend) << "Empty app name provided";
+        qCWarning(logApp) << "Empty app name provided";
         return -1;
     }
 
     // 先查找是否有该应用相关日志配置
     if (!LogApplicationHelper::instance()->isAppLogConfigExist(appName)) {
-        qCWarning(logBackend) << QString("unknown app:%1 is invalid.").arg(appName);
+        qCWarning(logApp) << QString("unknown app:%1 is invalid.").arg(appName);
         return -1;
     }
 
-    qCInfo(logBackend) << "Exporting logs for app:" << appName;
+    qCInfo(logApp) << "Exporting logs for app:" << appName;
 
     QString categoryOutPath = QString("%1/%2").arg(m_outPath).arg(appName);
 
@@ -485,11 +508,11 @@ int LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
                     DLDBusHandler::instance()->exportLog(subCategoryOutPath, file, true);
                 bSuccess = true;
             } else {
-                qCWarning(logBackend) << QString("app:%1 submodule:%2, logPath:%3 not found log files.").arg(appName).arg(submodule.name).arg(submodule.logPath);
+                qCWarning(logApp) << QString("app:%1 submodule:%2, logPath:%3 not found log files.").arg(appName).arg(submodule.name).arg(submodule.logPath);
             }
         } else if (submodule.logType == "journal") {
             if (submodule.filter.endsWith("*"))
-                qCWarning(logBackend) << QString("app:%1 submodule:%2, Export journal logs with wildcard not supported.").arg(appName).arg(submodule.name);
+                qCWarning(logApp) << QString("app:%1 submodule:%2, Export journal logs with wildcard not supported.").arg(appName).arg(submodule.name);
             else {
                 QJsonObject obj = submodule.toJson();
                 resetCategoryOutputPath(subCategoryOutPath);
@@ -502,44 +525,50 @@ int LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
     Utils::resetToNormalAuth(categoryOutPath);
 
     if (bSuccess)
-        qCInfo(logBackend) << QString("export %1 logs success.").arg(appName) << "\n";
+        qCInfo(logApp) << QString("export %1 logs success.").arg(appName) << "\n";
     else
-        qCInfo(logBackend) << QString("export %1 logs failed.").arg(appName) << "\n";
+        qCInfo(logApp) << QString("export %1 logs failed.").arg(appName) << "\n";
 
     return bSuccess ? 0 : -1;
 }
 
 bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &appName, const QString &period, const QString &level, const QString &submodule, const QString &keyword)
 {
-    if(!getOutDirPath(outDir))
+    qCDebug(logApp) << "LogBackend::exportAppLogsByCondition called";
+    if(!getOutDirPath(outDir)) {
+        qCWarning(logApp) << "Invalid output directory:" << outDir;
         return false;
+    }
 
-    if (appName.isEmpty())
+    if (appName.isEmpty()) {
+        qCWarning(logApp) << "Empty app name provided";
         return false;
+    }
 
     // 周期类型有效性验证
     BUTTONID periodId = ALL;
     if (!period.isEmpty()) {
+        qCDebug(logApp) << "period is not empty";
         periodId = period2Enum(period);
         if (INVALID == periodId) {
-            qCWarning(logBackend) << "invalid 'period' parameter: " << period << "\nUSEAGE: all(export all), today(export today), 3d(export past 3 days), 1w(export past week), 1m(export past month), 3m(export past 3 months)";
+            qCWarning(logApp) << "invalid 'period' parameter: " << period << "\nUSEAGE: all(export all), today(export today), 3d(export past 3 days), 1w(export past week), 1m(export past month), 3m(export past 3 months)";
             return false;
         }
     }
 
     // 级别有效性判断
     if (!level.isEmpty() && level2Id(level) == -2) {
-        qCWarning(logBackend) << "invalid 'level' parameter: " << level << "\nUSEAGE: all(all), 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
+        qCWarning(logApp) << "invalid 'level' parameter: " << level << "\nUSEAGE: all(all), 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
         return false;
     }
 
-    qCInfo(logBackend) << "appName:" << appName << "period:" << period << "level:" << level << "submodule" << submodule << "keyword:" << keyword;
+    qCInfo(logApp) << "appName:" << appName << "period:" << period << "level:" << level << "submodule" << submodule << "keyword:" << keyword;
 
     TIME_RANGE timeRange = getTimeRange(periodId);
 
     // 先查找是否有该应用相关日志配置
     if (!LogApplicationHelper::instance()->isAppLogConfigExist(appName)) {
-        qCWarning(logBackend) << QString("unknown app:%1 is invalid.").arg(appName);
+        qCWarning(logApp) << QString("unknown app:%1 is invalid.").arg(appName);
         return false;
     }
 
@@ -563,48 +592,62 @@ bool LogBackend::exportAppLogsByCondition(const QString &outDir, const QString &
 
 QStringList LogBackend::getLogTypes()
 {
+    qCDebug(logApp) << "LogBackend::getLogTypes called";
     Dtk::Core::DSysInfo::UosEdition edition = Dtk::Core::DSysInfo::uosEditionType();
     //等于服务器行业版或欧拉版(centos)
     bool isCentos = Dtk::Core::DSysInfo::UosEuler == edition || Dtk::Core::DSysInfo::UosEnterpriseC == edition || Dtk::Core::DSysInfo::UosMilitaryS == edition;
+    qCDebug(logApp) << "System edition:" << edition << "isCentos:" << isCentos;
     if (QFile::exists("/var/log/journal") || isCentos) {
+        qCDebug(logApp) << "Adding journal log type";
         m_logTypes.push_back(JOUR_TREE_DATA);
     }
 
     if (isCentos) {
+        qCDebug(logApp) << "Adding dmesg log type";
         m_logTypes.push_back(DMESG_TREE_DATA);
     } else {
         if (QFile::exists("/var/log/kern.log")) {
+            qCDebug(logApp) << "Adding kern log type";
             m_logTypes.push_back(KERN_TREE_DATA);
         }
     }
     if (Utils::isWayland()) {
+        qCDebug(logApp) << "Adding boot_klu log type";
         m_logTypes.push_back(BOOT_KLU_TREE_DATA);
     } else {
+        qCDebug(logApp) << "Adding boot log type";
         m_logTypes.push_back(BOOT_TREE_DATA);
     }
     if (isCentos) {
+        qCDebug(logApp) << "Adding dnf log type";
         m_logTypes.push_back(DNF_TREE_DATA);
     } else {
         if (QFile::exists("/var/log/dpkg.log")) {
+            qCDebug(logApp) << "Adding dpkg log type";
             m_logTypes.push_back(DPKG_TREE_DATA);
         }
     }
     //wayland环境才有kwin日志
     if (Utils::isWayland()) {
+        qCDebug(logApp) << "Adding kwin log type";
         m_logTypes.push_back(KWIN_TREE_DATA);
     } else {
+        qCDebug(logApp) << "Adding xorg log type";
         m_logTypes.push_back(XORG_TREE_DATA);
     }
     auto *appHelper = LogApplicationHelper::instance();
     QMap<QString, QString> appMap = appHelper->getMap();
     if (!appMap.isEmpty()) {
+        qCDebug(logApp) << "Adding app log type";
         m_logTypes.push_back(APP_TREE_DATA);
     }
 
+    qCDebug(logApp) << "Adding coredump log type";
     m_logTypes.push_back(COREDUMP_TREE_DATA);
 
     // add by Airy
     if (QFile::exists("/var/log/wtmp")) {
+        qCDebug(logApp) << "Adding last log type";
         m_logTypes.push_back(LAST_TREE_DATA);
     }
 
@@ -626,21 +669,29 @@ QStringList LogBackend::getLogTypes()
 
 void LogBackend::slot_parseFinished(int index, LOG_FLAG type, int status)
 {
-    if (m_flag != type || index != m_type2ThreadIndex[type])
+    qCDebug(logApp) << "LogBackend::slot_parseFinished called with index:" << index << "type:" << type << "status:" << status;
+    if (m_flag != type || index != m_type2ThreadIndex[type]) {
+        qCDebug(logApp) << "Parse finished signal ignored - type or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting parseFinished signal for view session";
         emit parseFinished(type, status);
 
-        if (status != ParseThreadBase::Normal)
+        if (status != ParseThreadBase::Normal) {
+            qCWarning(logApp) << "Parse finished with abnormal status:" << status;
             return;
+        }
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Processing export session";
         // 导出当前解析到的数据
         executeCLIExport(m_exportFilePath);
 
         // 异常情况，不再进行分段导出
         if (status != ParseThreadBase::Normal) {
+            qCWarning(logApp) << "Export parse finished with abnormal status:" << status;
             // 还原任务状态
             if (View == m_lastSessionType) {
                 m_sessionType = View;
@@ -659,12 +710,16 @@ void LogBackend::slot_parseFinished(int index, LOG_FLAG type, int status)
 
 void LogBackend::slot_logData(int index, const QList<QString> &list, LOG_FLAG type)
 {
-    if (m_flag != type || index != m_type2ThreadIndex[type])
+    qCDebug(logApp) << "LogBackend::slot_logData called with index:" << index << "type:" << type << "list size:" << list.size();
+    if (m_flag != type || index != m_type2ThreadIndex[type]) {
+        qCDebug(logApp) << "Log data signal ignored - type or index mismatch";
         return;
+    }
 
     m_type2LogDataOrigin[type].append(list);
     QList<QString> filterData = filterLog(m_currentSearchStr, list);
     m_type2LogData[type].append(filterData);
+    qCDebug(logApp) << "Filtered data size:" << filterData.size();
 
     if (View == m_sessionType) {
         // 只中转新增数据到界面
@@ -674,153 +729,206 @@ void LogBackend::slot_logData(int index, const QList<QString> &list, LOG_FLAG ty
 
 void LogBackend::slot_dpkgFinished(int index)
 {
-    if (m_flag != DPKG || index != m_dpkgCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_dpkgFinished called with index:" << index;
+    if (m_flag != DPKG || index != m_dpkgCurrentIndex) {
+        qCDebug(logApp) << "DPKG finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting dpkgFinished signal for view session";
         emit dpkgFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for DPKG";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_dpkgData(int index, QList<LOG_MSG_DPKG> list)
 {
-    if (m_flag != DPKG || index != m_dpkgCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_dpkgData called with index:" << index << "list size:" << list.size();
+    if (m_flag != DPKG || index != m_dpkgCurrentIndex) {
+        qCDebug(logApp) << "DPKG data signal ignored - flag or index mismatch";
         return;
+    }
 
     dListOrigin.append(list);
     dList.append(filterDpkg(m_currentSearchStr, list));
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting dpkgData signal for view session";
         emit dpkgData(dList);
     }
 }
 
 void LogBackend::slot_XorgFinished(int index)
 {
-    if (m_flag != XORG || index != m_xorgCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_XorgFinished called with index:" << index;
+    if (m_flag != XORG || index != m_xorgCurrentIndex) {
+        qCDebug(logApp) << "XORG finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting xlogFinished signal for view session";
         emit xlogFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for Xorg";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_xorgData(int index, QList<LOG_MSG_XORG> list)
 {
-    if (m_flag != XORG || index != m_xorgCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_xorgData called with index:" << index << "list size:" << list.size();
+    if (m_flag != XORG || index != m_xorgCurrentIndex) {
+        qCDebug(logApp) << "XORG data signal ignored - flag or index mismatch";
         return;
+    }
 
     xListOrigin.append(list);
     xList.append(filterXorg(m_currentSearchStr, list));
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting xlogData signal for view session";
         emit xlogData(xList);
     }
 }
 
 void LogBackend::slot_bootFinished(int index)
 {
-    if (m_flag != BOOT || index != m_bootCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_bootFinished called with index:" << index;
+    if (m_flag != BOOT || index != m_bootCurrentIndex) {
+        qCDebug(logApp) << "BOOT finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting bootFinished signal for view session";
         emit bootFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for boot";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_bootData(int index, QList<LOG_MSG_BOOT> list)
 {
-    if (m_flag != BOOT || index != m_bootCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_bootData called with index:" << index << "list size:" << list.size();
+    if (m_flag != BOOT || index != m_bootCurrentIndex) {
+        qCDebug(logApp) << "BOOT data signal ignored - flag or index mismatch";
         return;
+    }
 
     bList.append(list);
     currentBootList.append(filterBoot(m_bootFilter, list));
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting bootData signal for view session";
         emit bootData(currentBootList);
     }
 }
 
 void LogBackend::slot_kernFinished(int index)
 {
-    if (m_flag != KERN || index != m_kernCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_kernFinished called with index:" << index;
+    if (m_flag != KERN || index != m_kernCurrentIndex) {
+        qCDebug(logApp) << "KERN finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting kernFinished signal";
         emit kernFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for kern";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_kernData(int index, QList<LOG_MSG_JOURNAL> list)
 {
-    if (m_flag != KERN || index != m_kernCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_kernData called with index:" << index << "list size:" << list.size();
+    if (m_flag != KERN || index != m_kernCurrentIndex) {
+        qCDebug(logApp) << "KERN data signal ignored - flag or index mismatch";
         return;
+    }
 
     kListOrigin.append(list);
     kList.append(filterKern(m_currentSearchStr, list));
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting kernData signal for view session";
         emit kernData(kList);
     }
 }
 
 void LogBackend::slot_kwinFinished(int index)
 {
-    if (m_flag != Kwin || index != m_kwinCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_kwinFinished called with index:" << index;
+    if (m_flag != Kwin || index != m_kwinCurrentIndex) {
+        qCDebug(logApp) << "Kwin finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting kwinFinished signal for view session";
         emit kwinFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for kwin";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_kwinData(int index, QList<LOG_MSG_KWIN> list)
 {
-    if (m_flag != Kwin || index != m_kwinCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_kwinData called with index:" << index << "list size:" << list.size();
+    if (m_flag != Kwin || index != m_kwinCurrentIndex) {
+        qCDebug(logApp) << "Kwin data signal ignored - flag or index mismatch";
         return;
+    }
     m_kwinList.append(list);
     m_currentKwinList.append(filterKwin(m_currentSearchStr, list));
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting kwinData signal for view session";
         emit kwinData(m_currentKwinList);
     }
 }
 
 void LogBackend::slot_dnfFinished(const QList<LOG_MSG_DNF> &list)
 {
-    if (m_flag != Dnf)
+    qCDebug(logApp) << "LogBackend::slot_dnfFinished called with list size:" << list.size();
+    if (m_flag != Dnf) {
+        qCDebug(logApp) << "Dnf finished signal ignored - flag mismatch";
         return;
+    }
     dnfList = filterDnf(m_currentSearchStr, list);
     dnfListOrigin = list;
 
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting dnfFinished signal for view session";
         emit dnfFinished(dnfListOrigin);
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for dnf";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_dmesgFinished(const QList<LOG_MSG_DMESG> &list)
 {
-    if (m_flag != Dmesg)
+    qCDebug(logApp) << "LogBackend::slot_dmesgFinished called with list size:" << list.size();
+    if (m_flag != Dmesg) {
+        qCDebug(logApp) << "Dmesg finished signal ignored - flag mismatch";
         return;
+    }
 
     dmesgList = filterDmesg(m_currentSearchStr,list);
     dmesgListOrigin = list;
@@ -828,179 +936,242 @@ void LogBackend::slot_dmesgFinished(const QList<LOG_MSG_DMESG> &list)
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting dmesgFinished signal for view session";
         emit dmesgFinished(dmesgListOrigin);
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for dmesg";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_journalFinished(int index)
 {
-    if (m_flag != JOURNAL || index != m_journalCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_journalFinished called with index:" << index;
+    if (m_flag != JOURNAL || index != m_journalCurrentIndex) {
+        qCDebug(logApp) << "Journal finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting journalFinished signal for view session";
         emit journalFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for journal";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_journalBootFinished(int index)
 {
-    if (m_flag != BOOT_KLU || index != m_journalBootCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_journalBootFinished called with index:" << index;
+    if (m_flag != BOOT_KLU || index != m_journalBootCurrentIndex) {
+        qCDebug(logApp) << "Journal boot finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting journalBootFinished signal for view session";
         emit journalBootFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for journal boot";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_journalBootData(int index, QList<LOG_MSG_JOURNAL> list)
 {
-    if (m_flag != BOOT_KLU || index != m_journalBootCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_journalBootData called with index:" << index << "list size:" << list.size();
+    if (m_flag != BOOT_KLU || index != m_journalBootCurrentIndex) {
+        qCDebug(logApp) << "Journal boot data signal ignored - flag or index mismatch";
         return;
+    }
 
     jBootListOrigin.append(list);
     jBootList.append(filterJournalBoot(m_currentSearchStr, list));
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting journaBootlData signal for view session";
         emit journaBootlData(jBootList);
     }
 }
 
 void LogBackend::slot_journalData(int index, QList<LOG_MSG_JOURNAL> list)
 {
+    qCDebug(logApp) << "LogBackend::slot_journalData called with index:" << index << "list size:" << list.size();
     //判断最近一次获取数据线程的标记量,和信号曹发来的sender的标记量作对比,如果相同才可以刷新,因为会出现上次的获取线程就算停下信号也发出来了
-    if (m_flag != JOURNAL || index != m_journalCurrentIndex)
+    if (m_flag != JOURNAL || index != m_journalCurrentIndex) {
+        qCDebug(logApp) << "Journal data signal ignored - flag or index mismatch";
         return;
+    }
 
     jListOrigin.append(list);
     jList.append(filterJournal(m_currentSearchStr, list));
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting journalData signal for view session";
         emit journalData(jList);
     }
 }
 
 void LogBackend::slot_applicationFinished(int index)
 {
-    if (m_flag != APP || index != m_appCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_applicationFinished called with index:" << index;
+    if (m_flag != APP || index != m_appCurrentIndex) {
+        qCDebug(logApp) << "Application finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting appFinished signal for view session";
         emit appFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for application";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_applicationData(int index, QList<LOG_MSG_APPLICATOIN> list)
 {
-    if (m_flag != APP || index != m_appCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_applicationData called with index:" << index << "list size:" << list.size();
+    if (m_flag != APP || index != m_appCurrentIndex) {
+        qCDebug(logApp) << "Application data signal ignored - flag or index mismatch";
         return;
+    }
 
     appListOrigin.append(list);
     appList.append(filterApp(m_appFilter, list));
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting appData signal for view session";
         emit appData(appList);
     }
 }
 
 void LogBackend::slot_normalFinished(int index)
 {
-    if (m_flag != Normal || index != m_normalCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_normalFinished called with index:" << index;
+    if (m_flag != Normal || index != m_normalCurrentIndex) {
+        qCDebug(logApp) << "Normal finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting normalFinished signal for view session";
         emit normalFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for normal";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_normalData(int index, QList<LOG_MSG_NORMAL> list)
 {
-    if (m_flag != Normal || index != m_normalCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_normalData called with index:" << index << "list size:" << list.size();
+    if (m_flag != Normal || index != m_normalCurrentIndex) {
+        qCDebug(logApp) << "Normal data signal ignored - flag or index mismatch";
         return;
+    }
     norList.append(list);
     nortempList.append(filterNomal(m_normalFilter, list));
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting normalData signal for view session";
         emit normalData(nortempList);
     }
 }
 
 void LogBackend::slot_OOCFinished(int index, int error)
 {
-    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_OOCFinished called with index:" << index << "error:" << error;
+    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex) {
+        qCDebug(logApp) << "OOC finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
-    if (View == m_sessionType)
+    if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting OOCFinished signal for view session";
         emit OOCFinished(error);
+    }
 }
 
 void LogBackend::slot_OOCData(int index, const QString &data)
 {
-    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_OOCData called with index:" << index << "data:" << data;
+    if ((m_flag != OtherLog && m_flag != CustomLog) || index != m_OOCCurrentIndex) {
+        qCDebug(logApp) << "OOC data signal ignored - flag or index mismatch";
         return;
+    }
 
-    if (View == m_sessionType)
+    if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting OOCData signal for view session";
         emit OOCData(data);
+    }
 }
 
 void LogBackend::slot_auditFinished(int index, bool bShowTip)
 {
     Q_UNUSED(bShowTip);
 
-    if (m_flag != Audit || index != m_auditCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_auditFinished called with index:" << index << "bShowTip:" << bShowTip;
+    if (m_flag != Audit || index != m_auditCurrentIndex) {
+        qCDebug(logApp) << "Audit finished signal ignored - flag or index mismatch";
         return;
+    }
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting auditFinished signal for view session";
         emit auditFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for audit";
         executeCLIExport();
     }
 }
 
 void LogBackend::slot_auditData(int index, QList<LOG_MSG_AUDIT> list)
 {
-    if (m_flag != Audit || index != m_auditCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_auditData called with index:" << index << "list size:" << list.size();
+    if (m_flag != Audit || index != m_auditCurrentIndex) {
+        qCDebug(logApp) << "Audit data signal ignored - flag or index mismatch";
         return;
+    }
 
     aListOrigin.append(list);
     aList.append(filterAudit(m_auditFilter, list));
 
-    if (View == m_sessionType)
+    if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting auditData signal for view session";
         emit auditData(aList);
+    }
 }
 
 void LogBackend::slot_coredumpFinished(int index)
 {
-    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_coredumpFinished called with index:" << index;
+    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex) {
+        qCDebug(logApp) << "Coredump finished signal ignored - flag or index mismatch";
         return;
+    }
 
     m_isDataLoadComplete = true;
 
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting coredumpFinished signal for view session";
         emit coredumpFinished();
     } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for coredump";
         executeCLIExport();
     } else if (Report == m_sessionType) {
         int nCount = m_currentCoredumpList.size();
         QDateTime lastTime = LogApplicationHelper::instance()->getLastReportTime();
         QDateTime curTime = QDateTime::currentDateTime();
         if (nCount == 0) {
-            qCWarning(logBackend) << QString("Report coredump info failed, timeRange: '%1 ---- %2', no matching data.")
+            qCWarning(logApp) << QString("Report coredump info failed, timeRange: '%1 ---- %2', no matching data.")
                                      .arg(lastTime.toString("yyyy-MM-dd hh:mm:ss"))
                                      .arg(curTime.toString("yyyy-MM-dd hh:mm:ss"));
             // 此处退出码不能为-1，否则systemctl --failed服务会将其判为失败的systemd服务
@@ -1074,7 +1245,7 @@ void LogBackend::slot_coredumpFinished(int index)
 
                 Eventlogutils::GetInstance()->writeLogs(objCoredumpEvent);
                 LogApplicationHelper::instance()->saveLastRerportTime(latestCoredumpTime);
-                qCInfo(logBackend) << QString("Successfully reported %1 crash messages in total.").arg(afterCleanData.size());
+                qCInfo(logApp) << QString("Successfully reported %1 crash messages in total.").arg(afterCleanData.size());
                 qApp->exit(0);
             });
         }
@@ -1083,43 +1254,55 @@ void LogBackend::slot_coredumpFinished(int index)
 
 void LogBackend::slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list)
 {
-    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex)
+    qCDebug(logApp) << "LogBackend::slot_coredumpData called with index:" << index << "list size:" << list.size();
+    if (m_flag != COREDUMP || index != m_coredumpCurrentIndex) {
+        qCDebug(logApp) << "Coredump data signal ignored - flag or index mismatch";
         return;
+    }
 
     m_coredumpList.append(list);
     QList<LOG_MSG_COREDUMP> filterList = filterCoredump(m_currentSearchStr, list);
     m_currentCoredumpList.append(filterList);
 
-    if (View == m_sessionType)
+    if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting coredumpData signal for view session";
         emit coredumpData(m_currentCoredumpList, !filterList.isEmpty());
+    }
 }
 
 void LogBackend::slot_logLoadFailed(const QString &iError)
 {
-    qCWarning(logBackend) << "parse data failed. error: " << iError;
+    qCWarning(logApp) << "parse data failed. error: " << iError;
 
-    if (View == m_sessionType)
+    if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting proccessError signal for view session";
         emit proccessError(iError);
-    else if (Export == m_sessionType || Report == m_sessionType)
+    } else if (Export == m_sessionType || Report == m_sessionType) {
+        qCDebug(logApp) << "Exiting application with error code -1";
         qApp->exit(-1);
+    }
 }
 
 void LogBackend::onExportProgress(int nCur, int nTotal)
 {
+    qCDebug(logApp) << "LogBackend::onExportProgress called with nCur:" << nCur << "nTotal:" << nTotal;
     if (View == m_sessionType || View == m_lastSessionType) {
         bool bExportThreadRunning = false;
 
         // 获取导出线程对象
         LogExportThread *exportThread = qobject_cast<LogExportThread *>(sender());
         LogSegementExportThread* segementExportThread = qobject_cast<LogSegementExportThread *>(sender());
-        if (exportThread)
+        if (exportThread) {
+            qCDebug(logApp) << "Export thread is running";
             bExportThreadRunning = exportThread->isProcessing();
-        else if (segementExportThread) {
+        } else if (segementExportThread) {
+            qCDebug(logApp) << "Segment export thread is running";
             bExportThreadRunning = segementExportThread->isProcessing();
         }
 
         //如果导出线程不再运行则不处理此信号
         if (!bExportThreadRunning) {
+            qCDebug(logApp) << "Export thread is not running, skipping progress update";
             return;
         }
 
@@ -1129,18 +1312,21 @@ void LogBackend::onExportProgress(int nCur, int nTotal)
 
 void LogBackend::onExportResult(bool isSuccess)
 {
+    qCDebug(logApp) << "LogBackend::onExportResult called with isSuccess:" << isSuccess;
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting sigResult signal for view session";
         emit sigResult(isSuccess);
     } else if (Export == m_sessionType || Report == m_sessionType) {
+        qCDebug(logApp) << "Executing CLI export for export or report";
         if (Export == m_sessionType)
             Utils::resetToNormalAuth(m_exportFilePath);
 
         PERF_PRINT_END("POINT-04", "");
         if (isSuccess) {
-            qCInfo(logBackend) << "export success.";
+            qCInfo(logApp) << "export success.";
             qApp->quit();
         } else {
-            qCWarning(logBackend) << "export failed.";
+            qCWarning(logApp) << "export failed.";
             qApp->exit(-1);
         }
     }
@@ -1148,16 +1334,20 @@ void LogBackend::onExportResult(bool isSuccess)
 
 void LogBackend::onExportFakeCloseDlg()
 {
+    qCDebug(logApp) << "LogBackend::onExportFakeCloseDlg called";
     if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting sigProcessFull signal for view session";
         emit sigProcessFull();
     }
 }
 
 QList<LOG_MSG_BOOT> LogBackend::filterBoot(BOOT_FILTERS ibootFilter, const QList<LOG_MSG_BOOT> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterBoot called with iList size:" << iList.size();
     QList<LOG_MSG_BOOT> rsList;
     bool isStatusFilterEmpty = ibootFilter.statusFilter.isEmpty();
     if (isStatusFilterEmpty && ibootFilter.searchstr.isEmpty()) {
+        qCDebug(logApp) << "FilterBoot: ibootFilter is empty, returning iList";
         return iList;
     } else {
         for (int i = 0; i < iList.size(); i++) {
@@ -1170,13 +1360,16 @@ QList<LOG_MSG_BOOT> LogBackend::filterBoot(BOOT_FILTERS ibootFilter, const QList
             }
         }
     }
+    qCDebug(logApp) << "FilterBoot: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_NORMAL> LogBackend::filterNomal(NORMAL_FILTERS inormalFilter, const QList<LOG_MSG_NORMAL> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterNomal called with iList size:" << iList.size();
     QList<LOG_MSG_NORMAL> rsList;
     if (inormalFilter.searchstr.isEmpty() && inormalFilter.eventTypeFilter < 0) {
+        qCDebug(logApp) << "FilterNomal: inormalFilter is empty, returning iList";
         return iList;
     }
     int tcbx = inormalFilter.eventTypeFilter;
@@ -1212,13 +1405,16 @@ QList<LOG_MSG_NORMAL> LogBackend::filterNomal(NORMAL_FILTERS inormalFilter, cons
             }
         }
     }
+    qCDebug(logApp) << "FilterNomal: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_DPKG> LogBackend::filterDpkg(const QString &iSearchStr, const QList<LOG_MSG_DPKG> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterDpkg called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_DPKG> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterDpkg: iSearchStr is empty, returning iList";
         return iList;
     }
 
@@ -1228,13 +1424,16 @@ QList<LOG_MSG_DPKG> LogBackend::filterDpkg(const QString &iSearchStr, const QLis
             rsList.append(msg);
         }
     }
+    qCDebug(logApp) << "FilterDpkg: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_JOURNAL> LogBackend::filterKern(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterKern called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_JOURNAL> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterKern: iSearchStr is empty, returning iList";
         return iList;
     }
     for (int i = 0; i < iList.size(); i++) {
@@ -1243,13 +1442,16 @@ QList<LOG_MSG_JOURNAL> LogBackend::filterKern(const QString &iSearchStr, const Q
             rsList.append(msg);
         }
     }
+    qCDebug(logApp) << "FilterKern: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_XORG> LogBackend::filterXorg(const QString &iSearchStr, const QList<LOG_MSG_XORG> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterXorg called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_XORG> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterXorg: iSearchStr is empty, returning iList";
         return iList;
     }
     for (int i = 0; i < iList.size(); i++) {
@@ -1257,13 +1459,16 @@ QList<LOG_MSG_XORG> LogBackend::filterXorg(const QString &iSearchStr, const QLis
         if (msg.offset.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
+    qCDebug(logApp) << "FilterXorg: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_KWIN> LogBackend::filterKwin(const QString &iSearchStr, const QList<LOG_MSG_KWIN> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterKwin called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_KWIN> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterKwin: iSearchStr is empty, returning iList";
         return iList;
     }
     for (int i = 0; i < iList.size(); i++) {
@@ -1271,13 +1476,16 @@ QList<LOG_MSG_KWIN> LogBackend::filterKwin(const QString &iSearchStr, const QLis
         if (msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
+    qCDebug(logApp) << "FilterKwin: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_APPLICATOIN> LogBackend::filterApp(const QString &iSearchStr, const QList<LOG_MSG_APPLICATOIN> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterApp called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_APPLICATOIN> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterApp: iSearchStr is empty, returning iList";
         return iList;
     }
     for (int i = 0; i < iList.size(); i++) {
@@ -1285,13 +1493,16 @@ QList<LOG_MSG_APPLICATOIN> LogBackend::filterApp(const QString &iSearchStr, cons
         if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.src.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
+    qCDebug(logApp) << "FilterApp: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_APPLICATOIN> LogBackend::filterApp(APP_FILTERS appFilter, const QList<LOG_MSG_APPLICATOIN> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterApp called with iList size:" << iList.size();
     QList<LOG_MSG_APPLICATOIN> rsList;
     if (appFilter.searchstr.isEmpty() && appFilter.submodule.isEmpty()) {
+        qCDebug(logApp) << "FilterApp: appFilter is empty, returning iList";
         return iList;
     }
 
@@ -1320,13 +1531,16 @@ QList<LOG_MSG_APPLICATOIN> LogBackend::filterApp(APP_FILTERS appFilter, const QL
             }
         }
     }
+    qCDebug(logApp) << "FilterApp: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_DNF> LogBackend::filterDnf(const QString &iSearchStr, const QList<LOG_MSG_DNF> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterDnf called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_DNF> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterDnf: iSearchStr is empty, returning iList";
         return iList;
     }
     for (int i = 0; i < iList.size(); i++) {
@@ -1336,13 +1550,16 @@ QList<LOG_MSG_DNF> LogBackend::filterDnf(const QString &iSearchStr, const QList<
                 || msg.level.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
+    qCDebug(logApp) << "FilterDnf: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_DMESG> LogBackend::filterDmesg(const QString &iSearchStr, const QList<LOG_MSG_DMESG> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterDmesg called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_DMESG> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterDmesg: iSearchStr is empty, returning iList";
         return iList;
     }
 
@@ -1352,13 +1569,16 @@ QList<LOG_MSG_DMESG> LogBackend::filterDmesg(const QString &iSearchStr, const QL
             rsList.append(msg);
     }
 
+    qCDebug(logApp) << "FilterDmesg: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_JOURNAL> LogBackend::filterJournal(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterJournal called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_JOURNAL> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterJournal: iSearchStr is empty, returning iList";
         return iList;
     }
     for (int i = 0; i < iList.size(); i++) {
@@ -1366,13 +1586,16 @@ QList<LOG_MSG_JOURNAL> LogBackend::filterJournal(const QString &iSearchStr, cons
         if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
+    qCDebug(logApp) << "FilterJournal: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_JOURNAL> LogBackend::filterJournalBoot(const QString &iSearchStr, const QList<LOG_MSG_JOURNAL> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterJournalBoot called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_JOURNAL> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterJournalBoot: iSearchStr is empty, returning iList";
         return iList;
     }
     for (int i = 0; i < iList.size(); i++) {
@@ -1380,13 +1603,16 @@ QList<LOG_MSG_JOURNAL> LogBackend::filterJournalBoot(const QString &iSearchStr, 
         if (msg.dateTime.contains(iSearchStr, Qt::CaseInsensitive) || msg.hostName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonName.contains(iSearchStr, Qt::CaseInsensitive) || msg.daemonId.contains(iSearchStr, Qt::CaseInsensitive) || msg.level.contains(iSearchStr, Qt::CaseInsensitive) || msg.msg.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
+    qCDebug(logApp) << "FilterJournalBoot: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_FILE_OTHERORCUSTOM> LogBackend::filterOOC(const QString &iSearchStr, const QList<LOG_FILE_OTHERORCUSTOM> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterOOC called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_FILE_OTHERORCUSTOM> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterOOC: iSearchStr is empty, returning iList";
         return iList;
     }
     for (int i = 0; i < iList.size(); i++) {
@@ -1394,13 +1620,16 @@ QList<LOG_FILE_OTHERORCUSTOM> LogBackend::filterOOC(const QString &iSearchStr, c
         if (msg.name.contains(iSearchStr, Qt::CaseInsensitive) || msg.path.contains(iSearchStr, Qt::CaseInsensitive))
             rsList.append(msg);
     }
+    qCDebug(logApp) << "FilterOOC: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 QList<LOG_MSG_AUDIT> LogBackend::filterAudit(AUDIT_FILTERS auditFilter, const QList<LOG_MSG_AUDIT> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterAudit called with iList size:" << iList.size();
     QList<LOG_MSG_AUDIT> rsList;
     if (auditFilter.searchstr.isEmpty() && auditFilter.auditTypeFilter < -1) {
+        qCDebug(logApp) << "FilterAudit: auditFilter is empty, returning iList";
         return iList;
     }
     int nAuditType = auditFilter.auditTypeFilter - 1;
@@ -1410,13 +1639,15 @@ QList<LOG_MSG_AUDIT> LogBackend::filterAudit(AUDIT_FILTERS auditFilter, const QL
             rsList.append(msg);
         }
     }
-
+    qCDebug(logApp) << "FilterAudit: returning rsList with size:" << rsList.size();
     return rsList;
 }
 QList<LOG_MSG_COREDUMP> LogBackend::filterCoredump(const QString &iSearchStr, const QList<LOG_MSG_COREDUMP> &iList)
 {
+    qCDebug(logApp) << "LogBackend::filterCoredump called with iSearchStr:" << iSearchStr << "iList size:" << iList.size();
     QList<LOG_MSG_COREDUMP> rsList;
     if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "FilterCoredump: iSearchStr is empty, returning iList";
         return iList;
     }
     for (int i = 0; i < iList.size(); i++) {
@@ -1429,18 +1660,19 @@ QList<LOG_MSG_COREDUMP> LogBackend::filterCoredump(const QString &iSearchStr, co
             rsList.append(msg);
         }
     }
-
+    qCDebug(logApp) << "FilterCoredump: returning rsList with size:" << rsList.size();
     return rsList;
 }
 
 bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QString &condition)
 {
+    qCDebug(logApp) << "LogBackend::parseData called with flag:" << flag << "period:" << period << "condition:" << condition;
     // 周期类型有效性验证
     BUTTONID periodId = ALL;
     if (!period.isEmpty()) {
         periodId = period2Enum(period);
         if (INVALID == periodId) {
-            qCWarning(logBackend) << "invalid 'period' parameter: " << period << "\nUSEAGE: all(export all), today(export today), 3d(export past 3 days), 1w(export past week), 1m(export past month), 3m(export past 3 months)";
+            qCWarning(logApp) << "invalid 'period' parameter: " << period << "\nUSEAGE: all(export all), today(export today), 3d(export past 3 days), 1w(export past week), 1m(export past month), 3m(export past 3 months)";
             return false;
         }
     }
@@ -1451,7 +1683,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         if (!condition.isEmpty()) {
             lId = level2Id(condition);
             if (-2 == lId) {
-                qCWarning(logBackend) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
+                qCWarning(logApp) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(emerg), 1(alert), 2(crit), 3(error), 4(warning), 5(notice), 6(info), 7(debug)";
                 return false;
             }
         }
@@ -1464,7 +1696,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         if (!condition.isEmpty()) {
             dnfLevel = dnfLevel2Id(condition);
             if (DNFINVALID == dnfLevel) {
-                qCWarning(logBackend) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(supercrit), 1(crit), 2(error), 3(warning), 4(info), 5(debug), 6(trace)";
+                qCWarning(logApp) << "invalid 'level' parameter: " << condition << "\nUSEAGE: 0(supercrit), 1(crit), 2(error), 3(warning), 4(info), 5(debug), 6(trace)";
                 return false;
             }
         }
@@ -1481,7 +1713,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
             else if (condition == "failed" || condition == "2")
                 statusFilter = "Failed";
             else {
-                qCWarning(logBackend) << "invalid 'status' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export ok), 2(export failed)";
+                qCWarning(logApp) << "invalid 'status' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export ok), 2(export failed)";
                 return false;
             }
         }
@@ -1493,7 +1725,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         if (!condition.isEmpty()) {
             normalEventType = normal2eventType(condition);
             if (-1 == normalEventType) {
-                qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export login), 2(export boot), 3(shutdown)";
+                qCWarning(logApp) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(export all), 1(export login), 2(export boot), 3(shutdown)";
                 return false;
             }
         }
@@ -1505,19 +1737,20 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         if (!condition.isEmpty()) {
             auditType = audit2eventType(condition);
             if (-1 == auditType) {
-                qCWarning(logBackend) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(all), 1(ident auth), 2(discretionary access Contro), 3(mandatory access control), 4(remote), 5(doc audit), 6(other)";
+                qCWarning(logApp) << "invalid 'event' parameter: " << condition << "\nUSEAGE: 0(all), 1(ident auth), 2(discretionary access Contro), 3(mandatory access control), 4(remote), 5(doc audit), 6(other)";
                 return false;
             }
         }
     }
 
-    qCInfo(logBackend) << "parsing ..." << "period:" << period << "condition:" << condition << "keyword:" << m_currentSearchStr;
+    qCInfo(logApp) << "parsing ..." << "period:" << period << "condition:" << condition << "keyword:" << m_currentSearchStr;
 
     TIME_RANGE timeRange = getTimeRange(periodId);
 
     // 设置筛选条件，解析数据
     switch (flag) {
     case JOURNAL: {
+        qCDebug(logApp) << "LogBackend::parseData JOURNAL";
         QStringList arg;
         if (lId != LVALL) {
             QString prio = QString("PRIORITY=%1").arg(lId);
@@ -1534,6 +1767,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case Dmesg: {
+        qCDebug(logApp) << "LogBackend::parseData Dmesg";
         DMESG_FILTERS dmesgfilter;
         dmesgfilter.levelFilter = static_cast<PRIORITY>(lId);
         dmesgfilter.timeFilter = timeRange.begin;
@@ -1544,6 +1778,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case KERN: {
+        qCDebug(logApp) << "LogBackend::parseData KERN";
         LOG_FILTER_BASE filter;
         filter.type = flag;
         filter.filePath = "kern";
@@ -1556,6 +1791,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case BOOT_KLU: {
+        qCDebug(logApp) << "LogBackend::parseData BOOT_KLU";
         QStringList arg;
         if (lId != LVALL) {
             QString prio = QString("PRIORITY=%1").arg(lId);
@@ -1568,6 +1804,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case BOOT: {
+        qCDebug(logApp) << "LogBackend::parseData BOOT";
         m_bootFilter.searchstr = m_currentSearchStr;
         m_bootFilter.statusFilter = statusFilter;
 
@@ -1575,6 +1812,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case DPKG: {
+        qCDebug(logApp) << "LogBackend::parseData DPKG";
         DKPG_FILTERS dpkgFilter;
         dpkgFilter.timeFilterBegin = timeRange.begin;
         dpkgFilter.timeFilterEnd = timeRange.end;
@@ -1582,6 +1820,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case Dnf: {
+        qCDebug(logApp) << "LogBackend::parseData Dnf";
         DNF_FILTERS dnffilter;
         dnffilter.levelfilter = dnfLevel;
         dnffilter.timeFilter = timeRange.begin;
@@ -1592,6 +1831,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case Kwin: {
+        qCDebug(logApp) << "LogBackend::parseData Kwin";
         LOG_FILTER_BASE filter;
         filter.type = flag;
         filter.segementIndex = 0;
@@ -1601,6 +1841,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case XORG: {
+        qCDebug(logApp) << "LogBackend::parseData XORG";
         XORG_FILTERS xorgFilter;
         m_xorgCurrentIndex = m_logFileParser.parseByXlog(xorgFilter);
     }
@@ -1610,6 +1851,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case COREDUMP: {
+        qCDebug(logApp) << "LogBackend::parseData COREDUMP";
         COREDUMP_FILTERS coreFilter;
         coreFilter.timeFilterBegin = timeRange.begin;
         coreFilter.timeFilterEnd = timeRange.end;
@@ -1617,6 +1859,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case Normal: {
+        qCDebug(logApp) << "LogBackend::parseData Normal";
         m_normalFilter.searchstr = m_currentSearchStr;
         m_normalFilter.timeFilterBegin = timeRange.begin;
         m_normalFilter.timeFilterEnd = timeRange.end;
@@ -1625,6 +1868,7 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
     }
     break;
     case Audit: {
+        qCDebug(logApp) << "LogBackend::parseData Audit";
         m_auditFilter.searchstr = m_currentSearchStr;
         m_auditFilter.timeFilterBegin = timeRange.begin;
         m_auditFilter.timeFilterEnd = timeRange.end;
@@ -1641,62 +1885,79 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
 
 void LogBackend::executeCLIExport(const QString &originFilePath)
 {
-    if (!m_isDataLoadComplete)
+    qCDebug(logApp) << "LogBackend::executeCLIExport called with originFilePath:" << originFilePath;
+    if (!m_isDataLoadComplete) {
+        qCDebug(logApp) << "LogBackend::executeCLIExport m_isDataLoadComplete is false, returning";
         return;
+    }
 
     QString filePath = originFilePath;
     if (originFilePath.isEmpty()) {
+        qCDebug(logApp) << "LogBackend::executeCLIExport originFilePath is empty, using m_outPath:" << m_outPath;
         QString outPath = m_outPath;
         switch (m_flag) {
         case JOURNAL: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport JOURNAL";
             filePath = outPath + "/system.txt";
         }
             break;
         case Dmesg: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport Dmesg";
             filePath = outPath + "/dmesg.txt";
         }
             break;
         case KERN: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport KERN";
             filePath = outPath + "/kernel.txt";
         }
             break;
         case BOOT_KLU: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport BOOT_KLU";
             filePath = outPath + "/boot_klu.txt";
         }
             break;
         case BOOT: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport BOOT";
             filePath = outPath + "/boot.txt";
         }
             break;
         case DPKG: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport DPKG";
             filePath = outPath + "/dpkg.txt";
         }
             break;
         case Dnf: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport Dnf";
             filePath = outPath + "/dnf.txt";
         }
             break;
         case Kwin: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport Kwin";
             filePath = outPath + "/kwin.txt";
         }
             break;
         case XORG: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport XORG";
             filePath = outPath + "/xorg.txt";
         }
             break;
         case APP: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport APP";
             filePath = outPath + QString("/%1.txt").arg(m_appFilter.app);
         }
             break;
         case COREDUMP: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport COREDUMP";
             filePath = outPath + "/coredump.zip";
         }
             break;
         case Normal: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport Normal";
             filePath = outPath + "/boot-shutdown-event.txt";
         }
             break;
         case Audit: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport Audit";
             filePath = outPath + "/audit.txt";
         }
             break;
@@ -1710,6 +1971,7 @@ void LogBackend::executeCLIExport(const QString &originFilePath)
 
 void LogBackend::resetCategoryOutputPath(const QString &path)
 {
+    qCDebug(logApp) << "LogBackend::resetCategoryOutputPath called with path:" << path;
     // 先清空原有路径中的kernel日志文件
     QDir dir(path);
     dir.removeRecursively();
@@ -1720,13 +1982,17 @@ void LogBackend::resetCategoryOutputPath(const QString &path)
 
 QString LogBackend::getOutDirPath() const
 {
+    // qCDebug(logApp) << "LogBackend::getOutDirPath called, returning m_outPath:" << m_outPath;
     return m_outPath;
 }
 
 bool LogBackend::getOutDirPath(const QString &path)
 {
-    if (path == m_outPath)
+    qCDebug(logApp) << "LogBackend::getOutDirPath called with path:" << path;
+    if (path == m_outPath) {
+        qCDebug(logApp) << "LogBackend::getOutDirPath path is equal to m_outPath, returning true";
         return true;
+    }
 
     QString tmpPath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     if (!path.isEmpty())
@@ -1735,18 +2001,21 @@ bool LogBackend::getOutDirPath(const QString &path)
     // 若指定目录不存在，先创建目录
     QDir dir(tmpPath);
     if (!dir.exists()) {
+        qCDebug(logApp) << "LogBackend::getOutDirPath dir does not exist, creating directory";
          dir.mkpath(dir.absolutePath());
          m_newDir = dir.exists();
          if (m_newDir)
              tmpPath = dir.absolutePath();
     } else {
+        qCDebug(logApp) << "LogBackend::getOutDirPath dir exists, using absolute path";
         tmpPath = dir.absolutePath();
     }
 
     if (dir.exists()) {
         QFileInfo fi(tmpPath);
         if (!fi.isWritable()) {
-            qCWarning(logBackend) << QString("outPath: %1 is not writable.").arg(tmpPath);
+            qCDebug(logApp) << "LogBackend::getOutDirPath fi is not writable, returning false";
+            qCWarning(logApp) << QString("outPath: %1 is not writable.").arg(tmpPath);
             return false;
         }
 
@@ -1760,17 +2029,17 @@ bool LogBackend::getOutDirPath(const QString &path)
             }
         }
         if (!bAvailable) {
-            qCWarning(logBackend) << qApp->translate("ExportMessage", "The export directory is not available. Please choose another directory for the export operation.");
-            qCWarning(logBackend) << "outPath: " << tmpPath;
+            qCWarning(logApp) << qApp->translate("ExportMessage", "The export directory is not available. Please choose another directory for the export operation.");
+            qCWarning(logApp) << "outPath: " << tmpPath;
             return false;
         }
 
         m_outPath = tmpPath;
-        qCInfo(logBackend) << "outPath:" << m_outPath;
+        qCInfo(logApp) << "outPath:" << m_outPath;
         return true;
     } else {
         m_outPath = "";
-        qCWarning(logBackend) << QString("outpath:%1 is not exist.").arg(path);
+        qCWarning(logApp) << QString("outpath:%1 is not exist.").arg(path);
     }
 
     return false;
@@ -1778,55 +2047,70 @@ bool LogBackend::getOutDirPath(const QString &path)
 
 LOG_FLAG LogBackend::type2Flag(const QString &type, QString& error)
 {
+    qCDebug(logApp) << "LogBackend::type2Flag called with type:" << type;
     Dtk::Core::DSysInfo::UosEdition edition = Dtk::Core::DSysInfo::uosEditionType();
     bool isCentos = Dtk::Core::DSysInfo::UosEuler == edition || Dtk::Core::DSysInfo::UosEnterpriseC == edition || Dtk::Core::DSysInfo::UosMilitaryS == edition;
 
     LOG_FLAG flag = NONE;
-    if (type == TYPE_SYSTEM)
+    if (type == TYPE_SYSTEM) {
+        qCDebug(logApp) << "LogBackend::type2Flag JOURNAL";
         flag = JOURNAL;
-    else if (type == TYPE_KERNEL) {
+    } else if (type == TYPE_KERNEL) {
+        qCDebug(logApp) << "LogBackend::type2Flag KERN";
         if (isCentos)
             flag = Dmesg;
         else
             flag = KERN;
     } else if (type == TYPE_BOOT) {
+        qCDebug(logApp) << "LogBackend::type2Flag BOOT";
         if (Utils::isWayland())
             flag = BOOT_KLU;
         else
             flag = BOOT;
     } else if (type == TYPE_DPKG) {
+        qCDebug(logApp) << "LogBackend::type2Flag DPKG";
         if (!isCentos)
             flag = DPKG;
         else
             error = "Server industry edition has no dpkg.log";
     } else if (type == TYPE_DNF) {
+        qCDebug(logApp) << "LogBackend::type2Flag Dnf";
         if (isCentos)
             flag = Dnf;
         else
             error = "Only server industry edition has dnf.log";
     } else if (type == TYPE_KWIN) {
+        qCDebug(logApp) << "LogBackend::type2Flag Kwin";
         if (Utils::isWayland())
             flag = Kwin;
         else
             error = "Only wayland platform has kwin.log";
     } else if (type == TYPE_XORG) {
+        qCDebug(logApp) << "LogBackend::type2Flag XORG";
         if (!Utils::isWayland())
             flag = XORG;
         else
             error = "Wayland platform has no Xorg.log";
     } else if (type == TYPE_APP) {
+        qCDebug(logApp) << "LogBackend::type2Flag APP";
         flag = APP;
     } else if (type == TYPE_COREDUMP) {
+        qCDebug(logApp) << "LogBackend::type2Flag COREDUMP";
         flag = COREDUMP;
     } else if (type == TYPE_BSE) {
+        qCDebug(logApp) << "LogBackend::type2Flag Normal";
         flag = Normal;
     } else if (type == TYPE_OTHER) {
+        qCDebug(logApp) << "LogBackend::type2Flag OtherLog";
         flag = OtherLog;
     } else if (type == TYPE_CUSTOM) {
+        qCDebug(logApp) << "LogBackend::type2Flag CustomLog";
         flag = CustomLog;
     } else if (type == TYPE_AUDIT) {
+        qCDebug(logApp) << "LogBackend::type2Flag Audit";
         flag = Audit;
     } else {
+        qCDebug(logApp) << "LogBackend::type2Flag NONE";
         flag = NONE;
         error = QString("Unknown type: %1.").arg(type) + "USEAGE: system(journal log), kernel(kernel log), boot(boot log), dpkg(dpkg log), dnf(dnf log), kwin(Kwin log), xorg(Xorg log), app(deepin app log), coredump(coredump log)、boot-shutdown-event(boot shutdown event log)、other(other log)、custom(custom log)、audit(audit log)";
     }
@@ -1836,7 +2120,7 @@ LOG_FLAG LogBackend::type2Flag(const QString &type, QString& error)
 
 bool LogBackend::reportCoredumpInfo()
 {
-    qCDebug(logBackend) << "ready report coredump.";
+    qCDebug(logApp) << "ready report coredump.";
 
     m_flag = COREDUMP;
     m_currentSearchStr = "";
@@ -1849,16 +2133,18 @@ bool LogBackend::reportCoredumpInfo()
 
     // 异常的上次上报时间纠错
     if (lastTime > curTime) {
-        qCWarning(logBackend) << QString("last report time:[%1] is invalid, reset to %2").arg(lastTime.toString("yyyy-MM-dd hh:mm:ss")).arg(curTime.toString("yyyy-MM-dd hh:mm:ss"));
+        qCWarning(logApp) << QString("last report time:[%1] is invalid, reset to %2").arg(lastTime.toString("yyyy-MM-dd hh:mm:ss")).arg(curTime.toString("yyyy-MM-dd hh:mm:ss"));
         lastTime = curTime;
         LogApplicationHelper::instance()->saveLastRerportTime(curTime);
     }
 
     if (!lastTime.isValid()) {
+        qCDebug(logApp) << "LogBackend::reportCoredumpInfo lastTime is invalid, using ALL time range";
         TIME_RANGE timeRange = getTimeRange(ALL);
         coreFilter.timeFilterBegin = timeRange.begin;
         coreFilter.timeFilterEnd = timeRange.end;
     } else {
+        qCDebug(logApp) << "LogBackend::reportCoredumpInfo lastTime is valid, using lastTime and current time";
         coreFilter.timeFilterBegin = lastTime.toMSecsSinceEpoch();
         coreFilter.timeFilterEnd = QDateTime::currentDateTime().toMSecsSinceEpoch();
     }
@@ -1870,6 +2156,7 @@ bool LogBackend::reportCoredumpInfo()
 
 void LogBackend::setFlag(const LOG_FLAG &flag)
 {
+    // qCDebug(logApp) << "LogBackend::setFlag called with flag:" << flag;
     m_flag = flag;
 }
 
@@ -1878,6 +2165,7 @@ void LogBackend::setFlag(const LOG_FLAG &flag)
  */
 void LogBackend::clearAllFilter()
 {
+    // qCDebug(logApp) << "LogBackend::clearAllFilter called";
     m_type2Filter.clear();
 
     m_bootFilter = {"", ""};
@@ -1893,6 +2181,7 @@ void LogBackend::clearAllFilter()
  */
 void LogBackend::clearAllDatalist()
 {
+    // qCDebug(logApp) << "LogBackend::clearAllDatalist called";
     m_type2LogData.clear();
     m_type2LogDataOrigin.clear();
 
@@ -1929,89 +2218,109 @@ void LogBackend::clearAllDatalist()
 
 void LogBackend::parse(LOG_FILTER_BASE &filter)
 {
+    // qCDebug(logApp) << "LogBackend::parse called with filter:" << filter.type;
     m_type2ThreadIndex[filter.type] = m_logFileParser.parse(filter);
     m_type2Filter[filter.type] = filter;
 }
 
 void LogBackend::parseByJournal(const QStringList &arg)
 {
+    // qCDebug(logApp) << "LogBackend::parseByJournal called with arg:" << arg;
     m_journalCurrentIndex = m_logFileParser.parseByJournal(arg);
 }
 
 void LogBackend::parseByJournalBoot(const QStringList &arg)
 {
+    // qCDebug(logApp) << "LogBackend::parseByJournalBoot called with arg:" << arg;
     m_journalBootCurrentIndex = m_logFileParser.parseByJournalBoot(arg);
 }
 
 void LogBackend::parseByDpkg(const DKPG_FILTERS &iDpkgFilter)
 {
+    // qCDebug(logApp) << "LogBackend::parseByDpkg called with iDpkgFilter:" << iDpkgFilter;
     m_dpkgCurrentIndex = m_logFileParser.parseByDpkg(iDpkgFilter);
 }
 
 void LogBackend::parseByXlog(const XORG_FILTERS &iXorgFilter)
 {
+    // qCDebug(logApp) << "LogBackend::parseByXlog called with iXorgFilter:" << iXorgFilter;
     m_xorgCurrentIndex = m_logFileParser.parseByXlog(iXorgFilter);
 }
 
 void LogBackend::parseByBoot()
 {
+    // qCDebug(logApp) << "LogBackend::parseByBoot called";
     m_bootCurrentIndex = m_logFileParser.parseByBoot();
 }
 
 void LogBackend::parseByKern(const KERN_FILTERS &iKernFilter)
 {
+    // qCDebug(logApp) << "LogBackend::parseByKern called with iKernFilter:" << iKernFilter;
     m_kernCurrentIndex = m_logFileParser.parseByKern(iKernFilter);
 }
 
 void LogBackend::parseByApp(const APP_FILTERS &iAPPFilter)
 {
+    // qCDebug(logApp) << "LogBackend::parseByApp called with iAPPFilter:" << iAPPFilter;
     m_appCurrentIndex = m_logFileParser.parseByApp(iAPPFilter);
 }
 
 void LogBackend::parseByDnf(DNF_FILTERS iDnfFilter)
 {
+    // qCDebug(logApp) << "LogBackend::parseByDnf called with iDnfFilter:" << iDnfFilter;
     m_logFileParser.parseByDnf(iDnfFilter);
 }
 
 void LogBackend::parseByDmesg(DMESG_FILTERS iDmesgFilter)
 {
+    // qCDebug(logApp) << "LogBackend::parseByDmesg called with iDmesgFilter:" << iDmesgFilter;
     m_logFileParser.parseByDmesg(iDmesgFilter);
 }
 
 void LogBackend::parseByNormal(const NORMAL_FILTERS &iNormalFiler)
 {
+    // qCDebug(logApp) << "LogBackend::parseByNormal called with iNormalFiler:" << iNormalFiler;
     m_normalCurrentIndex = m_logFileParser.parseByNormal(iNormalFiler);
 }
 
 void LogBackend::parseByKwin(const KWIN_FILTERS &iKwinfilter)
 {
+    // qCDebug(logApp) << "LogBackend::parseByKwin called with iKwinfilter:" << iKwinfilter;
     m_kwinCurrentIndex = m_logFileParser.parseByKwin(iKwinfilter);
 }
 
 void LogBackend::parseByOOC(const QString &path)
 {
+    // qCDebug(logApp) << "LogBackend::parseByOOC called with path:" << path;
     m_OOCCurrentIndex = m_logFileParser.parseByOOC(path);
 }
 
 void LogBackend::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
 {
+    // qCDebug(logApp) << "LogBackend::parseByAudit called";
     m_auditCurrentIndex = m_logFileParser.parseByAudit(iAuditFilter);
 }
 
 void LogBackend::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap)
 {
+    // qCDebug(logApp) << "LogBackend::parseByCoredump called with iCoredumpFilter:" << iCoredumpFilter;
     m_coredumpCurrentIndex = m_logFileParser.parseByCoredump(iCoredumpFilter, parseMap);
 }
 
 int LogBackend::loadSegementPage(int nSegementIndex, bool bReset/* = true*/)
 {
-    if(nSegementIndex == -1)
+    // qCDebug(logApp) << "LogBackend::loadSegementPage called with nSegementIndex:" << nSegementIndex;
+    if(nSegementIndex == -1) {
+        qCDebug(logApp) << "LogBackend::loadSegementPage nSegementIndex is -1, returning -1";
         return -1;
+    }
 
     if (bReset) {
+        qCDebug(logApp) << "LogBackend::loadSegementPage bReset is true, clearing all datalist";
         clearAllDatalist();
     } else {
         // 搜索结果存在各分段数据只有几条的情况，因此进行分段搜索加载时，不能清空历史数据
+        qCDebug(logApp) << "LogBackend::loadSegementPage bReset is false, clearing type2LogDataOrigin and type2LogData";
         if (m_type2LogDataOrigin[m_flag].size() > SEGEMENT_SIZE)
             m_type2LogDataOrigin[m_flag].clear();
         if (m_type2LogData[m_flag].size() > SEGEMENT_SIZE)
@@ -2021,12 +2330,13 @@ int LogBackend::loadSegementPage(int nSegementIndex, bool bReset/* = true*/)
     m_type2Filter[m_flag].segementIndex = nSegementIndex;
     parse(m_type2Filter[m_flag]);
 
-    qCDebug(logBackend) << QString("load seagement index: %1").arg(nSegementIndex);
+    qCDebug(logApp) << QString("load seagement index: %1").arg(nSegementIndex);
     return nSegementIndex;
 }
 
 int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
 {
+    // qCDebug(logApp) << "LogBackend::getNextSegementIndex called with type:" << type;
     qint64 totalLineCount = 0;
     int nSegementIndex = -1;
     if (type == KERN) {
@@ -2035,6 +2345,7 @@ int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
             totalLineCount += DLDBusHandler::instance(this)->getLineCount(file);
         }
     } else if (type == Kwin) {
+        qCDebug(logApp) << "LogBackend::getNextSegementIndex Kwin";
         totalLineCount = DLDBusHandler::instance(this)->getLineCount(KWIN_TREE_DATA);
     }
 
@@ -2044,9 +2355,11 @@ int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
     qint64 currentLineCount = (m_type2Filter[type].segementIndex + (bNext ? 1 : 0)) * SEGEMENT_SIZE;
 
     if (totalLineCount > currentLineCount) {
-        if (bNext)
+        if (bNext) {
+            qCDebug(logApp) << "LogBackend::getNextSegementIndex bNext is true, incrementing segementIndex";
             nSegementIndex = ++m_type2Filter[type].segementIndex;
-        else if (currentLineCount > 0){
+        } else if (currentLineCount > 0){
+            qCDebug(logApp) << "LogBackend::getNextSegementIndex bNext is false, decrementing segementIndex";
             nSegementIndex = --m_type2Filter[type].segementIndex;
         }
     }
@@ -2056,6 +2369,7 @@ int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
 
 void LogBackend::exportLogData(const QString &filePath, const QStringList &strLabels)
 {
+    // qCDebug(logApp) << "LogBackend::exportLogData called with filePath:" << filePath;
     // 不是追加导出，则先清除原文件
     if (!m_bSegementExporting && QFile::exists(filePath)) {
         QFile::remove(filePath);
@@ -2063,13 +2377,13 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
 
     QFileInfo fi(filePath.left(filePath.lastIndexOf("/")));
     if (!fi.exists() || filePath.isEmpty()) {
-        qWarning(logBackend) <<  QString("outdir:%1 is not exists.").arg(fi.absoluteFilePath());
+        qWarning(logApp) <<  QString("outdir:%1 is not exists.").arg(fi.absoluteFilePath());
         onExportResult(false);
         return;
     }
     if (!fi.isWritable()) {
         onExportResult(false);
-        qCCritical(logBackend) <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
+        qCCritical(logApp) <<  QString("outdir:%1 is not writable.").arg(fi.absoluteFilePath());
         return;
     }
 
@@ -2079,7 +2393,7 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
                 // 分段导出时，某段未匹配到数据，也是正常的
                 return;
             } else {
-                qCWarning(logBackend) << "No matching data..";
+                qCWarning(logApp) << "No matching data..";
                 qApp->exit(-1);
                 return;
             }
@@ -2091,6 +2405,7 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
         labels = getLabels(m_flag);
 
     if ((m_flag == KERN || m_flag == Kwin)) {
+        qCDebug(logApp) << "LogBackend::exportLogData KERN or Kwin";
         // 初始化分段导出线程
         if (!m_pSegementExportThread) {
             m_pSegementExportThread = new LogSegementExportThread(this);
@@ -2109,6 +2424,7 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
 
         m_pSegementExportThread->setParameter(filePath, m_type2LogData[m_flag], labels, m_flag);
     } else {
+        qCDebug(logApp) << "LogBackend::exportLogData else";
         LogExportThread *exportThread = new LogExportThread(this);
         connect(exportThread, &LogExportThread::sigResult, this, &LogBackend::onExportResult);
         connect(exportThread, &LogExportThread::sigProgress, this, &LogBackend::onExportProgress);
@@ -2340,13 +2656,16 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
 
     m_exportFilePath = filePath;
 
-    qCInfo(logBackend) << "exporting ...";
+    qCInfo(logApp) << "exporting ...";
 }
 
 void LogBackend::segementExport()
 {
-    if (m_flag != KERN && m_flag != Kwin)
+    // qCDebug(logApp) << "LogBackend::segementExport called";
+    if (m_flag != KERN && m_flag != Kwin) {
+        qCDebug(logApp) << "LogBackend::segementExport m_flag is not KERN or Kwin, returning";
         return;
+    }
 
     // 判断是否需要分段导出
     int nSegementIndex = getNextSegementIndex(m_flag);
@@ -2379,6 +2698,7 @@ void LogBackend::segementExport()
 
 void LogBackend::stopExportFromUI()
 {
+    qCDebug(logApp) << "LogBackend::stopExportFromUI called";
     emit stopExport();
 
     //若界面正在分段导出，则停止导出
@@ -2407,9 +2727,12 @@ void LogBackend::stopExportFromUI()
 
 QList<QString> LogBackend::filterLog(const QString &iSearchStr, const QList<QString> &iList)
 {
+    // qCDebug(logApp) << "LogBackend::filterLog called with iSearchStr:" << iSearchStr;
     QList<QString> rsList;
-    if (iSearchStr.isEmpty())
+    if (iSearchStr.isEmpty()) {
+        qCDebug(logApp) << "LogBackend::filterLog iSearchStr is empty, returning iList";
         return iList;
+    }
 
     QJsonParseError parseError;
     for (auto data : iList) {
@@ -2430,6 +2753,7 @@ QList<QString> LogBackend::filterLog(const QString &iSearchStr, const QList<QStr
 
 BUTTONID LogBackend::period2Enum(const QString &period)
 {
+    // qCDebug(logApp) << "LogBackend::period2Enum called with period:" << period;
     BUTTONID id = INVALID;
     if (period == "all")
         id = ALL;
@@ -2449,6 +2773,7 @@ BUTTONID LogBackend::period2Enum(const QString &period)
 
 int LogBackend::level2Id(const QString &level)
 {
+    // qCDebug(logApp) << "LogBackend::level2Enum called with level:" << level;
     int lId = -2;
     if (level == "debug" || level == "7")
         lId = 7;
@@ -2476,6 +2801,7 @@ int LogBackend::level2Id(const QString &level)
 
 DNFPRIORITY LogBackend::dnfLevel2Id(const QString &level)
 {
+    // qCDebug(logApp) << "LogBackend::dnfLevel2Id called with level:" << level;
     DNFPRIORITY eId = DNFINVALID;
     if (level == "trace" || level == "6")
         eId = TRACE;
@@ -2501,6 +2827,7 @@ DNFPRIORITY LogBackend::dnfLevel2Id(const QString &level)
 
 int LogBackend::normal2eventType(const QString &eventType)
 {
+    // qCDebug(logApp) << "LogBackend::normal2eventType called with eventType:" << eventType;
     int type = -1;
     if (eventType == "all" || eventType == "0")
         type = 0;
@@ -2516,6 +2843,7 @@ int LogBackend::normal2eventType(const QString &eventType)
 
 int LogBackend::audit2eventType(const QString &eventType)
 {
+    // qCDebug(logApp) << "LogBackend::audit2eventType called with eventType:" << eventType;
     int type = -1;
     if (eventType == "all" || eventType == "0")
         type = 0;
@@ -2537,6 +2865,7 @@ int LogBackend::audit2eventType(const QString &eventType)
 
 TIME_RANGE LogBackend::getTimeRange(const BUTTONID &periodId)
 {
+    // qCDebug(logApp) << "LogBackend::getTimeRange called with periodId:" << periodId;
     TIME_RANGE tr;
 
     QDateTime dtStart = QDateTime::currentDateTime();
@@ -2589,6 +2918,7 @@ TIME_RANGE LogBackend::getTimeRange(const BUTTONID &periodId)
 
 QString LogBackend::getApplogPath(const QString &appName)
 {
+    // qCDebug(logApp) << "LogBackend::getApplogPath called with appName:" << appName;
     QString logPath;
     QMap<QString, QString> appData = LogApplicationHelper::instance()->getMap();
     for (auto &it2 : appData.toStdMap()) {
@@ -2606,6 +2936,7 @@ QString LogBackend::getApplogPath(const QString &appName)
 
 QStringList LogBackend::getLabels(const LOG_FLAG &flag)
 {
+    // qCDebug(logApp) << "LogBackend::getLabels called with flag:" << flag;
     QStringList labels = QStringList();
     switch (flag) {
     case JOURNAL: {
@@ -2704,6 +3035,7 @@ QStringList LogBackend::getLabels(const LOG_FLAG &flag)
 
 bool LogBackend::hasMatchedData(const LOG_FLAG &flag)
 {
+    // qCDebug(logApp) << "LogBackend::hasMatchedData called with flag:" << flag;
     bool bMatchedData = false;
     switch (flag) {
     case JOURNAL: {
@@ -2788,6 +3120,7 @@ bool LogBackend::hasMatchedData(const LOG_FLAG &flag)
 
 void LogBackend::parseCoredumpDetailInfo(QList<LOG_MSG_COREDUMP> &list)
 {
+    qCDebug(logApp) << "LogBackend::parseCoredumpDetailInfo called";
     QProcess process;
     for (auto &data : list) {
         QDateTime coredumpTime = QDateTime::fromString(data.dateTime, "yyyy-MM-dd hh:mm:ss");
@@ -2826,12 +3159,12 @@ void LogBackend::parseCoredumpDetailInfo(QList<LOG_MSG_COREDUMP> &list)
                 if (data.exe == KWAYLAND_EXE_PATH) {
                     data.appLog = DLDBusHandler::instance()->readLogLinesInRange(QString("%1/.kwin-old.log").arg(userHomePath), 0, KWIN_LASTLINE_NUM).join('\n');
                     if (!data.appLog.isEmpty())
-                        qCInfo(logBackend) << QString("kwin crash log:%1").arg(data.appLog);
+                        qCInfo(logApp) << QString("kwin crash log:%1").arg(data.appLog);
                 } else if (data.exe == XWAYLAND_EXE_PATH) {
                     data.appLog = DLDBusHandler::instance()->readLogLinesInRange(QString("%1/.xwayland.log.old").arg(userHomePath), KWIN_LASTLINE_NUM).join('\n');
                 }
             } else {
-                qCWarning(logBackend) << QString("uid:%1 homepath is empty.").arg(userId);
+                qCWarning(logApp) << QString("uid:%1 homepath is empty.").arg(userId);
             }
         }
     }

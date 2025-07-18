@@ -10,6 +10,9 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QEvent>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 /**
  * @brief LogApplication::LogApplication 构造函数
@@ -18,7 +21,7 @@
  */
 LogApplication::LogApplication(int &argc, char **argv): DApplication(argc, argv)
 {
-
+    qCDebug(logApp) << "LogApplication constructor called with argc:" << argc;
 }
 
 /**
@@ -27,6 +30,7 @@ LogApplication::LogApplication(int &argc, char **argv): DApplication(argc, argv)
  */
 void LogApplication::setMainWindow(LogCollectorMain *iMainWindow)
 {
+    qCDebug(logApp) << "LogApplication::setMainWindow called with window:" << iMainWindow;
     m_mainWindow = iMainWindow;
 }
 
@@ -38,14 +42,18 @@ void LogApplication::setMainWindow(LogCollectorMain *iMainWindow)
  */
 bool LogApplication::notify(QObject *obj, QEvent *evt)
 {
+    // qCDebug(logApp) << "LogApplication::notify called with obj:" << obj << "and event type:" << evt->type();
     switch (evt->type()) {
     case QEvent::KeyPress: {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(evt);
         //全局截获tab按键事件，调用mainwindow的对应函数去处理tab按键控件间切换
         if (keyEvent->key() == Qt::Key_Tab || keyEvent->key() == Qt::Key_Backtab) {
+            // qCDebug(logApp) << "LogApplication::notify handling Tab/Backtab key event";
             if (m_mainWindow) {
+                // qCDebug(logApp) << "Forwarding tab event to main window";
                 bool rs =  m_mainWindow->handleApplicationTabEventNotify(obj, keyEvent);
                 if (rs) {
+                    qCDebug(logApp) << "Tab event handled by main window";
                     return rs;
                 }
             }
