@@ -18,11 +18,14 @@
 #include <QTreeView>
 #include <QVBoxLayout>
 #include <QPainterPath>
+#include <QLoggingCategory>
 
 #include "structdef.h"
 #include <sys/utsname.h>
 
 DWIDGET_USE_NAMESPACE
+
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 #define LABEL_MIN_WIDTH 120
 
@@ -34,7 +37,7 @@ logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
     : DWidget(parent)
     , m_textBrowser(new logDetailEdit(this))
 {
-    qDebug() << "logDetailInfoWidget constructor called";
+    qCDebug(logApp) << "logDetailInfoWidget constructor called";
     initUI();
     //此控件不需要有焦点
     setFocusPolicy(Qt::NoFocus);
@@ -45,7 +48,7 @@ logDetailInfoWidget::logDetailInfoWidget(QWidget *parent)
  */
 void logDetailInfoWidget::cleanText()
 {
-    qDebug() << "Cleaning all text widgets";
+    qCDebug(logApp) << "Cleaning all text widgets";
     m_dateTime->hide();
 
     m_userName->hide();
@@ -81,7 +84,7 @@ void logDetailInfoWidget::cleanText()
  */
 void logDetailInfoWidget::hideLine(bool isHidden)
 {
-    qDebug() << "Setting horizontal line visibility:" << !isHidden;
+    qCDebug(logApp) << "Setting horizontal line visibility:" << !isHidden;
     m_hline->setHidden(isHidden);
 }
 
@@ -90,7 +93,7 @@ void logDetailInfoWidget::hideLine(bool isHidden)
  */
 void logDetailInfoWidget::initUI()
 {
-    qDebug() << "Initializing UI components";
+    qCDebug(logApp) << "Initializing UI components";
     // init pointer
     m_daemonName = new DLabel(this);
     QFont font;
@@ -221,6 +224,7 @@ void logDetailInfoWidget::initUI()
 
 void logDetailInfoWidget::setTextCustomSize(QWidget *w)
 {
+    qCDebug(logApp) << "logDetailInfoWidget::setTextCustomSize called for widget:" << w;
     DFontSizeManager::instance()->bind(w, DFontSizeManager::T8);
 }
 
@@ -230,6 +234,7 @@ void logDetailInfoWidget::setTextCustomSize(QWidget *w)
  */
 void logDetailInfoWidget::paintEvent(QPaintEvent *event)
 {
+    // qCDebug(logApp) << "logDetailInfoWidget::paintEvent called";
     QPainter painter(this);
     //抗锯齿
     painter.setRenderHint(QPainter::Antialiasing, true);
@@ -280,17 +285,22 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
                                          QString status, QString action, QString uname,
                                          QString event)
 {
+    qCDebug(logApp) << "logDetailInfoWidget::fillDetailInfo called with daemon:" << deamonName << "user:" << usrName;
     m_hline->show();
     m_errorLabel->hide();
     if (deamonName.isEmpty()) {
+        qCDebug(logApp) << "deamonName is empty";
         m_daemonName->hide();
     } else {
+        qCDebug(logApp) << "deamonName is not empty";
         m_daemonName->show();
         m_daemonName->setText(deamonName);
     }
     if (!level.isValid()) {
+        qCDebug(logApp) << "level is not valid";
         m_level->hide();
     } else {
+        qCDebug(logApp) << "level is valid";
         QIcon icon =  level.siblingAtColumn(0).data(Qt::DecorationRole).value<QIcon>();
         m_level->setIcon(icon);
 
@@ -299,8 +309,10 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     }
 
     if (dateTime.isEmpty()) {
+        qCDebug(logApp) << "dateTime is empty";
         m_dateTime->hide();
     } else {
+        qCDebug(logApp) << "dateTime is not empty";
         m_dateTime->show();
         QStringList dtlist = dateTime.split(".");
         if (dtlist.count() == 2 && deamonName != "Xorg")
@@ -310,36 +322,44 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
     }
 
     if (usrName.isEmpty()) {
+        qCDebug(logApp) << "usrName is empty";
         m_userName->hide();
         m_userLabel->hide();
     } else {
+        qCDebug(logApp) << "usrName is not empty";
         m_userName->show();
         m_userLabel->show();
         m_userName->setText(usrName);
     }
 
     if (pid.isEmpty()) {
+        qCDebug(logApp) << "pid is empty";
         m_pid->hide();
         m_pidLabel->hide();
     } else {
+        qCDebug(logApp) << "pid is not empty";
         m_pid->show();
         m_pidLabel->show();
         m_pid->setText(pid);
     }
 
     if (status.isEmpty()) {
+        qCDebug(logApp) << "status is empty";
         m_status->hide();
         m_statusLabel->hide();
     } else {
+        qCDebug(logApp) << "status is not empty";
         m_status->show();
         m_statusLabel->show();
         m_status->setText(status);
     }
 
     if (action.isEmpty()) {
+        qCDebug(logApp) << "action is empty";
         m_action->hide();
         m_actionLabel->hide();
     } else {
+        qCDebug(logApp) << "action is not empty";
         m_action->show();
         m_actionLabel->show();
         m_action->setText(action);
@@ -347,17 +367,21 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
 
     // add by Airy
     if (uname.isEmpty()) {
+        qCDebug(logApp) << "uname is empty";
         m_name->hide();
         m_nameLabel->hide();
     } else {
+        qCDebug(logApp) << "uname is not empty";
         m_name->show();        // add by Airy
         m_nameLabel->show();   // add by Airy
         m_name->setText(uname);
     }
     if (event.isEmpty()) {
+        qCDebug(logApp) << "event is empty";
         m_event->hide();
         m_eventLabel->hide();
     } else {
+        qCDebug(logApp) << "event is not empty";
         m_event->show();       // add by Airy
         m_eventLabel->show();  // add by Airy
         m_event->setText(event);
@@ -371,6 +395,7 @@ void logDetailInfoWidget::fillDetailInfo(QString deamonName, QString usrName, QS
 
 void logDetailInfoWidget::fillOOCDetailInfo(const QString &data, const int error)
 {
+    qCDebug(logApp) << "logDetailInfoWidget::fillOOCDetailInfo called with error:" << error;
     m_daemonName->hide();
     m_dateTime->hide();
     m_userName->hide();
@@ -391,10 +416,12 @@ void logDetailInfoWidget::fillOOCDetailInfo(const QString &data, const int error
 
     m_bottomLayer->setContentsMargins(20, 10, 0, 0);
     if (error == 0) {
+        qCDebug(logApp) << "Showing text browser with data";
         m_textBrowser->setText(data);
         m_textBrowser->show();
         m_errorLabel->hide();
     } else {
+        qCDebug(logApp) << "Showing error label with data";
         m_textBrowser->hide();
         m_errorLabel->show();
         m_errorLabel->setText(data);
@@ -410,6 +437,7 @@ void logDetailInfoWidget::fillOOCDetailInfo(const QString &data, const int error
 void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardItemModel *pModel,
                                           const QString &data, const int error)
 {
+    qCDebug(logApp) << "logDetailInfoWidget::slot_DetailInfo called with index row:" << index.row() << "error:" << error;
     cleanText();
 
     if (!index.isValid()) {
@@ -433,32 +461,38 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
     index.row();
     //按照选择的当前日志类型显示具体的信息
     if (dataStr.contains(DPKG_TABLE_DATA)) {
-
+        qCDebug(logApp) << "Displaying dpkg log details";
         fillDetailInfo("dpkg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
                        index.siblingAtColumn(1).data().toString(), "",
                        index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(XORG_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying Xorg log details";
         fillDetailInfo("Xorg", hostname, "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
                        index.siblingAtColumn(1).data().toString());
     } else if (dataStr.contains(BOOT_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying Boot log details";
         fillDetailInfo("Boot", hostname, "", "", QModelIndex(),
                        index.siblingAtColumn(1).data().toString(),
                        index.siblingAtColumn(0).data().toString());
     } else if (dataStr.contains(KERN_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying KERN log details";
         fillDetailInfo(index.siblingAtColumn(2).data().toString(),
                        /*m_pModel->item(index.row(), 1)->text()*/ hostname, "",
                        index.siblingAtColumn(0).data().toString(), QModelIndex(),
                        index.siblingAtColumn(3).data().toString());
     } else if (dataStr.contains(JOUR_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying JOUR log details";
         fillDetailInfo(index.siblingAtColumn(1).data().toString(),
                        /*m_pModel->item(index.row(), 4)->text()*/ hostname,
                        index.siblingAtColumn(5).data().toString(),
                        index.siblingAtColumn(2).data().toString(), index,
                        index.siblingAtColumn(3).data().toString());
     } else if (dataStr.contains(APP_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying APP log details";
         fillDetailInfo(data, hostname, "", index.siblingAtColumn(1).data().toString(), index,
                        index.siblingAtColumn(3).data(Qt::UserRole + 99).toString());
     } else if (dataStr.contains(LAST_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying LAST log details";
         //        fillDetailInfo("Event", m_pModel->item(index.row(), 0)->text(), "",
         //                       m_pModel->item(index.row(), 2)->text(), QModelIndex(),
         //                       m_pModel->item(index.row(), 4)->text());
@@ -479,23 +513,29 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        index.siblingAtColumn(0).data().toString());
         // modified by Airy
     } else if (dataStr.contains(KWIN_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying KWIN log details";
         fillDetailInfo("Kwin", hostname, "", "", QModelIndex(),
                        index.siblingAtColumn(0).data().toString());
     } else if (dataStr.contains(BOOT_KLU_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying BOOT_KLU log details";
         fillDetailInfo(index.siblingAtColumn(1).data().toString(),
                        /*m_pModel->item(index.row(), 4)->text()*/ hostname,
                        index.siblingAtColumn(5).data().toString(),
                        index.siblingAtColumn(2).data().toString(), index,
                        index.siblingAtColumn(3).data().toString());
     } else if (dataStr.contains(DNF_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying DNF log details";
         fillDetailInfo("dnf", hostname, "", index.siblingAtColumn(1).data().toString(), index,
                        index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(DMESG_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying DMESG log details";
         fillDetailInfo("kernel", hostname, "", index.siblingAtColumn(1).data().toString(), index,
                        index.siblingAtColumn(2).data().toString());
     } else if (dataStr.contains(OOC_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying OOC log details";
         fillOOCDetailInfo(data, error);
     } else if (dataStr.contains(AUDIT_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying AUDIT log details";
         fillDetailInfo("audit", hostname, "", index.siblingAtColumn(1).data().toString(), QModelIndex(),
                        index.siblingAtColumn(4).data().toString(),
                        index.siblingAtColumn(3).data().toString(),
@@ -503,6 +543,7 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        "",
                        index.siblingAtColumn(0).data().toString());
     } else if (dataStr.contains(COREDUMP_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying COREDUMP log details";
         fillDetailInfo(index.siblingAtColumn(3).data().toString(), hostname, "", index.siblingAtColumn(1).data().toString(), QModelIndex(),
                        index.siblingAtColumn(4).data(Qt::UserRole + 2).toString(),
                        index.siblingAtColumn(2).data().toString(),

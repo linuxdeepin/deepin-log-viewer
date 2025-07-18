@@ -37,11 +37,8 @@
 #endif
 using namespace PolkitQt1;
 
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logUtils, "org.deepin.log.viewer.utils")
-#else
-Q_LOGGING_CATEGORY(logUtils, "org.deepin.log.viewer.utils", QtInfoMsg)
-#endif
+Q_DECLARE_LOGGING_CATEGORY(logApp)
+
 const QString DCONFIG_APPID = "org.deepin.log.viewer";
 
 QHash<QString, QPixmap> Utils::m_imgCacheHash;
@@ -64,24 +61,25 @@ const int COREDUMP_TIME_THRESHOLD = 3;
 Utils::Utils(QObject *parent)
     : QObject(parent)
 {
-    qCDebug(logUtils) << "Utils constructor";
+    qCDebug(logApp) << "Utils constructor";
 }
 
 Utils::~Utils()
 {
+    qCDebug(logApp) << "Utils destructor called";
 }
 
 QString Utils::getQssContent(const QString &filePath)
 {
-    qCDebug(logUtils) << "Loading QSS content from:" << filePath;
+    qCDebug(logApp) << "Loading QSS content from:" << filePath;
     QFile file(filePath);
     QString qss;
 
     if (file.open(QIODevice::ReadOnly)) {
         qss = file.readAll();
-        qCDebug(logUtils) << "Successfully loaded QSS content";
+        qCDebug(logApp) << "Successfully loaded QSS content";
     } else {
-        qCWarning(logUtils) << "Failed to open QSS file:" << filePath << file.errorString();
+        qCWarning(logApp) << "Failed to open QSS file:" << filePath << file.errorString();
     }
 
     return qss;
@@ -89,50 +87,59 @@ QString Utils::getQssContent(const QString &filePath)
 
 QString Utils::getConfigPath()
 {
+    qCDebug(logApp) << "Getting config path";
     QDir dir(QDir(Utils::homePath + "/.config")
              .filePath(qApp->organizationName()));
 
-    return dir.filePath(qApp->applicationName());
+    QString path = dir.filePath(qApp->applicationName());
+    qCDebug(logApp) << "Config path:" << path;
+    return path;
 }
 
 QString Utils::getAppDataPath()
 {
+    qCDebug(logApp) << "Getting app data path";
     QDir dir(QDir(Utils::homePath + "/.local/share")
              .filePath(qApp->organizationName()));
 
-    return dir.filePath(qApp->applicationName());
+    QString path = dir.filePath(qApp->applicationName());
+    qCDebug(logApp) << "App data path:" << path;
+    return path;
 }
 
 bool Utils::isFontMimeType(const QString &filePath)
 {
-    qCDebug(logUtils) << "Checking font MIME type for:" << filePath;
+    qCDebug(logApp) << "Checking font MIME type for:" << filePath;
     const QString mimeName = QMimeDatabase().mimeTypeForFile(filePath).name();
     
     bool isFont = mimeName.startsWith("font/") || mimeName.startsWith("application/x-font");
-    qCDebug(logUtils) << "MIME type:" << mimeName << "isFont:" << isFont;
+    qCDebug(logApp) << "MIME type:" << mimeName << "isFont:" << isFont;
     
     return isFont;
 }
 
 bool Utils::isTextFileType(const QString &filePath)
 {
+    qCDebug(logApp) << "Checking text file type for:" << filePath;
     QMimeDatabase db;
     QMimeType mime = db.mimeTypeForFile(filePath);
     //标准文本文件和空白无后缀文件均计入文本文件范围
-    if (mime.inherits("text/plain") || mime.inherits("application/x-zerosize")) {
-        return true;
-    }
-    return false;
+    bool isText = mime.inherits("text/plain") || mime.inherits("application/x-zerosize");
+    qCDebug(logApp) << "MIME type:" << mime.name() << "isText:" << isText;
+    return isText;
 }
 
 QString Utils::suffixList()
 {
+    qCDebug(logApp) << "Getting suffix list";
     return QString("Font Files (*.ttf *.ttc *.otf)");
 }
 
 QPixmap Utils::renderSVG(const QString &filePath, const QSize &size)
 {
+    qCDebug(logApp) << "Rendering SVG:" << filePath << "size:" << size;
     if (m_imgCacheHash.contains(filePath)) {
+        qCDebug(logApp) << "Using cached image";
         return m_imgCacheHash.value(filePath);
     }
 
@@ -142,22 +149,27 @@ QPixmap Utils::renderSVG(const QString &filePath, const QSize &size)
     reader.setFileName(filePath);
 
     if (reader.canRead()) {
+        qCDebug(logApp) << "Reading image with scaled size";
         const qreal ratio = qApp->devicePixelRatio();
         reader.setScaledSize(size * ratio);
         pixmap = QPixmap::fromImage(reader.read());
         pixmap.setDevicePixelRatio(ratio);
     } else {
+        qCDebug(logApp) << "Loading image directly";
         pixmap.load(filePath);
     }
 
     m_imgCacheHash.insert(filePath, pixmap);
+    qCDebug(logApp) << "Image cached and returned";
 
     return pixmap;
 }
 
 QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
 {
+    qCDebug(logApp) << "Loading font family from file:" << fontFileName;
     if (m_fontNameCache.contains(fontFileName)) {
+        qCDebug(logApp) << "Using cached font name";
         return m_fontNameCache.value(fontFileName);
     }
 
@@ -165,6 +177,7 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
 
     QFile fontFile(fontFileName);
     if (!fontFile.open(QIODevice::ReadOnly)) {
+        qCWarning(logApp) << "Failed to open font file:" << fontFileName;
         return fontFamilyName;
     }
 
@@ -172,6 +185,9 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
     QStringList loadedFontFamilies = QFontDatabase::applicationFontFamilies(loadedFontID);
     if (!loadedFontFamilies.empty()) {
         fontFamilyName = loadedFontFamilies.at(0);
+        qCDebug(logApp) << "Font family loaded:" << fontFamilyName;
+    } else {
+        qCWarning(logApp) << "No font families found in file";
     }
     fontFile.close();
 
@@ -181,6 +197,7 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
 
 QString Utils::getReplaceColorStr(const char *d)
 {
+    qCDebug(logApp) << "Replacing color strings in text";
     QByteArray byteChar(d);
     byteChar = replaceEmptyByteArray(byteChar);
     QString d_str = QString(byteChar);
@@ -196,6 +213,7 @@ QString Utils::getReplaceColorStr(const char *d)
  */
 QByteArray Utils::replaceEmptyByteArray(const QByteArray &iReplaceStr)
 {
+    // qCDebug(logApp) << "Replacing empty bytes in array";
     QByteArray byteOutput = iReplaceStr;
     //\u0000是空字符，\x01是标题开始，出现于系统日志部分进程进程名称最后一个字符，不替换英文情况下显示错误
     return byteOutput.replace('\u0000', "").replace("\x01", "");
@@ -207,45 +225,53 @@ QByteArray Utils::replaceEmptyByteArray(const QByteArray &iReplaceStr)
  */
 Utils::CommandErrorType Utils::isErroCommand(const QString &str)
 {
+    qCDebug(logApp) << "Checking command error type for:" << str;
     if (str.contains("权限") || str.contains("permission", Qt::CaseInsensitive)) {
+        qCDebug(logApp) << "Permission error detected";
         return PermissionError;
     }
     if (str.contains("请重试") || str.contains("retry", Qt::CaseInsensitive)) {
+        qCDebug(logApp) << "Retry error detected";
         return RetryError;
     }
+    qCDebug(logApp) << "No error detected";
     return NoError;
 }
 
 bool Utils::checkAndDeleteDir(const QString &iFilePath)
 {
-    qCDebug(logUtils) << "Checking and deleting directory/file:" << iFilePath;
+    qCDebug(logApp) << "Checking and deleting directory/file:" << iFilePath;
     QFileInfo tempFileInfo(iFilePath);
 
     if (tempFileInfo.isDir()) {
         bool result = deleteDir(iFilePath);
-        qCDebug(logUtils) << "Directory deletion result:" << result;
+        qCDebug(logApp) << "Directory deletion result:" << result;
         return result;
     } else if (tempFileInfo.isFile()) {
         QFile deleteFile(iFilePath);
         bool result = deleteFile.remove();
-        qCDebug(logUtils) << "File deletion result:" << result;
+        qCDebug(logApp) << "File deletion result:" << result;
         return result;
     }
     
-    qCWarning(logUtils) << "Path is neither directory nor file:" << iFilePath;
+    qCWarning(logApp) << "Path is neither directory nor file:" << iFilePath;
     return false;
 }
 
 bool Utils::deleteDir(const QString &iFilePath)
 {
+    qCDebug(logApp) << "Deleting directory:" << iFilePath;
     QDir directory(iFilePath);
     if (!directory.exists()) {
+        qCDebug(logApp) << "Directory does not exist";
         return true;
     }
 
     QString srcPath = QDir::toNativeSeparators(iFilePath);
-    if (!srcPath.endsWith(QDir::separator()))
+    if (!srcPath.endsWith(QDir::separator())) {
+        qCDebug(logApp) << "Adding separator to path";
         srcPath += QDir::separator();
+    }
 
     QStringList fileNames = directory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
     bool error = false;
@@ -273,24 +299,29 @@ bool Utils::deleteDir(const QString &iFilePath)
 
 void Utils::replaceColorfulFont(QString *iStr)
 {
+    // qCDebug(logApp) << "Replacing colorful font in string";
     iStr->replace(REG_EXP("[[0-9]{1,2}m"), "");
 }
 
 bool Utils::isWayland()
 {
+    // qCDebug(logApp) << "Checking if Wayland is enabled";
     auto e = QProcessEnvironment::systemEnvironment();
     QString XDG_SESSION_TYPE = e.value(QStringLiteral("XDG_SESSION_TYPE"));
     QString WAYLAND_DISPLAY = e.value(QStringLiteral("WAYLAND_DISPLAY"));
 
     if (XDG_SESSION_TYPE == QLatin1String("wayland") || WAYLAND_DISPLAY.contains(QLatin1String("wayland"), Qt::CaseInsensitive)) {
+        qCDebug(logApp) << "Wayland is enabled";
         return true;
     } else {
+        qCDebug(logApp) << "Wayland is not enabled";
         return false;
     }
 }
 
 bool Utils::sleep(unsigned int msec)
 {
+    // qCDebug(logApp) << "Sleeping for:" << msec << "milliseconds";
     QTime dieTime = QTime::currentTime().addMSecs(static_cast<int>(msec));
 
     while (QTime::currentTime() < dieTime) {
@@ -302,8 +333,10 @@ bool Utils::sleep(unsigned int msec)
 
 QString Utils::mkMutiDir(const QString &path)
 {
+    qCDebug(logApp) << "Creating multi-level directory:" << path;
     QDir dir(path);
     if (path.isEmpty() || dir.exists()) {
+        qCDebug(logApp) << "Directory already exists";
         return path;
     }
     QString parentDir = mkMutiDir(path.mid(0, path.lastIndexOf('/')));
@@ -312,26 +345,27 @@ QString Utils::mkMutiDir(const QString &path)
     if (!dirname.isEmpty()) {
         bool bRet = parentPath.mkpath(dirname);
         if (!bRet)
-            qCWarning(logUtils) << QString("mkpath: unable to create directory '%1' in path: '%2/', please confirm if the file exists.").arg(dirname).arg(parentDir);
+            qCWarning(logApp) << QString("mkpath: unable to create directory '%1' in path: '%2/', please confirm if the file exists.").arg(dirname).arg(parentDir);
     }
     return parentDir + "/" + dirname;
 }
 
 bool Utils::checkAuthorization(const QString &actionId, qint64 applicationPid)
 {
-    qCDebug(logUtils) << "Checking authorization for action:" << actionId << "pid:" << applicationPid;
+    qCDebug(logApp) << "Checking authorization for action:" << actionId << "pid:" << applicationPid;
     Authority::Result result;
 
     result = Authority::instance()->checkAuthorizationSync(actionId, UnixProcessSubject(applicationPid),
                                                            Authority::AllowUserInteraction);
     bool authorized = result == Authority::Yes;
-    qCDebug(logUtils) << "Authorization result:" << authorized;
+    qCDebug(logApp) << "Authorization result:" << authorized;
     
     return authorized;
 }
 
 QString Utils::osVersion()
 {
+    qCDebug(logApp) << "Getting OS version";
     QProcess *unlock = new QProcess;
     unlock->start("lsb_release", {"-r"});
     unlock->waitForFinished();
@@ -355,6 +389,7 @@ QString Utils::osVersion()
 
 QString Utils::auditType(const QString &eventType)
 {
+    // qCDebug(logApp) << "Getting audit type for event type:" << eventType;
     QMapIterator<QString, QStringList> it(m_mapAuditType2EventType);
     while (it.hasNext()) {
         it.next();
@@ -367,6 +402,7 @@ QString Utils::auditType(const QString &eventType)
 
 double Utils::convertToMB(quint64 cap, const int size/* = 1024*/)
 {
+    // qCDebug(logApp) << "Converting capacity to MB:" << cap;
     static QString type[] = {" B", " KB", " MB"};
 
     double dc = cap;
@@ -382,10 +418,11 @@ double Utils::convertToMB(quint64 cap, const int size/* = 1024*/)
 
 QString Utils::getUserNamebyUID(uint uid)
 {
+    qCDebug(logApp) << "Getting user name by UID:" << uid;
     struct passwd * pwd;
     pwd = getpwuid(uid);
     if (nullptr == pwd) {
-        qCWarning(logUtils) << QString("unknown uid:%1").arg(uid);
+        qCWarning(logApp) << QString("unknown uid:%1").arg(uid);
         return "";
     }
 
@@ -394,10 +431,11 @@ QString Utils::getUserNamebyUID(uint uid)
 
 QString Utils::getUserHomePathByUID(uint uid)
 {
+    qCDebug(logApp) << "Getting user home path by UID:" << uid;
     struct passwd * pwd;
     pwd = getpwuid(uid);
     if (nullptr == pwd) {
-        qCWarning(logUtils) << QString("unknown uid:%1").arg(uid);
+        qCWarning(logApp) << QString("unknown uid:%1").arg(uid);
         return "";
     }
 
@@ -406,6 +444,7 @@ QString Utils::getUserHomePathByUID(uint uid)
 
 QString Utils::getCurrentUserName()
 {
+    // qCDebug(logApp) << "Getting current user name";
     // 获取当前系统用户名
     struct passwd* pwd = getpwuid(getuid());
     return pwd->pw_name;
@@ -413,7 +452,7 @@ QString Utils::getCurrentUserName()
 
 bool Utils::isCoredumpctlExist()
 {
-    qCDebug(logUtils) << "Checking if coredumpctl exists";
+    qCDebug(logApp) << "Checking if coredumpctl exists";
     bool isCoredumpctlExist = false;
     QDir dir("/usr/bin");
     QStringList list = dir.entryList(QStringList() << (QString("coredumpctl") + "*"), QDir::NoDotAndDotDot | QDir::Files);
@@ -421,17 +460,18 @@ bool Utils::isCoredumpctlExist()
     for (int i = 0; i < list.count(); i++) {
         if("coredumpctl" == list[i]) {
             isCoredumpctlExist = true;
-            qCDebug(logUtils) << "Found coredumpctl";
+            qCDebug(logApp) << "Found coredumpctl";
             break;
         }
     }
     
-    qCDebug(logUtils) << "coredumpctl exists:" << isCoredumpctlExist;
+    qCDebug(logApp) << "coredumpctl exists:" << isCoredumpctlExist;
     return isCoredumpctlExist;
 }
 
 QString Utils::appName(const QString &filePath)
 {
+    qCDebug(logApp) << "Getting app name for file path:" << filePath;
     QString ret;
     if (filePath.isEmpty())
         return ret;
@@ -456,6 +496,7 @@ QString Utils::appName(const QString &filePath)
 
 void Utils::resetToNormalAuth(const QString &path)
 {
+    qCDebug(logApp) << "Resetting to normal auth for path:" << path;
     QFileInfo fi(path);
     if (!path.isEmpty() && fi.exists()) {
         qInfo() << "resetToNormalAuth: " << path;
@@ -471,6 +512,7 @@ void Utils::resetToNormalAuth(const QString &path)
 
 QList<LOG_REPEAT_COREDUMP_INFO> Utils::countRepeatCoredumps(qint64 timeBegin, qint64 timeEnd)
 {
+    qCDebug(logApp) << "Counting repeat coredumps from:" << timeBegin << "to:" << timeEnd;
     QList<LOG_REPEAT_COREDUMP_INFO> result;
     QString data = DLDBusHandler::instance()->executeCmd("coredumpctl-list");
     QStringList strList = data.split('\n', SKIP_EMPTY_PARTS);
@@ -518,6 +560,7 @@ QList<LOG_REPEAT_COREDUMP_INFO> Utils::countRepeatCoredumps(qint64 timeBegin, qi
 
 QStringList Utils::getRepeatCoredumpExePaths()
 {
+    qCDebug(logApp) << "Getting repeat coredump exe paths";
     QFile file(COREDUMP_REPEAT_CONFIG_PATH);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return QStringList();
@@ -531,6 +574,7 @@ QStringList Utils::getRepeatCoredumpExePaths()
 
 void Utils::updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &infos)
 {
+    qCDebug(logApp) << "Updating repeat coredump exe paths";
     // 每隔24小时强制清空一次名单内容，以便重复的崩溃exe路径是最新的
     QFileInfo fi(COREDUMP_REPEAT_CONFIG_PATH);
     if (fi.birthTime().daysTo(QDateTime::currentDateTime()) >= 1) {
@@ -563,7 +607,7 @@ void Utils::updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &
 
     QFile file(COREDUMP_REPEAT_CONFIG_PATH);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qCWarning(logUtils) << "failed to open coredump repeat config file:" << COREDUMP_REPEAT_CONFIG_PATH;
+        qCWarning(logApp) << "failed to open coredump repeat config file:" << COREDUMP_REPEAT_CONFIG_PATH;
         return;
     }
 
@@ -575,6 +619,7 @@ void Utils::updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &
 
 static QByteArray processCmdWithArgs(const QString &cmdStr, const QString &workPath, const QStringList &args)
 {
+    qCDebug(logApp) << "Executing command:" << cmdStr << "with arguments:" << args << "in working directory:" << workPath;
     QProcess process;
     if (!workPath.isEmpty())
         process.setWorkingDirectory(workPath);
@@ -589,7 +634,7 @@ static QByteArray processCmdWithArgs(const QString &cmdStr, const QString &workP
     int nExitCode = process.exitCode();
     bool bRet = (process.exitStatus() == QProcess::NormalExit && nExitCode == 0);
     if (!bRet) {
-        qDebug() << "run cmd error, caused by:" << process.errorString() << "output:" << outPut;
+        qCDebug(logApp) << "run cmd error, caused by:" << process.errorString() << "output:" << outPut;
         return QByteArray();
     }
     return outPut;
@@ -597,6 +642,7 @@ static QByteArray processCmdWithArgs(const QString &cmdStr, const QString &workP
 
 QByteArray Utils::executeCmd(const QString &cmdStr, const QStringList &args, const QString &workPath)
 {
+    qCDebug(logApp) << "Executing command:" << cmdStr << "with arguments:" << args << "in working directory:" << workPath;
     return processCmdWithArgs(cmdStr, workPath,  args);
 }
 
@@ -625,7 +671,7 @@ void LoggerRules::initLoggerRules()
     connect(m_config, &Dtk::Core::DConfig::valueChanged, this, [this](const QString &key) {
       if (key == "log_rules") {
           setRules(m_config->value(key).toByteArray());
-          qCDebug(logUtils) << "value changed:" << key;
+          qCDebug(logApp) << "value changed:" << key;
       }
     });
 }

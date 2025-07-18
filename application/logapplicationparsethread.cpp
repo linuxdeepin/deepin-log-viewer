@@ -18,11 +18,7 @@
 
 #include <QLoggingCategory>
 
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logApp, "org.deepin.log.viewer.parse.app.work")
-#else
-Q_LOGGING_CATEGORY(logApp, "org.deepin.log.viewer.parse.app.work", QtInfoMsg)
-#endif
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 DWIDGET_USE_NAMESPACE
 
@@ -36,6 +32,7 @@ int LogApplicationParseThread::thread_count = 0;
 LogApplicationParseThread::LogApplicationParseThread(QObject *parent)
     : QThread(parent)
 {
+    qCDebug(logApp) << "LogApplicationParseThread constructor called";
     qRegisterMetaType<QList<LOG_MSG_APPLICATOIN> >("QList<LOG_MSG_APPLICATOIN>");
 
     initMap();
@@ -53,6 +50,7 @@ LogApplicationParseThread::LogApplicationParseThread(QObject *parent)
  */
 LogApplicationParseThread::~LogApplicationParseThread()
 {
+    qCDebug(logApp) << "LogApplicationParseThread destructor called";
     m_appList.clear();
     m_levelDict.clear();
     m_journalMap.clear();
@@ -70,6 +68,7 @@ LogApplicationParseThread::~LogApplicationParseThread()
 
 void LogApplicationParseThread::setFilters(const APP_FILTERSList &iFilters)
 {
+    // qCDebug(logApp) << "LogApplicationParseThread::setFilters called with" << iFilters.size() << "filters";
     m_AppFilers = iFilters;
 }
 
@@ -81,12 +80,14 @@ void LogApplicationParseThread::stopProccess()
     qCDebug(logApp) << "stopWork";
     m_canRun = false;
     if (m_process && m_process->isOpen()) {
+        qCDebug(logApp) << "Killing process for thread:" << m_threadCount;
         m_process->kill();
     }
 }
 
 int LogApplicationParseThread::getIndex()
 {
+    // qCDebug(logApp) << "LogApplicationParseThread::getIndex called, returning:" << m_threadCount;
     return m_threadCount;
 }
 
@@ -137,6 +138,7 @@ void LogApplicationParseThread::doWork()
 
 bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
 {
+    qCDebug(logApp) << "LogApplicationParseThread::parseByFile called with submodule:" << app_filter.submodule;
     m_AppFiler = app_filter;
 
     initProccess();
@@ -227,6 +229,7 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
 
 bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
 {
+    qCDebug(logApp) << "LogApplicationParseThread::parseByJournal called";
     m_AppFiler = app_filter;
 
     if ((!m_canRun)) {
@@ -411,11 +414,13 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
 
 void LogApplicationParseThread::onProcFinished(int ret)
 {
+    qCDebug(logApp) << "LogApplicationParseThread::onProcFinished called with return code:" << ret;
     Q_UNUSED(ret)
 }
 
 QString LogApplicationParseThread::getDateTimeFromStamp(const QString &str)
 {
+    qCDebug(logApp) << "LogApplicationParseThread::getDateTimeFromStamp converting timestamp:" << str;
     QString ret = "";
     QString dtstr = str.left(str.length() - 3);
     QDateTime dt = QDateTime::fromMSecsSinceEpoch(dtstr.toLongLong());
@@ -428,10 +433,12 @@ QString LogApplicationParseThread::getDateTimeFromStamp(const QString &str)
  */
 void LogApplicationParseThread::initMap()
 {
+    qCDebug(logApp) << "LogApplicationParseThread::initMap initializing level dictionary";
     m_levelDict.insert("Warning", WARN);
     m_levelDict.insert("Debug", DEB);
     m_levelDict.insert("Info", INF);
     m_levelDict.insert("Error", ERR);
+    qCDebug(logApp) << "Level dictionary initialized with" << m_levelDict.size() << "entries";
 }
 
 /**
@@ -439,6 +446,7 @@ void LogApplicationParseThread::initMap()
  */
 void LogApplicationParseThread::initJournalMap()
 {
+    qCDebug(logApp) << "LogApplicationParseThread::initJournalMap initializing journal level map";
     m_journalMap.clear();
     m_journalMap.insert(0, DApplication::translate("Level", "Emergency"));
     m_journalMap.insert(1, DApplication::translate("Level", "Alert"));
@@ -448,6 +456,7 @@ void LogApplicationParseThread::initJournalMap()
     m_journalMap.insert(5, DApplication::translate("Level", "Notice"));
     m_journalMap.insert(6, DApplication::translate("Level", "Info"));
     m_journalMap.insert(7, DApplication::translate("Level", "Debug"));
+    qCDebug(logApp) << "Journal level map initialized with" << m_journalMap.size() << "entries";
 }
 
 /**
@@ -457,6 +466,7 @@ void LogApplicationParseThread::initJournalMap()
  */
 QString LogApplicationParseThread::i2str(int prio)
 {
+    // qCDebug(logApp) << "LogApplicationParseThread::i2str converting priority:" << prio;
     return m_journalMap.value(prio);
 }
 
@@ -465,8 +475,12 @@ QString LogApplicationParseThread::i2str(int prio)
  */
 void LogApplicationParseThread::initProccess()
 {
+    qCDebug(logApp) << "LogApplicationParseThread::initProccess called";
     if (!m_process) {
+        qCDebug(logApp) << "Creating new QProcess instance";
         m_process = new QProcess;
+    } else {
+        qCDebug(logApp) << "QProcess already exists";
     }
 }
 
@@ -475,6 +489,7 @@ void LogApplicationParseThread::initProccess()
  */
 void LogApplicationParseThread::run()
 {
-    qCDebug(logApp) << "threadrun";
+    qCDebug(logApp) << "LogApplicationParseThread::run thread started";
     doWork();
+    qCDebug(logApp) << "LogApplicationParseThread::run thread finished";
 }

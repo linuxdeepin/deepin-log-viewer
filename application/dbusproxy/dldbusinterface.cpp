@@ -10,6 +10,7 @@
  */
 
 #include "dldbusinterface.h"
+#include <QDebug>
 
 /*
  * Implementation of interface class ComDeepinLogviewerInterface
@@ -18,8 +19,10 @@
 DeepinLogviewerInterface::DeepinLogviewerInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent)
     : QDBusAbstractInterface(service, path, staticInterfaceName(), connection, parent)
 {
+    // qDebug() << "DeepinLogviewerInterface constructor called with service:" << service << "path:" << path;
 }
 
 DeepinLogviewerInterface::~DeepinLogviewerInterface()
 {
+    // qDebug() << "DeepinLogviewerInterface destructor called";
 }

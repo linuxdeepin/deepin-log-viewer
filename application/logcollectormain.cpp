@@ -40,11 +40,7 @@ DWIDGET_USE_NAMESPACE
 const int BUTTON_SIZE  = 36;
 const int BUTTON_SIZE_COMPACT = 24;
 
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logCollector, "org.deepin.logger.collector")
-#else
-Q_LOGGING_CATEGORY(logCollector, "org.deepin.logger.collector", QtInfoMsg)
-#endif
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 //刷新间隔
 static const QString refreshIntervalKey = "base.RefreshInterval";
@@ -55,13 +51,13 @@ static const QString refreshIntervalKey = "base.RefreshInterval";
 LogCollectorMain::LogCollectorMain(QWidget *parent)
     : DMainWindow(parent)
 {
-    qCDebug(logCollector) << "Initializing LogCollectorMain...";
+    qCDebug(logApp) << "Initializing LogCollectorMain...";
     qRegisterMetaType<DNFPRIORITY>("DNFPRIORITY");
     initUI();
     initConnection();
 
     initShortCut();
-    qCDebug(logCollector) << "LogCollectorMain initialized successfully";
+    qCDebug(logApp) << "LogCollectorMain initialized successfully";
     //日志类型选择器选第一个
     m_logCatelogue->setDefaultSelect();
     //设置最小窗口尺寸
@@ -76,25 +72,25 @@ LogCollectorMain::LogCollectorMain(QWidget *parent)
  */
 LogCollectorMain::~LogCollectorMain()
 {
-    qCDebug(logCollector) << "Destroying LogCollectorMain...";
+    qCDebug(logApp) << "Destroying LogCollectorMain...";
     /** delete when app quit */
     if (m_searchEdt) {
         delete m_searchEdt;
         m_searchEdt = nullptr;
-        qCDebug(logCollector) << "Search edit widget deleted";
+        qCDebug(logApp) << "Search edit widget deleted";
     }
 
     if (m_backend) {
         delete m_backend;
         m_backend = nullptr;
-        qCDebug(logCollector) << "Settings backend deleted";
+        qCDebug(logApp) << "Settings backend deleted";
     }
     //如果窗体状态不是最大最小状态，则记录此时窗口尺寸到配置文件里，方便下次打开时恢复大小
     if (windowState() == Qt::WindowNoState) {
-        qCDebug(logCollector) << "Saving window size:" << width() << "x" << height();
+        qCDebug(logApp) << "Saving window size:" << width() << "x" << height();
         LogSettings::instance()->saveConfigWinSize(width(), height());
     }
-    qCDebug(logCollector) << "LogCollectorMain destroyed";
+    qCDebug(logApp) << "LogCollectorMain destroyed";
 }
 
 /**
@@ -102,7 +98,7 @@ LogCollectorMain::~LogCollectorMain()
  */
 void LogCollectorMain::initUI()
 {
-    qCDebug(logCollector) << "Initializing UI components...";
+    qCDebug(logApp) << "Initializing UI components...";
     /** add searchEdit */
     m_searchEdt = new DSearchEdit();
 
@@ -193,11 +189,12 @@ void LogCollectorMain::initUI()
 #endif
 
     m_originFilterWidth = m_topRightWgt->geometry().width();
-    qCDebug(logCollector) << "UI initialization completed. Original filter width:" << m_originFilterWidth;
+    qCDebug(logApp) << "UI initialization completed. Original filter width:" << m_originFilterWidth;
 }
 
 void LogCollectorMain::initTitlebarExtensions()
 {
+    qCDebug(logApp) << "Initializing titlebar extensions...";
     DMenu *refreshMenu = new DMenu(this);
     DMenu *menu = new DMenu(DApplication::translate("titlebar", "Refresh interval"), refreshMenu);
     menu->setAccessibleName("refresh_interval_menu");
@@ -205,6 +202,7 @@ void LogCollectorMain::initTitlebarExtensions()
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "1 min")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "5 min")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "No refresh")));
+    qCDebug(logApp) << "Created" << m_refreshActions.size() << "refresh interval actions";
 
     QActionGroup *group = new QActionGroup(menu);
     for (auto &it : m_refreshActions) {
@@ -254,24 +252,24 @@ void LogCollectorMain::initTitlebarExtensions()
 
 void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
 {
-    qCDebug(logCollector) << "Refresh interval changed, action:" << action->text();
+    qCDebug(logApp) << "Refresh interval changed, action:" << action->text();
     int index = m_refreshActions.indexOf(action);
     int timeInterval = 0;
     switch (index) {
     case 0:
         timeInterval = 10 * 1000; //10秒刷新
-        qCDebug(logCollector) << "Setting refresh interval to 10 seconds";
+        qCDebug(logApp) << "Setting refresh interval to 10 seconds";
         break;
     case 1:
         timeInterval = 60 * 1000; //1分钟刷新
-        qCDebug(logCollector) << "Setting refresh interval to 1 minute";
+        qCDebug(logApp) << "Setting refresh interval to 1 minute";
         break;
     case 2:
         timeInterval = 5 * 60 * 1000; //5分钟刷新
-        qCDebug(logCollector) << "Setting refresh interval to 5 minutes";
+        qCDebug(logApp) << "Setting refresh interval to 5 minutes";
         break;
     default:
-        qCDebug(logCollector) << "Disabling auto refresh";
+        qCDebug(logApp) << "Disabling auto refresh";
         break;
     }
     //先停止刷新
@@ -301,38 +299,41 @@ void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
 
 void LogCollectorMain::initSettings()
 {
+    qCDebug(logApp) << "Initializing settings...";
     m_settings = DSettings::fromJsonFile(":/deepin-log-viewer-setting.json");
     QString configpath = Utils::getConfigPath();
     QDir dir(configpath);
     if (!dir.exists()) {
+        qCDebug(logApp) << "Creating config directory:" << configpath;
         Utils::mkMutiDir(configpath);
     };
     m_backend = new QSettingBackend(dir.filePath("config.conf"));
     m_settings->setBackend(m_backend);
+    qCDebug(logApp) << "Settings initialized with config path:" << configpath;
 }
 
 void LogCollectorMain::exportAllLogs()
 {
-    qCDebug(logCollector) << "Starting export all logs...";
+    qCDebug(logApp) << "Starting export all logs...";
     static bool authorization = false;
     if (false == authorization) {
         QString policyActionId = "";
         // 开启等保四，若当前用户是审计管理员，使用单用户审计管理员鉴权
         if (DBusManager::isSEOpen() && DBusManager::isAuditAdmin()) {
             policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogsSelf";
-            qCDebug(logCollector) << "Using audit admin authorization";
+            qCDebug(logApp) << "Using audit admin authorization";
         } else {
             // 其他情况，默认为多用户鉴权
             policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogs";
-            qCDebug(logCollector) << "Using normal user authorization";
+            qCDebug(logApp) << "Using normal user authorization";
         }
 
         if (!Utils::checkAuthorization(policyActionId, qApp->applicationPid())) {
-            qCWarning(logCollector) << "Authorization failed for policy:" << policyActionId;
+            qCWarning(logApp) << "Authorization failed for policy:" << policyActionId;
             return;
         }
         authorization = true;
-        qCDebug(logCollector) << "Authorization passed";
+        qCDebug(logApp) << "Authorization passed";
     }
 
     // 时间
@@ -394,10 +395,10 @@ void LogCollectorMain::exportAllLogs()
     QThreadPool::globalInstance()->start(thread);
     m_exportDlg->exec();
     if (!exportcomplete) {
-        qCWarning(logCollector) << "Export cancelled by user";
+        qCWarning(logApp) << "Export cancelled by user";
         thread->slot_cancelExport();
     } else {
-        qCInfo(logCollector) << "Export completed successfully";
+        qCInfo(logApp) << "Export completed successfully";
     }
 }
 /**
@@ -405,6 +406,7 @@ void LogCollectorMain::exportAllLogs()
  */
 void LogCollectorMain::initConnection()
 {
+    qCDebug(logApp) << "Initializing signal-slot connections...";
     //! search
     connect(m_searchEdt, &DSearchEdit::textChanged, m_midRightWgt,
             &DisplayContent::slot_searchResult);
@@ -472,6 +474,7 @@ void LogCollectorMain::initConnection()
 
 void LogCollectorMain::slotClearInfoandFocus()
 {
+    qCDebug(logApp) << "Clearing search info and setting focus";
     m_searchEdt->clearEdit();
     if (!m_topRightWgt->getChangedcomboxstate() && m_topRightWgt->getLeftButtonState()) {
         m_topRightWgt->setLeftButtonState(false);
@@ -482,12 +485,16 @@ void LogCollectorMain::slotClearInfoandFocus()
 
 void LogCollectorMain::updateSizeMode()
 {
+    qCDebug(logApp) << "Updating size mode for UI elements";
     int nBtnSize = BUTTON_SIZE;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    if (DGuiApplicationHelper::isCompactMode())
+    if (DGuiApplicationHelper::isCompactMode()) {
         nBtnSize = BUTTON_SIZE_COMPACT;
-    else
+        qCDebug(logApp) << "Using compact mode button size:" << nBtnSize;
+    } else {
         nBtnSize = BUTTON_SIZE;
+        qCDebug(logApp) << "Using normal mode button size:" << nBtnSize;
+    }
 #else
     nBtnSize = BUTTON_SIZE;
 #endif
@@ -505,11 +512,11 @@ void LogCollectorMain::updateSizeMode()
  */
 void LogCollectorMain::initShortCut()
 {
-    qCDebug(logCollector) << "Initializing shortcuts...";
+    qCDebug(logApp) << "Initializing shortcuts...";
     // Resize Window --> Ctrl+Alt+F
     if (nullptr == m_scWndReize) {
         m_scWndReize = new QShortcut(this);
-        qCDebug(logCollector) << "Created window resize shortcut";
+        qCDebug(logApp) << "Created window resize shortcut";
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_scWndReize->setKey(Qt::CTRL + Qt::ALT + Qt::Key_F);
 #else
@@ -570,6 +577,7 @@ void LogCollectorMain::initShortCut()
  */
 bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *evt)
 {
+    qCDebug(logApp) << "Handling tab event for object:" << obj->objectName() << "key:" << evt->key();
     if (evt->key() == Qt::Key_Tab) {
         DWindowCloseButton *closebtn = this->titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
         if (obj == this->titlebar()) {
@@ -577,6 +585,7 @@ bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *
         } else if (obj->objectName() == "searchChildEdt") {
             return false;
         } else if (obj == closebtn) {
+            qCDebug(logApp) << "Setting focus to log catalogue from close button";
             m_logCatelogue->setFocus(Qt::TabFocusReason);
             return true;
         } else if (obj->objectName() == "mainLogTable") {
@@ -585,6 +594,7 @@ bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *
     } else if (evt->key() == Qt::Key_Backtab) {
         DWindowOptionButton *optionbtn = this->titlebar()->findChild<DWindowOptionButton *>("DTitlebarDWindowOptionButton");
         if (obj->objectName() == "logTypeSelectList") {
+            qCDebug(logApp) << "Setting focus to close button from log type list";
             DWindowCloseButton *closeButton = titlebar()->findChild<DWindowCloseButton *>("DTitlebarDWindowCloseButton");
             if (closeButton) {
                 closeButton->setFocus();
@@ -593,6 +603,7 @@ bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *
         } else if (obj == optionbtn) {
             return false;
         } else if (obj->objectName() == "searchChildEdt") {
+            qCDebug(logApp) << "Setting focus to main log table from search edit";
             m_midRightWgt->mainLogTableView()->setFocus(Qt::BacktabFocusReason);
             return true;
         }
@@ -602,6 +613,7 @@ bool LogCollectorMain::handleApplicationTabEventNotify(QObject *obj, QKeyEvent *
 
 void LogCollectorMain::closeEvent(QCloseEvent *event)
 {
+    // qCDebug(logApp) << "LogCollectorMain close event triggered";
     PERF_PRINT_BEGIN("POINT-02", "");
     DMainWindow::closeEvent(event);
 }

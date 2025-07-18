@@ -8,28 +8,25 @@
 #include "utils.h"
 
 #include <QLoggingCategory>
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logExportAll, "org.deepin.log.viewer.exportall.work")
-#else
-Q_LOGGING_CATEGORY(logExportAll, "org.deepin.log.viewer.exportall.work", QtInfoMsg)
-#endif
+
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 LogAllExportThread::LogAllExportThread(const QStringList &types, const QString &outfile, QObject *parent)
     : QObject(parent)
     , m_types(types)
     , m_outfile(outfile)
 {
-    qCDebug(logExportAll) << "LogAllExportThread created with types:" << types << "output file:" << outfile;
+    qCDebug(logApp) << "LogAllExportThread created with types:" << types << "output file:" << outfile;
 }
 
 void LogAllExportThread::run()
 {
-    qCDebug(logExportAll) << "Export thread started";
+    qCDebug(logApp) << "Export thread started";
     //判断权限
-    qCInfo(logExportAll) << "outFile: " << m_outfile;
+    qCInfo(logApp) << "outFile: " << m_outfile;
     QFileInfo info(m_outfile);
     if (!QFileInfo(info.path()).isWritable()) {
-        qCCritical(logExportAll) << QString("outdir:%1 it not writable or is not exist.").arg(info.absolutePath());
+        qCCritical(logApp) << QString("outdir:%1 it not writable or is not exist.").arg(info.absolutePath());
         emit exportFinsh(false);
         return;
     }
@@ -90,11 +87,11 @@ void LogAllExportThread::run()
                         if (logPaths.size() > 0) {
                             data.dir2Files[subDir] = logPaths;
                         } else {
-                            qCWarning(logExportAll) << QString("app:%1 submodule:%2, logPath:%3 not found log files.").arg(appName).arg(submodule.name).arg(submodule.logPath);
+                            qCWarning(logApp) << QString("app:%1 submodule:%2, logPath:%3 not found log files.").arg(appName).arg(submodule.name).arg(submodule.logPath);
                         }
                     } else if (submodule.logType == "journal") {
                         if (submodule.filter.endsWith("*"))
-                            qCWarning(logExportAll) << QString("app:%1 submodule:%2, Export journal logs with wildcard not supported.").arg(appName).arg(submodule.name);
+                            qCWarning(logApp) << QString("app:%1 submodule:%2, Export journal logs with wildcard not supported.").arg(appName).arg(submodule.name);
                         else {
                             QJsonObject obj = submodule.toJson();
                             data.dir2Cmds[subDir] = QStringList() << QJsonDocument(obj).toJson(QJsonDocument::Compact);
@@ -140,14 +137,14 @@ void LogAllExportThread::run()
     }
 
     if (eList.isEmpty()) {
-        qCWarning(logExportAll) << "No log types specified for export";
+        qCWarning(logApp) << "No log types specified for export";
         emit exportFinsh(false);
         return;
     }
 
     //删除原文件
     if (info.exists() && !QFile::remove(m_outfile)) {
-        qCCritical(logExportAll) << "Failed to remove existing output file:" << m_outfile;
+        qCCritical(logApp) << "Failed to remove existing output file:" << m_outfile;
         emit exportFinsh(false);
         return;
     }
@@ -162,7 +159,7 @@ void LogAllExportThread::run()
     //创建临时目录
     Utils::mkMutiDir(tmpPath);
     for (auto &it : eList) {
-        qCDebug(logExportAll) << "Processing log category:" << it.logCategory;
+        qCDebug(logApp) << "Processing log category:" << it.logCategory;
         //复制文件到一级目录
         QString tmpCategoryPath = QString("%1%2/").arg(tmpPath).arg(it.logCategory);
         Utils::mkMutiDir(tmpCategoryPath);
@@ -234,7 +231,7 @@ void LogAllExportThread::run()
     }
 
     if (!m_cancel) {
-        qCDebug(logExportAll) << "Packaging exported logs into:" << m_outfile;
+        qCDebug(logApp) << "Packaging exported logs into:" << m_outfile;
         //打包日志文件
         Utils::executeCmd("chmod", QStringList() << "-R" << "777" << Utils::getAppDataPath(), tmpPath);
         Utils::executeCmd("zip", QStringList() << "-r" << "tmp.zip" << "./", tmpPath);
@@ -248,10 +245,10 @@ void LogAllExportThread::run()
     dir.removeRecursively();
     //取消导出删除输出文件
     if (m_cancel) {
-        qCInfo(logExportAll) << "Export cancelled, removing output file";
+        qCInfo(logApp) << "Export cancelled, removing output file";
         QFile::remove(m_outfile);
     }
     bool success = !m_cancel && QFileInfo(m_outfile).exists();
-    qCDebug(logExportAll) << "Export finished with status:" << success;
+    qCDebug(logApp) << "Export finished with status:" << success;
     emit exportFinsh(success);
 }

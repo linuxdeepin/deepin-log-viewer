@@ -7,12 +7,16 @@
 #include <QProcess>
 #include <QCoreApplication>
 #include <QDebug>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logService)
 
 LogViewerWatcher::LogViewerWatcher():m_Timer(new QTimer (this))
 {
-
+    qCDebug(logService) << "LogViewerWatcher constructor called";
     connect(m_Timer,&QTimer::timeout,this,&LogViewerWatcher::onTimeOut);
     m_Timer->start(1000);
+    qCDebug(logService) << "Timer started with 1000ms interval";
 }
 
 /**
@@ -20,6 +24,7 @@ LogViewerWatcher::LogViewerWatcher():m_Timer(new QTimer (this))
  */
 void LogViewerWatcher::onTimeOut()
 {
+    qCDebug(logService) << "Timer timeout, checking for deepin-log-viewer process";
     QString cmd, outPut;
     QStringList args;
     //判断deepin-log-viewer客户端是否存在，如果不存在退出服务。
@@ -35,8 +40,12 @@ void LogViewerWatcher::onTimeOut()
             break;
         }
     }
-    if (!bHasLogViewer)
+    if (!bHasLogViewer) {
+        qCDebug(logService) << "deepin-log-viewer process not found, exiting service";
         QCoreApplication::exit(0);
+    } else {
+        qCDebug(logService) << "deepin-log-viewer process found, continuing service";
+    }
 }
 
 /**
@@ -45,8 +54,11 @@ void LogViewerWatcher::onTimeOut()
  */
 QString LogViewerWatcher::executCmd(const QString &strCmd, const QStringList &args)
 {
+     qCDebug(logService) << "Executing command:" << strCmd << "with args:" << args;
      QProcess proc;
      proc.start(strCmd, args);
      proc.waitForFinished(-1);
-     return  proc.readAllStandardOutput();
+     QString output = proc.readAllStandardOutput();
+     qCDebug(logService) << "Command execution completed";
+     return output;
 }
