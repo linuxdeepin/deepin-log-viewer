@@ -53,6 +53,7 @@ const QString s_Action_Export = "com.deepin.pkexec.logViewerAuth.exportLogs";
  */
 void removeDirFiles(const QString &dirPath)
 {
+    qCDebug(logService) << "Removing files in directory:" << dirPath;
     QDir dir(dirPath);
     dir.setFilter(QDir::NoDotAndDotDot | QDir::Files);
     foreach(QString dirItem, dir.entryList()) {
@@ -68,6 +69,7 @@ void removeDirFiles(const QString &dirPath)
  */
 QString unzipToTempFile(const QString &sourceFile, const QString &tempFileTemplate)
 {
+    qCDebug(logService) << "Unzipping file:" << sourceFile << "to temporary file:" << tempFileTemplate;
     QProcess m_process;
 
     // 每次创建临时文件，销毁由 QTemporaryDir 处理
@@ -95,6 +97,7 @@ QString unzipToTempFile(const QString &sourceFile, const QString &tempFileTempla
 LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
 {
+    qCDebug(logService) << "LogViewerService constructor called";
     m_commands.insert("dmesg", "dmesg -r");
     m_commands.insert("last", "last -x");
     m_commands.insert("journalctl_system", "journalctl -r");
@@ -102,11 +105,14 @@ LogViewerService::LogViewerService(QObject *parent)
     m_commands.insert("journalctl_app", "journalctl");
 
     m_actionId = s_Action_View;
+    qCDebug(logService) << "Commands initialized, action ID set to:" << m_actionId;
 }
 
 LogViewerService::~LogViewerService()
 {
+    qCDebug(logService) << "LogViewerService destructor called";
     if(!m_logMap.isEmpty()) {
+        qCDebug(logService) << "Cleaning up" << m_logMap.size() << "log map entries";
         for(auto eachPair : m_logMap) {
             delete eachPair.second;
         }
@@ -122,7 +128,9 @@ LogViewerService::~LogViewerService()
  */
 QString LogViewerService::readLog(const QDBusUnixFileDescriptor &fd)
 {
+    qCDebug(logService) << "Reading log from file descriptor";
     if(!checkAuth(s_Action_View)) {
+        qCWarning(logService) << "Authorization check failed for readLog";
         return " ";
     }
 
@@ -130,22 +138,25 @@ QString LogViewerService::readLog(const QDBusUnixFileDescriptor &fd)
     // fd转文件
     int fdi = fd.fileDescriptor();
     if (fdi <= 0) {
+        qCWarning(logService) << "Invalid file descriptor:" << fdi;
         return log;
     }
 
     QFile file;
     if (!file.open(fdi, QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open file path cache file descriptor.";
+        qCWarning(logService) << "Failed to open file path cache file descriptor.";
         return log;
     }
 
     QTextStream in(&file);
     QString targetFilePath = in.readAll();
 
-    if (!targetFilePath.isEmpty())
+    if (!targetFilePath.isEmpty()) {
+        qCDebug(logService) << "Reading log from path:" << targetFilePath;
         log = readLog(targetFilePath);
-    else
-        qWarning() << "target log file path is empty.";
+    } else {
+        qCWarning(logService) << "target log file path is empty.";
+    }
 
     file.close();
 
@@ -154,14 +165,17 @@ QString LogViewerService::readLog(const QDBusUnixFileDescriptor &fd)
 
 QByteArray LogViewerService::processCatFile(const QString &filePath)
 {
+    qCDebug(logService) << "Processing cat file:" << filePath;
     m_process.start("cat", QStringList() << filePath);
     m_process.waitForFinished(-1);
     QByteArray byte = m_process.readAllStandardOutput();
+    qCDebug(logService) << "Cat process completed, read" << byte.size() << "bytes";
     return byte;
 }
 
 static QByteArray processCmdWithArgs(const QString &cmdStr, const QStringList &args)
 {
+    qCDebug(logService) << "Processing command:" << cmdStr << "with arguments:" << args;
     QProcess process;
     process.start(cmdStr, args);
     process.waitForFinished(-1);
@@ -176,7 +190,9 @@ static QByteArray processCmdWithArgs(const QString &cmdStr, const QStringList &a
  */
 QString LogViewerService::readLog(const QString &filePath)
 {
+    qCDebug(logService) << "Reading log from file path:" << filePath;
     if(!checkAuth(s_Action_View)) {
+        qCWarning(logService) << "Authorization check failed for readLog";
         return " ";
     }
 
@@ -187,6 +203,7 @@ QString LogViewerService::readLog(const QString &filePath)
          !filePath.startsWith("/home") &&
          !filePath.startsWith("/root")) ||
          filePath.contains(".."))  {
+        qCWarning(logService) << "File path not in whitelist:" << filePath;
         return " ";
     }
 
@@ -202,12 +219,17 @@ QString LogViewerService::readLog(const QString &filePath)
             replaceTimes++;
         }
     }
+    if (replaceTimes > 0) {
+        qCDebug(logService) << "Replaced" << replaceTimes << "null bytes in log content";
+    }
     return QString::fromUtf8(byte);
 }
 
 qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 startLine, QList<uint64_t>& lineIndexes, bool reverseOrder) {
+    qCDebug(logService) << "Reading file:" << filePath << "and returning index with start line:" << startLine << "and reverse order:" << reverseOrder;
     std::ifstream file(filePath.toStdString());
     if (!file.is_open()) {
+        qCDebug(logService) << "File does not exist";
         // 文件不存在，返回错误
         return -1;
     }
@@ -220,6 +242,7 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
     // encoding to encode the array where the index is stored, and if it is still large,
     // you can continue to use Huffman encoding for the encoded array.
     if (lineIndexes.empty()) {
+        qCDebug(logService) << "Line indexes are empty, reading from file";
         // 从文件开头开始读取
         while (std::getline(file, line)) {
             lineNumber++;
@@ -230,6 +253,7 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
             }
         }
     } else {
+        qCDebug(logService) << "Line indexes are not empty, reading from file";
         if (startLine < lineIndexes.size() && !reverseOrder) {
             return lineIndexes[startLine];
         } else {
@@ -250,6 +274,7 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
 
     file.close();
 
+    qCDebug(logService) << "Returning index:" << lineIndexes.at(startLine);
     if (reverseOrder) {
         startLine = lineIndexes.size() - startLine - 1;
         if (startLine < 0)
@@ -270,16 +295,20 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
  */
 bool LogViewerService::checkAuthorization(const QString &actionId, qint64 applicationPid)
 {
+    qCDebug(logService) << "Checking authorization for action:" << actionId << "and application PID:" << applicationPid;
 #if defined (Q_OS_LINUX) || defined (Q_OS_UNIX) ||  defined (Q_OS_MAC)
             PolkitQt1::Authority::Result ret = PolkitQt1::Authority::instance()->checkAuthorizationSync(
                 actionId, PolkitQt1::UnixProcessSubject(applicationPid), PolkitQt1::Authority::AllowUserInteraction);
     if (PolkitQt1::Authority::Yes == ret) {
+        qCDebug(logService) << "Authorization check passed";
         return true;
     } else {
-        qWarning() << qPrintable("Policy authorization check failed!");
+        qCDebug(logService) << "Authorization check failed";
+        qCWarning(logService) << qPrintable("Policy authorization check failed!");
         return false;
     }
 #else
+    qCDebug(logService) << "Authorization check passed in non-linux/unix/macos platform";
     return true;
 #endif
 }
@@ -291,7 +320,9 @@ bool LogViewerService::checkAuthorization(const QString &actionId, qint64 applic
  */
 QStringList LogViewerService::readLogLinesInRange(const QDBusUnixFileDescriptor &fd, qint64 startLine, qint64 lineCount, bool bReverse)
 {
+    qCDebug(logService) << "Reading log lines in range with file descriptor, start line:" << startLine << "line count:" << lineCount << "reverse order:" << bReverse;
     if(!checkAuth(s_Action_View)) {
+        qCDebug(logService) << "Authorization check failed for readLogLinesInRange";
         return QStringList();
     }
 
@@ -299,12 +330,13 @@ QStringList LogViewerService::readLogLinesInRange(const QDBusUnixFileDescriptor 
     // fd转文件
     int fdi = fd.fileDescriptor();
     if (fdi <= 0) {
+        qCDebug(logService) << "Invalid file descriptor:" << fdi;
         return lines;
     }
 
     QFile file;
     if (!file.open(fdi, QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open file path cache file descriptor.";
+        qCWarning(logService) << "Failed to open file path cache file descriptor.";
         return lines;
     }
 
@@ -314,7 +346,7 @@ QStringList LogViewerService::readLogLinesInRange(const QDBusUnixFileDescriptor 
     if (!targetFilePath.isEmpty())
         lines = readLogLinesInRange(targetFilePath, startLine, lineCount, bReverse);
     else
-        qWarning() << "target log file path is empty.";
+        qCWarning(logService) << "target log file path is empty.";
 
     file.close();
 
@@ -323,6 +355,7 @@ QStringList LogViewerService::readLogLinesInRange(const QDBusUnixFileDescriptor 
 
 QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
 {
+    qCDebug(logService) << "Reading log lines in range with file path, start line:" << startLine << "line count:" << lineCount << "reverse order:" << bReverse;
     QStringList lines;
 
     // 开启鉴权
@@ -336,11 +369,13 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
          !filePath.startsWith("/home") &&
          !filePath.startsWith("/root")) ||
          filePath.contains("..")) {
+        qCDebug(logService) << "File path not in whitelist for readLogLinesInRange:" << filePath;
         return lines;
     }
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
+        qCDebug(logService) << "Failed to open file for readLogLinesInRange:" << filePath;
         QString token = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Md5).toHex();
         if (m_logLineIndex.contains(token))
             m_logLineIndex.remove(token);
@@ -366,6 +401,7 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
         return lines;
 
     if (!file.seek(m_logLineIndex[token].at(startLineIndex))) {
+        qCDebug(logService) << "Failed to seek file for readLogLinesInRange:" << filePath;
         file.close();
         return lines;
     }
@@ -385,10 +421,12 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
 }
 
 qint64 LogViewerService::findLineStartOffsetWithCaching(const QString &filePath, qint64 targetLine) {
+    qCDebug(logService) << "Finding line start offset with caching for file:" << filePath << "and target line:" << targetLine;
 
     const int blockSize = 4096; // 设置块大小，可以根据实际情况调整
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
+        qCDebug(logService) << "Failed to open file for findLineStartOffsetWithCaching:" << filePath;
         return -1; // 无法打开文件
     }
 
@@ -402,6 +440,7 @@ qint64 LogViewerService::findLineStartOffsetWithCaching(const QString &filePath,
     while (currentLine <= targetLine) {
         block = file.read(blockSize);
         if (block.isEmpty()) {
+            qCDebug(logService) << "Reached file end while reading block";
             break; // 到达文件末尾
         }
 
@@ -436,8 +475,11 @@ qint64 LogViewerService::findLineStartOffsetWithCaching(const QString &filePath,
 
 qint64 LogViewerService::getLineCount(const QString &filePath)
 {
-    if (!isValidInvoker())
+    qCDebug(logService) << "Getting line count for file:" << filePath;
+    if (!isValidInvoker()) {
+        qCWarning(logService) << "Invalid invoker for getLineCount";
         return -1;
+    }
 
     //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
     //部分设备是直接从root账户进入，因此还需要监控/root目录
@@ -446,11 +488,13 @@ qint64 LogViewerService::getLineCount(const QString &filePath)
          !filePath.startsWith("/home") &&
          !filePath.startsWith("/root")) ||
             filePath.contains("..")) {
+        qCWarning(logService) << "File path not in whitelist for getLineCount:" << filePath;
         return -1;
     }
 
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
+        qCWarning(logService) << "Failed to open file for line count:" << filePath;
         // 文件打开失败处理
         return -1;
     }
@@ -458,8 +502,12 @@ qint64 LogViewerService::getLineCount(const QString &filePath)
     qint64 lineCount = -1;
     QString result = processCmdWithArgs("wc", QStringList() << "-l" << filePath);
     QStringList splitResult = result.split(' ');
-    if (splitResult.size() > 0)
+    if (splitResult.size() > 0) {
         lineCount = splitResult.first().toLongLong();
+        qCDebug(logService) << "Line count result:" << lineCount;
+    } else {
+        qCWarning(logService) << "Failed to parse line count result:" << result;
+    }
 
     return lineCount;
 }
@@ -471,10 +519,13 @@ void LogViewerService::processCmdArgs(const QString &cmdStr, const QStringList &
 
 QString LogViewerService::executeCmd(const QString &cmd)
 {
+    qCDebug(logService) << "Executing command:" << cmd;
     QString result("");
 
-    if (!isValidInvoker())
+    if (!isValidInvoker()) {
+        qCWarning(logService) << "Invalid invoker for executeCmd";
         return result;
+    }
 
     QString cmdStr;
     QStringList args;
@@ -497,6 +548,7 @@ QString LogViewerService::executeCmd(const QString &cmd)
     }
 
     if (!cmdStr.isEmpty()) {
+        qCDebug(logService) << "Executing command:" << cmdStr << "with args:" << args;
         processCmdArgs(cmdStr, args);
 
         if (!m_process.waitForFinished(-1)) {
@@ -544,12 +596,15 @@ QString LogViewerService::executeCmd(const QString &cmd)
  */
 QString LogViewerService::openLogStream(const QString &filePath)
 {
+    qCDebug(logService) << "Opening log stream for file:" << filePath;
     QString result = readLog(filePath);
     if(result == " ") {
+        qCWarning(logService) << "Failed to read log file for stream";
         return "";
     }
 
     QString token = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Md5).toHex();
+    qCDebug(logService) << "Generated token for log stream:" << token;
 
     auto stream = new QTextStream;
 
@@ -566,7 +621,9 @@ QString LogViewerService::openLogStream(const QString &filePath)
  */
 QString LogViewerService::readLogInStream(const QString &token)
 {
+    qCDebug(logService) << "Reading log in stream with token:" << token;
     if(!m_logMap.contains(token)) {
+        qCWarning(logService) << "Token not found in log map:" << token;
         return "";
     }
 
@@ -574,6 +631,7 @@ QString LogViewerService::readLogInStream(const QString &token)
 
     QString result;
     constexpr int maxReadSize = 10 * 1024 * 1024;
+    int linesRead = 0;
     while (1) {
         auto data = stream->readLine();
         if(data.isEmpty()) {
@@ -581,15 +639,20 @@ QString LogViewerService::readLogInStream(const QString &token)
         }
 
         result += data + '\n';
+        linesRead++;
 
         if(result.size() > maxReadSize) {
+            qCDebug(logService) << "Reached max read size, stopping at" << linesRead << "lines";
             break;
         }
     }
 
     if(result.isEmpty()) {
+        qCDebug(logService) << "Stream finished, cleaning up token:" << token;
         delete m_logMap[token].second;
         m_logMap.remove(token);
+    } else {
+        qCDebug(logService) << "Read" << linesRead << "lines from stream";
     }
 
     return result;
@@ -597,6 +660,7 @@ QString LogViewerService::readLogInStream(const QString &token)
 
 QString LogViewerService::isFileExist(const QString &filePath)
 {
+    qCDebug(logService) << "Checking if file exists:" << filePath;
     if (!checkAuth(s_Action_View))
         return QString("");
 
@@ -608,6 +672,7 @@ QString LogViewerService::isFileExist(const QString &filePath)
 
 quint64 LogViewerService::getFileSize(const QString &filePath)
 {
+    qCDebug(logService) << "Getting file size for:" << filePath;
     QFileInfo fi(filePath);
     if (fi.exists())
         return static_cast<quint64>(fi.size());
@@ -618,6 +683,7 @@ quint64 LogViewerService::getFileSize(const QString &filePath)
 // 获取白名单导出路径
 QStringList LogViewerService::whiteListOutPaths()
 {
+    qCDebug(logService) << "Getting white list out paths";
     QStringList paths;
     // 获取用户家目录
     QStringList homeList = getHomePaths();
@@ -633,6 +699,7 @@ QStringList LogViewerService::whiteListOutPaths()
 // 获取用户家目录
 QStringList LogViewerService::getHomePaths()
 {
+    qCDebug(logService) << "Getting home paths";
     QStringList homeList;
 
     if (!calledFromDBus()) {
@@ -651,6 +718,7 @@ QStringList LogViewerService::getHomePaths()
 // 获取外设挂载路径
 QStringList LogViewerService::getExternalDevPaths()
 {
+    qCDebug(logService) << "Getting external dev paths";
     QStringList devPaths;
     const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = getMounts_safe();
     for (auto mount : mounts) {
@@ -688,6 +756,7 @@ QStringList LogViewerService::getExternalDevPaths()
 //可重入版本的getMounts
 QList<QExplicitlySharedDataPointer<DGioMount> > LogViewerService::getMounts_safe()
 {
+    qCDebug(logService) << "Getting mounts safely";
     static QMutex mutex;
     mutex.lock();
     auto result = DGioVolumeManager::getMounts();
@@ -697,14 +766,19 @@ QList<QExplicitlySharedDataPointer<DGioMount> > LogViewerService::getMounts_safe
 
 void LogViewerService::clearTempFiles()
 {
+    qCDebug(logService) << "Clearing temporary files";
     // 清除/tmp目录下lz4.dump文件
     QDir dirTemp(QDir::tempPath());
     dirTemp.setFilter(QDir::Files);
     dirTemp.setNameFilters(QStringList() << "*.lz4.dump");
     QFileInfoList fiList = dirTemp.entryInfoList();
+    int removedCount = 0;
     for (auto fi : fiList) {
-        QFile::remove(fi.absoluteFilePath());
+        if (QFile::remove(fi.absoluteFilePath())) {
+            removedCount++;
+        }
     }
+    qCDebug(logService) << "Removed" << removedCount << "temporary files";
 }
 
 /*!
@@ -713,6 +787,7 @@ void LogViewerService::clearTempFiles()
  */
 int LogViewerService::exitCode()
 {
+    // qCDebug(logService) << "Getting exit code";
     return m_process.exitCode();
 }
 
@@ -732,15 +807,19 @@ void LogViewerService::quit()
  */
 QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 {
+    qCDebug(logService) << "Getting file info for:" << file << "and unzip:" << unzip;
     // 判断非法调用
     if(!isValidInvoker()) {
+        qCDebug(logService) << "Invalid invoker";
         return {};
     }
 
     if (tmpDir.isValid()) {
+        qCDebug(logService) << "Tmp dir is valid";
         m_tmpDirPath = tmpDir.path();
         // 每次解压前移除旧有的文件
         if (unzip) {
+            qCDebug(logService) << "Removing old files in tmp dir";
             removeDirFiles(m_tmpDirPath);
         }
     }
@@ -756,6 +835,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
         } else if (appFileInfo.isDir()) {
             appDir = appFileInfo.absoluteFilePath();
         } else {
+            qCDebug(logService) << "App file info is not a file or dir";
             return QStringList();
         }
 
@@ -770,9 +850,11 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
         if (fileList.size() == 0)
             nameFilter = appFileInfo.completeBaseName();
     } else if (file == "audit"){
+        qCDebug(logService) << "Audit file";
         dir.setPath("/var/log/audit");
         nameFilter = file;
     } else if (file == "coredump") {
+        qCDebug(logService) << "Coredump file";
         QByteArray outByte = processCmdWithArgs("coredumpctl", QStringList() << "list");
         QStringList strList = QString(outByte.replace('\u0000', "").replace("\x01", "")).split('\n', SKIP_EMPTY_PARTS);
 
@@ -810,6 +892,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 
         return fileNamePath;
     } else {
+        qCDebug(logService) << "Other file";
         dir.setPath("/var/log");
         nameFilter = file;
     }
@@ -846,15 +929,19 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
  */
 QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
 {
+    qCDebug(logService) << "Getting other file info for:" << file << "and unzip:" << unzip;
     // 判断非法调用
     if(!isValidInvoker()) {
+        qCDebug(logService) << "Invalid invoker";
         return {};
     }
 
     if (tmpDir.isValid()) {
+        qCDebug(logService) << "Tmp dir is valid";
         m_tmpDirPath = tmpDir.path();
         // 每次解压前移除旧有的文件
         if (unzip) {
+            qCDebug(logService) << "Removing old files in tmp dir";
             removeDirFiles(m_tmpDirPath);
         }
     }
@@ -901,6 +988,7 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
 
 static bool processExportLog(const QString &cmdStr, const QString &outFullPath,const QStringList &args)
 {
+    qCDebug(logService) << "Processing export log for:" << cmdStr << "and outFullPath:" << outFullPath << "and args:" << args;
     QProcess process;
     if (cmdStr != "cp") {
         process.setStandardOutputFile(outFullPath, QIODevice::WriteOnly);
@@ -908,6 +996,7 @@ static bool processExportLog(const QString &cmdStr, const QString &outFullPath,c
 
     process.start(cmdStr, args);
     if (!process.waitForFinished(-1)) {
+        qCDebug(logService) << "Failed to wait for process to finish";
         return false;
     }
     return true;
@@ -915,7 +1004,9 @@ static bool processExportLog(const QString &cmdStr, const QString &outFullPath,c
 
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
+    qCDebug(logService) << "Exporting log to:" << outDir << "with input:" << in << "and isFile:" << isFile;
     if(!checkAuth(s_Action_Export)) { //非法调用
+        qCDebug(logService) << "Invalid authorization for export log";
         return false;
     }
 
@@ -927,6 +1018,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     }
 
     if (!outDirInfo.isDir() || in.isEmpty()) {
+        qCDebug(logService) << "Invalid output directory or input";
         return false;
     }
 
@@ -941,6 +1033,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         }
     }
     if (!bAvailable) {
+        qCDebug(logService) << "Output path not in whitelist";
         return false;
     }
 
@@ -950,11 +1043,13 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         //增加服务黑名单，只允许通过提权接口读取/var/log、/var/lib/systemd/coredump下，家目录下和临时目录下的文件
         if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home") && !in.startsWith("/var/lib/systemd/coredump"))
                 || in.contains("..")) {
+            qCDebug(logService) << "Input path not in allowed paths";
             return false;
         }
         QFileInfo filein(in);
         if (!filein.isFile()) {
             qCWarning(logService) << "in not file:" << in;
+            qCDebug(logService) << "Input is not a file";
             return false;
         }
 
@@ -1022,7 +1117,7 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
 
     if (cmdStr != "cp") {
         if (!QFile::exists(outFullPath)) {
-            qInfo() << "outFullPath:" << outFullPath << "not exist;";
+            qCInfo(logService) << "outFullPath:" << outFullPath << "not exist;";
             QFile file(outFullPath);
         }
     }
@@ -1044,7 +1139,9 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
 
 bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
 {
+    qCDebug(logService) << "Checking if invoker is valid with checkAuth:" << checkAuth;
    if (!calledFromDBus()) {
+       qCDebug(logService) << "Called not from dbus";
        return false;
    }
 
@@ -1061,6 +1158,7 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
     auto initNsMnt = initNsMntFile.symLinkTarget().trimmed().remove(0, QString("/proc/1/ns/mnt").length());
     auto senderNsMnt = senderNsMntFile.symLinkTarget().trimmed().remove(0, QString("/proc/%1/ns/mnt").arg(pid).length());
     if (initNsMnt != senderNsMnt) {
+        qCDebug(logService) << "Init ns mnt not equal to sender ns mnt";
         sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls！！！！！");
         return false;
     }
@@ -1121,15 +1219,17 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
     bool bAuthValid = true;
     QString strCheckAuthTip;
     if (valid && checkAuth) {
+        qCDebug(logService) << "Checking authorization for:" << m_actionId << "and pid:" << pid;
         bAuthValid = checkAuthorization(m_actionId, pid);
         valid = bAuthValid;
         if (!bAuthValid) {
             strCheckAuthTip = "checkAuthorization failed.";
-            qWarning() << strCheckAuthTip;
+            qCWarning(logService) << strCheckAuthTip;
         }
     }
     //非法调用
     if (!valid) {
+        qCDebug(logService) << "Invalid invoker";
         sendErrorReply(QDBusError::ErrorType::Failed,
                        QString("(pid: %1)[%2] is not allowed to configrate firewall. %3")
                        .arg(pid)
@@ -1142,14 +1242,15 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
 
 bool LogViewerService::checkAuth(const QString &actionId)
 {
+    qCDebug(logService) << "Checking auth for:" << actionId;
     if (!calledFromDBus()) {
-        qWarning() << "called not from dbus.";
+        qCWarning(logService) << "called not from dbus.";
         return false;
     }
 
     bool isRoot = connection().interface()->serviceUid(message().service()).value() == 0;
     if (isRoot) {
-        qInfo() << "dbus caller is root progress.";
+        qCInfo(logService) << "dbus caller is root progress.";
         return  true;
     }
 
@@ -1158,7 +1259,7 @@ bool LogViewerService::checkAuth(const QString &actionId)
     bool bAuthVaild = false;
     bAuthVaild = checkAuthorization(actionId, pid);
     if (!bAuthVaild) {
-        qWarning() << "checkAuthorization failed.";
+        qCWarning(logService) << "checkAuthorization failed.";
         sendErrorReply(QDBusError::ErrorType::Failed,
                        QString("(pid: %1) is not allowed to configrate firewall. %3")
                        .arg(pid)

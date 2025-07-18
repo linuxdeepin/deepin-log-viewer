@@ -33,6 +33,8 @@
 #include <QMenu>
 #include <QShortcut>
 #include <QAbstractButton>
+#include <QLoggingCategory>
+
 #define ITEM_HEIGHT 40
 #define ITEM_HEIGHT_COMPACT 24
 #define ITEM_WIDTH 108
@@ -44,15 +46,19 @@ Q_DECLARE_METATYPE(QMargins)
 
 DWIDGET_USE_NAMESPACE
 
+Q_DECLARE_LOGGING_CATEGORY(logApp)
+
 const QVariant VListViewItemMargin = QVariant::fromValue(QMargins(15, 0, 5, 0));
 
 LogListDelegate::LogListDelegate(LogListView *parent)
     : DStyledItemDelegate(parent)
 {
+    qCDebug(logApp) << "LogListDelegate constructor called";
 }
 
 void LogListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    // qCDebug(logApp) << "LogListDelegate::paint called";
     DStyledItemDelegate::paint(painter, option, index);
     LogListView *parentView = qobject_cast<LogListView *>(this->parent());
     if ((option.state & QStyle::State_HasFocus) && parentView && (parentView->focusReson() == Qt::TabFocusReason || parentView->focusReson() == Qt::BacktabFocusReason) && (parentView->hasFocus())) {
@@ -84,6 +90,7 @@ void LogListDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
  */
 bool LogListDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index)
 {
+    // qCDebug(logApp) << "LogListDelegate::helpEvent called";
     QToolTip::hideText();
     if (event->type() == QEvent::ToolTip) {
         const QString tooltip = index.data(Qt::DisplayRole).toString();
@@ -112,6 +119,7 @@ bool LogListDelegate::helpEvent(QHelpEvent *event, QAbstractItemView *view, cons
  */
 void LogListDelegate::hideTooltipImmediately()
 {
+    // qCDebug(logApp) << "LogListDelegate::hideTooltipImmediately called";
     QWidgetList qwl = QApplication::topLevelWidgets();
     for (QWidget *qw : qwl) {
         if (QStringLiteral("QTipLabel") == qw->metaObject()->className()) {
@@ -123,7 +131,7 @@ void LogListDelegate::hideTooltipImmediately()
 LogListView::LogListView(QWidget *parent)
     : DListView(parent)
 {
-    qDebug() << "LogListView constructor entered";
+    qCDebug(logApp) << "LogListView constructor entered";
     initUI();
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &LogListView::customContextMenuRequested, this, &LogListView::requestshowRightMenu);
@@ -156,7 +164,7 @@ LogListView::LogListView(QWidget *parent)
  */
 void LogListView::initUI()
 {
-    qDebug() << "LogListView::initUI() entered";
+    qCDebug(logApp) << "LogListView::initUI() entered";
     this->setMinimumWidth(150);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setItemDelegate(new LogListDelegate(this));
@@ -335,7 +343,9 @@ void LogListView::initUI()
 
 void LogListView::initCustomLogItem()
 {
+    qCDebug(logApp) << "LogListView::initCustomLogItem called";
     if (!m_customLogItem) {
+        qCDebug(logApp) << "Creating new custom log item";
         m_customLogItem = new QStandardItem(QIcon::fromTheme("dp_customlog", QIcon(":/customlog.svg")), DApplication::translate("Tree", "Custom Log"));
     }
 
@@ -349,6 +359,7 @@ void LogListView::initCustomLogItem()
 
 QStringList LogListView::getAllFiles(const QString &file)
 {
+    qCDebug(logApp) << "LogListView::getAllFiles called with file:" << file;
     QStringList files;
     if (file.contains("*")) {
         QString path = file.left(file.lastIndexOf('/'));
@@ -360,14 +371,17 @@ QStringList LogListView::getAllFiles(const QString &file)
         for (auto &file : files) {
             file = path + "/" + file;
         }
+        qCDebug(logApp) << "Found wildcard files:" << files;
     } else {
         files << file;
+        qCDebug(logApp) << "Single file:" << files;
     }
     return files;
 }
 
 void LogListView::setDefaultSelect()
 {
+    qCDebug(logApp) << "LogListView::setDefaultSelect called";
     setCurrentIndex(currentIndex());
     itemChanged(currentIndex());
 }
@@ -379,8 +393,11 @@ void LogListView::setDefaultSelect()
  */
 bool LogListView::isFileExist(const QString &iFile)
 {
+    qCDebug(logApp) << "LogListView::isFileExist checking file:" << iFile;
     QFile file(iFile);
-    return file.exists();
+    bool exists = file.exists();
+    qCDebug(logApp) << "File exists:" << exists;
+    return exists;
 }
 
 /**
@@ -389,6 +406,7 @@ bool LogListView::isFileExist(const QString &iFile)
  */
 void LogListView::paintEvent(QPaintEvent *event)
 {
+    // qCDebug(logApp) << "LogListView::paintEvent called";
     DPalette pa = DPaletteHelper::instance()->palette(this);
     pa.setBrush(DPalette::ItemBackground, pa.color(DPalette::Base));
     // pa.setBrush(DPalette::Background, pa.color(DPalette::Base));
@@ -406,15 +424,16 @@ void LogListView::paintEvent(QPaintEvent *event)
  */
 void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+    qCDebug(logApp) << "LogListView::currentChanged called with current row:" << current.row() << "previous row:" << previous.row();
     PERF_PRINT_BEGIN("POINT-03", "");
     if (current.row() < 0) {
-        qDebug() << "Invalid current row, exiting currentChanged";
+        qCDebug(logApp) << "Invalid current row, exiting currentChanged";
         return;
     }
 
     emit itemChanged(current);
     DListView::currentChanged(current, previous);
-    qDebug() << "LogListView::currentChanged() exited";
+    qCDebug(logApp) << "LogListView::currentChanged() exited";
 }
 
 /**
@@ -424,24 +443,30 @@ void LogListView::currentChanged(const QModelIndex &current, const QModelIndex &
  */
 void LogListView::truncateFile(QString path_)
 {
+    qCDebug(logApp) << "LogListView::truncateFile called with path:" << path_;
     QProcess prc;
     if (path_ == KERN_TREE_DATA || path_ == BOOT_TREE_DATA || path_ == DPKG_TREE_DATA || path_ == KWIN_TREE_DATA) {
         QStringList files = getAllFiles(path_.append("*"));
+        qCDebug(logApp) << "Truncating files:" << files;
         prc.start("pkexec", QStringList() << "logViewerTruncate" << files.join(' '));
     } else if (path_ == XORG_TREE_DATA) {
         path_ = "/var/log/Xorg*.log*";
         QStringList files = getAllFiles(path_);
+        qCDebug(logApp) << "Truncating Xorg files:" << files;
         prc.start("pkexec", QStringList() << "logViewerTruncate" << files.join(' '));
     } else if (path_ == DNF_TREE_DATA) {
         path_ = "/var/log/dnf*.log*";
         QStringList files = getAllFiles(path_);
+        qCDebug(logApp) << "Truncating DNF files:" << files;
         prc.start("pkexec", QStringList() << "logViewerTruncate" << files.join(' '));
     } else {
         QStringList files = getAllFiles(path_.append("*"));
+        qCDebug(logApp) << "Truncating other files:" << files;
         prc.start("pkexec", QStringList() << "logViewerTruncate" << files.join(' '));
     }
 
     prc.waitForFinished();
+    qCDebug(logApp) << "File truncation completed";
 }
 
 /**
@@ -451,12 +476,14 @@ void LogListView::truncateFile(QString path_)
  */
 void LogListView::slot_getAppPath(int id, const QString &app)
 {
+    qCDebug(logApp) << "LogListView::slot_getAppPath called with id:" << id << "app:" << app;
     Q_UNUSED(id);
 
     AppLogConfig appConfig = LogApplicationHelper::instance()->appLogConfig(app);
-    if (!appConfig.isValid())
+    if (!appConfig.isValid()) {
+        qCDebug(logApp) << "App config is invalid, setting empty path";
         g_path = "";
-    else {
+    } else {
         // std::vector<SubModuleConfig> vSubmodules = appConfig.subModules.toVector().toStdVector();
         QVector<SubModuleConfig> qSubmodules = appConfig.subModules.toVector();
         std::vector<SubModuleConfig> vSubmodules(qSubmodules.begin(), qSubmodules.end());
@@ -466,21 +493,24 @@ void LogListView::slot_getAppPath(int id, const QString &app)
 
         if (it != vSubmodules.end()) {
             g_path = it->logPath;
+            qCDebug(logApp) << "Found app log path:" << g_path;
             return;
         }
 
+        qCDebug(logApp) << "No matching submodule found, setting empty path";
         g_path = "";
     }
 }
 
 Qt::FocusReason LogListView::focusReson()
 {
+    // qCDebug(logApp) << "LogListView::focusReson called, returning:" << m_reson;
     return m_reson;
 }
 
 void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
 {
-    qDebug() << "LogListView::showRightMenu() entered";
+    qCDebug(logApp) << "LogListView::showRightMenu() entered";
     QModelIndex idx = this->currentIndex();
     QString pathData = idx.data(ITEM_DATE_ROLE).toString();
     if (!this->selectionModel()->selectedIndexes().empty()) {
@@ -559,6 +589,7 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
 
 void LogListView::requestshowRightMenu(const QPoint &pos)
 {
+    // qCDebug(logApp) << "LogListView::requestshowRightMenu called";
     if (this->indexAt(pos).isValid()) {
         showRightMenu(pos, false);
     }
@@ -566,6 +597,7 @@ void LogListView::requestshowRightMenu(const QPoint &pos)
 
 void LogListView::mouseMoveEvent(QMouseEvent *event)
 {
+    // qCDebug(logApp) << "LogListView::mouseMoveEvent called";
     Q_UNUSED(event)
     if (QToolTip::isVisible()) {
         QToolTip::hideText();
@@ -575,6 +607,7 @@ void LogListView::mouseMoveEvent(QMouseEvent *event)
 
 void LogListView::keyPressEvent(QKeyEvent *event)
 {
+    // qCDebug(logApp) << "LogListView::keyPressEvent called";
     if (event->key() == Qt::Key_Up) {
         if (currentIndex().row() == 0) {
             QModelIndex modelIndex = model()->index(model()->rowCount() - 1, 0);
@@ -596,6 +629,7 @@ void LogListView::keyPressEvent(QKeyEvent *event)
 
 void LogListView::mousePressEvent(QMouseEvent *event)
 {
+    // qCDebug(logApp) << "LogListView::mousePressEvent called";
     if (event->button() == Qt::RightButton) {
         emit clicked(indexAt(event->pos()));
     }
@@ -604,6 +638,7 @@ void LogListView::mousePressEvent(QMouseEvent *event)
 
 void LogListView::focusInEvent(QFocusEvent *event)
 {
+    // qCDebug(logApp) << "LogListView::focusInEvent called";
     if ((event->reason() != Qt::PopupFocusReason) && (event->reason() != Qt::ActiveWindowFocusReason)) {
         m_reson = event->reason();
     }
@@ -612,11 +647,13 @@ void LogListView::focusInEvent(QFocusEvent *event)
 
 void LogListView::focusOutEvent(QFocusEvent *event)
 {
+    // qCDebug(logApp) << "LogListView::focusOutEvent called";
     DListView::focusOutEvent(event);
 }
 
 void LogListView::slot_valueChanged_dConfig_or_gSetting(const QString &key)
 {
+    // qCDebug(logApp) << "LogListView::slot_valueChanged_dConfig_or_gSetting called with key:" << key;
     if (key == "customLogFiles" || key == "customlogfiles") {
         int size = LogApplicationHelper::instance()->getCustomLogList().size();
         if (size > 0 && (!m_customLogItem || !m_pModel->indexFromItem(m_customLogItem).isValid())) {
@@ -634,18 +671,23 @@ void LogListView::slot_valueChanged_dConfig_or_gSetting(const QString &key)
 
 void LogListView::updateSizeMode()
 {
+    // qCDebug(logApp) << "LogListView::updateSizeMode called";
     int nItemHeight = ITEM_HEIGHT;
 #ifdef DTKWIDGET_CLASS_DSizeMode
-    if (DGuiApplicationHelper::isCompactMode())
+    if (DGuiApplicationHelper::isCompactMode()) {
         nItemHeight = ITEM_HEIGHT_COMPACT;
-    else
+        qCDebug(logApp) << "Using compact mode item height:" << nItemHeight;
+    } else {
         nItemHeight = ITEM_HEIGHT;
+        qCDebug(logApp) << "Using normal mode item height:" << nItemHeight;
+    }
 #else
     nItemHeight = ITEM_HEIGHT;
 #endif
 
     if (m_pModel) {
         int nCount = m_pModel->rowCount();
+        qCDebug(logApp) << "Updating size for" << nCount << "items";
         for (int i = 0; i < nCount; i++) {
             QStandardItem* item = m_pModel->item(i);
             item->setSizeHint(QSize(ITEM_WIDTH, nItemHeight));

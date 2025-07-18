@@ -14,6 +14,9 @@
 #include <DPalette>
 #include <DStyleHelper>
 #include <DStyle>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 static const int kSpacingMargin = 4;
 #define ROW_HEIGHT 36
@@ -34,13 +37,14 @@ LogViewHeaderView::LogViewHeaderView(Qt::Orientation orientation, QWidget *paren
 #ifdef DTKWIDGET_CLASS_DSizeMode
     // 紧凑模式信号处理
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, &LogViewHeaderView::updateSizeMode);
-    qDebug() << "Connected sizeModeChanged signal";
+    qCDebug(logApp) << "Connected sizeModeChanged signal";
     updateSizeMode();
 #endif
 }
 
 LogViewHeaderView::~LogViewHeaderView()
 {
+    qCDebug(logApp) << "LogViewHeaderView destructor called";
     if (m_option != nullptr) {
         delete m_option;
         m_option = nullptr;
@@ -54,6 +58,7 @@ LogViewHeaderView::~LogViewHeaderView()
  */
 void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int logicalIndex) const
 {
+    // qCDebug(logApp) << "Painting section:" << logicalIndex;
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setOpacity(1);
@@ -114,6 +119,7 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
                    };
     }
     if (!model()) {
+        qCWarning(logApp) << "Model is null in paintSection";
         return;
     }
     QString title = model()->headerData(logicalIndex, orientation(), Qt::DisplayRole).toString();
@@ -129,6 +135,7 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
         painter->drawText(textRect, static_cast<int>(align), title);
     }
     if (isSortIndicatorShown() && logicalIndex == sortIndicatorSection()) {
+        // qCDebug(logApp) << "Drawing sort indicator for section:" << logicalIndex << "order:" << sortIndicatorOrder();
         // 绘制排序的箭头图标（8×5）
         QRect sortIndicator(textRect.x() + textRect.width() + margin,
                             textRect.y() + (textRect.height() - 5) / 2, 8, 10);
@@ -144,6 +151,7 @@ void LogViewHeaderView::paintSection(QPainter *painter, const QRect &rect, int l
 
 void LogViewHeaderView::focusInEvent(QFocusEvent *event)
 {
+    // qCDebug(logApp) << "LogViewHeaderView focus in event, reason:" << event->reason();
     m_reson = event->reason();
     DHeaderView::focusInEvent(event);
 }
@@ -154,6 +162,7 @@ void LogViewHeaderView::focusInEvent(QFocusEvent *event)
  */
 void LogViewHeaderView::paintEvent(QPaintEvent *event)
 {
+    // qCDebug(logApp) << "LogViewHeaderView paintEvent";
     QPainter painter(viewport());
     painter.save();
 
@@ -191,6 +200,7 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
     painter.restore();
     // draw focus
     if (hasFocus() && (m_reson == Qt::TabFocusReason || m_reson == Qt::BacktabFocusReason)) {
+        // qCDebug(logApp) << "Drawing focus rect";
         QStyleOptionFocusRect o;
         o.QStyleOption::operator=(option);
         QRect focusRect {rect.x() - offset(), rect.y(), length() - sectionPosition(0), rect.height()};
@@ -201,6 +211,7 @@ void LogViewHeaderView::paintEvent(QPaintEvent *event)
 
 QSize LogViewHeaderView::sizeHint() const
 {
+    // qCDebug(logApp) << "Getting size hint";
     int nRowHeight = ROW_HEIGHT;
 #ifdef DTKWIDGET_CLASS_DSizeMode
     if (DGuiApplicationHelper::isCompactMode())
@@ -219,6 +230,7 @@ QSize LogViewHeaderView::sizeHint() const
  */
 int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
 {
+    qCDebug(logApp) << "Getting section size hint for index:" << logicalIndex;
     QStyleOptionHeader option;
     initStyleOption(&option);
     DStyle *style = dynamic_cast<DStyle *>(DApplication::style());
@@ -226,21 +238,24 @@ int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
 
     QFontMetrics fm(DApplication::font());
     if (!model()) {
+        qCWarning(logApp) << "Model is null in sectionSizeHint";
         return -1;
     }
     QString buf = model()->headerData(logicalIndex, Qt::Horizontal, Qt::DisplayRole).toString();
     int textWidth = fm.horizontalAdvance(buf);
 
     if (sortIndicatorSection() == logicalIndex) {
+        qCDebug(logApp) << "Section has sort indicator, width:" << (textWidth + margin * 3 + 8);
         return textWidth + margin * 3 + 8;
     } else {
+        qCDebug(logApp) << "Section width:" << (textWidth + margin * 2);
         return textWidth + margin * 2;
     }
 }
 
 void LogViewHeaderView::updateSizeMode()
 {
-    qDebug() << "Updating size mode, compact:" << DGuiApplicationHelper::isCompactMode();
+    qCDebug(logApp) << "Updating size mode, compact:" << DGuiApplicationHelper::isCompactMode();
     int nRowHeight = ROW_HEIGHT;
 #ifdef DTKWIDGET_CLASS_DSizeMode
     if (DGuiApplicationHelper::isCompactMode())

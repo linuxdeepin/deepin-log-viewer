@@ -10,34 +10,30 @@
 #include <sys/time.h>
 #include <time.h>
 
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logDebugTime, "org.deepin.log.viewer.debug.timemanager")
-#else
-Q_LOGGING_CATEGORY(logDebugTime, "org.deepin.log.viewer.debug.timemanager", QtInfoMsg)
-#endif
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 DebugTimeManager::DebugTimeManager()
 {
-    qCDebug(logDebugTime) << "DebugTimeManager initialized";
+    qCDebug(logApp) << "DebugTimeManager initialized";
 
 }
 
 void DebugTimeManager::clear()
 {
-    qCDebug(logDebugTime) << "Clearing all time points";
+    qCDebug(logApp) << "Clearing all time points";
     m_MapPoint.clear();
     m_MapLinuxPoint.clear();
 }
 
 void DebugTimeManager::beginPointLinux(const QString &point, const QString &status)
 {
-    qCDebug(logDebugTime) << QString("Starting time point: %1 (%2)").arg(point).arg(status);
+    qCDebug(logApp) << QString("Starting time point: %1 (%2)").arg(point).arg(status);
     PointInfoLinux info;
     info.desc = status;
     timespec beginTime;
     int result = clock_gettime(CLOCK_MONOTONIC, &beginTime);
     if (result) {
-        qCWarning(logDebugTime) << "Failed to get monotonic clock time";
+        qCWarning(logApp) << "Failed to get monotonic clock time";
         return;
     }
     info.time = beginTime;
@@ -54,14 +50,14 @@ void DebugTimeManager::endPointLinux(const QString &point, const QString &status
             return;
         }
         timespec diffTime =  diff(m_MapLinuxPoint[point].time, endTime);
-        qCInfo(logDebugTime) << QString("[GRABPOINT] %1 %2 %3 time=%4s").arg(point).arg(m_MapLinuxPoint[point].desc).arg(status).arg(QString::number((diffTime.tv_sec * 1000 + (diffTime.tv_nsec) / 1000000) / 1000.0, 'g', 4));
+        qCInfo(logApp) << QString("[GRABPOINT] %1 %2 %3 time=%4s").arg(point).arg(m_MapLinuxPoint[point].desc).arg(status).arg(QString::number((diffTime.tv_sec * 1000 + (diffTime.tv_nsec) / 1000000) / 1000.0, 'g', 4));
         m_MapLinuxPoint.remove(point);
     }
 }
 
 timespec DebugTimeManager::diff(timespec start, timespec end)
 {
-    qCDebug(logDebugTime) << QString("Calculating time difference: start=%1.%2 end=%3.%4")
+    qCDebug(logApp) << QString("Calculating time difference: start=%1.%2 end=%3.%4")
         .arg(start.tv_sec).arg(start.tv_nsec)
         .arg(end.tv_sec).arg(end.tv_nsec);
     timespec temp;

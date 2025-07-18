@@ -10,14 +10,13 @@
 #include <QThread>
 #include <QLoggingCategory>
 
-Q_DECLARE_LOGGING_CATEGORY(logEventUtils)
-Q_LOGGING_CATEGORY(logEventUtils, "deepin.log.viewer.eventutils")
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 Eventlogutils *Eventlogutils::m_pInstance = nullptr;
 Eventlogutils *Eventlogutils::GetInstance()
 {
     if (m_pInstance == nullptr) {
-        qCDebug(logEventUtils) << "Creating Eventlogutils singleton instance";
+        qCDebug(logApp) << "Creating Eventlogutils singleton instance";
         m_pInstance  = new Eventlogutils();
     }
     return m_pInstance;
@@ -25,8 +24,9 @@ Eventlogutils *Eventlogutils::GetInstance()
 
 void Eventlogutils::writeLogs(QJsonObject &data)
 {
+    // qCDebug(logApp) << "Eventlogutils::writeLogs called with data:" << QJsonDocument(data).toJson(QJsonDocument::Compact);
     if (!writeEventLogFunc) {
-        qCWarning(logEventUtils) << "writeEventLogFunc is null, skip writing log";
+        qCWarning(logApp) << "writeEventLogFunc is null, skip writing log";
         return;
     }
 
@@ -39,15 +39,15 @@ Eventlogutils::Eventlogutils()
     initFunc = reinterpret_cast<bool (*)(const std::string &, bool)>(library.resolve("Initialize"));
     writeEventLogFunc = reinterpret_cast<void (*)(const std::string &)>(library.resolve("WriteEventLog"));
 
-    qCDebug(logEventUtils) << "Loading libdeepin-event-log.so functions:"
+    qCDebug(logApp) << "Loading libdeepin-event-log.so functions:"
                          << "initFunc:" << (initFunc ? "found" : "not found")
                          << "writeEventLogFunc:" << (writeEventLogFunc ? "found" : "not found");
 
     if (!initFunc) {
-        qCWarning(logEventUtils) << "Failed to resolve Initialize function";
+        qCWarning(logApp) << "Failed to resolve Initialize function";
         return;
     }
 
-    qCDebug(logEventUtils) << "Initializing event log with appName: deepin-log-viewer";
+    qCDebug(logApp) << "Initializing event log with appName: deepin-log-viewer";
     initFunc("deepin-log-viewer", true);
 }

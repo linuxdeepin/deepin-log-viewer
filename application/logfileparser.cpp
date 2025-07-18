@@ -33,11 +33,7 @@
 #include <utmp.h>
 #include <utmpx.h>
 
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logFileParser, "org.deepin.log.viewer.parser")
-#else
-Q_LOGGING_CATEGORY(logFileParser, "org.deepin.log.viewer.parser", QtInfoMsg)
-#endif
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 int journalWork::thread_index = 0;
 int JournalBootWork::thread_index = 0;
@@ -46,7 +42,7 @@ DWIDGET_USE_NAMESPACE
 LogFileParser::LogFileParser(QWidget *parent)
     : QObject(parent)
 {
-    qCDebug(logFileParser) << "LogFileParser constructor called";
+    qCDebug(logApp) << "LogFileParser constructor called";
     qRegisterMetaType<QList<LOG_MSG_KWIN> > ("QList<LOG_MSG_KWIN>");
     qRegisterMetaType<QList<LOG_MSG_XORG> > ("QList<LOG_MSG_XORG>");
     qRegisterMetaType<QList<LOG_MSG_DPKG> > ("QList<LOG_MSG_DPKG>");
@@ -63,23 +59,23 @@ LogFileParser::LogFileParser(QWidget *parent)
 
 LogFileParser::~LogFileParser()
 {
-    qCDebug(logFileParser) << "LogFileParser destructor called";
+    qCDebug(logApp) << "LogFileParser destructor called";
     stopAllLoad();
     if (SharedMemoryManager::getInstance()) {
-        qCDebug(logFileParser) << "Releasing shared memory";
+        qCDebug(logApp) << "Releasing shared memory";
         SharedMemoryManager::instance()->releaseMemory();
     }
 }
 
 int LogFileParser::parseByJournal(const QStringList &arg)
 {
-    qCDebug(logFileParser) << "Starting journal log parsing";
+    qCDebug(logApp) << "Starting journal log parsing";
     stopAllLoad();
 
     emit stopJournal();
     journalWork *work = new journalWork(this);
 
-    qCDebug(logFileParser) << "Setting journal parser arguments";
+    qCDebug(logApp) << "Setting journal parser arguments";
     work->setArg(arg);
     auto a = connect(work, &journalWork::journalFinished, this, &LogFileParser::journalFinished,
                      Qt::QueuedConnection);
@@ -89,14 +85,14 @@ int LogFileParser::parseByJournal(const QStringList &arg)
     connect(this, &LogFileParser::stopJournal, work, &journalWork::stopWork);
 
     int index = work->getIndex();
-    qCDebug(logFileParser) << "Starting journal parser thread with index:" << index;
+    qCDebug(logApp) << "Starting journal parser thread with index:" << index;
     QThreadPool::globalInstance()->start(work);
     return index;
 }
 
 int LogFileParser::parseByJournalBoot(const QStringList &arg)
 {
-    qCDebug(logFileParser) << "Starting journal boot log parsing";
+    qCDebug(logApp) << "Starting journal boot log parsing";
     stopAllLoad();
     JournalBootWork *work = new JournalBootWork(this);
 
@@ -115,7 +111,7 @@ int LogFileParser::parseByJournalBoot(const QStringList &arg)
 
 int LogFileParser::parseByDpkg(const DKPG_FILTERS &iDpkgFilter)
 {
-    qCDebug(logFileParser) << "Starting dpkg log parsing";
+    qCDebug(logApp) << "Starting dpkg log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(DPKG);
@@ -137,6 +133,7 @@ int LogFileParser::parseByDpkg(const DKPG_FILTERS &iDpkgFilter)
 
 int LogFileParser::parseByXlog(const XORG_FILTERS &iXorgFilter)    // modifed by Airy
 {
+    qCDebug(logApp) << "Starting xorg log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(XORG);
@@ -157,7 +154,7 @@ int LogFileParser::parseByXlog(const XORG_FILTERS &iXorgFilter)    // modifed by
 
 int LogFileParser::parseByNormal(const NORMAL_FILTERS &iNormalFiler)
 {
-    qCDebug(logFileParser) << "Starting normal log parsing";
+    qCDebug(logApp) << "Starting normal log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(Normal);
@@ -176,7 +173,7 @@ int LogFileParser::parseByNormal(const NORMAL_FILTERS &iNormalFiler)
 
 int LogFileParser::parseByKwin(const KWIN_FILTERS &iKwinfilter)
 {
-    qCDebug(logFileParser) << "Starting kwin log parsing";
+    qCDebug(logApp) << "Starting kwin log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(Kwin);
@@ -194,7 +191,7 @@ int LogFileParser::parseByKwin(const KWIN_FILTERS &iKwinfilter)
 
 int LogFileParser::parseByBoot()
 {
-    qCDebug(logFileParser) << "Starting boot log parsing";
+    qCDebug(logApp) << "Starting boot log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(BOOT);
@@ -214,26 +211,31 @@ int LogFileParser::parseByBoot()
 
 int LogFileParser::parse(LOG_FILTER_BASE &filter)
 {
+    qCDebug(logApp) << "Starting log parsing";
     stopAllLoad();
 
     ParseThreadBase *parseWork = nullptr;
-    if (filter.type == KERN)
+    if (filter.type == KERN) {
+        qCDebug(logApp) << "Starting kern log parsing";
         parseWork = new ParseThreadKern(this);
-    else if (filter.type == Kwin)
+    } else if (filter.type == Kwin) {
+        qCDebug(logApp) << "Starting kwin log parsing";
         parseWork = new ParseThreadKwin(this);
+    }
     if (parseWork) {
+        qCDebug(logApp) << "Setting filter for parse work";
         parseWork->setFilter(filter);
         int index = parseWork->getIndex();
         QThreadPool::globalInstance()->start(parseWork);
         return index;
     }
-
+    qCDebug(logApp) << "No parse work found, returning -1";
     return -1;
 }
 
 int LogFileParser::parseByKern(const KERN_FILTERS &iKernFilter)
 {
-    qCDebug(logFileParser) << "Starting kern log parsing";
+    qCDebug(logApp) << "Starting kern log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(KERN);
@@ -253,13 +255,14 @@ int LogFileParser::parseByKern(const KERN_FILTERS &iKernFilter)
 
 int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
 {
-    qCDebug(logFileParser) << "Starting app log parsing for:" << iAPPFilter.app;
+    qCDebug(logApp) << "Starting app log parsing for:" << iAPPFilter.app;
     // 根据应用名获取应用日志配置信息
     QString appName = iAPPFilter.app;
     AppLogConfig appLogConfig = LogApplicationHelper::instance()->appLogConfig(appName);
 
     APP_FILTERSList appFilterList;
     if (appLogConfig.subModules.size() == 1) {
+        qCDebug(logApp) << "App log config has only one submodule";
         APP_FILTERS appFilter = iAPPFilter;
         // 子模块名称与应用名称显示一致，并且仅有一个子模块，
         // 则认为该应用与子模块同名称，来源列表显示为应用名称
@@ -273,6 +276,7 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
         appFilter.execPath = appLogConfig.subModules[0].execPath;
         appFilterList.push_back(appFilter);
     } else if (appLogConfig.subModules.size() > 1) {
+        qCDebug(logApp) << "App log config has multiple submodules";
         for (auto submodule : appLogConfig.subModules) {
             APP_FILTERS appFilter = iAPPFilter;
             appFilter.submodule = submodule.name;
@@ -285,6 +289,7 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
     }
 
     if (appFilterList.size() > 0) {
+        qCDebug(logApp) << "App log config has submodules, starting parsing";
         stopAllLoad();
 
         m_appThread = new LogApplicationParseThread(this);
@@ -309,12 +314,13 @@ int LogFileParser::parseByApp(const APP_FILTERS &iAPPFilter)
         m_appThread->start();
         return index;
     }
-
+    qCDebug(logApp) << "App log config has no submodules, returning -1";
     return -1;
 }
 
 void LogFileParser::parseByDnf(DNF_FILTERS iDnfFilter)
 {
+    qCDebug(logApp) << "Starting dnf log parsing";
     stopAllLoad();
     LogAuthThread *authThread = new LogAuthThread(this);
     authThread->setType(Dnf);
@@ -332,6 +338,7 @@ void LogFileParser::parseByDnf(DNF_FILTERS iDnfFilter)
 
 void LogFileParser::parseByDmesg(DMESG_FILTERS iDmesgFilter)
 {
+    qCDebug(logApp) << "Starting dmesg log parsing";
     stopAllLoad();
     LogAuthThread *authThread = new LogAuthThread(this);
     authThread->setType(Dmesg);
@@ -349,6 +356,7 @@ void LogFileParser::parseByDmesg(DMESG_FILTERS iDmesgFilter)
 
 int LogFileParser::parseByOOC(const QString &path)
 {
+    qCDebug(logApp) << "Starting ooc log parsing";
     stopAllLoad();
 
     m_OOCThread = new LogOOCFileParseThread(this);
@@ -368,6 +376,7 @@ int LogFileParser::parseByOOC(const QString &path)
 
 int LogFileParser::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
 {
+    qCDebug(logApp) << "Starting audit log parsing";
     stopAllLoad();
     LogAuthThread   *authThread = new LogAuthThread(this);
     authThread->setType(Audit);
@@ -387,6 +396,7 @@ int LogFileParser::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
 
 int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap)
 {
+    qCDebug(logApp) << "Starting coredump log parsing";
     stopAllLoad();
     //qRegisterMetaType<QList<quint16>>("QList<LOG_MSG_COREDUMP>");
     LogAuthThread   *authThread = new LogAuthThread(this);
@@ -405,7 +415,7 @@ int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool
 
 void LogFileParser::stopAllLoad()
 {
-    qCDebug(logFileParser) << "Stopping all log parsers";
+    qCDebug(logApp) << "Stopping all log parsers";
     emit stop();
     emit stopKern();
     emit stopBoot();
@@ -425,8 +435,9 @@ void LogFileParser::stopAllLoad()
 
 void LogFileParser::quitLogAuththread(QThread *iThread)
 {
+    // qCDebug(logApp) << "LogFileParser::quitLogAuththread called with iThread:" << iThread;
     if (iThread && iThread->isRunning()) {
-        qCDebug(logFileParser) << "Stopping auth thread";
+        qCDebug(logApp) << "Stopping auth thread";
         iThread->quit();
         iThread->wait();
     }
@@ -446,7 +457,7 @@ void LogFileParser::quitLogAuththread(QThread *iThread)
  */
 void LogFileParser::slog_proccessError(const QString &iError)
 {
-    qCWarning(logFileParser) << "Log processing error:" << iError;
+    qCWarning(logApp) << "Log processing error:" << iError;
     emit proccessError(iError);
 }
 

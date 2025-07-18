@@ -16,11 +16,7 @@
 
 DWIDGET_USE_NAMESPACE
 
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logOOCParse, "org.deepin.log.viewer.parse.ooc.work")
-#else
-Q_LOGGING_CATEGORY(logOOCParse, "org.deepin.log.viewer.parse.ooc.work", QtInfoMsg)
-#endif
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 int LogOOCFileParseThread::thread_count = 0;
 /**
@@ -30,11 +26,11 @@ int LogOOCFileParseThread::thread_count = 0;
 LogOOCFileParseThread::LogOOCFileParseThread(QObject *parent)
     : QThread(parent)
 {
-    qCDebug(logOOCParse) << "Enter LogOOCFileParseThread constructor";
+    qCDebug(logApp) << "Enter LogOOCFileParseThread constructor";
     //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
     thread_count++;
     m_threadCount = thread_count;
-    qCDebug(logOOCParse) << "Exit LogOOCFileParseThread constructor, thread count:" << thread_count;
+    qCDebug(logApp) << "Exit LogOOCFileParseThread constructor, thread count:" << thread_count;
 }
 
 /**
@@ -42,18 +38,20 @@ LogOOCFileParseThread::LogOOCFileParseThread(QObject *parent)
  */
 LogOOCFileParseThread::~LogOOCFileParseThread()
 {
-    qCDebug(logOOCParse) << "Enter LogOOCFileParseThread destructor";
+    qCDebug(logApp) << "Enter LogOOCFileParseThread destructor";
     stopProccess();
-    qCDebug(logOOCParse) << "Exit LogOOCFileParseThread destructor";
+    qCDebug(logApp) << "Exit LogOOCFileParseThread destructor";
 }
 
 void LogOOCFileParseThread::setParam(const QString &path)
 {
+    // qCDebug(logApp) << "LogOOCFileParseThread::setParam called with path:" << path;
     m_path = path;
 }
 
 int LogOOCFileParseThread::getIndex()
 {
+    // qCDebug(logApp) << "LogOOCFileParseThread::getIndex called, returning:" << m_threadCount;
     return m_threadCount;
 }
 
@@ -62,55 +60,63 @@ int LogOOCFileParseThread::getIndex()
  */
 void LogOOCFileParseThread::doWork()
 {
-    qCDebug(logOOCParse) << "Enter LogOOCFileParseThread::doWork";
+    qCDebug(logApp) << "Enter LogOOCFileParseThread::doWork";
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
 
     if (m_path.isEmpty()) {
+        qCWarning(logApp) << "Path is empty, finishing thread";
         emit sigFinished(m_threadCount);
         return;
     }
 
     if (!checkAuthentication(m_path)) {
+        qCWarning(logApp) << "Authentication failed for path:" << m_path;
         emit sigFinished(m_threadCount, 1);
         return;
     }
 
     QStringList filePath = DLDBusHandler::instance(this)->getOtherFileInfo(m_path);
+    qCDebug(logApp) << "Found" << filePath.count() << "files to process";
     for (int i = 0; i < filePath.count(); i++) {
         if (!m_canRun) {
+            qCDebug(logApp) << "Thread stopped, exiting file processing loop";
             emit sigFinished(m_threadCount);
             return;
         }
 
         //鉴权
         if (!checkAuthentication(filePath.at(i))) {
+            qCWarning(logApp) << "Authentication failed for file:" << filePath.at(i);
             emit sigFinished(m_threadCount, 1);
             return;
         }
 
+        qCDebug(logApp) << "Reading log file:" << filePath.at(i);
         QString m_Log = DLDBusHandler::instance(this)->readLog(filePath.at(i));
         m_fileData += m_Log;
         // dbus鉴权失败，不再继续解析
         if (m_Log.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
+            qCWarning(logApp) << "DBus authorization failed";
             emit sigFinished(m_threadCount);
             return;
         }
         emit sigData(m_threadCount, m_fileData);
     }
 
-    qCDebug(logOOCParse) << "Exit LogOOCFileParseThread::doWork";
+    qCDebug(logApp) << "Exit LogOOCFileParseThread::doWork";
     emit sigFinished(m_threadCount);
 }
 
 //鉴权
 bool LogOOCFileParseThread::checkAuthentication(const QString &path)
 {
-    qCDebug(logOOCParse) << "Enter checkAuthentication, path:" << path;
+    qCDebug(logApp) << "Enter checkAuthentication, path:" << path;
 
     //判断当前用户对文件是否可读
     QFlags <QFileDevice::Permission> power = QFile::permissions(path);
     if (!power.testFlag(QFile::ReadUser)) {
+        qCDebug(logApp) << "User does not have read permission, requesting elevation";
         //若当前用户不具备读取权限，则显示提权对话框
         //共享内存对应变量置true，允许进程内部逻辑运行
         ShareMemoryInfo shareInfo;
@@ -123,11 +129,12 @@ bool LogOOCFileParseThread::checkAuthentication(const QString &path)
         m_process->waitForFinished(-1);
         //有错则传出空数据
         if (m_process->exitCode() != 0) {
+            qCWarning(logApp) << "Process exited with error code:" << m_process->exitCode();
             return false;
         }
     }
 
-    qCDebug(logOOCParse) << "Exit checkAuthentication, result:" << (power.testFlag(QFile::ReadUser) ? "true" : "false");
+    qCDebug(logApp) << "Exit checkAuthentication, result: true";
     return true;
 }
 
@@ -167,8 +174,9 @@ bool LogOOCFileParseThread::checkAuthentication(const QString &path)
  */
 void LogOOCFileParseThread::run()
 {
-    qCDebug(logOOCParse) << "threadrun";
+    qCDebug(logApp) << "LogOOCFileParseThread::run thread started";
     doWork();
+    qCDebug(logApp) << "LogOOCFileParseThread::run thread finished";
 }
 
 /**
@@ -176,7 +184,7 @@ void LogOOCFileParseThread::run()
  */
 void LogOOCFileParseThread::stopProccess()
 {
-    qCDebug(logOOCParse) << "Enter stopProccess";
+    qCDebug(logApp) << "Enter stopProccess";
 
     //防止正在执行时重复执行
     if (m_isStopProccess) {
@@ -194,12 +202,16 @@ void LogOOCFileParseThread::stopProccess()
     if (m_process) {
         m_process->kill();
     }
-    qCDebug(logOOCParse) << "Exit stopProccess";
+    qCDebug(logApp) << "Exit stopProccess";
 }
 
 void LogOOCFileParseThread::initProccess()
 {
+    qCDebug(logApp) << "LogOOCFileParseThread::initProccess called";
     if (!m_process) {
+        qCDebug(logApp) << "Creating new QProcess instance";
         m_process.reset(new QProcess);
+    } else {
+        qCDebug(logApp) << "QProcess already exists";
     }
 }

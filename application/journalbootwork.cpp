@@ -16,11 +16,7 @@
 #include <QProcess>
 #include <QLoggingCategory>
 
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logJournalboot, "org.deepin.log.viewer.parse.boot.journal.work")
-#else
-Q_LOGGING_CATEGORY(logJournalboot, "org.deepin.log.viewer.parse.boot.journal.work", QtInfoMsg)
-#endif
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 DWIDGET_USE_NAMESPACE
 
@@ -35,6 +31,7 @@ JournalBootWork::JournalBootWork(QStringList arg, QObject *parent)
     :  QObject(parent),
        QRunnable()
 {
+    qCDebug(logApp) << "JournalBootWork constructor called with args:" << arg;
     //注册QList<LOG_MSG_JOURNAL>类型以让信号可以发出数据并能连接信号槽
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     //初始化等级数字对应显示文本的map
@@ -46,11 +43,12 @@ JournalBootWork::JournalBootWork(QStringList arg, QObject *parent)
     m_arg.append("json");
     if (!arg.isEmpty()) {
         m_arg.append(arg);
-        qCDebug(logJournalboot) << "Added journal filter args:" << arg;
+        qCDebug(logApp) << "Added journal filter args:" << arg;
     }
     //静态计数变量加一并赋值给本对象的成员变量，以供外部判断是否为最新线程发出的数据信号
     thread_index++;
     m_threadIndex = thread_index;
+    qCDebug(logApp) << "Thread index set to:" << m_threadIndex;
 }
 
 /**
@@ -61,11 +59,13 @@ JournalBootWork::JournalBootWork(QObject *parent)
     :  QObject(parent),
        QRunnable()
 {
+    qCDebug(logApp) << "JournalBootWork default constructor called";
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     initMap();
     setAutoDelete(true);
     thread_index++;
     m_threadIndex = thread_index;
+    qCDebug(logApp) << "Thread index set to:" << m_threadIndex;
 }
 
 /**
@@ -75,7 +75,7 @@ JournalBootWork::~JournalBootWork()
 {
     logList.clear();
     m_map.clear();
-    qCDebug(logJournalboot) << "Cleaned up JournalBootWork resources";
+    qCDebug(logApp) << "Cleaned up JournalBootWork resources";
 }
 
 /**
@@ -83,8 +83,8 @@ JournalBootWork::~JournalBootWork()
  */
 void JournalBootWork::stopWork()
 {
+    qCDebug(logApp) << "JournalBootWork::stopWork called";
     m_canRun = false;
-    qCDebug(logJournalboot) << "stopWork";
 }
 
 /**
@@ -93,6 +93,7 @@ void JournalBootWork::stopWork()
  */
 int JournalBootWork::getIndex()
 {
+    qCDebug(logApp) << "JournalBootWork::getIndex called, returning:" << m_threadIndex;
     return m_threadIndex;
 }
 
@@ -102,6 +103,7 @@ int JournalBootWork::getIndex()
  */
 int JournalBootWork::getPublicIndex()
 {
+    qCDebug(logApp) << "JournalBootWork::getPublicIndex called, returning:" << thread_index;
     return thread_index;
 }
 
@@ -111,9 +113,12 @@ int JournalBootWork::getPublicIndex()
  */
 void JournalBootWork::setArg(QStringList arg)
 {
+    qCDebug(logApp) << "JournalBootWork::setArg called with:" << arg;
     m_arg.clear();
-    if (!arg.isEmpty())
+    if (!arg.isEmpty()) {
         m_arg.append(arg);
+        qCDebug(logApp) << "Arguments set successfully";
+    }
 }
 
 /**
@@ -121,9 +126,9 @@ void JournalBootWork::setArg(QStringList arg)
  */
 void JournalBootWork::run()
 {
-    qCDebug(logJournalboot) << "threadrun";
+    qCDebug(logApp) << "JournalBootWork::run thread started";
     doWork();
-
+    qCDebug(logApp) << "JournalBootWork::run thread finished";
 }
 
 
@@ -132,6 +137,7 @@ void JournalBootWork::run()
  */
 void JournalBootWork::doWork()
 {
+    qCDebug(logApp) << "JournalBootWork::doWork started";
     //此线程刚开始把可以继续变量置true，不然下面没法跑
     m_canRun = true;
     mutex.lock();
@@ -139,6 +145,7 @@ void JournalBootWork::doWork()
     mutex.unlock();
     //如果线程外部被直接调用stopWork
     if ((!m_canRun)) {
+        qCDebug(logApp) << "Work stopped before starting";
         mutex.unlock();
         return;
     }
@@ -159,7 +166,7 @@ void JournalBootWork::doWork()
     //r为系统借口返回值，小于0则表示失败，直接返回
     if (r < 0) {
         QString errostr = QString("Failed to open journal: %1").arg(r);
-        qCWarning(logJournalboot) << errostr;
+        qCWarning(logApp) << errostr;
         emit journalBootError(errostr);
         return;
     }
@@ -168,7 +175,7 @@ void JournalBootWork::doWork()
 
     if (r < 0) {
         QString errostr = QString("Failed to seek tail journal: %1").arg(r);
-        qCWarning(logJournalboot) << errostr;
+        qCWarning(logApp) << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -185,7 +192,7 @@ void JournalBootWork::doWork()
             r = sd_journal_add_match(j, m_arg.at(0).toStdString().c_str(), 0);
         if (r < 0) {
             QString errostr = QString("Failed to add match journal: %1").arg(r);
-            qCWarning(logJournalboot) << errostr;
+            qCWarning(logApp) << errostr;
             emit  journalBootError(errostr);
             return;
         }
@@ -212,12 +219,12 @@ void JournalBootWork::doWork()
         sd_journal_close(j);
         return;
     }
-    qCDebug(logJournalboot) << "journal match condition:" << match;
+    qCDebug(logApp) << "journal match condition:" << match;
     //增加筛选条件
     r = sd_journal_add_match(j, match, sizeof(match) - 1);
     if (r < 0) {
         QString errostr = QString("Failed to add match journal: %1").arg(r);
-        qCWarning(logJournalboot) << errostr;
+        qCWarning(logApp) << errostr;
         emit journalBootError(errostr);
         return;
     }
@@ -225,7 +232,7 @@ void JournalBootWork::doWork()
     r =   sd_journal_add_conjunction(j);
     if (r < 0) {
         QString errostr = QString("Failed to add conjunction journal: %1").arg(r);
-        qCWarning(logJournalboot) << errostr;
+        qCWarning(logApp) << errostr;
         emit  journalBootError(errostr);
         return;
     }
@@ -264,7 +271,7 @@ void JournalBootWork::doWork()
                 continue;
         }
         logMsg.dateTime = getDateTimeFromStamp(dt);
-        qCDebug(logJournalboot) << "Journal entry timestamp:" << logMsg.dateTime;
+        qCDebug(logApp) << "Journal entry timestamp:" << logMsg.dateTime;
 
         // 获取主机名
         r = sd_journal_get_data(j, "_HOSTNAME", reinterpret_cast<const void **>(&d), &l);
@@ -291,7 +298,7 @@ void JournalBootWork::doWork()
         r = sd_journal_get_data(j, "_COMM", reinterpret_cast<const void **>(&d), &l);
         if (r < 0) {
             logMsg.daemonName = "unknown";
-            qCWarning(logJournalboot) << logMsg.daemonId << "error code" << r;
+            qCWarning(logApp) << logMsg.daemonId << "error code" << r;
         } else {
             QStringList strList =    getReplaceColorStr(d).split("=");
             strList.removeFirst();
@@ -350,6 +357,7 @@ void JournalBootWork::doWork()
  */
 QString JournalBootWork::getReplaceColorStr(const char *d)
 {
+    qCDebug(logApp) << "JournalBootWork::getReplaceColorStr processing string";
     QByteArray byteChar(d);
     byteChar = Utils::replaceEmptyByteArray(byteChar);
     QString d_str = QString(byteChar);
@@ -366,6 +374,7 @@ QString JournalBootWork::getReplaceColorStr(const char *d)
  */
 QString JournalBootWork::getDateTimeFromStamp(const QString &str)
 {
+    qCDebug(logApp) << "JournalBootWork::getDateTimeFromStamp converting timestamp:" << str;
     QString ret = "";
     QString dtstr = str.left(str.length() - 6);
     QDateTime dt = DATE_FOTIME(dtstr.toUInt());
@@ -378,6 +387,7 @@ QString JournalBootWork::getDateTimeFromStamp(const QString &str)
  */
 void JournalBootWork::initMap()
 {
+    qCDebug(logApp) << "JournalBootWork::initMap initializing level map";
     m_map.clear();
     m_map.insert(0, DApplication::translate("Level", "Emergency"));
     m_map.insert(1, DApplication::translate("Level", "Alert"));
@@ -387,6 +397,7 @@ void JournalBootWork::initMap()
     m_map.insert(5, DApplication::translate("Level", "Notice"));
     m_map.insert(6, DApplication::translate("Level", "Info"));
     m_map.insert(7, DApplication::translate("Level", "Debug"));
+    qCDebug(logApp) << "Level map initialized with" << m_map.size() << "entries";
 }
 
 /**
@@ -396,5 +407,6 @@ void JournalBootWork::initMap()
  */
 QString JournalBootWork::i2str(int prio)
 {
+    qCDebug(logApp) << "JournalBootWork::i2str converting priority:" << prio;
     return m_map.value(prio);
 }

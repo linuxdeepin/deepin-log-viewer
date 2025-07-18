@@ -9,10 +9,14 @@
 #include <QScrollBar>
 #include <QEvent>
 #include <QDebug>
+#include <QLoggingCategory>
+
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 logDetailEdit::logDetailEdit(QWidget *parent)
     : DTextBrowser(parent)
 {
+    qCDebug(logApp) << "logDetailEdit constructor called";
     setAttribute(Qt::WA_AcceptTouchEvents); //接受触控事件
     grabGesture(Qt::TapGesture); //获取触控点击事件
     grabGesture(Qt::TapAndHoldGesture); //获取触控点击长按事件
@@ -26,9 +30,11 @@ logDetailEdit::logDetailEdit(QWidget *parent)
  */
 void logDetailEdit::onSelectionArea()
 {
+    qCDebug(logApp) << "logDetailEdit::onSelectionArea called with gesture action:" << m_gestureAction;
     if (m_gestureAction != GA_null) {
         QTextCursor cursor = textCursor();
         if (cursor.selectedText() != "") {
+            qCDebug(logApp) << "Clearing text selection";
             cursor.clearSelection();
             setTextCursor(cursor);
         }
@@ -42,8 +48,11 @@ void logDetailEdit::onSelectionArea()
  */
 bool logDetailEdit::event(QEvent *event)
 {
-    if (event->type() == QEvent::Gesture)
+    // qCDebug(logApp) << "logDetailEdit::event called with event type:" << event->type();
+    if (event->type() == QEvent::Gesture) {
+        qCDebug(logApp) << "logDetailEdit::event handling gesture event";
         gestureEvent(static_cast<QGestureEvent *>(event));
+    }
     return QTextEdit::event(event);
 }
 
@@ -54,10 +63,15 @@ bool logDetailEdit::event(QEvent *event)
  */
 bool logDetailEdit::gestureEvent(QGestureEvent *event)
 {
-    if (QGesture *tap = event->gesture(Qt::TapGesture))
+    // qCDebug(logApp) << "logDetailEdit::gestureEvent called";
+    if (QGesture *tap = event->gesture(Qt::TapGesture)) {
+        qCDebug(logApp) << "Processing tap gesture";
         tapGestureTriggered(static_cast<QTapGesture *>(tap));
-    if (QGesture *tapAndHold = event->gesture(Qt::TapAndHoldGesture))
+    }
+    if (QGesture *tapAndHold = event->gesture(Qt::TapAndHoldGesture)) {
+        qCDebug(logApp) << "Processing tap and hold gesture";
         tapAndHoldGestureTriggered(static_cast<QTapAndHoldGesture *>(tapAndHold));
+    }
     return true;
 }
 
@@ -67,16 +81,19 @@ bool logDetailEdit::gestureEvent(QGestureEvent *event)
  */
 void logDetailEdit::tapGestureTriggered(QTapGesture *tap)
 {
+    // qCDebug(logApp) << "logDetailEdit::tapGestureTriggered called with state:" << tap->state();
     this->clearFocus();
     //单指点击函数
     switch (tap->state()) { //根据点击的状态进行不同的操作
     case Qt::GestureStarted: { //开始点击，记录时间。时间不同 进行不同的操作
         m_gestureAction = GA_tap;
         m_tapBeginTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        qCDebug(logApp) << "Tap gesture started, action set to GA_tap";
         break;
     }
     case Qt::GestureUpdated: {
         m_gestureAction = GA_slide; //触控滑动
+        qCDebug(logApp) << "Tap gesture updated, action set to GA_slide";
         break;
     }
     case Qt::GestureCanceled: {
@@ -85,13 +102,16 @@ void logDetailEdit::tapGestureTriggered(QTapGesture *tap)
         if (timeSpace < TAP_MOVE_DELAY || m_slideContinue) { //普通滑动
             m_slideContinue = false;
             m_gestureAction = GA_slide;
+            qCDebug(logApp) << "Tap gesture canceled, action set to GA_slide";
         } else { //选中滑动
             m_gestureAction = GA_null;
+            qCDebug(logApp) << "Tap gesture canceled, action set to GA_null";
         }
         break;
     }
     case Qt::GestureFinished: {
         m_gestureAction = GA_null;
+        qCDebug(logApp) << "Tap gesture finished, action set to GA_null";
         break;
     }
     default: {
@@ -107,6 +127,7 @@ void logDetailEdit::tapGestureTriggered(QTapGesture *tap)
  */
 void logDetailEdit::tapAndHoldGestureTriggered(QTapAndHoldGesture *tapAndHold)
 {
+    // qCDebug(logApp) << "logDetailEdit::tapAndHoldGestureTriggered called with state:" << tapAndHold->state();
     //单指长按
     switch (tapAndHold->state()) {
     case Qt::GestureStarted:
@@ -133,6 +154,7 @@ void logDetailEdit::tapAndHoldGestureTriggered(QTapAndHoldGesture *tapAndHold)
  */
 void logDetailEdit::slideGesture(qreal diff)
 {
+    qCDebug(logApp) << "logDetailEdit::slideGesture called with diff:" << diff;
     static qreal delta = 0.0;
     int step = static_cast<int>(diff + delta);
     delta = diff + delta - step;
@@ -145,6 +167,7 @@ void logDetailEdit::slideGesture(qreal diff)
  */
 void logDetailEdit::mouseReleaseEvent(QMouseEvent *e)
 {
+    // qCDebug(logApp) << "logDetailEdit::mouseReleaseEvent called";
     change = 0.0;
     duration = 0.0;
     //add for single refers to the sliding
@@ -171,6 +194,7 @@ void logDetailEdit::mouseReleaseEvent(QMouseEvent *e)
  */
 void logDetailEdit::mouseMoveEvent(QMouseEvent *e)
 {
+    // qCDebug(logApp) << "logDetailEdit::mouseMoveEvent called";
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
     int pos = e->pos().y();
 #else
@@ -215,6 +239,7 @@ void logDetailEdit::mouseMoveEvent(QMouseEvent *e)
  */
 FlashTween::FlashTween()
 {
+    qCDebug(logApp) << "FlashTween constructor called";
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, &FlashTween::__run);
 }
@@ -229,8 +254,11 @@ FlashTween::FlashTween()
  */
 void FlashTween::start(qreal t, qreal b, qreal c, qreal d, FunSlideInertial f)
 {
-    if (c == 0.0 || d == 0.0)
+    qCDebug(logApp) << "FlashTween::start called with parameters - t:" << t << "b:" << b << "c:" << c << "d:" << d;
+    if (c == 0.0 || d == 0.0) {
+        qCDebug(logApp) << "FlashTween start aborted - zero change or duration";
         return;
+    }
     m_currentTime = t;
     m_beginValue = b;
     m_changeValue = c;
@@ -242,6 +270,7 @@ void FlashTween::start(qreal t, qreal b, qreal c, qreal d, FunSlideInertial f)
 
     m_timer->stop();
     m_timer->start(CELL_TIME);
+    qCDebug(logApp) << "FlashTween timer started with direction:" << m_direction;
 }
 
 /**
@@ -249,6 +278,7 @@ void FlashTween::start(qreal t, qreal b, qreal c, qreal d, FunSlideInertial f)
  */
 void FlashTween::__run()
 {
+    // qCDebug(logApp) << "FlashTween::__run called";
     qreal tempValue = m_lastValue;
     m_lastValue = FlashTween::sinusoidalEaseOut(m_currentTime, m_beginValue, abs(m_changeValue), m_durationTime);
     m_fSlideGesture(m_direction * (m_lastValue - tempValue));
@@ -256,6 +286,7 @@ void FlashTween::__run()
     if (m_currentTime < m_durationTime) {
         m_currentTime += CELL_TIME;
     } else {
+        qCDebug(logApp) << "FlashTween animation completed, stopping timer";
         m_timer->stop();
     }
 }

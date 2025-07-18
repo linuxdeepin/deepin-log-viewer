@@ -16,11 +16,7 @@
 #include <QLoggingCategory>
 #include <QDateTime>
 
-#ifdef QT_DEBUG
-Q_LOGGING_CATEGORY(logAppHelper, "org.deepin.log.viewer.application.helper")
-#else
-Q_LOGGING_CATEGORY(logAppHelper, "org.deepin.log.viewer.application.helper", QtInfoMsg)
-#endif
+Q_DECLARE_LOGGING_CATEGORY(logApp)
 
 std::atomic<LogApplicationHelper *> LogApplicationHelper::m_instance;
 std::mutex LogApplicationHelper::m_mutex;
@@ -45,6 +41,7 @@ const QString GSETTING_APPID = "com.deepin.log.viewer";
 LogApplicationHelper::LogApplicationHelper(QObject *parent)
     : QObject(parent)
 {
+    qCDebug(logApp) << "LogApplicationHelper constructor called";
     init();
 }
 
@@ -53,15 +50,19 @@ LogApplicationHelper::LogApplicationHelper(QObject *parent)
  */
 void LogApplicationHelper::init()
 {
+    qCDebug(logApp) << "LogApplicationHelper::init called";
     getAppLogConfigs();
     initOtherLog();
     initCustomLog();
+    qCDebug(logApp) << "LogApplicationHelper initialization completed";
 }
 
 void LogApplicationHelper::initAppLog()
 {
+    qCDebug(logApp) << "LogApplicationHelper::initAppLog called";
     // get current system language shortname
     m_current_system_language = QLocale::system().name();
+    qCDebug(logApp) << "System language:" << m_current_system_language;
 
     // get desktop & trasnames
     createDesktopFiles();
@@ -72,10 +73,12 @@ void LogApplicationHelper::initAppLog()
     createLogFiles();
 
     createTransLogFiles();
+    qCDebug(logApp) << "App log initialization completed";
 }
 
 void LogApplicationHelper::initOtherLog()
 {
+    qCDebug(logApp) << "LogApplicationHelper::initOtherLog called";
     //配置其他日志文件(可以是目录)
     m_other_log_list.clear();
 
@@ -158,6 +161,7 @@ void LogApplicationHelper::initOtherLog()
 //初始化自定义日志列表
 void LogApplicationHelper::initCustomLog()
 {
+    qCDebug(logApp) << "LogApplicationHelper::initCustomLog called";
     m_custom_log_list.clear();
 
 #ifdef DTKCORE_CLASS_DConfigFile
@@ -167,7 +171,7 @@ void LogApplicationHelper::initCustomLog()
 
         // 判断配置是否有效
         if (!m_pDConfig->isValid()) {
-            qCWarning(logAppHelper) << QString("DConfig is invalide, name:[%1], subpath[%2].").arg(m_pDConfig->name(), m_pDConfig->subpath());
+            qCWarning(logApp) << QString("DConfig is invalide, name:[%1], subpath[%2].").arg(m_pDConfig->name(), m_pDConfig->subpath());
             m_pDConfig->deleteLater();
             m_pDConfig = nullptr;
             return;
@@ -224,7 +228,7 @@ void LogApplicationHelper::initCustomLog()
                 m_custom_log_list.append(QStringList() << QFileInfo(iter).fileName() << path);
             }
         } else {
-            qCWarning(logAppHelper) << "cannot find gsettings config file";
+            qCWarning(logApp) << "cannot find gsettings config file";
         }
     }
 #endif
@@ -235,6 +239,7 @@ void LogApplicationHelper::initCustomLog()
  */
 void LogApplicationHelper::createDesktopFiles()
 {
+    qCDebug(logApp) << "LogApplicationHelper::createDesktopFiles called";
     m_desktop_files.clear();
     m_en_trans_map.clear();
 
@@ -245,6 +250,7 @@ void LogApplicationHelper::createDesktopFiles()
     };
 
     QStringList regStr {"deepin-", "dde-", "org.deepin", "com.deepin", "uos-"};
+    qCDebug(logApp) << "Searching desktop files in paths:" << searchPaths;
     
     // 遍历所有搜索目录
     for (const QString &path : searchPaths) {
@@ -339,18 +345,22 @@ void LogApplicationHelper::createDesktopFiles()
  */
 void LogApplicationHelper::createLogFiles()
 {
+    qCDebug(logApp) << "LogApplicationHelper::createLogFiles called";
     m_en_log_map.clear();
     m_log_files.clear();
 
     QString homePath = Utils::homePath;
     if (homePath.isEmpty()) {
+        qCWarning(logApp) << "Home path is empty, cannot create log files";
         return;
     }
     QString path = homePath + "/.cache/deepin/";
     QDir appDir(path);
     if (!appDir.exists()) {
+        qCWarning(logApp) << "App log directory does not exist:" << path;
         return;
     }
+    qCDebug(logApp) << "Scanning log files in:" << path;
 
     m_log_files = appDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
 
@@ -371,6 +381,7 @@ void LogApplicationHelper::createLogFiles()
 
 void LogApplicationHelper::createTransLogFiles()
 {
+    qCDebug(logApp) << "LogApplicationHelper::createTransLogFiles called";
     m_trans_log_map.clear();
     QMap<QString, QString>::const_iterator iter = m_en_log_map.constBegin();
     while (iter != m_en_log_map.constEnd()) {
@@ -408,13 +419,16 @@ void LogApplicationHelper::createTransLogFiles()
 void LogApplicationHelper::generateTransName(const QString &path, const QString &name, bool isDeepin, bool isGeneric,
                                       bool isName)
 {
+    qCDebug(logApp) << "LogApplicationHelper::generateTransName called with path:" << path << "name:" << name << "isDeepin:" << isDeepin << "isGeneric:" << isGeneric << "isName:" << isName;
     Q_UNUSED(isName)
     QFile fi(path);
     if (!fi.open(QIODevice::ReadOnly)) {
+        qCDebug(logApp) << "LogApplicationHelper::generateTransName fi open failed";
         return;
     }
     m_en_trans_map.insert(name.mid(0, name.lastIndexOf(".")), name.mid(0, name.lastIndexOf("."))); // desktop name
     if (name.contains("shutdown")) {
+        qCDebug(logApp) << "LogApplicationHelper::generateTransName name contains shutdown";
     }
     while (!fi.atEnd()) {
         QString lineStr = fi.readLine();
@@ -465,10 +479,13 @@ void LogApplicationHelper::generateTransName(const QString &path, const QString 
  */
 QString LogApplicationHelper::getLogFile(const QString &path)
 {
+    qCDebug(logApp) << "LogApplicationHelper::getLogFile called with path:" << path;
     QString ret;
     QDir subdir(path);
-    if (!subdir.exists())
+    if (!subdir.exists()) {
+        qCWarning(logApp) << "Log directory does not exist:" << path;
         return ret;
+    }
 
     QStringList logFiles = subdir.entryList(QDir::NoDotAndDotDot | QDir::Files);
 
@@ -484,14 +501,15 @@ QString LogApplicationHelper::getLogFile(const QString &path)
 
 void LogApplicationHelper::loadAppLogConfigsByJson()
 {
+    qCDebug(logApp) << "LogApplicationHelper::loadAppLogConfigsByJson called";
     m_JsonAppLogConfigs.clear();
 
     QDir dir(APP_LOG_CONFIG_PATH);
     if (!dir.exists()) {
-        qCWarning(logAppHelper) << QString("%1 does not exist.").arg(APP_LOG_CONFIG_PATH);
+        qCWarning(logApp) << QString("%1 does not exist.").arg(APP_LOG_CONFIG_PATH);
         return;
     }
-    qCDebug(logAppHelper) << "Loading app log configs from:" << APP_LOG_CONFIG_PATH;
+    qCDebug(logApp) << "Loading app log configs from:" << APP_LOG_CONFIG_PATH;
 
     dir.setFilter(QDir::Files);
     dir.setNameFilters(QStringList() << "*.json");
@@ -507,7 +525,7 @@ void LogApplicationHelper::loadAppLogConfigsByJson()
         QJsonParseError parseError;
         QJsonDocument document = QJsonDocument::fromJson(data, &parseError);
         if (parseError.error == QJsonParseError::NoError) {
-            qCDebug(logAppHelper) << "Successfully parsed JSON config file:" << fi.fileName();
+            qCDebug(logApp) << "Successfully parsed JSON config file:" << fi.fileName();
             if (document.isObject()) {
                 QJsonObject object = document.object();
 
@@ -585,24 +603,31 @@ void LogApplicationHelper::loadAppLogConfigsByJson()
 
 AppLogConfig LogApplicationHelper::jsonAppLogConfig(const QString &app)
 {
-    if (app.isEmpty())
+    qCDebug(logApp) << "LogApplicationHelper::jsonAppLogConfig called with app:" << app;
+    if (app.isEmpty()) {
+        qCDebug(logApp) << "LogApplicationHelper::jsonAppLogConfig app is empty, returning empty AppLogConfig";
         return AppLogConfig();
+    }
 
     if (m_JsonAppLogConfigs.isEmpty()) {
+        qCDebug(logApp) << "LogApplicationHelper::jsonAppLogConfig m_JsonAppLogConfigs is empty, loading app log configs by json";
         loadAppLogConfigsByJson();
     }
 
     foreach (AppLogConfig config, m_JsonAppLogConfigs) {
         if (config.contains(app)) {
+            qCDebug(logApp) << "LogApplicationHelper::jsonAppLogConfig found config for app:" << app;
             return config;
         }
     }
 
+    qCDebug(logApp) << "LogApplicationHelper::jsonAppLogConfig no config found for app:" << app;
     return AppLogConfig();
 }
 
 bool LogApplicationHelper::isJsonAppLogConfigExist(const QString &app)
 {
+    qCDebug(logApp) << "LogApplicationHelper::isJsonAppLogConfigExist called with app:" << app;
     foreach (AppLogConfig config, m_JsonAppLogConfigs) {
         if (config.contains(app)) {
             return true;
@@ -615,8 +640,11 @@ bool LogApplicationHelper::isJsonAppLogConfigExist(const QString &app)
 // 对应用日志的logPath做有效性判断
 void LogApplicationHelper::validityJsonLogPath(SubModuleConfig &submodule)
 {
-    if (submodule.logType != "file")
+    qCDebug(logApp) << "LogApplicationHelper::validityJsonLogPath called with submodule:" << submodule.name;
+    if (submodule.logType != "file") {
+        qCDebug(logApp) << "LogApplicationHelper::validityJsonLogPath submodule.logType is not file, returning";
         return;
+    }
 
     QString homePath = Utils::homePath;
     QString path = homePath + "/.cache/deepin/";
@@ -624,11 +652,13 @@ void LogApplicationHelper::validityJsonLogPath(SubModuleConfig &submodule)
     QDir logDir(path);
     if (logDir.exists()) {
         defaultLogFolders = logDir.entryList(QDir::AllDirs | QDir::NoDotAndDotDot);
+        qCDebug(logApp) << "LogApplicationHelper::validityJsonLogPath defaultLogFolders:" << defaultLogFolders;
     }
 
     QString defaultLogPath;
     if (defaultLogFolders.contains(submodule.name)) {
         defaultLogPath = getLogFile(path + submodule.name);
+        qCDebug(logApp) << "LogApplicationHelper::validityJsonLogPath defaultLogPath:" << defaultLogPath;
     }
 
     // 若logPath无效，则填入默认日志路径~/.cache/deepin
@@ -650,14 +680,16 @@ void LogApplicationHelper::validityJsonLogPath(SubModuleConfig &submodule)
 //刷新并返回所有显示文本对应的应用日志路径
 QMap<QString, QString> LogApplicationHelper::getMap()
 {
+    qCDebug(logApp) << "LogApplicationHelper::getMap called";
     initAppLog();
-
+    qCDebug(logApp) << "Returning translation log map with" << m_trans_log_map.size() << "entries";
     return m_trans_log_map;
 }
 
 // 刷新并返回最新的应用配置信息
 AppLogConfigList LogApplicationHelper::getAppLogConfigs()
 {
+    qCDebug(logApp) << "LogApplicationHelper::getAppLogConfigs called";
     initAppLog();
 
     m_appLogConfigs.clear();
@@ -717,26 +749,33 @@ AppLogConfigList LogApplicationHelper::getAppLogConfigs()
 //获取所有其他日志文件列表
 QList<QStringList> LogApplicationHelper::getOtherLogList()
 {
+    qCDebug(logApp) << "LogApplicationHelper::getOtherLogList called, returning" << m_other_log_list.size() << "entries";
     return m_other_log_list;
 }
 
 //获取所有自定义日志文件列表
 QList<QStringList> LogApplicationHelper::getCustomLogList()
 {
+    qCDebug(logApp) << "LogApplicationHelper::getCustomLogList called, returning" << m_custom_log_list.size() << "entries";
     return m_custom_log_list;
 }
 
 AppLogConfig LogApplicationHelper::appLogConfig(const QString &app)
 {
-    if (app.isEmpty())
+    qCDebug(logApp) << "LogApplicationHelper::appLogConfig called with app:" << app;
+    if (app.isEmpty()) {
+        qCWarning(logApp) << "Empty app name passed to appLogConfig";
         return AppLogConfig();
+    }
 
     if (m_appLogConfigs.isEmpty()) {
+        qCDebug(logApp) << "m_appLogConfigs is empty, refreshing";
         getAppLogConfigs();
     }
 
     foreach (AppLogConfig config, m_appLogConfigs) {
         if (config.contains(app)) {
+            qCDebug(logApp) << "Found app log config for" << app;
             return config;
         }
     }
@@ -746,8 +785,10 @@ AppLogConfig LogApplicationHelper::appLogConfig(const QString &app)
 
 bool LogApplicationHelper::isAppLogConfigExist(const QString &app)
 {
+    qCDebug(logApp) << "LogApplicationHelper::isAppLogConfigExist called with app:" << app;
     foreach (AppLogConfig config, m_appLogConfigs) {
         if (config.contains(app)) {
+            qCDebug(logApp) << "LogApplicationHelper::isAppLogConfigExist found config for app:" << app;
             return true;
         }
     }
@@ -757,14 +798,18 @@ bool LogApplicationHelper::isAppLogConfigExist(const QString &app)
 
 bool LogApplicationHelper::isValidAppName(const QString &appName)
 {
-    if (m_en_log_map.find(appName) != m_en_log_map.end())
+    qCDebug(logApp) << "LogApplicationHelper::isValidAppName called with appName:" << appName;
+    if (m_en_log_map.find(appName) != m_en_log_map.end()) {
+        qCDebug(logApp) << "LogApplicationHelper::isValidAppName found appName:" << appName;
         return true;
+    }
 
     return false;
 }
 
 QDateTime LogApplicationHelper::getLastReportTime()
 {
+    qCDebug(logApp) << "LogApplicationHelper::getLastReportTime called";
     QVariant time;
 
 #ifdef DTKCORE_CLASS_DConfigFile
@@ -778,10 +823,10 @@ QDateTime LogApplicationHelper::getLastReportTime()
 #endif
 
     if (time.isValid()) {
-        qCDebug(logAppHelper) << "Got last report time from config:" << time.toString();
+        qCDebug(logApp) << "Got last report time from config:" << time.toString();
         return QDateTime::fromString(time.toString(), "yyyy-MM-dd hh:mm:ss");
     }
-    qCDebug(logAppHelper) << "No valid last report time found in config";
+    qCDebug(logApp) << "No valid last report time found in config";
 
     return QDateTime();
 }
@@ -789,7 +834,7 @@ QDateTime LogApplicationHelper::getLastReportTime()
 void LogApplicationHelper::saveLastRerportTime(const QDateTime &date)
 {
     QString str = date.toString("yyyy-MM-dd hh:mm:ss");
-    qCDebug(logAppHelper) << "Saving last report time:" << str;
+    qCDebug(logApp) << "Saving last report time:" << str;
 
 #ifdef DTKCORE_CLASS_DConfigFile
     m_pDConfig->setValue(COREDUMP_REPORT_TIME, str);
@@ -803,6 +848,7 @@ void LogApplicationHelper::saveLastRerportTime(const QDateTime &date)
 
 int LogApplicationHelper::getMaxReportCoredump()
 {
+    qCDebug(logApp) << "LogApplicationHelper::getMaxReportCoredump called";
     QVariant value(MAX_COREDUMP_REPORT);
 
 #ifdef DTKCORE_CLASS_DConfigFile
@@ -815,17 +861,19 @@ int LogApplicationHelper::getMaxReportCoredump()
 #endif
 #endif
 
-    qCWarning(logAppHelper) << "coredump report max:" << value.toInt();
+    qCWarning(logApp) << "coredump report max:" << value.toInt();
     return value.toInt();
 }
 
 //从应用包名转换为应用显示文本
 QString LogApplicationHelper::transName(const QString &str)
 {
+    // qCDebug(logApp) << "LogApplicationHelper::transName called with:" << str;
     return m_en_trans_map.value(str);
 }
 
 QString LogApplicationHelper::getPathByAppId(const QString &str)
 {
+    // qCDebug(logApp) << "LogApplicationHelper::getPathByAppId called with:" << str;
     return m_en_log_map.value(str);
 }
