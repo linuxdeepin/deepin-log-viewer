@@ -36,8 +36,8 @@ journalWork::journalWork(QStringList arg, QObject *parent)
     qCDebug(logApp) << "journalWork constructor called with args:" << arg;
     //注册QList<LOG_MSG_JOURNAL>类型以让信号可以发出数据并能连接信号槽
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
-    //使用线程池启动该线程，跑完自己删自己
-    setAutoDelete(true);
+    //使用线程池启动该线程，由父对象管理生命周期
+    setAutoDelete(false);
     //初始化等级数字对应显示文本的map
     initMap();
     //增加获取参数
@@ -65,7 +65,7 @@ journalWork::journalWork(QObject *parent)
     qCDebug(logApp) << "journalWork default constructor called";
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     initMap();
-    setAutoDelete(true);
+    setAutoDelete(false);
     thread_index++;
     m_threadIndex = thread_index;
     qCDebug(logApp) << "Thread index set to:" << m_threadIndex;
@@ -149,7 +149,6 @@ void journalWork::doWork()
     mutex.unlock();
     if ((!m_canRun)) {
         qCDebug(logApp) << "Work stopped before starting";
-        mutex.unlock();
         return;
     }
 
@@ -157,13 +156,11 @@ void journalWork::doWork()
 
     sd_journal *j ;
     if ((!m_canRun)) {
-        mutex.unlock();
         return;
     }
     //打开日志文件
     r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
     if ((!m_canRun)) {
-        mutex.unlock();
         sd_journal_close(j);
         return;
     }
@@ -175,7 +172,6 @@ void journalWork::doWork()
     //从尾部开始读，这样出来数据是倒叙，符合需求
     sd_journal_seek_tail(j);
     if ((!m_canRun)) {
-        mutex.unlock();
         sd_journal_close(j);
         return;
     }
@@ -188,7 +184,6 @@ void journalWork::doWork()
             sd_journal_add_match(j, m_arg.at(0).toStdString().c_str(), 0);
     }
     if ((!m_canRun)) {
-        mutex.unlock();
         sd_journal_close(j);
         return;
     }
@@ -196,7 +191,6 @@ void journalWork::doWork()
     //调用宏开始迭代
     SD_JOURNAL_FOREACH_BACKWARDS(j) {
         if ((!m_canRun)) {
-            mutex.unlock();
             sd_journal_close(j);
             return;
         }
