@@ -36,8 +36,8 @@ JournalBootWork::JournalBootWork(QStringList arg, QObject *parent)
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     //初始化等级数字对应显示文本的map
     initMap();
-    //使用线程池启动该线程，跑完自己删自己
-    setAutoDelete(true);
+    //使用线程池启动该线程，由父对象管理生命周期
+    setAutoDelete(false);
     //增加获取参数
     m_arg.append("-o");
     m_arg.append("json");
@@ -62,7 +62,7 @@ JournalBootWork::JournalBootWork(QObject *parent)
     qCDebug(logApp) << "JournalBootWork default constructor called";
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     initMap();
-    setAutoDelete(true);
+    setAutoDelete(false);
     thread_index++;
     m_threadIndex = thread_index;
     qCDebug(logApp) << "Thread index set to:" << m_threadIndex;
