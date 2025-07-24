@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.19) unstable; urgency=medium
+
+  * fix: Fixed an exit crash (#394)
+
+ -- xiepengfei <xiepengfei@uniontech.com>  Thu, 24 Jul 2025 21:05:27 +0800
+
 deepin-log-viewer (6.5.18) unstable; urgency=medium
 
   * chore: update the help manual (#391)
