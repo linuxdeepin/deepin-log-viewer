@@ -1,3 +1,9 @@
+deepin-log-viewer (6.1.20) unstable; urgency=medium
+
+  * fix: package installation failure and stuck
+
+ -- wangrong <wangrong@uniontech.com>  Tue, 29 Jul 2025 20:03:50 +0800
+
 deepin-log-viewer (6.1.19) unstable; urgency=medium
 
   * v20 pull.
