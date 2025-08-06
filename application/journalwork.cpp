@@ -37,7 +37,7 @@ journalWork::journalWork(QStringList arg, QObject *parent)
     //注册QList<LOG_MSG_JOURNAL>类型以让信号可以发出数据并能连接信号槽
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     //使用线程池启动该线程，由父对象管理生命周期
-    setAutoDelete(false);
+    setAutoDelete(true);
     //初始化等级数字对应显示文本的map
     initMap();
     //增加获取参数
@@ -65,7 +65,7 @@ journalWork::journalWork(QObject *parent)
     qCDebug(logApp) << "journalWork default constructor called";
     qRegisterMetaType<QList<LOG_MSG_JOURNAL> >("QList<LOG_MSG_JOURNAL>");
     initMap();
-    setAutoDelete(false);
+    setAutoDelete(true);
     thread_index++;
     m_threadIndex = thread_index;
     qCDebug(logApp) << "Thread index set to:" << m_threadIndex;

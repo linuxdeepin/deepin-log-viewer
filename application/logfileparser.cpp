@@ -27,6 +27,8 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QtConcurrent>
+#include <QThreadPool>
+#include <QThread>
 #include <QLoggingCategory>
 
 #include <time.h>
@@ -61,6 +63,13 @@ LogFileParser::~LogFileParser()
 {
     qCDebug(logApp) << "LogFileParser destructor called";
     stopAllLoad();
+    
+    qCDebug(logApp) << "Waiting for thread pool to finish...";
+    if (!QThreadPool::globalInstance()->waitForDone(500)) {
+        QThreadPool::globalInstance()->clear();
+        QThreadPool::globalInstance()->waitForDone(100);
+    }
+    
     if (SharedMemoryManager::getInstance()) {
         qCDebug(logApp) << "Releasing shared memory";
         SharedMemoryManager::instance()->releaseMemory();
@@ -430,6 +439,10 @@ void LogFileParser::stopAllLoad()
     emit stopDmesg();
     emit stopOOC();
     emit stopCoredump();
+    
+    // 给线程一些时间来响应停止信号
+    qCDebug(logApp) << "Waiting for threads to respond to stop signals";
+    QThread::msleep(100);
     return;
 }
 

@@ -396,6 +396,17 @@ int main(int argc, char *argv[])
         w.show();
         Dtk::Widget::moveToCenter(&w);
         qCInfo(logApp) << "Main window displayed successfully";
+        
+        QObject::connect(&a, &QCoreApplication::aboutToQuit, [&]() {
+            qCDebug(logApp) << "Application about to quit, cleaning up threads";
+            QThreadPool::globalInstance()->clear();
+            if (!QThreadPool::globalInstance()->waitForDone(300)) {
+                qCWarning(logApp) << "Thread pool cleanup timeout during application quit";
+            } else {
+                qCDebug(logApp) << "Thread pool cleaned up successfully";
+            }
+        });
+        
         bool result = a.exec();
         PERF_PRINT_END("POINT-02", "");
 
