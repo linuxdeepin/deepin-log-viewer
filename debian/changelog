@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.20) unstable; urgency=medium
+
+  * feat: Add Lao language support
+
+ -- dengzhongyuan <dengzhongyuan@uniontech.com>  Wed, 13 Aug 2025 17:53:14 +0800
+
 deepin-log-viewer (6.5.19) unstable; urgency=medium
 
   * fix: Fixed an exit crash (#394)
