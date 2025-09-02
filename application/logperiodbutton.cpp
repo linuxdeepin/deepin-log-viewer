@@ -56,12 +56,14 @@ void LogPeriodButton::enterEvent(EnterEvent *e)
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 void LogPeriodButton::leaveEvent(EnterEvent *e)
+#else
+void LogPeriodButton::leaveEvent(QEvent *e)
+#endif
 {
     // qCDebug(logApp) << "Mouse left LogPeriodButton";
     isEnter = false;
     DPushButton::leaveEvent(e);
 }
-#endif
 
 /**
  * @brief LogPeriodButton::paintEvent  通过鼠标是否在按钮上的状态绘hover效果 绘制焦点边框,屏蔽默认绘制事件,只在tabfoucus时绘制边框
@@ -125,4 +127,3 @@ void LogPeriodButton::focusInEvent(QFocusEvent *event)
     DPushButton::focusInEvent(event);
 
 }
-

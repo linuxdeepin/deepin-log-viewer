@@ -18,6 +18,8 @@ protected:
     void enterEvent(EnterEvent *e)override;
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     void leaveEvent(EnterEvent *e)override;
+#else
+    void leaveEvent(QEvent *e)override;
 #endif
     void paintEvent(QPaintEvent *event)override;
     void focusInEvent(QFocusEvent *event) override;
