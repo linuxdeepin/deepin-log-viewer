@@ -120,7 +120,9 @@ void DisplayContent::initUI()
 
     //notAuditLabel
     notAuditLabel = new DLabel(this);
-    notAuditLabel->setPalette(pa);
+    DPalette auditPa = DPaletteHelper::instance()->palette(notAuditLabel);
+    auditPa.setBrush(DPalette::WindowText, auditPa.color(DPalette::TextTips));
+    noResultLabel->setPalette(auditPa);
     notAuditLabel->setText(DApplication::translate("Warning", "Security level for the current system: high\n audit only administrators can view the audit log"));
     DFontSizeManager::instance()->bind(notAuditLabel, DFontSizeManager::T4);
     notAuditLabel->setAlignment(Qt::AlignCenter);

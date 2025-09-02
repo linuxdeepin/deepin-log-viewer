@@ -61,3 +61,7 @@ CMakeCache.txt
 # AI
 .cursor
 .specstory
+.spec-workflow/
+
+# index cache
+.cache/
