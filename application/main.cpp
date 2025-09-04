@@ -399,11 +399,14 @@ int main(int argc, char *argv[])
         
         QObject::connect(&a, &QCoreApplication::aboutToQuit, [&]() {
             qCDebug(logApp) << "Application about to quit, cleaning up threads";
-            QThreadPool::globalInstance()->clear();
-            if (!QThreadPool::globalInstance()->waitForDone(300)) {
-                qCWarning(logApp) << "Thread pool cleanup timeout during application quit";
-            } else {
-                qCDebug(logApp) << "Thread pool cleaned up successfully";
+            QThreadPool *pool = QThreadPool::globalInstance();
+            if (pool) {
+                pool->clear();
+                if (!pool->waitForDone(300)) {
+                    qCWarning(logApp) << "Thread pool cleanup timeout during application quit";
+                } else {
+                    qCDebug(logApp) << "Thread pool cleaned up successfully";
+                }
             }
         });
         

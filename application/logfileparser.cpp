@@ -64,10 +64,27 @@ LogFileParser::~LogFileParser()
     qCDebug(logApp) << "LogFileParser destructor called";
     stopAllLoad();
     
-    qCDebug(logApp) << "Waiting for thread pool to finish...";
-    if (!QThreadPool::globalInstance()->waitForDone(500)) {
-        QThreadPool::globalInstance()->clear();
-        QThreadPool::globalInstance()->waitForDone(100);
+    // Give threads more time to respond to stop signals
+    QThread::msleep(200);
+    
+    // Check if application is still valid before accessing QThreadPool
+    if (QCoreApplication::instance() && !QCoreApplication::closingDown()) {
+        qCDebug(logApp) << "Checking thread pool status...";
+        // Use non-blocking approach to avoid deadlock
+        QThreadPool *pool = QThreadPool::globalInstance();
+        if (pool && pool->activeThreadCount() > 0) {
+            qCWarning(logApp) << "Active threads detected:" << pool->activeThreadCount();
+            // Clear queued tasks immediately, but don't wait for running tasks
+            pool->clear();
+            
+            // Use shorter timeout, proceed with destruction if wait fails
+            if (!pool->waitForDone(100)) {
+                qCWarning(logApp) << "Thread pool cleanup timeout, proceeding with destruction";
+                // Don't perform second wait to avoid deadlock
+            }
+        }
+    } else {
+        qCDebug(logApp) << "Application is closing down, skipping thread pool cleanup";
     }
     
     if (SharedMemoryManager::getInstance()) {
