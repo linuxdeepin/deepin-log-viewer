@@ -176,9 +176,13 @@ int LogBackend::exportAllLogs(const QString &outDir)
         fileFullPath += ".zip";
     }
 
-    LogAllExportThread *thread = new LogAllExportThread(m_logTypes, fileFullPath);
-    thread->setAutoDelete(true);
-    connect(thread, &LogAllExportThread::exportFinsh, this, [ = ](bool ret) {
+    QThread *exportThread = new QThread;
+    LogAllExportThread *worker = new LogAllExportThread(m_logTypes, fileFullPath);
+    worker->moveToThread(exportThread);
+
+    connect(exportThread, &QThread::started, worker, &LogAllExportThread::run);
+    connect(worker, &LogAllExportThread::exportFinsh, exportThread, &QThread::quit);
+    connect(worker, &LogAllExportThread::exportFinsh, this, [ = ](bool ret) {
         if (ret) {
             qCInfo(logApp) << "exporting all logs done.";
             PERF_PRINT_END("POINT-05", "cost");
@@ -194,7 +198,10 @@ int LogBackend::exportAllLogs(const QString &outDir)
             qApp->exit(-1);
         }
     });
-    QThreadPool::globalInstance()->start(thread);
+    connect(exportThread, &QThread::finished, worker, &LogAllExportThread::deleteLater);
+    connect(exportThread, &QThread::finished, exportThread, &QThread::deleteLater);
+
+    exportThread->start();
 
     return 0;
 }

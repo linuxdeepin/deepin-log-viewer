@@ -379,27 +379,40 @@ void LogCollectorMain::exportAllLogs()
     }
     //导出是否完成
     bool exportcomplete = false;
-    LogAllExportThread *thread = new LogAllExportThread(m_logCatelogue->getLogTypes(), newPath);
-    thread->setAutoDelete(true);
-    connect(thread, &LogAllExportThread::updateTolProcess, this, [ = ](int tol) {
-        m_exportDlg->setProgressBarRange(0, tol);
-    });
-    connect(thread, &LogAllExportThread::updatecurrentProcess, this, [ = ](int cur) {
-        m_exportDlg->updateProgressBarValue(cur);
-    });
-    connect(thread, &LogAllExportThread::exportFinsh, this, [&exportcomplete, this](bool ret) {
+    QThread *exportThread = new QThread;
+    LogAllExportThread *worker = new LogAllExportThread(m_logCatelogue->getLogTypes(), newPath);
+    worker->moveToThread(exportThread);
+
+    connect(exportThread, &QThread::started, worker, &LogAllExportThread::run);
+    connect(worker, &LogAllExportThread::exportFinsh, exportThread, &QThread::quit);
+    connect(worker, &LogAllExportThread::exportFinsh, this, [&exportcomplete, this](bool ret) {
         exportcomplete = true;
         m_exportDlg->close();
         m_midRightWgt->onExportResult(ret);
     });
-    QThreadPool::globalInstance()->start(thread);
+    connect(exportThread, &QThread::finished, worker, &LogAllExportThread::deleteLater);
+    connect(exportThread, &QThread::finished, exportThread, &QThread::deleteLater);
+
+    connect(worker, &LogAllExportThread::updateTolProcess, this, [ = ](int tol) {
+        m_exportDlg->setProgressBarRange(0, tol);
+    }, Qt::QueuedConnection);
+    connect(worker, &LogAllExportThread::updatecurrentProcess, this, [ = ](int cur) {
+        m_exportDlg->updateProgressBarValue(cur);
+    }, Qt::QueuedConnection);
+
+    // 导出计时器，用于性能测量
+    QElapsedTimer exportTimer;
+    exportTimer.start();
+    exportThread->start();
     m_exportDlg->exec();
     if (!exportcomplete) {
         qCWarning(logApp) << "Export cancelled by user";
-        thread->slot_cancelExport();
+        worker->slot_cancelExport();
     } else {
         qCInfo(logApp) << "Export completed successfully";
     }
+    qint64 elapsedMs = exportTimer.elapsed();
+    qCWarning(logApp) << "Export all logs, cost total time:" << elapsedMs << "ms";
 }
 /**
  * @brief LogCollectorMain::initConnection 连接信号槽
