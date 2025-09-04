@@ -1054,8 +1054,46 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         }
 
         outFullPath = outDirInfo.absoluteFilePath() + filein.fileName();
-        //复制文件
-        cmdExec = QString("cp %1 %2").arg(in, outDirInfo.absoluteFilePath());
+        
+        // 使用更高效的文件复制方法替代cp命令
+        QFile sourceFile(in);
+        QFile targetFile(outFullPath);
+        
+        // 使用块复制提高大文件复制效率
+        if (sourceFile.open(QIODevice::ReadOnly) && targetFile.open(QIODevice::WriteOnly)) {
+            const qint64 chunkSize = 1024 * 1024; // 1MB chunks
+            QScopedPointer<char> buffer(new char[chunkSize]);
+            
+            while (!sourceFile.atEnd()) {
+                qint64 bytesRead = sourceFile.read(buffer.data(), chunkSize);
+                if (bytesRead > 0) {
+                    if (targetFile.write(buffer.data(), bytesRead) != bytesRead) {
+                        qCWarning(logService) << "Failed to write all bytes to target file:" << outFullPath;
+                        sourceFile.close();
+                        targetFile.close();
+                        return false;
+                    }
+                } else if (bytesRead < 0) {
+                    qCWarning(logService) << "Error reading from source file:" << in;
+                    sourceFile.close();
+                    targetFile.close();
+                    return false;
+                }
+            }
+            
+            sourceFile.close();
+            targetFile.close();
+            
+            // 设置文件权限
+            QFile::setPermissions(outFullPath, QFileDevice::ReadOwner | QFileDevice::WriteOwner | 
+                                             QFileDevice::ReadGroup | QFileDevice::WriteGroup |
+                                             QFileDevice::ReadOther | QFileDevice::WriteOther);
+            
+            return true;
+        } else {
+            qCWarning(logService) << "Failed to open source or target file. Source:" << in << "Target:" << outFullPath;
+            return false;
+        }
     } else {
         QString cmd;
 
