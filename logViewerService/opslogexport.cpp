@@ -234,6 +234,21 @@ void OpsLogExport::exportAppLogs()
 
 void OpsLogExport::exportSystemLogs()
 {
+    // 系统
+    execute_command("dmesg -T", target_dir + "/system/dmesg_system.log");
+    execute_command("journalctl", target_dir + "/system/journalctl.log");
+    execute_command("journalctl -b -0", target_dir + "/system/journalctl-0.log");
+    execute_command("journalctl -b -1", target_dir + "/system/journalctl-1.log");
+    execute_command("journalctl -xb", target_dir + "/system/journalctl-xb.log");
+    copy_file_or_dir("/var/log/apt/history.log", target_dir + "/system/");
+    copy_file_or_dir("/var/log/alternatives.log", target_dir + "/system/");
+    copy_file_or_dir("/var/log/kern.log", target_dir + "/system/");
+    copy_file_or_dir("/var/log/syslog", target_dir + "/system/");
+    copy_file_or_dir("/var/log/dpkg.log", target_dir + "/system/");
+    // xorg /var/log/目录下所有log文件
+    system(("cp -rf /var/log/Xorg* " + target_dir + "/system/ 2>/dev/null").c_str());
+    // pulse　audio /home/uos/pulse.log
+    copy_file_or_dir(home_dir + "/pulse.log", target_dir + "/system/pulseaudio/");
 }
 
 void OpsLogExport::exportKernelLogs()
