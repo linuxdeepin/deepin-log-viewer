@@ -253,6 +253,23 @@ void OpsLogExport::exportSystemLogs()
 
 void OpsLogExport::exportKernelLogs()
 {
+    // 内核
+    copy_file_or_dir("/etc/product-info", target_dir + "/kernel/");
+    execute_command("uname -a", target_dir + "/kernel/uname-a.log");
+    execute_command("dmesg", target_dir + "/kernel/dmesg.log");
+    copy_file_or_dir("/sys/firmware/acpi/tables/DSDT", target_dir + "/kernel/");
+    copy_file_or_dir("/var/log/lightdm/lightdm.log", target_dir + "/kernel/");
+    system(("cp -rf /var/log/Xorg.0.log* " + target_dir + "/kernel/ 2>/dev/null").c_str());
+    execute_command("lspci -vvv | grep -A 12 'VGA c'", target_dir + "/kernel/lspci_VGA.log");
+    execute_command("ifconfig", target_dir + "/kernel/ifconfig.log");
+    execute_command("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}')", target_dir + "/kernel/eth_info.log");
+    execute_command("dmesg | grep iwlwifi", target_dir + "/kernel/dmesg_network.log");
+    execute_command("journalctl --system", target_dir + "/kernel/journalctl_system.log");
+    // ⽆法识别声卡问题⽇志
+    execute_command("aplay -l", target_dir + "/kernel/aplay.log");
+    execute_command("lshw -c sound", target_dir + "/kernel/sound_info.log");
+    // 龙芯内核
+    copy_file_or_dir("/var/log/kern.log", target_dir + "/kernel/");
 }
 
 void OpsLogExport::exportDDELogs()
