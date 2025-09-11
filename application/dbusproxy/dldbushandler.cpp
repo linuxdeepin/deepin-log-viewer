@@ -163,6 +163,11 @@ bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isF
     return m_dbus->exportLog(outDir, in, isFile);
 }
 
+bool DLDBusHandler::exportOpsLog(const QString &outDir, const QString &userHomeDir)
+{
+    return m_dbus->exportOpsLog(outDir, userHomeDir);
+}
+
 bool DLDBusHandler::isFileExist(const QString &filePath)
 {
     QDBusPendingReply<QString> reply = m_dbus->isFileExist(filePath);
