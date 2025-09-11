@@ -51,6 +51,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("exportLog"), argumentList);
     }
 
+    inline QDBusPendingReply<bool> exportOpsLog(const QString &outDir, const QString &userHomeDir)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(outDir) << QVariant::fromValue(userHomeDir);
+        return asyncCallWithArgumentList(QStringLiteral("exportOpsLog"), argumentList);
+    }
+
     inline QDBusPendingReply<QStringList> getFileInfo(const QString &file, bool unzip)
     {
         QList<QVariant> argumentList;

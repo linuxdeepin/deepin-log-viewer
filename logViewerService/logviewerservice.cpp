@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logviewerservice.h"
+#include "opslogexport.h"
 
 #include <pwd.h>
 #include <unistd.h>
@@ -1028,6 +1029,14 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         qCWarning(logService) << QString("chmod 777 %1 failed.").arg(outFullPath);
         return false;
     }
+    return true;
+}
+
+bool LogViewerService::exportOpsLog(const QString &outDir, const QString &userHomeDir)
+{
+    OpsLogExport ops(outDir.toStdString(), userHomeDir.toStdString());
+    ops.run();
+
     return true;
 }
 
