@@ -41,6 +41,9 @@ obj-x86_64-linux-gnu/*
 Makefile
 moc_*
 
+# translate
+translations/*qm
+
 #test
 */report/*
 */coverage/*
