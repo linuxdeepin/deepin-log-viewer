@@ -29,6 +29,7 @@ void OpsLogExport::run()
     exportSystemLogs();
     exportKernelLogs();
     exportDDELogs();
+    exportHwLogs();
 
     // 递归设置目录及文件的权限
     system(("chmod -R 777 " + target_dir).c_str());
@@ -288,4 +289,13 @@ void OpsLogExport::exportDDELogs()
     // DDE
     system(("cp " + home_dir + "/Desktop/DDE_LOG.zip " + target_dir + "/dde/ 2>/dev/null").c_str());
     copy_file_or_dir("/var/log/journalLog", target_dir + "/dde/");
+}
+
+void OpsLogExport::exportHwLogs()
+{
+    execute_command("dmidecode -t 0", target_dir + "/info-hw.txt");
+    execute_command("dmidecode -t 11", target_dir + "/info-hw.txt");
+    execute_command("cat /etc/hw_version", target_dir + "/info-hw.txt");
+    execute_command("hwfirmware -v", target_dir + "/info-hw.txt");
+    execute_command("lscpu", target_dir + "/info-hw.txt");
 }
