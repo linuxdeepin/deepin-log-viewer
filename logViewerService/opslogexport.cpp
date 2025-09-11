@@ -274,4 +274,18 @@ void OpsLogExport::exportKernelLogs()
 
 void OpsLogExport::exportDDELogs()
 {
+    // 文件管理器
+    copy_file_or_dir(home_dir + "/.cache/deepin/dde-desktop/dde-desktop.log", target_dir + "/dde/dde-desktop/");
+    copy_file_or_dir(home_dir + "/.cache/deepin/dde-file-manager/dde-file-manager.log", target_dir + "/dde/dde-file-manager/");
+    copy_file_or_dir(home_dir + "/.cache/deepin/dde-dock/dde-dock.log", target_dir + "/dde/dde-dock/");
+    copy_file_or_dir("/var/log/deepin/dde-file-manager-daemon", target_dir + "/dde/dde-file-manager/");
+    copy_file_or_dir("/var/log/messages", target_dir + "/dde/");
+    copy_file_or_dir("/var/log/syslog", target_dir + "/dde/");
+    execute_command("coredumpctl list", target_dir + "/dde/coredumpctl.log");
+    execute_command("free -m", target_dir + "/dde/free-m.log");   // 查看内存情况，输出内容截图或保存
+    execute_command("udisksctl dump", target_dir + "/dde/udiskctl_dump.txt");
+    execute_command("df -h", target_dir + "/dde/df-h.txt");
+    // DDE
+    system(("cp " + home_dir + "/Desktop/DDE_LOG.zip " + target_dir + "/dde/ 2>/dev/null").c_str());
+    copy_file_or_dir("/var/log/journalLog", target_dir + "/dde/");
 }
