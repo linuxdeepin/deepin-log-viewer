@@ -152,14 +152,15 @@ void LogAllExportThread::run()
     int currentProcess = 1;
     emit updateTolProcess(tolProcess);
     QString tmpPath = Utils::getAppDataPath() + "/tmp/";
+    QString viewerLogPath = tmpPath + "log/";
     QDir dir(tmpPath);
     //删除临时目录
     dir.removeRecursively();
     //创建临时目录
-    Utils::mkMutiDir(tmpPath);
+    Utils::mkMutiDir(viewerLogPath);
     for (auto &it : eList) {
         //复制文件到一级目录
-        QString tmpCategoryPath = QString("%1%2/").arg(tmpPath).arg(it.logCategory);
+        QString tmpCategoryPath = QString("%1%2/").arg(viewerLogPath).arg(it.logCategory);
         Utils::mkMutiDir(tmpCategoryPath);
         for (auto &file : it.files) {
             DLDBusHandler::instance(this)->exportLog(tmpCategoryPath, file, true);
@@ -226,6 +227,14 @@ void LogAllExportThread::run()
             }
         } else
             break;
+    }
+
+    if (!m_cancel) {
+        QString opsLogPath =tmpPath + "log-ops/";
+        Utils::mkMutiDir(opsLogPath);
+        QString userHomePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+        // 收集运维日志
+        DLDBusHandler::instance(this)->exportOpsLog(opsLogPath, userHomePath);
     }
 
     if (!m_cancel) {
