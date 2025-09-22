@@ -638,6 +638,14 @@ void Utils::exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir)
     system(tmpCmd.c_str());
     tmpCmd = ("lspci -vvv | grep -A 12 'VGA c' >> " + outDir + "/kernel/lspci_VGA.log").toStdString();
     system(tmpCmd.c_str());
+
+    // hwinfo
+    tmpCmd = ("hwfirmware -v >> " + outDir + "/system_info.txt").toStdString();
+    system(tmpCmd.c_str());
+    tmpCmd = ("echo >> " + outDir + "/system_info.txt").toStdString();
+    system(tmpCmd.c_str());
+    tmpCmd = ("lscpu >> " + outDir + "/system_info.txt").toStdString();
+    system(tmpCmd.c_str());
 }
 
 #ifdef DTKCORE_CLASS_DConfigFile
