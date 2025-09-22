@@ -296,6 +296,7 @@ void OpsLogExport::exportHwLogs()
     execute_command("dmidecode -t 0", target_dir + "/system_info.txt");
     execute_command("dmidecode -t 11", target_dir + "/system_info.txt");
     execute_command("cat /etc/hw_version", target_dir + "/system_info.txt");
-    execute_command("hwfirmware -v", target_dir + "/system_info.txt");
-    execute_command("lscpu", target_dir + "/system_info.txt");
+    execute_command("echo", target_dir + "/system_info.txt");
+//    execute_command("hwfirmware -v", target_dir + "/system_info.txt");
+//    execute_command("lscpu", target_dir + "/system_info.txt");
 }
