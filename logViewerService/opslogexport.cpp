@@ -215,14 +215,14 @@ void OpsLogExport::exportAppLogs()
     copy_file_or_dir("/var/log/uos/uos-license-agent", target_dir + "/app/uos-activator/log/");
     copy_file_or_dir("/var/log/uos/uos-activator-kms", target_dir + "/app/uos-activator/log/");
     // 输入法配置
-    system(("cp /tmp/fcitx*.log " + target_dir + "/app/fcitx/ 2>/dev/null").c_str());
+//    system(("cp -rf /tmp/fcitx*.log " + target_dir + "/app/fcitx/").c_str());
     // 磁盘管理器
     copy_file_or_dir("/var/log/deepin/deepin-diskmanager-service/Log", target_dir + "/app/deepin-diskmanager/");
     // 下载器
     copy_file_or_dir(home_dir + "/.config/uos/downloader/Log", target_dir + "/app/downloader/");
     // 窗口管理器(查看内核显卡驱动、查看核外驱动、查看窗管版本)
-    execute_command("lspci -v |grep VGA -A19", target_dir + "/app/kwin/lspci_VGA.log");
-    execute_command("glxinfo -B", target_dir + "/app/kwin/glxinfo.log");
+//    execute_command("lspci -v |grep VGA -A19", target_dir + "/app/kwin/lspci_VGA.log");
+//    execute_command("glxinfo -B", target_dir + "/app/kwin/glxinfo.log");
     execute_command("apt policy kwin-x11 dde-kwin", target_dir + "/app/kwin/kwin_info.log");
     // 安卓容器
     copy_file_or_dir("/usr/share/log/log.txt", target_dir + "/app/kbox/");
@@ -261,13 +261,13 @@ void OpsLogExport::exportKernelLogs()
     copy_file_or_dir("/sys/firmware/acpi/tables/DSDT", target_dir + "/kernel/");
     copy_file_or_dir("/var/log/lightdm/lightdm.log", target_dir + "/kernel/");
     system(("cp -rf /var/log/Xorg.0.log* " + target_dir + "/kernel/ 2>/dev/null").c_str());
-    execute_command("lspci -vvv | grep -A 12 'VGA c'", target_dir + "/kernel/lspci_VGA.log");
-    execute_command("ifconfig", target_dir + "/kernel/ifconfig.log");
-    execute_command("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}')", target_dir + "/kernel/eth_info.log");
+//    execute_command("lspci -vvv | grep -A 12 'VGA c'", target_dir + "/kernel/lspci_VGA.log");
+//    execute_command("ifconfig", target_dir + "/kernel/ifconfig.log");
+//    execute_command("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}')", target_dir + "/kernel/eth_info.log");
     execute_command("dmesg | grep iwlwifi", target_dir + "/kernel/dmesg_network.log");
     execute_command("journalctl --system", target_dir + "/kernel/journalctl_system.log");
     // ⽆法识别声卡问题⽇志
-    execute_command("aplay -l", target_dir + "/kernel/aplay.log");
+//    execute_command("aplay -l", target_dir + "/kernel/aplay.log");
     execute_command("lshw -c sound", target_dir + "/kernel/sound_info.log");
     // 龙芯内核
     copy_file_or_dir("/var/log/kern.log", target_dir + "/kernel/");

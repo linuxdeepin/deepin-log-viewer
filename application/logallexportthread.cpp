@@ -235,6 +235,7 @@ void LogAllExportThread::run()
         QString userHomePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         // 收集运维日志
         DLDBusHandler::instance(this)->exportOpsLog(opsLogPath, userHomePath);
+        Utils::exportSomeOpsLogs(opsLogPath, userHomePath);
     }
 
     if (!m_cancel) {
