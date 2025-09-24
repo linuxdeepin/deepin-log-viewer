@@ -21,7 +21,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::DBus
     )
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 install(FILES org.deepin.logviewer.ops.conf DESTINATION share/dbus-1/system.d/)
 install(FILES org.deepin.logviewer.ops.service DESTINATION share/dbus-1/system-services/)
 install(FILES deepin-log-viewer-ops.service DESTINATION lib/systemd/system)
