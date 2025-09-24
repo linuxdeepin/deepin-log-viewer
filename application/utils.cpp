@@ -622,8 +622,6 @@ void Utils::exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir)
     std::string tmpCmd;
 
     // app
-    tmpCmd = ("lspci -v |grep VGA -A19 >> " + outDir + "/app/kwin/lspci_VGA.log").toStdString();
-    system(tmpCmd.c_str());
     tmpCmd = ("glxinfo -B >> " + outDir + "/app/kwin/glxinfo.log").toStdString();
     system(tmpCmd.c_str());
     tmpCmd = ("cp -rf /tmp/fcitx*.log " + outDir + "/app/fcitx/").toStdString();
@@ -635,8 +633,6 @@ void Utils::exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir)
     tmpCmd = ("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}') >> " + outDir + "/kernel/eth_info.log").toStdString();
     system(tmpCmd.c_str());
     tmpCmd = ("ifconfig >> " + outDir + "/kernel/ifconfig.log").toStdString();
-    system(tmpCmd.c_str());
-    tmpCmd = ("lspci -vvv | grep -A 12 'VGA c' >> " + outDir + "/kernel/lspci_VGA.log").toStdString();
     system(tmpCmd.c_str());
 }
 

@@ -169,23 +169,6 @@ bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isF
 
 bool DLDBusHandler::exportOpsLog(const QString &outDir, const QString &userHomeDir)
 {
-    QDBusMessage message = QDBusMessage::createMethodCall("com.deepin.logviewer",
-                                                          "/com/deepin/logviewer",
-                                                          "com.deepin.logviewer",
-                                                          "exportOpsLog");
-    message << outDir << userHomeDir;
-
-    QDBusMessage reply = QDBusConnection::systemBus().call(message, QDBus::Block, 6000000);
-    if (reply.type() == QDBusMessage::ErrorMessage) {
-        qCritical(logDBusHandler) << "call dbus interface 'exportOpsLog' failed. error info:" << reply.errorMessage();
-        return false;
-    }
-
-    return reply.arguments().first().toBool();
-}
-
-bool DLDBusHandler::exportHwOpsLog(const QString &outDir, const QString &userHomeDir)
-{
     QDBusMessage message = QDBusMessage::createMethodCall(kLogExportService,
                                                           kLogExportPath,
                                                           kLogExportInterface,
