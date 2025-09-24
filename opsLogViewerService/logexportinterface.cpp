@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logexportinterface.h"
+#include "opslogexport.h"
 
 #include <QDBusConnection>
 #include <QDebug>
@@ -30,26 +31,8 @@ LogExportInterface::LogExportInterface(QObject *parent)
 
 bool LogExportInterface::ExportOpsLog(const QString &outDir, const QString &homeDir)
 {
-    Q_UNUSED(homeDir)
-
-    std::string cmd = ("dmidecode -t 0 >> " + outDir + "/system_info.txt").toStdString();
-    system(cmd.c_str());
-    cmd = ("dmidecode -t 11 >> " + outDir + "/system_info.txt").toStdString();
-    system(cmd.c_str());
-    cmd = ("cat /etc/hw_version >> " + outDir + "/system_info.txt").toStdString();
-    system(cmd.c_str());
-    cmd = ("echo >> " + outDir + "/system_info.txt").toStdString();
-    system(cmd.c_str());
-    cmd = ("/usr/sbin/hwfirmware -v >> " + outDir + "/system_info.txt").toStdString();
-    system(cmd.c_str());
-    cmd = ("echo >> " + outDir + "/system_info.txt").toStdString();
-    system(cmd.c_str());
-    cmd = ("lscpu >> " + outDir + "/system_info.txt").toStdString();
-    system(cmd.c_str());
-
-    // 递归设置目录及文件的权限
-    cmd = ("chmod -R 777 " + outDir).toStdString();
-    system(cmd.c_str());
+    OpsLogExport ops(outDir.toStdString(), homeDir.toStdString());
+    ops.run();
 
     QTimer::singleShot(1000, this, [=](){
         qApp->exit(0);
