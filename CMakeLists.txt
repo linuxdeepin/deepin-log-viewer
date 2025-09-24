@@ -11,6 +11,7 @@ add_subdirectory(logViewerAuth)
 add_subdirectory(logViewerTruncate)
 
 add_subdirectory(logViewerService)
+add_subdirectory(opsLogViewerService)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_subdirectory(tests)

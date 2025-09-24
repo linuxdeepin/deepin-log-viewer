@@ -27,7 +27,6 @@ private:
     void exportSystemLogs();
     void exportKernelLogs();
     void exportDDELogs();
-    void exportHwLogs();
 };
 
 #endif

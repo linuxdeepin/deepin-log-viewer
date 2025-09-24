@@ -2,13 +2,17 @@ usr/bin/deepin-log-viewer
 usr/bin/logViewerAuth
 usr/bin/logViewerTruncate
 usr/bin/deepin-logger
+usr/bin/ops-log-viewer-service
 usr/lib/deepin-daemon/log-view-service
 usr/lib/systemd/user/coredump-reporter.service
 usr/lib/systemd/user/coredump-reporter.timer
 usr/lib/systemd/system/deepin-log-viewer-daemon.service
+usr/lib/systemd/system/deepin-log-viewer-ops.service
 usr/share/applications/deepin-log-viewer.desktop
 usr/share/dbus-1/system-services/com.deepin.logviewer.service
+usr/share/dbus-1/system-services/org.deepin.logviewer.ops.service
 usr/share/dbus-1/system.d/com.deepin.logviewer.conf
+usr/share/dbus-1/system.d/org.deepin.logviewer.ops.conf
 usr/share/deepin-log-viewer/DocxTemplate/*.dfw
 usr/share/dsg/configs/org.deepin.log.viewer/*.json
 usr/share/glib-2.0/schemas/*.gschema.xml

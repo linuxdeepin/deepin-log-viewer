@@ -236,6 +236,7 @@ void LogAllExportThread::run()
         // 收集运维日志
         DLDBusHandler::instance(this)->exportOpsLog(opsLogPath, userHomePath);
         Utils::exportSomeOpsLogs(opsLogPath, userHomePath);
+        DLDBusHandler::instance(this)->exportHwOpsLog(opsLogPath, userHomePath);
     }
 
     if (!m_cancel) {
