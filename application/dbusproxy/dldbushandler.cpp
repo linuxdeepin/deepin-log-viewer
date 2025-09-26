@@ -175,7 +175,7 @@ bool DLDBusHandler::exportOpsLog(const QString &outDir, const QString &userHomeD
                                                           "ExportOpsLog");
     message << outDir << userHomeDir;
 
-    QDBusMessage reply = QDBusConnection::systemBus().call(message);
+    QDBusMessage reply = QDBusConnection::systemBus().call(message, QDBus::Block, 1200000);
     if (reply.type() == QDBusMessage::ErrorMessage) {
         qCritical(logDBusHandler) << "call dbus interface 'exportHwOpsLog' failed. error info:" << reply.errorMessage();
         return false;
