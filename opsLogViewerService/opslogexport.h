@@ -28,6 +28,8 @@ private:
     void exportKernelLogs();
     void exportDDELogs();
     void exportHWLogs();
+    void exportOSVersionLogs();
+    void exportDebVersionLogs();
 };
 
 #endif
