@@ -30,6 +30,8 @@ void OpsLogExport::run()
     exportKernelLogs();
     exportDDELogs();
     exportHWLogs();
+    exportOSVersionLogs();
+    exportDebVersionLogs();
 
     // 递归设置目录及文件的权限
     system(("chmod -R 777 " + target_dir).c_str());
@@ -301,4 +303,21 @@ void OpsLogExport::exportHWLogs()
     execute_command("/usr/sbin/hwfirmware -v", target_dir + "/system_info.txt");
     execute_command("echo", target_dir + "/system_info.txt");
     execute_command("lscpu", target_dir + "/system_info.txt");
+}
+
+void OpsLogExport::exportOSVersionLogs()
+{
+    execute_command("uname -a", target_dir + "/info-version.txt");
+    execute_command("echo", target_dir + "/info-version.txt");
+    execute_command("cat /etc/os-version", target_dir + "/info-version.txt");
+    execute_command("echo", target_dir + "/info-version.txt");
+    execute_command("echo -n 开发者模式开启状态：", target_dir + "/info-version.txt");
+    execute_command("cat /var/lib/deepin/developer-mode/enabled", target_dir + "/info-version.txt");
+    execute_command("echo \"\\n\"", target_dir + "/info-version.txt");
+    execute_command("uos-activator-cmd -q", target_dir + "/info-version.txt");
+}
+
+void OpsLogExport::exportDebVersionLogs()
+{
+    execute_command("dpkg -l", target_dir + "/deb-version.txt");
 }
