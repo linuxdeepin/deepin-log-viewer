@@ -2003,6 +2003,10 @@ int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
     qint64 totalLineCount = 0;
     int nSegementIndex = -1;
     if (type == KERN) {
+        if (m_type2Filter[type].segementIndex == -1 && bNext) { //On the first entry, it returns 0 directly without reading the file; the file is read only after authentication.
+            nSegementIndex = ++m_type2Filter[type].segementIndex;
+            return nSegementIndex;
+        }
         QStringList filePaths = DLDBusHandler::instance(this)->getFileInfo("kern");
         for (auto file: filePaths) {
             totalLineCount += DLDBusHandler::instance(this)->getLineCount(file);
