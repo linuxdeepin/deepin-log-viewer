@@ -15,6 +15,8 @@
 #include <QJsonObject>
 #include <QDateTime>
 #include <QSet>
+#include <QStandardPaths>
+#include <QTemporaryDir>
 
 Q_DECLARE_LOGGING_CATEGORY(logApp)
 
@@ -308,6 +310,9 @@ void LogAllExportThread::run()
         return;
     }
 
+    // Add task for ops log
+    totalTasks += 10;
+
     emit updateTolProcess(totalTasks);
     int completedTasks = 0;
 
@@ -321,7 +326,7 @@ void LogAllExportThread::run()
             // Optimize: extract filename without constructing QFileInfo
             int lastSlash = file.lastIndexOf('/');
             QString fileName = (lastSlash >= 0) ? file.mid(lastSlash + 1) : file;
-            QString entryName = data.logCategory + '/' + fileName;
+            QString entryName = "log/" + data.logCategory + '/' + fileName;
             ensureDirectoriesExist(entryName);
             if (!addFileToZip(file, entryName)) {
                  qCWarning(logApp) << "Failed to add file to zip:" << file;
@@ -340,7 +345,7 @@ void LogAllExportThread::run()
                 // Optimize: extract filename without constructing QFileInfo
                 int lastSlash = path.lastIndexOf('/');
                 QString fileName = (lastSlash >= 0) ? path.mid(lastSlash + 1) : path;
-                QString entryName = data.logCategory + '/' + fileMapIt.key() + '/' + fileName;
+                QString entryName = "log/" + data.logCategory + '/' + fileMapIt.key() + '/' + fileName;
                 ensureDirectoriesExist(entryName);
                 if (!addFileToZip(path, entryName)) {
                     qCWarning(logApp) << "Failed to add file to zip:" << path;
@@ -353,7 +358,7 @@ void LogAllExportThread::run()
         // Commands in category root
         for (const auto &command : data.commands) {
             if (m_cancel.load()) break;
-            QString entryName = data.logCategory + '/' + command + ".log";
+            QString entryName = "log/" + data.logCategory + '/' + command + ".log";
             ensureDirectoriesExist(entryName);
             
             if (command == "journalctl_system") {
@@ -388,18 +393,100 @@ void LogAllExportThread::run()
                     QString filter = obj["filter"].toString();
                     
                     if (logType == "journal" && !filter.isEmpty()) {
-                        QString entryName = data.logCategory + '/' + cmdMapIt.key() + '/' + filter + ".log";
+                        QString entryName = "log/" + data.logCategory + '/' + cmdMapIt.key() + '/' + filter + ".log";
                         ensureDirectoriesExist(entryName);
                         addProcessOutputToZip("journalctl", QStringList() << "-u" << filter, entryName);
                     }
                 } else {
                     // Fallback for malformed JSON
-                    QString entryName = data.logCategory + '/' + cmdMapIt.key() + "/journal.log";
+                    QString entryName = "log/" + data.logCategory + '/' + cmdMapIt.key() + "/journal.log";
                     ensureDirectoriesExist(entryName);
                     addProcessOutputToZip("journalctl", QStringList(), entryName);
                 }
                 emit updatecurrentProcess(++completedTasks);
             }
+        }
+    }
+
+    // --- Export additional ops logs ---
+    if (!m_cancel.load()) {
+        // Create temporary directory for ops logs
+        QString userHomePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+        QString opsLogPath = QDir::tempPath() + "/deepin-log-viewer-ops-logs-" + QString::number(QDateTime::currentMSecsSinceEpoch());
+
+        if (QDir().mkpath(opsLogPath)) {
+            DLDBusHandler::instance(this)->exportOpsLog(opsLogPath, userHomePath);
+            completedTasks += 5;
+            emit updatecurrentProcess(completedTasks);
+            Utils::exportSomeOpsLogs(opsLogPath, userHomePath);
+            completedTasks += 2;
+            emit updatecurrentProcess(completedTasks);
+
+            // Add ops logs to zip file with directory structure preserved
+            QDir opsDir(opsLogPath);
+            if (opsDir.exists()) {
+                // Recursive function to add directory structure to zip
+                std::function<void(const QDir&, const QString&)> addDirToZip = [&](const QDir& currentDir, const QString& basePath) {
+                    if (m_cancel.load()) return;
+
+                    // First, add all files in current directory
+                    QStringList files = currentDir.entryList(QDir::Files | QDir::NoDotAndDotDot);
+                    for (const QString &file : files) {
+                        if (m_cancel.load()) break;
+
+                        QString filePath = currentDir.filePath(file);
+                        QString entryName = "log-ops/" + basePath + file;
+                        ensureDirectoriesExist(entryName);
+
+                        if (!addFileToZip(filePath, entryName)) {
+                            qCWarning(logApp) << "Failed to add ops log file to zip:" << entryName;
+                        }
+                    }
+
+                    // Create directory entry for current directory if it's empty or has subdirectories
+                    if (files.isEmpty()) {
+                        QString dirEntryName = "log-ops/" + basePath;
+                        if (!dirEntryName.endsWith('/')) {
+                            dirEntryName += '/';
+                        }
+
+                        // Create empty directory entry
+                        zip_fileinfo zfi = {};
+                        QDateTime currentTime = QDateTime::currentDateTime();
+                        zfi.tmz_date = dateTimeToTmZip(currentTime);
+                        zfi.dosDate = 0;
+
+                        if (zipOpenNewFileInZip64(m_zipFile, dirEntryName.toUtf8().constData(), &zfi, nullptr, 0, nullptr, 0, nullptr, Z_DEFLATED, ZIP_COMPRESSION_LEVEL, 1) == ZIP_OK) {
+                            zipCloseFileInZip(m_zipFile);
+                        }
+                    }
+
+                    // Then, recursively process subdirectories
+                    QStringList subDirs = currentDir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+                    for (const QString &subDir : subDirs) {
+                        if (m_cancel.load()) break;
+
+                        QDir subDirectory = currentDir;
+                        if (subDirectory.cd(subDir)) {
+                            QString subPath = basePath + subDir + "/";
+                            addDirToZip(subDirectory, subPath);
+                        }
+                    }
+                };
+
+                // Start recursive addition from the ops directory
+                addDirToZip(opsDir, "");
+            }
+            completedTasks += 2;
+            emit updatecurrentProcess(completedTasks);
+            // Clean up temporary directory
+            if (!Utils::deleteDir(opsLogPath)) {
+                qCWarning(logApp) << "Failed to remove temporary ops log directory:" << opsLogPath;
+            }
+            completedTasks += 1;
+            emit updatecurrentProcess(completedTasks);
+        } else {
+            qCCritical(logApp) << "Failed to create temporary ops log directory:" << opsLogPath;
         }
     }
 

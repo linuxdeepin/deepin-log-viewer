@@ -28,6 +28,10 @@ void OpsLogExport::run()
     exportAppLogs();
     exportSystemLogs();
     exportKernelLogs();
+    exportDDELogs();
+    exportHWLogs();
+    exportOSVersionLogs();
+    exportDebVersionLogs();
 
     // 递归设置目录及文件的权限
     system(("chmod -R 777 " + target_dir).c_str());
@@ -269,4 +273,51 @@ void OpsLogExport::exportKernelLogs()
     execute_command("lshw -c sound", target_dir + "/kernel/sound_info.log");
     // 龙芯内核
     copy_file_or_dir("/var/log/kern.log", target_dir + "/kernel/");
+}
+
+void OpsLogExport::exportDDELogs()
+{
+    // 文件管理器
+    copy_file_or_dir(home_dir + "/.cache/deepin/dde-desktop/dde-desktop.log", target_dir + "/dde/dde-desktop/");
+    copy_file_or_dir(home_dir + "/.cache/deepin/dde-file-manager/dde-file-manager.log", target_dir + "/dde/dde-file-manager/");
+    copy_file_or_dir(home_dir + "/.cache/deepin/dde-dock/dde-dock.log", target_dir + "/dde/dde-dock/");
+    copy_file_or_dir("/var/log/deepin/dde-file-manager-daemon", target_dir + "/dde/dde-file-manager/");
+    copy_file_or_dir("/var/log/messages", target_dir + "/dde/");
+    copy_file_or_dir("/var/log/syslog", target_dir + "/dde/");
+    execute_command("coredumpctl list", target_dir + "/dde/coredumpctl.log");
+    execute_command("free -m", target_dir + "/dde/free-m.log");   // 查看内存情况，输出内容截图或保存
+    execute_command("udisksctl dump", target_dir + "/dde/udiskctl_dump.txt");
+    execute_command("df -h", target_dir + "/dde/df-h.txt");
+    // DDE
+    system(("cp " + home_dir + "/Desktop/DDE_LOG.zip " + target_dir + "/dde/ 2>/dev/null").c_str());
+    copy_file_or_dir("/var/log/journalLog", target_dir + "/dde/");
+}
+
+void OpsLogExport::exportHWLogs()
+{
+    // hw-info
+    execute_command("dmidecode -t 0", target_dir + "/system_info.txt");
+    execute_command("dmidecode -t 11", target_dir + "/system_info.txt");
+    execute_command("cat /etc/hw_version", target_dir + "/system_info.txt");
+    execute_command("echo", target_dir + "/system_info.txt");
+    execute_command("/usr/sbin/hwfirmware -v", target_dir + "/system_info.txt");
+    execute_command("echo", target_dir + "/system_info.txt");
+    execute_command("lscpu", target_dir + "/system_info.txt");
+}
+
+void OpsLogExport::exportOSVersionLogs()
+{
+    execute_command("uname -a", target_dir + "/info-version.txt");
+    execute_command("echo", target_dir + "/info-version.txt");
+    execute_command("cat /etc/os-version", target_dir + "/info-version.txt");
+    execute_command("echo", target_dir + "/info-version.txt");
+    execute_command("echo -n 开发者模式开启状态：", target_dir + "/info-version.txt");
+    execute_command("cat /var/lib/deepin/developer-mode/enabled", target_dir + "/info-version.txt");
+    execute_command("echo \"\\n\"", target_dir + "/info-version.txt");
+    execute_command("uos-activator-cmd -q", target_dir + "/info-version.txt");
+}
+
+void OpsLogExport::exportDebVersionLogs()
+{
+    execute_command("dpkg -l", target_dir + "/deb-version.txt");
 }

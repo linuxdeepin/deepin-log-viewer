@@ -26,6 +26,10 @@ private:
     void exportAppLogs();
     void exportSystemLogs();
     void exportKernelLogs();
+    void exportDDELogs();
+    void exportHWLogs();
+    void exportOSVersionLogs();
+    void exportDebVersionLogs();
 };
 
 #endif
