@@ -23,6 +23,7 @@ private:
     void execute_command(const std::string& cmd, const std::string& output_file);
 
     void createDirStruct();
+    void exportAppLogs();
 };
 
 #endif
