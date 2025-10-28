@@ -24,6 +24,8 @@ private:
 
     void createDirStruct();
     void exportAppLogs();
+    void exportSystemLogs();
+    void exportKernelLogs();
 };
 
 #endif

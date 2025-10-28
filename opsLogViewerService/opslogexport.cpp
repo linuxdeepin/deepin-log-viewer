@@ -26,6 +26,8 @@ void OpsLogExport::run()
     createDirStruct();
 
     exportAppLogs();
+    exportSystemLogs();
+    exportKernelLogs();
 
     // 递归设置目录及文件的权限
     system(("chmod -R 777 " + target_dir).c_str());
@@ -227,4 +229,44 @@ void OpsLogExport::exportAppLogs()
     // 日志收集工具
     copy_file_or_dir(home_dir + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log", target_dir + "/app/deepin-log-viewer/");
     copy_file_or_dir("/var/log/deepin/deepin-log-viewer-service", target_dir + "/app/deepin-log-viewer/");
+}
+
+void OpsLogExport::exportSystemLogs()
+{
+    // 系统
+    execute_command("dmesg -T", target_dir + "/system/dmesg_system.log");
+    execute_command("journalctl", target_dir + "/system/journalctl.log");
+    execute_command("journalctl -b -0", target_dir + "/system/journalctl-0.log");
+    execute_command("journalctl -b -1", target_dir + "/system/journalctl-1.log");
+    execute_command("journalctl -xb", target_dir + "/system/journalctl-xb.log");
+    copy_file_or_dir("/var/log/apt/history.log", target_dir + "/system/");
+    copy_file_or_dir("/var/log/alternatives.log", target_dir + "/system/");
+    copy_file_or_dir("/var/log/kern.log", target_dir + "/system/");
+    copy_file_or_dir("/var/log/syslog", target_dir + "/system/");
+    copy_file_or_dir("/var/log/dpkg.log", target_dir + "/system/");
+    // xorg /var/log/目录下所有log文件
+    system(("cp -rf /var/log/Xorg* " + target_dir + "/system/ 2>/dev/null").c_str());
+    // pulse　audio /home/uos/pulse.log
+    copy_file_or_dir(home_dir + "/pulse.log", target_dir + "/system/pulseaudio/");
+}
+
+void OpsLogExport::exportKernelLogs()
+{
+    // 内核
+    copy_file_or_dir("/etc/product-info", target_dir + "/kernel/");
+    execute_command("uname -a", target_dir + "/kernel/uname-a.log");
+    execute_command("dmesg", target_dir + "/kernel/dmesg.log");
+    copy_file_or_dir("/sys/firmware/acpi/tables/DSDT", target_dir + "/kernel/");
+    copy_file_or_dir("/var/log/lightdm/lightdm.log", target_dir + "/kernel/");
+    system(("cp -rf /var/log/Xorg.0.log* " + target_dir + "/kernel/ 2>/dev/null").c_str());
+    execute_command("lspci -vvv | grep -A 12 'VGA c'", target_dir + "/kernel/lspci_VGA.log");
+    //    execute_command("ifconfig", target_dir + "/kernel/ifconfig.log");
+    //    execute_command("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}')", target_dir + "/kernel/eth_info.log");
+    execute_command("dmesg | grep iwlwifi", target_dir + "/kernel/dmesg_network.log");
+    execute_command("journalctl --system", target_dir + "/kernel/journalctl_system.log");
+    // ⽆法识别声卡问题⽇志
+    //    execute_command("aplay -l", target_dir + "/kernel/aplay.log");
+    execute_command("lshw -c sound", target_dir + "/kernel/sound_info.log");
+    // 龙芯内核
+    copy_file_or_dir("/var/log/kern.log", target_dir + "/kernel/");
 }
