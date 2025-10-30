@@ -82,6 +82,8 @@ public:
     static void updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &infos = QList<LOG_REPEAT_COREDUMP_INFO>());
     // 执行cmd命令
     static QByteArray executeCmd(const QString& cmd, const QStringList& args = QStringList(), const QString& workPath = QString());
+    // 部分运维日志收集
+    static void exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir);
     /**
      * @brief specialComType 是否是特殊机型，like huawei
      * 取值有3种（-1,0,>0），默认为-1（未知），0（不是特殊机型）,>0（特殊机型）

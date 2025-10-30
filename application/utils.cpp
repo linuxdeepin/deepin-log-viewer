@@ -646,6 +646,27 @@ QByteArray Utils::executeCmd(const QString &cmdStr, const QStringList &args, con
     return processCmdWithArgs(cmdStr, workPath,  args);
 }
 
+void Utils::exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir)
+{
+    Q_UNUSED(userHomeDir)
+
+    std::string tmpCmd;
+
+    // app
+    tmpCmd = ("glxinfo -B >> " + outDir + "/app/kwin/glxinfo.log").toStdString();
+    system(tmpCmd.c_str());
+    tmpCmd = ("cp -rf /tmp/fcitx*.log " + outDir + "/app/fcitx/").toStdString();
+    system(tmpCmd.c_str());
+
+    // kernel
+    tmpCmd = ("aplay -l >> " + outDir + "/kernel/aplay.log").toStdString();
+    system(tmpCmd.c_str());
+    tmpCmd = ("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}') >> " + outDir + "/kernel/eth_info.log").toStdString();
+    system(tmpCmd.c_str());
+    tmpCmd = ("ifconfig >> " + outDir + "/kernel/ifconfig.log").toStdString();
+    system(tmpCmd.c_str());
+}
+
 #ifdef DTKCORE_CLASS_DConfigFile
 LoggerRules::LoggerRules(QObject *parent)
     : QObject(parent), m_rules(""), m_config(nullptr) {
