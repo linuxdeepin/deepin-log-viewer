@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.22) unstable; urgency=medium
+
+  * feat: Add ops logs
+
+ -- wangrong <wangrong@uniontech.com>  Fri, 31 Oct 2025 08:52:18 +0800
+
 deepin-log-viewer (6.5.21) unstable; urgency=medium
 
   * chore: version to 6.5.21
