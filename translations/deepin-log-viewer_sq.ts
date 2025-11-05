@@ -182,22 +182,22 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="213"/>
         <source>Discretionary Access Control</source>
-        <translation>Kontrolli Diskretional</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="214"/>
         <source>Mandatory access control</source>
-        <translation>Kontrolli Obligatorike</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="215"/>
         <source>Remote</source>
-        <translation>Remote</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="216"/>
         <source>Document audit</source>
-        <translation>Audita Dokumente</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="217"/>
@@ -665,7 +665,7 @@
         <location filename="../application/logexportthread.cpp" line="909"/>
         <location filename="../application/logexportthread.cpp" line="1018"/>
         <source>Null</source>
-        <translation>Nëjë</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="913"/>
@@ -693,19 +693,19 @@
         <location filename="../application/displaycontent.cpp" line="4179"/>
         <location filename="../application/logbackend.cpp" line="3095"/>
         <source>SIG</source>
-        <translation>SIG</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4183"/>
         <location filename="../application/logbackend.cpp" line="3099"/>
         <source>EXE</source>
-        <translation>EXE</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4181"/>
         <location filename="../application/logbackend.cpp" line="3097"/>
         <source>Core File</source>
-        <translation>Fajll Core</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4182"/>
@@ -717,7 +717,7 @@
         <location filename="../application/displaycontent.cpp" line="1058"/>
         <location filename="../application/logbackend.cpp" line="3083"/>
         <source>Offset</source>
-        <translation>Offset</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -846,7 +846,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="3512"/>
         <source>Audit log is not exist.</source>
-        <translation>Regjistro Audita nuk ekziston.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
@@ -884,7 +884,7 @@
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>SELF APPNAME</source>
-        <translation>SELF APPNEM</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/main.cpp" line="71"/>
@@ -939,7 +939,7 @@
     <message>
         <location filename="../application/main.cpp" line="77"/>
         <source>Report coredump informations.</source>
-        <translation>Raporto informacione për coredump.</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../application/main.cpp" line="76"/>
