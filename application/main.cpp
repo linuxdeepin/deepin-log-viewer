@@ -248,8 +248,8 @@ int main(int argc, char *argv[])
                         } else {
                             qCWarning(logApp) << QString("Export logs by %1, filterd by 'period' or 'level' or 'keyword' or 'submodule', currently not supported.").arg(type).arg(appName);
                         }
-                    } else if (TYPE_BSE == type || TYPE_AUDIT == type) {
-                        // 开关机事件、审计日志 可按周期和事件类型导出
+                    } else if (TYPE_BSE == type || TYPE_AUDIT == type || TYPE_AUTH == type) {
+                        // 开关机事件、审计日志、认证日志 可按周期和事件类型导出
                         if (!level.isEmpty() || !status.isEmpty())
                             qCWarning(logApp) << QString("Export logs by %1, can only be filtered using 'period' or 'event' or 'keyword' parameters.").arg(type);
                         else

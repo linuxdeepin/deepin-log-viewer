@@ -42,6 +42,7 @@ class DisplayContent : public Dtk::Widget::DWidget
         DATA_NO_SEARCH_RESULT, //搜索无记录
         DATA_NOT_AUDIT_ADMIN, // 提示不是审计管理员
         DATA_NO_AUDIT_LOG,    // 提示没有审计日志
+        DATA_NO_AUTH_LOG,     // 提示没有认证日志
         COREDUMPCTL_NOT_INSTALLED, //未安装coredumpctl工具
         DATA_NO_PERMISSION //没有权限查看
     };
@@ -112,6 +113,11 @@ private:
     void createAuditTableForm();
     void createAuditTable(const QList<LOG_MSG_AUDIT> &list);
 
+    // 认证日志
+    void generateAuthFile(int id, const QString &iSearchStr = "");
+    void createAuthTableForm();
+    void createAuthTable(const QList<LOG_MSG_AUTH> &list);
+
     //coredump log
     void generateCoredumpFile(int id, const QString &iSearchStr = "");
     void createCoredumpTableForm();
@@ -128,6 +134,7 @@ private:
     void insertNormalTable(const QList<LOG_MSG_NORMAL> &list, int start, int end);
     void insertOOCTable(const QList<LOG_FILE_OTHERORCUSTOM> &list, int start, int end);
     void insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int start, int end);
+    void insertAuthTable(const QList<LOG_MSG_AUTH> &list, int start, int end);
     void insertCoredumpTable(const QList<LOG_MSG_COREDUMP> &list, int start, int end);
     QString getAppName(const QString &filePath);
 
@@ -205,6 +212,8 @@ public slots:
     void slot_OOCData(const QString &data);
     void slot_auditFinished(bool bShowTip = false);
     void slot_auditData(const QList<LOG_MSG_AUDIT> &list);
+    void slot_authFinished();
+    void slot_authData(const QList<LOG_MSG_AUTH> &list);
     void slot_coredumpFinished();
     void slot_coredumpData(const QList<LOG_MSG_COREDUMP> &list, bool newData);
 
@@ -230,6 +239,7 @@ public slots:
     void parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_FILE_OTHERORCUSTOM> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemModel *oPModel);
+    void parseListToModel(QList<LOG_MSG_AUTH> iList, QStandardItemModel *oPModel);
     void parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardItemModel *oPModel);
     QString getIconByname(const QString &str);
     void setLoadState(LOAD_STATE iState, bool bSearching = false);

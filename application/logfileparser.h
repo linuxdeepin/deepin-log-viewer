@@ -45,6 +45,8 @@ public:
 
     int parseByAudit(const AUDIT_FILTERS &iAuditFilter);
 
+    int parseByAuth(const AUTH_FILTERS &iAuthFilter);
+
     int parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap = false);
 
     void stopAllLoad();
@@ -85,6 +87,9 @@ signals:
 
     void auditFinished(int index, bool bShowTip = false);
     void auditData(int index, QList<LOG_MSG_AUDIT>);
+
+    void authFinished(int index);
+    void authData(int index, QList<LOG_MSG_AUTH>);
 
     void coredumpFinished(int index);
     void coredumpData(int index, QList<LOG_MSG_COREDUMP> iDataList);

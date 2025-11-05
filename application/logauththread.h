@@ -32,6 +32,7 @@ public:
     void setFileterParam(const DNF_FILTERS &iFIlters) { m_dnfFilters = iFIlters; }
     void setFileterParam(const DMESG_FILTERS &iFIlters) { m_dmesgFilters = iFIlters; }
     void setFileterParam(const AUDIT_FILTERS &iFIlters) { m_auditFilters = iFIlters; }
+    void setFileterParam(const AUTH_FILTERS &iFIlters) { m_authFilters = iFIlters; }
     void setFileterParam(const COREDUMP_FILTERS &iFIlters) { m_coredumpFilters = iFIlters; }
     void stopProccess();
     void setFilePath(const QStringList &filePath);
@@ -57,6 +58,7 @@ protected:
     void handleDnf();
     void handleDmesg();
     void handleAudit();
+    void handleAuth();
     void handleCoredump();
     void initProccess();
     qint64 formatDateTime(QString m, QString d, QString t);
@@ -89,6 +91,8 @@ signals:
     void dmesgFinished(QList<LOG_MSG_DMESG> iKwinList);
     void auditFinished(int index, bool bShowTip = false);
     void auditData(int index, QList<LOG_MSG_AUDIT> iDataList);
+    void authFinished(int index);
+    void authData(int index, QList<LOG_MSG_AUTH> iDataList);
     void coredumpFinished(int index);
     void coredumpData(int index, QList<LOG_MSG_COREDUMP> iDataList);
     void proccessError(const QString &iError);
@@ -130,6 +134,10 @@ private:
      * @brief m_normalFilters 开关机日志筛选条件
      */
     AUDIT_FILTERS m_auditFilters;
+    /**
+     * @brief m_authFilters 认证日志筛选条件
+     */
+    AUTH_FILTERS m_authFilters;
 
     COREDUMP_FILTERS m_coredumpFilters;
     //获取数据用的cat命令的process

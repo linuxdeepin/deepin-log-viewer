@@ -91,6 +91,8 @@ public:
 
     void parseByAudit(const AUDIT_FILTERS &iAuditFilter);
 
+    void parseByAuth(const AUTH_FILTERS &iAuthFilter);
+
     void parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap = false);
 
     int loadSegementPage(int nSegementIndex, bool bReset = true);
@@ -163,6 +165,9 @@ signals:
     void auditFinished(bool bShowTip = false);
     void auditData(const QList<LOG_MSG_AUDIT>&);
 
+    void authFinished();
+    void authData(const QList<LOG_MSG_AUTH>&);
+
     void coredumpFinished();
     void coredumpData(const QList<LOG_MSG_COREDUMP> &iDataList, bool newData = true);
 
@@ -213,6 +218,8 @@ private slots:
     void slot_OOCData(int index, const QString & data);
     void slot_auditFinished(int index, bool bShowTip = false);
     void slot_auditData(int index, QList<LOG_MSG_AUDIT> list);
+    void slot_authFinished(int index);
+    void slot_authData(int index, QList<LOG_MSG_AUTH> list);
     void slot_coredumpFinished(int index);
     void slot_coredumpData(int index, QList<LOG_MSG_COREDUMP> list);
 
@@ -283,6 +290,11 @@ public:
      */
     AUDIT_FILTERS m_auditFilter;
 
+    /**
+     * @brief m_authFilter 当前认证日志筛选条件
+     */
+    AUTH_FILTERS m_authFilter;
+
     //当前搜索关键字
     QString m_currentSearchStr {""};
 
@@ -348,6 +360,11 @@ public:
     QList<LOG_MSG_AUDIT> aList, aListOrigin;
 
     /**
+     * @brief authList 认证日志数据   auth.log
+     */
+    QList<LOG_MSG_AUTH> authList, authListOrigin;
+
+    /**
      * @brief appListOrigin 未经过筛选的内核日志数据   ~/.cache/deepin/xxx.log(.xxx)
      */
     QList<LOG_MSG_APPLICATOIN> appList, appListOrigin;
@@ -407,6 +424,7 @@ private:
     int m_appCurrentIndex {-1};
     int m_OOCCurrentIndex {-1};
     int m_auditCurrentIndex {-1};
+    int m_authCurrentIndex {-1};
     int m_coredumpCurrentIndex {-1};
 
     bool m_isDataLoadComplete {false};

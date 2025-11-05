@@ -25,6 +25,7 @@
 #define OOC_TABLE_DATA "OOCItemData"
 #define AUDIT_TABLE_DATA "auditItemData"
 #define COREDUMP_TABLE_DATA "coredumpItemData"
+#define AUTH_TABLE_DATA "authItemData"
 
 #define JOUR_TREE_DATA "journalctl"
 #define BOOT_KLU_TREE_DATA "bootklu"
@@ -41,6 +42,7 @@
 #define CUSTOM_TREE_DATA "custom log"
 #define AUDIT_TREE_DATA "/var/log/audit/audit.log"
 #define COREDUMP_TREE_DATA "coredump log"
+#define AUTH_TREE_DATA "/var/log/auth.log"
 
 #define ITEM_DATE_ROLE (Qt::UserRole + 66)
 #define ICONPREFIX "://images/"
@@ -61,6 +63,7 @@
 #define TYPE_OTHER "other"
 #define TYPE_CUSTOM "custom"
 #define TYPE_AUDIT "audit"
+#define TYPE_AUTH "auth"
 
 #define AUDIT_ORIGIN_DATAROLE Qt::UserRole + 3
 
@@ -260,6 +263,22 @@ struct LOG_MSG_COREDUMP {
     }
 };
 
+struct LOG_MSG_AUTH {
+    QString dateTime;
+    QString hostName;
+    QString processName;
+    QString msg;
+
+    bool contains(const QString& searchstr) {
+        if (dateTime.contains(searchstr, Qt::CaseInsensitive)
+                || hostName.contains(searchstr, Qt::CaseInsensitive)
+                || processName.contains(searchstr, Qt::CaseInsensitive)
+                || msg.contains(searchstr, Qt::CaseInsensitive))
+            return true;
+        return false;
+    }
+};
+
 struct TIME_RANGE {
     qint64 begin = -1;
     qint64 end = -1;
@@ -370,6 +389,21 @@ struct AUDIT_FILTERS {
 };
 
 /**
+ * @brief The AUTH_FILTERS struct 认证日志筛选条件
+ */
+struct AUTH_FILTERS {
+    qint64 timeFilterBegin = -1 ; //筛选开始时间
+    qint64 timeFilterEnd = -1; //筛选结束时间
+    QString searchstr = ""; //搜索关键字
+
+    void clear() {
+        timeFilterBegin = -1;
+        timeFilterEnd = -1;
+        searchstr = "";
+    }
+};
+
+/**
  * @brief The FILTER_CONFIG struct 筛选控件中的筛选情况记录结构体
  */
 struct FILTER_CONFIG {
@@ -411,6 +445,7 @@ enum LOG_FLAG {
     CustomLog,
     Audit,
     COREDUMP,
+    Auth,
     NONE = 9999
 }; // modified by
 Q_DECLARE_METATYPE(LOG_FLAG)

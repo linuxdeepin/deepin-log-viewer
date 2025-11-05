@@ -420,6 +420,32 @@ int LogFileParser::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
     return index;
 }
 
+/**
+ * @brief LogFileParser::parseByAuth 解析认证日志
+ * @param iAuthFilter 认证日志筛选条件
+ * @return 线程索引
+ */
+int LogFileParser::parseByAuth(const AUTH_FILTERS &iAuthFilter)
+{
+    qCDebug(logApp) << "Starting Auth Log parsing";
+    stopAllLoad();
+    LogAuthThread   *authThread = new LogAuthThread(this);
+    authThread->setType(Auth);
+    QStringList filePath = LogApplicationHelper::instance()->getAuthLogList();
+    qCDebug(logApp) << "Auth log files:" << filePath;
+    authThread->setFileterParam(iAuthFilter);
+    authThread->setFilePath(filePath);
+    connect(authThread, &LogAuthThread::authFinished, this,
+            &LogFileParser::authFinished);
+    connect(authThread, &LogAuthThread::authData, this,
+            &LogFileParser::authData);
+    connect(this, &LogFileParser::stopKern, authThread,
+            &LogAuthThread::stopProccess);
+    int index = authThread->getIndex();
+    QThreadPool::globalInstance()->start(authThread);
+    return index;
+}
+
 int LogFileParser::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap)
 {
     qCDebug(logApp) << "Starting coredump log parsing";

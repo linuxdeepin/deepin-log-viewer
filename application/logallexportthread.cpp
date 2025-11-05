@@ -294,6 +294,10 @@ void LogAllExportThread::run()
         } else if (it.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "audit";
             data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("audit", false));
+        } else if (it.contains(AUTH_TREE_DATA, Qt::CaseInsensitive)) {
+            data.logCategory = "auth";
+            QStringList authLogFiles = LogApplicationHelper::instance()->getAuthLogList();
+            data.files.append(authLogFiles);
         }
 
         data.files.removeDuplicates();
