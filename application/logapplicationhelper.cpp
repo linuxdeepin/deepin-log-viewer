@@ -15,6 +15,9 @@
 #include <QJsonArray>
 #include <QLoggingCategory>
 #include <QDateTime>
+#include <QRegularExpression>
+
+#include <algorithm>
 
 Q_DECLARE_LOGGING_CATEGORY(logApp)
 
@@ -54,6 +57,7 @@ void LogApplicationHelper::init()
     getAppLogConfigs();
     initOtherLog();
     initCustomLog();
+    initAuthLog();
     qCDebug(logApp) << "LogApplicationHelper initialization completed";
 }
 
@@ -86,7 +90,6 @@ void LogApplicationHelper::initOtherLog()
     m_other_log_list_temp.append(QStringList() << "alternatives.log" << "/var/log/alternatives.log");
     m_other_log_list_temp.append(QStringList() << "history.log" << "/var/log/apt/history.log");
     m_other_log_list_temp.append(QStringList() << "term.log" << "/var/log/apt/term.log");
-    m_other_log_list_temp.append(QStringList() << "auth.log" << "/var/log/auth.log");
 
     m_other_log_list_temp.append(QStringList() << "access_log" << "/var/log/cups/access_log");
     m_other_log_list_temp.append(QStringList() << "error_log" << "/var/log/cups/error_log");
@@ -758,6 +761,61 @@ QList<QStringList> LogApplicationHelper::getCustomLogList()
 {
     qCDebug(logApp) << "LogApplicationHelper::getCustomLogList called, returning" << m_custom_log_list.size() << "entries";
     return m_custom_log_list;
+}
+
+/**
+ * @brief LogApplicationHelper::initAuthLog 初始化认证日志列表
+ * 扫描/var/log/auth.log及其历史文件auth.log.1, auth.log.2...auth.log.n
+ */
+void LogApplicationHelper::initAuthLog()
+{
+    qCDebug(logApp) << "LogApplicationHelper::initAuthLog called";
+    m_auth_log_list.clear();
+
+    const QString authLogPath = "/var/log/auth.log";
+    QDir logDir("/var/log");
+
+    // 添加主auth.log文件
+    if (QFile::exists(authLogPath)) {
+        m_auth_log_list.append(authLogPath);
+        qCDebug(logApp) << "Added auth.log file:" << authLogPath;
+    } else {
+        qCWarning(logApp) << "Main auth.log file does not exist:" << authLogPath;
+    }
+
+    // 扫描auth.log历史文件(auth.log.1, auth.log.2, ...)
+    QStringList filters;
+    filters << "auth.log.*";
+    QStringList authLogFiles = logDir.entryList(filters, QDir::Files, QDir::Name);
+
+    // 按数字排序，确保auth.log.1在前，auth.log.2在后
+    std::sort(authLogFiles.begin(), authLogFiles.end(), [](const QString &a, const QString &b) {
+        QRegularExpression re("auth\\.log\\.(\\d+)");
+        QRegularExpressionMatch matchA = re.match(a);
+        QRegularExpressionMatch matchB = re.match(b);
+        if (matchA.hasMatch() && matchB.hasMatch()) {
+            return matchA.captured(1).toInt() < matchB.captured(1).toInt();
+        }
+        return a < b;
+    });
+
+    for (const QString &fileName : authLogFiles) {
+        QString fullPath = logDir.absoluteFilePath(fileName);
+        m_auth_log_list.append(fullPath);
+        qCDebug(logApp) << "Added auth.log history file:" << fullPath;
+    }
+
+    qCDebug(logApp) << "Auth log initialization completed, found" << m_auth_log_list.size() << "files";
+}
+
+/**
+ * @brief LogApplicationHelper::getAuthLogList 获取所有认证日志文件列表
+ * @return 认证日志文件路径列表
+ */
+QStringList LogApplicationHelper::getAuthLogList()
+{
+    qCDebug(logApp) << "LogApplicationHelper::getAuthLogList called, returning" << m_auth_log_list.size() << "files";
+    return m_auth_log_list;
 }
 
 AppLogConfig LogApplicationHelper::appLogConfig(const QString &app)

@@ -313,6 +313,11 @@ void DisplayContent::initConnections()
     connect(m_pLogBackend, &LogBackend::auditFinished, this, &DisplayContent::slot_auditFinished,
             Qt::QueuedConnection);
 
+    connect(m_pLogBackend, &LogBackend::authData, this, &DisplayContent::slot_authData,
+            Qt::QueuedConnection);
+    connect(m_pLogBackend, &LogBackend::authFinished, this, &DisplayContent::slot_authFinished,
+            Qt::QueuedConnection);
+
     connect(m_pLogBackend, &LogBackend::coredumpData, this, &DisplayContent::slot_coredumpData,
             Qt::QueuedConnection);
     connect(m_pLogBackend, &LogBackend::coredumpFinished, this, &DisplayContent::slot_coredumpFinished,
@@ -879,6 +884,16 @@ void DisplayContent::insertAuditTable(const QList<LOG_MSG_AUDIT> &list, int star
 {
     qCDebug(logApp) << "DisplayContent::insertAuditTable called with start:" << start << "end:" << end;
     QList<LOG_MSG_AUDIT> midList = list;
+    if (end >= start) {
+        midList = midList.mid(start, end - start);
+    }
+    parseListToModel(midList, m_pModel);
+}
+
+void DisplayContent::insertAuthTable(const QList<LOG_MSG_AUTH> &list, int start, int end)
+{
+    qCDebug(logApp) << "DisplayContent::insertAuthTable called with start:" << start << "end:" << end;
+    QList<LOG_MSG_AUTH> midList = list;
     if (end >= start) {
         midList = midList.mid(start, end - start);
     }
@@ -1714,6 +1729,8 @@ void DisplayContent::slot_BtnSelected(int btnId, int lId, QModelIndex idx)
         generateKwinFile(filter);
     } else if (treeData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         generateAuditFile(BUTTONID(m_curBtnId), AUDITTYPE(m_curAuditType));
+    } else if (treeData.contains(AUTH_TREE_DATA, Qt::CaseInsensitive)) {
+        generateAuthFile(BUTTONID(m_curBtnId));
     } else if(treeData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
         generateCoredumpFile(btnId);
     }
@@ -1835,6 +1852,9 @@ void DisplayContent::slot_logCatelogueClicked(const QModelIndex &index)
         generateOOCLogs(OOC_CUSTOM);
     } else if (itemData.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = Audit;
+        m_pLogBackend->setFlag(m_flag);
+    } else if (itemData.contains(AUTH_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Auth;
         m_pLogBackend->setFlag(m_flag);
     } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = COREDUMP;
@@ -2378,6 +2398,35 @@ void DisplayContent::slot_auditData(const QList<LOG_MSG_AUDIT> &list)
         createAuditTable(list);
         m_firstLoadPageData = false;
         PERF_PRINT_END("POINT-03", "type=audit");
+    }
+}
+
+void DisplayContent::slot_authFinished()
+{
+    qCDebug(logApp) << "DisplayContent::slot_authFinished called";
+    if (m_flag != Auth) {
+        qCDebug(logApp) << "m_flag != Auth";
+        return;
+    }
+    m_isDataLoadComplete = true;
+    if (m_pLogBackend->authList.isEmpty()) {
+        setLoadState(DATA_COMPLETE);
+        createAuthTable(m_pLogBackend->authList);
+    }
+}
+
+void DisplayContent::slot_authData(const QList<LOG_MSG_AUTH> &list)
+{
+    qCDebug(logApp) << "DisplayContent::slot_authData called";
+    if (m_flag != Auth) {
+        qCDebug(logApp) << "m_flag != Auth";
+        return;
+    }
+
+    if (m_firstLoadPageData && !list.isEmpty()) {
+        createAuthTable(list);
+        m_firstLoadPageData = false;
+        PERF_PRINT_END("POINT-03", "type=auth");
     }
 }
 
@@ -3294,6 +3343,43 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_AUDIT> iList, QStandardItemM
     }
 }
 
+void DisplayContent::parseListToModel(QList<LOG_MSG_AUTH> iList, QStandardItemModel *oPModel)
+{
+    qCDebug(logApp) << "DisplayContent::parseListToModel AUTH called";
+    if (!oPModel) {
+        qCWarning(logApp) << "auth log parse model is empty";
+        return;
+    }
+
+    if (iList.isEmpty()) {
+        qCWarning(logApp) << "auth log parse model data is empty";
+        return;
+    }
+    QList<QStandardItem *> items;
+    DStandardItem *item = nullptr;
+    int listCount = iList.size();
+    for (int i = 0; i < listCount; i++) {
+        items.clear();
+        item = new DStandardItem(iList[i].dateTime);
+        item->setData(AUTH_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
+        items << item;
+        item = new DStandardItem(iList[i].hostName);
+        item->setData(AUTH_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(1));
+        items << item;
+        item = new DStandardItem(iList[i].processName);
+        item->setData(AUTH_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(2));
+        items << item;
+        item = new DStandardItem(iList[i].msg);
+        item->setData(AUTH_TABLE_DATA);
+        item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(3));
+        items << item;
+        oPModel->insertRow(oPModel->rowCount(), items);
+    }
+}
+
 void DisplayContent::parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardItemModel *oPModel)
 {
     qCDebug(logApp) << "DisplayContent::parseListToModel called";
@@ -3416,13 +3502,16 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearc
         break;
     }
     case DATA_NOT_AUDIT_ADMIN:
-    case DATA_NO_AUDIT_LOG:{
+    case DATA_NO_AUDIT_LOG:
+    case DATA_NO_AUTH_LOG:{
         // 开启等保四时，若当前用户不是审计管理员，给出提示
         m_treeView->show();
         if (iState == DATA_NOT_AUDIT_ADMIN) {
             notAuditLabel->setText(DApplication::translate("Warning", "Security level for the current system: high\n audit only administrators can view the audit log"));
         } else if (iState == DATA_NO_AUDIT_LOG) {
             notAuditLabel->setText(DApplication::translate("Warning", "Audit log is not exist."));
+        } else if (iState == DATA_NO_AUTH_LOG) {
+            notAuditLabel->setText(DApplication::translate("Warning", "Auth log is not exist."));
         }
         notAuditLabel->resize(m_treeView->viewport()->width(), m_treeView->viewport()->height());
         notAuditLabel->show();
@@ -3691,6 +3780,10 @@ void DisplayContent::slot_refreshClicked(const QModelIndex &index)
         m_flag = Audit;
         m_pLogBackend->setFlag(m_flag);
         generateAuditFile(m_curBtnId, m_curAuditType);
+    } else if (itemData.contains(AUTH_TREE_DATA, Qt::CaseInsensitive)) {
+        m_flag = Auth;
+        m_pLogBackend->setFlag(m_flag);
+        generateAuthFile(m_curBtnId);
     } else if (itemData.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
         m_flag = COREDUMP;
         m_pLogBackend->setFlag(m_flag);
@@ -3857,6 +3950,82 @@ void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchSt
         m_pLogBackend->parseByAudit(auditFilter);
 }
 
+void DisplayContent::generateAuthFile(int id, const QString &iSearchStr)
+{
+    qCDebug(logApp) << "DisplayContent::generateAuthFile called";
+    Q_UNUSED(iSearchStr);
+
+    // 若不存在，则显示认证日志不存在
+    if (!DLDBusHandler::instance(this)->isFileExist("/var/log/auth.log")) {
+        setLoadState(DATA_NO_AUTH_LOG);
+        m_detailWgt->cleanText();
+        m_detailWgt->hideLine(true);
+        return;
+    }
+
+    m_pLogBackend->clearAllFilter();
+    clearAllDatas();
+    m_firstLoadPageData = true;
+    m_isDataLoadComplete = false;
+    setLoadState(DATA_LOADING);
+    createAuthTableForm();
+    QDateTime dt = QDateTime::currentDateTime();
+    dt.setTime(QTime());
+    AUTH_FILTERS authFilter;
+
+    switch (id) {
+    case ALL:
+        break;
+    case ONE_DAY: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        authFilter.timeFilterBegin = dtStart.toMSecsSinceEpoch();
+        authFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+    }
+    break;
+    case THREE_DAYS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        authFilter.timeFilterBegin = dtStart.addDays(-2).toMSecsSinceEpoch();
+        authFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+    }
+    break;
+    case ONE_WEEK: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        authFilter.timeFilterBegin = dtStart.addDays(-6).toMSecsSinceEpoch();
+        authFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+    }
+    break;
+    case ONE_MONTH: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        authFilter.timeFilterBegin = dtStart.addMonths(-1).toMSecsSinceEpoch();
+        authFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+    }
+    break;
+    case THREE_MONTHS: {
+        QDateTime dtStart = dt;
+        QDateTime dtEnd = dt;
+        dtEnd.setTime(QTime(23, 59, 59, 999));
+        authFilter.timeFilterBegin = dtStart.addMonths(-3).toMSecsSinceEpoch();
+        authFilter.timeFilterEnd = dtEnd.toMSecsSinceEpoch();
+    }
+    break;
+    default:
+        break;
+    }
+
+    m_pLogBackend->m_authFilter = authFilter;
+
+    if (id >= ALL && id <= THREE_MONTHS)
+        m_pLogBackend->parseByAuth(authFilter);
+}
+
 void DisplayContent::createAuditTableForm()
 {
     qCDebug(logApp) << "DisplayContent::createAuditTableForm called";
@@ -3881,6 +4050,41 @@ void DisplayContent::createAuditTableForm()
     m_treeView->setColumnWidth(AUDIT_SPACE::auditMsgColumn, DATETIME_WIDTH);
     m_treeView->hideColumn(AUDIT_SPACE::auditMsgColumn);
 #endif
+}
+
+void DisplayContent::createAuthTableForm()
+{
+    qCDebug(logApp) << "DisplayContent::createAuthTableForm called";
+    m_pModel->clear();
+    m_pModel->setHorizontalHeaderLabels(QStringList()
+                                        << DApplication::translate("Table", "Date and Time")
+                                        << DApplication::translate("Table", "User")
+                                        << DApplication::translate("Table", "Process")
+                                        << DApplication::translate("Table", "Info"));
+    m_treeView->setColumnWidth(0, 140);
+    m_treeView->setColumnWidth(1, 100);
+    m_treeView->setColumnWidth(2, 100);
+    m_treeView->setColumnWidth(3, DATETIME_WIDTH);
+}
+
+void DisplayContent::createAuthTable(const QList<LOG_MSG_AUTH> &list)
+{
+    qCDebug(logApp) << "DisplayContent::createAuthTable called";
+    
+    if (list.isEmpty()) {
+        m_detailWgt->cleanText();
+        createAuthTableForm();
+        setLoadState(DATA_NO_SEARCH_RESULT);
+        return;
+    }
+    
+    setLoadState(DATA_COMPLETE);
+    createAuthTableForm();
+    parseListToModel(list, m_pModel);
+    if (list.count() > 0) {
+        m_treeView->setCurrentIndex(m_pModel->index(0, 0));
+        slot_tableItemClicked(m_pModel->index(0, 0));
+    }
 }
 
 void DisplayContent::createAuditTable(const QList<LOG_MSG_AUDIT> &list)

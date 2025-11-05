@@ -220,6 +220,10 @@ void LogAuthThread::run()
         qCDebug(logApp) << "LogAuthThread::run handleAudit";
         handleAudit();
         break;
+    case Auth:
+        qCDebug(logApp) << "LogAuthThread::run handleAuth";
+        handleAuth();
+        break;
     case COREDUMP:
         qCDebug(logApp) << "LogAuthThread::run handleCoredump";
         handleCoredump();
@@ -1307,6 +1311,159 @@ void LogAuthThread::handleAudit()
     emit auditFinished(m_threadCount);
 }
 
+/**
+ * @brief LogAuthThread::handleAuth 处理认证日志
+ * 解析/var/log/auth.log及历史文件
+ * 日志格式: YYYY-MM-DD HH:MM:SS 主机名 进程名: 消息
+ */
+void LogAuthThread::handleAuth()
+{
+    qCDebug(logApp) << "LogAuthThread::handleAuth started";
+    QList<LOG_MSG_AUTH> aList;
+    
+    // auth log pattern: 2025-11-03T17:02:01.797084+08:00 hostname processname: message
+    QRegularExpression authRe(R"(^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}\+\d{2}:\d{2})\s+(\S+)\s+([^:]+):\s*(.*)$)");
+    
+    for (int i = 0; i < m_FilePath.count(); i++) {
+        if (!m_canRun) {
+            qCDebug(logApp) << "Thread stopped before processing auth logs";
+            return;
+        }
+        
+        QString filePath = m_FilePath.at(i);
+        qCDebug(logApp) << "Processing auth log file:" << filePath;
+        
+        // Check file existence
+        if (!m_FilePath.at(i).contains("txt")) {
+            QFile file(filePath);
+            if (!file.exists()) {
+                qCWarning(logApp) << "Auth log file does not exist:" << filePath;
+                continue;
+            }
+        }
+        
+        // Check file permissions and authenticate if needed (like OOC log)
+        QFlags<QFileDevice::Permission> power = QFile::permissions(filePath);
+        if (!power.testFlag(QFile::ReadUser)) {
+            qCDebug(logApp) << "User does not have read permission for:" << filePath << ", requesting elevation";
+            // Show privilege elevation dialog
+            ShareMemoryInfo shareInfo;
+            shareInfo.isStart = true;
+            SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+            
+            initProccess();
+            m_process->start("pkexec", QStringList() << "logViewerAuth"
+                             << filePath << SharedMemoryManager::instance()->getRunnableKey());
+            m_process->waitForFinished(-1);
+            
+            if (m_process->exitCode() != 0) {
+                qCWarning(logApp) << "pkexec authentication failed for:" << filePath;
+                emit authFinished(m_threadCount);
+                return;
+            }
+        }
+        
+        if (!m_canRun) {
+            qCDebug(logApp) << "Thread stopped before processing auth logs";
+            return;
+        }
+        
+        // Read file content using DBus
+        QString m_Log = DLDBusHandler::instance(this)->readLog(filePath);
+        
+        // Check for DBus authentication failure
+        if (m_Log.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
+            qCDebug(logApp) << "Auth log DBus authorization failed";
+            emit authFinished(m_threadCount);
+            return;
+        }
+        
+        QByteArray outByte = m_Log.toUtf8();
+        if (!m_canRun) {
+            qCDebug(logApp) << "Thread stopped before processing auth logs";
+            return;
+        }
+        
+        // Split into lines
+        QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', SKIP_EMPTY_PARTS);
+        
+        qCDebug(logApp) << "Read" << strList.size() << "lines from" << filePath;
+        
+        // Parse log entries (reverse order - newest first)
+        for (int j = strList.size() - 1; j >= 0; --j) {
+            if (!m_canRun) {
+                qCDebug(logApp) << "Thread stopped before processing auth logs";
+                return;
+            }
+            
+            QString str = strList.at(j);
+            if (str.isEmpty())
+                continue;
+                
+            QRegularExpressionMatch match = authRe.match(str);
+            if (!match.hasMatch()) {
+                continue;
+            }
+            
+            LOG_MSG_AUTH msg;
+            // Convert ISO 8601 timestamp to display format "yyyy-MM-dd HH:mm:ss"
+            QString isoTime = match.captured(1);
+            QDateTime dateTime = QDateTime::fromString(isoTime, Qt::ISODate);
+            if (dateTime.isValid()) {
+                msg.dateTime = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+            } else {
+                // Fallback to original format if parsing fails
+                msg.dateTime = isoTime;
+            }
+            msg.hostName = match.captured(2);
+            msg.processName = match.captured(3).trimmed();
+            msg.msg = match.captured(4).trimmed();
+            
+            // Apply time filter
+            if (m_authFilters.timeFilterBegin > 0 || m_authFilters.timeFilterEnd > 0) {
+                // Parse ISO 8601 timestamp format: 2025-11-03T17:02:01.797084+08:00
+                QDateTime logTime = QDateTime::fromString(msg.dateTime, Qt::ISODate);
+                qint64 logTimestamp = logTime.toMSecsSinceEpoch();
+                
+                if (m_authFilters.timeFilterBegin > 0 && logTimestamp < m_authFilters.timeFilterBegin) {
+                    continue;
+                }
+                if (m_authFilters.timeFilterEnd > 0 && logTimestamp > m_authFilters.timeFilterEnd) {
+                    continue;
+                }
+            }
+            
+            // Apply search filter
+            if (!m_authFilters.searchstr.isEmpty()) {
+                if (!msg.contains(m_authFilters.searchstr)) {
+                    continue;
+                }
+            }
+            
+            aList.append(msg);
+            
+            // Send data in batches
+            if (aList.count() % SINGLE_READ_CNT == 0) {
+                emit authData(m_threadCount, aList);
+                aList.clear();
+            }
+            
+            if (!m_canRun) {
+                qCDebug(logApp) << "Thread stopped before processing auth logs";
+                return;
+            }
+        }
+    }
+    
+    // Send remaining data
+    if (aList.count() > 0) {
+        emit authData(m_threadCount, aList);
+    }
+    
+    qCDebug(logApp) << "LogAuthThread::handleAuth finished";
+    emit authFinished(m_threadCount);
+}
+
 void LogAuthThread::handleCoredump()
 {
     qCDebug(logApp) << "LogAuthThread::handleCoredump started";
@@ -1508,3 +1665,4 @@ qint64 LogAuthThread::formatDateTime(QString y, QString t)
     QDateTime dt = local.toDateTime(tStr, "yyyy-MM-dd hh:mm:ss");
     return dt.toMSecsSinceEpoch();
 }
+

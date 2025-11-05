@@ -132,6 +132,11 @@ void LogBackend::initConnections()
     connect(&m_logFileParser, &LogFileParser::auditFinished, this, &LogBackend::slot_auditFinished,
             Qt::QueuedConnection);
 
+    connect(&m_logFileParser, &LogFileParser::authData, this, &LogBackend::slot_authData,
+            Qt::QueuedConnection);
+    connect(&m_logFileParser, &LogFileParser::authFinished, this, &LogBackend::slot_authFinished,
+            Qt::QueuedConnection);
+
     connect(&m_logFileParser, &LogFileParser::coredumpData, this, &LogBackend::slot_coredumpData,
             Qt::QueuedConnection);
     connect(&m_logFileParser, &LogFileParser::coredumpFinished, this, &LogBackend::slot_coredumpFinished,
@@ -429,6 +434,21 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
         }
     }
     break;
+    case Auth: {
+        qCDebug(logApp) << "LogBackend::exportTypeLogs Auth";
+        QStringList logPaths = LogApplicationHelper::instance()->getAuthLogList();
+        if (!logPaths.isEmpty()) {
+            categoryOutPath = QString("%1/%2/").arg(m_outPath).arg("auth");
+            resetCategoryOutputPath(categoryOutPath);
+
+            for (auto &file: logPaths)
+                DLDBusHandler::instance()->exportLog(categoryOutPath, file, true);
+        } else {
+            qCWarning(logApp) << "/var/log has no auth logs";
+            bSuccess = false;
+        }
+    }
+    break;
     default:
         break;
     }
@@ -668,6 +688,9 @@ QStringList LogBackend::getLogTypes()
 
     //audit
     m_logTypes.push_back(AUDIT_TREE_DATA);
+
+    //auth
+    m_logTypes.push_back(AUTH_TREE_DATA);
 
     DLDBusHandler::instance(qApp)->whiteListOutPaths();
 
@@ -1154,6 +1177,38 @@ void LogBackend::slot_auditData(int index, QList<LOG_MSG_AUDIT> list)
     if (View == m_sessionType) {
         qCDebug(logApp) << "Emitting auditData signal for view session";
         emit auditData(aList);
+    }
+}
+
+void LogBackend::slot_authFinished(int index)
+{
+    qCDebug(logApp) << "LogBackend::slot_authFinished called with index:" << index;
+    if (m_flag != Auth || index != m_authCurrentIndex) {
+        qCDebug(logApp) << "Auth finished signal ignored - flag or index mismatch";
+        return;
+    }
+    m_isDataLoadComplete = true;
+
+    if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting authFinished signal for view session";
+        emit authFinished();
+    }
+}
+
+void LogBackend::slot_authData(int index, QList<LOG_MSG_AUTH> list)
+{
+    qCDebug(logApp) << "LogBackend::slot_authData called with index:" << index << "list size:" << list.size();
+    if (m_flag != Auth || index != m_authCurrentIndex) {
+        qCDebug(logApp) << "Auth data signal ignored - flag or index mismatch";
+        return;
+    }
+
+    authListOrigin.append(list);
+    authList.append(list); // No additional filtering needed for auth log
+
+    if (View == m_sessionType) {
+        qCDebug(logApp) << "Emitting authData signal for view session";
+        emit authData(authList);
     }
 }
 
@@ -1883,6 +1938,14 @@ bool LogBackend::parseData(const LOG_FLAG &flag, const QString &period, const QS
         m_auditCurrentIndex = m_logFileParser.parseByAudit(m_auditFilter);
     }
     break;
+    case Auth: {
+        qCDebug(logApp) << "LogBackend::parseData Auth";
+        m_authFilter.searchstr = m_currentSearchStr;
+        m_authFilter.timeFilterBegin = timeRange.begin;
+        m_authFilter.timeFilterEnd = timeRange.end;
+        m_authCurrentIndex = m_logFileParser.parseByAuth(m_authFilter);
+    }
+    break;
     default:
         break;
     }
@@ -1966,6 +2029,11 @@ void LogBackend::executeCLIExport(const QString &originFilePath)
         case Audit: {
             qCDebug(logApp) << "LogBackend::executeCLIExport Audit";
             filePath = outPath + "/audit.txt";
+        }
+            break;
+        case Auth: {
+            qCDebug(logApp) << "LogBackend::executeCLIExport Auth";
+            filePath = outPath + "/authentication.txt";
         }
             break;
         default:
@@ -2116,10 +2184,13 @@ LOG_FLAG LogBackend::type2Flag(const QString &type, QString& error)
     } else if (type == TYPE_AUDIT) {
         qCDebug(logApp) << "LogBackend::type2Flag Audit";
         flag = Audit;
+    } else if (type == TYPE_AUTH) {
+        qCDebug(logApp) << "LogBackend::type2Flag Auth";
+        flag = Auth;
     } else {
         qCDebug(logApp) << "LogBackend::type2Flag NONE";
         flag = NONE;
-        error = QString("Unknown type: %1.").arg(type) + "USEAGE: system(journal log), kernel(kernel log), boot(boot log), dpkg(dpkg log), dnf(dnf log), kwin(Kwin log), xorg(Xorg log), app(deepin app log), coredump(coredump log)、boot-shutdown-event(boot shutdown event log)、other(other log)、custom(custom log)、audit(audit log)";
+        error = QString("Unknown type: %1.").arg(type) + "USEAGE: system(journal log), kernel(kernel log), boot(boot log), dpkg(dpkg log), dnf(dnf log), kwin(Kwin log), xorg(Xorg log), app(deepin app log), coredump(coredump log)、boot-shutdown-event(boot shutdown event log)、other(other log)、custom(custom log)、audit(audit log)、auth(auth log)";
     }
 
     return flag;
@@ -2308,6 +2379,12 @@ void LogBackend::parseByAudit(const AUDIT_FILTERS &iAuditFilter)
     m_auditCurrentIndex = m_logFileParser.parseByAudit(iAuditFilter);
 }
 
+void LogBackend::parseByAuth(const AUTH_FILTERS &iAuthFilter)
+{
+    qCDebug(logApp) << "LogBackend::parseByAuth called";
+    m_authCurrentIndex = m_logFileParser.parseByAuth(iAuthFilter);
+}
+
 void LogBackend::parseByCoredump(const COREDUMP_FILTERS &iCoredumpFilter, bool parseMap)
 {
     // qCDebug(logApp) << "LogBackend::parseByCoredump called with iCoredumpFilter:" << iCoredumpFilter;
@@ -2490,6 +2567,10 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
             case Audit:
                 PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
                 exportThread->exportToTxtPublic(filePath, aList, labels);
+                break;
+            case Auth:
+                PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(authList.count()));
+                exportThread->exportToTxtPublic(filePath, authList, labels);
                 break;
             default:
                 break;
@@ -3033,6 +3114,13 @@ QStringList LogBackend::getLabels(const LOG_FLAG &flag)
                    << QCoreApplication::translate("Table", "Info");
     }
     break;
+    case Auth: {
+            labels << QCoreApplication::translate("Table", "Date and Time")
+                   << QCoreApplication::translate("Table", "User")
+                   << QCoreApplication::translate("Table", "Process")
+                   << QCoreApplication::translate("Table", "Info");
+    }
+    break;
     default:
     break;
     }
@@ -3114,6 +3202,12 @@ bool LogBackend::hasMatchedData(const LOG_FLAG &flag)
     break;
     case Audit: {
         if (!aList.isEmpty()) {
+            bMatchedData = true;
+        }
+    }
+    break;
+    case Auth: {
+        if (!authList.isEmpty()) {
             bMatchedData = true;
         }
     }

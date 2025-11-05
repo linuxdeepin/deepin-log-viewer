@@ -255,6 +255,17 @@ void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG
     qCDebug(logApp) << "Audit log TXT export parameters set";
 }
 
+void LogExportThread::exportToTxtPublic(const QString &fileName, const QList<LOG_MSG_AUTH> &jList, const QStringList &labels)
+{
+    qCDebug(logApp) << "Start export auth log to TXT, file:" << fileName << "items:" << jList.size();
+    m_fileName = fileName;
+    m_authlist = jList;
+    m_labels = labels;
+    m_runMode = TxtAUTH;
+    m_canRunning = true;
+    qCDebug(logApp) << "Auth log TXT export parameters set";
+}
+
 /**
  * @brief LogExportThread::exportToHtmlPublic 导出到日志html格式配置函数对QStandardItemModel数据类型的重载
  * @param fileName 导出文件路径全称
@@ -1505,6 +1516,54 @@ bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_A
             out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
             out << labels.value(col++, "") << ":" << jMsg.processName << " ";
             out << labels.value(col++, "") << ":" << jMsg.status << " ";
+            out << labels.value(col++, "") << ":" << jMsg.msg << " ";
+            out << "\n";
+            //导出进度信号
+            sigProgress(i + 1, jList.count());
+        }
+    } catch (const QString &ErrorStr) {
+        //捕获到异常，导出失败，发出失败信号
+        qCWarning(logApp) << "Export Stop" << ErrorStr;
+        fi.close();
+        emit sigResult(false);
+        if (ErrorStr != stopStr) {
+            emit sigError(QString("export error: %1").arg(ErrorStr));
+        }
+        return false;
+    }
+    fi.close();
+    //导出成功，如果此时被停止，则发出导出失败信号
+    emit sigResult(m_canRunning);
+    return m_canRunning;
+}
+
+bool LogExportThread::exportToTxt(const QString &fileName, const QList<LOG_MSG_AUTH> &jList, const QStringList &labels)
+{
+    //判断文件路径是否存在，不存在就返回错误
+    QFile fi(fileName);
+    if (!fi.open(QIODevice::WriteOnly)) {
+        emit sigResult(false);
+        emit sigError(openErroStr);
+        return false;
+    }
+    try {
+        QTextStream out(&fi);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        out.setCodec(QTextCodec::codecForName("utf-8"));
+#else
+        out.setEncoding(QStringConverter::Utf8);
+#endif
+        for (int i = 0; i < jList.count(); i++) {
+            //导出逻辑启动停止控制，外部把m_canRunning置false时停止运行，抛出异常处理
+            if (!m_canRunning) {
+                throw  QString(stopStr);
+            }
+            //导出各字段的描述和对应内容拼成目标字符串
+            LOG_MSG_AUTH jMsg = jList.at(i);
+            int col = 0;
+            out << labels.value(col++, "") << ":" << jMsg.dateTime << " ";
+            out << labels.value(col++, "") << ":" << jMsg.hostName << " ";
+            out << labels.value(col++, "") << ":" << jMsg.processName << " ";
             out << labels.value(col++, "") << ":" << jMsg.msg << " ";
             out << "\n";
             //导出进度信号
@@ -4028,6 +4087,10 @@ void LogExportThread::run()
     }
     case TxtAUDIT: {
         exportToTxt(m_fileName, m_alist, m_labels);
+    }
+        break;
+    case TxtAUTH: {
+        exportToTxt(m_fileName, m_authlist, m_labels);
     }
         break;
     case HtmlModel: {

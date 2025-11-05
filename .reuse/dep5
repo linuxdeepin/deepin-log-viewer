@@ -13,8 +13,8 @@ Files: .gitignore application/.gitignore
 Copyright: None
 License: CC0-1.0
 
-# xml toml json conf yaml sh
-Files: *.toml *.json *conf *.yaml *.sh *.h.in .project
+# xml toml json conf yaml sh  service
+Files: *.toml *.json *conf *.yaml *.sh *.h.in .project *.service
 Copyright: UnionTech Software Technology Co., Ltd.
 License: CC0-1.0
 

@@ -550,5 +550,11 @@ void logDetailInfoWidget::slot_DetailInfo(const QModelIndex &index, QStandardIte
                        "",
                        "",
                        "");
+    } else if (dataStr.contains(AUTH_TABLE_DATA)) {
+        qCDebug(logApp) << "Displaying AUTH log details";
+        fillDetailInfo(index.siblingAtColumn(2).data().toString(),
+                       index.siblingAtColumn(1).data().toString(),
+                       "", index.siblingAtColumn(0).data().toString(), QModelIndex(),
+                       index.siblingAtColumn(3).data().toString());
     }
 }

@@ -60,8 +60,10 @@ CMakeCache.txt
 
 # AI
 .cursor
+.cursorindexingignore
 .specstory
 .spec-workflow/
+.promptx/
 
 # index cache
 .cache/

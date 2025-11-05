@@ -811,6 +811,10 @@ void FilterContent::slot_logCatelogueClicked(const QModelIndex &index)
         qCDebug(logApp) << "slot_logCatelogueClicked AUDIT_TREE_DATA";
         m_currentType = AUDIT_TABLE_DATA;
         this->setSelectorVisible(false, false, false, true, false, false, false, true);
+    } else if (itemData.contains(AUTH_TREE_DATA)) {
+        qCDebug(logApp) << "slot_logCatelogueClicked AUTH_TREE_DATA";
+        m_currentType = AUTH_TABLE_DATA;
+        this->setSelectorVisible(false, false, false, true, true, false, false, false);
     } else if (itemData.contains(COREDUMP_TREE_DATA)) {
         qCDebug(logApp) << "slot_logCatelogueClicked COREDUMP_TREE_DATA";
         m_currentType = COREDUMP_TREE_DATA;
