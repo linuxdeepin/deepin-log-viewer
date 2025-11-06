@@ -660,62 +660,62 @@
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation> período</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="71"/>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar logs con un nivel de depuración especificado</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="71"/>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
+        <translation>Nivel</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="72"/>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>Estado de arranque</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="72"/>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar logs de arranque (no-klu) con un estado especificado</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="73"/>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar logs de eventos de apagado o auditoría con un tipo de evento especificado</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="73"/>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo de evento</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="74"/>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar logs basados en resultados de búsqueda por palabras clave</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="74"/>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>Palabra clave</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="76"/>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Informar sobre información de core dump.</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="75"/>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar logs basados en submodelo de aplicación</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="75"/>
         <source>SUBMODULE</source>
-        <translation type="unfinished"></translation>
+        <translation>Submódulo</translation>
     </message>
 </context>
 <context>
@@ -723,37 +723,37 @@
     <message>
         <location filename="../application/logcollectormain.cpp" line="202"/>
         <source>Refresh interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Intervalo de actualización</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="204"/>
         <source>10 sec</source>
-        <translation type="unfinished"></translation>
+        <translation>10 seg</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="205"/>
         <source>1 min</source>
-        <translation type="unfinished"></translation>
+        <translation>1 min</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="206"/>
         <source>5 min</source>
-        <translation type="unfinished"></translation>
+        <translation>5 min</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="207"/>
         <source>No refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin actualización</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="234"/>
         <source>Export All</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportar todo</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="240"/>
         <source>Refresh Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Actualizar ahora</translation>
     </message>
 </context>
 </TS>

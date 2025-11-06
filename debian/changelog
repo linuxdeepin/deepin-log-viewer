@@ -1,3 +1,11 @@
+deepin-log-viewer (6.5.23) unstable; urgency=medium
+
+  * chore: version to 6.5.23
+  * chore: update translations
+  * feat: Add authentication log support
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 06 Nov 2025 20:02:04 +0800
+
 deepin-log-viewer (6.5.22) unstable; urgency=medium
 
   * feat: Add ops logs
