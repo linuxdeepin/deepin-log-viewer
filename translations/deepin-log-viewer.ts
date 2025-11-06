@@ -179,32 +179,32 @@
     <message>
         <location filename="../application/filtercontent.cpp" line="212"/>
         <source>Identity authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Identity authentication</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="213"/>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Discretionary Access Control</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="214"/>
         <source>Mandatory access control</source>
-        <translation type="unfinished"></translation>
+        <translation>Mandatory access control</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="215"/>
         <source>Remote</source>
-        <translation type="unfinished"></translation>
+        <translation>Remote</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="216"/>
         <source>Document audit</source>
-        <translation type="unfinished"></translation>
+        <translation>Document audit</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="217"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Other</translation>
     </message>
 </context>
 <context>
@@ -212,12 +212,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1890"/>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"></translation>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="1884"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation type="unfinished"></translation>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -249,7 +249,7 @@
         <location filename="../application/logbackend.cpp" line="2107"/>
         <location filename="../application/logcollectormain.cpp" line="367"/>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>The export directory is not available. Please choose another directory for the export operation.</translation>
     </message>
 </context>
 <context>
@@ -695,31 +695,31 @@
         <location filename="../application/displaycontent.cpp" line="4179"/>
         <location filename="../application/logbackend.cpp" line="3095"/>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
+        <translation>SIG</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4183"/>
         <location filename="../application/logbackend.cpp" line="3099"/>
         <source>EXE</source>
-        <translation type="unfinished"></translation>
+        <translation>EXE</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4181"/>
         <location filename="../application/logbackend.cpp" line="3097"/>
         <source>Core File</source>
-        <translation type="unfinished"></translation>
+        <translation>Core File</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4182"/>
         <location filename="../application/logbackend.cpp" line="3098"/>
         <source>User Name </source>
-        <translation type="unfinished"></translation>
+        <translation>User Name </translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="1058"/>
         <location filename="../application/logbackend.cpp" line="3083"/>
         <source>Offset</source>
-        <translation type="unfinished"></translation>
+        <translation>Offset</translation>
     </message>
 </context>
 <context>
@@ -801,7 +801,7 @@
         <location filename="../application/loglistview.cpp" line="311"/>
         <location filename="../application/loglistview.cpp" line="313"/>
         <source>Auth Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Auth Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
@@ -813,13 +813,13 @@
         <location filename="../application/loglistview.cpp" line="321"/>
         <location filename="../application/loglistview.cpp" line="323"/>
         <source>Audit Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Audit Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="286"/>
         <location filename="../application/loglistview.cpp" line="288"/>
         <source>Coredump Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Coredump Log</translation>
     </message>
 </context>
 <context>
@@ -827,7 +827,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="132"/>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"></translation>
+        <translation>Unable to obtain crash information, please install systemd-coredump.</translation>
     </message>
 </context>
 <context>
@@ -842,17 +842,18 @@
         <location filename="../application/displaycontent.cpp" line="3510"/>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>Security level for the current system: high
+ audit only administrators can view the audit log</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3512"/>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Audit log is not exist.</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Auth log is not exist.</translation>
     </message>
 </context>
 <context>
@@ -860,97 +861,97 @@
     <message>
         <location filename="../application/main.cpp" line="68"/>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>Export logs to the specified path</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="68"/>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>PATH</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="69"/>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>Export logs of specified types</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="69"/>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>TYPE</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>Export logs of specified self-developed applications</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>SELF APPNAME</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="71"/>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>Export logs within a specified time period</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="71"/>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>PERIOD</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="72"/>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>Export logs within a specified debug level</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="72"/>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
+        <translation>LEVEL</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="73"/>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>BOOT STATUS</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="73"/>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>Export boot(no-klu) logs within a specified status</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="74"/>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>Export boot-shutdown-event or audit logs within a specified event type</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="74"/>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>EVENT TYPE</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="75"/>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Export logs based on keywords search results</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="75"/>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>KEY WORD</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="77"/>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Report coredump informations.</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="76"/>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"></translation>
+        <translation>Export logs based on app submodel</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="76"/>
         <source>SUBMODULE</source>
-        <translation type="unfinished"></translation>
+        <translation>SUBMODULE</translation>
     </message>
 </context>
 <context>
