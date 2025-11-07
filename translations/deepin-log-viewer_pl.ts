@@ -799,7 +799,7 @@
         <location filename="../application/loglistview.cpp" line="311"/>
         <location filename="../application/loglistview.cpp" line="313"/>
         <source>Auth Log</source>
-        <translation type="unfinished"/>
+        <translation>Dziennik uwierzytelnienia</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
@@ -851,7 +851,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Dziennik uwierzytelnienia nie istnieje.</translation>
     </message>
 </context>
 <context>
