@@ -799,7 +799,7 @@
         <location filename="../application/loglistview.cpp" line="311"/>
         <location filename="../application/loglistview.cpp" line="313"/>
         <source>Auth Log</source>
-        <translation type="unfinished"/>
+        <translation>Todennusloki</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
@@ -851,7 +851,7 @@ Vain järjestelmänvalvojat voivat katsoa valvontalokia</translation>
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>Todennuslokia ei ole.</translation>
     </message>
 </context>
 <context>
