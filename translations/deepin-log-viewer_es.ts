@@ -799,7 +799,7 @@
         <location filename="../application/loglistview.cpp" line="311"/>
         <location filename="../application/loglistview.cpp" line="313"/>
         <source>Auth Log</source>
-        <translation type="unfinished"/>
+        <translation>Registro de autenticación</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
@@ -851,7 +851,7 @@ Los administradores de solo auditoria pueden ver el registro de auditoria.</tran
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation type="unfinished"/>
+        <translation>El registro de autenticación no existe.</translation>
     </message>
 </context>
 <context>
