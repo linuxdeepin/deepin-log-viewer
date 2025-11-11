@@ -197,7 +197,11 @@ void LogAllExportThread::ensureDirectoriesExist(const QString &filePath)
     }
     
     // Extract directory parts from file path
+#if (QT_VERSION <= QT_VERSION_CHECK(5, 15, 0))
+    QStringList pathParts = filePath.split('/', QString::SkipEmptyParts);
+#else
     QStringList pathParts = filePath.split('/', Qt::SkipEmptyParts);
+#endif
     if (pathParts.size() <= 1) return; // No directories to create
     
     QString currentPath;
