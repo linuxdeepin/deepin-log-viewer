@@ -1406,11 +1406,13 @@ void LogAuthThread::handleAuth()
             }
             
             LOG_MSG_AUTH msg;
-            // Convert ISO 8601 timestamp to display format "yyyy-MM-dd HH:mm:ss"
+            // Convert ISO 8601 timestamp to local time display format "yyyy-MM-dd HH:mm:ss"
             QString isoTime = match.captured(1);
             QDateTime dateTime = QDateTime::fromString(isoTime, Qt::ISODate);
             if (dateTime.isValid()) {
-                msg.dateTime = dateTime.toString("yyyy-MM-dd HH:mm:ss");
+                // Convert to local time for display
+                QDateTime localDateTime = dateTime.toLocalTime();
+                msg.dateTime = localDateTime.toString("yyyy-MM-dd HH:mm:ss");
             } else {
                 // Fallback to original format if parsing fails
                 msg.dateTime = isoTime;
