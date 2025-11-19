@@ -646,6 +646,67 @@ QByteArray Utils::executeCmd(const QString &cmdStr, const QStringList &args, con
     return processCmdWithArgs(cmdStr, workPath,  args);
 }
 
+static void appendToFile(const QString &filePath, const QByteArray &content)
+{
+    QFile file(filePath);
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+        file.write(content);
+    } else {
+        qWarning() << "Error opening file for writing:" << file.errorString();
+    }
+}
+
+// 查找所有物理网络接口
+QStringList getPhysicalInterfaces()
+{
+    QStringList physicalInterfaces;
+    QDir netDir("/sys/class/net/");
+
+    if (!netDir.exists()) {
+        qWarning("Directory /sys/class/net/ does not exist. This program is for Linux only.");
+        return physicalInterfaces;
+    }
+
+    // 设置过滤器，只列出目录
+    netDir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+    QStringList interfaceList = netDir.entryList();
+
+    for (const QString &iface : interfaceList) {
+        // 物理网卡在 /sys/class/net/ 下会有一个指向 device 的符号链接或目录
+        QFileInfo deviceInfo(netDir.filePath(iface + "/device"));
+        if (deviceInfo.exists() && deviceInfo.isSymLink()) {
+            physicalInterfaces.append(iface);
+        }
+    }
+
+    return physicalInterfaces;
+}
+
+static QStringList expandPathWithWildcardIterator(const QString &pathWithWildcard)
+{
+    // 1. 分离目录和文件名模式
+    QFileInfo fileInfo(pathWithWildcard);
+    QString dirPath = fileInfo.path();
+    QString fileNamePattern = fileInfo.fileName();
+
+    QStringList matchedFiles;
+    QStringList nameFilters;
+    nameFilters << fileNamePattern;
+
+    // 2. 创建 QDirIterator
+    // 构造函数参数：目录, 名称过滤器, 实体类型过滤器, 迭代器标志
+    QDirIterator it(dirPath, nameFilters, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
+
+    // 3. 循环遍历所有匹配项
+    while (it.hasNext()) {
+        // it.next() 直接返回下一个匹配项的完整路径
+        matchedFiles.append(it.next());
+    }
+
+    return matchedFiles;
+}
+
 void Utils::exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir)
 {
     Q_UNUSED(userHomeDir)
@@ -653,18 +714,18 @@ void Utils::exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir)
     std::string tmpCmd;
 
     // app
-    tmpCmd = ("glxinfo -B >> " + outDir + "/app/kwin/glxinfo.log").toStdString();
-    system(tmpCmd.c_str());
-    tmpCmd = ("cp -rf /tmp/fcitx*.log " + outDir + "/app/fcitx/").toStdString();
-    system(tmpCmd.c_str());
+    appendToFile(outDir + "/app/kwin/glxinfo.log", executeCmd("glxinfo", { "-display", qEnvironmentVariable("DISPLAY"), "-B" }));
+    QStringList args = { "-rf" };
+    args.append(expandPathWithWildcardIterator("/tmp/fcitx*.log"));
+    args.append(outDir + "/app/fcitx/");
+    executeCmd("cp", args);
 
     // kernel
-    tmpCmd = ("aplay -l >> " + outDir + "/kernel/aplay.log").toStdString();
-    system(tmpCmd.c_str());
-    tmpCmd = ("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}') >> " + outDir + "/kernel/eth_info.log").toStdString();
-    system(tmpCmd.c_str());
-    tmpCmd = ("ifconfig >> " + outDir + "/kernel/ifconfig.log").toStdString();
-    system(tmpCmd.c_str());
+    appendToFile(outDir + "/kernel/aplay.log", executeCmd("aplay", { "-l" }));
+    for (const QString &iface : getPhysicalInterfaces()) {
+        appendToFile(outDir + "/kernel/eth_info.log", executeCmd("ethtool", { "-i", iface }));
+    }
+    appendToFile(outDir + "/kernel/ifconfig.log", executeCmd("ifconfig", { }));
 }
 
 #ifdef DTKCORE_CLASS_DConfigFile

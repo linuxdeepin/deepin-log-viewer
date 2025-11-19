@@ -12,7 +12,203 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include <QProcess>
+#include <QString>
+#include <QStringList>
+#include <QFile>
+#include <QDebug>
+#include <QBuffer>
+#include <QDirIterator>
+#include <QFileInfo>
+
 using namespace std;
+
+static QStringList parseCombinedArgString(const QString &program)
+{
+    QStringList args;
+    QString tmp;
+    int quoteCount = 0;
+    bool inQuote = false;
+
+    // handle quoting. tokens can be surrounded by double quotes
+    // "hello world". three consecutive double quotes represent
+    // the quote character itself.
+    for (int i = 0; i < program.size(); ++i) {
+        if (program.at(i) == QLatin1Char('"')) {
+            ++quoteCount;
+            if (quoteCount == 3) {
+                // third consecutive quote
+                quoteCount = 0;
+                tmp += program.at(i);
+            }
+            continue;
+        }
+        if (quoteCount) {
+            if (quoteCount == 1)
+                inQuote = !inQuote;
+            quoteCount = 0;
+        }
+        if (!inQuote && program.at(i).isSpace()) {
+            if (!tmp.isEmpty()) {
+                args += tmp;
+                tmp.clear();
+            }
+        } else {
+            tmp += program.at(i);
+        }
+    }
+    if (!tmp.isEmpty())
+        args += tmp;
+
+    return args;
+}
+
+static void appendToFile(const QString &filePath, const QByteArray &content)
+{
+    QFile file(filePath);
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+        file.write(content);
+    } else {
+        qWarning() << "Error opening file for writing:" << file.errorString();
+    }
+}
+
+/**
+ * @brief 在 QByteArray 数据中查找包含指定模式的行，并返回该行及其后面的N行。
+ *        功能类似于 `grep -A N pattern`，但操作的是内存中的数据。
+ *
+ * @param data     包含文本数据的 QByteArray。
+ * @param pattern  要搜索的字符串模式。
+ * @param afterLines 匹配成功后，要额外包含的后续行数 (N)。
+ * @return QList<QStringList> 每个 QStringList 代表一个匹配块。
+ */
+QList<QStringList> grepA(const QByteArray &data, const QString &pattern, int afterLines)
+{
+    QList<QStringList> allMatches;
+
+    // 使用 QBuffer 将 QByteArray 包装成一个 QIODevice
+    QBuffer buffer;
+    buffer.setData(data);
+    if (!buffer.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qWarning() << "Cannot open QBuffer for reading.";
+        return allMatches;
+    }
+
+    // QTextStream 可以直接从任何 QIODevice 读取数据
+    QTextStream in(&buffer);
+    // 假设数据是 UTF-8 编码，如果不是，需要设置正确的 codec
+    // in.setCodec("UTF-8");
+
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+
+        // 检查当前行是否包含目标模式
+        if (line.contains(pattern)) {
+            QStringList currentMatchGroup;
+            currentMatchGroup.append(line); // 添加匹配到的行
+
+            // 读取并添加后续的 'afterLines' 行
+            for (int i = 0; i < afterLines && !in.atEnd(); ++i) {
+                currentMatchGroup.append(in.readLine());
+            }
+
+            // 将这个匹配块添加到总的结果列表中
+            allMatches.append(currentMatchGroup);
+        }
+    }
+
+    return allMatches;
+}
+
+static void appendToFileWithGrepA(const QString &filePath, const QByteArray &content, const QString &pattern, int afterLines)
+{
+    QList<QStringList> matches = grepA(content, pattern, afterLines);
+
+    if (matches.isEmpty()) {
+        appendToFile(filePath, {});
+    } else {
+        QFile file(filePath);
+
+        if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+            bool firstGroup = true;
+            for (const QStringList &group : matches) {
+                if (!firstGroup) {
+                    file.write("--\n");
+                }
+                for (const QString &line : group) {
+                    file.write(line.toLocal8Bit());
+                    file.write("\n");
+                }
+                firstGroup = false;
+            }
+        } else {
+            qWarning() << "Error opening file for writing:" << file.errorString();
+        }
+    }
+}
+
+static int executCmd(const char *strCmd, const char *outputFile = nullptr, const QString &pattern = "", int afterLines = -1)
+{
+    qDebug() << "executCmd" << strCmd;
+
+    QString error = "";
+    int exitcode = 0;
+    QProcess proc;
+    QString prog;
+
+    QStringList args = parseCombinedArgString(strCmd);
+    if (args.isEmpty()) {
+        error = "args is empty";
+        exitcode = -1;
+        goto quit;
+    }
+    prog = args.takeFirst();
+
+    proc.setProgram(prog);
+    proc.setArguments(args);
+    proc.start(QIODevice::ReadWrite);
+
+    proc.waitForFinished(-1);
+    if (outputFile) {
+        if (pattern != "" && afterLines >= 0) {
+            appendToFileWithGrepA(outputFile, proc.readAllStandardOutput(), pattern, afterLines);
+        } else {
+            appendToFile(outputFile, proc.readAllStandardOutput());
+        }
+    }
+    error = proc.errorString();
+    exitcode = proc.exitCode();
+    proc.close();
+
+quit:
+    qDebug() << "executCmd exitcode:" << exitcode << error;
+    return exitcode;
+}
+
+static QStringList expandPathWithWildcardIterator(const QString &pathWithWildcard)
+{
+    // 1. 分离目录和文件名模式
+    QFileInfo fileInfo(pathWithWildcard);
+    QString dirPath = fileInfo.path();
+    QString fileNamePattern = fileInfo.fileName();
+
+    QStringList matchedFiles;
+    QStringList nameFilters;
+    nameFilters << fileNamePattern;
+
+    // 2. 创建 QDirIterator
+    // 构造函数参数：目录, 名称过滤器, 实体类型过滤器, 迭代器标志
+    QDirIterator it(dirPath, nameFilters, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
+
+    // 3. 循环遍历所有匹配项
+    while (it.hasNext()) {
+        // it.next() 直接返回下一个匹配项的完整路径
+        matchedFiles.append(it.next());
+    }
+
+    return matchedFiles;
+}
 
 OpsLogExport::OpsLogExport(const string &target, const string &home)
     : target_dir(target)
@@ -34,7 +230,7 @@ void OpsLogExport::run()
     exportDebVersionLogs();
 
     // 递归设置目录及文件的权限
-    system(("chmod -R 777 " + target_dir).c_str());
+    executCmd(("chmod -R 777 " + target_dir).c_str());
 }
 
 bool OpsLogExport::path_exists(const string &path)
@@ -46,20 +242,19 @@ bool OpsLogExport::path_exists(const string &path)
 bool OpsLogExport::create_directories(const string &path)
 {
     string cmd = "mkdir -p " + path;
-    return system(cmd.c_str()) == 0;
+    return executCmd(cmd.c_str()) == 0;
 }
 
 void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
 {
     if (!path_exists(src)) return;
-    string cmd = "cp -rf " + src + " " + dst_dir + " 2>/dev/null";
-    system(cmd.c_str());
+    string cmd = "cp -rf " + src + " " + dst_dir;
+    executCmd(cmd.c_str());
 }
 
 void OpsLogExport::execute_command(const string &cmd, const string &output_file)
 {
-    string full_cmd = cmd + " >> " + output_file;
-    system(full_cmd.c_str());
+    executCmd(cmd.c_str(), output_file.c_str());
 }
 
 void OpsLogExport::createDirStruct()
@@ -217,13 +412,13 @@ void OpsLogExport::exportAppLogs()
     copy_file_or_dir("/var/log/uos/uos-license-agent", target_dir + "/app/uos-activator/log/");
     copy_file_or_dir("/var/log/uos/uos-activator-kms", target_dir + "/app/uos-activator/log/");
     // 输入法配置
-    //    system(("cp -rf /tmp/fcitx*.log " + target_dir + "/app/fcitx/").c_str());
+    //    executCmd(("cp -rf /tmp/fcitx*.log " + target_dir + "/app/fcitx/").c_str());
     // 磁盘管理器
     copy_file_or_dir("/var/log/deepin/deepin-diskmanager-service/Log", target_dir + "/app/deepin-diskmanager/");
     // 下载器
     copy_file_or_dir(home_dir + "/.config/uos/downloader/Log", target_dir + "/app/downloader/");
     // 窗口管理器(查看内核显卡驱动、查看核外驱动、查看窗管版本)
-    execute_command("lspci -v |grep VGA -A19", target_dir + "/app/kwin/lspci_VGA.log");
+    executCmd("lspci -v", (target_dir + "/app/kwin/lspci_VGA.log").c_str(), "VGA", 19);
     //    execute_command("glxinfo -B", target_dir + "/app/kwin/glxinfo.log");
     execute_command("apt policy kwin-x11 dde-kwin", target_dir + "/app/kwin/kwin_info.log");
     // 安卓容器
@@ -249,7 +444,7 @@ void OpsLogExport::exportSystemLogs()
     copy_file_or_dir("/var/log/syslog", target_dir + "/system/");
     copy_file_or_dir("/var/log/dpkg.log", target_dir + "/system/");
     // xorg /var/log/目录下所有log文件
-    system(("cp -rf /var/log/Xorg* " + target_dir + "/system/ 2>/dev/null").c_str());
+    executCmd(("cp -rf " + expandPathWithWildcardIterator("/var/log/Xorg*").join(" ").toStdString() + " " + target_dir + "/system/").c_str());
     // pulse　audio /home/uos/pulse.log
     copy_file_or_dir(home_dir + "/pulse.log", target_dir + "/system/pulseaudio/");
 }
@@ -262,11 +457,11 @@ void OpsLogExport::exportKernelLogs()
     execute_command("dmesg", target_dir + "/kernel/dmesg.log");
     copy_file_or_dir("/sys/firmware/acpi/tables/DSDT", target_dir + "/kernel/");
     copy_file_or_dir("/var/log/lightdm/lightdm.log", target_dir + "/kernel/");
-    system(("cp -rf /var/log/Xorg.0.log* " + target_dir + "/kernel/ 2>/dev/null").c_str());
-    execute_command("lspci -vvv | grep -A 12 'VGA c'", target_dir + "/kernel/lspci_VGA.log");
+    executCmd(("cp -rf " + expandPathWithWildcardIterator("/var/log/Xorg.0.log*").join(" ").toStdString() + " " + target_dir + "/kernel/").c_str());
+    executCmd("lspci -vvv", (target_dir + "/kernel/lspci_VGA.log").c_str(), "VGA c", 12);
     //    execute_command("ifconfig", target_dir + "/kernel/ifconfig.log");
     //    execute_command("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}')", target_dir + "/kernel/eth_info.log");
-    execute_command("dmesg | grep iwlwifi", target_dir + "/kernel/dmesg_network.log");
+    executCmd("dmesg", (target_dir + "/kernel/dmesg_network.log").c_str(), "iwlwifi", 0);
     execute_command("journalctl --system", target_dir + "/kernel/journalctl_system.log");
     // ⽆法识别声卡问题⽇志
     //    execute_command("aplay -l", target_dir + "/kernel/aplay.log");
@@ -289,7 +484,7 @@ void OpsLogExport::exportDDELogs()
     execute_command("udisksctl dump", target_dir + "/dde/udiskctl_dump.txt");
     execute_command("df -h", target_dir + "/dde/df-h.txt");
     // DDE
-    system(("cp " + home_dir + "/Desktop/DDE_LOG.zip " + target_dir + "/dde/ 2>/dev/null").c_str());
+    executCmd(("cp " + home_dir + "/Desktop/DDE_LOG.zip " + target_dir + "/dde/").c_str());
     copy_file_or_dir("/var/log/journalLog", target_dir + "/dde/");
 }
 
