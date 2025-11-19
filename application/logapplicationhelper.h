@@ -65,6 +65,9 @@ public:
     //获取所有认证日志文件列表
     QStringList getAuthLogList();
 
+    //刷新认证日志文件列表
+    void refreshAuthLogList();
+
     AppLogConfig  appLogConfig(const QString& app);
     bool isAppLogConfigExist(const QString& app);
 

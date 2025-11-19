@@ -818,6 +818,12 @@ QStringList LogApplicationHelper::getAuthLogList()
     return m_auth_log_list;
 }
 
+void LogApplicationHelper::refreshAuthLogList()
+{
+    qCDebug(logApp) << "LogApplicationHelper::refreshAuthLogList called";
+    initAuthLog();
+}
+
 AppLogConfig LogApplicationHelper::appLogConfig(const QString &app)
 {
     qCDebug(logApp) << "LogApplicationHelper::appLogConfig called with app:" << app;
