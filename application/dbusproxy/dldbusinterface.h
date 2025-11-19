@@ -146,6 +146,13 @@ public Q_SLOTS: // METHODS
         QList<QVariant> argumentList;
         return asyncCallWithArgumentList(QStringLiteral("whiteListOutPaths"), argumentList);
     }
+
+    inline QDBusPendingReply<bool> exportOpsLog(const QString &outDir, const QString &userHomeDir)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(outDir) << QVariant::fromValue(userHomeDir);
+        return asyncCallWithArgumentList(QStringLiteral("exportOpsLog"), argumentList);
+    }
 Q_SIGNALS: // SIGNALS
 };
 

@@ -45,6 +45,8 @@ public Q_SLOTS:
     Q_SCRIPTABLE QString executeCmd(const QString &cmd);
     Q_SCRIPTABLE QStringList whiteListOutPaths();
 
+    Q_SCRIPTABLE bool exportOpsLog(const QString &outDir, const QString &homeDir);
+
 public:
     // 获取用户家目录
     QStringList getHomePaths();

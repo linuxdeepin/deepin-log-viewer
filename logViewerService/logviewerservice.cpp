@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logviewerservice.h"
+#include "opslogexport.h"
 #include "qtcompat.h"
 
 #include <pwd.h>
@@ -1305,4 +1306,17 @@ bool LogViewerService::checkAuth(const QString &actionId)
     }
 
     return  bAuthVaild;
+}
+
+bool LogViewerService::exportOpsLog(const QString &outDir, const QString &homeDir)
+{
+    if(!checkAuth(s_Action_Export)) {
+        qCDebug(logService) << "Invalid authorization for export log";
+        return false;
+    }
+
+    OpsLogExport ops(outDir.toStdString(), homeDir.toStdString());
+    ops.run();
+
+    return true;
 }
