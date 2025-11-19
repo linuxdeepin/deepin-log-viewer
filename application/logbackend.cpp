@@ -1192,6 +1192,10 @@ void LogBackend::slot_authFinished(int index)
     if (View == m_sessionType) {
         qCDebug(logApp) << "Emitting authFinished signal for view session";
         emit authFinished();
+    } else if (Export == m_sessionType) {
+        qCDebug(logApp) << "Processing export session for auth logs";
+        // 导出当前解析到的数据
+        executeCLIExport(m_exportFilePath);
     }
 }
 
@@ -2289,6 +2293,8 @@ void LogBackend::clearAllDatalist()
     cListOrigin.clear();
     aList.clear();
     aListOrigin.clear();
+    authList.clear();
+    authListOrigin.clear();
     m_coredumpList.clear();
     m_currentCoredumpList.clear();
     malloc_trim(0);
@@ -2477,9 +2483,27 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
                 // 分段导出时，某段未匹配到数据，也是正常的
                 return;
             } else {
-                qCWarning(logApp) << "No matching data..";
-                qApp->exit(-1);
-                return;
+                qCWarning(logApp) << "No matching data, creating empty file..";
+                // 对于认证日志，即使没有数据也要创建一个空文件或带标题的文件
+                if (m_flag == Auth) {
+                    // 创建带标题的文件
+                    QFile file(filePath);
+                    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                        QTextStream out(&file);
+                        QStringList labels = strLabels;
+                        if (labels.isEmpty())
+                            labels = getLabels(m_flag);
+                        out << labels.join("\t") << "\n";
+                        file.close();
+                        qCDebug(logApp) << "Created empty auth log file with headers";
+                    }
+                    // 发送导出完成信号
+                    onExportResult(true);
+                    return;
+                } else {
+                    qApp->exit(-1);
+                    return;
+                }
             }
         }
     }

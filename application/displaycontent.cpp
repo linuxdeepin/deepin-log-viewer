@@ -2423,10 +2423,12 @@ void DisplayContent::slot_authData(const QList<LOG_MSG_AUTH> &list)
         return;
     }
 
-    if (m_firstLoadPageData && !list.isEmpty()) {
+    if (!list.isEmpty()) {
         createAuthTable(list);
-        m_firstLoadPageData = false;
-        PERF_PRINT_END("POINT-03", "type=auth");
+        if (m_firstLoadPageData) {
+            m_firstLoadPageData = false;
+            PERF_PRINT_END("POINT-03", "type=auth");
+        }
     }
 }
 
@@ -3955,14 +3957,10 @@ void DisplayContent::generateAuthFile(int id, const QString &iSearchStr)
     qCDebug(logApp) << "DisplayContent::generateAuthFile called";
     Q_UNUSED(iSearchStr);
 
-    // 若不存在，则显示认证日志不存在
-    if (!DLDBusHandler::instance(this)->isFileExist("/var/log/auth.log")) {
-        setLoadState(DATA_NO_AUTH_LOG);
-        m_detailWgt->cleanText();
-        m_detailWgt->hideLine(true);
-        return;
-    }
-
+    // 不仅检查文件是否存在，还始终尝试重新加载以处理授权状态
+    // 即使文件存在，也可能由于授权过期导致无法访问
+    // 在刷新认证日志时重新扫描文件系统，确保获取最新的认证日志文件列表
+    LogApplicationHelper::instance()->refreshAuthLogList();
     m_pLogBackend->clearAllFilter();
     clearAllDatas();
     m_firstLoadPageData = true;
@@ -4061,7 +4059,7 @@ void DisplayContent::createAuthTableForm()
                                         << DApplication::translate("Table", "User")
                                         << DApplication::translate("Table", "Process")
                                         << DApplication::translate("Table", "Info"));
-    m_treeView->setColumnWidth(0, 140);
+    m_treeView->setColumnWidth(0, DATETIME_WIDTH);
     m_treeView->setColumnWidth(1, 100);
     m_treeView->setColumnWidth(2, 100);
     m_treeView->setColumnWidth(3, DATETIME_WIDTH);
