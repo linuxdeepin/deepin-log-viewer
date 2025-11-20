@@ -1306,6 +1306,7 @@ bool LogViewerService::checkAuth(const QString &actionId)
 
 bool LogViewerService::exportOpsLog(const QString &outDir, const QString &homeDir)
 {
+    qCDebug(logService) << "exportOpsLog for outDir:" << outDir << "and homeDir:" << homeDir;
     if(!checkAuth(s_Action_Export)) {
         qCDebug(logService) << "Invalid authorization for export log";
         return false;
