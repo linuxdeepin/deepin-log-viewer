@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "logviewerservice.h"
-#include "logviewerwatcher.h"
 
 #include <DLog>
 
@@ -63,7 +62,6 @@ int main(int argc, char *argv[])
         qCCritical(logService) << "registerService failed:" << systemBus.lastError();
         exit(0x0001);
     }
-    LogViewerWatcher watcher;
     LogViewerService service;
     if (!systemBus.registerObject(LogViewrPath,
                                   &service,

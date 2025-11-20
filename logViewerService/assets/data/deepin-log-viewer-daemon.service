@@ -20,13 +20,16 @@ InaccessiblePaths=-/etc/pam.d
 InaccessiblePaths=-/usr/share/uadp/
 
 NoNewPrivileges=yes
+ReadWritePaths=-/var/log/deepin/deepin-log-viewer-service
 # 传参需要/home，比如导出日志到/home路径下，读取/home/$user/.cache下应用日志
 #ProtectHome=yes
 ProtectKernelTunables=yes
 ProtectKernelModules=yes
 ProtectControlGroups=yes
-PrivateMounts=yes 
-PrivateTmp=yes
+PrivateMounts=yes
+# 用于接收 ops log
+# PrivateTmp=yes
+ReadWritePaths=-/tmp
 PrivateDevices=yes
 PrivateNetwork=yes
 RestrictNamespaces=yes
