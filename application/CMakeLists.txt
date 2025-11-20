@@ -24,11 +24,9 @@ set(CMAKE_AUTORCC ON)
 #set(CMAKE_CXX_FLAGS "-g -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")#${EXE_NAME}
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--as-needed -fPIE")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -std=c++11")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
 #安全测试加固编译参数
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
+string(APPEND CMAKE_EXE_LINKER_FLAGS " -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack -pie")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
 
@@ -38,11 +36,6 @@ if(CMAKE_COVERAGE_ARG STREQUAL "CMAKE_COVERAGE_ARG_ON")
 endif()
 
 set(APP_RES_DIR "assets")
-#安全测试加固编译参数
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIE")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE")
@@ -358,7 +351,7 @@ install(FILES configs/logconfig/deepin-log-viewer.json DESTINATION ${CMAKE_INSTA
 install(FILES configs/debugconfig/org.deepin.log.viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-debug-config/deepin-debug-config.d/)
 
 # Install coredump report service&timer
-install(FILES ./configs/coredump-reporter.timer ./configs/coredump-reporter.service DESTINATION lib/systemd/user/)
+install(FILES ./configs/coredump-reporter.timer ./configs/coredump-reporter.service DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/systemd/user/)
 
 #安装DConfig配置
 set(APPID org.deepin.log.viewer)
