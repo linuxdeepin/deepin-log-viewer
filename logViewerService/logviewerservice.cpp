@@ -294,12 +294,13 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
    @note Available on linux/unix/macos platform.
    @return check passed.
  */
-bool LogViewerService::checkAuthorization(const QString &actionId, qint64 applicationPid)
+bool LogViewerService::checkAuthorization(const QString &actionId)
 {
-    qCDebug(logService) << "Checking authorization for action:" << actionId << "and application PID:" << applicationPid;
+    QString appBusName = message().service();
+    qCDebug(logService) << "Checking authorization for action:" << actionId << "and app bus name:" << appBusName;
 #if defined (Q_OS_LINUX) || defined (Q_OS_UNIX) ||  defined (Q_OS_MAC)
-            PolkitQt1::Authority::Result ret = PolkitQt1::Authority::instance()->checkAuthorizationSync(
-                actionId, PolkitQt1::UnixProcessSubject(applicationPid), PolkitQt1::Authority::AllowUserInteraction);
+    PolkitQt1::Authority::Result ret = PolkitQt1::Authority::instance()->checkAuthorizationSync(
+        actionId, PolkitQt1::SystemBusNameSubject(appBusName), PolkitQt1::Authority::AllowUserInteraction);
     if (PolkitQt1::Authority::Yes == ret) {
         qCDebug(logService) << "Authorization check passed";
         return true;
@@ -1259,7 +1260,7 @@ bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
     QString strCheckAuthTip;
     if (valid && checkAuth) {
         qCDebug(logService) << "Checking authorization for:" << m_actionId << "and pid:" << pid;
-        bAuthValid = checkAuthorization(m_actionId, pid);
+        bAuthValid = checkAuthorization(m_actionId);
         valid = bAuthValid;
         if (!bAuthValid) {
             strCheckAuthTip = "checkAuthorization failed.";
@@ -1293,16 +1294,11 @@ bool LogViewerService::checkAuth(const QString &actionId)
         return  true;
     }
 
-    uint pid = connection().interface()->servicePid(message().service()).value();
-
     bool bAuthVaild = false;
-    bAuthVaild = checkAuthorization(actionId, pid);
+    bAuthVaild = checkAuthorization(actionId);
     if (!bAuthVaild) {
         qCWarning(logService) << "checkAuthorization failed.";
-        sendErrorReply(QDBusError::ErrorType::Failed,
-                       QString("(pid: %1) is not allowed to configrate firewall. %3")
-                       .arg(pid)
-                       .arg("checkAuthorization failed."));
+        sendErrorReply(QDBusError::ErrorType::Failed, "checkAuthorization failed.");
     }
 
     return  bAuthVaild;

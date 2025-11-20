@@ -66,7 +66,7 @@ private:
     qint64 readFileAndReturnIndex(const QString &filePath, qint64 startLine, QList<uint64_t>& lineIndexes, bool reverseOrder);
 
 private:
-    bool checkAuthorization(const QString &actionId, qint64 applicationPid);
+    bool checkAuthorization(const QString &actionId);
 private:
     QTemporaryDir tmpDir;
     QProcess m_process;
