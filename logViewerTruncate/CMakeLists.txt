@@ -22,8 +22,7 @@ if(CMAKE_COVERAGE_ARG STREQUAL "CMAKE_COVERAGE_ARG_ON")
 endif()
 
 #安全测试加固编译参数
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -z relro -z now -z noexecstack -pie")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -z relro -z now -z noexecstack -pie")
+string(APPEND CMAKE_EXE_LINKER_FLAGS " -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack -pie")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -fstack-protector-all")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -fstack-protector-all")
 
