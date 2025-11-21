@@ -471,9 +471,10 @@ void LogAllExportThread::run()
     if (!m_cancel.load()) {
         // Create temporary directory for ops logs
         QString userHomePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        QString opsLogPath = QDir::tempPath() + "/deepin-log-viewer-ops-logs-" + QString::number(QDateTime::currentMSecsSinceEpoch());
+        QTemporaryDir tempDir(QDir::tempPath() + "/XXXXXX");
 
-        if (QDir().mkpath(opsLogPath)) {
+        if (tempDir.isValid()) {
+            QString opsLogPath = tempDir.path();
             DLDBusHandler::instance(this)->exportOpsLog(opsLogPath, userHomePath);
             completedTasks += 5;
             emit updatecurrentProcess(completedTasks);
@@ -538,15 +539,14 @@ void LogAllExportThread::run()
             }
             completedTasks += 2;
             emit updatecurrentProcess(completedTasks);
-            // Clean up temporary directory
-            if (!Utils::deleteDir(opsLogPath)) {
-                qCWarning(logApp) << "Failed to remove temporary ops log directory:" << opsLogPath;
-            }
-            completedTasks += 1;
-            emit updatecurrentProcess(completedTasks);
         } else {
-            qCCritical(logApp) << "Failed to create temporary ops log directory:" << opsLogPath;
+            qCCritical(logApp) << "Failed to create temporary ops log directory";
+            completedTasks += 9;
+            emit updatecurrentProcess(completedTasks);
         }
+
+        completedTasks += 1;
+        emit updatecurrentProcess(completedTasks);
     }
 
     zipClose(m_zipFile, "Exported by Deepin Log Viewer");
