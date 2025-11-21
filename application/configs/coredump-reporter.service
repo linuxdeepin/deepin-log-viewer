@@ -12,4 +12,3 @@ InaccessiblePaths=-/etc/pam.d
 InaccessiblePaths=-/usr/share/uadp
 InaccessiblePaths=-/etc/sudoers
 InaccessiblePaths=-/etc/sudoers.d
-MemoryMax=8G

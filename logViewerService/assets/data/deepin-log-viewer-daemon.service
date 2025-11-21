@@ -9,7 +9,6 @@ BusName=com.deepin.logviewer
 ExecStart=/usr/lib/deepin-daemon/log-view-service
 # cap能力不能填为空，否则日志收集工具启动卡，并且不能查看/var/log下日志，建议cap能力不能为dbus必查项
 #CapabilityBoundingSet=~CAP_NET_RAW
-MemoryMax=8G
 # 非root有阻塞，deepin-daemon启动后不能通过/proc/pid/exe获取启动进程全路径，下一阶段再按deepin-dameon启动
 #User=deepin-daemon
 ProtectSystem=strict
