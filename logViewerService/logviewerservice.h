@@ -75,11 +75,7 @@ private:
     QMap<QString, QString> m_commands;
     QMap<QString, std::pair<QString, QTextStream*>> m_logMap;
     QMap<QString, QList<uint64_t>> m_logLineIndex;
-    /**
-     * @brief isValidInvoker 检验调研者是否是日志
-     * @return
-     */
-    bool isValidInvoker(bool checkAuth = false);
+
     bool checkAuth(const QString &actionId);
     QByteArray processCatFile(const QString &filePath);
     void processCmdArgs(const QString &cmdStr, const QStringList &args);

@@ -478,8 +478,7 @@ qint64 LogViewerService::findLineStartOffsetWithCaching(const QString &filePath,
 qint64 LogViewerService::getLineCount(const QString &filePath)
 {
     qCDebug(logService) << "Getting line count for file:" << filePath;
-    if (!isValidInvoker()) {
-        qCWarning(logService) << "Invalid invoker for getLineCount";
+    if (!checkAuth(s_Action_View)) {
         return -1;
     }
 
@@ -524,8 +523,7 @@ QString LogViewerService::executeCmd(const QString &cmd)
     qCDebug(logService) << "Executing command:" << cmd;
     QString result("");
 
-    if (!isValidInvoker()) {
-        qCWarning(logService) << "Invalid invoker for executeCmd";
+    if (!checkAuth(s_Action_Export)) {
         return result;
     }
 
@@ -811,8 +809,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 {
     qCDebug(logService) << "Getting file info for:" << file << "and unzip:" << unzip;
     // 判断非法调用
-    if(!isValidInvoker()) {
-        qCDebug(logService) << "Invalid invoker";
+    if(!checkAuth(s_Action_View)) {
         return {};
     }
 
@@ -933,8 +930,7 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
 {
     qCDebug(logService) << "Getting other file info for:" << file << "and unzip:" << unzip;
     // 判断非法调用
-    if(!isValidInvoker()) {
-        qCDebug(logService) << "Invalid invoker";
+    if(!checkAuth(s_Action_View)) {
         return {};
     }
 
@@ -1172,109 +1168,6 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     newProcess.start("chmod", QStringList() << "777" << outFullPath);
     if (!newProcess.waitForFinished()) {
         qCWarning(logService) << QString("chmod 777 %1 failed.").arg(outFullPath);
-        return false;
-    }
-    return true;
-}
-
-bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
-{
-    qCDebug(logService) << "Checking if invoker is valid with checkAuth:" << checkAuth;
-   if (!calledFromDBus()) {
-       qCDebug(logService) << "Called not from dbus";
-       return false;
-   }
-
-    bool valid = false;
-    QDBusConnection conn = connection();
-    QDBusMessage msg = message();
-
-    //判断是否存在执行路径
-    uint pid = conn.interface()->servicePid(msg.service()).value();
-
-    // 判断是否存在执行路径且是否存在于可调用者名单中
-    QFile initNsMntFile("/proc/1/ns/mnt");
-    QFile senderNsMntFile(QString("/proc/%1/ns/mnt").arg(pid));
-    auto initNsMnt = initNsMntFile.symLinkTarget().trimmed().remove(0, QString("/proc/1/ns/mnt").length());
-    auto senderNsMnt = senderNsMntFile.symLinkTarget().trimmed().remove(0, QString("/proc/%1/ns/mnt").arg(pid).length());
-    if (initNsMnt != senderNsMnt) {
-        qCDebug(logService) << "Init ns mnt not equal to sender ns mnt";
-        sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls！！！！！");
-        return false;
-    }
-
-    //进制使用环境变量导入.so动态调用dbus接口
-    QProcess proc;
-    proc.start(QString("cat /proc/%1/maps").arg(pid));
-    proc.waitForStarted();
-    proc.waitForFinished();
-    QString maps = QString::fromLocal8Bit(proc.readAllStandardOutput()).trimmed();
-    proc.close();
-    QStringList libMaps = maps.split("\n", SKIP_EMPTY_PARTS);
-    QStringList allParts;
-    for (const QString &part : libMaps) {
-        QStringList subParts = part.split(' ');
-        for (const QString &subPart : subParts) {
-            if (!subPart.isEmpty()) {
-                allParts.append(subPart);
-            }
-        }
-    }
-    for (int j = 0; j < allParts.count(); ++j) {
-        QString libStr = allParts.at(j);
-        QFileInfo info(libStr);
-        if (info.isFile()) {
-            QString fileName = info.fileName();
-            if (fileName.contains(".so")) {
-                QStringList libpath = libStr.split("/", SKIP_EMPTY_PARTS);
-                if (libpath.count() > 2) {
-                    QString libhead = QString("/%1/%2").arg(libpath.at(0)).arg(libpath.at(1));
-                    if (libhead != "/usr/lib") {
-                        sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls!");
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-
-    QFileInfo f(QString("/proc/%1/exe").arg(pid));
-    if (!f.exists()) {
-        valid = false;
-    } else {
-        valid = true;
-    }
-
-    //是否存在于可调用者名单中
-    QStringList ValidInvokerExePathList;
-    QString invokerPath = f.canonicalFilePath();
-    QStringList findPaths;//合法调用者查找目录列表
-    findPaths << "/usr/bin";
-    ValidInvokerExePathList << QStandardPaths::findExecutable("deepin-log-viewer", findPaths);
-
-    if (valid)
-        valid = ValidInvokerExePathList.contains(invokerPath);
-
-    // pokit前端进程鉴权
-    bool bAuthValid = true;
-    QString strCheckAuthTip;
-    if (valid && checkAuth) {
-        qCDebug(logService) << "Checking authorization for:" << m_actionId << "and pid:" << pid;
-        bAuthValid = checkAuthorization(m_actionId);
-        valid = bAuthValid;
-        if (!bAuthValid) {
-            strCheckAuthTip = "checkAuthorization failed.";
-            qCWarning(logService) << strCheckAuthTip;
-        }
-    }
-    //非法调用
-    if (!valid) {
-        qCDebug(logService) << "Invalid invoker";
-        sendErrorReply(QDBusError::ErrorType::Failed,
-                       QString("(pid: %1)[%2] is not allowed to configrate firewall. %3")
-                       .arg(pid)
-                       .arg((invokerPath))
-                       .arg(strCheckAuthTip));
         return false;
     }
     return true;

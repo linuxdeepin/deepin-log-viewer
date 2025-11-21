@@ -2,10 +2,14 @@
 Description=deepin-log-viewer coredump report activities
 
 [Service]
-
+Environment=HOME=/
+User=root
 ExecStart=/usr/bin/deepin-log-viewer --reportcoredump
-CapabilityBoundingSet=~
-MemoryLimit=8G
-
-[Install]
-WantedBy=multi-user.target
+ProtectSystem=strict
+InaccessiblePaths=-/etc/shadow
+InaccessiblePaths=-/etc/NetworkManager/system-connections
+InaccessiblePaths=-/etc/pam.d
+InaccessiblePaths=-/usr/share/uadp
+InaccessiblePaths=-/etc/sudoers
+InaccessiblePaths=-/etc/sudoers.d
+MemoryMax=8G
