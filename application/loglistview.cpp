@@ -207,7 +207,7 @@ void LogListView::initUI()
             m_logTypes.push_back(KERN_TREE_DATA);
         }
     }
-    if (Utils::isWayland()) {
+    if (Utils::isWayland() && QFile::exists(KWIN_TREE_DATA)) {
         item = new QStandardItem(QIcon::fromTheme("dp_start"), DApplication::translate("Tree", "Boot Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Boot Log")); // add by Airy for bug 16245
@@ -216,7 +216,8 @@ void LogListView::initUI()
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
         m_logTypes.push_back(BOOT_KLU_TREE_DATA);
-    } else {
+    }
+    if (!Utils::isWayland()) {
         item = new QStandardItem(QIcon::fromTheme("dp_start"), DApplication::translate("Tree", "Boot Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Boot Log")); // add by Airy for bug 16245
