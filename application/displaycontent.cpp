@@ -2423,12 +2423,10 @@ void DisplayContent::slot_authData(const QList<LOG_MSG_AUTH> &list)
         return;
     }
 
-    if (!list.isEmpty()) {
+    if (m_firstLoadPageData && !list.isEmpty()) {
         createAuthTable(list);
-        if (m_firstLoadPageData) {
-            m_firstLoadPageData = false;
-            PERF_PRINT_END("POINT-03", "type=auth");
-        }
+        m_firstLoadPageData = false;
+        PERF_PRINT_END("POINT-03", "type=auth");
     }
 }
 
