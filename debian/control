@@ -43,14 +43,13 @@ Depends: ${shlibs:Depends}, ${misc:Depends},
  lshw,
  dmidecode,
  udisks2,
- hwinfo,
- deepin-license-activator
+ hwinfo
 Description:Log Viewer is a useful tool for viewing system logs.
  Log viewer is a tool that collects logs generated when an application
  is running, for example, logs generated when operating system and
  applications start up and run. You can do trouble-shooting and solve
  problems quickly by analyzing logs.
-Recommends: uos-reporter, deepin-event-log    
+Recommends: uos-reporter, deepin-event-log, deepin-license-activator
 
 Package: liblogviewerplugin
 Architecture: any
