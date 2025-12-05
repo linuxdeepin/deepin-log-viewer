@@ -1,3 +1,10 @@
+deepin-log-viewer (6.5.25) unstable; urgency=medium
+
+  * fix: Fix fail to install in deepin os version
+  * fix: Fix log-view-service coredump
+
+ -- wangrong <wangrong@uniontech.com>  Thu, 04 Dec 2025 21:31:43 +0800
+
 deepin-log-viewer (6.5.24) unstable; urgency=medium
 
   * fix: Fix datetime format issue
