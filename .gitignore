@@ -67,3 +67,6 @@ CMakeCache.txt
 
 # index cache
 .cache/
+
+# Auto Claude data directory
+.auto-claude/

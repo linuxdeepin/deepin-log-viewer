@@ -11,31 +11,64 @@ ExecStart=/usr/lib/deepin-daemon/log-view-service
 #CapabilityBoundingSet=~CAP_NET_RAW
 # 非root有阻塞，deepin-daemon启动后不能通过/proc/pid/exe获取启动进程全路径，下一阶段再按deepin-dameon启动
 #User=deepin-daemon
+User=root
 ProtectSystem=strict
+MemoryMax=2G
+IOWeight=200
+OOMScoreAdjust=-500
+Nice=-5
 
 InaccessiblePaths=-/etc/shadow
 InaccessiblePaths=-/etc/NetworkManager/system-connections
 InaccessiblePaths=-/etc/pam.d
-InaccessiblePaths=-/usr/share/uadp/
+InaccessiblePaths=-/etc/security/
+InaccessiblePaths=-/etc/selinux/
+InaccessiblePaths=-/etc/deepin-elf-verify/
+InaccessiblePaths=-/etc/filearmor.d/
+InaccessiblePaths=-/etc/crypttab
+InaccessiblePaths=-/etc/fstab
+InaccessiblePaths=-/sysroot/ostree/repo/
+InaccessiblePaths=-/persistent/ostree/repo/
+InaccessiblePaths=-/usr/share/uadp
+InaccessiblePaths=-/etc/sudoers
+InaccessiblePaths=-/etc/sudoers.d
+InaccessiblePaths=-/root
+InaccessiblePaths=-/var/cache
+InaccessiblePaths=-/var/spool
 
-NoNewPrivileges=yes
-ReadWritePaths=-/var/log/deepin
+NoNewPrivileges=true
 # 传参需要/home，比如导出日志到/home路径下，读取/home/$user/.cache下应用日志
-#ProtectHome=yes
-ProtectKernelTunables=yes
-ProtectKernelModules=yes
-ProtectControlGroups=yes
-PrivateMounts=yes
+#ProtectHome=false
+ProtectProc=default
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+PrivateMounts=true
 # 用于接收 ops log
-# PrivateTmp=yes
-ReadWritePaths=-/tmp
-PrivateDevices=yes
-PrivateNetwork=yes
-RestrictNamespaces=yes
-LockPersonality=yes
-RestrictRealtime=yes
-RemoveIPC=yes
-MemoryDenyWriteExecute=yes
+#PrivateTmp=true
+ReadWritePaths=/var/log/deepin
+ReadWritePaths=/tmp /var/tmp /media /mnt /home
+PrivateDevices=true
+# V25: PrivateIPC recommended, but not effective for AF_UNIX (D-Bus uses AF_UNIX)
+#PrivateIPC=true
+PrivateNetwork=true
+RestrictNamespaces=true
+LockPersonality=true
+RestrictRealtime=true
+# RemoveIPC=false: Polkit authorization requires IPC/D-Bus communication
+RemoveIPC=false
+MemoryDenyWriteExecute=true
+RestrictSUIDSGID=true
+LimitMEMLOCK=infinity
+
+# V25: Restrict executable paths (recommended for security)
+# Business requirement: Service needs to execute various system commands for log collection
+# Commands used: cat, chmod, cp, mkdir, dmesg, journalctl, coredumpctl, readelf,
+#                udisksctl, apt, uname, lspci, lscpu, df, free, hwfirmware, dmidecode, etc.
+# Paths from main.cpp: PATH includes /usr/bin, /usr/sbin, /sbin
+ExecPaths=/usr/bin /usr/sbin /sbin /usr/lib /usr/lib/deepin-daemon
+NoExecPaths=/var/tmp
 
 # 需要device权限，可能导出日志到U盘等外部设备
 #DeviceAllow=/dev/loop-control

@@ -6,9 +6,50 @@ Environment=HOME=/
 User=root
 ExecStart=/usr/bin/deepin-log-viewer --reportcoredump
 ProtectSystem=strict
+MemoryMax=512M
+IOWeight=200
+OOMScoreAdjust=-500
+Nice=-5
+
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+NoNewPrivileges=true
+MemoryDenyWriteExecute=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+RestrictRealtime=true
+LockPersonality=true
+RemoveIPC=true
+LimitMEMLOCK=infinity
+
+ProtectHome=true
+ProtectProc=default
+PrivateTmp=true
+PrivateDevices=true
+
 InaccessiblePaths=-/etc/shadow
 InaccessiblePaths=-/etc/NetworkManager/system-connections
 InaccessiblePaths=-/etc/pam.d
+InaccessiblePaths=-/etc/security/
+InaccessiblePaths=-/etc/selinux/
+InaccessiblePaths=-/etc/deepin-elf-verify/
+InaccessiblePaths=-/etc/filearmor.d/
+InaccessiblePaths=-/etc/crypttab
+InaccessiblePaths=-/etc/fstab
+InaccessiblePaths=-/sysroot/ostree/repo/
+InaccessiblePaths=-/persistent/ostree/repo/
 InaccessiblePaths=-/usr/share/uadp
 InaccessiblePaths=-/etc/sudoers
 InaccessiblePaths=-/etc/sudoers.d
+InaccessiblePaths=-/root
+InaccessiblePaths=-/var/cache
+InaccessiblePaths=-/var/spool
+
+ReadWritePaths=/var/log/deepin
+ReadWritePaths=/tmp /var/tmp /media /mnt /home
+
+# V25: Restrict executable paths (recommended for security)
+ExecPaths=/usr/bin /usr/sbin /sbin /usr/lib
+NoExecPaths=/var/tmp
