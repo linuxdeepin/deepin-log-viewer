@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.26) unstable; urgency=medium
+
+  * chore: enhance service security.
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 25 Dec 2025 19:22:56 +0800
+
 deepin-log-viewer (6.5.25) unstable; urgency=medium
 
   * fix: Fix fail to install in deepin os version
