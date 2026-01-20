@@ -7,33 +7,33 @@
         <location filename="../application/displaycontent.cpp" line="187"/>
         <location filename="../application/loglistview.cpp" line="529"/>
         <source>Display in file manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Файл менеджеринде көрсөтүү</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="530"/>
         <source>Clear log</source>
-        <translation type="unfinished"></translation>
+        <translation>Журналды тазалоо</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="188"/>
         <location filename="../application/loglistview.cpp" line="531"/>
         <source>Refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Жаңылоо</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="582"/>
         <source>Are you sure you want to clear the log?</source>
-        <translation type="unfinished"></translation>
+        <translation>Журналды тазалагыңызга ишенесизби?</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="583"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Жокко чыгаруу</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="584"/>
         <source>Confirm</source>
-        <translation type="unfinished"></translation>
+        <translation>Растаңыз</translation>
     </message>
 </context>
 <context>
@@ -43,7 +43,7 @@
         <location filename="../application/filtercontent.cpp" line="81"/>
         <location filename="../application/filtercontent.cpp" line="695"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Баары</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="83"/>
@@ -51,7 +51,7 @@
         <location filename="../application/filtercontent.cpp" line="687"/>
         <location filename="../application/filtercontent.cpp" line="696"/>
         <source>Today</source>
-        <translation type="unfinished"></translation>
+        <translation>Бүгүн</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="86"/>
@@ -59,7 +59,7 @@
         <location filename="../application/filtercontent.cpp" line="688"/>
         <location filename="../application/filtercontent.cpp" line="697"/>
         <source>3 days</source>
-        <translation type="unfinished"></translation>
+        <translation>3 күн</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="89"/>
@@ -67,7 +67,7 @@
         <location filename="../application/filtercontent.cpp" line="689"/>
         <location filename="../application/filtercontent.cpp" line="698"/>
         <source>1 week</source>
-        <translation type="unfinished"></translation>
+        <translation>1 апта</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="92"/>
@@ -75,7 +75,7 @@
         <location filename="../application/filtercontent.cpp" line="690"/>
         <location filename="../application/filtercontent.cpp" line="699"/>
         <source>1 month</source>
-        <translation type="unfinished"></translation>
+        <translation>1 ай</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="95"/>
@@ -83,13 +83,13 @@
         <location filename="../application/filtercontent.cpp" line="691"/>
         <location filename="../application/filtercontent.cpp" line="700"/>
         <source>3 months</source>
-        <translation type="unfinished"></translation>
+        <translation>3 ай</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="224"/>
         <source>Export</source>
         <comment>button</comment>
-        <translation type="unfinished"></translation>
+        <translation>Экспорттоо</translation>
     </message>
 </context>
 <context>
@@ -103,108 +103,108 @@
         <location filename="../application/filtercontent.cpp" line="337"/>
         <location filename="../application/filtercontent.cpp" line="341"/>
         <source>All</source>
-        <translation type="unfinished"></translation>
+        <translation>Баары</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="121"/>
         <source>Emergency</source>
-        <translation type="unfinished"></translation>
+        <translation>Чапкаарлык жағдай</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="122"/>
         <source>Alert</source>
-        <translation type="unfinished"></translation>
+        <translation>Эскертүү</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="123"/>
         <location filename="../application/filtercontent.cpp" line="143"/>
         <source>Critical</source>
-        <translation type="unfinished"></translation>
+        <translation>Критикалык</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="124"/>
         <location filename="../application/filtercontent.cpp" line="144"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ката</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="125"/>
         <location filename="../application/filtercontent.cpp" line="145"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Эскертүү</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="126"/>
         <source>Notice</source>
-        <translation type="unfinished"></translation>
+        <translation>Эскертүү</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="127"/>
         <location filename="../application/filtercontent.cpp" line="129"/>
         <location filename="../application/filtercontent.cpp" line="146"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Маалымат</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="128"/>
         <location filename="../application/filtercontent.cpp" line="147"/>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Түзөтүү</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="198"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>Кирүү</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="199"/>
         <source>Boot</source>
-        <translation type="unfinished"></translation>
+        <translation>Бут</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="200"/>
         <source>Shutdown</source>
-        <translation type="unfinished"></translation>
+        <translation>Өчүрүү</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="142"/>
         <source>Super critical</source>
-        <translation type="unfinished"></translation>
+        <translation>Өтө критикалык</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="148"/>
         <source>Trace</source>
-        <translation type="unfinished"></translation>
+        <translation>Тизме</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="212"/>
         <source>Identity authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Идентификацияны которуу</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="213"/>
         <source>Discretionary Access Control</source>
-        <translation type="unfinished"></translation>
+        <translation>Иркенчилик менен Кирүү Баскаруу</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="214"/>
         <source>Mandatory access control</source>
-        <translation type="unfinished"></translation>
+        <translation>Мажбурий Кирүү Баскаруу</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="215"/>
         <source>Remote</source>
-        <translation type="unfinished"></translation>
+        <translation>Далынан</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="216"/>
         <source>Document audit</source>
-        <translation type="unfinished"></translation>
+        <translation>Документти текшерүү</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="217"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation>Башка</translation>
     </message>
 </context>
 <context>
@@ -212,12 +212,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="1890"/>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"></translation>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="1884"/>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
-        <translation type="unfinished"></translation>
+        <translation>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</translation>
     </message>
 </context>
 <context>
@@ -225,12 +225,12 @@
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="34"/>
         <source>Exporting...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорттоо...</translation>
     </message>
     <message>
         <location filename="../application/exportprogressdlg.cpp" line="57"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Жокко чыгаруу</translation>
     </message>
 </context>
 <context>
@@ -238,18 +238,18 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="3556"/>
         <source>Export successful</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт ийгиликтүү</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3559"/>
         <source>Export failed</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорт ийгиликсиз</translation>
     </message>
     <message>
         <location filename="../application/logbackend.cpp" line="2107"/>
         <location filename="../application/logcollectormain.cpp" line="367"/>
         <source>The export directory is not available. Please choose another directory for the export operation.</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспорттук буйрук жеткиликтүү эмес. Экспорт операциясы үчүн башка буйрук тандап коюнуз.</translation>
     </message>
 </context>
 <context>
@@ -258,7 +258,7 @@
         <location filename="../application/displaycontent.cpp" line="1882"/>
         <location filename="../application/displaycontent.cpp" line="1888"/>
         <source>Export File</source>
-        <translation type="unfinished"></translation>
+        <translation>Файлды экспорттоо</translation>
     </message>
 </context>
 <context>
@@ -268,7 +268,7 @@
         <location filename="../application/filtercontent.cpp" line="686"/>
         <location filename="../application/filtercontent.cpp" line="694"/>
         <source>Period:</source>
-        <translation type="unfinished"></translation>
+        <translation>Мөөнөт:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="114"/>
@@ -276,69 +276,69 @@
         <location filename="../application/filtercontent.cpp" line="135"/>
         <location filename="../application/filtercontent.cpp" line="136"/>
         <source>Level:  </source>
-        <translation type="unfinished"></translation>
+        <translation>Даражат:  </translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="180"/>
         <location filename="../application/logdetailinfowidget.cpp" line="139"/>
         <source>Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>Абалы:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="193"/>
         <location filename="../application/logdetailinfowidget.cpp" line="144"/>
         <source>Event Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Окуятуу түрү:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="135"/>
         <source>User:</source>
-        <translation type="unfinished"></translation>
+        <translation>колдонуучу:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="137"/>
         <source>PID:</source>
-        <translation type="unfinished"></translation>
+        <translation>PID:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="141"/>
         <source>Action:</source>
-        <translation type="unfinished"></translation>
+        <translation>Эмели:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="146"/>
         <source>Username:</source>
-        <translation type="unfinished"></translation>
+        <translation>Колдонуучу аты:</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="503"/>
         <source>Boot record</source>
-        <translation type="unfinished"></translation>
+        <translation>Жүктөлүш жазуусу</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="505"/>
         <source>Shutdown record</source>
-        <translation type="unfinished"></translation>
+        <translation>Токтотуу жазуусу</translation>
     </message>
     <message>
         <location filename="../application/logdetailinfowidget.cpp" line="508"/>
         <source>Login record</source>
-        <translation type="unfinished"></translation>
+        <translation>Кирүү жазуусу</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="208"/>
         <source>Audit Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тикшерүү түрү:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="155"/>
         <source>Application:</source>
-        <translation type="unfinished"></translation>
+        <translation>Программа:</translation>
     </message>
     <message>
         <location filename="../application/filtercontent.cpp" line="167"/>
         <source>Submodule:</source>
-        <translation type="unfinished"></translation>
+        <translation>Подмодуль:</translation>
     </message>
 </context>
 <context>
@@ -354,7 +354,7 @@
         <location filename="../application/logauththread.cpp" line="104"/>
         <location filename="../application/logexportthread.cpp" line="4011"/>
         <source>Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>Эскертүү</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="202"/>
@@ -369,7 +369,7 @@
         <location filename="../application/logauththread.cpp" line="107"/>
         <location filename="../application/logexportthread.cpp" line="4014"/>
         <source>Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Түзөтүү</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="203"/>
@@ -382,7 +382,7 @@
         <location filename="../application/logauththread.cpp" line="106"/>
         <location filename="../application/logexportthread.cpp" line="4013"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Маалымат</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="204"/>
@@ -395,7 +395,7 @@
         <location filename="../application/logauththread.cpp" line="103"/>
         <location filename="../application/logexportthread.cpp" line="4010"/>
         <source>Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Ката</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="208"/>
@@ -405,7 +405,7 @@
         <location filename="../application/logauththread.cpp" line="100"/>
         <location filename="../application/logexportthread.cpp" line="4007"/>
         <source>Emergency</source>
-        <translation type="unfinished"></translation>
+        <translation>Чапкаарлык жағдай</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="209"/>
@@ -415,7 +415,7 @@
         <location filename="../application/logauththread.cpp" line="101"/>
         <location filename="../application/logexportthread.cpp" line="4008"/>
         <source>Alert</source>
-        <translation type="unfinished"></translation>
+        <translation>Эскертүү</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="210"/>
@@ -427,7 +427,7 @@
         <location filename="../application/logauththread.cpp" line="102"/>
         <location filename="../application/logexportthread.cpp" line="4009"/>
         <source>Critical</source>
-        <translation type="unfinished"></translation>
+        <translation>Критикалык</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="213"/>
@@ -437,19 +437,19 @@
         <location filename="../application/logauththread.cpp" line="105"/>
         <location filename="../application/logexportthread.cpp" line="4012"/>
         <source>Notice</source>
-        <translation type="unfinished"></translation>
+        <translation>Эскертүү</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="220"/>
         <location filename="../application/logauththread.cpp" line="84"/>
         <source>Trace</source>
-        <translation type="unfinished"></translation>
+        <translation>Тизме</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="226"/>
         <location filename="../application/logauththread.cpp" line="92"/>
         <source>Super critical</source>
-        <translation type="unfinished"></translation>
+        <translation>Өтө критикалык</translation>
     </message>
 </context>
 <context>
@@ -457,7 +457,7 @@
     <message>
         <location filename="../application/logauththread.cpp" line="579"/>
         <source>Log file is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>Журнал файлы бош</translation>
     </message>
 </context>
 <context>
@@ -466,12 +466,12 @@
         <location filename="../application/main.cpp" line="343"/>
         <location filename="../application/main.cpp" line="344"/>
         <source>Log Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>Журналдарды көрсөтүүчү</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="346"/>
         <source>Log Viewer is a useful tool for viewing system logs.</source>
-        <translation type="unfinished"></translation>
+        <translation>Журналдарды көрсөтүүчү - система журналдарын көрүүгө көмөкчү инструмент.</translation>
     </message>
 </context>
 <context>
@@ -479,12 +479,12 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="117"/>
         <source>No search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Издөө нәтижеси жок</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="105"/>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Издөө</translation>
     </message>
 </context>
 <context>
@@ -503,7 +503,7 @@
         <location filename="../application/logexportthread.cpp" line="2557"/>
         <location filename="../application/logexportthread.cpp" line="2691"/>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Деңгээл</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="578"/>
@@ -519,7 +519,7 @@
         <location filename="../application/logexportthread.cpp" line="2558"/>
         <location filename="../application/logexportthread.cpp" line="2692"/>
         <source>Process</source>
-        <translation type="unfinished"></translation>
+        <translation>Процесс</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="579"/>
@@ -545,7 +545,7 @@
         <location filename="../application/logexportthread.cpp" line="2560"/>
         <location filename="../application/logexportthread.cpp" line="2694"/>
         <source>Date and Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата жана убакыт</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="580"/>
@@ -577,7 +577,7 @@
         <location filename="../application/logexportthread.cpp" line="2561"/>
         <location filename="../application/logexportthread.cpp" line="2695"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Маалымат</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="581"/>
@@ -591,7 +591,7 @@
         <location filename="../application/logexportthread.cpp" line="2562"/>
         <location filename="../application/logexportthread.cpp" line="2696"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Колдонуучу</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="582"/>
@@ -601,19 +601,19 @@
         <location filename="../application/logexportthread.cpp" line="2563"/>
         <location filename="../application/logexportthread.cpp" line="2697"/>
         <source>PID</source>
-        <translation type="unfinished"></translation>
+        <translation>PID</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="998"/>
         <location filename="../application/logbackend.cpp" line="3090"/>
         <source>Source</source>
-        <translation type="unfinished"></translation>
+        <translation>Булак</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="688"/>
         <location filename="../application/logbackend.cpp" line="3069"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Аракет</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3682"/>
@@ -621,7 +621,7 @@
         <location filename="../application/logbackend.cpp" line="3062"/>
         <location filename="../application/logbackend.cpp" line="3113"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="1195"/>
@@ -629,31 +629,31 @@
         <location filename="../application/logbackend.cpp" line="3103"/>
         <location filename="../application/logbackend.cpp" line="3110"/>
         <source>Event Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Окуя түрү</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="1196"/>
         <location filename="../application/logbackend.cpp" line="3104"/>
         <source>Username</source>
-        <translation type="unfinished"></translation>
+        <translation>колдонуучу аты</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="904"/>
         <location filename="../application/logexportthread.cpp" line="1013"/>
         <source>Level:</source>
-        <translation type="unfinished"></translation>
+        <translation>дәреже:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="905"/>
         <location filename="../application/logexportthread.cpp" line="1014"/>
         <source>Process:</source>
-        <translation type="unfinished"></translation>
+        <translation>процесс:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="906"/>
         <location filename="../application/logexportthread.cpp" line="1015"/>
         <source>Date and Time:</source>
-        <translation type="unfinished"></translation>
+        <translation>күн жана убакыт:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="908"/>
@@ -661,65 +661,65 @@
         <location filename="../application/logexportthread.cpp" line="1017"/>
         <location filename="../application/logexportthread.cpp" line="1020"/>
         <source>Info:</source>
-        <translation type="unfinished"></translation>
+        <translation>мағлумат:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="909"/>
         <location filename="../application/logexportthread.cpp" line="1018"/>
         <source>Null</source>
-        <translation type="unfinished"></translation>
+        <translation>бош</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="913"/>
         <location filename="../application/logexportthread.cpp" line="1022"/>
         <source>User:</source>
-        <translation type="unfinished"></translation>
+        <translation>колдонуучу:</translation>
     </message>
     <message>
         <location filename="../application/logexportthread.cpp" line="914"/>
         <location filename="../application/logexportthread.cpp" line="1023"/>
         <source>PID:</source>
-        <translation type="unfinished"></translation>
+        <translation>PID:</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3853"/>
         <source>File Name</source>
-        <translation type="unfinished"></translation>
+        <translation>файл аты</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3854"/>
         <source>Time Modified</source>
-        <translation type="unfinished"></translation>
+        <translation>өзгөртүлгөн убакыт</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4179"/>
         <location filename="../application/logbackend.cpp" line="3095"/>
         <source>SIG</source>
-        <translation type="unfinished"></translation>
+        <translation>SIG</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4183"/>
         <location filename="../application/logbackend.cpp" line="3099"/>
         <source>EXE</source>
-        <translation type="unfinished"></translation>
+        <translation>EXE</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4181"/>
         <location filename="../application/logbackend.cpp" line="3097"/>
         <source>Core File</source>
-        <translation type="unfinished"></translation>
+        <translation>ядрос файл</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="4182"/>
         <location filename="../application/logbackend.cpp" line="3098"/>
         <source>User Name </source>
-        <translation type="unfinished"></translation>
+        <translation>колдонуучу аты</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="1058"/>
         <location filename="../application/logbackend.cpp" line="3083"/>
         <source>Offset</source>
-        <translation type="unfinished"></translation>
+        <translation>жылдыруу</translation>
     </message>
 </context>
 <context>
@@ -728,7 +728,7 @@
         <location filename="../application/displaycontent.cpp" line="1197"/>
         <location filename="../application/logbackend.cpp" line="3105"/>
         <source>Date and Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата жана убакыт</translation>
     </message>
 </context>
 <context>
@@ -737,7 +737,7 @@
         <location filename="../application/loglistview.cpp" line="179"/>
         <location filename="../application/loglistview.cpp" line="181"/>
         <source>System Log</source>
-        <translation type="unfinished"></translation>
+        <translation>системалык журнал</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="190"/>
@@ -745,7 +745,7 @@
         <location filename="../application/loglistview.cpp" line="200"/>
         <location filename="../application/loglistview.cpp" line="202"/>
         <source>Kernel Log</source>
-        <translation type="unfinished"></translation>
+        <translation>ядро журнал</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="211"/>
@@ -753,73 +753,73 @@
         <location filename="../application/loglistview.cpp" line="220"/>
         <location filename="../application/loglistview.cpp" line="222"/>
         <source>Boot Log</source>
-        <translation type="unfinished"></translation>
+        <translation>жүктөө журнал</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="240"/>
         <location filename="../application/loglistview.cpp" line="242"/>
         <source>dpkg Log</source>
-        <translation type="unfinished"></translation>
+        <translation>dpkg журнал</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="252"/>
         <location filename="../application/loglistview.cpp" line="254"/>
         <source>Kwin Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Квин логу</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="261"/>
         <location filename="../application/loglistview.cpp" line="263"/>
         <source>Xorg Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Иксорг логу</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="273"/>
         <location filename="../application/loglistview.cpp" line="276"/>
         <source>Application Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Жоба логу</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="298"/>
         <location filename="../application/loglistview.cpp" line="302"/>
         <source>Boot-Shutdown Event</source>
-        <translation type="unfinished"></translation>
+        <translation>Бут-Шутдаун окуяты</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="230"/>
         <location filename="../application/loglistview.cpp" line="232"/>
         <source>dnf Log</source>
-        <translation type="unfinished"></translation>
+        <translation>ДНФ логу</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="311"/>
         <location filename="../application/loglistview.cpp" line="313"/>
         <source>Auth Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Авторизация логу</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="331"/>
         <location filename="../application/loglistview.cpp" line="333"/>
         <source>Other Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Башка логу</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
         <location filename="../application/loglistview.cpp" line="364"/>
         <source>Custom Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Колдонуучу логу</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="321"/>
         <location filename="../application/loglistview.cpp" line="323"/>
         <source>Audit Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Тикшерүү логу</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="286"/>
         <location filename="../application/loglistview.cpp" line="288"/>
         <source>Coredump Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Кордамп логу</translation>
     </message>
 </context>
 <context>
@@ -827,7 +827,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="132"/>
         <source>Unable to obtain crash information, please install systemd-coredump.</source>
-        <translation type="unfinished"></translation>
+        <translation>Чөттүк маалымат алууга болбойт, systemd-coredump орнотуңуз.</translation>
     </message>
 </context>
 <context>
@@ -835,24 +835,25 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="138"/>
         <source>You do not have permission to view it</source>
-        <translation type="unfinished"></translation>
+        <translation>Сизде көрүүгө уруксатыңыз жок</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3512"/>
         <source>Audit log is not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Тикшерүү логу жок.</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Авторизация логу жок.</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="126"/>
         <location filename="../application/displaycontent.cpp" line="3510"/>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>Учурдагы системанын коопсуздук деңгээли: жогорку
+ текшерүү логун тек администраторлар гана көрө алат</translation>
     </message>
 </context>
 <context>
@@ -860,97 +861,97 @@
     <message>
         <location filename="../application/main.cpp" line="68"/>
         <source>Export logs to the specified path</source>
-        <translation type="unfinished"></translation>
+        <translation>Логду белгиленген жолго экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="68"/>
         <source>PATH</source>
-        <translation type="unfinished"></translation>
+        <translation>ЖОЛ</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="69"/>
         <source>Export logs of specified types</source>
-        <translation type="unfinished"></translation>
+        <translation>белгиленген түрдөгү логдорду экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="69"/>
         <source>TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>ТҮРҮ</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>Export logs of specified self-developed applications</source>
-        <translation type="unfinished"></translation>
+        <translation>белгиленген өздүк жоболордун логдорун экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="70"/>
         <source>SELF APPNAME</source>
-        <translation type="unfinished"></translation>
+        <translation>ӨЗДҮК ЖОБА АТЫ</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="71"/>
         <source>Export logs within a specified time period</source>
-        <translation type="unfinished"></translation>
+        <translation>Кээ бир убакыт периодунда эмне логдорду экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="71"/>
         <source>PERIOD</source>
-        <translation type="unfinished"></translation>
+        <translation>ПЕРИОД</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="72"/>
         <source>Export logs within a specified debug level</source>
-        <translation type="unfinished"></translation>
+        <translation>Кээ бир дебаг деңгээлинде эмне логдорду экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="72"/>
         <source>LEVEL</source>
-        <translation type="unfinished"></translation>
+        <translation>ДЕҢГЭЭЛ</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="73"/>
         <source>BOOT STATUS</source>
-        <translation type="unfinished"></translation>
+        <translation>БУТ СТАТУСУ</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="73"/>
         <source>Export boot(no-klu) logs within a specified status</source>
-        <translation type="unfinished"></translation>
+        <translation>Кээ бир статус боюнча бут (no-klu) логдорду экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="74"/>
         <source>Export boot-shutdown-event or audit logs within a specified event type</source>
-        <translation type="unfinished"></translation>
+        <translation>Кээ бир иш-чаро түрү боюнча бут-шиUTDOWN-иче-журналдарын же аудит логдорун экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="74"/>
         <source>EVENT TYPE</source>
-        <translation type="unfinished"></translation>
+        <translation>ИШ-ЧАРО ТҮРҮ</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="75"/>
         <source>Export logs based on keywords search results</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключевыми сөздөрдүн издөө нәтижеси боюнча логдорду экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="75"/>
         <source>KEY WORD</source>
-        <translation type="unfinished"></translation>
+        <translation>КЛЮЧЕВОЕ СЛОВО</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="77"/>
         <source>Report coredump informations.</source>
-        <translation type="unfinished"></translation>
+        <translation>Coredump маалыматтарын жөнөтүү.</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="76"/>
         <source>Export logs based on app submodel</source>
-        <translation type="unfinished"></translation>
+        <translation>Колдонмо субмоделди боюнча логдорду экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="76"/>
         <source>SUBMODULE</source>
-        <translation type="unfinished"></translation>
+        <translation>СУБМОДЕЛЬ</translation>
     </message>
 </context>
 <context>
@@ -958,39 +959,39 @@
     <message>
         <location filename="../application/logcollectormain.cpp" line="199"/>
         <source>Refresh interval</source>
-        <translation type="unfinished"></translation>
+        <translation>Жаңылоо интервалы</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="201"/>
         <source>10 sec</source>
-        <translation type="unfinished"></translation>
+        <translation>10 сек</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="202"/>
         <source>1 min</source>
-        <translation type="unfinished"></translation>
+        <translation>1 мин</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="203"/>
         <source>5 min</source>
-        <translation type="unfinished"></translation>
+        <translation>5 мин</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="204"/>
         <source>No refresh</source>
-        <translation type="unfinished"></translation>
+        <translation>Жаңылтоо жок</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="232"/>
         <location filename="../application/logcollectormain.cpp" line="233"/>
         <source>Export All</source>
-        <translation type="unfinished"></translation>
+        <translation>Баарын экспорттоо</translation>
     </message>
     <message>
         <location filename="../application/logcollectormain.cpp" line="238"/>
         <location filename="../application/logcollectormain.cpp" line="239"/>
         <source>Refresh Now</source>
-        <translation type="unfinished"></translation>
+        <translation>Азыр жаңылоо</translation>
     </message>
 </context>
 </TS>

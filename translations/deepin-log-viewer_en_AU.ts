@@ -797,7 +797,7 @@
         <location filename="../application/loglistview.cpp" line="311"/>
         <location filename="../application/loglistview.cpp" line="313"/>
         <source>Auth Log</source>
-        <translation type="unfinished"></translation>
+        <translation>Auth Log</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="331"/>
@@ -839,7 +839,8 @@
         <location filename="../application/displaycontent.cpp" line="3510"/>
         <source>Security level for the current system: high
  audit only administrators can view the audit log</source>
-        <translation type="unfinished"></translation>
+        <translation>Security level for the current system: high
+ audit only administrators can view the audit log</translation>
     </message>
     <message>
         <location filename="../application/displaycontent.cpp" line="138"/>
@@ -854,7 +855,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>Auth log does not exist.</translation>
     </message>
 </context>
 <context>
