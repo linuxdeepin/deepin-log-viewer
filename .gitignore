@@ -23,13 +23,7 @@ build*/
 #cppcheck
 *.cppcheck
 test-cppcheck-build-dir/*
-# debian
-debian/*
-!debian/changelog
-!debian/rules
-!debian/control
-!debian/compat
-!debian/source/*
+
 # cmake dir
 obj-x86_64-linux-gnu/*
 *.txt.user
@@ -51,6 +45,7 @@ report/*
 .roomodes
 .kilocode/
 .cursors/
+.claude/
 
 # cmake output
 build/
