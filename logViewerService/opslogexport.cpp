@@ -29,6 +29,10 @@ void OpsLogExport::run()
     exportSystemLogs();
     exportKernelLogs();
     exportDDELogs();
+    exportAdditionalLogs();
+
+    // 递归设置目录及文件的权限
+    system(("chmod -R 777 " + target_dir).c_str());
 }
 
 bool OpsLogExport::path_exists(const string &path)
@@ -109,8 +113,14 @@ void OpsLogExport::createDirStruct()
         target_dir + "/dde/dde-desktop",
         target_dir + "/dde/dde-file-manager",
         target_dir + "/dde/dde-dock",
-        target_dir + "/system/pulseaudio"
+        target_dir + "/system/pulseaudio",
+        target_dir + "/journal"
     };
+
+    // hisi目录仅在源目录存在时创建
+    if (path_exists("/var/log/hisi")) {
+        dirs.push_back(target_dir + "/hisi");
+    }
 
     for (const auto& dir : dirs) {
         create_directories(dir);
@@ -285,4 +295,13 @@ void OpsLogExport::exportDDELogs()
     // DDE
     system(("cp " + home_dir + "/Desktop/DDE_LOG.zip " + target_dir + "/dde/ 2>/dev/null").c_str());
     copy_file_or_dir("/var/log/journalLog", target_dir + "/dde/");
+}
+
+void OpsLogExport::exportAdditionalLogs()
+{
+    // hisi日志：仅在海思麒麟设备中存在，不存在时不视为异常
+    copy_file_or_dir("/var/log/hisi", target_dir + "/hisi/");
+    
+    // journal日志：完整导出/var/log/journal目录下的所有内容
+    copy_file_or_dir("/var/log/journal", target_dir + "/journal/");
 }
