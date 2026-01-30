@@ -30,6 +30,7 @@ private:
     void exportHWLogs();
     void exportOSVersionLogs();
     void exportDebVersionLogs();
+    void exportAdditionalLogs();
 };
 
 #endif
