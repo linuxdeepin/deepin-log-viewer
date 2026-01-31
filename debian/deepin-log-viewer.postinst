@@ -1,0 +1,24 @@
+#!/bin/bash
+# 停止并更新 systemd user timer, 避免由其发起的周期日志导出, 该操作会弹出授权框
+
+#获取已登陆的用户
+userNameArr=($(who -q | head -n 1))
+
+#定时器名称
+sysTimer="coredump-reporter.timer"
+
+#根据已登录的用户更新定时器
+for userName in ${userNameArr[@]} ; do
+    #获取定时器状态
+    serviceStatus=$(runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user is-active ${sysTimer}")
+    #活跃的关键字
+    activeStr="active"
+    #如果为活跃的则表示定时器已开启
+    if [ "$serviceStatus" = "$activeStr" ];then
+        runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user stop ${sysTimer}" || true
+        runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user daemon-reload" || true
+    fi
+done
+
+#确保软件包安装不会失败
+exit 0
