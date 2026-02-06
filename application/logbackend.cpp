@@ -26,6 +26,7 @@
 #include <QThreadPool>
 #include <QLoggingCategory>
 #include <QCoreApplication>
+#include <QTemporaryDir>
 
 Q_DECLARE_LOGGING_CATEGORY(logApp)
 
@@ -3252,12 +3253,17 @@ void LogBackend::parseCoredumpDetailInfo(QList<LOG_MSG_COREDUMP> &list)
         // 解析coredump文件保存位置
         if (data.coreFile != "missing") {
             QString outInfoByte;
-            // get maps info
-            const QString &corePath = QDir::tempPath() + QString("/%1.dump").arg(QFileInfo(data.storagePath).fileName());
-            DLDBusHandler::instance()->executeCmd(QString("coredumpctl dump %1 -o %2").arg(data.pid).arg(corePath));
-            outInfoByte = DLDBusHandler::instance()->executeCmd(QString("readelf -n %1").arg(corePath));
 
-            data.maps = outInfoByte;
+            // get maps info
+            QTemporaryDir tempDir;
+            if (tempDir.isValid()) {
+                const QString &corePath = tempDir.path() + QString("/%1.dump").arg(QFileInfo(data.storagePath).fileName());
+                DLDBusHandler::instance()->executeCmd(QString("coredumpctl dump %1 -o %2").arg(data.pid).arg(corePath));
+                outInfoByte = DLDBusHandler::instance()->executeCmd(QString("readelf -n %1").arg(corePath));
+                data.maps = outInfoByte;
+            } else {
+                qCWarning(logApp) << "Unable to create temporary directory: " << tempDir.errorString();
+            }
 
             // 获取二进制文件信息
             outInfoByte = Utils::executeCmd("file", QStringList() << data.exe);
