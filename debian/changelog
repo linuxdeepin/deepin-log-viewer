@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.28) unstable; urgency=medium
+
+  * fix: The coredump file was not cleaned up after exporting
+
+ -- wangrong <wangrong@uniontech.com>  Fri, 06 Feb 2026 15:53:00 +0800
+
 deepin-log-viewer (6.5.27) unstable; urgency=medium
 
   * fix: Fix requiring authorization even without request
