@@ -29,6 +29,9 @@ void OpsLogExport::run()
     exportSystemLogs();
     exportKernelLogs();
     exportDDELogs();
+    exportHWLogs();
+    exportOSVersionLogs();
+    exportDebVersionLogs();
     exportAdditionalLogs();
 
     // 递归设置目录及文件的权限
@@ -227,7 +230,7 @@ void OpsLogExport::exportAppLogs()
     // 下载器
     copy_file_or_dir(home_dir + "/.config/uos/downloader/Log", target_dir + "/app/downloader/");
     // 窗口管理器(查看内核显卡驱动、查看核外驱动、查看窗管版本)
-//    execute_command("lspci -v |grep VGA -A19", target_dir + "/app/kwin/lspci_VGA.log");
+    execute_command("lspci -v |grep VGA -A19", target_dir + "/app/kwin/lspci_VGA.log");
 //    execute_command("glxinfo -B", target_dir + "/app/kwin/glxinfo.log");
     execute_command("apt policy kwin-x11 dde-kwin", target_dir + "/app/kwin/kwin_info.log");
     // 安卓容器
@@ -267,7 +270,7 @@ void OpsLogExport::exportKernelLogs()
     copy_file_or_dir("/sys/firmware/acpi/tables/DSDT", target_dir + "/kernel/");
     copy_file_or_dir("/var/log/lightdm/lightdm.log", target_dir + "/kernel/");
     system(("cp -rf /var/log/Xorg.0.log* " + target_dir + "/kernel/ 2>/dev/null").c_str());
-//    execute_command("lspci -vvv | grep -A 12 'VGA c'", target_dir + "/kernel/lspci_VGA.log");
+    execute_command("lspci -vvv | grep -A 12 'VGA c'", target_dir + "/kernel/lspci_VGA.log");
 //    execute_command("ifconfig", target_dir + "/kernel/ifconfig.log");
 //    execute_command("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}')", target_dir + "/kernel/eth_info.log");
     execute_command("dmesg | grep iwlwifi", target_dir + "/kernel/dmesg_network.log");
@@ -295,6 +298,35 @@ void OpsLogExport::exportDDELogs()
     // DDE
     system(("cp " + home_dir + "/Desktop/DDE_LOG.zip " + target_dir + "/dde/ 2>/dev/null").c_str());
     copy_file_or_dir("/var/log/journalLog", target_dir + "/dde/");
+}
+
+void OpsLogExport::exportHWLogs()
+{
+    // hw-info
+    execute_command("dmidecode -t 0", target_dir + "/system_info.txt");
+    execute_command("dmidecode -t 11", target_dir + "/system_info.txt");
+    execute_command("cat /etc/hw_version", target_dir + "/system_info.txt");
+    execute_command("echo", target_dir + "/system_info.txt");
+    execute_command("/usr/sbin/hwfirmware -v", target_dir + "/system_info.txt");
+    execute_command("echo", target_dir + "/system_info.txt");
+    execute_command("lscpu", target_dir + "/system_info.txt");
+}
+
+void OpsLogExport::exportOSVersionLogs()
+{
+    execute_command("uname -a", target_dir + "/info-version.txt");
+    execute_command("echo", target_dir + "/info-version.txt");
+    execute_command("cat /etc/os-version", target_dir + "/info-version.txt");
+    execute_command("echo", target_dir + "/info-version.txt");
+    execute_command("echo -n 开发者模式开启状态：", target_dir + "/info-version.txt");
+    execute_command("cat /var/lib/deepin/developer-mode/enabled", target_dir + "/info-version.txt");
+    execute_command("echo \"\\n\"", target_dir + "/info-version.txt");
+    execute_command("uos-activator-cmd -q", target_dir + "/info-version.txt");
+}
+
+void OpsLogExport::exportDebVersionLogs()
+{
+    execute_command("dpkg -l", target_dir + "/deb-version.txt");
 }
 
 void OpsLogExport::exportAdditionalLogs()
