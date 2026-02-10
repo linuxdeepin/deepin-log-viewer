@@ -1,9 +1,0 @@
-[Unit]
-Description=Deepin Log Viewer Ops Daemon
-
-[Service]
-Type=dbus
-BusName=org.deepin.logviewer.service.opsLogExport
-ExecStart=/usr/bin/ops-log-viewer-service
-CapabilityBoundingSet=~CAP_NET_RAW
-MemoryLimit=8G

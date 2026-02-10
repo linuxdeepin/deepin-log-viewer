@@ -7,10 +7,6 @@
 #include <QStandardPaths>
 #include <QLoggingCategory>
 
-constexpr const char* kLogExportService = "org.deepin.logviewer.service.opsLogExport";
-constexpr const char* kLogExportPath = "/org/deepin/logviewer/service/opsLogExport";
-constexpr const char* kLogExportInterface = "org.deepin.logviewer.service.opsLogExport";
-
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(logDBusHandler, "org.deepin.log.viewer.dbus.handler")
 #else
@@ -169,19 +165,19 @@ bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isF
 
 bool DLDBusHandler::exportOpsLog(const QString &outDir, const QString &userHomeDir)
 {
-    QDBusMessage message = QDBusMessage::createMethodCall(kLogExportService,
-                                                          kLogExportPath,
-                                                          kLogExportInterface,
-                                                          "ExportOpsLog");
-    message << outDir << userHomeDir;
+    m_dbus->setTimeout(1200000);
+    QDBusPendingReply<bool> reply = m_dbus->exportOpsLog(outDir, userHomeDir);
+    reply.waitForFinished();
+    m_dbus->setTimeout(-1);
 
-    QDBusMessage reply = QDBusConnection::systemBus().call(message, QDBus::Block, 1200000);
-    if (reply.type() == QDBusMessage::ErrorMessage) {
-        qCritical(logDBusHandler) << "call dbus interface 'exportHwOpsLog' failed. error info:" << reply.errorMessage();
+    if (reply.isError()) {
+        qCritical(logDBusHandler) << "call dbus interface 'exportHwOpsLog' failed. error info:" << reply.error().message();
+
         return false;
+    } else {
+        qCDebug(logDBusHandler) << "exportOpsLog succeeded:" << reply.value();
+        return reply.value();
     }
-
-    return reply.arguments().first().toBool();
 }
 
 bool DLDBusHandler::isFileExist(const QString &filePath)
