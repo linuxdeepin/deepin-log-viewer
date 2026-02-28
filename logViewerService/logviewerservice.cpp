@@ -433,7 +433,7 @@ qint64 LogViewerService::findLineStartOffsetWithCaching(const QString &filePath,
 
 qint64 LogViewerService::getLineCount(const QString &filePath)
 {
-    if (!isValidInvoker())
+    if (!checkAuth(s_Action_View))
         return -1;
 
     //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
@@ -470,7 +470,7 @@ QString LogViewerService::executeCmd(const QString &cmd)
 {
     QString result("");
 
-    if (!isValidInvoker())
+    if (!checkAuth(s_Action_View))
         return result;
 
     QString cmdStr;
@@ -730,7 +730,7 @@ void LogViewerService::quit()
 QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 {
     // 判断非法调用
-    if(!isValidInvoker()) {
+    if (!checkAuth(s_Action_View)) {
         return {};
     }
 
@@ -837,7 +837,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
 {
     // 判断非法调用
-    if(!isValidInvoker()) {
+    if (!checkAuth(s_Action_View)) {
         return {};
     }
 
@@ -1037,104 +1037,6 @@ bool LogViewerService::exportOpsLog(const QString &outDir, const QString &userHo
     OpsLogExport ops(outDir.toStdString(), userHomeDir.toStdString());
     ops.run();
 
-    return true;
-}
-
-bool LogViewerService::isValidInvoker(bool checkAuth/* = true*/)
-{
-   if (!calledFromDBus()) {
-       return false;
-   }
-
-    bool valid = false;
-    QDBusConnection conn = connection();
-    QDBusMessage msg = message();
-
-    //判断是否存在执行路径
-    uint pid = conn.interface()->servicePid(msg.service()).value();
-
-    // 判断是否存在执行路径且是否存在于可调用者名单中
-    QFile initNsMntFile("/proc/1/ns/mnt");
-    QFile senderNsMntFile(QString("/proc/%1/ns/mnt").arg(pid));
-    auto initNsMnt = initNsMntFile.readLink().trimmed().remove(0, QString("/proc/1/ns/mnt").length());
-    auto senderNsMnt = senderNsMntFile.readLink().trimmed().remove(0, QString("/proc/%1/ns/mnt").arg(pid).length());
-    if (initNsMnt != senderNsMnt) {
-        sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls！！！！！");
-        return false;
-    }
-
-    //进制使用环境变量导入.so动态调用dbus接口
-    QProcess proc;
-    proc.start(QString("cat /proc/%1/maps").arg(pid));
-    proc.waitForStarted();
-    proc.waitForFinished();
-    QString maps = QString::fromLocal8Bit(proc.readAllStandardOutput()).trimmed();
-    proc.close();
-    QStringList libMaps = maps.split("\n", QString::SkipEmptyParts);
-    QStringList allParts;
-    for (const QString &part : libMaps) {
-        QStringList subParts = part.split(' ');
-        for (const QString &subPart : subParts) {
-            if (!subPart.isEmpty()) {
-                allParts.append(subPart);
-            }
-        }
-    }
-    for (int j = 0; j < allParts.count(); ++j) {
-        QString libStr = allParts.at(j);
-        QFileInfo info(libStr);
-        if (info.isFile()) {
-            QString fileName = info.fileName();
-            if (fileName.contains(".so")) {
-                QStringList libpath = libStr.split("/", QString::SkipEmptyParts);
-                if (libpath.count() > 2) {
-                    QString libhead = QString("/%1/%2").arg(libpath.at(0)).arg(libpath.at(1));
-                    if (libhead != "/usr/lib") {
-                        sendErrorReply(QDBusError::ErrorType::Failed, "Illegal calls！！！！！");
-                        return false;
-                    }
-                }
-            }
-        }
-    }
-
-    QFileInfo f(QString("/proc/%1/exe").arg(pid));
-    if (!f.exists()) {
-        valid = false;
-    } else {
-        valid = true;
-    }
-
-    //是否存在于可调用者名单中
-    QStringList ValidInvokerExePathList;
-    QString invokerPath = f.canonicalFilePath();
-    QStringList findPaths;//合法调用者查找目录列表
-    findPaths << "/usr/bin";
-    ValidInvokerExePathList << QStandardPaths::findExecutable("deepin-log-viewer", findPaths);
-
-    if (valid)
-        valid = ValidInvokerExePathList.contains(invokerPath);
-
-    // pokit前端进程鉴权
-    bool bAuthValid = true;
-    QString strCheckAuthTip;
-    if (valid && checkAuth) {
-        bAuthValid = checkAuthorization(m_actionId, pid);
-        valid = bAuthValid;
-        if (!bAuthValid) {
-            strCheckAuthTip = "checkAuthorization failed.";
-            qWarning() << strCheckAuthTip;
-        }
-    }
-    //非法调用
-    if (!valid) {
-        sendErrorReply(QDBusError::ErrorType::Failed,
-                       QString("(pid: %1)[%2] is not allowed to configrate firewall. %3")
-                       .arg(pid)
-                       .arg((invokerPath))
-                       .arg(strCheckAuthTip));
-        return false;
-    }
     return true;
 }
 
