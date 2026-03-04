@@ -265,11 +265,11 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
    @note Available on linux/unix/macos platform.
    @return check passed.
  */
-bool LogViewerService::checkAuthorization(const QString &actionId, qint64 applicationPid)
+bool LogViewerService::checkAuthorization(const QString &actionId, const QString &busName)
 {
 #if defined (Q_OS_LINUX) || defined (Q_OS_UNIX) ||  defined (Q_OS_MAC)
             PolkitQt1::Authority::Result ret = PolkitQt1::Authority::instance()->checkAuthorizationSync(
-                actionId, PolkitQt1::UnixProcessSubject(applicationPid), PolkitQt1::Authority::AllowUserInteraction);
+                actionId, PolkitQt1::SystemBusNameSubject(busName), PolkitQt1::Authority::AllowUserInteraction);
     if (PolkitQt1::Authority::Yes == ret) {
         return true;
     } else {
@@ -1053,15 +1053,15 @@ bool LogViewerService::checkAuth(const QString &actionId)
         return  true;
     }
 
-    uint pid = connection().interface()->servicePid(message().service()).value();
+    QString busName = message().service();
 
     bool bAuthVaild = false;
-    bAuthVaild = checkAuthorization(actionId, pid);
+    bAuthVaild = checkAuthorization(actionId, busName);
     if (!bAuthVaild) {
         qWarning() << "checkAuthorization failed.";
         sendErrorReply(QDBusError::ErrorType::Failed,
-                       QString("(pid: %1) is not allowed to configrate firewall. %3")
-                       .arg(pid)
+                       QString("(busName: %1) is not allowed to configrate firewall. %2")
+                       .arg(busName)
                        .arg("checkAuthorization failed."));
     }
 
