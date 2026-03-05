@@ -1,4 +1,6 @@
 #!/bin/bash
+# 停止并更新 systemd user timer, 避免由其发起的周期日志导出, 该操作会弹出授权框
+# 启用系统级 coredump-reporter timer
 
 #获取已登陆的用户
 userNameArr=($(who -q | head -n 1))
@@ -6,22 +8,24 @@ userNameArr=($(who -q | head -n 1))
 #定时器名称
 sysTimer="coredump-reporter.timer"
 
-#根据已登陆的用户开启后端定时任务
+#根据已登录的用户更新定时器
 for userName in ${userNameArr[@]} ; do
-    #获取服务状态
+    #获取定时器状态
     serviceStatus=$(runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user is-active ${sysTimer}")
     #活跃的关键字
     activeStr="active"
-    #如果为活跃的则表示服务已开启
+    #如果为活跃的则表示定时器已开启
     if [ "$serviceStatus" = "$activeStr" ];then
-        #如果服务已经启动则重新加载
+        runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user stop ${sysTimer}" || true
         runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user daemon-reload" || true
-    else
-        #如果服务没有启动则设置开启
-        runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user enable ${sysTimer}" || true
-        #runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user start ${sysTimer}"
     fi
 done
+
+# 启用系统级 timer
+if [ -f /lib/systemd/system/coredump-reporter.timer ]; then
+    systemctl daemon-reload || true
+    systemctl enable coredump-reporter.timer || true
+fi
 
 #确保软件包安装不会失败
 exit 0
