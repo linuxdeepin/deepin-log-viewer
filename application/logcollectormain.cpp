@@ -324,7 +324,7 @@ void LogCollectorMain::exportAllLogs()
             qCDebug(logApp) << "Using audit admin authorization";
         } else {
             // 其他情况，默认为多用户鉴权
-            policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogs";
+            policyActionId = "com.deepin.pkexec.logViewerAuth";
             qCDebug(logApp) << "Using normal user authorization";
         }
 

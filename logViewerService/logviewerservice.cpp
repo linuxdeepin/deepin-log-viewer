@@ -523,7 +523,7 @@ QString LogViewerService::executeCmd(const QString &cmd)
     qCDebug(logService) << "Executing command:" << cmd;
     QString result("");
 
-    if (!checkAuth(s_Action_Export)) {
+    if (!checkAuth(s_Action_View)) {
         return result;
     }
 
@@ -1003,7 +1003,7 @@ static bool processExportLog(const QString &cmdStr, const QString &outFullPath,c
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
     qCDebug(logService) << "Exporting log to:" << outDir << "with input:" << in << "and isFile:" << isFile;
-    if(!checkAuth(s_Action_Export)) { //非法调用
+    if(!checkAuth(s_Action_View)) { //非法调用
         qCDebug(logService) << "Invalid authorization for export log";
         return false;
     }
@@ -1200,7 +1200,7 @@ bool LogViewerService::checkAuth(const QString &actionId)
 bool LogViewerService::exportOpsLog(const QString &outDir, const QString &homeDir)
 {
     qCDebug(logService) << "exportOpsLog for outDir:" << outDir << "and homeDir:" << homeDir;
-    if(!checkAuth(s_Action_Export)) {
+    if(!checkAuth(s_Action_View)) {
         qCDebug(logService) << "Invalid authorization for export log";
         return false;
     }
