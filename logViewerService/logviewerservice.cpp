@@ -905,7 +905,7 @@ static bool processExportLog(const QString &cmdStr, const QString &outFullPath,c
 
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
-    if(!checkAuth(s_Action_Export)) { //非法调用
+    if(!checkAuth(s_Action_View)) { //非法调用
         return false;
     }
 
