@@ -355,7 +355,7 @@ bool Utils::checkAuthorization(const QString &actionId, qint64 applicationPid)
     qCDebug(logApp) << "Checking authorization for action:" << actionId << "pid:" << applicationPid;
     Authority::Result result;
 
-    result = Authority::instance()->checkAuthorizationSync(actionId, UnixProcessSubject(applicationPid),
+    result = Authority::instance()->checkAuthorizationSync(actionId, SystemBusNameSubject(QDBusConnection::systemBus().baseService()),
                                                            Authority::AllowUserInteraction);
     bool authorized = result == Authority::Yes;
     qCDebug(logApp) << "Authorization result:" << authorized;
