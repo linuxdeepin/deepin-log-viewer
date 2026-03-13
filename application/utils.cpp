@@ -306,7 +306,7 @@ bool Utils::checkAuthorization(const QString &actionId, qint64 applicationPid)
 {
     Authority::Result result;
 
-    result = Authority::instance()->checkAuthorizationSync(actionId, UnixProcessSubject(applicationPid),
+    result = Authority::instance()->checkAuthorizationSync(actionId, SystemBusNameSubject(QDBusConnection::systemBus().baseService()),
                                                            Authority::AllowUserInteraction);
     return result == Authority::Yes ? true : false;
 }

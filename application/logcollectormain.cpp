@@ -300,7 +300,7 @@ void LogCollectorMain::exportAllLogs()
             policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogsSelf";
         else
             // 其他情况，默认为多用户鉴权
-            policyActionId = "com.deepin.pkexec.logViewerAuth.exportLogs";
+            policyActionId = "com.deepin.pkexec.logViewerAuth";
 
         if (!Utils::checkAuthorization(policyActionId, qApp->applicationPid())) {
             return;
