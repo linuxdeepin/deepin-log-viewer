@@ -65,3 +65,16 @@ CMakeCache.txt
 
 # Auto Claude data directory
 .auto-claude/
+
+# debian
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/deepin-log-viewer.postrm.debhelper
+debian/deepin-log-viewer.substvars
+debian/deepin-log-viewer/
+debian/files
+debian/liblogviewerplugin-dev.substvars
+debian/liblogviewerplugin-dev/
+debian/liblogviewerplugin.substvars
+debian/liblogviewerplugin/
+debian/tmp/
