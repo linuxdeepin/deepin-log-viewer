@@ -1,4 +1,7 @@
 #!/bin/bash
+
+#DEBHELPER#
+
 # 停止并更新 systemd user timer, 避免由其发起的周期日志导出, 该操作会弹出授权框
 
 #获取已登陆的用户
