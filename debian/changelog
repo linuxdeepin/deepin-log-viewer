@@ -1,3 +1,11 @@
+deepin-log-viewer (6.5.29) unstable; urgency=medium
+
+  * Fix: resolve double polkit authorization prompt when exporting logs
+  * chore(CI): add debian check workflow
+  * chore: update gitignore and debian postinst script
+
+ -- wangrong <wangrong@uniontech.com>  Wed, 18 Mar 2026 13:30:56 +0800
+
 deepin-log-viewer (6.5.28) unstable; urgency=medium
 
   * fix: The coredump file was not cleaned up after exporting
