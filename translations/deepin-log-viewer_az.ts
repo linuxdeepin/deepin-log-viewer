@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="az">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="az">
 <context>
     <name>Action</name>
     <message>
@@ -792,16 +790,16 @@
         <translation>dnf jurnalı</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="311"/>
-        <location filename="../application/loglistview.cpp" line="313"/>
-        <source>Auth Log</source>
-        <translation>Giriş Logu</translation>
-    </message>
-    <message>
         <location filename="../application/loglistview.cpp" line="331"/>
         <location filename="../application/loglistview.cpp" line="333"/>
         <source>Other Log</source>
         <translation>Başqa jurnal</translation>
+    </message>
+    <message>
+        <location filename="../application/loglistview.cpp" line="311"/>
+        <location filename="../application/loglistview.cpp" line="313"/>
+        <source>Auth Log</source>
+        <translation>Kimlik doğrulaması jurnalı</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
@@ -853,7 +851,7 @@ audit səviyyəsində sadeç idarəetmələr audit qeyri-xidmətlərini izləyə
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation>Giriş logu mövcud deyil.</translation>
+        <translation>Kimlik doğrulaması mövcud deyil.</translation>
     </message>
 </context>
 <context>
