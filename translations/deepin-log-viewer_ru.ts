@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="ru">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ru">
 <context>
     <name>Action</name>
     <message>
@@ -792,16 +790,16 @@
         <translation>Журнал dnf</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="311"/>
-        <location filename="../application/loglistview.cpp" line="313"/>
-        <source>Auth Log</source>
-        <translation>Журнал аутентификации</translation>
-    </message>
-    <message>
         <location filename="../application/loglistview.cpp" line="331"/>
         <location filename="../application/loglistview.cpp" line="333"/>
         <source>Other Log</source>
         <translation>Другое бревно</translation>
+    </message>
+    <message>
+        <location filename="../application/loglistview.cpp" line="311"/>
+        <location filename="../application/loglistview.cpp" line="313"/>
+        <source>Auth Log</source>
+        <translation>Журнал авторизации</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
@@ -853,7 +851,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation>Журнал аутентификации не существует.</translation>
+        <translation>Журнал авторизации не существует.</translation>
     </message>
 </context>
 <context>
