@@ -553,9 +553,9 @@ void LogCollectorMain::initShortCut()
     if (nullptr == m_scFindFont) {
         m_scFindFont = new QShortcut(this);
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-        m_scWndReize->setKey(Qt::CTRL + Qt::Key_F);
+        m_scFindFont->setKey(Qt::CTRL + Qt::Key_F);
 #else
-        m_scWndReize->setKey(QKeyCombination(Qt::CTRL, Qt::Key_F));
+        m_scFindFont->setKey(QKeyCombination(Qt::CTRL, Qt::Key_F));
 #endif
         m_scFindFont->setContext(Qt::ApplicationShortcut);
         m_scFindFont->setAutoRepeat(false);
