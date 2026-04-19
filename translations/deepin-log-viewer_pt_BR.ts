@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="pt_BR">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="pt_BR">
 <context>
     <name>Action</name>
     <message>
@@ -792,16 +790,16 @@
         <translation>Log do dnf</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="311"/>
-        <location filename="../application/loglistview.cpp" line="313"/>
-        <source>Auth Log</source>
-        <translation>Log de Autenticação</translation>
-    </message>
-    <message>
         <location filename="../application/loglistview.cpp" line="331"/>
         <location filename="../application/loglistview.cpp" line="333"/>
         <source>Other Log</source>
         <translation>Outro log</translation>
+    </message>
+    <message>
+        <location filename="../application/loglistview.cpp" line="311"/>
+        <location filename="../application/loglistview.cpp" line="313"/>
+        <source>Auth Log</source>
+        <translation>Log de autenticação</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
@@ -853,7 +851,7 @@ auditoria: somente os administradores podem visualizar o registro de auditoria</
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation>Log de autenticação não existe.</translation>
+        <translation>O log de autenticação não existe.</translation>
     </message>
 </context>
 <context>
