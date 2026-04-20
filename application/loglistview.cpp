@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -168,6 +168,8 @@ void LogListView::initUI()
     this->setMinimumWidth(150);
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setItemDelegate(new LogListDelegate(this));
+    this->setBackgroundType(static_cast<DStyledItemDelegate::BackgroundType>(
+        DStyledItemDelegate::RoundedBackground | DStyledItemDelegate::NoNormalState));
     this->setItemSpacing(0);
     this->setViewportMargins(10, 10, 10, 0);
     Dtk::Core::DSysInfo::UosEdition edition = Dtk::Core::DSysInfo::uosEditionType();
