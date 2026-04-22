@@ -9,7 +9,7 @@
     <description>authentication</description>
     <description xml:lang="zh_CN">认证</description>
     <message>Authentication is required to view the log</message>
-    <message xml:lang="zh_CN">查看此日志需要授权</message>
+    <message xml:lang="zh_CN">访问日志需要认证</message>
     <icon_name></icon_name>
     <defaults>
       <allow_any>no</allow_any>
@@ -30,14 +30,14 @@
       <allow_active>auth_self_keep</allow_active>
     </defaults>
     <description xml:lang="zh_CN">认证</description>
-    <message xml:lang="zh_CN">查看此日志需要授权</message>
+    <message xml:lang="zh_CN">访问日志需要认证</message>
   </action>
 
   <action id="com.deepin.pkexec.logViewerAuth.exportLogs">
     <description>authentication</description>
     <description xml:lang="zh_CN">认证</description>
     <message>Authentication is required to export logs</message>
-    <message xml:lang="zh_CN">导出日志需要授权</message>
+    <message xml:lang="zh_CN">访问日志需要认证</message>
     <icon_name />
     <defaults>
       <allow_any>no</allow_any>
@@ -50,7 +50,7 @@
     <description>authentication</description>
     <description xml:lang="zh_CN">认证</description>
     <message>Authentication is required to export logs</message>
-    <message xml:lang="zh_CN">导出日志需要授权</message>
+    <message xml:lang="zh_CN">访问日志需要认证</message>
     <icon_name />
     <defaults>
       <allow_any>no</allow_any>

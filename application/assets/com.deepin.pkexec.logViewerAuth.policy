@@ -20,7 +20,7 @@
 		<description xml:lang="fr">authentification</description>
 		<message xml:lang="fr">L'authentification est requise pour voir les journaux</message>
 		<description xml:lang="zh_CN">认证</description>
-		<message xml:lang="zh_CN">查看此日志需要授权</message>
+		<message xml:lang="zh_CN">访问日志需要认证</message>
 		<description xml:lang="da">autentifikation</description>
 		<description xml:lang="gl_ES">autenticación</description>
 		<description xml:lang="pl">uwierzytelnienie</description>
@@ -76,7 +76,7 @@
 		<description xml:lang="az">kimlik doğrulaması</description>
 		<message xml:lang="az">Jurnala baxmaq üçün kimlik doğrulaması tələb olunur</message>
 		<description xml:lang="zh_HK">認證</description>
-		<message xml:lang="zh_HK">查看此日誌需要認證</message>
+		<message xml:lang="zh_HK">訪問日誌需要認證</message>
 		<description xml:lang="pt">autenticação</description>
 		<message xml:lang="pt">É necessária autenticação para visualizar o registo</message>
 	</action>
@@ -94,7 +94,7 @@
 		<description xml:lang="fr">authentification</description>
 		<message xml:lang="fr">L'authentification est requise pour voir les journaux</message>
 		<description xml:lang="zh_CN">认证</description>
-		<message xml:lang="zh_CN">查看此日志需要授权</message>
+		<message xml:lang="zh_CN">访问日志需要认证</message>
 		<description xml:lang="da">autentifikation</description>
 		<description xml:lang="gl_ES">autenticación</description>
 		<description xml:lang="pl">uwierzytelnienie</description>
@@ -150,7 +150,7 @@
 		<description xml:lang="az">kimlik doğrulaması</description>
 		<message xml:lang="az">Jurnala baxmaq üçün kimlik doğrulaması tələb olunur</message>
 		<description xml:lang="zh_HK">認證</description>
-		<message xml:lang="zh_HK">查看此日誌需要認證</message>
+		<message xml:lang="zh_HK">訪問日誌需要認證</message>
 		<description xml:lang="pt">autenticação</description>
 		<message xml:lang="pt">É necessária autenticação para visualizar o registo</message>
 	</action>
@@ -168,7 +168,7 @@
 		<description xml:lang="fr">authentification</description>
 		<message xml:lang="fr">L'authentification est requise pour exporter les journaux</message>
 		<description xml:lang="zh_CN">认证</description>
-		<message xml:lang="zh_CN">导出日志需要授权</message>
+		<message xml:lang="zh_CN">访问日志需要授权</message>
 		<description xml:lang="da">autentifikation</description>
 		<description xml:lang="gl_ES">autenticación</description>
 		<description xml:lang="pl">uwierzytelnienie</description>
@@ -232,7 +232,7 @@
 		<description xml:lang="fr">authentification</description>
 		<message xml:lang="fr">L'authentification est requise pour exporter les journaux</message>
 		<description xml:lang="zh_CN">认证</description>
-		<message xml:lang="zh_CN">导出日志需要授权</message>
+		<message xml:lang="zh_CN">访问日志需要认证</message>
 		<description xml:lang="da">autentifikation</description>
 		<description xml:lang="gl_ES">autenticación</description>
 		<description xml:lang="pl">uwierzytelnienie</description>
