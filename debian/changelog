@@ -1,3 +1,14 @@
+deepin-log-viewer (6.5.30) unstable; urgency=medium
+
+  * chore: Update version to 6.5.30
+  * [skip CI] Translate deepin-log-viewer.ts in pt_BR
+  * [skip CI] Translate deepin-log-viewer.ts in ru
+  * fix(policy): unify log authentication policy messages
+  * fix: The shortcut Ctrl+F cannot jump to the search bar.
+  * fix(ui): fix log list view background style
+
+ -- zhanghongyuan <zhanghongyuan@uniontech.com>  Fri, 24 Apr 2026 10:06:18 +0800
+
 deepin-log-viewer (6.5.29) unstable; urgency=medium
 
   * Fix: resolve double polkit authorization prompt when exporting logs
