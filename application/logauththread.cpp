@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -1551,6 +1551,11 @@ void LogAuthThread::handleCoredump()
             #endif
         } else {
             coredumpMsg.storagePath = QString("coredump file is missing");
+        }
+
+        if ((exePath.contains("dde-file-manager-server") || exePath.contains("dde-file-manager-daemon"))
+            && coredumpMsg.stackInfo.contains("delete")) {
+            continue;
         }
 
         coredumpList.append(coredumpMsg);
