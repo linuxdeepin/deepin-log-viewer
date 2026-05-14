@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -229,6 +229,8 @@ void OpsLogExport::run()
     exportOSVersionLogs();
     exportDebVersionLogs();
     exportAdditionalLogs();
+    exportAptLogs();
+    exportUosSteLogs();
 
     // 递归设置目录及文件的权限
     executCmd(("chmod -R 777 " + target_dir).c_str());
@@ -312,7 +314,9 @@ void OpsLogExport::createDirStruct()
         target_dir + "/dde/dde-file-manager",
         target_dir + "/dde/dde-dock",
         target_dir + "/system/pulseaudio",
-        target_dir + "/journal"
+        target_dir + "/journal",
+        target_dir + "/apt",
+        target_dir + "/uos-ste"
     };
 
     // hisi目录仅在源目录存在时创建
@@ -531,4 +535,16 @@ void OpsLogExport::exportAdditionalLogs()
     
     // journal日志：完整导出/var/log/journal目录下的所有内容
     copy_file_or_dir("/var/log/journal", target_dir + "/journal/");
+}
+
+void OpsLogExport::exportAptLogs()
+{
+    // apt日志：完整导出/var/log/apt目录下的所有内容
+    copy_file_or_dir("/var/log/apt", target_dir);
+}
+
+void OpsLogExport::exportUosSteLogs()
+{
+    // uos-ste日志：完整导出/var/log/uos-ste目录下的所有内容
+    copy_file_or_dir("/var/log/uos-ste", target_dir);
 }
