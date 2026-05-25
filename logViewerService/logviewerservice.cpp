@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -1034,6 +1034,10 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
 
 bool LogViewerService::exportOpsLog(const QString &outDir, const QString &userHomeDir)
 {
+    if(!checkAuth(s_Action_View)) { //非法调用
+        return false;
+    }
+
     OpsLogExport ops(outDir.toStdString(), userHomeDir.toStdString());
     ops.run();
 
