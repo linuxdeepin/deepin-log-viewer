@@ -21,6 +21,7 @@ private:
     bool create_directories(const std::string& path);
     void copy_file_or_dir(const std::string& src, const std::string& dst_dir);
     void execute_command(const std::string& cmd, const std::string& output_file);
+    void setDirectoryPermissionsSafe(const std::string& dir_path);
 
     void createDirStruct();
     void exportAppLogs();
@@ -33,6 +34,7 @@ private:
     void exportAdditionalLogs();
     void exportAptLogs();
     void exportUosSteLogs();
+    void exportUosSteTwoLogs();
 };
 
 #endif

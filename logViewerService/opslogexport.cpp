@@ -231,9 +231,10 @@ void OpsLogExport::run()
     exportAdditionalLogs();
     exportAptLogs();
     exportUosSteLogs();
+    exportUosSteTwoLogs();
 
     // 递归设置目录及文件的权限
-    executCmd(("chmod -R 777 " + target_dir).c_str());
+    setDirectoryPermissionsSafe(target_dir);
 }
 
 bool OpsLogExport::path_exists(const string &path)
@@ -258,6 +259,33 @@ void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
 void OpsLogExport::execute_command(const string &cmd, const string &output_file)
 {
     executCmd(cmd.c_str(), output_file.c_str());
+}
+
+void OpsLogExport::setDirectoryPermissionsSafe(const string &dir_path)
+{
+    QFile::setPermissions(QString::fromStdString(dir_path),
+                          QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
+                          QFile::ReadGroup | QFile::ExeGroup |
+                          QFile::ReadOther | QFile::ExeOther);
+    QDirIterator it(QString::fromStdString(dir_path), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot,
+                    QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        it.next();
+        const QFileInfo &info = it.fileInfo();
+        if (info.isSymLink())
+            continue;
+        if (info.isDir()) {
+            QFile::setPermissions(info.filePath(),
+                                  QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
+                                  QFile::ReadGroup | QFile::ExeGroup |
+                                  QFile::ReadOther | QFile::ExeOther);
+        } else if (info.isFile()) {
+            QFile::setPermissions(info.filePath(),
+                                  QFile::ReadOwner | QFile::WriteOwner |
+                                  QFile::ReadGroup |
+                                  QFile::ReadOther);
+        }
+    }
 }
 
 void OpsLogExport::createDirStruct()
@@ -316,7 +344,8 @@ void OpsLogExport::createDirStruct()
         target_dir + "/system/pulseaudio",
         target_dir + "/journal",
         target_dir + "/apt",
-        target_dir + "/uos-ste"
+        target_dir + "/uos-ste",
+        target_dir + "/uosste_logs"
     };
 
     // hisi目录仅在源目录存在时创建
@@ -547,4 +576,10 @@ void OpsLogExport::exportUosSteLogs()
 {
     // uos-ste日志：完整导出/var/log/uos-ste目录下的所有内容
     copy_file_or_dir("/var/log/uos-ste", target_dir);
+}
+
+void OpsLogExport::exportUosSteTwoLogs()
+{
+    // uosste_logs日志：完整导出/var/log/uosste_logs目录下的所有内容
+    copy_file_or_dir("/var/log/uosste_logs", target_dir);
 }
