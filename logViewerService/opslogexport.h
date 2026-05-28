@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,6 +21,7 @@ private:
     bool create_directories(const std::string& path);
     void copy_file_or_dir(const std::string& src, const std::string& dst_dir);
     void execute_command(const std::string& cmd, const std::string& output_file);
+    void setDirectoryPermissionsSafe(const std::string& dir_path);
 
     void createDirStruct();
     void exportAppLogs();
@@ -30,6 +31,9 @@ private:
     void exportHWLogs();
     void exportOSVersionLogs();
     void exportDebVersionLogs();
+    void exportAptLogs();
+    void exportUosSteLogs();
+    void exportUosSteTwoLogs();
 };
 
 #endif
