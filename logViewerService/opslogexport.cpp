@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2025 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -228,9 +228,12 @@ void OpsLogExport::run()
     exportHWLogs();
     exportOSVersionLogs();
     exportDebVersionLogs();
+    exportAptLogs();
+    exportUosSteLogs();
+    exportUosSteTwoLogs();
 
     // 递归设置目录及文件的权限
-    executCmd(("chmod -R 777 " + target_dir).c_str());
+    setDirectoryPermissionsSafe(target_dir);
 }
 
 bool OpsLogExport::path_exists(const string &path)
@@ -255,6 +258,33 @@ void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
 void OpsLogExport::execute_command(const string &cmd, const string &output_file)
 {
     executCmd(cmd.c_str(), output_file.c_str());
+}
+
+void OpsLogExport::setDirectoryPermissionsSafe(const std::string &dir_path)
+{
+    QFile::setPermissions(QString::fromStdString(dir_path),
+                          QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
+                              QFile::ReadGroup | QFile::ExeGroup |
+                              QFile::ReadOther | QFile::ExeOther);
+    QDirIterator it(QString::fromStdString(dir_path), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot,
+                    QDirIterator::Subdirectories);
+    while (it.hasNext()) {
+        it.next();
+        const QFileInfo &info = it.fileInfo();
+        if (info.isSymLink())
+            continue;
+        if (info.isDir()) {
+            QFile::setPermissions(info.filePath(),
+                                  QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
+                                      QFile::ReadGroup | QFile::ExeGroup |
+                                      QFile::ReadOther | QFile::ExeOther);
+        } else if (info.isFile()) {
+            QFile::setPermissions(info.filePath(),
+                                  QFile::ReadOwner | QFile::WriteOwner |
+                                      QFile::ReadGroup |
+                                      QFile::ReadOther);
+        }
+    }
 }
 
 void OpsLogExport::createDirStruct()
@@ -310,7 +340,10 @@ void OpsLogExport::createDirStruct()
         target_dir + "/dde/dde-desktop",
         target_dir + "/dde/dde-file-manager",
         target_dir + "/dde/dde-dock",
-        target_dir + "/system/pulseaudio"
+        target_dir + "/system/pulseaudio",
+        target_dir + "/apt",
+        target_dir + "/uos-ste",
+        target_dir + "/uosste_logs"
     };
 
     for (const auto& dir : dirs) {
@@ -515,4 +548,22 @@ void OpsLogExport::exportOSVersionLogs()
 void OpsLogExport::exportDebVersionLogs()
 {
     execute_command("dpkg -l", target_dir + "/deb-version.txt");
+}
+
+void OpsLogExport::exportAptLogs()
+{
+    // apt日志：完整导出/var/log/apt目录下的所有内容
+    copy_file_or_dir("/var/log/apt", target_dir);
+}
+
+void OpsLogExport::exportUosSteLogs()
+{
+    // uos-ste日志：完整导出/var/log/uos-ste目录下的所有内容
+    copy_file_or_dir("/var/log/uos-ste", target_dir);
+}
+
+void OpsLogExport::exportUosSteTwoLogs()
+{
+    // uosste_logs日志：完整导出/var/log/uosste_logs目录下的所有内容
+    copy_file_or_dir("/var/log/uosste_logs", target_dir);
 }
