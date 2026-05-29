@@ -44,8 +44,8 @@ set(LINK_LIBS
     Qt${QT_DESIRED_VERSION}::Core
     Qt${QT_DESIRED_VERSION}::DBus
     Qt${QT_DESIRED_VERSION}::Widgets
-    Dtk${DTK_VERSION_MAJOR}::Core
-    Dtk${DTK_VERSION_MAJOR}::Gui
+    ${DtkCore_LIBRARIES}
+    ${DtkGui_LIBRARIES}
     PolkitQt${QT_DESIRED_VERSION}-1::Agent
 )
 

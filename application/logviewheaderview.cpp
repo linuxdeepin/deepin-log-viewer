@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -255,9 +255,9 @@ int LogViewHeaderView::sectionSizeHint(int logicalIndex) const
 
 void LogViewHeaderView::updateSizeMode()
 {
-    qCDebug(logApp) << "Updating size mode, compact:" << DGuiApplicationHelper::isCompactMode();
     int nRowHeight = ROW_HEIGHT;
 #ifdef DTKWIDGET_CLASS_DSizeMode
+    qCDebug(logApp) << "Updating size mode, compact:" << DGuiApplicationHelper::isCompactMode();
     if (DGuiApplicationHelper::isCompactMode())
         nRowHeight = ROW_HEIGHT_COMPACT;
     else

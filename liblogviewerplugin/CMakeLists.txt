@@ -63,9 +63,9 @@ set(LINK_LIBS
     Qt${QT_DESIRED_VERSION}::Gui
     Qt${QT_DESIRED_VERSION}::Concurrent
     Qt${QT_DESIRED_VERSION}::Widgets
-    Dtk${DTK_VERSION_MAJOR}::Widget
-    Dtk${DTK_VERSION_MAJOR}::Core
-    Dtk${DTK_VERSION_MAJOR}::Gui
+    ${DtkWidget_LIBRARIES}
+    ${DtkCore_LIBRARIES}
+    ${DtkGui_LIBRARIES}
     PolkitQt${QT_DESIRED_VERSION}-1::Agent
 )
 
