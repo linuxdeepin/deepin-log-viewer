@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -16,8 +16,7 @@ TEST(Utils_Destructor_UT, Utils_Destructor_UT)
 {
     Utils *p = new Utils(nullptr);
     EXPECT_NE(p, nullptr);
-    p->~Utils();
-    p->deleteLater();
+    delete p;
 }
 
 TEST(Utils_Constructor_UT, Utils_Constructor_UT)

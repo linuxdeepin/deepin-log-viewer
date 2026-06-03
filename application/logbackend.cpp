@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -53,6 +53,7 @@ LogBackend *LogBackend::instance(QObject *parent)
 LogBackend::~LogBackend()
 {
     qCDebug(logApp) << "Destroying LogBackend instance";
+    m_staticbackend = nullptr;
 }
 
 LogBackend::LogBackend(QObject *parent) : QObject(parent)

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -105,9 +105,7 @@ TEST(LogCollectorMain_Destructor_UT, LogCollectorMain_Destructor_UT)
     stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);
-    p->~LogCollectorMain();
-    EXPECT_EQ(p->m_searchEdt, nullptr);
-    p->deleteLater();
+    delete p;
 }
 TEST(LogCollectorMain_initUI_UT, LogCollectorMain_initUI_UT)
 {
