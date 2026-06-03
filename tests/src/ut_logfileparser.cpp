@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -83,8 +83,7 @@ TEST(LogFileParser_Destructor_UT, LogFileParser_Destructor_UT)
     stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
     LogFileParser *p = new LogFileParser(nullptr);
     EXPECT_NE(p, nullptr);
-    p->~LogFileParser();
-    p->deleteLater();
+    delete p;
 }
 
 //TEST(LogFileParser_parseByJournalBoot_UT, LogFileParser_parseByJournalBoot_UT)
