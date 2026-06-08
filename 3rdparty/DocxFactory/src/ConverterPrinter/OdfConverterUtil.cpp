@@ -11,6 +11,12 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <spawn.h>
+#include <fcntl.h>
+
+extern char **environ;
 
 #endif
 
@@ -18,20 +24,6 @@
 
 using namespace DocxFactory;
 using namespace std;
-
-
-
-#if defined( _WIN32 ) || defined( _WIN64 )
-
-	#define ODF_CONVERTER_CMD( p_exec, p_importFile, p_exportFile ) \
-		string( "(\"" ) + p_exec + "\" /I \"" + p_importFile + "\" /O \"" + p_exportFile + "\" /F 1> nul 2> nul)"
-
-#else
-
-	#define ODF_CONVERTER_CMD( p_exec, p_importFile, p_exportFile ) \
-		string( "\"" ) + p_exec + "\" /I \"" + p_importFile + "\" /O \"" + p_exportFile + "\" /F 1> /dev/null 2> /dev/null"
-
-#endif
 
 
 
@@ -93,16 +85,46 @@ void OdfConverterUtil::saveAs( const string& p_importFile, const string& p_expor
 
 	else
 	{
-		string	l_cmd		= ODF_CONVERTER_CMD( m_exec, p_importFile, p_exportFile );
-		int		l_exitCode	= system( l_cmd.c_str() );
+		// Use posix_spawn instead of fork+exec to avoid issues
+		// with fork() in a multithreaded process.
+		pid_t l_pid = 0;
+		posix_spawn_file_actions_t l_actions;
+
+		posix_spawn_file_actions_init( &l_actions );
+
+		// Redirect stdout and stderr to /dev/null (same as the
+		// original system() command did with "1> /dev/null 2> /dev/null")
+		int l_devNull = open( "/dev/null", O_RDWR );
+		posix_spawn_file_actions_adddup2( &l_actions, l_devNull, STDOUT_FILENO );
+		posix_spawn_file_actions_adddup2( &l_actions, l_devNull, STDERR_FILENO );
+		posix_spawn_file_actions_addclose( &l_actions, l_devNull );
+
+		const char* l_argv[] = {
+			m_exec.c_str(),
+			"/I", p_importFile.c_str(),
+			"/O", p_exportFile.c_str(),
+			"/F", nullptr
+		};
+
+		int l_spawnErr = posix_spawnp(
+			&l_pid, m_exec.c_str(), &l_actions, nullptr,
+			(char* const*)l_argv, environ );
+
+		posix_spawn_file_actions_destroy( &l_actions );
+		close( l_devNull );
+
+		if ( l_spawnErr != 0 )
+			throw UtilFailedException( m_exec, __FILE__, __LINE__ );
+
+		int l_status = 0;
+		waitpid( l_pid, &l_status, 0 );
+		int l_exitCode = WEXITSTATUS( l_status );
 
 		if ( l_exitCode != 0 )
 			throw UtilFailedException( m_exec, __FILE__, __LINE__ );
 
-		#ifdef __unix__
-			if ( chmod( p_exportFile.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH ) != 0 )
-				throw UtilFailedException( "chmod", __FILE__, __LINE__ );
-		#endif
+		if ( chmod( p_exportFile.c_str(), S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH ) != 0 )
+			throw UtilFailedException( "chmod", __FILE__, __LINE__ );
 	}
 } // saveAs
 
