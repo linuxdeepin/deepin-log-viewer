@@ -1195,7 +1195,37 @@ bool LogViewerService::exportOpsLog(const QString &outDir, const QString &homeDi
 {
     qCDebug(logService) << "exportOpsLog for outDir:" << outDir << "and homeDir:" << homeDir;
     if(!checkAuth(s_Action_View)) {
-        qCDebug(logService) << "Invalid authorization for export log";
+        qCWarning(logService) << "Invalid authorization for export log";
+        return false;
+    }
+
+    // 导出路径白名单检查
+    QString outPath = QDir::cleanPath(outDir);
+    QStringList availablePaths = whiteListOutPaths();
+    bool bOutAvailable = false;
+    for (auto path : availablePaths) {
+        if (outPath.startsWith(path)) {
+            bOutAvailable = true;
+            break;
+        }
+    }
+    if (!bOutAvailable) {
+        qCCritical(logService) << "Output path not in whitelist:" << outDir;
+        return false;
+    }
+
+    // 家目录参数白名单检查，限定为已知用户家目录
+    QString cleanHomeDir = QDir::cleanPath(homeDir);
+    QStringList homeList = getHomePaths();
+    bool bHomeValid = false;
+    for (auto path : homeList) {
+        if (cleanHomeDir == path) {
+            bHomeValid = true;
+            break;
+        }
+    }
+    if (!bHomeValid) {
+        qCCritical(logService) << "homeDir not in allowed home paths:" << homeDir;
         return false;
     }
 
