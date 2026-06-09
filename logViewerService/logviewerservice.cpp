@@ -99,11 +99,11 @@ LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
 {
     qCDebug(logService) << "LogViewerService constructor called";
-    m_commands.insert("dmesg", "dmesg -r");
-    m_commands.insert("last", "last -x");
-    m_commands.insert("journalctl_system", "journalctl -r");
-    m_commands.insert("journalctl_boot", "journalctl -b -r");
-    m_commands.insert("journalctl_app", "journalctl");
+    m_commands.insert("dmesg", QStringList() << "dmesg" << "-r");
+    m_commands.insert("last", QStringList() << "last" << "-x");
+    m_commands.insert("journalctl_system", QStringList() << "journalctl" << "-r");
+    m_commands.insert("journalctl_boot", QStringList() << "journalctl" << "-b" << "-r");
+    m_commands.insert("journalctl_app", QStringList() << "journalctl");
 
     m_actionId = s_Action_View;
     qCDebug(logService) << "Commands initialized, action ID set to:" << m_actionId;
@@ -1036,7 +1036,6 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     }
 
     QString outFullPath = "";
-    QString cmdExec = "";
     if (isFile) {
         //增加服务黑名单，只允许通过提权接口读取/var/log、/var/lib/systemd/coredump下，家目录下和临时目录下的文件
         if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home") && !in.startsWith("/var/lib/systemd/coredump"))
@@ -1093,7 +1092,9 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             return false;
         }
     } else {
-        QString cmd;
+        QString cmdStr;
+        QStringList args;
+        QString submoduleName;
 
         // 判断输入是否为json字串
         QJsonParseError parseError;
@@ -1102,65 +1103,58 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
             if (document.isObject()) {
                 QJsonObject object = document.object();
 
-                QString submoduleName;
-                QString filter;
-                QString execPath;
-
                 if (object.contains("name"))
                     submoduleName = object.value("name").toString();
+
+                QString filter;
+                QString execPath;
                 if (object.contains("filter"))
                     filter = object.value("filter").toString();
                 if (object.contains("execPath"))
                     execPath = object.value("execPath").toString();
 
-                QString condition;
-                if (!execPath.isEmpty())
-                    condition += QString(" _EXE=%1").arg(execPath);
-                if (!filter.isEmpty())
-                    condition += QString(" CODE_CATEGORY=%1").arg(filter);
-                if (execPath.isEmpty() && filter.isEmpty())
-                    condition += QString(" SYSLOG_IDENTIFIER=%1").arg(submoduleName);
-
-                if (!condition.isEmpty()) {
-                    cmd = "journalctl" + condition;
-                    cmd += " -r";
-                    outFullPath = outDirInfo.absoluteFilePath() + submoduleName + ".log";
+                cmdStr = "journalctl";
+                // 每个匹配条件作为独立参数，不会被shell解释
+                if (!execPath.isEmpty()) {
+                    args << QString("_EXE=%1").arg(execPath);
                 }
+                if (!filter.isEmpty()) {
+                    args << QString("CODE_CATEGORY=%1").arg(filter);
+                }
+                if (execPath.isEmpty() && filter.isEmpty()) {
+                    args << QString("SYSLOG_IDENTIFIER=%1").arg(submoduleName);
+                }
+                args << "-r";
+
+                outFullPath = outDirInfo.absoluteFilePath() + submoduleName + ".log";
             }
         }
 
-        // 判断输入是否为cmd命令
-        if (cmd.isEmpty()) {
+        // 判断输入是否为cmd命令（来自硬编码白名单，无注入风险）
+        if (cmdStr.isEmpty()) {
             auto it = m_commands.find(in);
             if (it != m_commands.end()) {
-                cmd = it.value();
+                args = it.value();
+                cmdStr = args.takeFirst();
                 outFullPath = outDirInfo.absoluteFilePath() + in + ".log";
             }
         }
 
         // 未解析出有效命令，返回
-        if (cmd.isEmpty()) {
+        if (cmdStr.isEmpty()) {
             qCWarning(logService) << "unknown command:" << in;
             return false;
         }
 
-        cmdExec = cmd;
-    }
-
-    QString cmdStr = cmdExec.mid(0, cmdExec.indexOf(' '));
-    QStringList args;
-    args << cmdExec.mid(cmdExec.indexOf(' ') + 1).split(' ');
-
-    if (cmdStr != "cp") {
         if (!QFile::exists(outFullPath)) {
             qCInfo(logService) << "outFullPath:" << outFullPath << "not exist;";
             QFile file(outFullPath);
         }
-    }
 
-    if (!processExportLog(cmdStr,outFullPath, args)) {
-        qCWarning(logService) << "command error:" << cmdExec;
-        return false;
+        if (!processExportLog(cmdStr, outFullPath, args)) {
+            qCWarning(logService) << "command error:" << cmdStr << args;
+            return false;
+        }
     }
 
     //设置文件权限

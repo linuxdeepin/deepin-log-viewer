@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -72,7 +72,7 @@ private:
     QProcess m_process;
     QString m_tmpDirPath;
     QString m_actionId;
-    QMap<QString, QString> m_commands;
+    QMap<QString, QStringList> m_commands;
     QMap<QString, std::pair<QString, QTextStream*>> m_logMap;
     QMap<QString, QList<uint64_t>> m_logLineIndex;
 
