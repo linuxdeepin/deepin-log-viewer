@@ -6,6 +6,7 @@
 #define OPS_LOG_EXPORT_H
 
 #include <string>
+#include <QStringList>
 
 class OpsLogExport {
 public:
@@ -20,7 +21,7 @@ private:
     bool path_exists(const std::string& path);
     bool create_directories(const std::string& path);
     void copy_file_or_dir(const std::string& src, const std::string& dst_dir);
-    void execute_command(const std::string& cmd, const std::string& output_file);
+    void execute_command(const QStringList &args, const std::string &output_file);
     void setDirectoryPermissionsSafe(const std::string& dir_path);
 
     void createDirStruct();
@@ -30,7 +31,6 @@ private:
     void exportDDELogs();
     void exportHWLogs();
     void exportOSVersionLogs();
-    void exportDebVersionLogs();
     void exportAptLogs();
     void exportUosSteLogs();
     void exportUosSteTwoLogs();

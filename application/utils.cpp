@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -720,12 +720,21 @@ void Utils::exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir)
     args.append(outDir + "/app/fcitx/");
     executeCmd("cp", args);
 
+    args.clear();
+    args << "policy" << "kwin-x11" << "dde-kwin";
+    appendToFile(outDir + "/app/kwin/kwin_info.log", executeCmd("apt", args));
+
     // kernel
     appendToFile(outDir + "/kernel/aplay.log", executeCmd("aplay", { "-l" }));
     for (const QString &iface : getPhysicalInterfaces()) {
         appendToFile(outDir + "/kernel/eth_info.log", executeCmd("ethtool", { "-i", iface }));
     }
     appendToFile(outDir + "/kernel/ifconfig.log", executeCmd("ifconfig", { }));
+
+    // deb version
+    args.clear();
+    args << "-l";
+    appendToFile(outDir + "/deb-version.txt", executeCmd("dpkg", args));
 }
 
 #ifdef DTKCORE_CLASS_DConfigFile
