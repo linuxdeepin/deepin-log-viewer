@@ -92,11 +92,11 @@ QString unzipToTempFile(const QString &sourceFile, const QString &tempFileTempla
 LogViewerService::LogViewerService(QObject *parent)
     : QObject(parent)
 {
-    m_commands.insert("dmesg", "dmesg -r");
-    m_commands.insert("last", "last -x");
-    m_commands.insert("journalctl_system", "journalctl -r");
-    m_commands.insert("journalctl_boot", "journalctl -b -r");
-    m_commands.insert("journalctl_app", "journalctl");
+    m_commands.insert("dmesg", QStringList() << "dmesg" << "-r");
+    m_commands.insert("last", QStringList() << "journalctl" << "-r");
+    m_commands.insert("journalctl_system", QStringList() << "journalctl" << "-r");
+    m_commands.insert("journalctl_boot", QStringList() << "journalctl" << "-b" << "-r");
+    m_commands.insert("journalctl_app", QStringList() << "journalctl");
 
     m_actionId = s_Action_View;
 }
@@ -921,10 +921,10 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     }
 
     // 导出路径白名单检查
-    QString outPath = outDirInfo.absoluteFilePath();
-    QStringList availablePaths = whiteListOutPaths();
+    const QString outPath = outDirInfo.absoluteFilePath();
+    const QStringList availablePaths = whiteListOutPaths();
     bool bAvailable = false;
-    for (auto path : availablePaths) {
+    for (const auto &path : availablePaths) {
         if (outPath.startsWith(path)) {
             bAvailable = true;
             break;
@@ -934,8 +934,10 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         return false;
     }
 
-    QString outFullPath = "";
-    QString cmdExec = "";
+    QString cmdStr;
+    QStringList args;
+    QString outFullPath;
+
     if (isFile) {
         //增加服务黑名单，只允许通过提权接口读取/var/log、/var/lib/systemd/coredump下，家目录下和临时目录下的文件
         if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home") && !in.startsWith("/var/lib/systemd/coredump"))
@@ -949,66 +951,60 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         }
 
         outFullPath = outDirInfo.absoluteFilePath() + filein.fileName();
-        //复制文件
-        cmdExec = QString("cp %1 %2").arg(in, outDirInfo.absoluteFilePath());
+        //直接构建参数列表，避免字符串拼接后再 split 的参数注入风险
+        cmdStr = "cp";
+        args << in << outDirInfo.absoluteFilePath();
     } else {
-        QString cmd;
-
         // 判断输入是否为json字串
         QJsonParseError parseError;
         QJsonDocument document = QJsonDocument::fromJson(in.toUtf8(), &parseError);
-        if (parseError.error == QJsonParseError::NoError) {
-            if (document.isObject()) {
-                QJsonObject object = document.object();
+        if (parseError.error == QJsonParseError::NoError && document.isObject()) {
+            QJsonObject object = document.object();
 
-                QString submoduleName;
-                QString filter;
-                QString execPath;
+            const QString submoduleName = object.value("name").toString();
+            const QString filter = object.value("filter").toString();
+            const QString execPath = object.value("execPath").toString();
 
-                if (object.contains("name"))
-                    submoduleName = object.value("name").toString();
-                if (object.contains("filter"))
-                    filter = object.value("filter").toString();
-                if (object.contains("execPath"))
-                    execPath = object.value("execPath").toString();
+            //直接构建 journalctl 参数列表，杜绝字符串拼接的参数注入风险
+            cmdStr = "journalctl";
+            if (!execPath.isEmpty())
+                args << QString("_EXE=%1").arg(execPath);
+            if (!filter.isEmpty())
+                args << QString("CODE_CATEGORY=%1").arg(filter);
+            if (execPath.isEmpty() && filter.isEmpty())
+                args << QString("SYSLOG_IDENTIFIER=%1").arg(submoduleName);
+            args << "-r";
 
-                QString condition;
-                if (!execPath.isEmpty())
-                    condition += QString(" _EXE=%1").arg(execPath);
-                if (!filter.isEmpty())
-                    condition += QString(" CODE_CATEGORY=%1").arg(filter);
-                if (execPath.isEmpty() && filter.isEmpty())
-                    condition += QString(" SYSLOG_IDENTIFIER=%1").arg(submoduleName);
-
-                if (!condition.isEmpty()) {
-                    cmd = "journalctl" + condition;
-                    cmd += " -r";
-                    outFullPath = outDirInfo.absoluteFilePath() + submoduleName + ".log";
-                }
+            //规范化输出路径，防止 submoduleName 包含 ../ 导致路径穿越
+            const QString rawOutPath = outDirInfo.absoluteFilePath() + submoduleName + ".log";
+            outFullPath = QDir::cleanPath(rawOutPath);
+            if (!outFullPath.startsWith(outPath)) {
+                qCWarning(logService) << "submoduleName path traversal detected:" << submoduleName;
+                return false;
             }
         }
 
-        // 判断输入是否为cmd命令
-        if (cmd.isEmpty()) {
+        // 判断输入是否为预定义的命令标识
+        if (cmdStr.isEmpty()) {
             auto it = m_commands.find(in);
             if (it != m_commands.end()) {
-                cmd = it.value();
+                const QStringList fullArgs = it.value();
+                if (fullArgs.isEmpty()) {
+                    qCWarning(logService) << "empty command args:" << in;
+                    return false;
+                }
+                cmdStr = fullArgs.first();
+                args = fullArgs.mid(1);
                 outFullPath = outDirInfo.absoluteFilePath() + in + ".log";
             }
         }
 
         // 未解析出有效命令，返回
-        if (cmd.isEmpty()) {
+        if (cmdStr.isEmpty()) {
             qCWarning(logService) << "unknown command:" << in;
             return false;
         }
-
-        cmdExec = cmd;
     }
-
-    QString cmdStr = cmdExec.mid(0, cmdExec.indexOf(' '));
-    QStringList args;
-    args << cmdExec.mid(cmdExec.indexOf(' ') + 1).split(' ');
 
     if (cmdStr != "cp") {
         if (!QFile::exists(outFullPath)) {
@@ -1017,8 +1013,8 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
         }
     }
 
-    if (!processExportLog(cmdStr,outFullPath, args)) {
-        qCWarning(logService) << "command error:" << cmdExec;
+    if (!processExportLog(cmdStr, outFullPath, args)) {
+        qCWarning(logService) << "command error:" << cmdStr << args;
         return false;
     }
 
