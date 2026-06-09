@@ -23,46 +23,6 @@
 
 using namespace std;
 
-static QStringList parseCombinedArgString(const QString &program)
-{
-    QStringList args;
-    QString tmp;
-    int quoteCount = 0;
-    bool inQuote = false;
-
-    // handle quoting. tokens can be surrounded by double quotes
-    // "hello world". three consecutive double quotes represent
-    // the quote character itself.
-    for (int i = 0; i < program.size(); ++i) {
-        if (program.at(i) == QLatin1Char('"')) {
-            ++quoteCount;
-            if (quoteCount == 3) {
-                // third consecutive quote
-                quoteCount = 0;
-                tmp += program.at(i);
-            }
-            continue;
-        }
-        if (quoteCount) {
-            if (quoteCount == 1)
-                inQuote = !inQuote;
-            quoteCount = 0;
-        }
-        if (!inQuote && program.at(i).isSpace()) {
-            if (!tmp.isEmpty()) {
-                args += tmp;
-                tmp.clear();
-            }
-        } else {
-            tmp += program.at(i);
-        }
-    }
-    if (!tmp.isEmpty())
-        args += tmp;
-
-    return args;
-}
-
 static void appendToFile(const QString &filePath, const QByteArray &content)
 {
     QFile file(filePath);
@@ -148,28 +108,21 @@ static void appendToFileWithGrepA(const QString &filePath, const QByteArray &con
     }
 }
 
-static int executCmd(const char *strCmd, const char *outputFile = nullptr, const QString &pattern = "", int afterLines = -1)
+static int runProcess(const QStringList &args, const char *outputFile = nullptr, const QString &pattern = "", int afterLines = -1)
 {
-    qDebug() << "executCmd" << strCmd;
-
-    QString error = "";
-    int exitcode = 0;
-    QProcess proc;
-    QString prog;
-
-    QStringList args = parseCombinedArgString(strCmd);
     if (args.isEmpty()) {
-        error = "args is empty";
-        exitcode = -1;
-        goto quit;
+        qWarning() << "runProcess: args is empty";
+        return -1;
     }
-    prog = args.takeFirst();
+    qDebug() << "runProcess" << args;
 
-    proc.setProgram(prog);
-    proc.setArguments(args);
+    QProcess proc;
+    proc.setProgram(args.at(0));
+    proc.setArguments(args.mid(1));
     proc.start(QIODevice::ReadWrite);
-
     proc.waitForFinished(-1);
+
+    int exitcode = proc.exitCode();
     if (outputFile) {
         if (pattern != "" && afterLines >= 0) {
             appendToFileWithGrepA(outputFile, proc.readAllStandardOutput(), pattern, afterLines);
@@ -177,12 +130,7 @@ static int executCmd(const char *strCmd, const char *outputFile = nullptr, const
             appendToFile(outputFile, proc.readAllStandardOutput());
         }
     }
-    error = proc.errorString();
-    exitcode = proc.exitCode();
-    proc.close();
-
-quit:
-    qDebug() << "executCmd exitcode:" << exitcode << error;
+    qDebug() << "runProcess exitcode:" << exitcode << proc.errorString();
     return exitcode;
 }
 
@@ -227,7 +175,6 @@ void OpsLogExport::run()
     exportDDELogs();
     exportHWLogs();
     exportOSVersionLogs();
-    exportDebVersionLogs();
     exportAdditionalLogs();
     exportAptLogs();
     exportUosSteLogs();
@@ -245,28 +192,54 @@ bool OpsLogExport::path_exists(const string &path)
 
 bool OpsLogExport::create_directories(const string &path)
 {
-    string cmd = "mkdir -p " + path;
-    return executCmd(cmd.c_str()) == 0;
+    return QDir(QString::fromStdString(path)).mkpath(".");
 }
 
 void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
 {
     if (!path_exists(src)) return;
-    string cmd = "cp -rf " + src + " " + dst_dir;
-    executCmd(cmd.c_str());
+
+    QString qSrc = QString::fromStdString(src);
+    QString qDst = QString::fromStdString(dst_dir);
+
+    QFileInfo srcInfo(qSrc);
+    if (srcInfo.isFile()) {
+        // 单个文件：确保目标目录存在后用 QFile::copy
+        QDir().mkpath(qDst);
+        QString dstFile = qDst + "/" + srcInfo.fileName();
+        QFile::remove(dstFile);  // QFile::copy 要求目标不存在
+        QFile::copy(qSrc, dstFile);
+    } else {
+        // 目录：使用 cp -rf 通过 QProcess 参数数组传递
+        runProcess({"cp", "-rf", qSrc, qDst});
+    }
 }
 
-void OpsLogExport::execute_command(const string &cmd, const string &output_file)
+void OpsLogExport::execute_command(const QStringList &args, const string &output_file)
 {
-    executCmd(cmd.c_str(), output_file.c_str());
+    runProcess(args, output_file.c_str());
 }
 
 void OpsLogExport::setDirectoryPermissionsSafe(const string &dir_path)
 {
-    QFile::setPermissions(QString::fromStdString(dir_path),
-                          QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
-                          QFile::ReadGroup | QFile::ExeGroup |
-                          QFile::ReadOther | QFile::ExeOther);
+    // 收缩到最小权限：仅 owner 可读写执行/写入，避免向 group 和 other 暴露导出目录。
+    const QFile::Permissions dirPerms = QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner;
+    const QFile::Permissions filePerms = QFile::ReadOwner | QFile::WriteOwner;
+
+    const QFileInfo homeInfo(QString::fromStdString(home_dir));
+    const uint ownerId = static_cast<uint>(homeInfo.ownerId());
+    const uint groupId = static_cast<uint>(homeInfo.groupId());
+
+    auto applySafeOwnership = [&](const QString &path, bool isDir) {
+        if (::chown(QFile::encodeName(path).constData(), ownerId, groupId) != 0) {
+            qWarning() << "Failed to chown export path:" << path << "error:" << strerror(errno);
+            return;
+        }
+        QFile::setPermissions(path, isDir ? dirPerms : filePerms);
+    };
+
+    applySafeOwnership(QString::fromStdString(dir_path), true);
+
     QDirIterator it(QString::fromStdString(dir_path), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot,
                     QDirIterator::Subdirectories);
     while (it.hasNext()) {
@@ -274,17 +247,7 @@ void OpsLogExport::setDirectoryPermissionsSafe(const string &dir_path)
         const QFileInfo &info = it.fileInfo();
         if (info.isSymLink())
             continue;
-        if (info.isDir()) {
-            QFile::setPermissions(info.filePath(),
-                                  QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
-                                  QFile::ReadGroup | QFile::ExeGroup |
-                                  QFile::ReadOther | QFile::ExeOther);
-        } else if (info.isFile()) {
-            QFile::setPermissions(info.filePath(),
-                                  QFile::ReadOwner | QFile::WriteOwner |
-                                  QFile::ReadGroup |
-                                  QFile::ReadOther);
-        }
+        applySafeOwnership(info.filePath(), info.isDir());
     }
 }
 
@@ -458,9 +421,9 @@ void OpsLogExport::exportAppLogs()
     // 下载器
     copy_file_or_dir(home_dir + "/.config/uos/downloader/Log", target_dir + "/app/downloader/");
     // 窗口管理器(查看内核显卡驱动、查看核外驱动、查看窗管版本)
-    executCmd("lspci -v", (target_dir + "/app/kwin/lspci_VGA.log").c_str(), "VGA", 19);
+    runProcess({"lspci", "-v"}, (target_dir + "/app/kwin/lspci_VGA.log").c_str(), "VGA", 19);
     //    execute_command("glxinfo -B", target_dir + "/app/kwin/glxinfo.log");
-    execute_command("apt policy kwin-x11 dde-kwin", target_dir + "/app/kwin/kwin_info.log");
+//    execute_command({"apt", "policy", "kwin-x11", "dde-kwin"}, target_dir + "/app/kwin/kwin_info.log");
     // 安卓容器
     copy_file_or_dir("/usr/share/log/log.txt", target_dir + "/app/kbox/");
     copy_file_or_dir(home_dir + "/log/AospLog.log", target_dir + "/app/kbox/");
@@ -473,18 +436,25 @@ void OpsLogExport::exportAppLogs()
 void OpsLogExport::exportSystemLogs()
 {
     // 系统
-    execute_command("dmesg -T", target_dir + "/system/dmesg_system.log");
-    execute_command("journalctl", target_dir + "/system/journalctl.log");
-    execute_command("journalctl -b -0", target_dir + "/system/journalctl-0.log");
-    execute_command("journalctl -b -1", target_dir + "/system/journalctl-1.log");
-    execute_command("journalctl -xb", target_dir + "/system/journalctl-xb.log");
+    execute_command({"dmesg", "-T"}, target_dir + "/system/dmesg_system.log");
+    execute_command({"journalctl"}, target_dir + "/system/journalctl.log");
+    execute_command({"journalctl", "-b", "-0"}, target_dir + "/system/journalctl-0.log");
+    execute_command({"journalctl", "-b", "-1"}, target_dir + "/system/journalctl-1.log");
+    execute_command({"journalctl", "-xb"}, target_dir + "/system/journalctl-xb.log");
     copy_file_or_dir("/var/log/apt/history.log", target_dir + "/system/");
     copy_file_or_dir("/var/log/alternatives.log", target_dir + "/system/");
     copy_file_or_dir("/var/log/kern.log", target_dir + "/system/");
     copy_file_or_dir("/var/log/syslog", target_dir + "/system/");
     copy_file_or_dir("/var/log/dpkg.log", target_dir + "/system/");
     // xorg /var/log/目录下所有log文件
-    executCmd(("cp -rf " + expandPathWithWildcardIterator("/var/log/Xorg*").join(" ").toStdString() + " " + target_dir + "/system/").c_str());
+    {
+        QStringList xorgFiles = expandPathWithWildcardIterator("/var/log/Xorg*");
+        if (!xorgFiles.isEmpty()) {
+            QStringList cpArgs;
+            cpArgs << "cp" << "-rf" << xorgFiles << QString::fromStdString(target_dir + "/system/");
+            runProcess(cpArgs);
+        }
+    }
     // pulse　audio /home/uos/pulse.log
     copy_file_or_dir(home_dir + "/pulse.log", target_dir + "/system/pulseaudio/");
 }
@@ -493,19 +463,26 @@ void OpsLogExport::exportKernelLogs()
 {
     // 内核
     copy_file_or_dir("/etc/product-info", target_dir + "/kernel/");
-    execute_command("uname -a", target_dir + "/kernel/uname-a.log");
-    execute_command("dmesg", target_dir + "/kernel/dmesg.log");
+    execute_command({"uname", "-a"}, target_dir + "/kernel/uname-a.log");
+    execute_command({"dmesg"}, target_dir + "/kernel/dmesg.log");
     copy_file_or_dir("/sys/firmware/acpi/tables/DSDT", target_dir + "/kernel/");
     copy_file_or_dir("/var/log/lightdm/lightdm.log", target_dir + "/kernel/");
-    executCmd(("cp -rf " + expandPathWithWildcardIterator("/var/log/Xorg.0.log*").join(" ").toStdString() + " " + target_dir + "/kernel/").c_str());
-    executCmd("lspci -vvv", (target_dir + "/kernel/lspci_VGA.log").c_str(), "VGA c", 12);
+    {
+        QStringList xorgFiles = expandPathWithWildcardIterator("/var/log/Xorg.0.log*");
+        if (!xorgFiles.isEmpty()) {
+            QStringList cpArgs;
+            cpArgs << "cp" << "-rf" << xorgFiles << QString::fromStdString(target_dir + "/kernel/");
+            runProcess(cpArgs);
+        }
+    }
+    runProcess({"lspci", "-vvv"}, (target_dir + "/kernel/lspci_VGA.log").c_str(), "VGA c", 12);
     //    execute_command("ifconfig", target_dir + "/kernel/ifconfig.log");
     //    execute_command("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}')", target_dir + "/kernel/eth_info.log");
-    executCmd("dmesg", (target_dir + "/kernel/dmesg_network.log").c_str(), "iwlwifi", 0);
-    execute_command("journalctl --system", target_dir + "/kernel/journalctl_system.log");
+    runProcess({"dmesg"}, (target_dir + "/kernel/dmesg_network.log").c_str(), "iwlwifi", 0);
+    execute_command({"journalctl", "--system"}, target_dir + "/kernel/journalctl_system.log");
     // ⽆法识别声卡问题⽇志
 //    execute_command("aplay -l", target_dir + "/kernel/aplay.log");
-    execute_command("lshw -c sound", target_dir + "/kernel/sound_info.log");
+    execute_command({"lshw", "-c", "sound"}, target_dir + "/kernel/sound_info.log");
     // 龙芯内核
     copy_file_or_dir("/var/log/kern.log", target_dir + "/kernel/");
 }
@@ -519,42 +496,38 @@ void OpsLogExport::exportDDELogs()
     copy_file_or_dir("/var/log/deepin/dde-file-manager-daemon", target_dir + "/dde/dde-file-manager/");
     copy_file_or_dir("/var/log/messages", target_dir + "/dde/");
     copy_file_or_dir("/var/log/syslog", target_dir + "/dde/");
-    execute_command("coredumpctl list", target_dir + "/dde/coredumpctl.log");
-    execute_command("free -m", target_dir + "/dde/free-m.log");   // 查看内存情况，输出内容截图或保存
-    execute_command("udisksctl dump", target_dir + "/dde/udiskctl_dump.txt");
-    execute_command("df -h", target_dir + "/dde/df-h.txt");
+    execute_command({"coredumpctl", "list"}, target_dir + "/dde/coredumpctl.log");
+    execute_command({"free", "-m"}, target_dir + "/dde/free-m.log");   // 查看内存情况，输出内容截图或保存
+    execute_command({"udisksctl", "dump"}, target_dir + "/dde/udiskctl_dump.txt");
+    execute_command({"df", "-h"}, target_dir + "/dde/df-h.txt");
     // DDE
-    executCmd(("cp " + home_dir + "/Desktop/DDE_LOG.zip " + target_dir + "/dde/").c_str());
+    runProcess({"cp", QString::fromStdString(home_dir + "/Desktop/DDE_LOG.zip"),
+                   QString::fromStdString(target_dir + "/dde/")});
     copy_file_or_dir("/var/log/journalLog", target_dir + "/dde/");
 }
 
 void OpsLogExport::exportHWLogs()
 {
     // hw-info
-    execute_command("dmidecode -t 0", target_dir + "/system_info.txt");
-    execute_command("dmidecode -t 11", target_dir + "/system_info.txt");
-    execute_command("cat /etc/hw_version", target_dir + "/system_info.txt");
-    execute_command("echo", target_dir + "/system_info.txt");
-    execute_command("/usr/sbin/hwfirmware -v", target_dir + "/system_info.txt");
-    execute_command("echo", target_dir + "/system_info.txt");
-    execute_command("lscpu", target_dir + "/system_info.txt");
+    execute_command({"dmidecode", "-t", "0"}, target_dir + "/system_info.txt");
+    execute_command({"dmidecode", "-t", "11"}, target_dir + "/system_info.txt");
+    execute_command({"cat", "/etc/hw_version"}, target_dir + "/system_info.txt");
+    execute_command({"echo"}, target_dir + "/system_info.txt");
+    execute_command({"/usr/sbin/hwfirmware", "-v"}, target_dir + "/system_info.txt");
+    execute_command({"echo"}, target_dir + "/system_info.txt");
+    execute_command({"lscpu"}, target_dir + "/system_info.txt");
 }
 
 void OpsLogExport::exportOSVersionLogs()
 {
-    execute_command("uname -a", target_dir + "/info-version.txt");
-    execute_command("echo", target_dir + "/info-version.txt");
-    execute_command("cat /etc/os-version", target_dir + "/info-version.txt");
-    execute_command("echo", target_dir + "/info-version.txt");
-    execute_command("echo -n 开发者模式开启状态：", target_dir + "/info-version.txt");
-    execute_command("cat /var/lib/deepin/developer-mode/enabled", target_dir + "/info-version.txt");
-    execute_command("echo \"\\n\"", target_dir + "/info-version.txt");
-    execute_command("uos-activator-cmd -q", target_dir + "/info-version.txt");
-}
-
-void OpsLogExport::exportDebVersionLogs()
-{
-    execute_command("dpkg -l", target_dir + "/deb-version.txt");
+    execute_command({"uname", "-a"}, target_dir + "/info-version.txt");
+    execute_command({"echo"}, target_dir + "/info-version.txt");
+    execute_command({"cat", "/etc/os-version"}, target_dir + "/info-version.txt");
+    execute_command({"echo"}, target_dir + "/info-version.txt");
+    execute_command({"echo", "-n" "开发者模式开启状态："}, target_dir + "/info-version.txt");
+    execute_command({"cat", "/var/lib/deepin/developer-mode/enabled"}, target_dir + "/info-version.txt");
+    execute_command({"echo", "\\n"}, target_dir + "/info-version.txt");
+    execute_command({"uos-activator-cmd", "-q"}, target_dir + "/info-version.txt");
 }
 
 void OpsLogExport::exportAdditionalLogs()
