@@ -1,3 +1,15 @@
+deepin-log-viewer (6.5.31) unstable; urgency=medium
+
+  * fix: add path whitelist validation to exportOpsLog
+  * fix: prevent command injection in log export by using argument lists
+  * fix(logViewerService): eliminate shell injection risks and tighten export directory permissions
+  * fix(security): replace system() with posix_spawnp() to prevent command injection
+  * fix(build): use DTK library variables instead of CMake targets for CI compat
+  * feat(application): add coredump collection for file manager processes with delete in stack
+  * feat(opslogexport): add apt and uos-ste log export support
+
+ -- dengzhongyuan <dengzhongyuan@uniontech.com>  Thu, 11 Jun 2026 19:37:32 +0800
+
 deepin-log-viewer (6.5.30) unstable; urgency=medium
 
   * chore: Update version to 6.5.30
