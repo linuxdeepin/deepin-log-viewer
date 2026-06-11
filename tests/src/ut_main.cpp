@@ -1,12 +1,16 @@
-// SPDX-FileCopyrightText: 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2022-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <gtest/gtest.h>
 #include <QApplication>
+#include <QLoggingCategory>
 #if defined(CMAKE_SAFETYTEST_ARG_ON)
 #include <sanitizer/asan_interface.h>
 #endif
+
+// 定义日志分类（等同于 application/main.cpp 中的定义）
+Q_LOGGING_CATEGORY(logApp, "org.deepin.log.viewer.main")
 
 int main(int argc, char *argv[])
 {

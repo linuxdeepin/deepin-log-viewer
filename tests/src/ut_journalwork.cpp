@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -47,10 +47,7 @@ TEST(journalWork_Destructor_UT, journalWork_Destructor_UT_001)
 {
     journalWork *p = new journalWork(nullptr);
     EXPECT_NE(p, nullptr);
-    p->~journalWork();
-    EXPECT_EQ(p->logList.isEmpty(), true);
-    EXPECT_EQ(p->m_map.isEmpty(), true);
-    p->deleteLater();
+    delete p;
 }
 
 TEST(journalWork_stopWork_UT, journalWork_stopWork_UT_001)
