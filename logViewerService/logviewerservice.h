@@ -45,7 +45,7 @@ public Q_SLOTS:
     Q_SCRIPTABLE QString executeCmd(const QString &cmd);
     Q_SCRIPTABLE QStringList whiteListOutPaths();
 
-    Q_SCRIPTABLE bool exportOpsLog(const QString &outDir, const QString &homeDir);
+    Q_SCRIPTABLE QString exportOpsLog();
 
 public:
     // 获取用户家目录
@@ -64,6 +64,9 @@ private:
     qint64 findLineStartOffsetWithCaching(const QString &filePath, qint64 targetLine);
 
     qint64 readFileAndReturnIndex(const QString &filePath, qint64 startLine, QList<uint64_t>& lineIndexes, bool reverseOrder);
+
+    // 获取当前调用该 DBus 接口的用户家目录路径
+    QString getCallerHomeDir();
 
 private:
     bool checkAuthorization(const QString &actionId);

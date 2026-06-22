@@ -287,6 +287,41 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
     return lineIndexes.at(startLine); // 返回给定起始行的索引
 }
 
+QString LogViewerService::getCallerHomeDir()
+{
+    if (!calledFromDBus()) {
+        qWarning() << "getCallerHomeDir: called not from dbus.";
+        return QString();
+    }
+
+    QString busName = message().service();
+    auto reply = connection().interface()->serviceUid(busName);
+    if (!reply.isValid()) {
+        qCWarning(logService) << "getCallerHomeDir: failed to get caller UID via D-Bus:"
+                              << reply.error().message();
+        return QString();
+    }
+
+    uint callerUid = reply.value();
+
+    // 使用线程安全版本的 getpwuid_r 替代非线程安全的 getpwuid
+    struct passwd pwd;
+    struct passwd *result = nullptr;
+    long bufSize = sysconf(_SC_GETPW_R_SIZE_MAX);
+    if (bufSize <= 0 || bufSize > 1024 * 1024) {
+        bufSize = 16384;  // 默认缓冲区大小
+    }
+    QByteArray buf(static_cast<qsizetype>(bufSize), '\0');
+
+    int ret = getpwuid_r(static_cast<uid_t>(callerUid), &pwd, buf.data(), buf.size(), &result);
+    if (ret == 0 && result) {
+        return QString::fromLocal8Bit(pwd.pw_dir);
+    }
+
+    qCCritical(logService) << "getCallerHomeDir: failed to resolve uid:" << callerUid << "error:" << ret;
+    return QString();
+}
+
 /**
    @brief Polkit action authorization check.
         Use com.deepin.pkexec.logViewerAuth.policy config file.
@@ -1191,46 +1226,35 @@ bool LogViewerService::checkAuth(const QString &actionId)
     return  bAuthVaild;
 }
 
-bool LogViewerService::exportOpsLog(const QString &outDir, const QString &homeDir)
+QString LogViewerService::exportOpsLog()
 {
-    qCDebug(logService) << "exportOpsLog for outDir:" << outDir << "and homeDir:" << homeDir;
     if(!checkAuth(s_Action_View)) {
         qCWarning(logService) << "Invalid authorization for export log";
-        return false;
+        return QString();
     }
 
-    // 导出路径白名单检查
-    QString outPath = QDir::cleanPath(outDir);
-    QStringList availablePaths = whiteListOutPaths();
-    bool bOutAvailable = false;
-    for (auto path : availablePaths) {
-        if (outPath.startsWith(path)) {
-            bOutAvailable = true;
-            break;
-        }
-    }
-    if (!bOutAvailable) {
-        qCCritical(logService) << "Output path not in whitelist:" << outDir;
-        return false;
+    QString callerHomeDir = getCallerHomeDir();
+    if (callerHomeDir.isEmpty()) {
+        qCWarning(logService) << "Failed to get caller home directory for export log";
+        return QString();
     }
 
-    // 家目录参数白名单检查，限定为已知用户家目录
-    QString cleanHomeDir = QDir::cleanPath(homeDir);
-    QStringList homeList = getHomePaths();
-    bool bHomeValid = false;
-    for (auto path : homeList) {
-        if (cleanHomeDir == path) {
-            bHomeValid = true;
-            break;
-        }
-    }
-    if (!bHomeValid) {
-        qCCritical(logService) << "homeDir not in allowed home paths:" << homeDir;
-        return false;
+    // 不支持导出 sudo 权限的日志，且导出日志功能主要面向普通用户使用场景，
+    // 因此当获取到的用户家目录为根目录时，认为是异常情况，不执行导出操作
+    if (callerHomeDir == "/" || callerHomeDir == "/root") {
+        qCWarning(logService) << "Invalid caller home directory for export log: " << callerHomeDir;
+        return QString();
     }
 
-    OpsLogExport ops(outDir.toStdString(), homeDir.toStdString());
+    QByteArray tmpTemplate = "/tmp/deepin-log-viewer-ops-logs.XXXXXX";
+    if (!mkdtemp(tmpTemplate.data())) {
+        qCCritical(logService) << "Failed to create secure temp directory";
+        return QString();
+    }
+    QString newOutDir = tmpTemplate;
+
+    OpsLogExport ops(newOutDir.toStdString(), callerHomeDir.toStdString());
     ops.run();
 
-    return true;
+    return newOutDir;
 }

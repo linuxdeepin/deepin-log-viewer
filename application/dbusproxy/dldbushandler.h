@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,7 +21,7 @@ public:
     int exitCode();
     void quit();
     bool exportLog(const QString &outDir, const QString &in, bool isFile);
-    bool exportOpsLog(const QString &outDir, const QString &userHomeDir);
+    QString exportOpsLog();
     bool isFileExist(const QString &filePath);
     quint64 getFileSize(const QString &filePath);
     qint64 getLineCount(const QString &filePath);

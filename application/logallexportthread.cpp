@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -16,7 +16,6 @@
 #include <QDateTime>
 #include <QSet>
 #include <QStandardPaths>
-#include <QTemporaryDir>
 
 Q_DECLARE_LOGGING_CATEGORY(logApp)
 
@@ -468,14 +467,13 @@ void LogAllExportThread::run()
     }
 
     // --- Export additional ops logs ---
-    if (!m_cancel.load()) {
-        // Create temporary directory for ops logs
+    // 不支持导出 sudo 权限的日志，且导出日志功能主要面向普通用户使用场景，
+    // 因此当获取到的用户家目录为根目录时，认为是异常情况，不执行导出操作
+    if (!m_cancel.load() && QDir::homePath() != "/" && QDir::homePath() != "/root") {
+        // Create a fixed temporary directory for ops logs
         QString userHomePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        QTemporaryDir tempDir(QDir::tempPath() + "/XXXXXX");
-
-        if (tempDir.isValid()) {
-            QString opsLogPath = tempDir.path();
-            DLDBusHandler::instance(this)->exportOpsLog(opsLogPath, userHomePath);
+        QString opsLogPath = DLDBusHandler::instance(this)->exportOpsLog();
+        if (!opsLogPath.isEmpty()) {
             completedTasks += 5;
             emit updatecurrentProcess(completedTasks);
             Utils::exportSomeOpsLogs(opsLogPath, userHomePath);

@@ -8,6 +8,10 @@
  * Do not edit! All changes made to it will be lost.
  */
 
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #ifndef DEEPINLOGVIEWERINTERFACE_H
 #define DEEPINLOGVIEWERINTERFACE_H
 
@@ -147,10 +151,9 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("whiteListOutPaths"), argumentList);
     }
 
-    inline QDBusPendingReply<bool> exportOpsLog(const QString &outDir, const QString &userHomeDir)
+    inline QDBusPendingReply<QString> exportOpsLog()
     {
         QList<QVariant> argumentList;
-        argumentList << QVariant::fromValue(outDir) << QVariant::fromValue(userHomeDir);
         return asyncCallWithArgumentList(QStringLiteral("exportOpsLog"), argumentList);
     }
 Q_SIGNALS: // SIGNALS
