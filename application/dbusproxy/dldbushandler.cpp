@@ -163,16 +163,15 @@ bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isF
     return m_dbus->exportLog(outDir, in, isFile);
 }
 
-bool DLDBusHandler::exportOpsLog(const QString &outDir, const QString &userHomeDir)
+bool DLDBusHandler::exportOpsLog()
 {
     m_dbus->setTimeout(1200000);
-    QDBusPendingReply<bool> reply = m_dbus->exportOpsLog(outDir, userHomeDir);
+    QDBusPendingReply<bool> reply = m_dbus->exportOpsLog();
     reply.waitForFinished();
     m_dbus->setTimeout(-1);
 
     if (reply.isError()) {
-        qCritical(logDBusHandler) << "call dbus interface 'exportHwOpsLog' failed. error info:" << reply.error().message();
-
+        qCritical(logDBusHandler) << "call dbus interface 'exportOpsLog' failed. error info:" << reply.error().message();
         return false;
     } else {
         qCDebug(logDBusHandler) << "exportOpsLog succeeded:" << reply.value();

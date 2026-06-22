@@ -55,7 +55,6 @@ const QString COREDUMP_REPEAT_CONFIG_PATH = Utils::homePath + "/.cache/deepin/de
 const float COREDUMP_HIGH_REPETITION = 0.8f;
 const int COREDUMP_TIME_THRESHOLD = 3;
 
-
 Utils::Utils(QObject *parent)
     : QObject(parent)
 {
@@ -80,17 +79,16 @@ QString Utils::getQssContent(const QString &filePath)
 QString Utils::getConfigPath()
 {
     QDir dir(QDir(Utils::homePath + "/.config")
-             .filePath(qApp->organizationName()));
+             .filePath(kOrgNameForDeepinLogViewer));
 
-    return dir.filePath(qApp->applicationName());
+    return dir.filePath(kAppNameForDeepinLogViewer);
 }
 
 QString Utils::getAppDataPath()
 {
     QDir dir(QDir(Utils::homePath + "/.local/share")
-             .filePath(qApp->organizationName()));
-
-    return dir.filePath(qApp->applicationName());
+             .filePath(kOrgNameForDeepinLogViewer));
+    return dir.filePath(kAppNameForDeepinLogViewer);
 }
 
 bool Utils::isFontMimeType(const QString &filePath)

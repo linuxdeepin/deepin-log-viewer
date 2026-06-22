@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -229,12 +229,14 @@ void LogAllExportThread::run()
             break;
     }
 
-    if (!m_cancel) {
+    // 不支持导出 sudo 权限的日志，且导出日志功能主要面向普通用户使用场景，
+    // 因此当获取到的用户家目录为根目录时，认为是异常情况，不执行导出操作
+    if (!m_cancel && QDir::homePath() != "/" && QDir::homePath() != "/root") {
         QString opsLogPath =tmpPath + "log-ops/";
         Utils::mkMutiDir(opsLogPath);
         QString userHomePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         // 收集运维日志
-        DLDBusHandler::instance(this)->exportOpsLog(opsLogPath, userHomePath);
+        DLDBusHandler::instance(this)->exportOpsLog();
         Utils::exportSomeOpsLogs(opsLogPath, userHomePath);
     }
 
