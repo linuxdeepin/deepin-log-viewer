@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
     // 命令参数大于1，进行命令行处理
     if (argc > 1) {
         QCoreApplication a(argc, argv);
-        a.setOrganizationName("deepin");
-        a.setApplicationName("deepin-log-viewer");
+        a.setOrganizationName(kOrgNameForDeepinLogViewer);
+        a.setApplicationName(kAppNameForDeepinLogViewer);
         a.setApplicationVersion(VERSION);
 
         DLogManager::registerConsoleAppender();

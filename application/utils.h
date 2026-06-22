@@ -21,6 +21,9 @@ struct LOG_REPEAT_COREDUMP_INFO {
     float repetitionRate = 0.0;
 };
 
+static constexpr char kOrgNameForDeepinLogViewer[] { "deepin" };
+static constexpr char kAppNameForDeepinLogViewer[] { "deepin-log-viewer" };
+
 /**
  * @brief 公用工具静态函数类
  */

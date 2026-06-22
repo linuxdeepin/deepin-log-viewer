@@ -36,7 +36,7 @@ public Q_SLOTS:
     Q_SCRIPTABLE QStringList getFileInfo(const QString &file, bool unzip = true);
     Q_SCRIPTABLE QStringList getOtherFileInfo(const QString &file, bool unzip = true);
     Q_SCRIPTABLE bool exportLog(const QString &outDir, const QString &in, bool isFile);
-    Q_SCRIPTABLE bool exportOpsLog(const QString &outDir, const QString &userHomeDir);
+    Q_SCRIPTABLE bool exportOpsLog();
     Q_SCRIPTABLE QString openLogStream(const QString &filePath);
     Q_SCRIPTABLE QString readLogInStream(const QString &token);
     Q_SCRIPTABLE QString isFileExist(const QString &filePath);
@@ -75,6 +75,8 @@ private:
     QMap<QString, std::pair<QString, QTextStream*>> m_logMap;
     QMap<QString, QList<uint64_t>> m_logLineIndex;
     bool checkAuth(const QString &actionId);
+    // 获取当前调用该 DBus 接口的用户家目录路径
+    QString getCallerHomeDir();
     QByteArray processCatFile(const QString &filePath);
     void processCmdArgs(const QString &cmdStr, const QStringList &args);
 };
