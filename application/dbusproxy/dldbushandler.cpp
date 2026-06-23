@@ -143,6 +143,11 @@ void DLDBusHandler::quit()
     m_dbus->quit();
 }
 
+bool DLDBusHandler::isGetFileInfoError() const
+{
+    return m_bGetFileInfoError;
+}
+
 QStringList DLDBusHandler::getFileInfo(const QString &flag, bool unzip)
 {
     qCDebug(logApp) << "DLDBusHandler::getFileInfo called with flag:" << flag << "unzip:" << unzip;
@@ -150,9 +155,11 @@ QStringList DLDBusHandler::getFileInfo(const QString &flag, bool unzip)
     reply.waitForFinished();
     if (reply.isError()) {
         qCWarning(logApp) << "call dbus iterface 'getFileInfo()' failed. error info:" << reply.error().message();
+        m_bGetFileInfoError = true;
     } else {
         qCDebug(logApp) << "getFileInfo succeeded, file count:" << reply.value().size();
         filePath = reply.value();
+        m_bGetFileInfoError = false;
     }
     return filePath;
 }
