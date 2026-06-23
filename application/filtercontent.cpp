@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -468,7 +468,11 @@ void FilterContent::setSelection(FILTER_CONFIG iConifg)
         cbx_dnf_lv->setCurrentIndex(iConifg.dnfCbx);
     }
     m_btnGroup->button(iConifg.dateBtn)->setChecked(true); //add by Airy for bug 19660:period button default setting
-    Q_EMIT m_btnGroup->button(iConifg.dateBtn)->click();
+    // 对于应用日志(APP_TREE_DATA)，应用下拉框变更(slot_cbxAppIdxChanged)已经触发了generateAppFile数据加载，
+    // 并且已携带了正确的dateBtn参数，此处不应再emit click()否则会导致重复加载（引发多次授权弹框）
+    if (m_currentType != APP_TREE_DATA) {
+        Q_EMIT m_btnGroup->button(iConifg.dateBtn)->click();
+    }
 }
 
 /**
