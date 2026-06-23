@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -125,16 +125,21 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
         emit appFinished(m_threadCount);
     } else {
         QStringList filePath = DLDBusHandler::instance(this)->getFileInfo(m_AppFiler.path);
+        // 如果getFileInfo的dbus调用失败(如用户取消授权)，直接返回false以中止后续子模块处理
+        if (DLDBusHandler::instance(this)->isGetFileInfoError()) {
+            qCWarning(logApp) << "D-Bus getFileInfo failed (authorization canceled) for submodule:"
+                              << app_filter.submodule << ", aborting remaining submodules";
+            emit appFinished(m_threadCount);
+            return false;
+        }
         for (int i = 0; i < filePath.count(); i++) {
             if (!m_canRun) {
-                mutex.unlock();
                 return false;
             }
             //按行解析
             QByteArray outByte = DLDBusHandler::instance(this)->readLog(filePath[i]).toUtf8();
             // dbus鉴权失败，不再继续解析
             if (outByte.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
-                mutex.unlock();
                 emit appFinished(m_threadCount);
                 return false;
             }
@@ -145,7 +150,6 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
 
             for (int j = strList.size() - 1; j >= 0; --j) {
                 if (!m_canRun) {
-                    mutex.unlock();
                     return false;
                 }
                 LOG_MSG_APPLICATOIN msg;
@@ -193,7 +197,6 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
                 }
             }
             if (!m_canRun) {
-                mutex.unlock();
                 return false;
             }
         }
@@ -207,7 +210,6 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
     m_AppFiler = app_filter;
 
     if ((!m_canRun)) {
-        mutex.unlock();
         return false;
     }
 
@@ -215,13 +217,11 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
 
     sd_journal *j ;
     if ((!m_canRun)) {
-        mutex.unlock();
         return false;
     }
     //打开日志文件
     r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
     if ((!m_canRun)) {
-        mutex.unlock();
         sd_journal_close(j);
         return false;
     }
@@ -233,7 +233,6 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
     //从尾部开始读，这样出来数据是倒叙，符合需求
     sd_journal_seek_tail(j);
     if ((!m_canRun)) {
-        mutex.unlock();
         sd_journal_close(j);
         return false;
     }
@@ -274,7 +273,6 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
     }
 
     if ((!m_canRun)) {
-        mutex.unlock();
         sd_journal_close(j);
         return false;
     }
@@ -294,7 +292,6 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
     //调用宏开始迭代
     SD_JOURNAL_FOREACH_BACKWARDS(j) {
         if ((!m_canRun)) {
-            mutex.unlock();
             sd_journal_close(j);
             return false;
         }

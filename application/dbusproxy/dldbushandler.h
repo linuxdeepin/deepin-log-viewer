@@ -17,6 +17,7 @@ public:
     QString readLog(const QString &filePath);
     QStringList readLogLinesInRange(const QString &filePath, qint64 startLine = 0, qint64 lineCount = 500, bool bReverse = true);
     QStringList getFileInfo(const QString &flag, bool unzip = true);
+    bool isGetFileInfoError() const;
     QStringList getOtherFileInfo(const QString &flag, bool unzip = true);
     int exitCode();
     void quit();
@@ -41,6 +42,7 @@ private:
     static DLDBusHandler *m_statichandeler;
     DeepinLogviewerInterface *m_dbus;
     QStringList filePath;
+    bool m_getFileInfoError = false;
 
     QTemporaryDir m_tempDir;
 };
