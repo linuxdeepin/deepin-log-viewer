@@ -6,14 +6,17 @@ endif ()
 #这里项目名称绝对不能和编译出的target名称一样
 project(deepin_log_viewer)
 option(DMAN_RELEAE OFF "Install dman resources to system or not")
+option(OPT_ENABLE_BUILD_UT "Build unit tests" ON)
 add_subdirectory(application)
 add_subdirectory(logViewerAuth)
 add_subdirectory(logViewerTruncate)
 
 add_subdirectory(logViewerService)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_subdirectory(tests)
+if (OPT_ENABLE_BUILD_UT)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_subdirectory(tests)
+    endif()
 endif()
 
 add_subdirectory(liblogviewerplugin)
