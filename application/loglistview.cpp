@@ -250,8 +250,8 @@ void LogListView::initUI()
             m_logTypes.push_back(DPKG_TREE_DATA);
         }
     }
-    //wayland环境才有kwin日志
-    if (Utils::isWayland()) {
+    // wayland环境且日志文件存在才有 kwin 日志
+    if (Utils::isWayland() && QFile::exists(KWIN_TREE_DATA)) {
         item = new QStandardItem(QIcon::fromTheme("dp_kwin"), DApplication::translate("Tree", "Kwin Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Kwin Log"));
@@ -260,7 +260,8 @@ void LogListView::initUI()
         item->setData(VListViewItemMargin, Dtk::MarginsRole);
         m_pModel->appendRow(item);
         m_logTypes.push_back(KWIN_TREE_DATA);
-    } else {
+    }
+    if (!Utils::isWayland()) {
         item = new QStandardItem(QIcon::fromTheme("dp_x"), DApplication::translate("Tree", "Xorg Log"));
         setIconSize(QSize(ICON_SIZE, ICON_SIZE));
         item->setToolTip(DApplication::translate("Tree", "Xorg Log")); // add by Airy for bug 16245
