@@ -415,34 +415,6 @@ bool Utils::isCoredumpctlExist()
     return isCoredumpctlExist;
 }
 
-QString Utils::getHomePath(const QString &userName)
-{
-    QString uName("");
-    if (!userName.isEmpty())
-        uName = userName;
-    else
-        uName = getCurrentUserName();
-
-    QString homePath = "";
-    if (isValidUserName(uName)) {
-        QProcess *unlock = new QProcess;
-        unlock->start("sh", QStringList() << "-c" << QString("cat /etc/passwd | grep %1").arg(uName));
-        unlock->waitForFinished();
-        auto output = unlock->readAllStandardOutput();
-        auto str = QString::fromUtf8(output);
-        homePath = str.mid(str.indexOf("::") + 2).split(":").first();
-    }
-
-    // 根据用户名获取家目录失败，默认采用QDir::homePath()作为homePath
-    QDir dir(homePath);
-    if (!dir.exists() || homePath.isEmpty())
-        homePath = QDir::homePath();
-
-    qCDebug(logUtils) << "userName: " << uName << "homePath:" << homePath;
-
-    return homePath;
-}
-
 QString Utils::appName(const QString &filePath)
 {
     QString ret;

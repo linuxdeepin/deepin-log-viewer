@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -76,7 +76,6 @@ public:
     static QString getCurrentUserName();
     static bool isValidUserName(const QString &userName);
     static bool isCoredumpctlExist();  // is coredumpctl installed
-    static QString getHomePath(const QString &userName = "");
     static QString appName(const QString &filePath);
     static void resetToNormalAuth(const QString &path);
     // 统计所有崩溃记录重复次数
