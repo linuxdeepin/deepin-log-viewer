@@ -1,3 +1,14 @@
+deepin-log-viewer (6.5.32) unstable; urgency=medium
+
+  *fix(loglistview): decouple Kwin/Xorg log visibility and validate Kwin log file existence
+  *chore: add OPT_ENABLE_BUILD_UT option to control unit test building
+  *fix: resolve multiple polkit auth dialogs and mutex crashes in app log parsing
+  *fix(logexport): eliminate path injection in exportOpsLog by resolving caller home dir via DBus UID
+  *fix(desktop): add trailing semicolon to Categories field
+  *fix(test): resolve Qt6 unittest crash and link errors
+
+ -- Wang Yu <wangyu@uniontech.com>  Fri, 26 Jun 2026 10:40:25 +0800
+
 deepin-log-viewer (6.5.31) unstable; urgency=medium
 
   * fix: add path whitelist validation to exportOpsLog
@@ -540,4 +551,3 @@ deepin-log-viewer (5.2.0) unstable; urgency=medium
   * Initial release
 
  -- unknown <zs@zs-PC.com>  Thu, 17 Oct 2019 16:57:59 +0800
-
