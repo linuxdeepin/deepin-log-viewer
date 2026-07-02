@@ -13,6 +13,8 @@ MemoryLimit=8G
 # 非root有阻塞，deepin-daemon启动后不能通过/proc/pid/exe获取启动进程全路径，下一阶段再按deepin-dameon启动
 #User=deepin-daemon
 ProtectSystem=strict
+# exportOpsLog 需要在 /var/log 下创建临时导出目录，须显式放开写权限
+ReadWritePaths=/var/log
 
 InaccessiblePaths=-/etc/shadow
 InaccessiblePaths=-/etc/NetworkManager/system-connections

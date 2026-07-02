@@ -232,12 +232,23 @@ void LogAllExportThread::run()
     // 不支持导出 sudo 权限的日志，且导出日志功能主要面向普通用户使用场景，
     // 因此当获取到的用户家目录为根目录时，认为是异常情况，不执行导出操作
     if (!m_cancel && QDir::homePath() != "/" && QDir::homePath() != "/root") {
-        QString opsLogPath =tmpPath + "log-ops/";
+        QString opsLogPath = tmpPath + "log-ops/";
         Utils::mkMutiDir(opsLogPath);
         QString userHomePath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        // 收集运维日志
-        DLDBusHandler::instance(this)->exportOpsLog();
-        Utils::exportSomeOpsLogs(opsLogPath, userHomePath);
+        // 收集运维日志：root 服务在 /var/log 下创建随机临时目录导出日志，并返回该目录路径
+        QString rootTempDir = DLDBusHandler::instance(this)->exportOpsLog();
+        if (!rootTempDir.isEmpty() && QDir(rootTempDir).exists()) {
+            // 将 root 导出的日志从 /var/log 临时目录拷贝到前端的 opsLogPath。
+            // -rP：递归拷贝且不跟随符号链接，与 root 侧 copy_file_or_dir 的 cp -rP 保持一致，
+            // 避免临时目录内符号链接指向 FIFO/特殊文件导致前端进程阻塞或读到非预期内容。
+            Utils::executeCmd("cp", QStringList() << "-rP" << rootTempDir + "/." << opsLogPath);
+            // 拷贝完成后及时清理 /var/log 下的 root 临时目录，避免遗留含系统日志的目录。
+            // 无参：服务端清理自身缓存的本次导出路径，杜绝路径替换风险。
+            DLDBusHandler::instance(this)->removeOpsLogTempDir();
+        } else {
+            qCWarning(logExportAll) << "exportOpsLog returned empty or non-existent root temp dir, root-side ops logs may be missing";
+        }
+        Utils::exportUserPermissionOpsLogs(opsLogPath, userHomePath);
     }
 
     if (!m_cancel) {

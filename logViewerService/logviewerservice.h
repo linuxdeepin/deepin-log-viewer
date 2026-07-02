@@ -13,6 +13,7 @@
 #include <QProcess>
 #include <QTemporaryDir>
 #include <QDBusUnixFileDescriptor>
+#include <QMap>
 
 class QTextStream;
 class DGioVolumeManager;
@@ -36,7 +37,10 @@ public Q_SLOTS:
     Q_SCRIPTABLE QStringList getFileInfo(const QString &file, bool unzip = true);
     Q_SCRIPTABLE QStringList getOtherFileInfo(const QString &file, bool unzip = true);
     Q_SCRIPTABLE bool exportLog(const QString &outDir, const QString &in, bool isFile);
-    Q_SCRIPTABLE bool exportOpsLog();
+    Q_SCRIPTABLE QString exportOpsLog();
+    // 清理 exportOpsLog 在 /var/log 下创建的临时导出目录。无参：清理的是服务端缓存
+    // 的本次创建路径，避免调用方传参带来的路径替换/越权删除风险。
+    Q_SCRIPTABLE bool removeOpsLogTempDir();
     Q_SCRIPTABLE QString openLogStream(const QString &filePath);
     Q_SCRIPTABLE QString readLogInStream(const QString &token);
     Q_SCRIPTABLE QString isFileExist(const QString &filePath);
@@ -70,13 +74,20 @@ private:
     QTemporaryDir tmpDir;
     QProcess m_process;
     QString m_tmpDirPath;
+    // exportOpsLog 创建的 /var/log 临时目录路径，按 D-Bus 调用方 unique bus name 隔离存储，
+    // 供 removeOpsLogTempDir 按当前调用者身份清理。避免单一成员变量在多用户/多窗口并发
+    // 导出时被覆盖，导致临时目录泄露或误清理他人目录。
+    QMap<QString, QString> m_opsTempDirs;
     QString m_actionId;
     QMap<QString, QStringList> m_commands;
     QMap<QString, std::pair<QString, QTextStream*>> m_logMap;
     QMap<QString, QList<uint64_t>> m_logLineIndex;
     bool checkAuth(const QString &actionId);
-    // 获取当前调用该 DBus 接口的用户家目录路径
-    QString getCallerHomeDir();
+    // 按 fd-relative 安全方式删除 exportOpsLog 产生的 /var/log 临时目录（path 为缓存路径）。
+    // 成功返回 true；path 为空或非预期前缀/删除失败返回 false。
+    bool removeOpsTempDirByPath(const QString &path);
+    // 获取当前调用该 DBus 接口的用户家目录路径与主组 gid
+    bool getCallerHomeAndGid(QString &outHome, uint &outGid);
     QByteArray processCatFile(const QString &filePath);
     void processCmdArgs(const QString &cmdStr, const QStringList &args);
 };

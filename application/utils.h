@@ -84,11 +84,24 @@ public:
     static QStringList getRepeatCoredumpExePaths();
     // 更新高频重复崩溃记录exe路径到文件
     static void updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &infos = QList<LOG_REPEAT_COREDUMP_INFO>());
+    // 查找所有物理网络接口
+    static QStringList getPhysicalInterfaces();
+    static QStringList expandPathWithWildcardIterator(const QString &pathWithWildcard);
     // 执行cmd命令
     static QByteArray executeCmd(const QString& cmd, const QStringList& args = QStringList(), const QString& workPath = QString());
+    static QByteArray processCmdWithArgs(const QString &cmdStr, const QString &workPath, const QStringList &args);
+    static void appendToFile(const QString &filePath, const QByteArray &content);
+    // 用户权限的APP日志收集
+    static void exportUserPermissionAppLogs(const QString &outDir, const QString &userHomeDir);
+    // 用户权限的系统日志收集
+    static void exportUserPermissionSystemLogs(const QString &outDir, const QString &userHomeDir);
+    // 用户权限的内核日志收集
+    static void exportUserPermissionKernelLogs(const QString &outDir);
+    // 用户权限的DDE日志收集
+    static void exportUserPermissionDDELogs(const QString &outDir, const QString &userHomeDir);
+    // 用户权限的运维日志收集
+    static void exportUserPermissionOpsLogs(const QString &outDir, const QString &userHomeDir);
 
-    // 部分运维日志收集
-    static void exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir);
 
     /**
      * @brief specialComType 是否是特殊机型，like huawei
