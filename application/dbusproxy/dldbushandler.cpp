@@ -170,18 +170,34 @@ bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isF
     return m_dbus->exportLog(outDir, in, isFile);
 }
 
-bool DLDBusHandler::exportOpsLog()
+QString DLDBusHandler::exportOpsLog()
 {
     m_dbus->setTimeout(1200000);
-    QDBusPendingReply<bool> reply = m_dbus->exportOpsLog();
+    QDBusPendingReply<QString> reply = m_dbus->exportOpsLog();
     reply.waitForFinished();
     m_dbus->setTimeout(-1);
 
     if (reply.isError()) {
         qCritical(logDBusHandler) << "call dbus interface 'exportOpsLog' failed. error info:" << reply.error().message();
+        return QString();
+    } else {
+        qCDebug(logDBusHandler) << "exportOpsLog succeeded, root temp dir:" << reply.value();
+        return reply.value();
+    }
+}
+
+bool DLDBusHandler::removeOpsLogTempDir()
+{
+    m_dbus->setTimeout(60000);
+    QDBusPendingReply<bool> reply = m_dbus->removeOpsLogTempDir();
+    reply.waitForFinished();
+    m_dbus->setTimeout(-1);
+
+    if (reply.isError()) {
+        qCritical(logDBusHandler) << "call dbus interface 'removeOpsLogTempDir' failed. error info:" << reply.error().message();
         return false;
     } else {
-        qCDebug(logDBusHandler) << "exportOpsLog succeeded:" << reply.value();
+        qCDebug(logDBusHandler) << "removeOpsLogTempDir succeeded, result:" << reply.value();
         return reply.value();
     }
 }

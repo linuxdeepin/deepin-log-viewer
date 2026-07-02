@@ -7,6 +7,11 @@
 
 #include <pwd.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <cstring>
 #include <fstream>
 
 #include <polkit-qt5-1/PolkitQt1/Authority>
@@ -32,6 +37,8 @@ using namespace PolkitQt1;
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTemporaryFile>
+#include <QFile>
+#include <QTemporaryDir>
 
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service")
@@ -1031,49 +1038,181 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     return true;
 }
 
-bool LogViewerService::exportOpsLog()
+QString LogViewerService::exportOpsLog()
 {
     if(!checkAuth(s_Action_View)) { //非法调用
         qCWarning(logService) << "Invalid authorization for export log";
-        return false;
+        return QString();
     }
 
-    QString callerHomeDir = getCallerHomeDir();
-    if (callerHomeDir.isEmpty()) {
-        qCWarning(logService) << "Failed to get caller home directory for export log";
-        return false;
+    QString callerHomeDir;
+    uint callerGid = 0;
+    if (!getCallerHomeAndGid(callerHomeDir, callerGid)) {
+        qCWarning(logService) << "Failed to get caller identity for export log";
+        return QString();
     }
 
     // 不支持导出 sudo 权限的日志，且导出日志功能主要面向普通用户使用场景，
     // 因此当获取到的用户家目录为根目录时，认为是异常情况，不执行导出操作
     if (callerHomeDir == "/" || callerHomeDir == "/root") {
         qCWarning(logService) << "Invalid caller home directory for export log: " << callerHomeDir;
+        return QString();
+    }
+
+    // 安全改进：root 服务不再写入用户家目录（避免符号链接攻击面），
+    // 改为在 /var/log 下创建随机临时目录，由 root 完全控制。
+    // 导出完成后将路径返回给前端，由前端以普通用户身份拷贝到自己的临时目录。
+    // 临时目录的即时清理由前端拷贝完成后调用 removeOpsLogTempDir() 完成。
+
+    QTemporaryDir tmpOpsDir("/var/log/deepin-log-viewer-ops-log.XXXXXX");
+    tmpOpsDir.setAutoRemove(false);
+    if (!tmpOpsDir.isValid()) {
+        qCWarning(logService) << "exportOpsLog: failed to create temporary dir under /var/log:" << tmpOpsDir.errorString();
+        return QString();
+    }
+
+    const QString opsDir = tmpOpsDir.path();
+    // 按调用方 D-Bus unique bus name 隔离缓存本次创建的临时目录路径，
+    // 供 removeOpsLogTempDir() 按当前调用者身份清理。若同一调用方存在未清理的旧目录，
+    // 先兜底清理，避免旧目录因被覆盖而泄露。
+    const QString callerBusName = message().service();
+    if (m_opsTempDirs.contains(callerBusName)) {
+        removeOpsTempDirByPath(m_opsTempDirs.value(callerBusName));
+    }
+    m_opsTempDirs.insert(callerBusName, opsDir);
+    // 临时目录离开作用域后不会被自动删除（AutoRemove=false），路径交由 OpsLogExport 使用
+    OpsLogExport ops(opsDir.toStdString(), callerGid);
+    ops.run();
+
+    return opsDir;
+}
+
+// 基于 fd 的 TOCTOU 安全递归删除目录。
+// 全程相对父目录 fd 操作（openat/fstatat/unlinkat），不重新解析路径，消除「检查-使用」竞态。
+// - O_NOFOLLOW：若 name 是符号链接则 openat 直接失败，不跟随目标；
+// - O_DIRECTORY：仅当为目录时打开；
+// - fstatat(..., AT_SYMLINK_NOFOLLOW) 取条目自身 stat，符号链接为 S_ISLNK（非 S_ISDIR），
+//   走 unlinkat 删链接本身而非跟随目标。
+static bool safeRemoveDirRecursive(int parentFd, const char *name)
+{
+    int fd = openat(parentFd, name, O_RDONLY | O_NOFOLLOW | O_DIRECTORY | O_CLOEXEC);
+    if (fd < 0) {
+        // 非目录或符号链接：作为文件/链接直接 unlink（不跟随目标）。
+        return unlinkat(parentFd, name, 0) == 0;
+    }
+
+    DIR *dir = fdopendir(fd);
+    if (!dir) {
+        close(fd);
         return false;
     }
 
-    QString newOutDir = callerHomeDir + "/.local/share/"
-            + kOrgNameForDeepinLogViewer + "/"
-            + kAppNameForDeepinLogViewer + "/tmp/log-ops/";
+    // 先收集所有条目名，再处理，避免在迭代过程中修改目录导致遗漏。
+    QVector<QByteArray> entries;
+    struct dirent *entry = nullptr;
+    while ((entry = readdir(dir)) != nullptr) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+        entries.append(QByteArray(entry->d_name));
+    }
+    // 此时不再调用 readdir，可安全修改目录。
 
-    OpsLogExport ops(newOutDir.toStdString(), callerHomeDir.toStdString());
-    ops.run();
+    bool ok = true;
+    for (const QByteArray &childName : entries) {
+        struct stat st;
+        if (fstatat(fd, childName.constData(), &st, AT_SYMLINK_NOFOLLOW) != 0)
+            continue;  // 条目已消失，跳过
 
+        if (S_ISDIR(st.st_mode)) {
+            if (!safeRemoveDirRecursive(fd, childName.constData()))
+                ok = false;
+        } else {
+            // 普通文件或符号链接——unlink 链接本身，不跟随。
+            if (unlinkat(fd, childName.constData(), 0) != 0)
+                ok = false;
+        }
+    }
+
+    closedir(dir);  // 同时关闭 fd
+    // 目录已清空，移除目录项本身。
+    if (unlinkat(parentFd, name, AT_REMOVEDIR) != 0)
+        ok = false;
+    return ok;
+}
+
+bool LogViewerService::removeOpsTempDirByPath(const QString &path)
+{
+    // 防御性前缀校验：缓存路径由本服务设置，理论可信，但删除前再确认前缀。
+    if (!path.startsWith("/var/log/deepin-log-viewer-ops-log.")) {
+        qCWarning(logService) << "removeOpsTempDirByPath: cached path not under expected prefix, refuse:" << path;
+        return false;
+    }
+
+    // 基于 fd 的 TOCTOU 安全递归删除，替代 QDir::removeRecursively 的路径式操作。
+    // 注意：safeRemoveDirRecursive 内部递归虽是 fd-relative，但其入口签名是 (parentFd, name)，
+    // 若传 AT_FDCWD + 绝对路径，openat 会忽略 fd 并重新解析绝对路径，打破“全程不重新解析路径”
+    // 的设计承诺。这里先打开可信父目录 /var/log 的 fd，再以 basename 进行 fd-relative 操作，
+    // 目标路径自始至终不再被重新解析，真正消除“检查-使用”竞态。
+    const QByteArray pathBytes = QFile::encodeName(path);
+    const int slash = pathBytes.lastIndexOf('/');
+    if (slash <= 0) {
+        qCWarning(logService) << "removeOpsTempDirByPath: invalid path (no parent dir):" << path;
+        return false;
+    }
+    const QByteArray parentPath = pathBytes.left(slash);      // /var/log
+    const QByteArray baseName = pathBytes.mid(slash + 1);     // deepin-log-viewer-ops-log.XXX
+
+    const int parentFd = open(parentPath.constData(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+    if (parentFd < 0) {
+        qCWarning(logService) << "removeOpsTempDirByPath: failed to open parent dir:" << parentPath << "errno:" << errno;
+        return false;
+    }
+    const bool removed = safeRemoveDirRecursive(parentFd, baseName.constData());
+    close(parentFd);
+
+    if (!removed) {
+        qCWarning(logService) << "removeOpsTempDirByPath: failed to remove safely:" << path;
+        return false;
+    }
+
+    qCDebug(logService) << "removeOpsTempDirByPath: removed:" << path;
     return true;
 }
 
-QString LogViewerService::getCallerHomeDir()
+bool LogViewerService::removeOpsLogTempDir()
+{
+    // 授权校验：与 exportOpsLog 一致，使用 s_Action_View。
+    if (!checkAuth(s_Action_View)) {
+        return false;
+    }
+
+    // 无参设计：清理的是服务端在 exportOpsLog 中按当前调用者缓存的本进程临时目录路径，
+    // 不接受调用方传参，杜绝路径替换/越权删除风险。按 D-Bus unique bus name 查找，
+    // 只清理当前调用者自己的目录，互不影响其他用户/窗口的导出。
+    const QString callerBusName = message().service();
+    if (!m_opsTempDirs.contains(callerBusName)) {
+        return true;  // 当前调用者无缓存目录，视为已清理
+    }
+
+    const QString path = m_opsTempDirs.value(callerBusName);
+    const bool removed = removeOpsTempDirByPath(path);
+    m_opsTempDirs.remove(callerBusName);
+    return removed;
+}
+
+bool LogViewerService::getCallerHomeAndGid(QString &outHome, uint &outGid)
 {
     if (!calledFromDBus()) {
-        qWarning() << "getCallerHomeDir: called not from dbus.";
-        return QString();
+        qWarning() << "getCallerHomeAndGid: called not from dbus.";
+        return false;
     }
 
     QString busName = message().service();
     auto reply = connection().interface()->serviceUid(busName);
     if (!reply.isValid()) {
-        qCWarning(logService) << "getCallerHomeDir: failed to get caller UID via D-Bus:"
+        qCWarning(logService) << "getCallerHomeAndGid: failed to get caller UID via D-Bus:"
                               << reply.error().message();
-        return QString();
+        return false;
     }
 
     uint callerUid = reply.value();
@@ -1089,11 +1228,13 @@ QString LogViewerService::getCallerHomeDir()
 
     int ret = getpwuid_r(static_cast<uid_t>(callerUid), &pwd, buf.data(), buf.size(), &result);
     if (ret == 0 && result) {
-        return QString::fromLocal8Bit(pwd.pw_dir);
+        outHome = QString::fromLocal8Bit(pwd.pw_dir);
+        outGid = static_cast<uint>(pwd.pw_gid);
+        return true;
     }
 
-    qCCritical(logService) << "getCallerHomeDir: failed to resolve uid:" << callerUid << "error:" << ret;
-    return QString();
+    qCCritical(logService) << "getCallerHomeAndGid: failed to resolve uid:" << callerUid << "error:" << ret;
+    return false;
 }
 
 bool LogViewerService::checkAuth(const QString &actionId)

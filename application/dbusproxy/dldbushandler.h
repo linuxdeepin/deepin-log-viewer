@@ -22,7 +22,8 @@ public:
     int exitCode();
     void quit();
     bool exportLog(const QString &outDir, const QString &in, bool isFile);
-    bool exportOpsLog();
+    QString exportOpsLog();
+    bool removeOpsLogTempDir();
     bool isFileExist(const QString &filePath);
     quint64 getFileSize(const QString &filePath);
     qint64 getLineCount(const QString &filePath);

@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "opslogexport.h"
+#include "opslogpaths.h"
 
 #include <iostream>
 #include <fstream>
@@ -11,6 +12,7 @@
 #include <cstdlib>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <QProcess>
 #include <QString>
@@ -20,6 +22,7 @@
 #include <QBuffer>
 #include <QDirIterator>
 #include <QFileInfo>
+#include <QDir>
 
 using namespace std;
 
@@ -158,16 +161,21 @@ static QStringList expandPathWithWildcardIterator(const QString &pathWithWildcar
     return matchedFiles;
 }
 
-OpsLogExport::OpsLogExport(const string &target, const string &home)
+OpsLogExport::OpsLogExport(const string &target, uint callerGid)
     : target_dir(target)
-    , home_dir(home)
+    , m_callerGid(callerGid)
 {
 }
 
 void OpsLogExport::run()
 {
-    // 注意：需要优先创建目录结构
-    createDirStruct();
+    // 安全加固：在执行任何拷贝操作前，验证目标目录路径安全（无符号链接、在 /var/log 下）
+    if (!ensureSafeTargetDir()) {
+        qWarning() << "OpsLogExport::run: target directory safety check failed, aborting export";
+        return;
+    }
+
+    createOpsLogDirStruct(QString::fromStdString(target_dir));
 
     exportAppLogs();
     exportSystemLogs();
@@ -184,17 +192,113 @@ void OpsLogExport::run()
     setDirectoryPermissionsSafe(target_dir);
 }
 
+void OpsLogExport::createOpsLogDirStruct(const QString &outDir)
+{
+    // 创建目录结构
+    QStringList dirs = {
+        outDir + QString(kKernelPath),
+        outDir + QString(kSystemPath),
+        outDir + QString(kDDEPath),
+        outDir + QString(kAppPath),
+        outDir + QString(kJournalPath),
+        outDir + QString(kAptPath),
+        outDir + QString(kUosStePath),
+        outDir + QString(kUossteLogsPath),
+        outDir + QString(kDefenderPath),
+        outDir + QString(kCloudPrintPath),
+        outDir + QString(kCloudScanPath),
+        outDir + QString(kPrinterPath),
+        outDir + QString(kGraphicsDriverManagerPath),
+        outDir + QString(kBootMakerPath),
+        outDir + QString(kScanerPath),
+        outDir + QString(kKMSPath),
+        outDir + QString(kCompressorPath),
+        outDir + QString(kCalendarPath),
+        outDir + QString(kManualPath),
+        outDir + QString(kReaderPath),
+        outDir + QString(kFontManagerPath),
+        outDir + QString(kDebInstallerPath),
+        outDir + QString(kTerminalPath),
+        outDir + QString(kVoiceNotPath),
+        outDir + QString(kDevicemanagerPath),
+        outDir + QString(kServiceSupportPath),
+        outDir + QString(kRemoteAssistancePath),
+        outDir + QString(kSystemMonitorPath),
+        outDir + QString(kEditorPath),
+        outDir + QString(kCalculatorPath),
+        outDir + QString(kMailPath),
+        outDir + QString(kScreenRecorderPath),
+        outDir + QString(kDrawPath),
+        outDir + QString(kMusicPath),
+        outDir + QString(kImageViewerPath),
+        outDir + QString(kAlbumPath),
+        outDir + QString(kMoviePath),
+        outDir + QString(kCameraPath),
+        outDir + QString(kChineseImePath),
+        outDir + QString(kDeepinInstallerPath),
+        outDir + QString(kDeepinRecoveryPath),
+        outDir + QString(kOemCustomPath),
+        outDir + QString(kUosActivatorPath),
+        outDir + QString(kUosActivatorLogPath),
+        outDir + QString(kFcitxPath),
+        outDir + QString(kDiskManagerPath),
+        outDir + QString(kDownloaderPath),
+        outDir + QString(kKwinPath),
+        outDir + QString(kKboxPath),
+        outDir + QString(kDeepinLogViewerPath),
+        outDir + QString(kDdeDesktopPath),
+        outDir + QString(kDdeFileManagerPath),
+        outDir + QString(kDdeDockPath),
+        outDir + QString(kSystemPulseaudioPath)
+    };
+
+    // hisi目录仅在源目录存在时创建
+    if (path_exists("/var/log/hisi")) {
+        dirs.push_back(outDir + QString(kHisiPath));
+    }
+
+    for (const QString &dir : dirs) {
+        QDir(dir).mkpath(".");
+    }
+}
+
 bool OpsLogExport::path_exists(const string &path)
 {
     struct stat buffer;
     return (stat(path.c_str(), &buffer) == 0);
 }
 
-bool OpsLogExport::create_directories(const string &path)
+/*!
+ * \brief 验证目标目录在 /var/log 下。
+ *
+ * target_dir 由 LogViewerService::exportOpsLog() 通过 QTemporaryDir 在 /var/log 下
+ * 随机创建（root 控制、用户不可预测路径），此处仅做防御性前缀校验。
+ *
+ * 使用 canonicalFilePath 解析符号链接到真实路径后再做前缀比对，避免 cleanPath 仅处理
+ * “.”/“..” 而不解析符号链接、被构造路径逃逸到非预期目录。注意 /var/log 自身也可能
+ * 是符号链接（指向独立分区），因此两端都用 canonicalFilePath 解析后在同一真实坐标系下比对。
+ *
+ * \return true 表示路径在 /var/log 下；false 表示路径异常。
+ */
+bool OpsLogExport::ensureSafeTargetDir()
 {
-    return QDir(QString::fromStdString(path)).mkpath(".");
+    const QString rawTarget = QString::fromStdString(target_dir);
+    const QString canonicalTarget = QFileInfo(rawTarget).canonicalFilePath();
+    if (canonicalTarget.isEmpty()) {
+        qWarning() << "ensureSafeTargetDir: target_dir does not exist or cannot be resolved:" << rawTarget;
+        return false;
+    }
+    const QString canonicalVarLog = QFileInfo(QStringLiteral("/var/log")).canonicalFilePath();
+    if (canonicalVarLog.isEmpty()) {
+        qWarning() << "ensureSafeTargetDir: /var/log cannot be resolved";
+        return false;
+    }
+    if (!canonicalTarget.startsWith(canonicalVarLog + "/")) {
+        qWarning() << "ensureSafeTargetDir: target_dir is not under /var/log:" << canonicalTarget;
+        return false;
+    }
+    return true;
 }
-
 void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
 {
     if (!path_exists(src)) return;
@@ -203,6 +307,9 @@ void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
     QString qDst = QString::fromStdString(dst_dir);
 
     QFileInfo srcInfo(qSrc);
+    // 符号链接源一律不拷贝：避免引入指向特殊文件/系统文件的链接，防止后续前端 cp
+    // 或 root 清理时跟随链接造成阻塞或误删。目录内残留的链接会在权限整理阶段再删一次。
+    if (srcInfo.isSymLink()) return;
     if (srcInfo.isFile()) {
         // 单个文件：确保目标目录存在后用 QFile::copy
         QDir().mkpath(qDst);
@@ -210,8 +317,9 @@ void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
         QFile::remove(dstFile);  // QFile::copy 要求目标不存在
         QFile::copy(qSrc, dstFile);
     } else {
-        // 目录：使用 cp -rf 通过 QProcess 参数数组传递
-        runProcess({"cp", "-rf", qSrc, qDst});
+        // 目录：-rP 复制链接本身而非目标内容；目录内的符号链接条目会在
+        // setDirectoryPermissionsSafe 中被统一删除，最终导出目录不含任何符号链接。
+        runProcess({"cp", "-rP", qSrc, qDst});
     }
 }
 
@@ -222,180 +330,82 @@ void OpsLogExport::execute_command(const QStringList &args, const string &output
 
 void OpsLogExport::setDirectoryPermissionsSafe(const string &dir_path)
 {
-    // 收缩到最小权限：仅 owner 可读写执行/写入，避免向 group 和 other 暴露导出目录。
-    const QFile::Permissions dirPerms = QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner;
-    const QFile::Permissions filePerms = QFile::ReadOwner | QFile::WriteOwner;
+    // 基本校验：确认路径在 /var/log 下。目录由 root 通过 QTemporaryDir 在 /var/log 下
+    // 随机创建（mkdtemp，初始 0700 root:root，路径用户不可预测）。
+    // 使用 canonicalFilePath 解析符号链接到真实路径后再比对，避免 cleanPath 不解析符号链接
+    // 被构造路径逃逸；/var/log 自身也可能是符号链接，故两端都解析后比对。
+    const QString rawDir = QString::fromStdString(dir_path);
+    const QString canonicalDir = QFileInfo(rawDir).canonicalFilePath();
+    if (canonicalDir.isEmpty()) {
+        qWarning() << "setDirectoryPermissionsSafe: dir_path cannot be resolved:" << rawDir;
+        return;
+    }
+    const QString canonicalVarLog = QFileInfo(QStringLiteral("/var/log")).canonicalFilePath();
+    if (canonicalVarLog.isEmpty()) {
+        qWarning() << "setDirectoryPermissionsSafe: /var/log cannot be resolved";
+        return;
+    }
+    if (!canonicalDir.startsWith(canonicalVarLog + "/")) {
+        qWarning() << "setDirectoryPermissionsSafe: dir_path is not under /var/log, refusing:" << canonicalDir;
+        return;
+    }
 
-    const QFileInfo homeInfo(QString::fromStdString(home_dir));
-    const uint ownerId = static_cast<uint>(homeInfo.ownerId());
-    const uint groupId = static_cast<uint>(homeInfo.groupId());
+    // 权限策略：属主保持 root，仅将 group 改为 callerGid，目录 0750、文件 0640。
+    //
+    // - 不把 owner 改成 caller：caller 对目录只有 group 的 r-x（无 w），无法在其中创建
+    //   或替换符号链接，从而杜绝 caller 植入指向系统核心文件的符号链接、待 root 下次
+    //   清理 removeRecursively 时误删目标的攻击面。
+    // - 0750/0640 而非 0755/0644：仅 caller 同组可读，避免任意本地用户在 exportOpsLog
+    //   返回至前端拷贝完成的时间窗内读取 auth.log/syslog 等敏感系统日志。
+    //
+    // 仍需递归处理：copy_file_or_dir() 对目录用 `cp -rP` 会保留源目录 mode（如
+    // /var/log/journal 常为 0700/02755），必须统一刷成 0750/0640。
+    const QFile::Permissions dirPerms = QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner
+                                      | QFile::ReadGroup | QFile::ExeGroup;
+    const QFile::Permissions filePerms = QFile::ReadOwner | QFile::WriteOwner
+                                       | QFile::ReadGroup;
+
+    const gid_t callerGid = static_cast<gid_t>(m_callerGid);
+    // uid 传 -1 表示不改变 owner（保持 root），仅设置 group。
+    const uid_t keepOwner = static_cast<uid_t>(-1);
 
     auto applySafeOwnership = [&](const QString &path, bool isDir) {
-        if (::chown(QFile::encodeName(path).constData(), ownerId, groupId) != 0) {
-            qWarning() << "Failed to chown export path:" << path << "error:" << strerror(errno);
+        if (::chown(QFile::encodeName(path).constData(), keepOwner, callerGid) != 0) {
+            qWarning() << "Failed to chgrp export path:" << path << "error:" << strerror(errno);
             return;
         }
         QFile::setPermissions(path, isDir ? dirPerms : filePerms);
     };
 
-    applySafeOwnership(QString::fromStdString(dir_path), true);
+    // 顶层临时目录本身（QTemporaryDir 经 mkdtemp 创建，非符号链接）
+    applySafeOwnership(canonicalDir, true);
 
-    QDirIterator it(QString::fromStdString(dir_path), QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot,
+    // QDirIterator 默认不跟随符号链接（NoIteratorFlags）
+    QDirIterator it(canonicalDir, QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot,
                     QDirIterator::Subdirectories);
     while (it.hasNext()) {
         it.next();
         const QFileInfo &info = it.fileInfo();
-        if (info.isSymLink())
+        if (info.isSymLink()) {
+            // 符号链接不保留：直接删除链接条目（不跟随目标），确保导出目录不含任何
+            // 符号链接——前端 cp 与 root 下次清理均无链接可跟随，杜绝相关风险。
+            QFile::remove(info.filePath());
             continue;
+        }
         applySafeOwnership(info.filePath(), info.isDir());
-    }
-}
-
-void OpsLogExport::createDirStruct()
-{
-    // 创建目录结构
-    vector<string> dirs = {
-        target_dir + "/kernel",
-        target_dir + "/system",
-        target_dir + "/dde",
-        target_dir + "/app",
-        target_dir + "/app/deepin-defender",
-        target_dir + "/app/deepin-cloud-print",
-        target_dir + "/app/deepin-cloud-scan",
-        target_dir + "/app/dde-printer",
-        target_dir + "/app/deepin-graphics-driver-manager",
-        target_dir + "/app/deepin-boot-maker",
-        target_dir + "/app/deepin-scaner",
-        target_dir + "/app/kms",
-        target_dir + "/app/deepin-compressor",
-        target_dir + "/app/dde-calendar",
-        target_dir + "/app/deepin-manual",
-        target_dir + "/app/deepin-reader",
-        target_dir + "/app/deepin-font-manager",
-        target_dir + "/app/deepin-deb-installer",
-        target_dir + "/app/deepin-terminal",
-        target_dir + "/app/deepin-voice-note",
-        target_dir + "/app/deepin-devicemanager",
-        target_dir + "/app/uos-service-support",
-        target_dir + "/app/uos-remote-assistance",
-        target_dir + "/app/deepin-system-monitor",
-        target_dir + "/app/deepin-editor",
-        target_dir + "/app/deepin-calculator",
-        target_dir + "/app/deepin-mail",
-        target_dir + "/app/deepin-screen-recorder",
-        target_dir + "/app/deepin-draw",
-        target_dir + "/app/deepin-music",
-        target_dir + "/app/deepin-image-viewer",
-        target_dir + "/app/deepin-album",
-        target_dir + "/app/deepin-movie",
-        target_dir + "/app/deepin-camera",
-        target_dir + "/app/chineseime",
-        target_dir + "/app/deepin-installer",
-        target_dir + "/app/deepin-recovery",
-        target_dir + "/app/oem-custom",
-        target_dir + "/app/uos-activator",
-        target_dir + "/app/uos-activator/log",
-        target_dir + "/app/fcitx",
-        target_dir + "/app/deepin-diskmanager",
-        target_dir + "/app/downloader",
-        target_dir + "/app/kwin",
-        target_dir + "/app/kbox",
-        target_dir + "/app/deepin-log-viewer",
-        target_dir + "/dde/dde-desktop",
-        target_dir + "/dde/dde-file-manager",
-        target_dir + "/dde/dde-dock",
-        target_dir + "/system/pulseaudio",
-        target_dir + "/journal",
-        target_dir + "/apt",
-        target_dir + "/uos-ste",
-        target_dir + "/uosste_logs"
-    };
-
-    // hisi目录仅在源目录存在时创建
-    if (path_exists("/var/log/hisi")) {
-        dirs.push_back(target_dir + "/hisi");
-    }
-
-    for (const auto& dir : dirs) {
-        create_directories(dir);
     }
 }
 
 void OpsLogExport::exportAppLogs()
 {
-    // 安全中心
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-defender/deepin-defender.log", target_dir + "/app/deepin-defender/");
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-defender-daemon/deepin-defender-daemon.log", target_dir + "/app/deepin-defender/");
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-defender-datainterface/deepin-defender-datainterface.log", target_dir + "/app/deepin-defender/");
     // 云打印
-    copy_file_or_dir(home_dir + "/.cache/uniontech/deepin-cloud-print/deepin-cloud-print.log", target_dir + "/app/deepin-cloud-print/");
     copy_file_or_dir("/var/log/cups/dcp_log", target_dir + "/app/deepin-cloud-print/");
-    copy_file_or_dir(home_dir + "/.cache/uniontech/deepin-cloud-print-configurator/deepin-cloud-print-configurator.log", target_dir + "/app/deepin-cloud-print/");
-    // 云扫描
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-cloud-scan/deepin-cloud-scan.log", target_dir + "/app/deepin-cloud-scan/");
     // 打印管理器
     copy_file_or_dir("/var/log/cups/error_log", target_dir + "/app/dde-printer/");
-    copy_file_or_dir(home_dir + "/.cache/deepin/dde-printer/dde-printer.log", target_dir + "/app/dde-printer/");
     // 显卡驱动管理器
     copy_file_or_dir("/var/log/deepin-graphics-driver-manager-server.log", target_dir + "/app/deepin-graphics-driver-manager/");
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-graphics-driver-manager/deepin-graphics-driver-manager.log", target_dir + "/app/deepin-graphics-driver-manager/");
     // 启动盘制作工具
     copy_file_or_dir("/var/log/deepin/deepin-boot-maker-service.log", target_dir + "/app/deepin-boot-maker/");
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-boot-maker/deepin-boot-maker.log", target_dir + "/app/deepin-boot-maker/");
-    // 扫描管理
-    copy_file_or_dir(home_dir + "/.cache/deepin/org.deepin.scanner/org.deepin.scanner", target_dir + "/app/deepin-scaner/");
-    // KMS项目
-    copy_file_or_dir(home_dir + "/.cache/deepin/kmsclient", target_dir + "/app/kms/");
-    copy_file_or_dir(home_dir + "/.cache/deepin/kmstools", target_dir + "/app/kms/");
-    // 归档管理器
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-compressor/deepin-compressor.log", target_dir + "/app/deepin-compressor/");
-    // 日历
-    copy_file_or_dir(home_dir + "/.cache/deepin/dde-calendar-service/dde-calendar-service.log", target_dir + "/app/dde-calendar/");
-    copy_file_or_dir(home_dir + "/.cache/deepin/dde-calendar/dde-calendar.log", target_dir + "/app/dde-calendar/");
-    // 帮助手册
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-manual/deepin-manual.log", target_dir + "/app/deepin-manual/");
-    // 文档查看器
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-reader/deepin-reader.log", target_dir + "/app/deepin-reader/");
-    // 字体管理器
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-font-manager/deepin-font-manager.log", target_dir + "/app/deepin-font-manager/");
-    // 软件包安装器
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-deb-installer/deepin-deb-installer.log", target_dir + "/app/deepin-deb-installer/");
-    // 终端
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-terminal/deepin-terminal.log", target_dir + "/app/deepin-terminal/");
-    // 语音记事本
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-voice-note/deepin-voice-note.log", target_dir + "/app/deepin-voice-note/");
-    // 设备管理器
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-devicemanager/deepin-devicemanager.log", target_dir + "/app/deepin-devicemanager/");
-    // 服务与支持
-    copy_file_or_dir(home_dir + "/.cache/deepin/uos-service-support/uos-service-support.log", target_dir + "/app/uos-service-support/");
-    // 远程协助
-    copy_file_or_dir(home_dir + "/.cache/deepin/uos-remote-assistance/uos-remote-assistance.log", target_dir + "/app/uos-remote-assistance/");
-    // 系统监视器
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-system-monitor/deepin-system-monitor.log", target_dir + "/app/deepin-system-monitor/");
-    // 文本编辑器
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-editor/deepin-editor.log", target_dir + "/app/deepin-editor/");
-    // 计算器
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-calculator/deepin-calculator.log", target_dir + "/app/deepin-calculator/");
-    // 邮箱
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-mail/deepin-mail.log", target_dir + "/app/deepin-mail/");
-    // 截图录屏
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-screen-recorder/deepin-screen-recorder.log", target_dir + "/app/deepin-screen-recorder/");
-    // 画板
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-draw/deepin-draw.log", target_dir + "/app/deepin-draw/");
-    // 音乐
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-music/deepin-music.log", target_dir + "/app/deepin-music/");
-    // 看图
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-image-viewer/deepin-image-viewer.log", target_dir + "/app/deepin-image-viewer/");
-    // 相册
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-album/deepin-album.log", target_dir + "/app/deepin-album/");
-    // 影院
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-movie/deepin-movie.log", target_dir + "/app/deepin-movie/");
-    // 相机
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-camera/deepin-camera.log", target_dir + "/app/deepin-camera/");
-    // 中文输入法
-    copy_file_or_dir(home_dir + "/.cache/org.deepin.chineseime/ime/chineseime-qimpanel.log", target_dir + "/app/chineseime/");
-    copy_file_or_dir(home_dir + "/.cache/org.deepin.chineseime/ime/fcitx-iflyime.log", target_dir + "/app/chineseime/");
-    copy_file_or_dir(home_dir + "/.cache/org.deepin.chineseime/ime/ossp.log", target_dir + "/app/chineseime/");
     // 安装器
     copy_file_or_dir("/var/log/deepin-installer.log", target_dir + "/app/deepin-installer/");
     copy_file_or_dir("/var/log/deepin-installer-first-boot.log", target_dir + "/app/deepin-installer/");
@@ -406,30 +416,16 @@ void OpsLogExport::exportAppLogs()
     copy_file_or_dir("/var/local/oem-custom-tool/oem-custom-tool.log", target_dir + "/app/oem-custom/");
     copy_file_or_dir("/var/local/oem-custom-tool/oem-custom-tool-bk.log", target_dir + "/app/oem-custom/");
     copy_file_or_dir("/root/.cache/isocustomizer-agent/iso-customizer-agent/iso-customizer-agent.log", target_dir + "/app/oem-custom/");
-    // 授权管理客户端
-    copy_file_or_dir(home_dir + "/.cache/uos/uos-activator", target_dir + "/app/uos-activator/");
-    copy_file_or_dir(home_dir + "/.cache/uos/uos-activator-cmd", target_dir + "/app/uos-activator/");
-    copy_file_or_dir(home_dir + "/.cache/uos-agent/uos-license-agent", target_dir + "/app/uos-activator/");
-    copy_file_or_dir(home_dir + "/.cache/uos-agent/uos-activator-kms", target_dir + "/app/uos-activator/");
     // 授权管理客户端(1020及之后版本日志)
     copy_file_or_dir("/var/log/uos/uos-license-agent", target_dir + "/app/uos-activator/log/");
     copy_file_or_dir("/var/log/uos/uos-activator-kms", target_dir + "/app/uos-activator/log/");
-    // 输入法配置
-    //    executCmd(("cp -rf /tmp/fcitx*.log " + target_dir + "/app/fcitx/").c_str());
     // 磁盘管理器
     copy_file_or_dir("/var/log/deepin/deepin-diskmanager-service/Log", target_dir + "/app/deepin-diskmanager/");
-    // 下载器
-    copy_file_or_dir(home_dir + "/.config/uos/downloader/Log", target_dir + "/app/downloader/");
-    // 窗口管理器(查看内核显卡驱动、查看核外驱动、查看窗管版本)
+    // 窗口管理器
     runProcess({"lspci", "-v"}, (target_dir + "/app/kwin/lspci_VGA.log").c_str(), "VGA", 19);
-    //    execute_command("glxinfo -B", target_dir + "/app/kwin/glxinfo.log");
-//    execute_command({"apt", "policy", "kwin-x11", "dde-kwin"}, target_dir + "/app/kwin/kwin_info.log");
     // 安卓容器
     copy_file_or_dir("/usr/share/log/log.txt", target_dir + "/app/kbox/");
-    copy_file_or_dir(home_dir + "/log/AospLog.log", target_dir + "/app/kbox/");
-    copy_file_or_dir(home_dir + "/log/KboxServer.log", target_dir + "/app/kbox/");
     // 日志收集工具
-    copy_file_or_dir(home_dir + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log", target_dir + "/app/deepin-log-viewer/");
     copy_file_or_dir("/var/log/deepin/deepin-log-viewer-service", target_dir + "/app/deepin-log-viewer/");
 }
 
@@ -455,8 +451,6 @@ void OpsLogExport::exportSystemLogs()
             runProcess(cpArgs);
         }
     }
-    // pulse　audio /home/uos/pulse.log
-    copy_file_or_dir(home_dir + "/pulse.log", target_dir + "/system/pulseaudio/");
 }
 
 void OpsLogExport::exportKernelLogs()
@@ -476,12 +470,9 @@ void OpsLogExport::exportKernelLogs()
         }
     }
     runProcess({"lspci", "-vvv"}, (target_dir + "/kernel/lspci_VGA.log").c_str(), "VGA c", 12);
-    //    execute_command("ifconfig", target_dir + "/kernel/ifconfig.log");
-    //    execute_command("ethtool -i $(ifconfig | grep --max-count=1 ^en | awk -F ':' '{print $1}')", target_dir + "/kernel/eth_info.log");
     runProcess({"dmesg"}, (target_dir + "/kernel/dmesg_network.log").c_str(), "iwlwifi", 0);
     execute_command({"journalctl", "--system"}, target_dir + "/kernel/journalctl_system.log");
     // ⽆法识别声卡问题⽇志
-//    execute_command("aplay -l", target_dir + "/kernel/aplay.log");
     execute_command({"lshw", "-c", "sound"}, target_dir + "/kernel/sound_info.log");
     // 龙芯内核
     copy_file_or_dir("/var/log/kern.log", target_dir + "/kernel/");
@@ -490,9 +481,6 @@ void OpsLogExport::exportKernelLogs()
 void OpsLogExport::exportDDELogs()
 {
     // 文件管理器
-    copy_file_or_dir(home_dir + "/.cache/deepin/dde-desktop/dde-desktop.log", target_dir + "/dde/dde-desktop/");
-    copy_file_or_dir(home_dir + "/.cache/deepin/dde-file-manager/dde-file-manager.log", target_dir + "/dde/dde-file-manager/");
-    copy_file_or_dir(home_dir + "/.cache/deepin/dde-dock/dde-dock.log", target_dir + "/dde/dde-dock/");
     copy_file_or_dir("/var/log/deepin/dde-file-manager-daemon", target_dir + "/dde/dde-file-manager/");
     copy_file_or_dir("/var/log/messages", target_dir + "/dde/");
     copy_file_or_dir("/var/log/syslog", target_dir + "/dde/");
@@ -500,9 +488,6 @@ void OpsLogExport::exportDDELogs()
     execute_command({"free", "-m"}, target_dir + "/dde/free-m.log");   // 查看内存情况，输出内容截图或保存
     execute_command({"udisksctl", "dump"}, target_dir + "/dde/udiskctl_dump.txt");
     execute_command({"df", "-h"}, target_dir + "/dde/df-h.txt");
-    // DDE
-    runProcess({"cp", QString::fromStdString(home_dir + "/Desktop/DDE_LOG.zip"),
-                   QString::fromStdString(target_dir + "/dde/")});
     copy_file_or_dir("/var/log/journalLog", target_dir + "/dde/");
 }
 
