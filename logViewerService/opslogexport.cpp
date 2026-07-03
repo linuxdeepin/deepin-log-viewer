@@ -11,8 +11,6 @@
 #include <cstring>
 #include <cstdlib>
 #include <sys/stat.h>
-#include <unistd.h>
-#include <errno.h>
 
 #include <QProcess>
 #include <QString>
@@ -161,9 +159,8 @@ static QStringList expandPathWithWildcardIterator(const QString &pathWithWildcar
     return matchedFiles;
 }
 
-OpsLogExport::OpsLogExport(const string &target, uint callerGid)
+OpsLogExport::OpsLogExport(const string &target)
     : target_dir(target)
-    , m_callerGid(callerGid)
 {
 }
 
@@ -187,9 +184,6 @@ void OpsLogExport::run()
     exportAptLogs();
     exportUosSteLogs();
     exportUosSteTwoLogs();
-
-    // 递归设置目录及文件的权限
-    setDirectoryPermissionsSafe(target_dir);
 }
 
 void OpsLogExport::createOpsLogDirStruct(const QString &outDir)
@@ -307,8 +301,9 @@ void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
     QString qDst = QString::fromStdString(dst_dir);
 
     QFileInfo srcInfo(qSrc);
-    // 符号链接源一律不拷贝：避免引入指向特殊文件/系统文件的链接，防止后续前端 cp
-    // 或 root 清理时跟随链接造成阻塞或误删。目录内残留的链接会在权限整理阶段再删一次。
+    // 符号链接源一律不拷贝：避免引入指向特殊文件/系统文件的链接。新流程下整个收集、
+    // 压缩、回传、清理均在 root 一次 D-Bus 调用内闭环完成，无前端直接读取临时目录的环节，
+    // 故无需再对目录内残留的符号链接做统一清理。
     if (srcInfo.isSymLink()) return;
     if (srcInfo.isFile()) {
         // 单个文件：确保目标目录存在后用 QFile::copy
@@ -317,8 +312,9 @@ void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
         QFile::remove(dstFile);  // QFile::copy 要求目标不存在
         QFile::copy(qSrc, dstFile);
     } else {
-        // 目录：-rP 复制链接本身而非目标内容；目录内的符号链接条目会在
-        // setDirectoryPermissionsSafe 中被统一删除，最终导出目录不含任何符号链接。
+        // 目录：-rP 复制链接本身而非目标内容。导出目录最终整体压缩写入 fd，
+        // zip 默认不跟随符号链接（仅存储链接路径），前端 unzip 也仅还原链接条目，
+        // 不存在跟随链接读到非预期内容或阻塞的风险。
         runProcess({"cp", "-rP", qSrc, qDst});
     }
 }
@@ -326,74 +322,6 @@ void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
 void OpsLogExport::execute_command(const QStringList &args, const string &output_file)
 {
     runProcess(args, output_file.c_str());
-}
-
-void OpsLogExport::setDirectoryPermissionsSafe(const string &dir_path)
-{
-    // 基本校验：确认路径在 /var/log 下。目录由 root 通过 QTemporaryDir 在 /var/log 下
-    // 随机创建（mkdtemp，初始 0700 root:root，路径用户不可预测）。
-    // 使用 canonicalFilePath 解析符号链接到真实路径后再比对，避免 cleanPath 不解析符号链接
-    // 被构造路径逃逸；/var/log 自身也可能是符号链接，故两端都解析后比对。
-    const QString rawDir = QString::fromStdString(dir_path);
-    const QString canonicalDir = QFileInfo(rawDir).canonicalFilePath();
-    if (canonicalDir.isEmpty()) {
-        qWarning() << "setDirectoryPermissionsSafe: dir_path cannot be resolved:" << rawDir;
-        return;
-    }
-    const QString canonicalVarLog = QFileInfo(QStringLiteral("/var/log")).canonicalFilePath();
-    if (canonicalVarLog.isEmpty()) {
-        qWarning() << "setDirectoryPermissionsSafe: /var/log cannot be resolved";
-        return;
-    }
-    if (!canonicalDir.startsWith(canonicalVarLog + "/")) {
-        qWarning() << "setDirectoryPermissionsSafe: dir_path is not under /var/log, refusing:" << canonicalDir;
-        return;
-    }
-
-    // 权限策略：属主保持 root，仅将 group 改为 callerGid，目录 0750、文件 0640。
-    //
-    // - 不把 owner 改成 caller：caller 对目录只有 group 的 r-x（无 w），无法在其中创建
-    //   或替换符号链接，从而杜绝 caller 植入指向系统核心文件的符号链接、待 root 下次
-    //   清理 removeRecursively 时误删目标的攻击面。
-    // - 0750/0640 而非 0755/0644：仅 caller 同组可读，避免任意本地用户在 exportOpsLog
-    //   返回至前端拷贝完成的时间窗内读取 auth.log/syslog 等敏感系统日志。
-    //
-    // 仍需递归处理：copy_file_or_dir() 对目录用 `cp -rP` 会保留源目录 mode（如
-    // /var/log/journal 常为 0700/02755），必须统一刷成 0750/0640。
-    const QFile::Permissions dirPerms = QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner
-                                      | QFile::ReadGroup | QFile::ExeGroup;
-    const QFile::Permissions filePerms = QFile::ReadOwner | QFile::WriteOwner
-                                       | QFile::ReadGroup;
-
-    const gid_t callerGid = static_cast<gid_t>(m_callerGid);
-    // uid 传 -1 表示不改变 owner（保持 root），仅设置 group。
-    const uid_t keepOwner = static_cast<uid_t>(-1);
-
-    auto applySafeOwnership = [&](const QString &path, bool isDir) {
-        if (::chown(QFile::encodeName(path).constData(), keepOwner, callerGid) != 0) {
-            qWarning() << "Failed to chgrp export path:" << path << "error:" << strerror(errno);
-            return;
-        }
-        QFile::setPermissions(path, isDir ? dirPerms : filePerms);
-    };
-
-    // 顶层临时目录本身（QTemporaryDir 经 mkdtemp 创建，非符号链接）
-    applySafeOwnership(canonicalDir, true);
-
-    // QDirIterator 默认不跟随符号链接（NoIteratorFlags）
-    QDirIterator it(canonicalDir, QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot,
-                    QDirIterator::Subdirectories);
-    while (it.hasNext()) {
-        it.next();
-        const QFileInfo &info = it.fileInfo();
-        if (info.isSymLink()) {
-            // 符号链接不保留：直接删除链接条目（不跟随目标），确保导出目录不含任何
-            // 符号链接——前端 cp 与 root 下次清理均无链接可跟随，杜绝相关风险。
-            QFile::remove(info.filePath());
-            continue;
-        }
-        applySafeOwnership(info.filePath(), info.isDir());
-    }
 }
 
 void OpsLogExport::exportAppLogs()

@@ -23,10 +23,8 @@
       <arg name="isFile" type="b" direction="in"/>
     </method>
     <method name="exportOpsLog">
-      <arg type="s" direction="out"/>
-    </method>
-    <method name="removeOpsLogTempDir">
       <arg type="b" direction="out"/>
+      <arg name="fd" type="h" direction="in"/>
     </method>
     <method name="getFileInfo"> 
       <arg type="as" direction="out"/>
