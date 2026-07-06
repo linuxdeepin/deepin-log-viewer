@@ -38,6 +38,7 @@ using namespace PolkitQt1;
 #include <QJsonObject>
 #include <QTemporaryFile>
 #include <QFile>
+#include <QDir>
 #include <QTemporaryDir>
 
 #ifdef QT_DEBUG
@@ -1075,33 +1076,28 @@ bool LogViewerService::exportOpsLog(const QDBusUnixFileDescriptor &fd)
     }
 
     const QString opsDir = tmpOpsDir.path();
-    // 临时目录离开作用域后不会被自动删除（AutoRemove=false），路径交由 OpsLogExport 使用。
-    // 收集、压缩、回传、清理均由 root 在本次调用内完成，无需调整目录权限。
-    OpsLogExport ops(opsDir.toStdString());
-    ops.run();
-
-    // 将收集到的日志整体压缩。压缩包放在 opsDir 之外（/var/log 下的随机文件），
-    // 避免把压缩包自身打进去。使用 QTemporaryFile 保证异常退出时也能被回收。
-    QTemporaryFile tmpZipFile;
-    tmpZipFile.setAutoRemove(false);
-    tmpZipFile.setFileTemplate(QStringLiteral("/var/log/deepin-log-viewer-ops-XXXXXX.zip"));
-    if (!tmpZipFile.open()) {
-        qCWarning(logService) << "exportOpsLog: failed to create temp zip file:" << tmpZipFile.errorString();
+    // 在 opsDir 内创建子目录 log-ops，专用于 OpsLogExport 收集日志。
+    // 收集完成后压缩该子目录，压缩包同样落在 opsDir 内，
+    // 全程不向 /var/log 暴露压缩包或日志内容，无需调整目录权限。
+    const QString logCollectDir = opsDir + QStringLiteral("/log-ops");
+    if (!QDir().mkpath(logCollectDir)) {
+        qCWarning(logService) << "exportOpsLog: failed to create log collect dir:" << logCollectDir;
         removeOpsTempDirByPathInternal(opsDir);
         return false;
     }
-    const QString tmpZipPath = tmpZipFile.fileName();
-    tmpZipFile.close();  // 关闭占用的句柄，交由 zip 命令写入
 
-    // QTemporaryFile::open() 已经在磁盘上创建了一个 0 字节文件。
-    // 若该路径下文件已存在，zip 会尝试将其当作已有压缩包读取并「更新」，
-    // 而 0 字节文件缺少 zip 尾部签名，zip 会报 "Zip file structure invalid" 并以 exitCode 3 退出。
-    // 因此在调用 zip 前必须先删除这个空文件，让 zip 从零开始创建新压缩包。
-    QFile::remove(tmpZipPath);
+    OpsLogExport ops(logCollectDir.toStdString());
+    ops.run();
+
+    // 将收集到的 log-ops 子目录内容整体压缩。压缩包放在 opsDir 内（log-ops.zip），
+    // 与被压缩内容同处一个随机目录，不暴露在 /var/log 下，避免被其它用户短暂读取。
+    // 直接以最终路径调用 zip 创建新压缩包，无需先创建空文件再删除。
+    const QString tmpZipPath = opsDir + QStringLiteral("/log-ops.zip");
 
     QProcess zipProc;
-    zipProc.setWorkingDirectory(opsDir);
-    zipProc.start(QStringLiteral("zip"), QStringList() << QStringLiteral("-r") << tmpZipPath << QStringLiteral("./"));
+    zipProc.setWorkingDirectory(logCollectDir);
+    zipProc.start(QStringLiteral("zip"), QStringList() << QStringLiteral("-r")
+                      << tmpZipPath << QStringLiteral("."));
     if (!zipProc.waitForFinished(-1) || zipProc.exitCode() != 0) {
         qCWarning(logService) << "exportOpsLog: zip failed, exitCode:" << zipProc.exitCode()
                               << "stderr:" << zipProc.readAllStandardError();
