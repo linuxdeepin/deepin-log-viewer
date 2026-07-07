@@ -44,8 +44,9 @@ public Q_SLOTS:
     // 仅能执行特定合法命令
     Q_SCRIPTABLE QString executeCmd(const QString &cmd);
     Q_SCRIPTABLE QStringList whiteListOutPaths();
-
-    Q_SCRIPTABLE QString exportOpsLog();
+    // 通过前端传入的文件描述符导出运维日志：后端在 /var/log 下创建随机临时目录收集日志，
+    // 整体压缩后写入 fd，随后自行清理临时目录，不再向调用方返回路径。
+    Q_SCRIPTABLE bool exportOpsLog(const QDBusUnixFileDescriptor &fd);
 
 public:
     // 获取用户家目录
@@ -67,6 +68,11 @@ private:
 
     // 获取当前调用该 DBus 接口的用户家目录路径
     QString getCallerHomeDir();
+    // 基于 fd 的 TOCTOU 安全方式删除 exportOpsLog 产生的 /var/log 临时目录（opsDir）。
+    // 由 exportOpsLog 写入 fd 完成后自动调用回收，成功返回 true。
+    bool removeOpsTempDirByPathInternal(const QString &path);
+    // 基于 fd 的 TOCTOU 安全递归删除目录。
+    bool safeRemoveDirRecursive(int parentFd, const char *name);
 
 private:
     bool checkAuthorization(const QString &actionId);

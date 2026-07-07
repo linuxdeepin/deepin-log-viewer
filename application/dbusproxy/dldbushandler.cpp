@@ -179,20 +179,6 @@ QStringList DLDBusHandler::getOtherFileInfo(const QString &flag, bool unzip)
     return filePathList;
 }
 
-QString DLDBusHandler::exportOpsLog()
-{
-    m_dbus->setTimeout(1200000);
-    QDBusPendingReply<QString> reply = m_dbus->exportOpsLog();
-    reply.waitForFinished();
-    m_dbus->setTimeout(-1);
-
-    if (reply.isError()) {
-        qCWarning(logApp) << "call dbus iterface 'exportOpsLog()' failed. error info:" << reply.error().message();
-        return QString();
-    }
-    return reply.value();
-}
-
 bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
     qCDebug(logApp) << "DLDBusHandler::exportLog called with outDir:" << outDir << "in:" << in << "isFile:" << isFile;
@@ -251,4 +237,42 @@ void DLDBusHandler::releaseFilePathCacheFile(const QString &cacheFilePath)
         qCDebug(logApp) << "Removing cache file:" << cacheFilePath;
         QFile::remove(cacheFilePath);
     }
+}
+
+bool DLDBusHandler::exportOpsLog(const QString &zipFilePath)
+{
+    // 前端创建压缩包目标文件并以写方式打开，将 fd 通过 D-Bus 传给后端。
+    // 后端在 root 权限下收集 /var/log 等运维日志，整体压缩后写入该 fd，
+    // 并自行清理 /var/log 下的随机临时目录，前端无需再感知后端临时目录路径。
+    QFile zipFile(zipFilePath);
+    if (!zipFile.open(QIODevice::WriteOnly)) {
+        qCritical() << "exportOpsLog: failed to open zip file for writing:" << zipFilePath
+                    << "error:" << zipFile.errorString();
+        return false;
+    }
+
+    const int fd = zipFile.handle();
+    if (fd <= 0) {
+        qCritical() << "exportOpsLog: invalid file descriptor for:" << zipFilePath;
+        zipFile.close();
+        return false;
+    }
+
+    QDBusUnixFileDescriptor dbusFd(fd);
+
+    m_dbus->setTimeout(1200000);
+    QDBusPendingReply<bool> reply = m_dbus->exportOpsLog(dbusFd);
+    reply.waitForFinished();
+    m_dbus->setTimeout(-1);
+
+    // 后端写完后会关闭其 dup 的 fd，但前端打开的 QFile 仍需由前端关闭。
+    zipFile.close();
+
+    if (reply.isError()) {
+        qCritical() << "call dbus interface 'exportOpsLog' failed. error info:" << reply.error().message();
+        return false;
+    }
+
+    const bool ok = reply.value();
+    return ok;
 }
