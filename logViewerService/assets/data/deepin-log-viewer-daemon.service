@@ -13,6 +13,8 @@ ExecStart=/usr/lib/deepin-daemon/log-view-service
 #User=deepin-daemon
 User=root
 ProtectSystem=strict
+# exportOpsLog 需要在 /var/log 下创建临时导出目录，须显式放开写权限
+ReadWritePaths=/var/log
 MemoryMax=2G
 IOWeight=200
 OOMScoreAdjust=-500

@@ -22,7 +22,6 @@ public:
     int exitCode();
     void quit();
     bool exportLog(const QString &outDir, const QString &in, bool isFile);
-    QString exportOpsLog();
     bool isFileExist(const QString &filePath);
     quint64 getFileSize(const QString &filePath);
     qint64 getLineCount(const QString &filePath);
@@ -30,6 +29,7 @@ public:
     QString openLogStream(const QString &filePath);
     QString readLogInStream(const QString &token);
     QStringList whiteListOutPaths();
+    bool exportOpsLog(const QString &zipFilePath);
 
 private:
     explicit DLDBusHandler(QObject *parent = nullptr);

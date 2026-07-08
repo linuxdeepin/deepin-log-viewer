@@ -10,19 +10,17 @@
 
 class OpsLogExport {
 public:
-    OpsLogExport(const std::string& target, const std::string& home);
+    OpsLogExport(const std::string& target);
 
     void run();
 
 private:
     std::string target_dir;
-    std::string home_dir;
 
     bool path_exists(const std::string& path);
     bool create_directories(const std::string& path);
     void copy_file_or_dir(const std::string& src, const std::string& dst_dir);
     void execute_command(const QStringList &args, const std::string &output_file);
-    void setDirectoryPermissionsSafe(const std::string& dir_path);
 
     void createDirStruct();
     void exportAppLogs();

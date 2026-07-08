@@ -151,9 +151,10 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QStringLiteral("whiteListOutPaths"), argumentList);
     }
 
-    inline QDBusPendingReply<QString> exportOpsLog()
+    inline QDBusPendingReply<bool> exportOpsLog(const QDBusUnixFileDescriptor &fd)
     {
         QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(fd);
         return asyncCallWithArgumentList(QStringLiteral("exportOpsLog"), argumentList);
     }
 Q_SIGNALS: // SIGNALS

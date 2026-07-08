@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "logsettings.h"
 #include "dbusmanager.h"
+#include "opslogpaths.h"
 #include "dbusproxy/dldbushandler.h"
 #include "qtcompat.h"
 
@@ -103,6 +104,8 @@ QString Utils::getAppDataPath()
              .filePath(qApp->organizationName()));
 
     QString path = dir.filePath(qApp->applicationName());
+    if (!dir.exists(path))
+        dir.mkpath(path);
     qCDebug(logApp) << "App data path:" << path;
     return path;
 }
@@ -617,7 +620,7 @@ void Utils::updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &
     file.close();
 }
 
-static QByteArray processCmdWithArgs(const QString &cmdStr, const QString &workPath, const QStringList &args)
+QByteArray Utils::processCmdWithArgs(const QString &cmdStr, const QString &workPath, const QStringList &args)
 {
     qCDebug(logApp) << "Executing command:" << cmdStr << "with arguments:" << args << "in working directory:" << workPath;
     QProcess process;
@@ -628,8 +631,15 @@ static QByteArray processCmdWithArgs(const QString &cmdStr, const QString &workP
     process.setArguments(args);
     process.setEnvironment({"LANG=en_US.UTF-8", "LANGUAGE=en_US"});
     process.start();
-    // Wait for process to finish without timeout.
-    process.waitForFinished(-1);
+    // 设定超时上限，防止因特殊文件（如 /dev/zero、无写端的 FIFO）或异常子进程导致
+    // 无限阻塞。超时后主动 kill 并回收，避免僵尸进程与导出线程被永久卡死（拒绝服务）。
+    static constexpr int kCmdTimeoutMs = 300000;
+    if (!process.waitForFinished(kCmdTimeoutMs)) {
+        qWarning() << "cmd timed out after" << kCmdTimeoutMs << "ms, killing:" << cmdStr << args;
+        process.kill();
+        process.waitForFinished(3000);
+        return QByteArray();
+    }
     QByteArray outPut = process.readAllStandardOutput();
     int nExitCode = process.exitCode();
     bool bRet = (process.exitStatus() == QProcess::NormalExit && nExitCode == 0);
@@ -646,7 +656,7 @@ QByteArray Utils::executeCmd(const QString &cmdStr, const QStringList &args, con
     return processCmdWithArgs(cmdStr, workPath,  args);
 }
 
-static void appendToFile(const QString &filePath, const QByteArray &content)
+void Utils::appendToFile(const QString &filePath, const QByteArray &content)
 {
     QFile file(filePath);
 
@@ -657,8 +667,25 @@ static void appendToFile(const QString &filePath, const QByteArray &content)
     }
 }
 
+void Utils::safeCpSkipSymlinks(const QStringList &sources, const QString &dest, bool recursive)
+{
+    QStringList args;
+    args << "-P";  // 不跟随源参数自身及递归树内的符号链接
+    if (recursive)
+        args << "-r";
+    for (const QString &src : sources) {
+        if (QFileInfo(src).isSymLink()) {
+            qWarning() << "skip symlink source to avoid DoS:" << src;
+            continue;
+        }
+        args << src;
+    }
+    args << dest;
+    Utils::executeCmd("cp", args);
+}
+
 // 查找所有物理网络接口
-QStringList getPhysicalInterfaces()
+QStringList Utils::getPhysicalInterfaces()
 {
     QStringList physicalInterfaces;
     QDir netDir("/sys/class/net/");
@@ -683,7 +710,7 @@ QStringList getPhysicalInterfaces()
     return physicalInterfaces;
 }
 
-static QStringList expandPathWithWildcardIterator(const QString &pathWithWildcard)
+QStringList Utils::expandPathWithWildcardIterator(const QString &pathWithWildcard)
 {
     // 1. 分离目录和文件名模式
     QFileInfo fileInfo(pathWithWildcard);
@@ -707,31 +734,213 @@ static QStringList expandPathWithWildcardIterator(const QString &pathWithWildcar
     return matchedFiles;
 }
 
-void Utils::exportSomeOpsLogs(const QString &outDir, const QString &userHomeDir)
+void Utils::exportUserPermissionAppLogs(const QString &outDir, const QString &userHomeDir)
 {
-    Q_UNUSED(userHomeDir)
+    // 安全中心
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-defender/deepin-defender.log",
+                        userHomeDir + "/.cache/deepin/deepin-defender-daemon/deepin-defender-daemon.log",
+                        userHomeDir + "/.cache/deepin/deepin-defender-datainterface/deepin-defender-datainterface.log"},
+                       outDir + kDefenderPath, false);
 
-    std::string tmpCmd;
+    // 云打印
+    safeCpSkipSymlinks({userHomeDir + "/.cache/uniontech/deepin-cloud-print/deepin-cloud-print.log",
+                        userHomeDir + "/.cache/uniontech/deepin-cloud-print-configurator/deepin-cloud-print-configurator.log"},
+                       outDir + kCloudPrintPath, false);
 
-    // app
+    // 云扫描
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-cloud-scan/deepin-cloud-scan.log"},
+                       outDir + kCloudScanPath, false);
+
+    // 打印管理器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/dde-printer/dde-printer.log"},
+                       outDir + kPrinterPath, false);
+
+    // 显卡驱动管理器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-graphics-driver-manager/deepin-graphics-driver-manager.log"},
+                       outDir + kGraphicsDriverManagerPath, false);
+
+    // 启动盘制作工具
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-boot-maker/deepin-boot-maker.log"},
+                       outDir + kBootMakerPath, false);
+
+    // 扫描管理
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/org.deepin.scanner/org.deepin.scanner"},
+                       outDir + kScanerPath, true);
+
+    // KMS项目
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/kmsclient",
+                        userHomeDir + "/.cache/deepin/kmstools"},
+                       outDir + kKMSPath, true);
+
+    // 归档管理器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-compressor/deepin-compressor.log"},
+                       outDir + kCompressorPath, false);
+
+    // 日历
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/dde-calendar-service/dde-calendar-service.log",
+                        userHomeDir + "/.cache/deepin/dde-calendar/dde-calendar.log"},
+                       outDir + kCalendarPath, false);
+
+    // 帮助手册
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-manual/deepin-manual.log"},
+                       outDir + kManualPath, false);
+
+    // 文档查看器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-reader/deepin-reader.log"},
+                       outDir + kReaderPath, false);
+
+    // 字体管理器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-font-manager/deepin-font-manager.log"},
+                       outDir + kFontManagerPath, false);
+
+    // 软件包安装器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-deb-installer/deepin-deb-installer.log"},
+                       outDir + kDebInstallerPath, false);
+
+    // 终端
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-terminal/deepin-terminal.log"},
+                       outDir + kTerminalPath, false);
+
+    // 语音记事本
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-voice-note/deepin-voice-note.log"},
+                       outDir + kVoiceNotPath, false);
+
+    // 设备管理器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-devicemanager/deepin-devicemanager.log"},
+                       outDir + kDevicemanagerPath, false);
+
+    // 服务与支持
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/uos-service-support/uos-service-support.log"},
+                       outDir + kServiceSupportPath, false);
+
+    // 远程协助
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/uos-remote-assistance/uos-remote-assistance.log"},
+                       outDir + kRemoteAssistancePath, false);
+
+    // 系统监视器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-system-monitor/deepin-system-monitor.log"},
+                       outDir + kSystemMonitorPath, false);
+
+    // 文本编辑器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-editor/deepin-editor.log"},
+                       outDir + kEditorPath, false);
+
+    // 计算器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-calculator/deepin-calculator.log"},
+                       outDir + kCalculatorPath, false);
+
+    // 邮箱
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-mail/deepin-mail.log"},
+                       outDir + kMailPath, false);
+
+    // 截图录屏
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-screen-recorder/deepin-screen-recorder.log"},
+                       outDir + kScreenRecorderPath, false);
+
+    // 画板
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-draw/deepin-draw.log"},
+                       outDir + kDrawPath, false);
+
+    // 音乐
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-music/deepin-music.log"},
+                       outDir + kMusicPath, false);
+
+    // 看图
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-image-viewer/deepin-image-viewer.log"},
+                       outDir + kImageViewerPath, false);
+
+    // 相册
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-album/deepin-album.log"},
+                       outDir + kAlbumPath, false);
+
+    // 影院
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-movie/deepin-movie.log"},
+                       outDir + kMoviePath, false);
+
+    // 相机
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-camera/deepin-camera.log"},
+                       outDir + kCameraPath, false);
+
+    // 中文输入法
+    safeCpSkipSymlinks({userHomeDir + "/.cache/org.deepin.chineseime/ime/chineseime-qimpanel.log",
+                        userHomeDir + "/.cache/org.deepin.chineseime/ime/fcitx-iflyime.log",
+                        userHomeDir + "/.cache/org.deepin.chineseime/ime/ossp.log"},
+                       outDir + kChineseImePath, false);
+
+    // 授权管理客户端
+    safeCpSkipSymlinks({userHomeDir + "/.cache/uos/uos-activator",
+                        userHomeDir + "/.cache/uos/uos-activator-cmd",
+                        userHomeDir + "/.cache/uos-agent/uos-license-agent",
+                        userHomeDir + "/.cache/uos-agent/uos-activator-kms"},
+                       outDir + kUosActivatorPath, true);
+
+    // 输入法配置
+    safeCpSkipSymlinks(expandPathWithWildcardIterator("/tmp/fcitx*.log"),
+                       outDir + "/app/fcitx/", true);
+
+    // 下载器
+    safeCpSkipSymlinks({userHomeDir + "/.config/uos/downloader/Log"},
+                       outDir + kDownloaderPath, true);
+
+    // 窗口管理器
     appendToFile(outDir + "/app/kwin/glxinfo.log", executeCmd("glxinfo", { "-display", qEnvironmentVariable("DISPLAY"), "-B" }));
-    QStringList args = { "-rf" };
-    args.append(expandPathWithWildcardIterator("/tmp/fcitx*.log"));
-    args.append(outDir + "/app/fcitx/");
-    executeCmd("cp", args);
+    appendToFile(outDir + "/app/kwin/kwin_info.log", executeCmd("apt", { "policy", "kwin-x11", "dde-kwin" }));
 
-    args.clear();
-    args << "policy" << "kwin-x11" << "dde-kwin";
-    appendToFile(outDir + "/app/kwin/kwin_info.log", executeCmd("apt", args));
+    // 安卓容器
+    safeCpSkipSymlinks({userHomeDir + "/log/AospLog.log",
+                        userHomeDir + "/log/KboxServer.log"},
+                       outDir + kKboxPath, false);
 
-    // kernel
+    // 日志收集工具
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log"},
+                       outDir + kDeepinLogViewerPath, false);
+}
+
+void Utils::exportUserPermissionSystemLogs(const QString &outDir, const QString &userHomeDir)
+{
+    // pulse　audio /home/uos/pulse.log
+    safeCpSkipSymlinks({userHomeDir + "/pulse.log"}, outDir + kSystemPulseaudioPath, false);
+}
+
+void Utils::exportUserPermissionKernelLogs(const QString &outDir)
+{
+    // ⽆法识别声卡问题⽇志
     appendToFile(outDir + "/kernel/aplay.log", executeCmd("aplay", { "-l" }));
+
     for (const QString &iface : getPhysicalInterfaces()) {
         appendToFile(outDir + "/kernel/eth_info.log", executeCmd("ethtool", { "-i", iface }));
     }
+
     appendToFile(outDir + "/kernel/ifconfig.log", executeCmd("ifconfig", { }));
+}
+
+void Utils::exportUserPermissionDDELogs(const QString &outDir, const QString &userHomeDir)
+{
+    // 文件管理器
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/dde-desktop/dde-desktop.log"},
+                       outDir + kDdeDesktopPath, false);
+
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/dde-file-manager/dde-file-manager.log"},
+                       outDir + kDdeFileManagerPath, false);
+
+    // 任务栏
+    safeCpSkipSymlinks({userHomeDir + "/.cache/deepin/dde-dock/dde-dock.log"},
+                       outDir + kDdeDockPath, false);
+
+    //DDE
+    safeCpSkipSymlinks({userHomeDir + "/Desktop/DDE_LOG.zip"},
+                       outDir + kDDEPath, false);
+}
+
+void Utils::exportUserPermissionOpsLogs(const QString &outDir, const QString &userHomeDir)
+{
+    Utils::exportUserPermissionAppLogs(outDir, userHomeDir);
+    Utils::exportUserPermissionSystemLogs(outDir, userHomeDir);
+    Utils::exportUserPermissionKernelLogs(outDir);
+    Utils::exportUserPermissionDDELogs(outDir, userHomeDir);
 
     // deb version
+    QStringList args;
     args.clear();
     args << "-l";
     appendToFile(outDir + "/deb-version.txt", executeCmd("dpkg", args));

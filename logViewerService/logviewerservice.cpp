@@ -9,6 +9,9 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <fstream>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <dirent.h>
 
 #include <dgiofile.h>
 #include <dgiovolume.h>
@@ -320,6 +323,97 @@ QString LogViewerService::getCallerHomeDir()
 
     qCCritical(logService) << "getCallerHomeDir: failed to resolve uid:" << callerUid << "error:" << ret;
     return QString();
+}
+
+// 基于 fd 的 TOCTOU 安全方式删除 exportOpsLog 产生的 /var/log 临时目录（opsDir）。
+// 由 exportOpsLog 在写入 fd 完成后自动调用，确保 /var/log 下不残留含系统日志的目录。
+bool LogViewerService::removeOpsTempDirByPathInternal(const QString &path)
+{
+    // 防御性前缀校验：路径由本服务创建，删除前再确认前缀。
+    if (!path.startsWith("/var/log/deepin-log-viewer-ops-log.")) {
+        qCWarning(logService) << "removeOpsTempDirByPathInternal: path not under expected prefix, refuse:" << path;
+        return false;
+    }
+
+    // 先打开可信父目录 /var/log 的 fd，再以 basename 进行 fd-relative 操作，
+    // 目标路径自始至终不再被重新解析，真正消除“检查-使用”竞态。
+    const QByteArray pathBytes = QFile::encodeName(path);
+    const int slash = pathBytes.lastIndexOf('/');
+    if (slash <= 0) {
+        qCWarning(logService) << "removeOpsTempDirByPathInternal: invalid path (no parent dir):" << path;
+        return false;
+    }
+    const QByteArray parentPath = pathBytes.left(slash);      // /var/log
+    const QByteArray baseName = pathBytes.mid(slash + 1);     // deepin-log-viewer-ops-log.XXX
+
+    const int parentFd = open(parentPath.constData(), O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+    if (parentFd < 0) {
+        qCWarning(logService) << "removeOpsTempDirByPathInternal: failed to open parent dir:" << parentPath << "errno:" << errno;
+        return false;
+    }
+    const bool removed = safeRemoveDirRecursive(parentFd, baseName.constData());
+    close(parentFd);
+
+    if (!removed) {
+        qCWarning(logService) << "removeOpsTempDirByPathInternal: failed to remove safely:" << path;
+        return false;
+    }
+
+    qCDebug(logService) << "removeOpsTempDirByPathInternal: removed:" << path;
+    return true;
+}
+
+// 基于 fd 的 TOCTOU 安全递归删除目录。
+// 全程相对父目录 fd 操作（openat/fstatat/unlinkat），不重新解析路径，消除「检查-使用」竞态。
+// - O_NOFOLLOW：若 name 是符号链接则 openat 直接失败，不跟随目标；
+// - O_DIRECTORY：仅当为目录时打开；
+// - fstatat(..., AT_SYMLINK_NOFOLLOW) 取条目自身 stat，符号链接为 S_ISLNK（非 S_ISDIR），
+//   走 unlinkat 删链接本身而非跟随目标。
+bool LogViewerService::safeRemoveDirRecursive(int parentFd, const char *name)
+{
+    int fd = openat(parentFd, name, O_RDONLY | O_NOFOLLOW | O_DIRECTORY | O_CLOEXEC);
+    if (fd < 0) {
+        // 非目录或符号链接：作为文件/链接直接 unlink（不跟随目标）。
+        return unlinkat(parentFd, name, 0) == 0;
+    }
+
+    DIR *dir = fdopendir(fd);
+    if (!dir) {
+        close(fd);
+        return false;
+    }
+
+    // 先收集所有条目名，再处理，避免在迭代过程中修改目录导致遗漏。
+    QVector<QByteArray> entries;
+    struct dirent *entry = nullptr;
+    while ((entry = readdir(dir)) != nullptr) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+            continue;
+        entries.append(QByteArray(entry->d_name));
+    }
+    // 此时不再调用 readdir，可安全修改目录。
+
+    bool ok = true;
+    for (const QByteArray &childName : entries) {
+        struct stat st;
+        if (fstatat(fd, childName.constData(), &st, AT_SYMLINK_NOFOLLOW) != 0)
+            continue;  // 条目已消失，跳过
+
+        if (S_ISDIR(st.st_mode)) {
+            if (!safeRemoveDirRecursive(fd, childName.constData()))
+                ok = false;
+        } else {
+            // 普通文件或符号链接——unlink 链接本身，不跟随。
+            if (unlinkat(fd, childName.constData(), 0) != 0)
+                ok = false;
+        }
+    }
+
+    closedir(dir);  // 同时关闭 fd
+    // 目录已清空，移除目录项本身。
+    if (unlinkat(parentFd, name, AT_REMOVEDIR) != 0)
+        ok = false;
+    return ok;
 }
 
 /**
@@ -1226,35 +1320,125 @@ bool LogViewerService::checkAuth(const QString &actionId)
     return  bAuthVaild;
 }
 
-QString LogViewerService::exportOpsLog()
+bool LogViewerService::exportOpsLog(const QDBusUnixFileDescriptor &fd)
 {
     if(!checkAuth(s_Action_View)) {
         qCWarning(logService) << "Invalid authorization for export log";
-        return QString();
+        return false;
     }
 
     QString callerHomeDir = getCallerHomeDir();
     if (callerHomeDir.isEmpty()) {
         qCWarning(logService) << "Failed to get caller home directory for export log";
-        return QString();
+        return false;
     }
 
     // 不支持导出 sudo 权限的日志，且导出日志功能主要面向普通用户使用场景，
     // 因此当获取到的用户家目录为根目录时，认为是异常情况，不执行导出操作
     if (callerHomeDir == "/" || callerHomeDir == "/root") {
         qCWarning(logService) << "Invalid caller home directory for export log: " << callerHomeDir;
-        return QString();
+        return false;
     }
 
-    QByteArray tmpTemplate = "/tmp/deepin-log-viewer-ops-logs.XXXXXX";
-    if (!mkdtemp(tmpTemplate.data())) {
-        qCCritical(logService) << "Failed to create secure temp directory";
-        return QString();
+    // 前端创建压缩包目标文件并以写方式打开，将 fd 通过 D-Bus 传入。
+    // 后端在 root 权限下于 /var/log 创建随机临时目录收集运维日志，整体压缩后写入该 fd，
+    // 随后自行清理临时目录，全程不向调用方暴露 /var/log 路径，前端也无需再调用清理接口。
+    int fdi = fd.fileDescriptor();
+    if (fdi <= 0) {
+        qCWarning(logService) << "exportOpsLog: invalid file descriptor from caller";
+        return false;
     }
-    QString newOutDir = tmpTemplate;
 
-    OpsLogExport ops(newOutDir.toStdString(), callerHomeDir.toStdString());
+    QTemporaryDir tmpOpsDir("/var/log/deepin-log-viewer-ops-log.XXXXXX");
+    tmpOpsDir.setAutoRemove(false);
+    if (!tmpOpsDir.isValid()) {
+        qCWarning(logService) << "exportOpsLog: failed to create temporary dir under /var/log:" << tmpOpsDir.errorString();
+        return false;
+    }
+
+    const QString opsDir = tmpOpsDir.path();
+    // 在 opsDir 内创建子目录 log-ops，专用于 OpsLogExport 收集日志。
+    // 收集完成后压缩该子目录，压缩包同样落在 opsDir 内，
+    // 全程不向 /var/log 暴露压缩包或日志内容，无需调整目录权限。
+    const QString logCollectDir = opsDir + QStringLiteral("/log-ops");
+    if (!QDir().mkpath(logCollectDir)) {
+        qCWarning(logService) << "exportOpsLog: failed to create log collect dir:" << logCollectDir;
+        removeOpsTempDirByPathInternal(opsDir);
+        return false;
+    }
+
+    OpsLogExport ops(logCollectDir.toStdString());
     ops.run();
 
-    return newOutDir;
+    // 将收集到的 log-ops 子目录内容整体压缩。压缩包放在 opsDir 内（log-ops.zip），
+    // 与被压缩内容同处一个随机目录，不暴露在 /var/log 下，避免被其它用户短暂读取。
+    // 直接以最终路径调用 zip 创建新压缩包，无需先创建空文件再删除。
+    const QString tmpZipPath = opsDir + QStringLiteral("/log-ops.zip");
+    QProcess zipProc;
+    zipProc.setWorkingDirectory(logCollectDir);
+    zipProc.start(QStringLiteral("zip"), QStringList() << QStringLiteral("-r")
+                                                       << tmpZipPath << QStringLiteral("."));
+    static constexpr int kZipTimeoutMs = 600000;
+    if (!zipProc.waitForFinished(kZipTimeoutMs) || zipProc.exitCode() != 0) {
+        qCWarning(logService) << "exportOpsLog: zip failed, exitCode:" << zipProc.exitCode()
+        << "stderr:" << zipProc.readAllStandardError();
+        zipProc.kill();
+        QFile::remove(tmpZipPath);
+        removeOpsTempDirByPathInternal(opsDir);
+        return false;
+    }
+
+    // 将压缩包内容写入前端传入的 fd（内核经 SCM_RIGHTS 复制了句柄，root 写入即落入前端文件）。
+    bool writeOk = false;
+    {
+        QFile zipIn(tmpZipPath);
+        if (!zipIn.open(QIODevice::ReadOnly)) {
+            qCWarning(logService) << "exportOpsLog: failed to open temp zip for reading:" << tmpZipPath;
+        } else {
+            QFile fdOut;
+            if (!fdOut.open(fdi, QIODevice::WriteOnly)) {
+                qCWarning(logService) << "exportOpsLog: failed to open caller fd for writing";
+            } else {
+                constexpr qint64 bufSize = 1 << 20;  // 1 MiB
+                // 缓冲区较大，改用堆分配，避免占用过多线程栈空间；
+                // 与本文件 exportLog() 中 1 MiB 缓冲区的处理方式保持一致。
+                QScopedPointer<char> buf(new char[bufSize]);
+                qint64 n = 0;
+                bool error = false;
+                while ((n = zipIn.read(buf.data(), bufSize)) > 0) {
+                    qint64 written = 0;
+                    while (written < n) {
+                        qint64 w = fdOut.write(buf.data() + written, n - written);
+                        if (w < 0) {
+                            error = true;
+                            break;
+                        }
+                        written += w;
+                    }
+                    if (error)
+                        break;
+                }
+                if (error || n < 0) {
+                    qCWarning(logService) << "exportOpsLog: write to caller fd failed";
+                } else {
+                    fdOut.flush();
+                    writeOk = true;
+                }
+                fdOut.close();  // 关闭后端持有的 fd 句柄，前端 QFile 仍保留自己的句柄
+            }
+            zipIn.close();
+        }
+    }
+
+    // 清理压缩包与 /var/log 临时目录，无论写入是否成功都需回收。
+    QFile::remove(tmpZipPath);
+    removeOpsTempDirByPathInternal(opsDir);
+
+    if (!writeOk) {
+        qCWarning(logService) << "exportOpsLog: aborted, failed to write zip to caller fd";
+        return false;
+    }
+
+    qCDebug(logService) << "exportOpsLog: ops logs zipped and written to caller fd successfully";
+    return true;
 }
