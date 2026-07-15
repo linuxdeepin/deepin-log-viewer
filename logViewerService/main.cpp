@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -58,16 +58,19 @@ int main(int argc, char *argv[])
     Dtk::Core::DLogManager::registerFileAppender();
 #endif
     QDBusConnection systemBus = QDBusConnection::systemBus();
-    if (!systemBus.registerService(LogViewrServiceName)) {
-        qCCritical(logService) << "registerService failed:" << systemBus.lastError();
-        exit(0x0001);
-    }
+    // 先注册对象再注册服务名：well-known name 一旦对外可见，/com/deepin/logviewer
+    // 对象必然已就绪，消除名称已注册但对象尚未注册的竞态窗口
+    // （表现为 busctl tree 间歇性 "No such object path '/'"）。
     LogViewerService service;
     if (!systemBus.registerObject(LogViewrPath,
                                   &service,
                                   QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals)) {
         qCCritical(logService) << "registerObject failed:" << systemBus.lastError();
         exit(0x0002);
+    }
+    if (!systemBus.registerService(LogViewrServiceName)) {
+        qCCritical(logService) << "registerService failed:" << systemBus.lastError();
+        exit(0x0001);
     }
     return a.exec();
 }
