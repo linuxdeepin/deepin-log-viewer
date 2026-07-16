@@ -1,3 +1,12 @@
+deepin-log-viewer (6.5.33) unstable; urgency=medium
+
+  * chore: Update version to 6.5.33
+  * fix: remove deepin prefix from Chinese translations in desktop file
+  * fix(service): register D-Bus object before service name to close race
+  * fix(security): harden ops log export via fd-based transfer and symlink-safe collection
+
+ -- zhanghongyuan <zhanghongyuan@uniontech.com>  Thu, 16 Jul 2026 19:35:34 +0800
+
 deepin-log-viewer (6.5.32) unstable; urgency=medium
 
   *fix(loglistview): decouple Kwin/Xorg log visibility and validate Kwin log file existence
