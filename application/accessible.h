@@ -40,6 +40,22 @@
 #include <QMetaEnum>
 #include <QWidget>
 
+// Include custom widget headers for accessible factory
+#include "loglistview.h"
+#include "logtreeview.h"
+#include "filtercontent.h"
+#include "displaycontent.h"
+#include "logperiodbutton.h"
+#include "lognormalbutton.h"
+#include "logiconbutton.h"
+#include "logcombox.h"
+#include "logspinnerwidget.h"
+#include "logdetailinfowidget.h"
+#include "logdetailedit.h"
+#include "exportprogressdlg.h"
+#include "logcollectormain.h"
+#include "logviewheaderview.h"
+
 inline constexpr char kSeparator[] { "_" };
 
 inline QString getObjPrefix(QAccessible::Role r)
@@ -257,11 +273,39 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, QString fallba
 
 /********************** 添加accessible ***********************/
 SET_FORM_ACCESSIBLE(QWidget,m_w->objectName())
+SET_FORM_ACCESSIBLE(LogListView,"LogListView")
+SET_FORM_ACCESSIBLE(LogTreeView,"LogTreeView")
+SET_FORM_ACCESSIBLE(FilterContent,"FilterContent")
+SET_FORM_ACCESSIBLE(DisplayContent,"DisplayContent")
+SET_BUTTON_ACCESSIBLE(LogPeriodButton,"LogPeriodButton")
+SET_BUTTON_ACCESSIBLE(LogNormalButton,"LogNormalButton")
+SET_BUTTON_ACCESSIBLE(LogIconButton,"LogIconButton")
+SET_FORM_ACCESSIBLE(LogCombox,"LogCombox")
+SET_FORM_ACCESSIBLE(LogSpinnerWidget,"LogSpinnerWidget")
+SET_FORM_ACCESSIBLE(logDetailInfoWidget,"logDetailInfoWidget")
+SET_FORM_ACCESSIBLE(logDetailEdit,"logDetailEdit")
+SET_FORM_ACCESSIBLE(ExportProgressDlg,"ExportProgressDlg")
+SET_FORM_ACCESSIBLE(LogCollectorMain,"LogCollectorMain")
+SET_FORM_ACCESSIBLE(LogViewHeaderView,"LogViewHeaderView")
 
 QAccessibleInterface *accessibleFactory(const QString &classname, QObject *object)
 {
     QAccessibleInterface *interface = nullptr;
     USE_ACCESSIBLE(classname, QWidget);
+    USE_ACCESSIBLE(classname, LogListView);
+    USE_ACCESSIBLE(classname, LogTreeView);
+    USE_ACCESSIBLE(classname, FilterContent);
+    USE_ACCESSIBLE(classname, DisplayContent);
+    USE_ACCESSIBLE(classname, LogPeriodButton);
+    USE_ACCESSIBLE(classname, LogNormalButton);
+    USE_ACCESSIBLE(classname, LogIconButton);
+    USE_ACCESSIBLE(classname, LogCombox);
+    USE_ACCESSIBLE(classname, LogSpinnerWidget);
+    USE_ACCESSIBLE(classname, logDetailInfoWidget);
+    USE_ACCESSIBLE(classname, logDetailEdit);
+    USE_ACCESSIBLE(classname, ExportProgressDlg);
+    USE_ACCESSIBLE(classname, LogCollectorMain);
+    USE_ACCESSIBLE(classname, LogViewHeaderView);
 
     return interface;
 }

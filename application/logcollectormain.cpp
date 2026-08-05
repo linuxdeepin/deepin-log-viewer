@@ -117,6 +117,8 @@ void LogCollectorMain::initUI()
     m_logCatelogue = new LogListView(this);
     m_logCatelogue->setMaximumWidth(LEFT_LIST_WIDTH);
     m_logCatelogue->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_logCatelogue->setObjectName("logTypeSelectList");
+    m_logCatelogue->setAccessibleName("left_side_bar");
 
     m_hSplitter->addWidget(m_logCatelogue);
     m_hSplitter->setStretchFactor(0, 1);
@@ -124,6 +126,7 @@ void LogCollectorMain::initUI()
     m_vLayout = new QVBoxLayout;
     /** topRight frame */
     m_topRightWgt = new FilterContent();
+    m_topRightWgt->setAccessibleName("filterWidget");
     // m_topRightWgt->setMinimumWidth(8000);
     // m_topRightWgt->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     m_vLayout->addWidget(m_topRightWgt);

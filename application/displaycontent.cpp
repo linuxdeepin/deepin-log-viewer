@@ -107,10 +107,12 @@ void DisplayContent::initUI()
     // set table for display log data
     initTableView();
     m_treeView->setMinimumHeight(100);
+    m_treeView->setAccessibleName("logTreeView");
     m_treeView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
 
     //noResultLabel
     noResultLabel = new DLabel(this);
+    noResultLabel->setAccessibleName("noResultLabel");
     DPalette pa = DPaletteHelper::instance()->palette(noResultLabel);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     noResultLabel->setPalette(pa);
@@ -120,6 +122,7 @@ void DisplayContent::initUI()
 
     //notAuditLabel
     notAuditLabel = new DLabel(this);
+    notAuditLabel->setAccessibleName("notAuditLabel");
     DPalette auditPa = DPaletteHelper::instance()->palette(notAuditLabel);
     auditPa.setBrush(DPalette::WindowText, auditPa.color(DPalette::TextTips));
     noResultLabel->setPalette(auditPa);
@@ -128,12 +131,14 @@ void DisplayContent::initUI()
     notAuditLabel->setAlignment(Qt::AlignCenter);
 
     noCoredumpctlLabel = new DLabel(this);
+    noCoredumpctlLabel->setAccessibleName("noCoredumpctlLabel");
     noCoredumpctlLabel->setPalette(pa);
     noCoredumpctlLabel->setText(DApplication::translate("Waring", "Unable to obtain crash information, please install systemd-coredump."));
     DFontSizeManager::instance()->bind(noCoredumpctlLabel, DFontSizeManager::T4);
     noCoredumpctlLabel->setAlignment(Qt::AlignCenter);
 
     noPermissionLabel = new DLabel(this);
+    noPermissionLabel->setAccessibleName("noPermissionLabel");
     noPermissionLabel->setPalette(pa);
     noPermissionLabel->setText(DApplication::translate("Warning", "You do not have permission to view it"));
     DFontSizeManager::instance()->bind(noPermissionLabel, DFontSizeManager::T4);
