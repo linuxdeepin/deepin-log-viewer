@@ -802,6 +802,10 @@ QString LogViewerService::isFileExist(const QString &filePath)
 quint64 LogViewerService::getFileSize(const QString &filePath)
 {
     qCDebug(logService) << "Getting file size for:" << filePath;
+    if (!checkAuth(s_Action_View)) {
+        return 0;
+    }
+
     QFileInfo fi(filePath);
     if (fi.exists())
         return static_cast<quint64>(fi.size());
