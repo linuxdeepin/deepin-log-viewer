@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -319,8 +319,6 @@ void LogListView::initUI()
     item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
     m_logTypes.push_back(AUDIT_TREE_DATA);
-
-    DLDBusHandler::instance(this)->whiteListOutPaths();
 
     // set first item is select when app start
     if (m_pModel->rowCount() > 0) {

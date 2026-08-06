@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -602,8 +602,6 @@ QStringList LogBackend::getLogTypes()
 
     //audit
     m_logTypes.push_back(AUDIT_TREE_DATA);
-
-    DLDBusHandler::instance(qApp)->whiteListOutPaths();
 
     return m_logTypes;
 }
@@ -1725,6 +1723,10 @@ bool LogBackend::getOutDirPath(const QString &path)
 
         // 导出路径白名单检查
         QStringList availablePaths =  DLDBusHandler::instance()->whiteListOutPaths();
+        if (availablePaths.isEmpty()) {
+            qCWarning(logBackend) << "Failed to retrieve white list out paths, aborting export pre-check";
+            return false;
+        }
         bool bAvailable = false;
         for (auto path : availablePaths) {
             if (tmpPath.startsWith(path)) {
