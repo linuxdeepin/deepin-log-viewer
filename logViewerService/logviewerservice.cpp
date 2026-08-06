@@ -833,6 +833,9 @@ QStringList LogViewerService::whiteListOutPaths()
 {
     trackCurrentCaller();
     qCDebug(logService) << "Getting white list out paths";
+    if (!checkAuth(s_Action_View)) {
+        return {};
+    }
     QStringList paths;
     // 获取用户家目录
     QStringList homeList = getHomePaths();
