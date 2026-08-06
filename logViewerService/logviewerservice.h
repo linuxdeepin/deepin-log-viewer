@@ -14,6 +14,8 @@
 #include <QTemporaryDir>
 #include <QDBusUnixFileDescriptor>
 #include <QMap>
+#include <QDBusServiceWatcher>
+#include <QSet>
 
 class QTextStream;
 class DGioVolumeManager;
@@ -85,6 +87,13 @@ private:
     bool removeOpsTempDirByPathInternal(const QString &path);
     QByteArray processCatFile(const QString &filePath);
     void processCmdArgs(const QString &cmdStr, const QStringList &args);
+
+    // 客户端生命周期跟踪：记录所有通过 D-Bus 连入的调用方唯一总线名，
+    // 当最后一个客户端断开后自动退出服务（替代被前端主动调用的 quit）。
+    void trackCurrentCaller();
+    void onClientUnregistered(const QString &serviceName);
+    QDBusServiceWatcher *m_clientWatcher = nullptr;
+    QSet<QString> m_clientBusNames;
 };
 
 #endif // LOGVIEWERSERVICE_H

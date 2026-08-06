@@ -25,7 +25,7 @@ DLDBusHandler *DLDBusHandler::instance(QObject *parent)
 
 DLDBusHandler::~DLDBusHandler()
 {
-    quit();
+    // 不再主动调用后端 quit()：后端会在所有 D-Bus 客户端断开后自行退出。
 }
 
 DLDBusHandler::DLDBusHandler(QObject *parent)
