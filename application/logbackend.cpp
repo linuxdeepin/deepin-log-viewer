@@ -694,8 +694,6 @@ QStringList LogBackend::getLogTypes()
     //auth
     m_logTypes.push_back(AUTH_TREE_DATA);
 
-    DLDBusHandler::instance(qApp)->whiteListOutPaths();
-
     return m_logTypes;
 }
 
@@ -2102,6 +2100,10 @@ bool LogBackend::getOutDirPath(const QString &path)
 
         // 导出路径白名单检查
         QStringList availablePaths =  DLDBusHandler::instance()->whiteListOutPaths();
+        if (availablePaths.isEmpty()) {
+            qCWarning(logApp) << "Failed to retrieve white list out paths, aborting export pre-check";
+            return false;
+        }
         bool bAvailable = false;
         for (auto path : availablePaths) {
             if (tmpPath.startsWith(path)) {

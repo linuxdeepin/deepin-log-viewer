@@ -347,9 +347,6 @@ void LogListView::initUI()
         initCustomLogItem();
     }
 
-
-    DLDBusHandler::instance(this)->whiteListOutPaths();
-
     // set first item is select when app start
     if (m_pModel->rowCount() > 0) {
         this->setCurrentIndex(m_pModel->index(0, 0));

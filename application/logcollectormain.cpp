@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -354,6 +354,11 @@ void LogCollectorMain::exportAllLogs()
     QFileInfo info(newPath);
     QString outPath = info.path();
     QStringList availablePaths =  DLDBusHandler::instance(this)->whiteListOutPaths();
+
+    if (availablePaths.isEmpty()) {
+        qCWarning(logApp) << "Failed to retrieve white list out paths, aborting export pre-check";
+        return;
+    }
 
     bool bAvailable = false;
     for (auto path : availablePaths) {
