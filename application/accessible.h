@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2023 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -39,6 +39,22 @@
 #include <QObject>
 #include <QMetaEnum>
 #include <QWidget>
+
+// 自定义控件头文件，用于 AT-SPI accessible 接口
+#include "loglistview.h"
+#include "logtreeview.h"
+#include "logcombox.h"
+#include "logperiodbutton.h"
+#include "lognormalbutton.h"
+#include "logiconbutton.h"
+#include "logspinnerwidget.h"
+#include "logdetailinfowidget.h"
+#include "logdetailedit.h"
+#include "exportprogressdlg.h"
+#include "displaycontent.h"
+#include "filtercontent.h"
+#include "logcollectormain.h"
+#include "logtableview.h"
 
 inline constexpr char kSeparator[] { "_" };
 
@@ -258,10 +274,66 @@ inline QString getAccessibleName(QWidget *w, QAccessible::Role r, QString fallba
 /********************** 添加accessible ***********************/
 SET_FORM_ACCESSIBLE(QWidget,m_w->objectName())
 
+// LogListView - 日志类型选择列表
+SET_FORM_ACCESSIBLE(LogListView,m_w->objectName())
+
+// LogTreeView - 主日志数据表格
+SET_FORM_ACCESSIBLE(LogTreeView,m_w->objectName())
+
+// LogCombox - 自定义下拉框
+SET_FORM_ACCESSIBLE(LogCombox,m_w->objectName())
+
+// LogPeriodButton - 时间周期按钮（继承DPushButton）
+SET_BUTTON_ACCESSIBLE(LogPeriodButton,m_w->objectName())
+
+// LogNormalButton - 普通按钮（继承DPushButton）
+SET_BUTTON_ACCESSIBLE(LogNormalButton,m_w->objectName())
+
+// LogIconButton - 图标按钮（继承QPushButton）
+SET_BUTTON_ACCESSIBLE(LogIconButton,m_w->objectName())
+
+// LogSpinnerWidget - 加载转圈控件
+SET_FORM_ACCESSIBLE(LogSpinnerWidget,m_w->objectName())
+
+// logDetailInfoWidget - 详情信息面板
+SET_FORM_ACCESSIBLE(logDetailInfoWidget,m_w->objectName())
+
+// logDetailEdit - 详情文本浏览器
+SET_FORM_ACCESSIBLE(logDetailEdit,m_w->objectName())
+
+// ExportProgressDlg - 导出进度对话框
+SET_FORM_ACCESSIBLE(ExportProgressDlg,m_w->objectName())
+
+// FilterContent - 筛选内容面板（DFrame）
+SET_FORM_ACCESSIBLE(FilterContent,m_w->objectName())
+
+// DisplayContent - 显示内容面板（DWidget）
+SET_FORM_ACCESSIBLE(DisplayContent,m_w->objectName())
+
+// LogCollectorMain - 主窗口（DMainWindow）
+SET_FORM_ACCESSIBLE(LogCollectorMain,m_w->objectName())
+
+// LogTableView - 表格视图
+SET_FORM_ACCESSIBLE(LogTableView,m_w->objectName())
+
 QAccessibleInterface *accessibleFactory(const QString &classname, QObject *object)
 {
     QAccessibleInterface *interface = nullptr;
     USE_ACCESSIBLE(classname, QWidget);
+    USE_ACCESSIBLE(classname, LogListView);
+    USE_ACCESSIBLE(classname, LogTreeView);
+    USE_ACCESSIBLE(classname, LogCombox);
+    USE_ACCESSIBLE(classname, LogPeriodButton);
+    USE_ACCESSIBLE(classname, LogNormalButton);
+    USE_ACCESSIBLE(classname, LogIconButton);
+    USE_ACCESSIBLE(classname, LogSpinnerWidget);
+    USE_ACCESSIBLE(classname, logDetailInfoWidget);
+    USE_ACCESSIBLE(classname, logDetailEdit);
+    USE_ACCESSIBLE(classname, ExportProgressDlg);
+    USE_ACCESSIBLE(classname, FilterContent);
+    USE_ACCESSIBLE(classname, DisplayContent);
+    USE_ACCESSIBLE(classname, LogCollectorMain);
+    USE_ACCESSIBLE(classname, LogTableView);
 
     return interface;
 }
