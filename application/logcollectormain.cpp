@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -158,7 +158,7 @@ void LogCollectorMain::initUI()
     /** left frame */
     m_logCatelogue = new LogListView();
     m_logCatelogue->setObjectName("logTypeSelectList");
-    m_logCatelogue->setAccessibleName("left_side_bar");
+    m_logCatelogue->setAccessibleName("leftSideBar");
     m_hLayout->addWidget(m_logCatelogue, 1);
     m_logCatelogue->setFixedWidth(160);
     m_vLayout = new QVBoxLayout;
@@ -168,6 +168,7 @@ void LogCollectorMain::initUI()
     m_vLayout->addWidget(m_topRightWgt);
     /** midRight frame */
     m_midRightWgt = new DisplayContent();
+    m_midRightWgt->setAccessibleName("displayWidget");
 
     m_vLayout->addWidget(m_midRightWgt, 1);
     m_vLayout->setContentsMargins(0, 10, 0, 10);
@@ -197,7 +198,7 @@ void LogCollectorMain::initTitlebarExtensions()
     qCDebug(logApp) << "Initializing titlebar extensions...";
     DMenu *refreshMenu = new DMenu(this);
     DMenu *menu = new DMenu(DApplication::translate("titlebar", "Refresh interval"), refreshMenu);
-    menu->setAccessibleName("refresh_interval_menu");
+    menu->setAccessibleName("refreshIntervalMenu");
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "10 sec")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "1 min")));
     m_refreshActions.push_back(menu->addAction(qApp->translate("titlebar", "5 min")));
@@ -230,13 +231,13 @@ void LogCollectorMain::initTitlebarExtensions()
     m_exportAllBtn->setIcon(QIcon::fromTheme("export"));
     m_exportAllBtn->setIconSize(QSize(36, 36));
     m_exportAllBtn->setToolTip(qApp->translate("titlebar", "Export All"));
-    m_exportAllBtn->setAccessibleName(qApp->translate("titlebar", "Export All"));
+    m_exportAllBtn->setAccessibleName("exportAllBtn");
     m_refreshBtn = new DIconButton(widget);
     m_refreshBtn->setIcon(QIcon::fromTheme("refresh"));
     m_refreshBtn->setFixedSize(QSize(36, 36));
     m_refreshBtn->setIconSize(QSize(36, 36));
     m_refreshBtn->setToolTip(qApp->translate("titlebar", "Refresh Now"));
-    m_refreshBtn->setAccessibleName(qApp->translate("titlebar", "Refresh Now"));
+    m_refreshBtn->setAccessibleName("refreshBtn");
     layout->addSpacing(115);
     layout->addWidget(m_exportAllBtn);
     layout->addSpacing(2);

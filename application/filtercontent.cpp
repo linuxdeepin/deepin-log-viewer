@@ -74,25 +74,32 @@ void FilterContent::initUI()
     // set period info
     hLayout_period = new QHBoxLayout;
     periodLabel = new DLabel(DApplication::translate("Label", "Period:"), this);
+    periodLabel->setAccessibleName("periodLabel");
     periodLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     m_btnGroup = new QButtonGroup(this);
     //初始化时间筛选按钮部分布局
     m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
+    m_allBtn->setAccessibleName("allBtn");
     m_allBtn->setToolTip(DApplication::translate("Button", "All"));  // add by Airy for bug 16245
     m_btnGroup->addButton(m_allBtn, 0);
     m_todayBtn = new LogPeriodButton(DApplication::translate("Button", "Today"), this);
+    m_todayBtn->setAccessibleName("todayBtn");
     m_todayBtn->setToolTip(DApplication::translate("Button", "Today"));  // add by Airy for bug
     m_btnGroup->addButton(m_todayBtn, 1);
     m_threeDayBtn = new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
+    m_threeDayBtn->setAccessibleName("threeDayBtn");
     m_threeDayBtn->setToolTip(DApplication::translate("Button", "3 days")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_threeDayBtn, 2);
     m_lastWeekBtn = new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
+    m_lastWeekBtn->setAccessibleName("lastWeekBtn");
     m_lastWeekBtn->setToolTip(DApplication::translate("Button", "1 week")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_lastWeekBtn, 3);
     m_lastMonthBtn = new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
+    m_lastMonthBtn->setAccessibleName("lastMonthBtn");
     m_lastMonthBtn->setToolTip(DApplication::translate("Button", "1 month")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_lastMonthBtn, 4);
     m_threeMonthBtn = new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
+    m_threeMonthBtn->setAccessibleName("threeMonthBtn");
     m_threeMonthBtn->setToolTip(DApplication::translate("Button", "3 months")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_threeMonthBtn, 5);
     //设置初始时间筛选为全部
@@ -112,10 +119,10 @@ void FilterContent::initUI()
     hLayout_all = new QHBoxLayout;
     QHBoxLayout *hLayout_lvl = new QHBoxLayout;
     lvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
-    lvTxt->setAccessibleName(DApplication::translate("Label", "Level:  "));
+    lvTxt->setAccessibleName("levelLabel");
     lvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_lv = new LogCombox(this);
-    //cbx_lv->view()->setAccessibleName("combobox_level_view");
+    cbx_lv->setAccessibleName("levelCombox");
     cbx_lv->setMinimumWidth(LEVEL_COMBO_WIDTH);
     cbx_lv->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                      << DApplication::translate("ComboBox", "Emergency")
@@ -133,10 +140,10 @@ void FilterContent::initUI()
     hLayout_all->addLayout(hLayout_lvl);
     QHBoxLayout *hLayout_dnf_lvl = new QHBoxLayout;
     dnflvTxt = new DLabel(DApplication::translate("Label", "Level:  "), this);
-    dnflvTxt->setAccessibleName("dnf" + DApplication::translate("Label", "Level:  "));
+    dnflvTxt->setAccessibleName("dnfLevelLabel");
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
-    //cbx_dnf_lv->view()->setAccessibleName("combobox_dnflevel_view");
+    cbx_dnf_lv->setAccessibleName("dnfLevelCombox");
     cbx_dnf_lv->setMinimumWidth(198);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "Super critical"), SUPERCRITICAL);
@@ -153,9 +160,9 @@ void FilterContent::initUI()
     // set all files under ~/.cache/deepin
     QHBoxLayout *hLayout_app = new QHBoxLayout;
     appTxt = new DLabel(DApplication::translate("Label", "Application:"), this);
+    appTxt->setAccessibleName("appLabel");
     cbx_app = new LogCombox(this);
-    //cbx_app->view()->setAccessibleName("combobox_app_view");
-
+    cbx_app->setAccessibleName("appCombox");
     cbx_app->setMinimumWidth(160);
     hLayout_app->addWidget(appTxt);
     hLayout_app->addWidget(cbx_app, 1);
@@ -165,9 +172,9 @@ void FilterContent::initUI()
     // app submodules
     QHBoxLayout *hLayout_submodule = new QHBoxLayout;
     submoduleTxt = new DLabel(DApplication::translate("Label", "Submodule:"), this);
+    submoduleTxt->setAccessibleName("submoduleLabel");
     cbx_submodule = new LogCombox(this);
-    //cbx_submodule->view()->setAccessibleName("combobox_submodule_view");
-
+    cbx_submodule->setAccessibleName("submoduleCombox");
     cbx_submodule->setMinimumWidth(143);
     hLayout_submodule->addWidget(submoduleTxt);
     hLayout_submodule->addWidget(cbx_submodule, 1);
@@ -178,8 +185,9 @@ void FilterContent::initUI()
     // add status item
     QHBoxLayout *hLayout_status = new QHBoxLayout;
     statusTxt = new DLabel(DApplication::translate("Label", "Status:"), this);
+    statusTxt->setAccessibleName("statusLabel");
     cbx_status = new LogCombox(this);
-    //cbx_status->view()->setAccessibleName("combobox_status_view");
+    cbx_status->setAccessibleName("statusCombox");
     cbx_status->setMinimumWidth(120);
     cbx_status->addItems(QStringList() << DApplication::translate("ComboBox", "All") << "OK"
                          << "Failed");
@@ -191,8 +199,9 @@ void FilterContent::initUI()
     // add by Airy for adding type item
     QHBoxLayout *hLayout_type = new QHBoxLayout;
     typeTxt = new DLabel(DApplication::translate("Label", "Event Type:"), this);
+    typeTxt->setAccessibleName("eventTypeLabel");
     typeCbx = new LogCombox(this);
-    //typeCbx->view()->setAccessibleName("combobox_eventtype_view");
+    typeCbx->setAccessibleName("eventTypeCombox");
     typeCbx->setMinimumWidth(120);
     typeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                       << DApplication::translate("ComboBox", "Login")
@@ -206,7 +215,9 @@ void FilterContent::initUI()
     // 审计日志审计类型筛选下拉框
     QHBoxLayout *hLayout_auditType = new QHBoxLayout;
     auditTypeTxt = new DLabel(DApplication::translate("Label", "Audit Type:"), this);
+    auditTypeTxt->setAccessibleName("auditTypeLabel");
     auditTypeCbx = new LogCombox(this);
+    auditTypeCbx->setAccessibleName("auditTypeCombox");
     auditTypeCbx->setMinimumWidth(120);
     auditTypeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                       << DApplication::translate("ComboBox", "Identity authentication")
@@ -222,6 +233,7 @@ void FilterContent::initUI()
 
     hLayout_all->addStretch(1);
     exportBtn = new LogNormalButton(DApplication::translate("Button", "Export", "button"), this);
+    exportBtn->setAccessibleName("exportBtn");
     exportBtn->setContentsMargins(0, 0, 18, 18);
     exportBtn->setFixedWidth(BUTTON_EXPORT_WIDTH_MIN);
     hLayout_all->addWidget(exportBtn);
