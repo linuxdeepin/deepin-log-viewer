@@ -48,6 +48,9 @@ int main(int argc, char *argv[])
         a.setApplicationName(kAppNameForDeepinLogViewer);
         a.setApplicationVersion(VERSION);
 
+        // 预先创建 DLDBusHandler
+        DLDBusHandler::instance(&a);
+
         DLogManager::registerConsoleAppender();
 
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
@@ -320,6 +323,9 @@ int main(int argc, char *argv[])
         a.setApplicationDisplayName(DApplication::translate("Main", "Log Viewer"));
         a.setApplicationDescription(
                     DApplication::translate("Main", "Log Viewer is a useful tool for viewing system logs."));
+
+        // 预先创建 DLDBusHandler
+        DLDBusHandler::instance(&a);
 
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 0))
         DLogManager::registerJournalAppender();
