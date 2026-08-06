@@ -110,6 +110,13 @@ LogViewerService::LogViewerService(QObject *parent)
 
     m_actionId = s_Action_View;
     qCDebug(logService) << "Commands initialized, action ID set to:" << m_actionId;
+
+    // 监听系统总线上调用方的唯一总线名属主变化：客户端进程退出时其唯一
+    // 总线名被释放，watcher 发出 serviceUnregistered，据此实现“无客户端即退出”。
+    m_clientWatcher = new QDBusServiceWatcher({}, QDBusConnection::systemBus(),
+                                              QDBusServiceWatcher::WatchForOwnerChange, this);
+    connect(m_clientWatcher, &QDBusServiceWatcher::serviceUnregistered,
+            this, &LogViewerService::onClientUnregistered);
 }
 
 LogViewerService::~LogViewerService()
@@ -132,6 +139,7 @@ LogViewerService::~LogViewerService()
  */
 QString LogViewerService::readLog(const QDBusUnixFileDescriptor &fd)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Reading log from file descriptor";
     if(!checkAuth(s_Action_View)) {
         qCWarning(logService) << "Authorization check failed for readLog";
@@ -451,6 +459,7 @@ bool LogViewerService::checkAuthorization(const QString &actionId)
  */
 QStringList LogViewerService::readLogLinesInRange(const QDBusUnixFileDescriptor &fd, qint64 startLine, qint64 lineCount, bool bReverse)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Reading log lines in range with file descriptor, start line:" << startLine << "line count:" << lineCount << "reverse order:" << bReverse;
     if(!checkAuth(s_Action_View)) {
         qCDebug(logService) << "Authorization check failed for readLogLinesInRange";
@@ -606,6 +615,7 @@ qint64 LogViewerService::findLineStartOffsetWithCaching(const QString &filePath,
 
 qint64 LogViewerService::getLineCount(const QString &filePath)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Getting line count for file:" << filePath;
     if (!checkAuth(s_Action_View)) {
         return -1;
@@ -649,6 +659,7 @@ void LogViewerService::processCmdArgs(const QString &cmdStr, const QStringList &
 
 QString LogViewerService::executeCmd(const QString &cmd)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Executing command:" << cmd;
     QString result("");
 
@@ -725,6 +736,7 @@ QString LogViewerService::executeCmd(const QString &cmd)
  */
 QString LogViewerService::openLogStream(const QString &filePath)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Opening log stream for file:" << filePath;
     QString result = readLog(filePath);
     if(result == " ") {
@@ -750,6 +762,7 @@ QString LogViewerService::openLogStream(const QString &filePath)
  */
 QString LogViewerService::readLogInStream(const QString &token)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Reading log in stream with token:" << token;
     if(!m_logMap.contains(token)) {
         qCWarning(logService) << "Token not found in log map:" << token;
@@ -789,6 +802,7 @@ QString LogViewerService::readLogInStream(const QString &token)
 
 QString LogViewerService::isFileExist(const QString &filePath)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Checking if file exists:" << filePath;
     if (!checkAuth(s_Action_View))
         return QString("");
@@ -801,6 +815,7 @@ QString LogViewerService::isFileExist(const QString &filePath)
 
 quint64 LogViewerService::getFileSize(const QString &filePath)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Getting file size for:" << filePath;
     if (!checkAuth(s_Action_View)) {
         return 0;
@@ -816,6 +831,7 @@ quint64 LogViewerService::getFileSize(const QString &filePath)
 // 获取白名单导出路径
 QStringList LogViewerService::whiteListOutPaths()
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Getting white list out paths";
     QStringList paths;
     // 获取用户家目录
@@ -920,17 +936,44 @@ void LogViewerService::clearTempFiles()
  */
 int LogViewerService::exitCode()
 {
+    trackCurrentCaller();
     // qCDebug(logService) << "Getting exit code";
     return m_process.exitCode();
 }
 
 /*!
  * \~chinese \brief LogViewerService::quit 退出服务端程序
+ *
+ * 仅允许 root 调用（systemd/管理员显式停服）。非 root 调用直接返回
+ * AccessDenied，不触发 polkit 认证（不弹框），避免“请求退出却提示
+ * 访问日志需要认证”的语义错位。普通用户的正常退出由服务端在所有
+ * 客户端断开后自动执行（见 onClientUnregistered）。
  */
 void LogViewerService::quit()
 {
     qCDebug(logService) << "LogViewService::Quit called";
-    QCoreApplication::exit(0);
+    trackCurrentCaller();
+    if (!calledFromDBus()) {
+        return;
+    }
+    // 显式校验 D-Bus 回复有效性：serviceUid() 失败时 QDBusReply::value() 会静默
+    // 返回默认构造值 0，若直接当作 UID 会与 root(0) 混淆，构成 fail-open。此处
+    // 对无效回复 fail-closed，拒绝退出并回 AccessDenied，绝不回退为 0。
+    auto reply = connection().interface()->serviceUid(message().service());
+    if (!reply.isValid()) {
+        qCWarning(logService) << "quit denied: failed to get caller UID via D-Bus:"
+                              << reply.error().message();
+        sendErrorReply(QDBusError::ErrorType::AccessDenied,
+                       "quit is only allowed for root");
+        return;
+    }
+    const uint callerUid = reply.value();
+    if (callerUid != 0) {
+        qCWarning(logService) << "quit denied: non-root caller uid" << callerUid;
+        sendErrorReply(QDBusError::ErrorType::AccessDenied, "quit is only allowed for root");
+        return;
+    }
+    QCoreApplication::quit();
 }
 
 /*!
@@ -940,6 +983,7 @@ void LogViewerService::quit()
  */
 QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Getting file info for:" << file << "and unzip:" << unzip;
     // 判断非法调用
     if(!checkAuth(s_Action_View)) {
@@ -1061,6 +1105,7 @@ QStringList LogViewerService::getFileInfo(const QString &file, bool unzip)
  */
 QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Getting other file info for:" << file << "and unzip:" << unzip;
     // 判断非法调用
     if(!checkAuth(s_Action_View)) {
@@ -1135,6 +1180,7 @@ static bool processExportLog(const QString &cmdStr, const QString &outFullPath,c
 
 bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
+    trackCurrentCaller();
     qCDebug(logService) << "Exporting log to:" << outDir << "with input:" << in << "and isFile:" << isFile;
     if(!checkAuth(s_Action_View)) { //非法调用
         qCDebug(logService) << "Invalid authorization for export log";
@@ -1300,6 +1346,32 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     return true;
 }
 
+void LogViewerService::trackCurrentCaller()
+{
+    // 仅 D-Bus 调用才记录；内部调用（calledFromDBus() 为 false）直接 no-op，
+    // 因此在私有 helper 等非 D-Bus 入口调用也无副作用。
+    if (!calledFromDBus())
+        return;
+    const QString caller = message().service();
+    if (caller.isEmpty() || m_clientBusNames.contains(caller))
+        return;
+    m_clientBusNames.insert(caller);
+    m_clientWatcher->addWatchedService(caller);
+}
+
+void LogViewerService::onClientUnregistered(const QString &serviceName)
+{
+    if (!m_clientBusNames.remove(serviceName))
+        return;
+    qCInfo(logService) << "Client disconnected:" << serviceName
+                       << "remaining:" << m_clientBusNames.size();
+    // 仅在“有客户端 → 全部断开”的转换时退出；启动空集不退出。
+    if (m_clientBusNames.isEmpty()) {
+        qCInfo(logService) << "All clients disconnected, exiting";
+        QCoreApplication::quit();
+    }
+}
+
 bool LogViewerService::checkAuth(const QString &actionId)
 {
     qCDebug(logService) << "Checking auth for:" << actionId;
@@ -1326,6 +1398,7 @@ bool LogViewerService::checkAuth(const QString &actionId)
 
 bool LogViewerService::exportOpsLog(const QDBusUnixFileDescriptor &fd)
 {
+    trackCurrentCaller();
     if(!checkAuth(s_Action_View)) {
         qCWarning(logService) << "Invalid authorization for export log";
         return false;
