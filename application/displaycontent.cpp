@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -111,6 +111,7 @@ void DisplayContent::initUI()
 
     //noResultLabel
     noResultLabel = new DLabel(this);
+    noResultLabel->setAccessibleName("noResultLabel");
     DPalette pa = DPaletteHelper::instance()->palette(noResultLabel);
     pa.setBrush(DPalette::WindowText, pa.color(DPalette::TextTips));
     noResultLabel->setPalette(pa);
@@ -120,6 +121,7 @@ void DisplayContent::initUI()
 
     //notAuditLabel
     notAuditLabel = new DLabel(this);
+    notAuditLabel->setAccessibleName("notAuditLabel");
     DPalette auditPa = DPaletteHelper::instance()->palette(notAuditLabel);
     auditPa.setBrush(DPalette::WindowText, auditPa.color(DPalette::TextTips));
     noResultLabel->setPalette(auditPa);
@@ -128,12 +130,14 @@ void DisplayContent::initUI()
     notAuditLabel->setAlignment(Qt::AlignCenter);
 
     noCoredumpctlLabel = new DLabel(this);
+    noCoredumpctlLabel->setAccessibleName("noCoredumpctlLabel");
     noCoredumpctlLabel->setPalette(pa);
     noCoredumpctlLabel->setText(DApplication::translate("Waring", "Unable to obtain crash information, please install systemd-coredump."));
     DFontSizeManager::instance()->bind(noCoredumpctlLabel, DFontSizeManager::T4);
     noCoredumpctlLabel->setAlignment(Qt::AlignCenter);
 
     noPermissionLabel = new DLabel(this);
+    noPermissionLabel->setAccessibleName("noPermissionLabel");
     noPermissionLabel->setPalette(pa);
     noPermissionLabel->setText(DApplication::translate("Warning", "You do not have permission to view it"));
     DFontSizeManager::instance()->bind(noPermissionLabel, DFontSizeManager::T4);
@@ -144,7 +148,7 @@ void DisplayContent::initUI()
     m_spinnerWgt->setAccessibleName("spinnerWidget");
     m_spinnerWgt->setMinimumHeight(300);
     m_spinnerWgt_K = new LogSpinnerWidget(this);
-    m_spinnerWgt_K->setAccessibleName("spinnerWidget_K");
+    m_spinnerWgt_K->setAccessibleName("spinnerWidgetK");
     m_spinnerWgt_K->setMinimumHeight(300);
 
     //m_detailWgt
@@ -178,12 +182,12 @@ void DisplayContent::initUI()
 
     //m_exportDlg
     m_exportDlg = new ExportProgressDlg(this);
-    m_exportDlg->setAccessibleName("ExportProgressDlg");
+    m_exportDlg->setAccessibleName("exportProgressDlg");
     m_exportDlg->hide();
 
 
     m_menu = new QMenu(m_treeView);
-    m_menu->setAccessibleName("table_menu");
+    m_menu->setAccessibleName("tableMenu");
     m_act_openForder = m_menu->addAction(/*tr("在文件管理器中显示")*/ DApplication::translate("Action", "Display in file manager"));
     m_act_refresh = m_menu->addAction(/*tr("刷新")*/ DApplication::translate("Action", "Refresh"));
 

@@ -1,0 +1,237 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# AT-SPI 预期元素名称清单
+# 生成方式：libclang AST 扫描 + 源码补全
+# 生成日期：2026-08-06
+# 仓库：linuxdeepin/deepin-log-viewer (master)
+
+application: deepin-log-viewer
+
+widgets:
+  # 主窗口
+  - name: LogCollectorMain
+    type: window
+    accessible_name: ""
+    object_name: ""
+    role: Form
+
+  # 标题栏
+  - name: titlebar
+    type: titlebar
+    accessible_name: ""
+    object_name: titlebar
+
+  # 搜索框
+  - name: searchEdt
+    type: search_edit
+    accessible_name: ""
+    object_name: searchEdt
+
+  - name: searchChildEdt
+    type: line_edit
+    accessible_name: ""
+    object_name: searchChildEdt
+
+  # 左侧日志类型选择器
+  - name: logTypeSelectList
+    type: list_view
+    accessible_name: leftSideBar
+    object_name: logTypeSelectList
+    items:
+      - text: System Journal
+        data: "journal"
+      - text: Kernel Log
+        data: "kern"
+      - text: Boot Log
+        data: "boot"
+      - text: dpkg Log
+        data: "dpkg"
+      - text: Xorg Log
+        data: "xorg"
+      - text: Kwin Log
+        data: "kwin"
+      - text: Application Log
+        data: "app"
+      - text: Coredump Log
+        data: "coredump"
+      - text: Boot-Shutdown Event
+        data: "last"
+      - text: Auth Log
+        data: "auth"
+      - text: Audit Log
+        data: "audit"
+      - text: Other Log
+        data: "other"
+      - text: Custom Log
+        data: "custom"
+
+  # 主数据表格
+  - name: mainLogTable
+    type: tree_view
+    accessible_name: mainLogTable
+    object_name: mainLogTable
+
+  # 筛选面板
+  - name: FilterContent
+    type: frame
+    accessible_name: filterWidget
+    object_name: FilterContent
+    children:
+      # 时间筛选按钮
+      - name: allBtn
+        type: button
+        accessible_name: allBtn
+        text: All
+      - name: todayBtn
+        type: button
+        accessible_name: todayBtn
+        text: Today
+      - name: threeDayBtn
+        type: button
+        accessible_name: threeDayBtn
+        text: 3 days
+      - name: lastWeekBtn
+        type: button
+        accessible_name: lastWeekBtn
+        text: 1 week
+      - name: lastMonthBtn
+        type: button
+        accessible_name: lastMonthBtn
+        text: 1 month
+      - name: threeMonthBtn
+        type: button
+        accessible_name: threeMonthBtn
+        text: 3 months
+
+      # 提示标签
+      - name: periodLabel
+        type: label
+        accessible_name: periodLabel
+      - name: levelLabel
+        type: label
+        accessible_name: levelLabel
+      - name: dnfLevelLabel
+        type: label
+        accessible_name: dnfLevelLabel
+      - name: appLabel
+        type: label
+        accessible_name: appLabel
+      - name: submoduleLabel
+        type: label
+        accessible_name: submoduleLabel
+      - name: statusLabel
+        type: label
+        accessible_name: statusLabel
+      - name: eventTypeLabel
+        type: label
+        accessible_name: eventTypeLabel
+      - name: auditTypeLabel
+        type: label
+        accessible_name: auditTypeLabel
+
+      # 下拉筛选框
+      - name: levelCombox
+        type: combobox
+        accessible_name: levelCombox
+        object_name: level_combox
+      - name: dnfLevelCombox
+        type: combobox
+        accessible_name: dnfLevelCombox
+      - name: appCombox
+        type: combobox
+        accessible_name: appCombox
+        object_name: app_combox
+      - name: submoduleCombox
+        type: combobox
+        accessible_name: submoduleCombox
+      - name: statusCombox
+        type: combobox
+        accessible_name: statusCombox
+        object_name: status_combox
+      - name: eventTypeCombox
+        type: combobox
+        accessible_name: eventTypeCombox
+        object_name: event_type_combox
+      - name: auditTypeCombox
+        type: combobox
+        accessible_name: auditTypeCombox
+
+      # 导出按钮
+      - name: exportBtn
+        type: button
+        accessible_name: exportBtn
+        text: Export
+
+  # 内容显示面板
+  - name: DisplayContent
+    type: widget
+    accessible_name: displayWidget
+    object_name: DisplayContent
+    children:
+      - name: splitterFrame
+        type: splitter
+        accessible_name: splitterFrame
+      - name: spinnerWidget
+        type: spinner
+        accessible_name: spinnerWidget
+      - name: spinnerWidgetK
+        type: spinner
+        accessible_name: spinnerWidgetK
+      - name: detailInfoWidget
+        type: detail_widget
+        accessible_name: detailInfoWidget
+      - name: noResultLabel
+        type: label
+        accessible_name: noResultLabel
+      - name: notAuditLabel
+        type: label
+        accessible_name: notAuditLabel
+      - name: noCoredumpctlLabel
+        type: label
+        accessible_name: noCoredumpctlLabel
+      - name: noPermissionLabel
+        type: label
+        accessible_name: noPermissionLabel
+
+  # 详情信息面板
+  - name: logDetailInfoWidget
+    type: detail_widget
+    accessible_name: detailInfoWidget
+
+  # 导出进度对话框
+  - name: exportProgressDlg
+    type: dialog
+    accessible_name: exportProgressDlg
+
+  # 表格右键菜单
+  - name: tableMenu
+    type: menu
+    accessible_name: tableMenu
+    items:
+      - text: Display in file manager
+      - text: Refresh
+
+  # 标题栏按钮
+  - name: exportAllBtn
+    type: icon_button
+    accessible_name: exportAllBtn
+  - name: refreshBtn
+    type: icon_button
+    accessible_name: refreshBtn
+
+  # 标题栏刷新间隔菜单
+  - name: refreshIntervalMenu
+    type: menu
+    accessible_name: refreshIntervalMenu
+    items:
+      - text: 10 sec
+      - text: 1 min
+      - text: 5 min
+      - text: No refresh
+
+  # 中央控件
+  - name: centralWidget
+    type: widget
+    accessible_name: centralWidget
