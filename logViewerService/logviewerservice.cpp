@@ -39,6 +39,7 @@ using namespace PolkitQt1;
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QTemporaryFile>
+#include <QUuid>
 
 #ifdef QT_DEBUG
 Q_LOGGING_CATEGORY(logService, "org.deepin.log.viewer.service")
@@ -744,7 +745,10 @@ QString LogViewerService::openLogStream(const QString &filePath)
         return "";
     }
 
-    QString token = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Md5).toHex();
+    // 使用随机 UUID 作为 token，替代可预测的 MD5(filePath)。
+    // 旧方案下攻击者只需知道文件路径即可计算 token，无需经过 openLogStream，
+    // 进而通过无鉴权的 readLogInStream 窃取其他用户缓存的日志。
+    QString token = QUuid::createUuid().toString(QUuid::WithoutBraces);
     qCDebug(logService) << "Generated token for log stream:" << token;
 
     auto stream = new QTextStream;
@@ -764,6 +768,11 @@ QString LogViewerService::readLogInStream(const QString &token)
 {
     trackCurrentCaller();
     qCDebug(logService) << "Reading log in stream with token:" << token;
+    if (!checkAuth(s_Action_View)) {
+        qCWarning(logService) << "Authorization check failed for readLogInStream";
+        return "";
+    }
+
     if(!m_logMap.contains(token)) {
         qCWarning(logService) << "Token not found in log map:" << token;
         return "";
