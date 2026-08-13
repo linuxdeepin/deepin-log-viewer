@@ -1383,7 +1383,18 @@ bool LogViewerService::checkAuth(const QString &actionId)
         return false;
     }
 
-    bool isRoot = connection().interface()->serviceUid(message().service()).value() == 0;
+    // 显式校验 D-Bus 回复有效性：serviceUid() 失败时 QDBusReply::value() 会静默
+    // 返回默认构造值 0，若直接当作 UID 会与 root(0) 混淆，构成 fail-open——
+    // 任何 D-Bus 调用者都能借此绕过 Polkit 被当作 root 放行。此处对无效回复
+    // fail-closed，拒绝访问并回 Failed，绝不回退为 root。
+    auto reply = connection().interface()->serviceUid(message().service());
+    if (!reply.isValid()) {
+        qCWarning(logService) << "checkAuth denied: failed to get caller UID via D-Bus:"
+                              << reply.error().message();
+        sendErrorReply(QDBusError::ErrorType::Failed, "failed to get caller UID");
+        return false;
+    }
+    bool isRoot = reply.value() == 0;
     if (isRoot) {
         qCInfo(logService) << "dbus caller is root progress.";
         return  true;
