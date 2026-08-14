@@ -949,6 +949,9 @@ void LogViewerService::clearTempFiles()
 int LogViewerService::exitCode()
 {
     trackCurrentCaller();
+    if (!checkAuth(s_Action_View)) {
+        return -1;
+    }
     // qCDebug(logService) << "Getting exit code";
     return m_process.exitCode();
 }
