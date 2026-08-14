@@ -754,6 +754,9 @@ void LogViewerService::clearTempFiles()
 int LogViewerService::exitCode()
 {
     trackCurrentCaller();
+    if (!checkAuth(s_Action_View)) {
+        return -1;
+    }
     return m_process.exitCode();
 }
 
