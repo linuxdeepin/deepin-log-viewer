@@ -1,3 +1,13 @@
+deepin-log-viewer (6.5.36) unstable; urgency=medium
+
+  * fix(service): validate QDBusReply in checkAuth to prevent Polkit
+    bypass
+  * fix(service): use random UUID token and add auth check for
+    readLogInStream
+  * fix(logviewerservice): add polkit auth check to exitCode DBus method
+
+ -- wangrong <wangrong@uniontech.com>  Fri, 14 Aug 2026 09:32:04 +0800
+
 deepin-log-viewer (6.5.35) unstable; urgency=medium
 
   * fix(security): add polkit auth check to getFileSize D-Bus method
