@@ -20,12 +20,14 @@ public:
 
     static Eventlogutils *GetInstance();
     void writeLogs(QJsonObject &data);
+    bool isAvailable();
 private :
     static Eventlogutils *m_pInstance;
     Eventlogutils();
 
     bool (*initFunc)(const std::string &packagename, bool enable_sig) = nullptr;
     void (*writeEventLogFunc)(const std::string &eventdata) = nullptr;
+    bool m_available = false;
 };
 
 #endif // EVENTLOGUTILS_H

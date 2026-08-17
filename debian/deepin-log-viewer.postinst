@@ -25,6 +25,8 @@ done
 if [ -f /lib/systemd/system/coredump-reporter.timer ]; then
     systemctl daemon-reload || true
     systemctl enable coredump-reporter.timer || true
+    # 升级安装后立即激活定时器，避免重启前 coredump 上报链路不运行
+    systemctl start coredump-reporter.timer || true
 fi
 
 #确保软件包安装不会失败

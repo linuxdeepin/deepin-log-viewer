@@ -1042,7 +1042,7 @@ void LogBackend::slot_coredumpFinished(int index)
             latestCoredumpTime = latestCoredumpTime.addSecs(1);
 
             // 先初始化埋点接口，延迟2秒后调用埋点接口，以便能正常写入埋点数据
-            Eventlogutils::GetInstance();
+            Eventlogutils *reporter = Eventlogutils::GetInstance();
 
             QTimer::singleShot(2000, this, [=]{
                 // 埋点记录崩溃数据
@@ -1056,7 +1056,18 @@ void LogBackend::slot_coredumpFinished(int index)
                     {"message", objList}
                 };
 
-                Eventlogutils::GetInstance()->writeLogs(objCoredumpEvent);
+                if (!reporter->isAvailable()) {
+                    // 埋点后端不可用（libdeepin-event-log.so 缺失或初始化失败）：不前移上报水位，
+                    // 保留本轮崩溃数据待下一周期重试，避免“静默丢数据 + 假成功”。
+                    // 退出码仍为 0，避免被 systemctl --failed 误判为失败服务。
+                    qCWarning(logBackend) << QString("Skip reporting %1 crash messages: event-log backend unavailable, "
+                                                     "watermark not advanced (will retry next cycle).")
+                                                 .arg(afterCleanData.size());
+                    qApp->exit(0);
+                    return;
+                }
+
+                reporter->writeLogs(objCoredumpEvent);
                 LogApplicationHelper::instance()->saveLastRerportTime(latestCoredumpTime);
                 qCInfo(logBackend) << QString("Successfully reported %1 crash messages in total.").arg(afterCleanData.size());
                 qApp->exit(0);
