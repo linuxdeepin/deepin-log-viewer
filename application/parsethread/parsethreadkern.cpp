@@ -52,6 +52,42 @@ void ParseThreadKern::handleKern()
     QList<QString> dataList;
     qint64 gStartLine = m_filter.segementIndex * SEGEMENT_SIZE;
     m_FilePath = DLDBusHandler::instance(this)->getFileInfo(m_filter.filePath, false);
+
+    // 鉴权上提：在逐文件循环前只触发一次 pkexec 鉴权，避免内核多轮转文件各自弹窗（Bug 371767）
+    // 成功后 polkit auth_admin_keep 缓存命中，循环内各文件经 DBus 读取时不再重复鉴权
+    if (!Utils::runInCmd) {
+        if (m_FilePath.isEmpty()) {
+            emit parseFinished(m_threadCount, m_type);
+            return;
+        }
+        initProccess();
+        if (!m_canRun) {
+            return;
+        }
+        m_process->setProcessChannelMode(QProcess::MergedChannels);
+        if (!m_canRun) {
+            return;
+        }
+        //共享内存对应变量置true，允许进程内部逻辑运行
+        ShareMemoryInfo shareInfo;
+        shareInfo.isStart = true;
+        SharedMemoryManager::instance()->setRunnableTag(shareInfo);
+        //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
+        m_process->start("pkexec", QStringList() << "logViewerAuth"
+                         << m_FilePath.at(0) << SharedMemoryManager::instance()->getRunnableKey());
+        m_process->waitForFinished(-1);
+        //有错则传出空数据（取消/失败只弹一次，不再进入循环）
+        if (m_process->exitCode() != 0) {
+            emit parseFinished(m_threadCount, m_type, CancelAuth);
+            return;
+        }
+        // 取消/失败时 polkit auth_admin_keep 缓存为空，非交互式校验确认未授权则不进入逐文件 DBus 读取（Bug 371767）
+        if (!Utils::checkAuthorizationCached("com.deepin.pkexec.logViewerAuth")) {
+            emit parseFinished(m_threadCount, m_type, CancelAuth);
+            return;
+        }
+    }
+
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
             QFile file(m_FilePath.at(i)); // add by Airy
@@ -60,34 +96,6 @@ void ParseThreadKern::handleKern()
                 return;
             }
         }
-        if (!m_canRun) {
-            return;
-        }
-
-        if (!Utils::runInCmd) {
-            initProccess();
-            if (!m_canRun) {
-                return;
-            }
-            m_process->setProcessChannelMode(QProcess::MergedChannels);
-            if (!m_canRun) {
-                return;
-            }
-            //共享内存对应变量置true，允许进程内部逻辑运行
-            ShareMemoryInfo shareInfo;
-            shareInfo.isStart = true;
-            SharedMemoryManager::instance()->setRunnableTag(shareInfo);
-            //启动日志需要提权获取，运行的时候把对应共享内存的名称传进去，方便获取进程拿标记量判断是否继续运行
-            m_process->start("pkexec", QStringList() << "logViewerAuth"
-                             << m_FilePath.at(i) << SharedMemoryManager::instance()->getRunnableKey());
-            m_process->waitForFinished(-1);
-            //有错则传出空数据
-            if (m_process->exitCode() != 0) {
-                emit parseFinished(m_threadCount, m_type, CancelAuth);
-                return;
-            }
-        }
-
         if (!m_canRun) {
             return;
         }
