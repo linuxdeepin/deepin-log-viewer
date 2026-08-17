@@ -9,11 +9,11 @@
 #include <DMessageBox>
 #include <DApplication>
 
-#include <systemd/sd-journal.h>
-
 #include <QDateTime>
 #include <QDebug>
 #include <QProcess>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <QLoggingCategory>
 
@@ -213,37 +213,26 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
         return false;
     }
 
-    int r;
+    // journal 型应用日志由非特权前端 sd_journal_open 只能读到本进程可见的 journal 子集，
+    // 无法获取以 root/sudo 运行的服务（如 uos-service-support-agent）写入系统 journal 的日志。
+    // 改为经 root 后端 com.deepin.logviewer 以 journalctl 取数（-o json -r），前端按结构化
+    // 字段解析；过滤条件由后端安全构建参数列表（与 exportLog 一致，杜绝参数注入）。
+    QJsonObject conditionsObj;
+    conditionsObj["name"] = m_AppFiler.app;
+    conditionsObj["filter"] = m_AppFiler.filter;
+    conditionsObj["execPath"] = m_AppFiler.execPath;
+    const QString conditions = QString::fromUtf8(
+        QJsonDocument(conditionsObj).toJson(QJsonDocument::Compact));
 
-    sd_journal *j ;
+    const QString output = DLDBusHandler::instance(this)->getJournalLog(conditions);
     if ((!m_canRun)) {
         return false;
     }
-    //打开日志文件
-    r = sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
-    if ((!m_canRun)) {
-        sd_journal_close(j);
-        return false;
-    }
-    //r为系统借口返回值，小于0则表示失败，直接返回
-    if (r < 0) {
-        fprintf(stderr, "Failed to open journal: %s\n", strerror(-r));
-        return false;
-    }
-    //从尾部开始读，这样出来数据是倒叙，符合需求
-    sd_journal_seek_tail(j);
-    if ((!m_canRun)) {
-        sd_journal_close(j);
-        return false;
-    }
+    // 后端无有效匹配条件或鉴权失败时返回空，视作无日志
+    if (output.isEmpty())
+        return true;
 
-    // 增加日志等级筛选
-    if (m_AppFiler.lvlFilter != LVALL) {
-        QString prio = QString("PRIORITY=%1").arg(m_AppFiler.lvlFilter);
-        sd_journal_add_match(j, prio.toStdString().c_str(), 0);
-    }
-
-    // 查看是否开启通配符匹配
+    // 查看是否开启通配符匹配（journalctl 无法精确过滤通配符，前端按 CODE_CATEGORY 前缀过滤）
     bool bWildcardMatch = m_AppFiler.filter.endsWith("*");
     QString wildcard_CodeCategory = "";
     if (bWildcardMatch)
@@ -253,34 +242,6 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
     if (wildcard_CodeCategory.isEmpty())
         bWildcardMatch = false;
 
-    bool bCanMatch = false;
-    // 增加日志exec筛选
-    if (!m_AppFiler.execPath.isEmpty()) {
-        sd_journal_add_match(j, QString("_EXE=%1").arg(m_AppFiler.execPath).toStdString().c_str(), 0);
-        bCanMatch = true;
-    }
-
-    // 增加code_category筛选，filter字段内容必须为完整的code_category种类名称
-    if (!m_AppFiler.filter.isEmpty() && m_AppFiler.filter != "*" && !bWildcardMatch) {
-        sd_journal_add_match(j, QString("CODE_CATEGORY=%1").arg(m_AppFiler.filter).toStdString().c_str(), 0);
-        bCanMatch = true;
-    }
-
-    // exec和filter都未配置，只能按进程名称进行筛选
-    if (!bCanMatch && !m_AppFiler.app.isEmpty()) {
-        sd_journal_add_match(j, QString("SYSLOG_IDENTIFIER=%1").arg(m_AppFiler.app).toStdString().c_str(), 0);
-        bCanMatch = true;
-    }
-
-    if ((!m_canRun)) {
-        sd_journal_close(j);
-        return false;
-    }
-
-    // journal不具备匹配条件，放弃journal应用日志解析
-    if (!bCanMatch)
-        return true;
-
     uint64_t beginTime = 0;
     uint64_t endTime = 0;
     if (m_AppFiler.timeFilterBegin != -1) {
@@ -289,61 +250,43 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
     }
 
     int cnt = 0;
-    //调用宏开始迭代
-    SD_JOURNAL_FOREACH_BACKWARDS(j) {
+    // journalctl -r -o json 输出每行一个 JSON 对象，最新在前（与原 SD_JOURNAL_FOREACH_BACKWARDS 顺序一致）
+    const QStringList lines = output.split('\n', QString::SkipEmptyParts);
+    for (int i = 0; i < lines.size(); ++i) {
         if ((!m_canRun)) {
-            sd_journal_close(j);
             return false;
         }
-        const char *d;
-        size_t l;
+
+        const QJsonObject obj = QJsonDocument::fromJson(lines[i].toUtf8()).object();
+        if (obj.isEmpty())
+            continue;
+
+        // 获取时间：优先 _SOURCE_REALTIME_TIMESTAMP，回退 __REALTIME_TIMESTAMP（与原 sd_journal 行为一致）
+        const QString srcTs = obj.value("_SOURCE_REALTIME_TIMESTAMP").toString();
+        const QString recvTs = obj.value("__REALTIME_TIMESTAMP").toString();
+        if (srcTs.isEmpty() && recvTs.isEmpty())
+            continue;
 
         LOG_MSG_APPLICATOIN logMsg;
-        //获取时间
-        r = sd_journal_get_data(j, "_SOURCE_REALTIME_TIMESTAMP", reinterpret_cast<const void **>(&d), &l);
-        if (r < 0) {
-            r = sd_journal_get_data(j, "__REALTIME_TIMESTAMP", reinterpret_cast<const void **>(&d), &l);
-            if (r < 0) {
-                continue;
-            }
-        }
-
         logMsg.subModule = m_AppFiler.submodule;
-
-        uint64_t t;
-        sd_journal_get_realtime_usec(j, &t);
-        //解锁返回字符串长度上限，默认是64k，写0为无限
-        // sd_journal_set_data_threshold(j, 0);
-        QString dt = Utils::getReplaceColorStr(d).split("=").value(1);
+        // 显示时间优先 _SOURCE_REALTIME_TIMESTAMP，回退 __REALTIME_TIMESTAMP
+        logMsg.dateTime = getDateTimeFromStamp(srcTs.isEmpty() ? recvTs : srcTs);
+        // 过滤时间用 __REALTIME_TIMESTAMP（与原 sd_journal_get_realtime_usec 一致），缺失时回退 source
+        const uint64_t t = (recvTs.isEmpty() ? srcTs : recvTs).toULongLong();
         if (m_AppFiler.timeFilterBegin != -1) {
             if (t < beginTime || t > endTime)
                 continue;
         }
-        logMsg.dateTime = getDateTimeFromStamp(dt);
 
         // 根据filter进行通配符匹配查找
         if (bWildcardMatch) {
-            r = sd_journal_get_data(j, "CODE_CATEGORY", reinterpret_cast<const void **>(&d), &l);
-            QString code_category;
-            if (r >= 0) {
-                QStringList strList = Utils::getReplaceColorStr(d).split("=");
-                strList.removeFirst();
-                code_category = strList.join("=");
-                if (!code_category.startsWith(wildcard_CodeCategory))
-                    continue;
-            }
+            const QString code_category = obj.value("CODE_CATEGORY").toString();
+            if (!code_category.startsWith(wildcard_CodeCategory))
+                continue;
         }
 
         //获取信息体
-        r = sd_journal_get_data(j, "MESSAGE", reinterpret_cast<const void **>(&d), &l);
-        if (r < 0) {
-            logMsg.msg = "";
-        } else {
-            //出来的数据格式为 字段名= 信息体，但是因为信息体中也可能有=号，所以要把第一个去掉，后面的用=号拼起来
-            QStringList strList = Utils::getReplaceColorStr(d).split("=");
-            strList.removeFirst();
-            logMsg.msg = strList.join("=");
-        }
+        logMsg.msg = obj.value("MESSAGE").toString();
         logMsg.detailInfo = logMsg.msg;
 
         //如果日志太长就显示一部分
@@ -351,15 +294,18 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
             logMsg.msg = logMsg.detailInfo.mid(0, 500);
         }
 
-        //获取等级
-        r = sd_journal_get_data(j, "PRIORITY", reinterpret_cast<const void **>(&d), &l);
-        if (r < 0) {
-            //有些时候的确会产生没有等级的日志，按照需求此时一律按调试处理，和journalctl 的筛选行为一致
-            logMsg.level = i2str(7);
-        } else {
-            //获取等级为字段名= 数字 ，数字为0-7 ，对应紧急到调试，需要转换
-            logMsg.level = i2str(Utils::getReplaceColorStr(d).split("=").value(1).toInt());
-        }
+        //获取等级：0-7 对应紧急到调试，与 journalctl 筛选行为一致；缺省按调试(7)处理
+        const QJsonValue prioVal = obj.value("PRIORITY");
+        int prio = 7;
+        if (!prioVal.isUndefined())
+            prio = prioVal.toString().toInt();
+        else if (m_AppFiler.lvlFilter != LVALL)
+            continue;  // 缺少 PRIORITY 的条目在原 journal PRIORITY= 匹配下会被排除
+        //日志等级筛选（原由 sd_journal_add_match PRIORITY= 在 journal 侧过滤，现前端过滤）
+        if (m_AppFiler.lvlFilter != LVALL && prio != m_AppFiler.lvlFilter)
+            continue;
+        logMsg.level = i2str(prio);
+
         cnt++;
         mutex.lock();
         m_appList.append(logMsg);
@@ -370,13 +316,9 @@ bool LogApplicationParseThread::parseByJournal(const APP_FILTERS &app_filter)
             mutex.lock();
             emit appData(m_threadCount, m_appList);
             m_appList.clear();
-            //sleep(100);
             mutex.unlock();
         }
     }
-
-    //第一次加载时这个之后的代码都不执行?故放到最后
-    sd_journal_close(j);
 
     return true;
 }

@@ -30,6 +30,7 @@ public:
     QString openLogStream(const QString &filePath);
     QString readLogInStream(const QString &token);
     QStringList whiteListOutPaths();
+    QString getJournalLog(const QString &conditions);
 
 private:
     explicit DLDBusHandler(QObject *parent = nullptr);

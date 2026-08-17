@@ -116,6 +116,22 @@ QStringList DLDBusHandler::whiteListOutPaths()
 }
 
 /*!
+ * \~chinese \brief DLDBusHandler::getJournalLog 经 root 后端读取系统 journal
+ * \~chinese \param conditions JSON 串（含 name/filter/execPath）
+ * \~chinese \return journalctl -o json 的原始输出；DBus 调用失败时返回空串
+ */
+QString DLDBusHandler::getJournalLog(const QString &conditions)
+{
+    QDBusPendingReply<QString> reply = m_dbus->getJournalLog(conditions);
+    reply.waitForFinished();
+    if (reply.isError()) {
+        qCWarning(logDBusHandler) << "call dbus iterface 'getJournalLog()' failed. error info:" << reply.error().message();
+        return QString();
+    }
+    return reply.value();
+}
+
+/*!
  * \~chinese \brief DLDBusHandler::exitCode 返回进程状态
  * \~chinese \return 进程返回值
  */
