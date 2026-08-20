@@ -12,7 +12,14 @@ class DLDBusHandler : public QObject
 {
     Q_OBJECT
 public:
-    static DLDBusHandler *instance(QObject *parent = nullptr);
+    /**
+     * @brief 获取单例对象。线程安全（C++11 魔法静态变量保证）。
+     * @note 旧实现要求 parent 非空才会创建实例，导致在子线程中首次调用
+     *       （如不传 this 的 DLDBusHandler::instance()->executeCmd(...)）
+     *       会返回 nullptr，从而引发空指针崩溃。现改为标准的 Meyers 单例，
+     *       移除 parent 参数，单例自行管理生命周期，多线程下首次调用即创建。
+     */
+    static DLDBusHandler *instance();
     ~DLDBusHandler();
     QString readLog(const QString &filePath);
     QStringList readLogLinesInRange(const QString &filePath, qint64 startLine = 0, qint64 lineCount = 500, bool bReverse = true);
@@ -39,7 +46,6 @@ private:
     void releaseFilePathCacheFile(const QString &cacheFilePath);
 
 private:
-    static DLDBusHandler *m_statichandeler;
     DeepinLogviewerInterface *m_dbus;
     QStringList filePath;
     bool m_bGetFileInfoError = false;

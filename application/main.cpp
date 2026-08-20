@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -13,6 +13,7 @@
 #include "logbackend.h"
 #include "cliapplicationhelper.h"
 #include "accessible.h"
+#include "dbusproxy/dldbushandler.h"
 
 #include <DApplication>
 // #include <DApplicationSettings>
@@ -64,7 +65,9 @@ int main(int argc, char *argv[])
         LoggerRules logRules;
         logRules.initLoggerRules();
 #endif
-
+        // 提前在主线程创建 DLDBusHandler 单例，避免后续在子线程中首次调用
+        // 时不传 parent 而返回 nullptr 导致空指针崩溃。
+        DLDBusHandler::instance();
         QCommandLineOption exportOption(QStringList() << "e" << "export", DApplication::translate("main", "Export logs to the specified path"), DApplication::translate("main", "PATH"));
         QCommandLineOption typeOption(QStringList() << "t" << "type", DApplication::translate("main", "Export logs of specified types"), DApplication::translate("main", "TYPE"));
         QCommandLineOption appOption(QStringList() << "d" << "deepin-application", DApplication::translate("main", "Export logs of specified self-developed applications"), DApplication::translate("main", "SELF APPNAME"));
@@ -361,6 +364,10 @@ int main(int argc, char *argv[])
     logRules.initLoggerRules();
 #endif
         LogApplicationHelper::instance();
+
+        // 提前在主线程创建 DLDBusHandler 单例，避免后续在子线程中首次调用
+        // 时不传 parent 而返回 nullptr 导致空指针崩溃。
+        DLDBusHandler::instance();
 
         qCDebug(logApp) << "Checking single instance for application:" << a.applicationName();
         if (!DGuiApplicationHelper::instance()->setSingleInstance(a.applicationName(),

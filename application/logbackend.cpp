@@ -387,7 +387,7 @@ int LogBackend::exportTypeLogs(const QString &outDir, const QString &type)
 
         auto otherLogListPair = LogApplicationHelper::instance()->getOtherLogList();
         for (auto &it2 : otherLogListPair) {
-            QStringList logPaths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.at(1));
+            QStringList logPaths = DLDBusHandler::instance()->getOtherFileInfo(it2.at(1));
             logPaths.removeDuplicates();
             if (logPaths.size() > 1) {
                 QString tmpSubCategoryOutPath = QString("%1/%2/").arg(categoryOutPath).arg(it2.at(0));
@@ -528,7 +528,7 @@ int LogBackend::exportAppLogs(const QString &outDir, const QString &appName)
         if (appLogConfig.subModules.size() == 1 &&  submodule.name == appLogConfig.name)
             subCategoryOutPath = categoryOutPath;
         if (submodule.logType == "file") {
-            QStringList logPaths = DLDBusHandler::instance(nullptr)->getFileInfo(submodule.logPath);
+            QStringList logPaths = DLDBusHandler::instance()->getFileInfo(submodule.logPath);
             logPaths.removeDuplicates();
             if (logPaths.size() > 0) {
                 resetCategoryOutputPath(subCategoryOutPath);
@@ -2434,13 +2434,13 @@ int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
     qint64 totalLineCount = 0;
     int nSegementIndex = -1;
     if (type == KERN) {
-        QStringList filePaths = DLDBusHandler::instance(this)->getFileInfo("kern");
+        QStringList filePaths = DLDBusHandler::instance()->getFileInfo("kern");
         for (auto file: filePaths) {
-            totalLineCount += DLDBusHandler::instance(this)->getLineCount(file);
+            totalLineCount += DLDBusHandler::instance()->getLineCount(file);
         }
     } else if (type == Kwin) {
         qCDebug(logApp) << "LogBackend::getNextSegementIndex Kwin";
-        totalLineCount = DLDBusHandler::instance(this)->getLineCount(KWIN_TREE_DATA);
+        totalLineCount = DLDBusHandler::instance()->getLineCount(KWIN_TREE_DATA);
     }
 
     // 计算分段段数

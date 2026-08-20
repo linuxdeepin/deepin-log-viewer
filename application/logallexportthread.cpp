@@ -59,7 +59,7 @@ bool LogAllExportThread::addFileToZip(const QString &filePath, const QString &zi
         qCDebug(logApp) << "Direct file access failed, trying DBus export for:" << filePath;
 
         // For permission-restricted files like auth.log, use DBus exportLog interface
-        if (DLDBusHandler::instance(nullptr)->exportLog(QFileInfo(m_outfile).path(), filePath, true)) {
+        if (DLDBusHandler::instance()->exportLog(QFileInfo(m_outfile).path(), filePath, true)) {
             // Read the exported content and add to zip
             QFile exportedFile(QFileInfo(m_outfile).path() + "/" + QFileInfo(filePath).fileName());
             if (exportedFile.open(QIODevice::ReadOnly)) {
@@ -277,19 +277,19 @@ void LogAllExportThread::run()
             data.commands.push_back("last");
         } else if (it.contains(DPKG_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "dpkg";
-            data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("dpkg", false));
+            data.files.append(DLDBusHandler::instance()->getFileInfo("dpkg", false));
         } else if (it.contains(KERN_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "kernel";
-            data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("kern", false));
+            data.files.append(DLDBusHandler::instance()->getFileInfo("kern", false));
         } else if (it.contains(XORG_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "xorg";
-            data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("Xorg", false));
+            data.files.append(DLDBusHandler::instance()->getFileInfo("Xorg", false));
         } else if (it.contains(DNF_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "dnf";
-            data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("dnf", false));
+            data.files.append(DLDBusHandler::instance()->getFileInfo("dnf", false));
         } else if (it.contains(BOOT_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "boot";
-            data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("boot", false));
+            data.files.append(DLDBusHandler::instance()->getFileInfo("boot", false));
         } else if (it.contains(KWIN_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "kwin";
             data.files.append(KWIN_TREE_DATA);
@@ -308,7 +308,7 @@ void LogAllExportThread::run()
                     if (appLogConfig.subModules.size() == 1 &&  submodule.name == appLogConfig.name)
                         subDir = dir;
                     if (submodule.logType == "file") {
-                        QStringList logPaths = DLDBusHandler::instance(nullptr)->getFileInfo(submodule.logPath);
+                        QStringList logPaths = DLDBusHandler::instance()->getFileInfo(submodule.logPath);
                         logPaths.removeDuplicates();
                         if (logPaths.size() > 0) {
                             data.dir2Files[subDir] = logPaths;
@@ -327,12 +327,12 @@ void LogAllExportThread::run()
             }
         } else if (it.contains(COREDUMP_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "coredump";
-            data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("coredump", false));
+            data.files.append(DLDBusHandler::instance()->getFileInfo("coredump", false));
         } else if (it.contains(OTHER_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "others";
             auto otherLogListPair = LogApplicationHelper::instance()->getOtherLogList();
             for (auto &it2 : otherLogListPair) {
-                QStringList paths = DLDBusHandler::instance(nullptr)->getOtherFileInfo(it2.at(1));
+                QStringList paths = DLDBusHandler::instance()->getOtherFileInfo(it2.at(1));
                 paths.removeDuplicates();
                 if (paths.size() > 1)
                     data.dir2Files[it2.at(0)] = paths;
@@ -347,7 +347,7 @@ void LogAllExportThread::run()
             }
         } else if (it.contains(AUDIT_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "audit";
-            data.files.append(DLDBusHandler::instance(nullptr)->getFileInfo("audit", false));
+            data.files.append(DLDBusHandler::instance()->getFileInfo("audit", false));
         } else if (it.contains(AUTH_TREE_DATA, Qt::CaseInsensitive)) {
             data.logCategory = "auth";
             QStringList authLogFiles = LogApplicationHelper::instance()->getAuthLogList();
@@ -486,7 +486,7 @@ void LogAllExportThread::run()
         // root 服务在 /var/log 下创建随机临时目录收集日志，整体压缩后写入该 fd，并自行清理临时目录。
         // 前端拿到写入完成的压缩包后，解压到 opsLogPath，再删除该压缩包。
         QString opsZipPath = tmpOpsDirPath + "/" + "log-ops.zip";
-        bool opsOk = DLDBusHandler::instance(this)->exportOpsLog(opsZipPath);
+        bool opsOk = DLDBusHandler::instance()->exportOpsLog(opsZipPath);
         if (!opsOk || !QFileInfo(opsZipPath).exists()) {
             qCCritical(logApp) << "exportOpsLog failed or zip not produced";
             zipClose(m_zipFile, nullptr);

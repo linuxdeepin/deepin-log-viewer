@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -76,7 +76,7 @@ void LogOOCFileParseThread::doWork()
         return;
     }
 
-    QStringList filePath = DLDBusHandler::instance(this)->getOtherFileInfo(m_path);
+    QStringList filePath = DLDBusHandler::instance()->getOtherFileInfo(m_path);
     qCDebug(logApp) << "Found" << filePath.count() << "files to process";
     for (int i = 0; i < filePath.count(); i++) {
         if (!m_canRun) {
@@ -93,7 +93,7 @@ void LogOOCFileParseThread::doWork()
         }
 
         qCDebug(logApp) << "Reading log file:" << filePath.at(i);
-        QString m_Log = DLDBusHandler::instance(this)->readLog(filePath.at(i));
+        QString m_Log = DLDBusHandler::instance()->readLog(filePath.at(i));
         m_fileData += m_Log;
         // dbus鉴权失败，不再继续解析
         if (m_Log.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
@@ -163,7 +163,7 @@ bool LogOOCFileParseThread::checkAuthentication(const QString &path)
 //        }
 //    }
 
-//    m_fileData = DLDBusHandler::instance(this)->readLog(m_path);
+//    m_fileData = DLDBusHandler::instance()->readLog(m_path);
 
 //    emit sigData(m_threadCount, m_fileData);
 //    emit sigFinished(m_threadCount);

@@ -353,7 +353,7 @@ void LogCollectorMain::exportAllLogs()
     // 导出路径白名单检查
     QFileInfo info(newPath);
     QString outPath = info.path();
-    QStringList availablePaths =  DLDBusHandler::instance(this)->whiteListOutPaths();
+    QStringList availablePaths =  DLDBusHandler::instance()->whiteListOutPaths();
 
     if (availablePaths.isEmpty()) {
         qCWarning(logApp) << "Failed to retrieve white list out paths, aborting export pre-check";
@@ -380,7 +380,7 @@ void LogCollectorMain::exportAllLogs()
 
     if (m_exportDlg == nullptr) {
         m_exportDlg = new ExportProgressDlg(this);
-        DLDBusHandler::instance(this);
+        DLDBusHandler::instance();
     }
     //导出是否完成
     bool exportcomplete = false;
