@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -3944,7 +3944,7 @@ bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_C
     //复制文件
     int nCoreDumpCount = 0;
     for (auto &it : jList) {
-        DLDBusHandler::instance(this)->exportLog(tmpPath, it.storagePath, true);
+        DLDBusHandler::instance()->exportLog(tmpPath, it.storagePath, true);
         if (it.coreFile == "present")
             nCoreDumpCount++;
         if (!m_canRunning) {

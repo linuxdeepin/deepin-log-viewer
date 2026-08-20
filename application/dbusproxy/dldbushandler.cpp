@@ -9,16 +9,13 @@
 
 Q_DECLARE_LOGGING_CATEGORY(logApp)
 
-DLDBusHandler *DLDBusHandler::m_statichandeler = nullptr;
-
-DLDBusHandler *DLDBusHandler::instance(QObject *parent)
+// 标准的 Meyers 单例：利用 C++11 魔法静态变量（函数局部静态对象），
+// 其初始化由编译器保证线程安全且仅执行一次，多线程首次调用即创建。
+// 单例无父对象，自行管理生命周期，进程退出时由 OS 回收。
+DLDBusHandler *DLDBusHandler::instance()
 {
-    // qCDebug(logApp) << "DLDBusHandler::instance called with parent:" << parent;
-    if (parent != nullptr && m_statichandeler == nullptr) {
-        qCDebug(logApp) << "Creating new DLDBusHandler instance";
-        m_statichandeler = new DLDBusHandler(parent);
-    }
-    return m_statichandeler;
+    static DLDBusHandler instance;
+    return &instance;
 }
 
 DLDBusHandler::~DLDBusHandler()
@@ -31,6 +28,7 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
     : QObject(parent)
 {
     qCDebug(logApp) << "DLDBusHandler constructor called with parent:" << parent;
+    // 注意：D-Bus 接口对象以 this 为父对象，随单例一起销毁。
     m_dbus = new DeepinLogviewerInterface("com.deepin.logviewer",
                                           "/com/deepin/logviewer",
                                           QDBusConnection::systemBus(),

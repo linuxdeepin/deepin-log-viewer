@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -51,7 +51,7 @@ void ParseThreadKern::handleKern()
     QList<QString> dataList;
     qint64 gStartLine = m_filter.segementIndex * SEGEMENT_SIZE;
     qCDebug(logApp) << "Global start line:" << gStartLine;
-    m_FilePath = DLDBusHandler::instance(this)->getFileInfo(m_filter.filePath, false);
+    m_FilePath = DLDBusHandler::instance()->getFileInfo(m_filter.filePath, false);
     qCDebug(logApp) << "Found" << m_FilePath.count() << "files to process";
     for (int i = 0; i < m_FilePath.count(); i++) {
         qCDebug(logApp) << "Processing file" << i << ":" << m_FilePath.at(i);
@@ -103,7 +103,7 @@ void ParseThreadKern::handleKern()
         //如果是压缩文件，对其解压缩
         QString filePath = m_FilePath.at(i);
         if(QString::compare(QFileInfo(filePath).suffix(), "gz", Qt::CaseInsensitive) == 0){
-            QStringList filePathList = DLDBusHandler::instance(this)->getFileInfo(filePath);
+            QStringList filePathList = DLDBusHandler::instance()->getFileInfo(filePath);
             if(filePathList.size()){
                 filePath = filePathList.at(0);
             }else {
@@ -111,7 +111,7 @@ void ParseThreadKern::handleKern()
             }
         }
 
-        qint64 lineCount = DLDBusHandler::instance(this)->getLineCount(filePath);
+        qint64 lineCount = DLDBusHandler::instance()->getLineCount(filePath);
         qCDebug(logApp) << "File line count:" << lineCount;
 
         // 获取全局起始行在当前文件的相对起始行位置
@@ -124,7 +124,7 @@ void ParseThreadKern::handleKern()
         qint64 startLine = gStartLine;
         qCDebug(logApp) << "Reading lines from" << startLine << "count:" << SEGEMENT_SIZE;
 
-        QStringList strList = DLDBusHandler::instance(this)->readLogLinesInRange(filePath, startLine, SEGEMENT_SIZE);
+        QStringList strList = DLDBusHandler::instance()->readLogLinesInRange(filePath, startLine, SEGEMENT_SIZE);
         for (int j = strList.size() - 1; j >= 0; --j) {
             if (!m_canRun) {
                 return;

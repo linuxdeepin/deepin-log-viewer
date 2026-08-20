@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -3878,7 +3878,7 @@ void DisplayContent::generateAuditFile(int id, int lId, const QString &iSearchSt
     Q_UNUSED(iSearchStr);
 
     // 若审计日志不存在，则显示审计日志不存在
-    if (!DLDBusHandler::instance(this)->isFileExist(AUDIT_TREE_DATA)) {
+    if (!DLDBusHandler::instance()->isFileExist(AUDIT_TREE_DATA)) {
         setLoadState(DATA_NO_AUDIT_LOG);
         m_detailWgt->cleanText();
         m_detailWgt->hideLine(true);

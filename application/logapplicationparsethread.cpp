@@ -148,9 +148,9 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
         qCWarning(logApp) << "Empty path for submodule:" << app_filter.submodule;
         emit appFinished(m_threadCount);
     } else {
-        QStringList filePath = DLDBusHandler::instance(this)->getFileInfo(m_AppFiler.path);
+        QStringList filePath = DLDBusHandler::instance()->getFileInfo(m_AppFiler.path);
         // 如果getFileInfo的dbus调用失败(如用户取消授权)，直接返回false以中止后续子模块处理
-        if (DLDBusHandler::instance(this)->isGetFileInfoError()) {
+        if (DLDBusHandler::instance()->isGetFileInfoError()) {
             qCWarning(logApp) << "D-Bus getFileInfo failed (authorization canceled) for submodule:"
                             << app_filter.submodule << ", aborting remaining submodules";
             emit appFinished(m_threadCount);
@@ -161,7 +161,7 @@ bool LogApplicationParseThread::parseByFile(const APP_FILTERS &app_filter)
                 return false;
             }
             //按行解析
-            QByteArray outByte = DLDBusHandler::instance(this)->readLog(filePath[i]).toUtf8();
+            QByteArray outByte = DLDBusHandler::instance()->readLog(filePath[i]).toUtf8();
             // dbus鉴权失败，不再继续解析
             if (outByte.endsWith("is not allowed to configrate firewall. checkAuthorization failed.")) {
                 qCWarning(logApp) << "D-Bus authorization failed for file:" << filePath[i];
