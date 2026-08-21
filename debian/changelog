@@ -1,3 +1,13 @@
+deepin-log-viewer (6.5.37) unstable; urgency=medium
+
+  * chore: Sync by
+    https://github.com/linuxdeepin/.github/commit/a300f8523d4876677112ed
+    ab6a0772f7ad112976
+  * fix(dbus): reimplement DLDBusHandler as a standard thread-safe
+    singleton
+
+ -- liuzheng <liuzheng@uniontech.com>  Fri, 21 Aug 2026 09:07:28 +0800
+
 deepin-log-viewer (6.5.36) unstable; urgency=medium
 
   * fix(service): validate QDBusReply in checkAuth to prevent Polkit
