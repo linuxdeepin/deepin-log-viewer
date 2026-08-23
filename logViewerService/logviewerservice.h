@@ -48,6 +48,9 @@ public Q_SLOTS:
     // 仅能执行特定合法命令
     Q_SCRIPTABLE QString executeCmd(const QString &cmd);
     Q_SCRIPTABLE QStringList whiteListOutPaths();
+    // 经 root 后端读取系统 journal，供非特权前端获取 journal 型应用日志。
+    // conditions 为 JSON 串（含 name/filter/execPath），后端据此安全构造 journalctl 过滤参数。
+    Q_SCRIPTABLE QString getJournalLog(const QString &conditions);
 
 public:
     // 获取用户家目录

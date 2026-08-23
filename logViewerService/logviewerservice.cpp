@@ -1039,6 +1039,60 @@ bool LogViewerService::exportLog(const QString &outDir, const QString &in, bool 
     return true;
 }
 
+/*!
+ * \~chinese \brief LogViewerService::getJournalLog 通过 root 后端读取系统 journal
+ * \~chinese \param conditions JSON 串，含 name/filter/execPath，用于安全构造 journalctl 过滤条件
+ * \~chinese \return journalctl `-o json -r --no-pager` 的原始输出（每行一个 JSON 对象）；鉴权失败或无有效匹配条件时返回空串
+ *
+ * 前端「应用日志」journal 型子模块在非特权进程内 sd_journal_open 只能读到本进程可见的
+ * journal 子集，无法获取以 root/sudo 运行的服务（如 uos-service-support-agent）写入
+ * 系统 journal 的日志，故经此后端以 root 执行 journalctl 取数。过滤条件构造复用
+ * exportLog 已验证的安全模式：直接构建 journalctl 参数列表，不进行字符串拼接，
+ * 杜绝参数注入；无输出路径，无路径穿越风险。
+ */
+QString LogViewerService::getJournalLog(const QString &conditions)
+{
+    if (!checkAuth(s_Action_View))
+        return QString();
+
+    QJsonParseError parseError;
+    QJsonDocument document = QJsonDocument::fromJson(conditions.toUtf8(), &parseError);
+    if (parseError.error != QJsonParseError::NoError || !document.isObject())
+        return QString();
+
+    QJsonObject object = document.object();
+    const QString submoduleName = object.value("name").toString();
+    const QString filter = object.value("filter").toString();
+    const QString execPath = object.value("execPath").toString();
+
+    // 直接构建 journalctl 参数列表，杜绝字符串拼接的参数注入风险（与 exportLog 一致）
+    QStringList args;
+    bool bCanMatch = false;
+    if (!execPath.isEmpty()) {
+        args << QString("_EXE=%1").arg(execPath);
+        bCanMatch = true;
+    }
+    // 通配符匹配（filter 以 * 结尾）无法用 journalctl 精确过滤，留给前端按 CODE_CATEGORY 前缀过滤
+    if (!filter.isEmpty() && filter != "*" && !filter.endsWith("*")) {
+        args << QString("CODE_CATEGORY=%1").arg(filter);
+        bCanMatch = true;
+    }
+    if (!bCanMatch && !submoduleName.isEmpty()) {
+        args << QString("SYSLOG_IDENTIFIER=%1").arg(submoduleName);
+        bCanMatch = true;
+    }
+
+    // 不具备匹配条件，返回空
+    if (!bCanMatch)
+        return QString();
+
+    // -r 倒序（最新优先，与前端原 SD_JOURNAL_FOREACH_BACKWARDS 行为一致）；
+    // -o json 每行一个 JSON 对象，保留结构化字段供前端解析；--no-pager 禁用分页避免阻塞
+    args << "-o" << "json" << "-r" << "--no-pager";
+
+    return QString::fromUtf8(processCmdWithArgs("journalctl", args));
+}
+
 bool LogViewerService::exportOpsLog(const QDBusUnixFileDescriptor &fd)
 {
     if(!checkAuth(s_Action_View)) { //非法调用

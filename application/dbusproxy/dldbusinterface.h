@@ -157,6 +157,13 @@ public Q_SLOTS: // METHODS
         QList<QVariant> argumentList;
         return asyncCallWithArgumentList(QStringLiteral("whiteListOutPaths"), argumentList);
     }
+
+    inline QDBusPendingReply<QString> getJournalLog(const QString &conditions)
+    {
+        QList<QVariant> argumentList;
+        argumentList << QVariant::fromValue(conditions);
+        return asyncCallWithArgumentList(QStringLiteral("getJournalLog"), argumentList);
+    }
 Q_SIGNALS: // SIGNALS
 };
 

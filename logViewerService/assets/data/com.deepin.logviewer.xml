@@ -58,5 +58,9 @@
     <method name="whiteListOutPaths">
       <arg type="as" direction="out"/>
     </method>
+    <method name="getJournalLog">
+      <arg type="s" direction="out"/>
+      <arg name="conditions" type="s" direction="in"/>
+    </method>
   </interface>
 </node>
