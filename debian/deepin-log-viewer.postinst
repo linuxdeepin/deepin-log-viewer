@@ -8,18 +8,19 @@ userNameArr=($(who -q | head -n 1))
 #定时器名称
 sysTimer="coredump-reporter.timer"
 
-#根据已登录的用户更新定时器
+#根据已登录的用户清理用户级 timer 残留
+#旧版本曾将 timer 安装到 systemd/user 并通过 --user enable 启用,升级后必须无条件 stop+disable,
+#否则残留的用户级 timer 会以普通用户身份触发 coredump 上报,经 D-Bus 调用时因 caller 非 root
+#而触发 polkit 授权弹框
 for userName in ${userNameArr[@]} ; do
-    #获取定时器状态
-    serviceStatus=$(runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user is-active ${sysTimer}")
-    #活跃的关键字
-    activeStr="active"
-    #如果为活跃的则表示定时器已开启
-    if [ "$serviceStatus" = "$activeStr" ];then
-        runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user stop ${sysTimer}" || true
-        runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user daemon-reload" || true
-    fi
+    runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user stop ${sysTimer}" || true
+    runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user disable ${sysTimer}" || true
+    runuser -f -l ${userName} -c "XDG_RUNTIME_DIR=\"/run/user/$(id -u ${userName})\" systemctl --user daemon-reload" || true
 done
+
+# 清理可能残留的用户级 unit 文件(旧版本安装到 lib/systemd/user/)
+rm -f /usr/lib/systemd/user/coredump-reporter.timer 2>/dev/null || true
+rm -f /usr/lib/systemd/user/coredump-reporter.service 2>/dev/null || true
 
 # 启用系统级 timer
 if [ -f /lib/systemd/system/coredump-reporter.timer ]; then
