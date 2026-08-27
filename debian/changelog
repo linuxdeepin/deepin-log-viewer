@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.38) unstable; urgency=medium
+
+  * fix(security): chmod target must be export path, not its parent dir
+
+ -- wangrong <wangrong@uniontech.com>  Thu, 27 Aug 2026 19:53:06 +0800
+
 deepin-log-viewer (6.5.37) unstable; urgency=medium
 
   * chore: Sync by
