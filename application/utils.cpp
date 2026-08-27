@@ -503,13 +503,7 @@ void Utils::resetToNormalAuth(const QString &path)
     QFileInfo fi(path);
     if (!path.isEmpty() && fi.exists()) {
         qInfo() << "resetToNormalAuth: " << path;
-        QString tmpPath = path;
-        if (fi.isDir())
-            tmpPath = path;
-        else
-            tmpPath = fi.absolutePath();
-
-        executeCmd("chmod", QStringList() << "-R" << "777" << tmpPath);
+        executeCmd("chmod", QStringList() << "-R" << "777" << path);
     }
 }
 
