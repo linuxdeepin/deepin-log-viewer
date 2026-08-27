@@ -168,6 +168,7 @@ void LogCollectorMain::initUI()
     m_vLayout->addWidget(m_topRightWgt);
     /** midRight frame */
     m_midRightWgt = new DisplayContent();
+    m_midRightWgt->setAccessibleName("displayWidget");
 
     m_vLayout->addWidget(m_midRightWgt, 1);
     m_vLayout->setContentsMargins(0, 10, 0, 10);
