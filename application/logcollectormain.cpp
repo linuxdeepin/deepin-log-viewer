@@ -101,6 +101,7 @@ void LogCollectorMain::initUI()
     qCDebug(logApp) << "Initializing UI components...";
     /** add searchEdit */
     m_searchEdt = new DSearchEdit();
+    m_searchEdt->setAccessibleName("SearchEdt");
 
     m_searchEdt->setPlaceHolder(DApplication::translate("SearchBar", "Search"));
     m_searchEdt->setMaximumWidth(400);
@@ -226,12 +227,14 @@ void LogCollectorMain::initTitlebarExtensions()
     DWidget *widget = new DWidget;
     QHBoxLayout *layout = new QHBoxLayout(widget);
     m_exportAllBtn = new DIconButton(widget);
+    m_exportAllBtn->setObjectName("ExportAllBtn");
     m_exportAllBtn->setFixedSize(QSize(36, 36));
     m_exportAllBtn->setIcon(QIcon::fromTheme("export"));
     m_exportAllBtn->setIconSize(QSize(36, 36));
     m_exportAllBtn->setToolTip(qApp->translate("titlebar", "Export All"));
     m_exportAllBtn->setAccessibleName(qApp->translate("titlebar", "Export All"));
     m_refreshBtn = new DIconButton(widget);
+    m_refreshBtn->setObjectName("RefreshBtn");
     m_refreshBtn->setIcon(QIcon::fromTheme("refresh"));
     m_refreshBtn->setFixedSize(QSize(36, 36));
     m_refreshBtn->setIconSize(QSize(36, 36));
@@ -534,6 +537,7 @@ void LogCollectorMain::initShortCut()
     // Resize Window --> Ctrl+Alt+F
     if (nullptr == m_scWndReize) {
         m_scWndReize = new QShortcut(this);
+        m_scWndReize->setObjectName("ScWndReize");
         qCDebug(logApp) << "Created window resize shortcut";
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_scWndReize->setKey(Qt::CTRL + Qt::ALT + Qt::Key_F);
@@ -557,6 +561,7 @@ void LogCollectorMain::initShortCut()
     // Find font --> Ctrl+F
     if (nullptr == m_scFindFont) {
         m_scFindFont = new QShortcut(this);
+        m_scFindFont->setObjectName("ScFindFont");
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_scFindFont->setKey(Qt::CTRL + Qt::Key_F);
 #else
@@ -572,6 +577,7 @@ void LogCollectorMain::initShortCut()
     // export file --> Ctrl+E
     if (nullptr == m_scExport) {
         m_scExport = new QShortcut(this);
+        m_scExport->setObjectName("ScExport");
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_scExport->setKey(Qt::CTRL + Qt::Key_E);
 #else

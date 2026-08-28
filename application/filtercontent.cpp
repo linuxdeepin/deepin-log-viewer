@@ -76,23 +76,36 @@ void FilterContent::initUI()
     periodLabel = new DLabel(DApplication::translate("Label", "Period:"), this);
     periodLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     m_btnGroup = new QButtonGroup(this);
+    m_btnGroup->setObjectName("BtnGroup");
     //初始化时间筛选按钮部分布局
     m_allBtn = new LogPeriodButton(DApplication::translate("Button", "All"), this);
+    m_allBtn->setObjectName("AllBtn");
+    m_allBtn->setAccessibleName("AllBtn");
     m_allBtn->setToolTip(DApplication::translate("Button", "All"));  // add by Airy for bug 16245
     m_btnGroup->addButton(m_allBtn, 0);
     m_todayBtn = new LogPeriodButton(DApplication::translate("Button", "Today"), this);
+    m_todayBtn->setObjectName("TodayBtn");
+    m_todayBtn->setAccessibleName("TodayBtn");
     m_todayBtn->setToolTip(DApplication::translate("Button", "Today"));  // add by Airy for bug
     m_btnGroup->addButton(m_todayBtn, 1);
     m_threeDayBtn = new LogPeriodButton(DApplication::translate("Button", "3 days"), this);
+    m_threeDayBtn->setObjectName("ThreeDayBtn");
+    m_threeDayBtn->setAccessibleName("ThreeDayBtn");
     m_threeDayBtn->setToolTip(DApplication::translate("Button", "3 days")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_threeDayBtn, 2);
     m_lastWeekBtn = new LogPeriodButton(DApplication::translate("Button", "1 week"), this);
+    m_lastWeekBtn->setObjectName("LastWeekBtn");
+    m_lastWeekBtn->setAccessibleName("LastWeekBtn");
     m_lastWeekBtn->setToolTip(DApplication::translate("Button", "1 week")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_lastWeekBtn, 3);
     m_lastMonthBtn = new LogPeriodButton(DApplication::translate("Button", "1 month"), this);
+    m_lastMonthBtn->setObjectName("LastMonthBtn");
+    m_lastMonthBtn->setAccessibleName("LastMonthBtn");
     m_lastMonthBtn->setToolTip(DApplication::translate("Button", "1 month")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_lastMonthBtn, 4);
     m_threeMonthBtn = new LogPeriodButton(DApplication::translate("Button", "3 months"), this);
+    m_threeMonthBtn->setObjectName("ThreeMonthBtn");
+    m_threeMonthBtn->setAccessibleName("ThreeMonthBtn");
     m_threeMonthBtn->setToolTip(DApplication::translate("Button", "3 months")); // add by Airy for bug 16245
     m_btnGroup->addButton(m_threeMonthBtn, 5);
     //设置初始时间筛选为全部
@@ -136,6 +149,8 @@ void FilterContent::initUI()
     dnflvTxt->setAccessibleName("dnf" + DApplication::translate("Label", "Level:  "));
     dnflvTxt->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     cbx_dnf_lv = new LogCombox(this);
+    cbx_dnf_lv->setObjectName("CbxDnfLv");
+    cbx_dnf_lv->setAccessibleName("CbxDnfLv");
     //cbx_dnf_lv->view()->setAccessibleName("combobox_dnflevel_view");
     cbx_dnf_lv->setMinimumWidth(198);
     cbx_dnf_lv->addItem(DApplication::translate("ComboBox", "All"), DNFLVALL);
@@ -166,6 +181,8 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_submodule = new QHBoxLayout;
     submoduleTxt = new DLabel(DApplication::translate("Label", "Submodule:"), this);
     cbx_submodule = new LogCombox(this);
+    cbx_submodule->setObjectName("CbxSubmodule");
+    cbx_submodule->setAccessibleName("CbxSubmodule");
     //cbx_submodule->view()->setAccessibleName("combobox_submodule_view");
 
     cbx_submodule->setMinimumWidth(143);
@@ -207,6 +224,8 @@ void FilterContent::initUI()
     QHBoxLayout *hLayout_auditType = new QHBoxLayout;
     auditTypeTxt = new DLabel(DApplication::translate("Label", "Audit Type:"), this);
     auditTypeCbx = new LogCombox(this);
+    auditTypeCbx->setObjectName("AuditTypeCbx");
+    auditTypeCbx->setAccessibleName("AuditTypeCbx");
     auditTypeCbx->setMinimumWidth(120);
     auditTypeCbx->addItems(QStringList() << DApplication::translate("ComboBox", "All")
                       << DApplication::translate("ComboBox", "Identity authentication")
@@ -222,6 +241,8 @@ void FilterContent::initUI()
 
     hLayout_all->addStretch(1);
     exportBtn = new LogNormalButton(DApplication::translate("Button", "Export", "button"), this);
+    exportBtn->setObjectName("ExportBtn");
+    exportBtn->setAccessibleName("ExportBtn");
     exportBtn->setContentsMargins(0, 0, 18, 18);
     exportBtn->setFixedWidth(BUTTON_EXPORT_WIDTH_MIN);
     hLayout_all->addWidget(exportBtn);
@@ -404,9 +425,13 @@ void FilterContent::setSelectorVisible(bool lvCbx, bool appListCbx, bool statusC
     setUpdatesEnabled(true);
 
     cbx_lv->setObjectName("level_combox");
+    cbx_lv->setAccessibleName("CbxLv");
     cbx_app->setObjectName("app_combox");
+    cbx_app->setAccessibleName("CbxApp");
     cbx_status->setObjectName("status_combox");
+    cbx_status->setAccessibleName("CbxStatus");
     typeCbx->setObjectName("event_type_combox");
+    typeCbx->setAccessibleName("TypeCbx");
 }
 
 /**
