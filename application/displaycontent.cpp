@@ -183,6 +183,7 @@ void DisplayContent::initUI()
 
 
     m_menu = new QMenu(m_treeView);
+    m_menu->setObjectName("Menu");
     m_menu->setAccessibleName("table_menu");
     m_act_openForder = m_menu->addAction(/*tr("在文件管理器中显示")*/ DApplication::translate("Action", "Display in file manager"));
     m_act_refresh = m_menu->addAction(/*tr("刷新")*/ DApplication::translate("Action", "Refresh"));

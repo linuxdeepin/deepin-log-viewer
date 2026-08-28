@@ -138,6 +138,7 @@ LogListView::LogListView(QWidget *parent)
     //DGuiApplicationHelper::ColorType ct = DGuiApplicationHelper::instance()->themeType();
 
     m_rightClickTriggerShortCut = new QShortcut(this);
+    m_rightClickTriggerShortCut->setObjectName("RightClickTriggerShortCut");
     #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
         m_rightClickTriggerShortCut->setKey(Qt::ALT + Qt::Key_M);
     #else
@@ -527,9 +528,14 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
     QString pathData = idx.data(ITEM_DATE_ROLE).toString();
     if (!this->selectionModel()->selectedIndexes().empty()) {
         g_context = new QMenu(this);
+        g_context->setObjectName("GContext");
+        g_context->setAccessibleName("GContext");
         g_openForder = new QAction(/*tr("在文件管理器中显示")*/ DApplication::translate("Action", "Display in file manager"), this);
+        g_openForder->setObjectName("GOpenForder");
         g_clear = new QAction(/*tr("清除日志内容")*/ DApplication::translate("Action", "Clear log"), this);
+        g_clear->setObjectName("GClear");
         g_refresh = new QAction(/*tr("刷新")*/ DApplication::translate("Action", "Refresh"), this);
+        g_refresh->setObjectName("GRefresh");
 
         g_context->addAction(g_openForder);
         g_context->addAction(g_clear);

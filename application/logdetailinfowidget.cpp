@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -121,6 +121,8 @@ void logDetailInfoWidget::initUI()
     m_status->setMinimumWidth(LABEL_MIN_WIDTH);
 
     m_level = new LogIconButton(this);
+    m_level->setObjectName("Level");
+    m_level->setAccessibleName("Level");
     DFontSizeManager::instance()->bind(m_level, DFontSizeManager::T8);
 
     // add by Airy
@@ -155,6 +157,8 @@ void logDetailInfoWidget::initUI()
 
     //不设置nofocus焦点会上到这上面来,可是我们不需要它可以有焦点
     m_textBrowser->setFocusPolicy(Qt::NoFocus);
+    m_textBrowser->setObjectName("TextBrowser");
+    m_textBrowser->setAccessibleName("TextBrowser");
     DFontSizeManager::instance()->bind(m_textBrowser, DFontSizeManager::T8);
     m_textBrowser->setFrameShape(QFrame::NoFrame);
     m_textBrowser->viewport()->setAutoFillBackground(false);

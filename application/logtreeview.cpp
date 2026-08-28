@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -78,6 +78,8 @@ void LogTreeView::initUI()
     setItemDelegate(m_itemDelegate);
 
     m_headerDelegate = new LogViewHeaderView(Qt::Horizontal, this);
+    m_headerDelegate->setObjectName("HeaderDelegate");
+    m_headerDelegate->setAccessibleName("HeaderDelegate");
     setHeader(m_headerDelegate);
 
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
