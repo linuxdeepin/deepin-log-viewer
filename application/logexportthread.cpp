@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -3835,7 +3835,8 @@ bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_C
     }
 
     // 使用7z进行压缩，方便获取进度
-    procss.start("7z", QStringList() << "a" << "-l" << "-bsp1" << "tmp.zip" << "./");
+    // 注意：-l 是 p7zip 专有开关，移除以兼容所有版本
+    procss.start("7z", QStringList() << "a" << "-bsp1" << "tmp.zip" << "./");
     procss.waitForFinished(-1);
 
     procss.start("mv", QStringList() << "tmp.zip" << fileName);
