@@ -67,6 +67,8 @@ public:
     static QString mkMutiDir(const QString &path);
     //授权框
     static bool checkAuthorization(const QString &actionId, qint64 applicationPid);
+    // 非交互式授权校验：仅检查 polkit 缓存（不弹窗），用于取消/失败后判断是否已获授权（Bug 371767）
+    static bool checkAuthorizationCached(const QString &actionId);
     //系统版本号
     static QString osVersion();
     static QString auditType(const QString& eventType);

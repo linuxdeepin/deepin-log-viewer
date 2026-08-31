@@ -310,6 +310,17 @@ bool Utils::checkAuthorization(const QString &actionId, qint64 applicationPid)
     return result == Authority::Yes ? true : false;
 }
 
+bool Utils::checkAuthorizationCached(const QString &actionId)
+{
+    // 非交互式授权校验：Authority::None 不弹窗，仅查询 polkit 缓存。
+    // 取消/失败时 auth_admin_keep 缓存为空，返回 false；成功鉴权后缓存命中返回 true（Bug 371767）。
+    Authority::Result result;
+
+    result = Authority::instance()->checkAuthorizationSync(actionId, SystemBusNameSubject(QDBusConnection::systemBus().baseService()),
+                                                           Authority::None);
+    return result == Authority::Yes ? true : false;
+}
+
 QString Utils::osVersion()
 {
     QProcess *unlock = new QProcess;
