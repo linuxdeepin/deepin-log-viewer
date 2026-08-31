@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="sv">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="sv">
 <context>
     <name>Action</name>
     <message>
@@ -468,7 +466,7 @@
         <location filename="../application/main.cpp" line="343"/>
         <location filename="../application/main.cpp" line="344"/>
         <source>Log Viewer</source>
-        <translation>Loggvisare</translation>
+        <translation>Log Viewer</translation>
     </message>
     <message>
         <location filename="../application/main.cpp" line="346"/>
@@ -794,16 +792,16 @@
         <translation>dnf-logg</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="311"/>
-        <location filename="../application/loglistview.cpp" line="313"/>
-        <source>Auth Log</source>
-        <translation>Autentiseringslogg</translation>
-    </message>
-    <message>
         <location filename="../application/loglistview.cpp" line="331"/>
         <location filename="../application/loglistview.cpp" line="333"/>
         <source>Other Log</source>
         <translation>Annan logg</translation>
+    </message>
+    <message>
+        <location filename="../application/loglistview.cpp" line="311"/>
+        <location filename="../application/loglistview.cpp" line="313"/>
+        <source>Auth Log</source>
+        <translation>Autentiseringslogg</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
@@ -840,6 +838,14 @@
         <translation>Du har inte tillstånd att visa det</translation>
     </message>
     <message>
+        <location filename="../application/displaycontent.cpp" line="126"/>
+        <location filename="../application/displaycontent.cpp" line="3510"/>
+        <source>Security level for the current system: high
+ audit only administrators can view the audit log</source>
+        <translation>Säkerhetsnivå för det aktuella systemet: hög
+ endast administratörer kan visa auditloggen</translation>
+    </message>
+    <message>
         <location filename="../application/displaycontent.cpp" line="3512"/>
         <source>Audit log is not exist.</source>
         <translation>Auditlogg finns inte.</translation>
@@ -847,15 +853,7 @@
     <message>
         <location filename="../application/displaycontent.cpp" line="3514"/>
         <source>Auth log is not exist.</source>
-        <translation>Autentiseringslogg finns inte.</translation>
-    </message>
-    <message>
-        <location filename="../application/displaycontent.cpp" line="126"/>
-        <location filename="../application/displaycontent.cpp" line="3510"/>
-        <source>Security level for the current system: high
- audit only administrators can view the audit log</source>
-        <translation>Säkerhetsnivå för det aktuella systemet: hög
- endast administratörer kan visa auditloggen</translation>
+        <translation>Autentiseringsloggen finns inte.</translation>
     </message>
 </context>
 <context>
