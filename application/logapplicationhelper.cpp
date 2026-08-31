@@ -202,7 +202,7 @@ void LogApplicationHelper::initCustomLog()
     //初始化gsetting配置
     if (!m_pGSettings) {
         if (QGSettings::isSchemaInstalled(GSETTING_APPID.toUtf8())) {
-            m_pGSettings = new QGSettings(GSETTING_APPID.toUtf8(), "/com/deepin/log/viewer/");
+            m_pGSettings = new QGSettings(GSETTING_APPID.toUtf8(), "/com/deepin/log/viewer/", this);
 
             //监听key的value是否发生了变化
             connect(m_pGSettings, &QGSettings::changed, this, [ = ](const QString & key) {
@@ -225,6 +225,27 @@ void LogApplicationHelper::initCustomLog()
         } else {
             qCWarning(logAppHelper) << "cannot find gsettings config file";
         }
+    }
+}
+
+/**
+ * @brief LogApplicationHelper::releaseConfigs 释放 DConfig/QGSettings 对象
+ *
+ * 上报子进程完成业务后、qApp->exit(0) 前调用，使 DConfig/QGSettings 持有的
+ * 后台 dbus 子线程在 QCoreApplication 仍存活时被释放，避免进程退出析构时
+ * 与子线程 QDBusConnectionManager teardown 竞态致崩。
+ */
+void LogApplicationHelper::releaseConfigs()
+{
+#ifdef DTKCORE_CLASS_DConfigFile
+    if (m_pDConfig) {
+        delete m_pDConfig;
+        m_pDConfig = nullptr;
+    }
+#endif
+    if (m_pGSettings) {
+        delete m_pGSettings;
+        m_pGSettings = nullptr;
     }
 }
 

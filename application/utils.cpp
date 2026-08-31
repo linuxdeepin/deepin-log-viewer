@@ -890,7 +890,15 @@ LoggerRules::LoggerRules(QObject *parent)
     : QObject(parent), m_rules(""), m_config(nullptr) {
 }
 
-LoggerRules::~LoggerRules() { m_config->deleteLater(); }
+LoggerRules::~LoggerRules()
+{
+    // 同步释放 DConfig，避免 deleteLater 在事件循环停止后不执行导致泄漏与后台 dbus 线程悬空。
+    // 仅当 QCoreApplication 仍存活时同步 delete（上报子进程路径满足；GUI 路径此时已析构，跳过以保持与原行为等价）。
+    if (m_config && QCoreApplication::instance()) {
+        delete m_config;
+        m_config = nullptr;
+    }
+}
 
 void LoggerRules::initLoggerRules()
 {

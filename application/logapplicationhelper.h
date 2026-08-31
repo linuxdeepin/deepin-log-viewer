@@ -70,6 +70,10 @@ public:
     // 获取崩溃上报最大条数，默认为50
     int getMaxReportCoredump();
 
+    // 释放 DConfig/QGSettings 对象及其后台 dbus 子线程，供上报子进程退出前确定性清理，
+    // 避免 qApp->exit(0) 时与子线程 QDBusConnectionManager 析构竞态
+    void releaseConfigs();
+
 private:
     explicit LogApplicationHelper(QObject *parent = nullptr);
 
