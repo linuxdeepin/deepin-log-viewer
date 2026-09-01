@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="ar">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ar">
 <context>
     <name>Action</name>
     <message>
@@ -792,16 +790,16 @@
         <translation>سجل dnf</translation>
     </message>
     <message>
-        <location filename="../application/loglistview.cpp" line="311"/>
-        <location filename="../application/loglistview.cpp" line="313"/>
-        <source>Auth Log</source>
-        <translation>سجل التحقق</translation>
-    </message>
-    <message>
         <location filename="../application/loglistview.cpp" line="331"/>
         <location filename="../application/loglistview.cpp" line="333"/>
         <source>Other Log</source>
         <translation>سجل آخر</translation>
+    </message>
+    <message>
+        <location filename="../application/loglistview.cpp" line="311"/>
+        <location filename="../application/loglistview.cpp" line="313"/>
+        <source>Auth Log</source>
+        <translation>سجل التحقق</translation>
     </message>
     <message>
         <location filename="../application/loglistview.cpp" line="360"/>
