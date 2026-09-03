@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -52,6 +52,11 @@ void ParseThreadKern::handleKern()
     QList<QString> dataList;
     qint64 gStartLine = m_filter.segementIndex * SEGEMENT_SIZE;
     m_FilePath = DLDBusHandler::instance(this)->getFileInfo(m_filter.filePath, false);
+    // 如果getFileInfo的dbus调用失败(如用户取消授权)，直接当作授权失败来返回,避免后续出现继续弹出授权框问题
+    if (DLDBusHandler::instance(this)->isGetFileInfoError()) {
+        emit parseFinished(m_threadCount, m_type, CancelAuth);
+        return;
+    }
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
             QFile file(m_FilePath.at(i)); // add by Airy
