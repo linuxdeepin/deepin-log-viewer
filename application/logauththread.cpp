@@ -1186,8 +1186,11 @@ void LogAuthThread::handleCoredump()
 
     QString byte;
     initProccess();
+    DeepinLogviewerInterface dbusInterface("com.deepin.logviewer",
+                                           "/com/deepin/logviewer",
+                                           QDBusConnection::systemBus());
     if (Utils::runInCmd) {
-        byte = DLDBusHandler::instance()->executeCmd("coredumpctl-list");
+        byte = dbusInterface.executeCmd("coredumpctl-list");
         byte = byte.replace('\u0000', "").replace("\x01", "");
     } else {
         m_process->start("pkexec", QStringList() << "logViewerAuth" <<
@@ -1241,7 +1244,7 @@ void LogAuthThread::handleCoredump()
         if (coredumpMsg.coreFile != "missing") {
             // 若coreFile状态为missing，表示文件已丢失，不继续解析文件位置
             QString outInfoByte;
-            outInfoByte = DLDBusHandler::instance()->executeCmd(QString("coredumpctl info %1").arg(coredumpMsg.pid));
+            outInfoByte = dbusInterface.executeCmd(QString("coredumpctl info %1").arg(coredumpMsg.pid));
 
             // 解析第一条堆栈信息
             QStringList strList = outInfoByte.split("Stack trace of thread");
