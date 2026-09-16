@@ -796,6 +796,22 @@ int LogApplicationHelper::getMaxReportCoredump()
     return value.toInt();
 }
 
+// 显式清理 DConfig/QGSettings 对象
+// 在 qApp->exit(0) 前调用，确保事件循环停止后仍能立即释放资源
+void LogApplicationHelper::cleanup()
+{
+#ifdef DTKCORE_CLASS_DConfigFile
+    if (m_pDConfig) {
+        delete m_pDConfig;
+        m_pDConfig = nullptr;
+    }
+#endif
+    if (m_pGSettings) {
+        delete m_pGSettings;
+        m_pGSettings = nullptr;
+    }
+}
+
 //从应用包名转换为应用显示文本
 QString LogApplicationHelper::transName(const QString &str)
 {
