@@ -540,8 +540,8 @@ void FilterContent::paintEvent(QPaintEvent *event)
     QRectF rect = this->rect();
     rect.setX(0.5);
     rect.setY(0.5);
-    rect.setWidth(rect.width() - 0.5);
-    rect.setHeight(rect.height() - 0.5);
+    rect.setWidth(rect.width() - 1.0);
+    rect.setHeight(rect.height() - 1.0);
 
     QPainterPath painterPath;
     //绘制圆角矩形
