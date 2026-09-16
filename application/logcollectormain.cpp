@@ -164,7 +164,7 @@ void LogCollectorMain::initUI()
 
     m_hLayout->addLayout(m_vLayout, 10);
     m_hLayout->setContentsMargins(0, 0, 10, 0);
-    m_hLayout->setSpacing(10);
+    m_hLayout->setSpacing(0);
 
     this->centralWidget()->setAccessibleName("centralWidget");
     this->centralWidget()->setLayout(m_hLayout);
