@@ -1302,7 +1302,8 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
 
         if (getIconByname(logList[i].level).isEmpty())
             item->setText(logList[i].level);
-        item->setIcon(QIcon(iconPath));
+        else
+            item->setIcon(QIcon(iconPath));
         item->setData(JOUR_TABLE_DATA);
         item->setData(logList[i].level, Log_Item_SPACE::levelRole);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
@@ -1452,7 +1453,8 @@ void DisplayContent::insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int 
 
         if (getIconByname(logList[i].level).isEmpty())
             item->setText(logList[i].level);
-        item->setIcon(QIcon(iconPath));
+        else
+            item->setIcon(QIcon(iconPath));
         item->setData(BOOT_KLU_TABLE_DATA);
         item->setData(logList[i].level, Log_Item_SPACE::levelRole);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
@@ -3069,7 +3071,8 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_APPLICATOIN> iList, QStandar
         QString iconPath = m_iconPrefix + getIconByname(iList[i].level);
         if (getIconByname(iList[i].level).isEmpty())
             item->setText(lvStr);
-        item->setIcon(QIcon(iconPath));
+        else
+            item->setIcon(QIcon(iconPath));
         item->setData(APP_TABLE_DATA);
         item->setData(lvStr, Log_Item_SPACE::levelRole);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
@@ -3224,7 +3227,8 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DNF> iList, QStandardItemMod
         QString iconPath = m_iconPrefix + m_dnfIconNameMap.value(iList[i].level);
         if (m_dnfIconNameMap.value(iList[i].level).isEmpty())
             item->setText(iList[i].level);
-        item->setIcon(QIcon(iconPath));
+        else
+            item->setIcon(QIcon(iconPath));
         item->setData(DNF_TABLE_DATA);
         item->setData(lvStr, Log_Item_SPACE::levelRole);
         items << item;
@@ -3260,7 +3264,8 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_DMESG> iList, QStandardItemM
 
         if (getIconByname(iList[i].level).isEmpty())
             item->setText(iList[i].level);
-        item->setIcon(QIcon(iconPath));
+        else
+            item->setIcon(QIcon(iconPath));
         item->setData(DMESG_TABLE_DATA);
         item->setData(iList[i].level, Log_Item_SPACE::levelRole);
         items << item;
