@@ -986,6 +986,8 @@ void LogBackend::slot_coredumpFinished(int index)
                                      .arg(lastTime.toString("yyyy-MM-dd hh:mm:ss"))
                                      .arg(curTime.toString("yyyy-MM-dd hh:mm:ss"));
             // 此处退出码不能为-1，否则systemctl --failed服务会将其判为失败的systemd服务
+            // 退出前显式清理 DConfig/QGSettings 对象，避免事件循环停止后 dbus 子线程竞态崩溃
+            LogApplicationHelper::instance()->cleanup();
             qApp->exit(0);
         } else {
             // 统计所有崩溃重复次数
@@ -1057,6 +1059,8 @@ void LogBackend::slot_coredumpFinished(int index)
                 Eventlogutils::GetInstance()->writeLogs(objCoredumpEvent);
                 LogApplicationHelper::instance()->saveLastRerportTime(latestCoredumpTime);
                 qCInfo(logBackend) << QString("Successfully reported %1 crash messages in total.").arg(afterCleanData.size());
+                // 退出前显式清理 DConfig/QGSettings 对象，避免事件循环停止后 dbus 子线程竞态崩溃
+                LogApplicationHelper::instance()->cleanup();
                 qApp->exit(0);
             });
         }

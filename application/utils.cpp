@@ -890,7 +890,7 @@ LoggerRules::LoggerRules(QObject *parent)
     : QObject(parent), m_rules(""), m_config(nullptr) {
 }
 
-LoggerRules::~LoggerRules() { m_config->deleteLater(); }
+LoggerRules::~LoggerRules() { delete m_config; m_config = nullptr; }
 
 void LoggerRules::initLoggerRules()
 {

@@ -70,6 +70,9 @@ public:
     // 获取崩溃上报最大条数，默认为50
     int getMaxReportCoredump();
 
+    // 显式清理 DConfig/QGSettings 对象，确保进程退出前释放资源
+    void cleanup();
+
 private:
     explicit LogApplicationHelper(QObject *parent = nullptr);
 
