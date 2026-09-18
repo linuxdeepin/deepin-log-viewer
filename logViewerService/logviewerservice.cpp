@@ -678,14 +678,17 @@ QString LogViewerService::executeCmd(const QString &cmd)
         // 通过后端服务，按进程号获取崩溃信息
         cmdStr = "coredumpctl";
         args = cmd.mid(QString("coredumpctl").size() + 1).split(' ');
-    } else if (cmd.startsWith("coredumpctl dump")) {
-        // 截取对应pid的dump文件到指定目录
-        cmdStr = "coredumpctl";
-        args = cmd.mid(QString("coredumpctl").size() + 1).split(' ');
-    } else if (cmd.startsWith("readelf")) {
-        // 获取dump文件偏移地址信息
-        cmdStr = "readelf";
-        args = cmd.mid(QString("readelf").size() + 1).split(' ');
+    } else if (cmd.startsWith("read-coredump-maps")) {
+        // 合并原 dump+readelf 两步：在后端私有命名空间内完成 coredumpctl dump →
+        // readelf -n → 自动清理，路径不再经 D-Bus 传递，PrivateTmp 下依然有效。
+        const QString pid = cmd.mid(QString("read-coredump-maps").size()).trimmed();
+        bool pidOk = false;
+        pid.toInt(&pidOk);
+        if (!pidOk || pid.isEmpty()) {
+            qCWarning(logService) << "read-coredump-maps: invalid pid:" << pid;
+            return result;
+        }
+        return extractCoredumpMaps(pid);
     }
 
     if (!cmdStr.isEmpty()) {
@@ -707,27 +710,63 @@ QString LogViewerService::executeCmd(const QString &cmd)
             else
                 nCnt = 0;
             result = QString::number(nCnt);
-        } else if (cmd.startsWith("readelf")) {
-            // 因原始maps信息过大，基本几百KB，埋点平台并不需要全量数据，仅取前200行maps信息即可
-            QTextStream in(m_process.readAllStandardOutput());
-            QStringList lines;
-            QString str;
-            while (!in.atEnd()) {
-                str  = in.readLine();
-
-                if (!str.isEmpty())
-                    lines.push_back(str);
-                if (lines.count() >= COREDUMP_MAPS_MAX_LINES)
-                    break;
-            }
-
-            result = lines.join('\n').toUtf8();
         } else {
             result = m_process.readAllStandardOutput();
         }
     }
 
     return result;
+}
+
+/*!
+ * \~chinese \brief LogViewerService::extractCoredumpMaps 在后端私有命名空间内完成
+ *            coredumpctl dump + readelf -n 并截取前 COREDUMP_MAPS_MAX_LINES 行 maps 信息。
+ * \~chinese \param pid 崩溃进程号
+ * \~chinese \return maps 文本（前 200 行），失败返回空串
+ * \note 临时 dump 文件落在后端私有 /tmp（QTemporaryFile，autoRemove），作用域结束自动清理。
+ *       原实现由前端拼 /tmp 路径经 D-Bus 传后端，PrivateTmp 下后端不可达该路径；
+ *       现改为后端自建临时文件闭环处理，路径不跨进程传递。
+ */
+QString LogViewerService::extractCoredumpMaps(const QString &pid)
+{
+    // 仅需单个临时文件，无需目录：open() 以 O_EXCL 独占创建，fileName() 即路径。
+    // open 后立即 close，让 coredumpctl dump -o 以 O_TRUNC 覆写该文件。
+    QTemporaryFile tmpFile(QDir::tempPath() + "/deepin-log-viewer-core-XXXXXX.dump");
+    if (!tmpFile.open()) {
+        qCWarning(logService) << "extractCoredumpMaps: failed to create temp file:" << tmpFile.errorString();
+        return QString();
+    }
+    const QString corePath = tmpFile.fileName();
+    tmpFile.close();
+
+    // coredumpctl dump: 导出 core dump 到后端私有 /tmp 下的临时文件
+    m_process.start("coredumpctl", QStringList() << "dump" << pid << "-o" << corePath);
+    if (!m_process.waitForFinished(-1) || m_process.exitCode() != 0) {
+        qCWarning(logService) << "extractCoredumpMaps: coredumpctl dump failed for pid:" << pid
+                              << "exitCode:" << m_process.exitCode()
+                              << "stderr:" << m_process.readAllStandardError();
+        return QString();
+    }
+
+    // readelf -n: 读取 ELF notes（含 maps 信息）
+    m_process.start("readelf", QStringList() << "-n" << corePath);
+    if (!m_process.waitForFinished(-1)) {
+        qCWarning(logService) << "extractCoredumpMaps: readelf failed for:" << corePath;
+        return QString();
+    }
+
+    // 因原始 maps 信息过大，仅取前 COREDUMP_MAPS_MAX_LINES 行
+    QTextStream in(m_process.readAllStandardOutput());
+    QStringList lines;
+    while (!in.atEnd()) {
+        const QString str = in.readLine();
+        if (!str.isEmpty())
+            lines.push_back(str);
+        if (lines.count() >= COREDUMP_MAPS_MAX_LINES)
+            break;
+    }
+
+    return lines.join('\n');
 }
 
 /*!
