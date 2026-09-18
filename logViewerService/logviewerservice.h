@@ -97,6 +97,9 @@ private:
     bool checkAuth(const QString &actionId);
     QByteArray processCatFile(const QString &filePath);
     void processCmdArgs(const QString &cmdStr, const QStringList &args);
+    // 在后端私有命名空间内完成 coredumpctl dump + readelf -n，截取前 200 行 maps。
+    // 临时 dump 文件由 QTemporaryFile（autoRemove）管理，作用域结束自动清理。
+    QString extractCoredumpMaps(const QString &pid);
 
     // 客户端生命周期跟踪：记录所有通过 D-Bus 连入的调用方唯一总线名，
     // 当最后一个客户端断开后自动退出服务（替代被前端主动调用的 quit）。
