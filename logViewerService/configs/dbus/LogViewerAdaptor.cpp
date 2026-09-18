@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2024 - 2025 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2024 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -43,11 +43,11 @@ int LogViewerAdaptor::exitCode()
     return out0;
 }
 
-bool LogViewerAdaptor::exportLog(int dirFd, const QString &in, bool isFile)
+bool LogViewerAdaptor::exportLog(const QDBusUnixFileDescriptor &dirFd, const QString &in, bool isFile)
 {
     // handle method call com.deepin.logviewer.exportLog
     bool out0;
-    QMetaObject::invokeMethod(parent(), "exportLog", Q_RETURN_ARG(bool, out0), Q_ARG(int, dirFd), Q_ARG(QString, in), Q_ARG(bool, isFile));
+    QMetaObject::invokeMethod(parent(), "exportLog", Q_RETURN_ARG(bool, out0), Q_ARG(QDBusUnixFileDescriptor, dirFd), Q_ARG(QString, in), Q_ARG(bool, isFile));
     return out0;
 }
 
