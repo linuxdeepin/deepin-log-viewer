@@ -41,7 +41,7 @@ class LogViewerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"quit\"/>\n"
 "    <method name=\"exportLog\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
-"      <arg direction=\"in\" type=\"s\" name=\"outDir\"/>\n"
+"      <arg direction=\"in\" type=\"i\" name=\"dirFd\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"in\"/>\n"
 "      <arg direction=\"in\" type=\"b\" name=\"isFile\"/>\n"
 "    </method>\n"
@@ -87,7 +87,7 @@ public: // PROPERTIES
 public Q_SLOTS: // METHODS
     QString executeCmd(const QString &cmd);
     int exitCode();
-    bool exportLog(const QString &outDir, const QString &in, bool isFile);
+    bool exportLog(int dirFd, const QString &in, bool isFile);
     QStringList getFileInfo(const QString &file, bool unzip);
     qulonglong getFileSize(const QString &filePath);
     qlonglong getLineCount(const QString &filePath);
