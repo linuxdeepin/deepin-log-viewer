@@ -47,10 +47,9 @@ ProtectKernelModules=true
 ProtectControlGroups=true
 ProtectClock=true
 PrivateMounts=true
-# 用于接收 ops log
-#PrivateTmp=true
+PrivateTmp=true
 ReadWritePaths=/var/log/deepin
-ReadWritePaths=/tmp /var/tmp /media /mnt /home
+ReadWritePaths=/media /mnt /home
 PrivateDevices=true
 # V25: PrivateIPC recommended, but not effective for AF_UNIX (D-Bus uses AF_UNIX)
 #PrivateIPC=true
