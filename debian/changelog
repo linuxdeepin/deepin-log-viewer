@@ -1,3 +1,14 @@
+deepin-log-viewer (6.5.40) unstable; urgency=medium
+
+  * refactor(service): change exportLog outDir to fd-based for
+    PrivateTmp
+  * refactor(service): close coredump maps flow in backend namespace
+  * feat(service): enable PrivateTmp for the daemon
+  * fix(security): sink home log reads to frontend, enable
+    ProtectHome=tmpfs
+
+ -- wangrong <wangrong@uniontech.com>  Fri, 18 Sep 2026 20:05:49 +0800
+
 deepin-log-viewer (6.5.39) unstable; urgency=medium
 
   * fix: add AT-SPI accessible names for interactive widgets
