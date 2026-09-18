@@ -43,11 +43,11 @@ int LogViewerAdaptor::exitCode()
     return out0;
 }
 
-bool LogViewerAdaptor::exportLog(const QString &outDir, const QString &in, bool isFile)
+bool LogViewerAdaptor::exportLog(int dirFd, const QString &in, bool isFile)
 {
     // handle method call com.deepin.logviewer.exportLog
     bool out0;
-    QMetaObject::invokeMethod(parent(), "exportLog", Q_RETURN_ARG(bool, out0), Q_ARG(QString, outDir), Q_ARG(QString, in), Q_ARG(bool, isFile));
+    QMetaObject::invokeMethod(parent(), "exportLog", Q_RETURN_ARG(bool, out0), Q_ARG(int, dirFd), Q_ARG(QString, in), Q_ARG(bool, isFile));
     return out0;
 }
 

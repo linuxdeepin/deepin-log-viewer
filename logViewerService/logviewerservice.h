@@ -37,7 +37,7 @@ public Q_SLOTS:
     Q_SCRIPTABLE void quit();
     Q_SCRIPTABLE QStringList getFileInfo(const QString &file, bool unzip = true);
     Q_SCRIPTABLE QStringList getOtherFileInfo(const QString &file, bool unzip = true);
-    Q_SCRIPTABLE bool exportLog(const QString &outDir, const QString &in, bool isFile);
+    Q_SCRIPTABLE bool exportLog(const QDBusUnixFileDescriptor &dirFd, const QString &in, bool isFile);
     Q_SCRIPTABLE QString openLogStream(const QString &filePath);
     Q_SCRIPTABLE QString readLogInStream(const QString &token);
     Q_SCRIPTABLE QString isFileExist(const QString &filePath);
@@ -75,6 +75,13 @@ private:
     bool removeOpsTempDirByPathInternal(const QString &path);
     // 基于 fd 的 TOCTOU 安全递归删除目录。
     bool safeRemoveDirRecursive(int parentFd, const char *name);
+
+    // exportLog 目标 basename 净化：拒绝含 '/' 或 "." / ".." 的名字，
+    // 防止 openat(dirFd, name) 穿越 dirFd 白名单约束（openat 的 name 中
+    // ".."/"/" 是相对 dirFd 的直接穿越，不受 readlink 白名单约束）。
+    static bool isSafeBasename(const QString &name);
+    // 路径前缀白名单匹配：按路径分量比较，避免 "/tmpfoo" 误匹配 "/tmp"。
+    static bool isPathUnder(const QString &path, const QString &prefix);
 
 private:
     bool checkAuthorization(const QString &actionId);
