@@ -3,9 +3,26 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dldbushandler.h"
+#include "userlogaccess.h"
+#include "../utils.h"
+
 #include <QDebug>
 #include <QStandardPaths>
 #include <QLoggingCategory>
+#include <QFile>
+#include <QDir>
+#include <QFileInfo>
+#include <QUrl>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QHash>
+
+#include <dgiomount.h>
+#include <dgiofile.h>
+#include <dgiovolumemanager.h>
+
+#include <fcntl.h>
+#include <unistd.h>
 
 Q_DECLARE_LOGGING_CATEGORY(logApp)
 
@@ -41,6 +58,22 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
 }
 
 /*!
+ * \~chinese \brief DLDBusHandler::isHomePath 判断路径是否属于当前用户 home 目录
+ * \~chinese ProtectHome=tmpfs 后，home 下的日志由 UserLogAccess 本地读取，不再走 DBus。
+ */
+bool DLDBusHandler::isHomePath(const QString &filePath) const
+{
+    if (filePath.isEmpty() || Utils::homePath.isEmpty()) {
+        return false;
+    }
+    // 精确匹配 home 前缀：path == home 或 path 以 home + "/" 开头
+    if (filePath == Utils::homePath) {
+        return true;
+    }
+    return filePath.startsWith(Utils::homePath + "/");
+}
+
+/*!
  * \~chinese \brief DLDBusHandler::readLog 读取日志文件
  * \~chinese \param filePath 文件路径
  * \~chinese \return 读取的日志
@@ -48,6 +81,13 @@ DLDBusHandler::DLDBusHandler(QObject *parent)
 QString DLDBusHandler::readLog(const QString &filePath)
 {
     qCDebug(logApp) << "DLDBusHandler::readLog called with filePath:" << filePath;
+
+    // home 目录下日志由用户日志访问类本地读取
+    if (isHomePath(filePath)) {
+        return UserLogAccess::instance()->readLog(filePath);
+    }
+
+    // 非_home 路径走后端 DBus（需 polkit 提权，后端以 root 读取 /var/log 等）
     QString tempFilePath = createFilePathCacheFile(filePath);
     QFile file(tempFilePath);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -81,6 +121,12 @@ QString DLDBusHandler::readLog(const QString &filePath)
 QStringList DLDBusHandler::readLogLinesInRange(const QString &filePath, qint64 startLine, qint64 lineCount, bool bReverse)
 {
     qCDebug(logApp) << "DLDBusHandler::readLogLinesInRange called with filePath:" << filePath << "startLine:" << startLine << "lineCount:" << lineCount << "bReverse:" << bReverse;
+
+    // home 目录下日志由用户日志访问类本地读取
+    if (isHomePath(filePath)) {
+        return UserLogAccess::instance()->readLogLinesInRange(filePath, startLine, lineCount, bReverse);
+    }
+
     QString tempFilePath = createFilePathCacheFile(filePath);
     QFile file(tempFilePath);
     if (!file.open(QIODevice::ReadOnly)) {
@@ -107,19 +153,73 @@ QStringList DLDBusHandler::readLogLinesInRange(const QString &filePath, qint64 s
 QString DLDBusHandler::openLogStream(const QString &filePath)
 {
     qCDebug(logApp) << "DLDBusHandler::openLogStream called with filePath:" << filePath;
+
+    // home 目录下日志由用户日志访问类本地读取，返回 local- 前缀 token
+    if (isHomePath(filePath)) {
+        return UserLogAccess::instance()->openLogStream(filePath);
+    }
+
     return m_dbus->openLogStream(filePath);
 }
 
 QString DLDBusHandler::readLogInStream(const QString &token)
 {
     qCDebug(logApp) << "DLDBusHandler::readLogInStream called with token:" << token;
+
+    // local- 前缀 token 路由到用户日志访问类
+    if (token.startsWith(QStringLiteral("local-"))) {
+        return UserLogAccess::instance()->readLogInStream(token);
+    }
+
     return m_dbus->readLogInStream(token);
 }
 
 QStringList DLDBusHandler::whiteListOutPaths()
 {
     qCDebug(logApp) << "DLDBusHandler::whiteListOutPaths called";
-    return m_dbus->whiteListOutPaths();
+    // ProtectHome=tmpfs 后后端无法列举 /home 和 /run/user，前端自行实现白名单。
+    QStringList paths;
+
+    // 用户家目录
+    if (!Utils::homePath.isEmpty() && Utils::homePath != "/" && Utils::homePath != "/root") {
+        paths << Utils::homePath;
+    }
+
+    // 外设挂载路径（包括 SMB/gvfs）
+    const QList<QExplicitlySharedDataPointer<DGioMount>> mounts = DGioVolumeManager::getMounts();
+    for (auto mount : mounts) {
+        QString uri = mount->getRootFile()->uri();
+        QString scheme = QUrl(uri).scheme();
+
+        // SMB 路径判断
+        QRegularExpression recifs("^file:///media/(.*)/smbmounts");
+        QRegularExpression regvfs("^file:///run/user/(.*)/gvfs|^/root/.gvfs");
+        if (recifs.match(uri).hasMatch() || regvfs.match(uri).hasMatch()) {
+            QString path = QUrl(uri).toLocalFile();
+            QFlags<QFileDevice::Permission> power = QFile::permissions(path);
+            if (power.testFlag(QFile::WriteUser))
+                paths << path;
+        }
+
+        // 外设路径判断
+        if ((scheme == "file") ||
+                (scheme == "gphoto2") ||
+                (scheme == "mtp")) {
+            QExplicitlySharedDataPointer<DGioFile> locationFile = mount->getDefaultLocationFile();
+            QString path = locationFile->path();
+            if (path.startsWith("/media/")) {
+                QFlags<QFileDevice::Permission> power = QFile::permissions(path);
+                if (power.testFlag(QFile::WriteUser)) {
+                    paths << path;
+                }
+            }
+        }
+    }
+
+    // 临时目录
+    paths << "/tmp";
+
+    return paths;
 }
 
 /*!
@@ -149,6 +249,12 @@ bool DLDBusHandler::isGetFileInfoError() const
 QStringList DLDBusHandler::getFileInfo(const QString &flag, bool unzip)
 {
     qCDebug(logApp) << "DLDBusHandler::getFileInfo called with flag:" << flag << "unzip:" << unzip;
+
+    // home 目录下日志由用户日志访问类本地列举
+    if (isHomePath(flag)) {
+        return UserLogAccess::instance()->getFileInfo(flag, unzip);
+    }
+
     QDBusPendingReply<QStringList> reply = m_dbus->getFileInfo(flag, unzip);
     reply.waitForFinished();
     if (reply.isError()) {
@@ -165,6 +271,12 @@ QStringList DLDBusHandler::getFileInfo(const QString &flag, bool unzip)
 QStringList DLDBusHandler::getOtherFileInfo(const QString &flag, bool unzip)
 {
     qCDebug(logApp) << "DLDBusHandler::getOtherFileInfo called with flag:" << flag << "unzip:" << unzip;
+
+    // home 目录下日志由用户日志访问类本地列举
+    if (isHomePath(flag)) {
+        return UserLogAccess::instance()->getOtherFileInfo(flag, unzip);
+    }
+
     QDBusPendingReply<QStringList> reply = m_dbus->getOtherFileInfo(flag, unzip);
     reply.waitForFinished();
     QStringList filePathList;
@@ -177,15 +289,112 @@ QStringList DLDBusHandler::getOtherFileInfo(const QString &flag, bool unzip)
     return filePathList;
 }
 
+// 计算导出目标文件名：与后端原 openat(dirFd, safeName) 逻辑对齐。
+// isFile=true: 取源文件 basename；isFile=false: 取命令名/子模块名 + ".log"。
+static QString computeExportFileName(const QString &in, bool isFile)
+{
+    if (isFile) {
+        return QFileInfo(in).fileName();
+    }
+
+    // JSON 分支：解析 submoduleName 作为目标文件名
+    QJsonParseError parseError;
+    QJsonDocument document = QJsonDocument::fromJson(in.toUtf8(), &parseError);
+    if (parseError.error == QJsonParseError::NoError && document.isObject()) {
+        QJsonObject object = document.object();
+        if (object.contains("name")) {
+            return object.value("name").toString() + ".log";
+        }
+    }
+
+    // 硬编码白名单命令分支：命令名 + ".log"
+    static const QHash<QString, QString> commandNames = {
+        {"dmesg", "dmesg.log"},
+        {"last", "last.log"},
+        {"journalctl_system", "journalctl_system.log"},
+        {"journalctl_boot", "journalctl_boot.log"},
+        {"journalctl_app", "journalctl_app.log"}
+    };
+    return commandNames.value(in, in + ".log");
+}
+
 bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isFile)
 {
     qCDebug(logApp) << "DLDBusHandler::exportLog called with outDir:" << outDir << "in:" << in << "isFile:" << isFile;
-    return m_dbus->exportLog(outDir, in, isFile);
+
+    if (in.isEmpty()) {
+        qCWarning(logApp) << "exportLog: empty input";
+        return false;
+    }
+
+    // 计算目标文件名并拼接完整目标文件路径
+    const QString fileName = computeExportFileName(in, isFile);
+    if (fileName.isEmpty()) {
+        qCWarning(logApp) << "exportLog: failed to compute file name for:" << in;
+        return false;
+    }
+    // 规范化目录路径：去掉末尾多余的 '/'，再拼接文件名
+    QString dir = outDir;
+    while (dir.endsWith('/'))
+        dir.chop(1);
+    const QString outFilePath = dir + QDir::separator() + fileName;
+
+    // 源文件在 home 下：前端本地复制到目标文件
+    if (isFile && isHomePath(in)) {
+        QFile sourceFile(in);
+        if (!sourceFile.open(QIODevice::ReadOnly)) {
+            qCWarning(logApp) << "exportLog: failed to open source file:" << in;
+            return false;
+        }
+        QFile targetFile(outFilePath);
+        if (!targetFile.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
+            qCWarning(logApp) << "exportLog: failed to open target file:" << outFilePath;
+            sourceFile.close();
+            return false;
+        }
+        const qint64 chunkSize = 1024 * 1024;
+        QScopedPointer<char> buffer(new char[chunkSize]);
+        bool error = false;
+        while (!sourceFile.atEnd()) {
+            qint64 bytesRead = sourceFile.read(buffer.data(), chunkSize);
+            if (bytesRead > 0) {
+                if (targetFile.write(buffer.data(), bytesRead) != bytesRead) {
+                    qCWarning(logApp) << "exportLog: failed to write all bytes to target";
+                    error = true;
+                    break;
+                }
+            } else if (bytesRead < 0) {
+                qCWarning(logApp) << "exportLog: error reading from source:" << in;
+                error = true;
+                break;
+            }
+        }
+        targetFile.flush();
+        sourceFile.close();
+        targetFile.close();
+        return !error;
+    }
+
+    // 非_home 源路径走后端 DBus（后端以 root 读取 /var/log 等）
+    // 前端打开目标文件（写方式），将 fd 通过 D-Bus 传给后端。
+    QDBusPendingReply<bool> reply = m_dbus->exportLog(outFilePath, in, isFile);
+    reply.waitForFinished();
+    if (reply.isError()) {
+        qCWarning(logApp) << "call dbus interface 'exportLog' failed. error info:" << reply.error().message();
+        return false;
+    }
+    return reply.value();
 }
 
 bool DLDBusHandler::isFileExist(const QString &filePath)
 {
     qCDebug(logApp) << "DLDBusHandler::isFileExist called with filePath:" << filePath;
+
+    // home 目录下日志由用户日志访问类本地检查
+    if (isHomePath(filePath)) {
+        return UserLogAccess::instance()->isFileExist(filePath);
+    }
+
     QString ret = m_dbus->isFileExist(filePath);
     qCDebug(logApp) << "isFileExist result:" << ret;
     return ret == "exist";
@@ -194,12 +403,24 @@ bool DLDBusHandler::isFileExist(const QString &filePath)
 quint64 DLDBusHandler::getFileSize(const QString &filePath)
 {
     qCDebug(logApp) << "DLDBusHandler::getFileSize called with filePath:" << filePath;
+
+    // home 目录下日志由用户日志访问类本地获取
+    if (isHomePath(filePath)) {
+        return UserLogAccess::instance()->getFileSize(filePath);
+    }
+
     return m_dbus->getFileSize(filePath);
 }
 
 qint64 DLDBusHandler::getLineCount(const QString &filePath)
 {
     qCDebug(logApp) << "DLDBusHandler::getLineCount called with filePath:" << filePath;
+
+    // home 目录下日志由用户日志访问类本地统计
+    if (isHomePath(filePath)) {
+        return UserLogAccess::instance()->getLineCount(filePath);
+    }
+
     return m_dbus->getLineCount(filePath);
 }
 

@@ -41,7 +41,7 @@ class LogViewerAdaptor: public QDBusAbstractAdaptor
 "    <method name=\"quit\"/>\n"
 "    <method name=\"exportLog\">\n"
 "      <arg direction=\"out\" type=\"b\"/>\n"
-"      <arg direction=\"in\" type=\"h\" name=\"dirFd\"/>\n"
+"      <arg direction=\"in\" type=\"h\" name=\"fd\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"in\"/>\n"
 "      <arg direction=\"in\" type=\"b\" name=\"isFile\"/>\n"
 "    </method>\n"
@@ -74,8 +74,9 @@ class LogViewerAdaptor: public QDBusAbstractAdaptor
 "      <arg direction=\"out\" type=\"s\"/>\n"
 "      <arg direction=\"in\" type=\"s\" name=\"cmd\"/>\n"
 "    </method>\n"
-"    <method name=\"whiteListOutPaths\">\n"
-"      <arg direction=\"out\" type=\"as\"/>\n"
+"    <method name=\"exportOpsLog\">\n"
+"      <arg direction=\"out\" type=\"b\"/>\n"
+"      <arg direction=\"in\" type=\"h\" name=\"fd\"/>\n"
 "    </method>\n"
 "  </interface>\n"
         "")
@@ -87,7 +88,7 @@ public: // PROPERTIES
 public Q_SLOTS: // METHODS
     QString executeCmd(const QString &cmd);
     int exitCode();
-    bool exportLog(const QDBusUnixFileDescriptor &dirFd, const QString &in, bool isFile);
+    bool exportLog(const QDBusUnixFileDescriptor &fd, const QString &in, bool isFile);
     QStringList getFileInfo(const QString &file, bool unzip);
     qulonglong getFileSize(const QString &filePath);
     qlonglong getLineCount(const QString &filePath);
@@ -97,7 +98,7 @@ public Q_SLOTS: // METHODS
     QString readLog(int fd);
     QString readLogInStream(const QString &token);
     QStringList readLogLinesInRange(int fd, qlonglong startLine, qlonglong lineCount);
-    QStringList whiteListOutPaths();
+    bool exportOpsLog(const QDBusUnixFileDescriptor &fd);
 Q_SIGNALS: // SIGNALS
 };
 

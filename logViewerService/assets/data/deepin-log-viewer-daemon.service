@@ -34,13 +34,17 @@ InaccessiblePaths=-/persistent/ostree/repo/
 InaccessiblePaths=-/usr/share/uadp
 InaccessiblePaths=-/etc/sudoers
 InaccessiblePaths=-/etc/sudoers.d
-InaccessiblePaths=-/root
+# ProtectHome=tmpfs: /home、/root、/run/user 以 tmpfs 遮蔽，后端不再直接访问用户家目录。
+# 用户日志读取已下沉到前端（用户进程内本地读取），后端仅处理 /var/log 等系统路径。
+# 后端仍需只读访问 /root/.cache/isocustomizer-agent（opslogexport 收集 OEM 工具日志），
+# 通过 BindReadOnlyPaths 将该子树从宿主只读 bind 回来，穿透 tmpfs 遮蔽。
+ProtectHome=tmpfs
+BindReadOnlyPaths=-/root/.cache/isocustomizer-agent
 InaccessiblePaths=-/var/cache
 InaccessiblePaths=-/var/spool
 
 NoNewPrivileges=true
-# 传参需要/home，比如导出日志到/home路径下，读取/home/$user/.cache下应用日志
-#ProtectHome=false
+# ProtectHome=tmpfs 已遮蔽 /home，前端本地读取用户日志，后端无需访问 /home。
 ProtectProc=default
 ProtectKernelTunables=true
 ProtectKernelModules=true
@@ -49,7 +53,7 @@ ProtectClock=true
 PrivateMounts=true
 PrivateTmp=true
 ReadWritePaths=/var/log/deepin
-ReadWritePaths=/media /mnt /home
+ReadWritePaths=/media /mnt
 PrivateDevices=true
 # V25: PrivateIPC recommended, but not effective for AF_UNIX (D-Bus uses AF_UNIX)
 #PrivateIPC=true

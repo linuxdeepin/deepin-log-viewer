@@ -13,9 +13,6 @@
 #include <sys/stat.h>
 #include <dirent.h>
 
-#include <dgiofile.h>
-#include <dgiovolume.h>
-#include <dgiovolumemanager.h>
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 #include <polkit-qt5-1/PolkitQt1/Authority>
 #else
@@ -209,14 +206,14 @@ QString LogViewerService::readLog(const QString &filePath)
         return " ";
     }
 
-    //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
-    //部分设备是直接从root账户进入，因此还需要监控/root目录
-    if ((!filePath.startsWith("/var/log/") &&
-         !filePath.startsWith("/tmp") &&
-         !filePath.startsWith("/home") &&
-         !filePath.startsWith("/root")) ||
-         filePath.contains(".."))  {
+    // ProtectHome=tmpfs 遮蔽后，后端仅允许读取 /var/log/ 和 /tmp 下的系统日志文件；
+    // /home、/root 下的用户日志由前端用户日志访问类在用户进程内本地读取，不再经此后端接口。
+    if (!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp")) {
         qCWarning(logService) << "File path not in whitelist:" << filePath;
+        return " ";
+    }
+    if (filePath.contains("..")) {
+        qCWarning(logService) << "File path contains '..':" << filePath;
         return " ";
     }
 
@@ -503,14 +500,14 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
     if (!checkAuth(s_Action_View))
         return lines;
 
-    //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
-    //部分设备是直接从root账户进入，因此还需要监控/root目录
-    if ((!filePath.startsWith("/var/log/") &&
-         !filePath.startsWith("/tmp") &&
-         !filePath.startsWith("/home") &&
-         !filePath.startsWith("/root")) ||
-         filePath.contains("..")) {
+    // ProtectHome=tmpfs 遮蔽后，后端仅允许读取 /var/log/ 和 /tmp 下的系统日志文件；
+    // /home、/root 下的用户日志由前端用户日志访问类在用户进程内本地读取，不再经此后端接口。
+    if (!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp")) {
         qCDebug(logService) << "File path not in whitelist for readLogLinesInRange:" << filePath;
+        return lines;
+    }
+    if (filePath.contains("..")) {
+        qCDebug(logService) << "File path contains '..':" << filePath;
         return lines;
     }
 
@@ -622,14 +619,13 @@ qint64 LogViewerService::getLineCount(const QString &filePath)
         return -1;
     }
 
-    //增加服务黑名单，只允许通过提权接口读取/var/log下，家目录下和临时目录下的文件
-    //部分设备是直接从root账户进入，因此还需要监控/root目录
-    if ((!filePath.startsWith("/var/log/") &&
-         !filePath.startsWith("/tmp") &&
-         !filePath.startsWith("/home") &&
-         !filePath.startsWith("/root")) ||
-            filePath.contains("..")) {
+    // ProtectHome=tmpfs 遮蔽后，后端仅允许读取 /var/log/ 和 /tmp 下的系统日志文件。
+    if (!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp")) {
         qCWarning(logService) << "File path not in whitelist for getLineCount:" << filePath;
+        return -1;
+    }
+    if (filePath.contains("..")) {
+        qCWarning(logService) << "File path contains '..':" << filePath;
         return -1;
     }
 
@@ -876,93 +872,6 @@ quint64 LogViewerService::getFileSize(const QString &filePath)
     return 0;
 }
 
-// 获取白名单导出路径
-QStringList LogViewerService::whiteListOutPaths()
-{
-    trackCurrentCaller();
-    qCDebug(logService) << "Getting white list out paths";
-    if (!checkAuth(s_Action_View)) {
-        return {};
-    }
-    QStringList paths;
-    // 获取用户家目录
-    QStringList homeList = getHomePaths();
-    if (!homeList.isEmpty())
-        paths << homeList;
-    // 获取外设挂载可写路径(包括smb路径)
-    paths << getExternalDevPaths();
-    // 获取临时目录
-    paths.push_back("/tmp");
-    return paths;
-}
-
-// 获取用户家目录
-QStringList LogViewerService::getHomePaths()
-{
-    qCDebug(logService) << "Getting home paths";
-    QStringList homeList;
-
-    if (!calledFromDBus()) {
-        return homeList;
-    }
-
-    QFileInfoList infoList = QDir("/home").entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-    for (auto info : infoList) {
-        if (info.isDir())
-            homeList.push_back(info.absoluteFilePath());
-    }
-
-    return homeList;
-}
-
-// 获取外设挂载路径
-QStringList LogViewerService::getExternalDevPaths()
-{
-    qCDebug(logService) << "Getting external dev paths";
-    QStringList devPaths;
-    const QList<QExplicitlySharedDataPointer<DGioMount> > mounts = getMounts_safe();
-    for (auto mount : mounts) {
-        QString uri = mount->getRootFile()->uri();
-        QString scheme = QUrl(uri).scheme();
-
-        // sbm路径判断，分为gvfs挂载和cifs挂载两种
-        QRegularExpression recifs("^file:///media/(.*)/smbmounts");
-        QRegularExpression regvfs("^file:///run/user/(.*)/gvfs|^/root/.gvfs");
-        if (recifs.match(uri).hasMatch() || regvfs.match(uri).hasMatch()) {
-            QString path = QUrl(uri).toLocalFile();
-            QFlags <QFileDevice::Permission> power = QFile::permissions(path);
-            if (power.testFlag(QFile::WriteUser))
-                devPaths.push_back(path);
-        }
-
-        // 外设路径判断
-        if ((scheme == "file") ||  //usb device
-                (scheme == "gphoto2") ||        //phone photo
-                (scheme == "mtp")) {            //android file
-            QExplicitlySharedDataPointer<DGioFile> locationFile = mount->getDefaultLocationFile();
-            QString path = locationFile->path();
-            if (path.startsWith("/media/")) {
-                QFlags <QFileDevice::Permission> power = QFile::permissions(path);
-                if (power.testFlag(QFile::WriteUser)) {
-                    devPaths.push_back(path);
-                }
-            }
-        }
-    }
-
-    return devPaths;
-}
-
-//可重入版本的getMounts
-QList<QExplicitlySharedDataPointer<DGioMount> > LogViewerService::getMounts_safe()
-{
-    qCDebug(logService) << "Getting mounts safely";
-    static QMutex mutex;
-    mutex.lock();
-    auto result = DGioVolumeManager::getMounts();
-    mutex.unlock();
-    return result;
-}
 
 void LogViewerService::clearTempFiles()
 {
@@ -1216,26 +1125,6 @@ QStringList LogViewerService::getOtherFileInfo(const QString &file, bool unzip)
     return fileNamePath;
 }
 
-// 目标 basename 净化：openat(dirFd, name) 的 name 中 ".."/"/" 是相对 dirFd
-// 的直接穿越，不受 readlink 白名单约束，必须强制为纯 basename。
-bool LogViewerService::isSafeBasename(const QString &name)
-{
-    return !name.isEmpty()
-        && !name.contains('/')
-        && name != "."
-        && name != "..";
-}
-
-// 路径前缀白名单匹配：按路径分量比较，避免 "/tmpfoo" 误匹配 "/tmp"。
-bool LogViewerService::isPathUnder(const QString &path, const QString &prefix)
-{
-    if (!path.startsWith(prefix))
-        return false;
-    if (path == prefix)
-        return true;
-    // prefix 以 / 结尾，或 path 在 prefix 之后恰有 / 分隔
-    return prefix.endsWith('/') || path.at(prefix.size()) == '/';
-}
 
 // 通过 QProcess 运行命令，将标准输出重定向到父进程持有的 fd。
 // 子进程无法直接继承父进程的 fd（Qt 的 closeOpenFiles 会关闭继承的 fd，
@@ -1263,51 +1152,27 @@ static bool runCommandRedirectToFd(const QString &cmdStr, const QStringList &arg
     return true;
 }
 
-bool LogViewerService::exportLog(const QDBusUnixFileDescriptor &dirFd, const QString &in, bool isFile)
+bool LogViewerService::exportLog(const QDBusUnixFileDescriptor &fd, const QString &in, bool isFile)
 {
     trackCurrentCaller();
-    qCDebug(logService) << "Exporting log with dirFd, input:" << in << "isFile:" << isFile;
+    qCDebug(logService) << "Exporting log with target fd, input:" << in << "isFile:" << isFile;
     if (!checkAuth(s_Action_View)) {
         qCDebug(logService) << "Invalid authorization for export log";
         return false;
     }
 
-    // fd 有效性校验
-    const int dirFdInt = dirFd.fileDescriptor();
-    if (dirFdInt <= 0) {
-        qCWarning(logService) << "exportLog: invalid dirFd";
+    // 目标文件 fd 由前端打开（用户自己可写的文件），后端只需检查可写即可。
+    // fd 即精确授权：前端打开的文件必然是用户有权限写入的，无需白名单或路径校验。
+    const int outFd = fd.fileDescriptor();
+    if (outFd <= 0) {
+        qCWarning(logService) << "exportLog: invalid target fd";
         return false;
     }
 
-    // 必须是目录
-    struct stat dirSt;
-    if (fstat(dirFdInt, &dirSt) != 0 || !S_ISDIR(dirSt.st_mode)) {
-        qCWarning(logService) << "exportLog: dirFd is not a directory";
-        return false;
-    }
-
-    // readlink 解析 fd 真实路径，做白名单校验。
-    // 非特权调用者可 open("/etc", O_PATH) 成功，不校验即 root 在 /etc 写任意文件。
-    char pathBuf[PATH_MAX];
-    const QString fdLink = QStringLiteral("/proc/self/fd/%1").arg(dirFdInt);
-    ssize_t n = readlink(fdLink.toUtf8().constData(), pathBuf, sizeof(pathBuf) - 1);
-    if (n <= 0) {
-        qCWarning(logService) << "exportLog: failed to readlink dirFd:" << errno;
-        return false;
-    }
-    pathBuf[n] = '\0';
-    const QString resolvedDir = QString::fromLocal8Bit(pathBuf);
-
-    QStringList availablePaths = whiteListOutPaths();
-    bool bAvailable = false;
-    for (const auto &path : availablePaths) {
-        if (isPathUnder(resolvedDir, path)) {
-            bAvailable = true;
-            break;
-        }
-    }
-    if (!bAvailable) {
-        qCWarning(logService) << "exportLog: resolved dir not in whitelist:" << resolvedDir;
+    // 必须是普通文件，防止写入设备/套接字等特殊 fd
+    struct stat fdSt;
+    if (fstat(outFd, &fdSt) != 0 || !S_ISREG(fdSt.st_mode)) {
+        qCWarning(logService) << "exportLog: target fd is not a regular file";
         return false;
     }
 
@@ -1316,14 +1181,14 @@ bool LogViewerService::exportLog(const QDBusUnixFileDescriptor &dirFd, const QSt
         return false;
     }
 
-    // 计算目标 basename 并净化（openat 的 name 中 ".."/"/" 可穿越 dirFd）
-    QString safeName;
+    // 命令白名单分支（非文件模式）
     QString cmdStr;
     QStringList args;
 
     if (isFile) {
-        // 输入路径白名单：仅允许 /var/log/、/tmp、/home、/var/lib/systemd/coredump
-        if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/home") && !in.startsWith("/var/lib/systemd/coredump"))
+        // 输入路径白名单：仅允许 /var/log/、/tmp、/var/lib/systemd/coredump
+        // /home 下的应用日志由前端用户日志访问类本地导出，不再经此后端接口。
+        if ((!in.startsWith("/var/log/") && !in.startsWith("/tmp") && !in.startsWith("/var/lib/systemd/coredump"))
                 || in.contains("..")) {
             qCWarning(logService) << "Input path not in allowed paths:" << in;
             return false;
@@ -1333,9 +1198,8 @@ bool LogViewerService::exportLog(const QDBusUnixFileDescriptor &dirFd, const QSt
             qCWarning(logService) << "in not file:" << in;
             return false;
         }
-        safeName = filein.fileName();  // 天然 basename
     } else {
-        // JSON 分支：解析 submoduleName 作为目标文件名
+        // JSON 分支：解析 submoduleName 构造 journalctl 命令
         QJsonParseError parseError;
         QJsonDocument document = QJsonDocument::fromJson(in.toUtf8(), &parseError);
         if (parseError.error == QJsonParseError::NoError && document.isObject()) {
@@ -1359,8 +1223,6 @@ bool LogViewerService::exportLog(const QDBusUnixFileDescriptor &dirFd, const QSt
             if (execPath.isEmpty() && filter.isEmpty())
                 args << QString("SYSLOG_IDENTIFIER=%1").arg(submoduleName);
             args << "-r";
-
-            safeName = submoduleName + ".log";
         }
 
         // 硬编码白名单命令分支
@@ -1369,7 +1231,6 @@ bool LogViewerService::exportLog(const QDBusUnixFileDescriptor &dirFd, const QSt
             if (it != m_commands.end()) {
                 args = it.value();
                 cmdStr = args.takeFirst();
-                safeName = in + ".log";
             }
         }
 
@@ -1379,22 +1240,9 @@ bool LogViewerService::exportLog(const QDBusUnixFileDescriptor &dirFd, const QSt
         }
     }
 
-    if (!isSafeBasename(safeName)) {
-        qCWarning(logService) << "exportLog: unsafe basename:" << safeName;
-        return false;
-    }
-
-    // openat 创建目标文件（O_NOFOLLOW 防符号链接替换）
-    const int outFd = openat(dirFdInt, safeName.toUtf8().constData(),
-                             O_CREAT | O_WRONLY | O_TRUNC | O_CLOEXEC | O_NOFOLLOW, 0666);
-    if (outFd < 0) {
-        qCWarning(logService) << "exportLog: openat failed for:" << safeName << "errno:" << errno;
-        return false;
-    }
-
     bool ret = false;
     if (isFile) {
-        // 块复制源文件到 outFd
+        // 块复制源文件到目标 fd
         QFile sourceFile(in);
         if (!sourceFile.open(QIODevice::ReadOnly)) {
             qCWarning(logService) << "Failed to open source file:" << in;
@@ -1421,21 +1269,17 @@ bool LogViewerService::exportLog(const QDBusUnixFileDescriptor &dirFd, const QSt
                         break;
                     }
                 }
-                targetFile.close();  // 不关闭 outFd（由 close(outFd) 统一关闭）
+                targetFile.flush();
                 sourceFile.close();
                 ret = !error;
             }
         }
     } else {
-        // 命令输出重定向到 outFd（通过 /proc/<pid>/fd/N magic symlink）
+        // 命令输出重定向到目标 fd（通过 /proc/<pid>/fd/N magic symlink）
         ret = runCommandRedirectToFd(cmdStr, args, outFd);
     }
 
-    // 设置文件权限（替代 chmod 777 QProcess，少一次进程派生）
-    if (fchmod(outFd, 0777) != 0) {
-        qCWarning(logService) << "fchmod 777 failed for fd:" << outFd << "errno:" << errno;
-    }
-    close(outFd);
+    // 不对前端打开的 fd 做 fchmod（权限由前端文件决定），也不 close（fd 由调用者管理）。
     return ret;
 }
 

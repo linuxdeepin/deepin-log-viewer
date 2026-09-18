@@ -43,7 +43,7 @@ find_package(Boost)
 find_package(XercesC)
 find_package(ZLIB)
 
-find_package(PolkitQt${QT_DESIRED_VERSION}-1)
+pkg_check_modules(Gio REQUIRED gio-qt${DTK_VERSION_MAJOR})
 
 set(qt_required_components Core DBus Gui Concurrent Xml Widgets)
 
@@ -66,7 +66,7 @@ set(LINK_LIBS
     ${DtkWidget_LIBRARIES}
     ${DtkCore_LIBRARIES}
     ${DtkGui_LIBRARIES}
-    PolkitQt${QT_DESIRED_VERSION}-1::Agent
+    ${Gio_LIBRARIES}
 )
 
 if (QT_DESIRED_VERSION MATCHES 6)
@@ -75,6 +75,7 @@ else()
     list(APPEND LINK_LIBS ${Gsetting_LIBRARIES})
     include_directories(${Gsetting_INCLUDE_DIRS})
 endif()
+include_directories(${Gio_INCLUDE_DIRS})
 
 
 #设置输出目录

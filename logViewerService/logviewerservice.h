@@ -5,8 +5,6 @@
 #ifndef LOGVIEWERSERVICE_H
 #define LOGVIEWERSERVICE_H
 
-#include <dgiomount.h>
-
 #include <QObject>
 #include <QDBusContext>
 #include <QScopedPointer>
@@ -17,7 +15,6 @@
 #include <QSet>
 
 class QTextStream;
-class DGioVolumeManager;
 class LogViewerService : public QObject
     , protected QDBusContext
 {
@@ -37,7 +34,7 @@ public Q_SLOTS:
     Q_SCRIPTABLE void quit();
     Q_SCRIPTABLE QStringList getFileInfo(const QString &file, bool unzip = true);
     Q_SCRIPTABLE QStringList getOtherFileInfo(const QString &file, bool unzip = true);
-    Q_SCRIPTABLE bool exportLog(const QDBusUnixFileDescriptor &dirFd, const QString &in, bool isFile);
+    Q_SCRIPTABLE bool exportLog(const QDBusUnixFileDescriptor &fd, const QString &in, bool isFile);
     Q_SCRIPTABLE QString openLogStream(const QString &filePath);
     Q_SCRIPTABLE QString readLogInStream(const QString &token);
     Q_SCRIPTABLE QString isFileExist(const QString &filePath);
@@ -45,17 +42,9 @@ public Q_SLOTS:
     Q_SCRIPTABLE qint64 getLineCount(const QString &filePath);
     // 仅能执行特定合法命令
     Q_SCRIPTABLE QString executeCmd(const QString &cmd);
-    Q_SCRIPTABLE QStringList whiteListOutPaths();
     // 通过前端传入的文件描述符导出运维日志：后端在 /var/log 下创建随机临时目录收集日志，
     // 整体压缩后写入 fd，随后自行清理临时目录，不再向调用方返回路径。
     Q_SCRIPTABLE bool exportOpsLog(const QDBusUnixFileDescriptor &fd);
-
-public:
-    // 获取用户家目录
-    QStringList getHomePaths();
-    // 获取外设挂载路径(包括smb路径)
-    QStringList getExternalDevPaths();
-    QList<QExplicitlySharedDataPointer<DGioMount>> getMounts_safe();
 
 private:
     QString readLog(const QString &filePath);
@@ -76,12 +65,6 @@ private:
     // 基于 fd 的 TOCTOU 安全递归删除目录。
     bool safeRemoveDirRecursive(int parentFd, const char *name);
 
-    // exportLog 目标 basename 净化：拒绝含 '/' 或 "." / ".." 的名字，
-    // 防止 openat(dirFd, name) 穿越 dirFd 白名单约束（openat 的 name 中
-    // ".."/"/" 是相对 dirFd 的直接穿越，不受 readlink 白名单约束）。
-    static bool isSafeBasename(const QString &name);
-    // 路径前缀白名单匹配：按路径分量比较，避免 "/tmpfoo" 误匹配 "/tmp"。
-    static bool isPathUnder(const QString &path, const QString &prefix);
 
 private:
     bool checkAuthorization(const QString &actionId);

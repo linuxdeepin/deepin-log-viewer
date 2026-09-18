@@ -41,7 +41,10 @@ public:
 private:
     explicit DLDBusHandler(QObject *parent = nullptr);
 
-private:
+    // 判断路径是否属于当前用户 home 目录（应路由到 UserLogAccess 本地读取）
+    bool isHomePath(const QString &filePath) const;
+
+    // 为后端 readLog/readLogLinesInRange 构造 fd 缓存文件
     QString createFilePathCacheFile(const QString& logFilePath);
     void releaseFilePathCacheFile(const QString &cacheFilePath);
 
