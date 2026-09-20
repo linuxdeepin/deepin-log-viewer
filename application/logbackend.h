@@ -265,6 +265,9 @@ public:
     // 日志种类-----筛选条件
     QMap<LOG_FLAG, LOG_FILTER_BASE> m_type2Filter;
 
+    // 内核日志文件路径缓存（首次 getFileInfo 后复用，避免刷新时二次鉴权）
+    QStringList m_kernFilePaths;
+
     // 筛选条件
     /**
      * @brief m_journalFilter 当前系统日志筛选条件
