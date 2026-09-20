@@ -215,6 +215,7 @@ public slots:
     void slot_getLogtype(int tcbx); // add by Airy
     void slot_getAuditType(int tcbx);
     void slot_refreshClicked(const QModelIndex &index); //add by Airy for adding refresh
+    void slot_truncateRefresh(const QModelIndex &index); // truncate then refresh
     void slot_dnfLevel(DNFPRIORITY iLevel);
 
     //导出前把当前要导出的当前信息的Qlist转换成QStandardItemModel便于导出
