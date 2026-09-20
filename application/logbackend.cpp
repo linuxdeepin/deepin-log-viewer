@@ -2651,6 +2651,10 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
                 PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
                 exportThread->exportToHtmlPublic(filePath, aList, labels);
                 break;
+            case Auth:
+                PERF_PRINT_BEGIN("POINT-04", QString("format=html count=%1").arg(authList.count()));
+                exportThread->exportToHtmlPublic(filePath, authList, labels);
+                break;
             default:
                 break;
             }
@@ -2704,6 +2708,10 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
                 PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
                 exportThread->exportToDocPublic(filePath, aList, labels);
                 break;
+            case Auth:
+                PERF_PRINT_BEGIN("POINT-04", QString("format=doc count=%1").arg(authList.count()));
+                exportThread->exportToDocPublic(filePath, authList, labels);
+                break;
             default:
                 break;
             }
@@ -2756,6 +2764,10 @@ void LogBackend::exportLogData(const QString &filePath, const QStringList &strLa
             case Audit:
                 PERF_PRINT_BEGIN("POINT-04", QString("format=txt count=%1").arg(aList.count()));
                 exportThread->exportToXlsPublic(filePath, aList, labels);
+                break;
+            case Auth:
+                PERF_PRINT_BEGIN("POINT-04", QString("format=xls count=%1").arg(authList.count()));
+                exportThread->exportToXlsPublic(filePath, authList, labels);
                 break;
             default:
                 break;
