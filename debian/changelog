@@ -1,3 +1,9 @@
+deepin-log-viewer (6.5.41) unstable; urgency=medium
+
+  * fix: Fix Auth log export to doc/xls/html hanging on progress dialog
+
+ -- wangrong <wangrong@uniontech.com>  Sun, 20 Sep 2026 16:37:15 +0800
+
 deepin-log-viewer (6.5.40) unstable; urgency=medium
 
   * refactor(service): change exportLog outDir to fd-based for
