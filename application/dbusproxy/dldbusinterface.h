@@ -22,6 +22,7 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
+#include <QtCore/QFile>
 #include <QtDBus/QtDBus>
 
 #include <fcntl.h>
@@ -70,6 +71,12 @@ public Q_SLOTS: // METHODS
         argumentList << QVariant::fromValue(dbusFd) << QVariant::fromValue(in) << QVariant::fromValue(isFile);
         QDBusPendingReply<bool> reply = asyncCallWithArgumentList(QStringLiteral("exportLog"), argumentList);
         ::close(fileFd);
+
+        reply.waitForFinished();
+        if (reply.isError() || !reply.value()) {
+            QFile::remove(outFilePath);
+        }
+
         return reply;
     }
 
