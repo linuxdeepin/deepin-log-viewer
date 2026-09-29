@@ -87,3 +87,8 @@ License: Zlib
 Files: 3rdparty/tmpfileplus/*
 Copyright: 2012-2016 David Ireland
 License: MPL-2.0
+
+# .project
+Files: .project
+Copyright: UnionTech Software Technology Co., Ltd.
+License: CC0-1.0
