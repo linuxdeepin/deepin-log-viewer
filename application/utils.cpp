@@ -11,6 +11,10 @@
 
 #include <math.h>
 #include <pwd.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <fcntl.h>
 
 #include <QUrl>
 #include <QDir>
@@ -105,7 +109,8 @@ QString Utils::getAppDataPath()
 
     QString path = dir.filePath(qApp->applicationName());
     if (!dir.exists(path))
-        dir.mkpath(path);
+        if (!dir.mkpath(path))
+            qCWarning(logApp) << "Failed to create app data directory:" << path;
     qCDebug(logApp) << "App data path:" << path;
     return path;
 }
@@ -353,6 +358,59 @@ QString Utils::mkMutiDir(const QString &path)
     return parentDir + "/" + dirname;
 }
 
+void Utils::fixDirOwnership(const QString &dirPath)
+{
+    // 仅处理 homePath 目录下的路径，避免误改其他目录属主
+    if (!dirPath.startsWith(Utils::homePath + QLatin1Char('/'))) {
+        qCWarning(logApp) << "fixDirOwnership: dirPath is not under homePath, skip:" << dirPath;
+        return;
+    }
+
+    // 使用 lstat 获取 homePath 属主，不跟随符号链接
+    struct stat st;
+    if (lstat(Utils::homePath.toUtf8().constData(), &st) != 0) {
+        qCWarning(logApp) << "fixDirOwnership: failed to lstat homePath:" << Utils::homePath << "error:" << strerror(errno);
+        return;
+    }
+    uid_t realUID = st.st_uid;
+    gid_t realGID = st.st_gid;
+    if (getuid() == realUID) {
+        return;
+    }
+
+    // 从根目录逐级 openat(O_DIRECTORY | O_NOFOLLOW) 打开目标路径，
+    // 任一组件是符号链接则 openat 失败，拒绝继续，防止 symlink 攻击。
+    int fd = open("/", O_DIRECTORY);
+    if (fd < 0) {
+        qCWarning(logApp) << "fixDirOwnership: failed to open root directory:" << strerror(errno);
+        return;
+    }
+
+    QByteArray pathBytes = dirPath.toUtf8();
+    char *path = pathBytes.data();
+    char *saveptr = nullptr;
+    char *component = strtok_r(path, "/", &saveptr);
+    while (component != nullptr) {
+        int nextFd = openat(fd, component, O_DIRECTORY | O_NOFOLLOW);
+        if (nextFd < 0) {
+            qCWarning(logApp) << "fixDirOwnership: refused to traverse component" << component
+                              << "(possible symlink), error:" << strerror(errno);
+            close(fd);
+            return;
+        }
+        close(fd);
+        fd = nextFd;
+        component = strtok_r(nullptr, "/", &saveptr);
+    }
+
+    if (fchown(fd, realUID, realGID) != 0) {
+        qCWarning(logApp) << "fixDirOwnership: failed to fchown" << dirPath
+                          << "to uid:" << realUID << "gid:" << realGID
+                          << "error:" << strerror(errno);
+    }
+    close(fd);
+}
+
 bool Utils::checkAuthorization(const QString &actionId, qint64 applicationPid)
 {
     qCDebug(logApp) << "Checking authorization for action:" << actionId << "pid:" << applicationPid;
@@ -583,7 +641,11 @@ void Utils::updateRepeatCoredumpExePaths(const QList<LOG_REPEAT_COREDUMP_INFO> &
     // 目录不存在，则创建目录
     if (!QFileInfo::exists(fi.absolutePath())) {
         QDir dir;
-        dir.mkpath(fi.absolutePath());
+        if (!dir.mkpath(fi.absolutePath())) {
+            qCWarning(logApp) << "Failed to create directory:" << fi.absolutePath();
+        } else {
+            Utils::fixDirOwnership(fi.absolutePath());
+        }
     }
 
     // 确定当前时间范围的崩溃数据高频重复路径

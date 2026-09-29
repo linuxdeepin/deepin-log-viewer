@@ -190,7 +190,10 @@ bool OpsLogExport::path_exists(const string &path)
 
 bool OpsLogExport::create_directories(const string &path)
 {
-    return QDir(QString::fromStdString(path)).mkpath(".");
+    bool ok = QDir(QString::fromStdString(path)).mkpath(".");
+    if (!ok)
+        qWarning() << "Failed to create directories:" << QString::fromStdString(path);
+    return ok;
 }
 
 void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
@@ -207,7 +210,8 @@ void OpsLogExport::copy_file_or_dir(const string &src, const string &dst_dir)
     if (srcInfo.isSymLink()) return;
     if (srcInfo.isFile()) {
         // 单个文件：确保目标目录存在后用 QFile::copy
-        QDir().mkpath(qDst);
+        if (!QDir().mkpath(qDst))
+            qWarning() << "Failed to create directory:" << qDst;
         QString dstFile = qDst + "/" + srcInfo.fileName();
         QFile::remove(dstFile);  // QFile::copy 要求目标不存在
         QFile::copy(qSrc, dstFile);

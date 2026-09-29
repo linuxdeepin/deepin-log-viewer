@@ -83,6 +83,8 @@ public:
     // 查找所有物理网络接口
     static QStringList getPhysicalInterfaces();
     static QStringList expandPathWithWildcardIterator(const QString &pathWithWildcard);
+    // 修正目录属主：当进程 UID 与真实登录用户 UID 不一致时，chown 为真实用户
+    static void fixDirOwnership(const QString &dirPath);
     // 执行cmd命令
     static QByteArray executeCmd(const QString& cmd, const QStringList& args = QStringList(), const QString& workPath = QString());
     static QByteArray processCmdWithArgs(const QString &cmdStr, const QString &workPath, const QStringList &args);
