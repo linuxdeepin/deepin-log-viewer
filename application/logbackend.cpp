@@ -2079,7 +2079,8 @@ bool LogBackend::getOutDirPath(const QString &path)
     QDir dir(tmpPath);
     if (!dir.exists()) {
         qCDebug(logApp) << "LogBackend::getOutDirPath dir does not exist, creating directory";
-         dir.mkpath(dir.absolutePath());
+         if (!dir.mkpath(dir.absolutePath()))
+             qCWarning(logApp) << "Failed to create output directory:" << dir.absolutePath();
          m_newDir = dir.exists();
          if (m_newDir)
              tmpPath = dir.absolutePath();

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -40,7 +40,8 @@ LogSettings::LogSettings(QObject *parent)
     QDir infoPath(Utils::getConfigPath());
     if (!infoPath.exists()) {
         qCDebug(logApp) << "Info path does not exist, creating it";
-        infoPath.mkpath(Utils::getConfigPath());
+        if (!infoPath.mkpath(Utils::getConfigPath()))
+            qCWarning(logApp) << "Failed to create config directory:" << Utils::getConfigPath();
     }
 
     m_configPath = infoPath.filePath("wininfo-config.conf");

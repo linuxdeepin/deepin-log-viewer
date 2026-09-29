@@ -50,7 +50,8 @@ int main(int argc, char *argv[])
                           .arg(qApp->applicationName());
 
     if (!dirCheck.exists(LogPath)) {
-        dirCheck.mkpath(LogPath);
+        if (!dirCheck.mkpath(LogPath))
+            qCWarning(logService) << "Failed to create log directory:" << LogPath;
     }
     QString serviceLogPath=LogPath+QString("%1.log").arg(qApp->applicationName());
     Dtk::Core::DLogManager::setlogFilePath(serviceLogPath);

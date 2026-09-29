@@ -42,7 +42,13 @@ UserLogAccess::UserLogAccess(QObject *parent)
 {
     // 初始化解压根目录：~/.cache/deepin/deepin-log-viewer/user-log
     m_extractRoot = Utils::homePath + QStringLiteral("/.cache/deepin/deepin-log-viewer/user-log");
-    QDir().mkpath(m_extractRoot);
+    if (!QDir().mkpath(m_extractRoot)) {
+        qCWarning(logUserLogAccess) << "Failed to create extract root directory:" << m_extractRoot;
+    } else {
+        // mkpath 可能同时创建父目录 deepin-log-viewer，两处均需修正属主
+        Utils::fixDirOwnership(Utils::homePath + QStringLiteral("/.cache/deepin/deepin-log-viewer"));
+        Utils::fixDirOwnership(m_extractRoot);
+    }
 
     // 清理上次残留的解压子目录
     QDir rootDir(m_extractRoot);
@@ -74,7 +80,11 @@ QString UserLogAccess::createExtractSubdir()
     // 每次调用创建独立子目录，避免并发互删
     const QString subdir = m_extractRoot + QDir::separator()
                            + QStringLiteral("extract-") + QUuid::createUuid().toString(QUuid::WithoutBraces);
-    QDir().mkpath(subdir);
+    if (!QDir().mkpath(subdir)) {
+        qCWarning(logUserLogAccess) << "Failed to create extract subdirectory:" << subdir;
+        return QString();
+    }
+    Utils::fixDirOwnership(subdir);
     return subdir;
 }
 
@@ -277,10 +287,10 @@ QStringList UserLogAccess::getFileInfo(const QString &file, bool unzip)
 
         // 独立解压子目录
         QString extractDir = createExtractSubdir();
-        QString tempFileTemplate = extractDir + QDir::separator() + "Log_extract_XXXXXX.txt";
+        QString tempFileTemplate = extractDir.isEmpty() ? QString() : extractDir + QDir::separator() + "Log_extract_XXXXXX.txt";
 
         for (int i = 0; i < fileList.count(); i++) {
-            if (fileList[i].suffix().compare("gz", Qt::CaseInsensitive) == 0 && unzip) {
+            if (!tempFileTemplate.isEmpty() && fileList[i].suffix().compare("gz", Qt::CaseInsensitive) == 0 && unzip) {
                 QString unzipFile = unzipToTempFile(fileList[i].absoluteFilePath(), tempFileTemplate);
                 if (!unzipFile.isEmpty())
                     fileNamePath.append(unzipFile);
@@ -308,10 +318,10 @@ QStringList UserLogAccess::getFileInfo(const QString &file, bool unzip)
         QFileInfoList fileList = dir.entryInfoList();
 
         QString extractDir = createExtractSubdir();
-        QString tempFileTemplate = extractDir + QDir::separator() + "Log_extract_XXXXXX.txt";
+        QString tempFileTemplate = extractDir.isEmpty() ? QString() : extractDir + QDir::separator() + "Log_extract_XXXXXX.txt";
 
         for (int i = 0; i < fileList.count(); i++) {
-            if (fileList[i].suffix().compare("gz", Qt::CaseInsensitive) == 0 && unzip) {
+            if (!tempFileTemplate.isEmpty() && fileList[i].suffix().compare("gz", Qt::CaseInsensitive) == 0 && unzip) {
                 QString unzipFile = unzipToTempFile(fileList[i].absoluteFilePath(), tempFileTemplate);
                 if (!unzipFile.isEmpty())
                     fileNamePath.append(unzipFile);
@@ -350,10 +360,10 @@ QStringList UserLogAccess::getOtherFileInfo(const QString &file, bool unzip)
     QFileInfoList fileList = dir.entryInfoList();
 
     QString extractDir = createExtractSubdir();
-    QString tempFileTemplate = extractDir + QDir::separator() + "Log_extract_XXXXXX.txt";
+    QString tempFileTemplate = extractDir.isEmpty() ? QString() : extractDir + QDir::separator() + "Log_extract_XXXXXX.txt";
 
     for (int i = 0; i < fileList.count(); i++) {
-        if (fileList[i].suffix().compare("gz", Qt::CaseInsensitive) == 0 && unzip) {
+        if (!tempFileTemplate.isEmpty() && fileList[i].suffix().compare("gz", Qt::CaseInsensitive) == 0 && unzip) {
             QString unzipFile = unzipToTempFile(fileList[i].absoluteFilePath(), tempFileTemplate);
             if (!unzipFile.isEmpty())
                 fileNamePath.append(unzipFile);
