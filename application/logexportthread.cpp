@@ -4193,7 +4193,7 @@ bool LogExportThread::exportToZip(const QString &fileName, const QList<LOG_MSG_C
     }
 
     // 使用7z进行压缩，方便获取进度
-    procss.start("7z", QStringList() << "a" << "-l" << "-bsp1" << "tmp.zip" << "./");
+    procss.start("7z", QStringList() << "a" << "-bsp1" << "tmp.zip" << "./");
     procss.waitForFinished(-1);
 
     procss.start("mv", QStringList() << "tmp.zip" << fileName);
