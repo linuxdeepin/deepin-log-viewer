@@ -357,8 +357,18 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
         return lines;
     }
 
-    QFile file(filePath);
-    if (!file.open(QIODevice::ReadOnly)) {
+    // 原子地检查并打开文件，拒绝符号链接（O_NOFOLLOW），消除 TOCTOU 时间窗口
+    int fd = open(filePath.toLocal8Bit().constData(), O_RDONLY | O_NOFOLLOW | O_CLOEXEC);
+    if (fd < 0) {
+        QString token = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Md5).toHex();
+        if (m_logLineIndex.contains(token))
+            m_logLineIndex.remove(token);
+        return lines;
+    }
+
+    QFile file;
+    if (!file.open(fd, QIODevice::ReadOnly, QFileDevice::AutoCloseHandle)) {
+        close(fd);
         QString token = QCryptographicHash::hash(filePath.toUtf8(), QCryptographicHash::Md5).toHex();
         if (m_logLineIndex.contains(token))
             m_logLineIndex.remove(token);

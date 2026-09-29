@@ -18,6 +18,9 @@
 
 #include <sys/utsname.h>
 #include <malloc.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
 
 #include <DSysInfo>
 
@@ -2773,6 +2776,26 @@ void LogBackend::parseCoredumpDetailInfo(QList<LOG_MSG_COREDUMP> &list)
         // 解析coredump文件保存位置
         if (data.coreFile != "missing") {
             QString outInfoByte;
+            // 校验 pid 为纯数字，防止参数注入
+            bool pidValid = !data.pid.isEmpty();
+            for (const QChar &c : data.pid) {
+                if (!c.isDigit()) {
+                    pidValid = false;
+                    break;
+                }
+            }
+            if (!pidValid) {
+                qCWarning(logBackend) << "skip coredump detail: invalid pid:" << data.pid;
+                continue;
+            }
+            // 原子地校验 exe 路径不是符号链接（O_NOFOLLOW），消除 TOCTOU 时间窗口
+            int exeFd = open(data.exe.toLocal8Bit().constData(), O_RDONLY | O_NOFOLLOW | O_CLOEXEC);
+            if (exeFd >= 0) {
+                close(exeFd);
+            } else if (errno == ELOOP) {
+                qCWarning(logBackend) << "skip coredump detail: exe is symlink:" << data.exe;
+                continue;
+            }
             // get maps info
             const QString &corePath = QDir::tempPath() + QString("/%1.dump").arg(QFileInfo(data.storagePath).fileName());
             DLDBusHandler::instance()->executeCmd(QString("coredumpctl dump %1 -o %2").arg(data.pid).arg(corePath));
