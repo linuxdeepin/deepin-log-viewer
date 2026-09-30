@@ -1,3 +1,11 @@
+deepin-log-viewer (6.5.42) unstable; urgency=medium
+
+  * fix: remove p7zip-specific -l switch from 7z export command
+  * fix: cleanup residual Log_extract file on export failure
+  * fix: correct directory ownership when creating cache dirs with sudo
+
+ -- wangrong <wangrong@uniontech.com>  Wed, 30 Sep 2026 09:10:02 +0800
+
 deepin-log-viewer (6.5.41) unstable; urgency=medium
 
   * fix: Fix Auth log export to doc/xls/html hanging on progress dialog
