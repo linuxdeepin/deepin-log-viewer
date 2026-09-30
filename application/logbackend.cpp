@@ -1997,6 +1997,9 @@ int LogBackend::loadSegementPage(int nSegementIndex, bool bReset/* = true*/)
     }
 
     m_type2Filter[m_flag].segementIndex = nSegementIndex;
+    if (m_flag == KERN && !m_kernFilePaths.isEmpty()) {
+        m_type2Filter[m_flag].cachedFilePaths = m_kernFilePaths;
+    }
     parse(m_type2Filter[m_flag]);
 
     qCDebug(logBackend) << QString("load seagement index: %1").arg(nSegementIndex);
@@ -2012,7 +2015,13 @@ int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
             nSegementIndex = ++m_type2Filter[type].segementIndex;
             return nSegementIndex;
         }
-        QStringList filePaths = DLDBusHandler::instance(this)->getFileInfo("kern");
+        QStringList filePaths;
+        if (m_kernFilePaths.isEmpty()) {
+            filePaths = DLDBusHandler::instance(this)->getFileInfo("kern", false);
+            m_kernFilePaths = filePaths;
+        } else {
+            filePaths = m_kernFilePaths;
+        }
         for (auto file: filePaths) {
             totalLineCount += DLDBusHandler::instance(this)->getLineCount(file);
         }
