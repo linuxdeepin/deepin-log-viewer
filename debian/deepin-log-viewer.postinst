@@ -23,9 +23,9 @@ rm -f /usr/lib/systemd/user/coredump-reporter.timer 2>/dev/null || true
 rm -f /usr/lib/systemd/user/coredump-reporter.service 2>/dev/null || true
 
 # 启用系统级 timer
-if [ -f /lib/systemd/system/coredump-reporter.timer ]; then
+if [ -f /usr/lib/systemd/system/coredump-reporter.timer ]; then
     systemctl daemon-reload || true
-    systemctl enable coredump-reporter.timer || true
+    systemctl enable coredump-reporter.timer || echo "Warning: failed to enable coredump-reporter.timer" >&2
 fi
 
 #确保软件包安装不会失败
