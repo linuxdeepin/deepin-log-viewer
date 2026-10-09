@@ -1867,6 +1867,20 @@ void LogBackend::clearAllFilter()
 }
 
 /**
+ * @brief LogBackend::invalidateKernCache 失效内核日志缓存（截断刷新时调用）
+ *
+ * 截断内核日志后，已缓存的 m_kernTotalLineCount 和 m_kernFilePaths 已过期，
+ * 需重置以避免陈旧行数导致分页错误和空页级联加载。
+ * 注意：不可在 clearAllFilter() 中调用，因为正常刷新时 handleKern 依赖
+ * m_kernFilePaths 注入 cachedFilePaths 以跳过 getFileInfo 鉴权。
+ */
+void LogBackend::invalidateKernCache()
+{
+    m_kernTotalLineCount = -1;
+    m_kernFilePaths.clear();
+}
+
+/**
  * @brief DisplayContent::clearAllDatalist 清空所有获取的数据list
  */
 void LogBackend::clearAllDatalist()
@@ -1997,6 +2011,9 @@ int LogBackend::loadSegementPage(int nSegementIndex, bool bReset/* = true*/)
     }
 
     m_type2Filter[m_flag].segementIndex = nSegementIndex;
+    if (m_flag == KERN && !m_kernFilePaths.isEmpty()) {
+        m_type2Filter[m_flag].cachedFilePaths = m_kernFilePaths;
+    }
     parse(m_type2Filter[m_flag]);
 
     qCDebug(logBackend) << QString("load seagement index: %1").arg(nSegementIndex);
@@ -2012,10 +2029,19 @@ int LogBackend::getNextSegementIndex(LOG_FLAG type, bool bNext/* = true*/)
             nSegementIndex = ++m_type2Filter[type].segementIndex;
             return nSegementIndex;
         }
-        QStringList filePaths = DLDBusHandler::instance(this)->getFileInfo("kern");
-        for (auto file: filePaths) {
-            totalLineCount += DLDBusHandler::instance(this)->getLineCount(file);
+        if (m_kernTotalLineCount < 0) {
+            // 首次调用：使用 unzip=true 获取解压后 .txt 路径计算正确行数；
+            // 同时使用 unzip=false 获取 .gz 原始路径缓存供 handleKern 使用
+            QStringList txtFilePaths = DLDBusHandler::instance(this)->getFileInfo("kern");
+            if (!txtFilePaths.isEmpty()) {
+                m_kernTotalLineCount = 0;
+                for (const auto &file : txtFilePaths) {
+                    m_kernTotalLineCount += DLDBusHandler::instance(this)->getLineCount(file);
+                }
+                m_kernFilePaths = DLDBusHandler::instance(this)->getFileInfo("kern", false);
+            }
         }
+        totalLineCount = m_kernTotalLineCount < 0 ? 0 : m_kernTotalLineCount;
     } else if (type == Kwin) {
         totalLineCount = DLDBusHandler::instance(this)->getLineCount(KWIN_TREE_DATA);
     }

@@ -531,7 +531,7 @@ void LogListView::showRightMenu(const QPoint &pos, bool isUsePoint)
             int Ok = dialog->exec();
             if (Ok == DDialog::Accepted) {
                 truncateFile(path);
-                emit sigRefresh(index);
+                emit sigTruncateRefresh(index);
             }
         });
 
