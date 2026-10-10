@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -102,4 +102,34 @@ QString DBusManager::getHomePathByFreeDesktop()
 
     qCDebug(logApp) << "Home path lookup completed, returning:" << homePath;
     return homePath;
+}
+
+bool DBusManager::isScreenLocked()
+{
+    qCDebug(logApp) << "Checking screen lock status";
+
+    // DDE 锁屏不走 SessionManager.SetLocked，也不更新 login1 的 LockedHint；
+    // 锁屏界面（dde-lock-front）通过 Visible 属性暴露状态。
+    // 依次尝试 V25 新服务名与 V20 旧服务名
+    const char *services[][3] = {
+        {"org.deepin.dde.LockFront1", "/org/deepin/dde/LockFront1", "org.deepin.dde.LockFront1"},
+        {"com.deepin.dde.lockFront", "/com/deepin/dde/lockFront", "com.deepin.dde.lockFront"},
+    };
+    for (const auto &svc : services) {
+        QDBusInterface lockFront(svc[0], svc[1], svc[2],
+                                 QDBusConnection::sessionBus());
+        if (!lockFront.isValid())
+            continue;
+
+        QVariant visible = lockFront.property("Visible");
+        if (visible.isValid()) {
+            bool locked = visible.toBool();
+            qCDebug(logApp) << "Screen lock status:" << locked << "(from" << svc[0] << ")";
+            return locked;
+        }
+    }
+
+    // 未锁屏时锁屏进程通常不在运行，DBus 服务不存在，视为未锁屏
+    qCDebug(logApp) << "LockFront service not available, assuming unlocked";
+    return false;
 }
