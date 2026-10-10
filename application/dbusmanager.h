@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,6 +21,8 @@ public:
     static bool isAuditAdmin();
     // 利用freedeskop获取当前用户家目录路径
     static QString getHomePathByFreeDesktop();
+    // 检查当前会话是否处于锁屏状态
+    static bool isScreenLocked();
 signals:
 
 public slots:

@@ -29,6 +29,9 @@
 #include <QKeyEvent>
 #include <QActionGroup>
 
+#include <QtConcurrent>
+#include <QFutureWatcher>
+
 #include <DAboutDialog>
 #include <DFileDialog>
 
@@ -284,11 +287,22 @@ void LogCollectorMain::switchRefreshActionTriggered(QAction *action)
         if (nullptr == m_refreshTimer) {
             m_refreshTimer = new QTimer(this);
             connect(m_refreshTimer, &QTimer::timeout, this, [ = ] {
-                m_topRightWgt->setLeftButtonState(true);
-                m_topRightWgt->setChangedcomboxstate(false);
-                //触发刷新信号
-                emit m_logCatelogue->sigRefresh(m_logCatelogue->currentIndex());
-                m_logCatelogue->setFocus();
+                // 锁屏时跳过自动刷新，避免在锁屏界面弹出 polkit 认证对话框
+                // DBus 调用放到工作线程执行，避免阻塞 GUI 事件循环
+                auto *watcher = new QFutureWatcher<bool>(this);
+                connect(watcher, &QFutureWatcher<bool>::finished, this, [ = ]() {
+                    if (watcher->result()) {
+                        qCDebug(logApp) << "Screen is locked, skipping auto refresh";
+                    } else {
+                        m_topRightWgt->setLeftButtonState(true);
+                        m_topRightWgt->setChangedcomboxstate(false);
+                        //触发刷新信号
+                        emit m_logCatelogue->sigRefresh(m_logCatelogue->currentIndex());
+                        m_logCatelogue->setFocus();
+                    }
+                    watcher->deleteLater();
+                });
+                watcher->setFuture(QtConcurrent::run(DBusManager::isScreenLocked));
             });
         }
         m_refreshTimer->start(timeInterval);
