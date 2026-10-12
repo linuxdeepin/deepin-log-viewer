@@ -643,23 +643,79 @@ void LogAuthThread::handleXorg()
 }
 
 /**
+ * @brief dpkgLineTime 从 dpkg 日志行中提取时间戳
+ * @param line dpkg 日志行
+ * @return 解析成功返回 QDateTime，失败返回无效 QDateTime
+ */
+static QDateTime dpkgLineTime(const QString &line)
+{
+    // dpkg 日志行格式为 "yyyy-MM-dd hh:mm:ss ..."，取前 19 字符即可得到时间戳部分
+    return QDateTime::fromString(line.trimmed().left(19), "yyyy-MM-dd hh:mm:ss");
+}
+
+/**
+ * @brief dpkgFileOutOfTimeRange 判断 dpkg 日志文件的时间范围是否完全在筛选区间之外
+ * @param lines 文件内容行列表
+ * @param filterBegin 筛选起始时间（毫秒）
+ * @param filterEnd 筛选结束时间（毫秒）
+ * @return true 表示文件时间范围与筛选区间无交集，可跳过逐行解析；false 表示需要逐行解析
+ */
+static bool dpkgFileOutOfTimeRange(const QStringList &lines, qint64 filterBegin, qint64 filterEnd)
+{
+    QDateTime fileEarliest, fileLatest;
+    // 从前往后找第一个有效时间戳作为文件最早时间
+    for (int i = 0; i < lines.size(); ++i) {
+        const QDateTime dt = dpkgLineTime(lines.at(i));
+        if (dt.isValid()) {
+            fileEarliest = dt;
+            break;
+        }
+    }
+    // 从后往前找第一个有效时间戳作为文件最晚时间
+    for (int i = lines.size() - 1; i >= 0; --i) {
+        const QDateTime dt = dpkgLineTime(lines.at(i));
+        if (dt.isValid()) {
+            fileLatest = dt;
+            break;
+        }
+    }
+    // 无法确定时间范围时保守返回 false，不跳过逐行解析
+    if (!fileEarliest.isValid() || !fileLatest.isValid())
+        return false;
+
+    return fileLatest.toMSecsSinceEpoch() < filterBegin
+           || fileEarliest.toMSecsSinceEpoch() > filterEnd;
+}
+
+/**
  * @brief LogAuthThread::handleDkpg 获取dpkg逻辑
  */
 void LogAuthThread::handleDkpg()
 {
     qCDebug(logApp) << "LogAuthThread::handleDkpg started, processing" << m_FilePath.count() << "files";
     QList<LOG_MSG_DPKG> dList;
+    const REG_EXP ansiRegex("\\x1B\\[\\d+(;\\d+){0,2}m");
     for (int i = 0; i < m_FilePath.count(); i++) {
         if (!m_FilePath.at(i).contains("txt")) {
             QFile file(m_FilePath.at(i)); // if not,maybe crash
             if (!file.exists()) {
                 qCWarning(logApp) << "DPKG log file does not exist:" << m_FilePath.at(i);
+                emit dpkgFinished(m_threadCount);
                 return;
             }
         }
         if (!m_canRun) {
             qCDebug(logApp) << "Thread stopped before processing dpkg logs";
             return;
+        }
+        // 快速通道：原始日志文件的最后修改时间早于筛选起点，整个文件无需读取
+        if (m_dkpgFilters.timeFilterBegin > 0 && m_dkpgFilters.timeFilterEnd > 0
+            && !m_FilePath.at(i).contains("txt")) {
+            QFileInfo fileInfo(m_FilePath.at(i));
+            if (fileInfo.lastModified().toMSecsSinceEpoch() < m_dkpgFilters.timeFilterBegin) {
+                qCDebug(logApp) << "Skipping dpkg file (mtime before filter range):" << m_FilePath.at(i);
+                continue;
+            }
         }
         qCDebug(logApp) << "Processing DPKG file:" << m_FilePath.at(i);
 
@@ -675,13 +731,20 @@ void LogAuthThread::handleDkpg()
             return;
         }
         QStringList strList = QString(Utils::replaceEmptyByteArray(outByte)).split('\n', SKIP_EMPTY_PARTS);
+        // 内容预筛：取文件首尾可解析时间戳确定文件时间范围，与筛选区间无交集则跳过逐行解析
+        if (m_dkpgFilters.timeFilterBegin > 0 && m_dkpgFilters.timeFilterEnd > 0 && !strList.isEmpty()) {
+            if (dpkgFileOutOfTimeRange(strList, m_dkpgFilters.timeFilterBegin, m_dkpgFilters.timeFilterEnd)) {
+                qCDebug(logApp) << "Skipping dpkg file (content out of filter range):" << m_FilePath.at(i);
+                continue;
+            }
+        }
         for (int j = strList.size() - 1; j >= 0; --j) {
             QString str = strList.at(j);
             if (!m_canRun) {
                 qCDebug(logApp) << "Thread stopped before processing dpkg logs";
                 return;
             }
-            str.replace(REG_EXP("\\x1B\\[\\d+(;\\d+){0,2}m"), "");
+            str.replace(ansiRegex, "");
             QStringList m_strList = str.split(" ", SKIP_EMPTY_PARTS);
             if (m_strList.size() < 3)
                 continue;
