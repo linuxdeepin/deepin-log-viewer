@@ -270,6 +270,7 @@ void LogListView::initUI()
     }
 
     // coredump log
+    if (Utils::isCoredumpctlExist()) {
     item = new QStandardItem(QIcon::fromTheme("dp_customlog"), DApplication::translate("Tree", "Coredump Log"));
     setIconSize(QSize(ICON_SIZE, ICON_SIZE));
     item->setToolTip(DApplication::translate("Tree", "Coredump Log"));
@@ -278,6 +279,7 @@ void LogListView::initUI()
     item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
     m_logTypes.push_back(COREDUMP_TREE_DATA);
+    }
 
 
     // add by Airy
@@ -311,6 +313,7 @@ void LogListView::initUI()
     }
 
     // 审计日志 （因dbus安全整改要求，isFileExist接口需要进行polkit鉴权，因此调整为程序启动时默认显示审计日志）
+    if (QFile::exists("/usr/sbin/auditd")) {
     item = new QStandardItem(QIcon::fromTheme("dp_customlog"), DApplication::translate("Tree", "Audit Log"));
     setIconSize(QSize(ICON_SIZE, ICON_SIZE));
     item->setToolTip(DApplication::translate("Tree", "Audit Log"));
@@ -319,6 +322,7 @@ void LogListView::initUI()
     item->setData(VListViewItemMargin, Dtk::MarginsRole);
     m_pModel->appendRow(item);
     m_logTypes.push_back(AUDIT_TREE_DATA);
+    }
 
     // set first item is select when app start
     if (m_pModel->rowCount() > 0) {

@@ -588,7 +588,9 @@ QStringList LogBackend::getLogTypes()
         m_logTypes.push_back(APP_TREE_DATA);
     }
 
-    m_logTypes.push_back(COREDUMP_TREE_DATA);
+    if (Utils::isCoredumpctlExist()) {
+        m_logTypes.push_back(COREDUMP_TREE_DATA);
+    }
 
     // add by Airy
     if (QFile::exists("/var/log/wtmp")) {
@@ -604,7 +606,9 @@ QStringList LogBackend::getLogTypes()
     }
 
     //audit
-    m_logTypes.push_back(AUDIT_TREE_DATA);
+    if (QFile::exists("/usr/sbin/auditd")) {
+        m_logTypes.push_back(AUDIT_TREE_DATA);
+    }
 
     return m_logTypes;
 }
