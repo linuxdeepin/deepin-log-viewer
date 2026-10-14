@@ -1,0 +1,15 @@
+{
+    "name": "deepin-movie",
+    "group": "",
+    "submodules": [
+        {
+            "name": "deepin-movie",
+            "filter": "",
+            "exec": "/usr/bin/deepin-movie",
+            "logType": "file",
+            "logPath": "~/.cache/deepin/deepin-movie/deepin-movie.log"
+        }
+    ],
+    "visible": true,
+    "version": "V2.0"
+}
