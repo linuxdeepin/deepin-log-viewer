@@ -449,7 +449,7 @@ void Utils::resetToNormalAuth(const QString &path)
     }
 }
 
-QList<LOG_REPEAT_COREDUMP_INFO> Utils::countRepeatCoredumps(qint64 timeBegin, qint64 timeEnd)
+QList<LOG_REPEAT_COREDUMP_INFO> Utils::countRepeatCoredumps(qint64 timeBegin, qint64 timeEnd, int *pTotalCount)
 {
     QList<LOG_REPEAT_COREDUMP_INFO> result;
     QString data = DLDBusHandler::instance()->executeCmd("coredumpctl-list");
@@ -492,6 +492,10 @@ QList<LOG_REPEAT_COREDUMP_INFO> Utils::countRepeatCoredumps(qint64 timeBegin, qi
             info.repetitionRate = static_cast<float>(info.times) / total;
         }
     }
+
+    // 输出本次统计的崩溃记录总数（与重复统计同一份快照，保证口径一致）
+    if (pTotalCount)
+        *pTotalCount = total;
 
     return result;
 }

@@ -78,8 +78,9 @@ public:
     static bool isCoredumpctlExist();  // is coredumpctl installed
     static QString appName(const QString &filePath);
     static void resetToNormalAuth(const QString &path);
-    // 统计所有崩溃记录重复次数
-    static QList<LOG_REPEAT_COREDUMP_INFO> countRepeatCoredumps(qint64 timeBegin = -1, qint64 timeEnd = -1);
+    // 统计所有崩溃记录重复次数；pTotalCount 非空时输出本次统计的崩溃记录总数
+    // （与重复统计取自同一份 coredumpctl list 输出，供埋点 coredumpListCount 单数据源使用）
+    static QList<LOG_REPEAT_COREDUMP_INFO> countRepeatCoredumps(qint64 timeBegin = -1, qint64 timeEnd = -1, int *pTotalCount = nullptr);
     // 获取高频重复崩溃记录exe路径名单
     static QStringList getRepeatCoredumpExePaths();
     // 更新高频重复崩溃记录exe路径到文件

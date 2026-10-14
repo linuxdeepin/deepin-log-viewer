@@ -991,9 +991,13 @@ void LogBackend::slot_coredumpFinished(int index)
             // 此处退出码不能为-1，否则systemctl --failed服务会将其判为失败的systemd服务
             qApp->exit(0);
         } else {
-            // 统计所有崩溃重复次数
+            // 统计所有崩溃重复次数；coredumpListCount 与 repeatCoredumps 必须取自
+            // 同一份 coredumpctl list 快照：此前埋点时通过 coredumpctl-list-count 单独
+            // 重新执行一次 coredumpctl 统计总数，与重复统计间隔可达数秒（中间隔着崩溃
+            // 详情解析与2秒延迟），期间新产生的崩溃只计入其中一个，导致两值不一致
             QJsonObject repeatObj;
-            QList<LOG_REPEAT_COREDUMP_INFO> repeatInfos = Utils::countRepeatCoredumps();
+            int nCoredumpTotalCount = 0;
+            QList<LOG_REPEAT_COREDUMP_INFO> repeatInfos = Utils::countRepeatCoredumps(-1, -1, &nCoredumpTotalCount);
             for (auto i : repeatInfos) {
                 repeatObj.insert(i.exePath, i.times);
             }
@@ -1052,7 +1056,8 @@ void LogBackend::slot_coredumpFinished(int index)
                     {"version", QCoreApplication::applicationVersion()},
                     {"event",  "log"},
                     {"target", "coredump"},
-                    {"coredumpListCount", DLDBusHandler::instance()->executeCmd("coredumpctl-list-count").toInt()},
+                    // 单数据源：与 repeatCoredumps 取自同一份 coredumpctl list 快照的总数
+                    {"coredumpListCount", nCoredumpTotalCount},
                     {"repeatCoredumps", repeatObj},
                     {"message", objList}
                 };
