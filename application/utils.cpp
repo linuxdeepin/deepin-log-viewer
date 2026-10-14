@@ -460,7 +460,17 @@ QList<LOG_REPEAT_COREDUMP_INFO> Utils::countRepeatCoredumps(qint64 timeBegin, qi
         if (str.trimmed().isEmpty())
             continue;
         QStringList tmpList = str.split(" ", QString::SkipEmptyParts);
-        if (tmpList.count() < 10)
+
+        // 通过查找以 "/" 开头的 exe 路径字段判断有效数据行，
+        // 同时跳过表头和表尾行（它们不含 "/" 开头的字段）
+        QString exePath;
+        for (const QString &field : tmpList) {
+            if (field.startsWith('/')) {
+                exePath = field;
+                break;
+            }
+        }
+        if (exePath.isEmpty())
             continue;
 
         QDateTime dt = QDateTime::fromString(tmpList[1] + " " + tmpList[2], "yyyy-MM-dd hh:mm:ss");
@@ -470,7 +480,6 @@ QList<LOG_REPEAT_COREDUMP_INFO> Utils::countRepeatCoredumps(qint64 timeBegin, qi
         }
 
         total++;
-        QString exePath = tmpList[9];
 
         auto it = std::find_if(result.begin(), result.end(), [&exePath](const LOG_REPEAT_COREDUMP_INFO& item){
             return exePath == item.exePath;
