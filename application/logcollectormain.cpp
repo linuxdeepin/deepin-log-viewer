@@ -416,6 +416,12 @@ void LogCollectorMain::initConnection()
             SLOT(slot_logCatelogueRefresh(const QModelIndex &)));
 
     connect(m_logCatelogue, &LogListView::sigRefresh, this, &LogCollectorMain::slotClearInfoandFocus);
+    // 截断刷新：先失效内核缓存再走刷新流程
+    connect(m_logCatelogue, SIGNAL(sigTruncateRefresh(const QModelIndex &)), m_midRightWgt,
+            SLOT(slot_truncateRefresh(const QModelIndex &)));
+    connect(m_logCatelogue, SIGNAL(sigTruncateRefresh(const QModelIndex &)), m_topRightWgt,
+            SLOT(slot_logCatelogueRefresh(const QModelIndex &)));
+    connect(m_logCatelogue, &LogListView::sigTruncateRefresh, this, &LogCollectorMain::slotClearInfoandFocus);
     //! treeView widget
 
     connect(m_logCatelogue, SIGNAL(itemChanged(const QModelIndex &)), m_midRightWgt,

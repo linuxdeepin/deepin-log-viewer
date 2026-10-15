@@ -65,6 +65,7 @@ public:
 
     // 清理日志筛选条件
     void clearAllFilter();
+    void invalidateKernCache();
 
     // 清理日志数据缓存
     void clearAllDatalist();
@@ -264,6 +265,11 @@ public:
 
     // 日志种类-----筛选条件
     QMap<LOG_FLAG, LOG_FILTER_BASE> m_type2Filter;
+
+    // 内核日志文件路径缓存（首次 getFileInfo 后复用，避免刷新时二次鉴权）
+    QStringList m_kernFilePaths;
+    // 内核日志总行数缓存（首次计算后复用，避免刷新时二次鉴权）
+    qint64 m_kernTotalLineCount = -1;
 
     // 筛选条件
     /**
