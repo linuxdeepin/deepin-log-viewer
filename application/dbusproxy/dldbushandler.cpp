@@ -229,12 +229,16 @@ quint64 DLDBusHandler::getFileSize(const QString &filePath)
 
 qint64 DLDBusHandler::getLineCount(const QString &filePath)
 {
-    return m_dbus->getLineCount(filePath);
+    QDBusPendingReply<qint64> reply = m_dbus->getLineCount(filePath);
+    reply.waitForFinished();
+    return reply.value();
 }
 
 QString DLDBusHandler::executeCmd(const QString &cmd)
 {
-    return m_dbus->executeCmd(cmd);
+    QDBusPendingReply<QString> reply = m_dbus->executeCmd(cmd);
+    reply.waitForFinished();
+    return reply.value();
 }
 
 QString DLDBusHandler::createFilePathCacheFile(const QString &logFilePath)
