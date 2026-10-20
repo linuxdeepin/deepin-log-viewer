@@ -1820,6 +1820,10 @@ void DisplayContent::slot_parseFinished(LOG_FLAG type, int status)
             m_exportDlg->hide();
             DApplication::setActiveWindow(this);
         }
+        // 鉴权取消时，显示无权限提示，引导用户重新鉴权后手动刷新
+        clearAllDatas();
+        setLoadState(DATA_NO_PERMISSION);
+        return;
     } else {
         // 分段加载逻辑处理
         if (m_treeView->verticalScrollBar()->maximum() == 0 || m_pModel->rowCount() < TREE_NORMAL_COUNT) {
