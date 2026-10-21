@@ -1,6 +1,8 @@
 #!/bin/bash
-builddir=build
-reportdir=build-ut
+export builddir=build
+export reportdir=build-ut
+export scriptdir="$(cd "$(dirname "$0")" && pwd)"
+export projectdir="$(cd "${scriptdir}/.." && pwd)"
 rm -r $builddir
 rm -r ../$builddir
 rm -r $reportdir
@@ -12,8 +14,12 @@ cd ../$builddir
 cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_SAFETYTEST_ARG="CMAKE_SAFETYTEST_ARG_ON" ..
 make -j8
 #生成asan日志和ut测试xml结果
+set +e
 ./tests/deepin-log-viewer-test --gtest_output=xml:./report/report_deepin-log-viewer.xml
+test_exit_code=$?
 ./tests/deepin-log-viewer-plugin-test --gtest_output=xml:./report/report_deepin-log-viewer-plugin.xml
+test_exit_code=$((test_exit_code || $?))
+set -e
 
 workdir=$(cd ../$(dirname $0)/$builddir; pwd)
 
@@ -31,6 +37,11 @@ mv ./html/index.html ./html/cov_deepin-log-viewer.html
 #对asan、ut、代码覆盖率结果收集至指定文件夹
 cp -r html ../$reportdir/
 cp -r report ../$reportdir/
-cp -r asan*.log* ../$reportdir/asan_deepin-log-viewer.log
+cp -r asan*.log* ../$reportdir/asan_deepin-log-viewer.log 2>/dev/null || true
 
-exit 0
+# 生成摘要 JSON
+echo "==> Generating summary JSON: ../$reportdir/ut-summary.json"
+
+python3 "${scriptdir}/gen-ut-summary.py"
+
+exit $test_exit_code
