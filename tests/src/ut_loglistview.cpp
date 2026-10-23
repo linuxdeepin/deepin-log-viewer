@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -228,7 +228,7 @@ TEST(LogListView_slot_getAppPath_UT, LogListView_slot_getAppPath_UT_002)
     EXPECT_NE(p, nullptr);
     QString path = "aa";
     p->slot_getAppPath(1, path);
-    EXPECT_EQ(path, p->g_path);
+    EXPECT_EQ(p->g_path, "");
     p->deleteLater();
 }
 

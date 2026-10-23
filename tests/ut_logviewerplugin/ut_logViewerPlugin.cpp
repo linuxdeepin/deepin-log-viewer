@@ -1,10 +1,11 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "../application/utils.h"
 #include "ut_logViewerPlugin.h"
 #include "../application/qtcompat.h"
+#include "logapplicationhelper.h"
 
 #include <stub.h>
 
@@ -15,6 +16,7 @@ LogViewerPlugin_UT::LogViewerPlugin_UT()
 
 void LogViewerPlugin_UT::SetUp()
 {
+    LogApplicationHelper::instance();
     m_instance = new LogViewerPlugin;
     qDebug() << "SetUp" << ENDL;
 }
@@ -95,6 +97,7 @@ INSTANTIATE_TEST_CASE_P(LogViewerPlugin, LogViewerPlugin_generateAppFile_UT,
 
 TEST_P(LogViewerPlugin_generateAppFile_UT, LogViewerPlugin_generateAppFile_UT_001)
 {
+    LogApplicationHelper::instance();
     Stub stub;
     stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), QThreadPool_start);
     stub.set(ADDR(QThread, start), QThread_start);
