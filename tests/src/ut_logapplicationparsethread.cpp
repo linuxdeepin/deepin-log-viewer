@@ -44,6 +44,11 @@ QStringList stub_getAppFileInfo(const QString &flag)
     return QStringList() << "test";
 }
 
+bool stub_isGetFileInfoError_false()
+{
+    return false;
+}
+
 QByteArray stub_readAllStandardOutput(){
     return "2021-03-10, 11:33:23.48.9 [Warning] [                                                         0] QFSFileEngine::open: No file name specified";
 }
@@ -98,13 +103,23 @@ TEST_F(LogApplicationParseThread_UT, UT_DoWork_001)
     stub.set((QList<QFileInfo>(QDir::*)(QDir::Filters, QDir::SortFlags) const)ADDR(QDir, entryInfoList), stub_entryInfoList);
     stub.set(ADDR(DLDBusHandler, getFileInfo), stub_getAppFileInfo);
     stub.set(ADDR(DLDBusHandler, readLog), stub_readAppLog);
+    stub.set(ADDR(DLDBusHandler, isGetFileInfoError), stub_isGetFileInfoError_false);
     stub.set(ADDR(QProcess, readAllStandardOutput), stub_readAllStandardOutput);
     EXPECT_NE(m_logAppThread, nullptr);
     m_logAppThread->m_AppFiler.path = "";
     m_logAppThread->doWork();
-    m_logAppThread->m_AppFiler.path = "test";
+    APP_FILTERS appfilter;
+    appfilter.logType = "file";
+    APP_FILTERSList appfilters;
+    appfilters << appfilter;
+    m_logAppThread->m_AppFilers = appfilters;
     m_logAppThread->doWork();
-    m_logAppThread->m_AppFiler.lvlFilter=-1;
+    m_logAppThread->m_AppFilers.clear();
+    appfilter.path = "test";
+    appfilter.lvlFilter = LVALL;
+    appfilters.clear();
+    appfilters << appfilter;
+    m_logAppThread->m_AppFilers = appfilters;
     m_logAppThread->doWork();
     EXPECT_NE(m_logAppThread->m_process, nullptr);
     EXPECT_EQ(m_logAppThread->m_appList.count(),1);
