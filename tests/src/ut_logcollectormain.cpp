@@ -259,6 +259,7 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
     stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    stub.set(ADDR(QObject, objectName), stub_ObjectName);
     LogCollectorMain_handleApplicationTabEventNotify_UT_Param param = GetParam();
     LogCollectorMain *p = new LogCollectorMain(nullptr);
     EXPECT_NE(p, nullptr);

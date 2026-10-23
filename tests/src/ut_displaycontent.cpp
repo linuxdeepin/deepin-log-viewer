@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -24,6 +24,8 @@
 #include <QStandardPaths>
 #include <QMenu>
 #include <QAction>
+#include <QScrollBar>
+#include <QTest>
 
 class DisplayContentlx_UT : public testing::Test
 {
@@ -302,6 +304,7 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT)
     Stub stub;
     m_content->m_flag = LOG_FLAG::JOURNAL;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -314,6 +317,7 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT002)
     Stub stub;
     m_content->m_flag = LOG_FLAG::BOOT;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -326,6 +330,7 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT003)
     Stub stub;
     m_content->m_flag = LOG_FLAG::BOOT_KLU;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -338,6 +343,7 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT005)
     Stub stub;
     m_content->m_flag = LOG_FLAG::APP;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -350,6 +356,7 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT006)
     Stub stub;
     m_content->m_flag = LOG_FLAG::XORG;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -362,6 +369,7 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT007)
     Stub stub;
     m_content->m_flag = LOG_FLAG::KERN;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -374,6 +382,7 @@ TEST_F(DisplayContentlx_UT, DmesgScrollValueChanged_UT)
     Stub stub;
     m_content->m_flag = LOG_FLAG::Dmesg;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -386,6 +395,7 @@ TEST_F(DisplayContentlx_UT, DnfScrollValueChanged_UT)
     Stub stub;
     m_content->m_flag = LOG_FLAG::Dnf;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -398,6 +408,7 @@ TEST_F(DisplayContentlx_UT, NormalScrollValueChanged_UT)
     Stub stub;
     m_content->m_flag = LOG_FLAG::Normal;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -410,6 +421,7 @@ TEST_F(DisplayContentlx_UT, KwinScrollValueChanged_UT)
     Stub stub;
     m_content->m_flag = LOG_FLAG::Kwin;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -422,6 +434,7 @@ TEST_F(DisplayContentlx_UT, ScrollValueChanged_UT008)
     Stub stub;
     m_content->m_flag = LOG_FLAG::DPKG;
     stub.set(ADDR(LogTreeView, singleRowHeight), stub_singleRowHeight);
+    m_content->m_treeView->verticalScrollBar()->setMaximum(1000);
     m_content->slot_vScrollValueChanged(275);
     EXPECT_NE(m_content->m_treeView,nullptr)<<"check the status after slot_vScrollValueChanged()";
     EXPECT_EQ(m_content->m_treeViewLastScrollValue, 275)<<"check the status after slot_vScrollValueChanged()";
@@ -544,7 +557,7 @@ TEST_F(DisplayContentlx_UT, slot_appLogs_UT)
 {
     Stub stub;
     stub.set(ADDR(DisplayContent, generateAppFile), generateAppFileNull);
-    m_content->slot_appLogs(1, "~/.cache/deepin/deepin-log-viewer/deepin-log-viewer.log");
+    m_content->slot_appLogs(1, "deepin-log-viewer");
     EXPECT_NE(m_content, nullptr);
     EXPECT_EQ(m_content->m_pLogBackend->appList.size(), 0)<<"check the status after slot_appLogs()";
     EXPECT_EQ(m_content->m_curBtnId, 1)<<"check the status after slot_appLogs()";
@@ -558,6 +571,7 @@ TEST_F(DisplayContentlx_UT, slot_dpkgData_UT)
     dpkgList.push_back(dpkgLog);
     m_content->m_flag = LOG_FLAG::DPKG;
     m_content->m_firstLoadPageData = true;
+    m_content->m_pLogBackend->dListOrigin = dpkgList;
     m_content->slot_dpkgData(dpkgList);
     EXPECT_NE(m_content->m_pLogBackend->dListOrigin.size(), 0)<<"check the status after slot_dpkgData()";
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::DPKG)<<"check the status after slot_dpkgData()";
@@ -579,6 +593,7 @@ TEST_F(DisplayContentlx_UT, slot_kernData_UT)
     kernList.push_back(kernLog);
     m_content->m_flag = LOG_FLAG::KERN;
     m_content->m_firstLoadPageData = true;
+    m_content->m_pLogBackend->kListOrigin = kernList;
     m_content->slot_kernData(kernList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::KERN)<<"check the status after slot_kernData()";
     EXPECT_NE(m_content->m_pLogBackend->kListOrigin.size(),0)<<"check the status after slot_kernData()";
@@ -591,6 +606,7 @@ TEST_F(DisplayContentlx_UT, slot_kwinData_UT)
     kwinList.push_back(kwinLog);
     m_content->m_flag = LOG_FLAG::Kwin;
     m_content->m_firstLoadPageData = true;
+    m_content->m_pLogBackend->m_kwinList = kwinList;
     m_content->slot_kwinData(kwinList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::Kwin)<<"check the status after slot_kwinData()";
     EXPECT_NE(m_content->m_pLogBackend->m_kwinList.size(),0)<<"check the status after slot_kwinData()";
@@ -603,6 +619,7 @@ TEST_F(DisplayContentlx_UT, slot_bootData_UT)
     bootList.push_back(bootLog);
     m_content->m_flag = LOG_FLAG::BOOT;
     m_content->m_firstLoadPageData = true;
+    m_content->m_pLogBackend->bList = bootList;
     m_content->slot_bootData(bootList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::BOOT)<<"check the status after slot_bootData()";
     EXPECT_NE(m_content->m_pLogBackend->bList.size(), 0)<<"check the status after slot_bootData()";
@@ -624,6 +641,7 @@ TEST_F(DisplayContentlx_UT, slot_dnfFinished_UT)
     dnfList.push_back(dnfLog);
     m_content->m_flag = LOG_FLAG::Dnf;
     m_content->m_firstLoadPageData = true;
+    m_content->m_pLogBackend->dnfList = dnfList;
     m_content->slot_dnfFinished(dnfList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dnf)<<"check the status after slot_dnfFinished()";
     EXPECT_EQ(m_content->m_pLogBackend->dnfList.size(), 1)<<"check the status after slot_dnfFinished()";
@@ -636,6 +654,7 @@ TEST_F(DisplayContentlx_UT, slot_dmesgFinished_UT)
     dmesgList.push_back(dmesgLog);
     m_content->m_flag = LOG_FLAG::Dmesg;
     m_content->m_firstLoadPageData = true;
+    m_content->m_pLogBackend->dmesgList = dmesgList;
     m_content->slot_dmesgFinished(dmesgList);
     EXPECT_EQ(m_content->m_flag, LOG_FLAG::Dmesg)<<"check the status after slot_dmesgFinished()";
     EXPECT_EQ(m_content->m_pLogBackend->dmesgList.size(), 1)<<"check the status after slot_dmesgFinished()";
@@ -712,6 +731,7 @@ TEST_F(DisplayContentlx_UT, slot_xorgData_UT){
     m_content->m_flag=LOG_FLAG::XORG;
     m_content->m_pLogBackend->m_xorgCurrentIndex=1;
     m_content->m_firstLoadPageData=true;
+    m_content->m_pLogBackend->xListOrigin = listXorg;
     m_content->slot_xorgData(listXorg);
     EXPECT_EQ(m_content->m_flag,LOG_FLAG::XORG)<<"check the status after  slot_xorgData()";
     EXPECT_NE(m_content->m_pLogBackend->xListOrigin.size(), 0)<<"check the status after  slot_xorgData()";
@@ -734,6 +754,7 @@ TEST_F(DisplayContentlx_UT, slot_applicationData_UT){
     m_content->m_flag=LOG_FLAG::APP;
     m_content->m_pLogBackend->m_appCurrentIndex=1;
     m_content->m_firstLoadPageData=true;
+    m_content->m_pLogBackend->appListOrigin = listApp;
     m_content->slot_applicationData(listApp);
     EXPECT_EQ(m_content->m_flag,LOG_FLAG::APP)<<"check the status after slot_applicationData()";
     EXPECT_NE(m_content->m_pLogBackend->appListOrigin.size(),0)<<"check the status after slot_applicationData()";
@@ -1814,6 +1835,16 @@ class DisplayContent_slot_exportClicked_UT : public ::testing::TestWithParam<Dis
 };
 
 INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_slot_exportClicked_UT, ::testing::Values(DisplayContent_slot_exportClicked_UT_Param(0), DisplayContent_slot_exportClicked_UT_Param(1), DisplayContent_slot_exportClicked_UT_Param(2), DisplayContent_slot_exportClicked_UT_Param(3), DisplayContent_slot_exportClicked_UT_Param(4), DisplayContent_slot_exportClicked_UT_Param(5), DisplayContent_slot_exportClicked_UT_Param(6), DisplayContent_slot_exportClicked_UT_Param(7), DisplayContent_slot_exportClicked_UT_Param(8), DisplayContent_slot_exportClicked_UT_Param(9)));
+TEST_P(DisplayContent_slot_exportClicked_UT, DisplayContent_slot_exportClicked_UT)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_slot_exportClicked_UT_Param param = GetParam();
+    p->deleteLater();
+}
 QString slot_exportClicked_ModelIndex_data = "";
 
 
@@ -2722,6 +2753,10 @@ TEST_P(DisplayContent_setLoadState_UT, DisplayContent_setLoadState_UT)
     p->m_treeView->setHidden(param.m_treeViewIsHide);
 
     p->setLoadState(param.m_loadState);
+    if (param.m_loadState == DisplayContent::DATA_NO_SEARCH_RESULT) {
+        QThread::msleep(60);
+        QCoreApplication::processEvents();
+    }
     EXPECT_EQ(param.m_spinnerWgtIsShowResult, !p->m_spinnerWgt->isHidden());
     EXPECT_EQ(param.m_spinnerWgtKIsShowResult, !p->m_spinnerWgt_K->isHidden());
     EXPECT_EQ(param.m_noResultLabelIsShowResult, !p->noResultLabel->isHidden());
