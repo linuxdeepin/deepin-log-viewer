@@ -13,6 +13,9 @@ cd ../$builddir
 #编译
 cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_SAFETYTEST_ARG="CMAKE_SAFETYTEST_ARG_ON" ..
 make -j8
+#Qt/QApplication退出时的一次性分配不会释放，会触发LeakSanitizer以退出码1结束进程，
+#导致全部通过的UT被误判为失败(报告被__sanitizer_set_report_path重定向到asan.log.*，控制台不可见)，故关闭泄漏检测
+export ASAN_OPTIONS=detect_leaks=0
 #生成asan日志和ut测试xml结果
 set +e
 ./tests/deepin-log-viewer-test --gtest_output=xml:./report/report_deepin-log-viewer.xml
