@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -36,6 +36,7 @@
 #include <QThread>
 #include <QVBoxLayout>
 #include <QElapsedTimer>
+#include <QTimer>
 #include <QDateTime>
 #include <QFileIconProvider>
 #include <QMenu>
@@ -3090,6 +3091,33 @@ void DisplayContent::parseListToModel(QList<LOG_MSG_COREDUMP> iList, QStandardIt
  */
 void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearching/* = false*/)
 {
+    m_state = iState;
+
+    if (iState != DATA_LOADING && iState != DATA_LOADING_K) {
+        QTimer *timer = findChild<QTimer *>("loadingTimeoutTimer");
+        if (timer)
+            timer->stop();
+    }
+
+    auto startLoadingTimeout = [this]() {
+        QTimer *timer = findChild<QTimer *>("loadingTimeoutTimer");
+        if (!timer) {
+            timer = new QTimer(this);
+            timer->setObjectName("loadingTimeoutTimer");
+            timer->setSingleShot(true);
+            connect(timer, &QTimer::timeout, this, [this]() {
+                if (m_state == DATA_LOADING || m_state == DATA_LOADING_K) {
+                    qCWarning(logDisplaycontent) << "Loading timed out, recovering UI state";
+                    DMessageManager::instance()->sendMessage(
+                        this->window(), QIcon(ICONPREFIX + "warning_info.svg"),
+                        DApplication::translate("Warning", "Loading timed out, please try refreshing again"));
+                    setLoadState(DATA_COMPLETE);
+                }
+            });
+        }
+        timer->start(30000);
+    };
+
     if (!m_spinnerWgt->isHidden()) {
         m_spinnerWgt->spinnerStop();
         m_spinnerWgt->hide();
@@ -3128,6 +3156,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearc
             if (!bSearching || m_pModel->rowCount() == 0)
                 m_treeView->hide();
         }
+        startLoadingTimeout();
         break;
     }
     case DATA_COMPLETE: {
@@ -3143,6 +3172,7 @@ void DisplayContent::setLoadState(DisplayContent::LOAD_STATE iState, bool bSearc
         emit setExportEnable(false);
         m_spinnerWgt_K->show();
         m_spinnerWgt_K->spinnerStart();
+        startLoadingTimeout();
         break;
     }
     case DATA_NO_SEARCH_RESULT: {
