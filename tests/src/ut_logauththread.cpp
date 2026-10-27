@@ -165,6 +165,71 @@ void handleFile()
 {
 }
 
+// ---- Stubs for uncovered functions ----
+
+bool stub_isFileExist_true(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return true;
+}
+
+bool stub_isFileExist_false(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return false;
+}
+
+bool stub_Logexists_false()
+{
+    return false;
+}
+
+quint64 stub_getFileSize_small(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return 1;
+}
+
+QString stub_auditReadLog(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return "type=SYSCALL msg=audit(1688526389.214:61): arch=c000003e syscall=2 success=yes exit=3 a0=7fff comm=\"cat\" exe=\"/usr/bin/cat\"\n"
+           "type=UNKNOWN msg=audit(1688526390.215:62): test data\n"
+           "not_an_audit_line\n";
+}
+
+QString stub_authReadLog(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return "2025-11-03T17:02:01.797084+08:00 myhost sshd: Accepted password for user\n"
+           "2025-11-03T17:03:02.123456+08:00 myhost sudo: command not found\n"
+           "not_a_valid_line\n";
+}
+
+QString stub_coredumpExecuteCmd(const QString &cmd)
+{
+    if (cmd == "coredumpctl-list") {
+        return "Mon 2025-01-01 12:00:00 UTC 1234 0 1000 1000 11 missing /usr/bin/test\n"
+               "Tue 2025-01-02 13:00:00 UTC 5678 0 1000 1000 11 missing /usr/bin/app\n";
+    }
+    return "";
+}
+
+QString stub_getUserNamebyUID(uint uid)
+{
+    Q_UNUSED(uid);
+    return "testuser";
+}
+
+QString stub_dpkgReadLog_timetest(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return "2020-11-24 01:57:24 startup archives install\n"
+           "2020-11-24 01:57:24 install base-passwd:amd64 <none> 3.5.46\n"
+           "2020-11-25 02:00:00 configure base-passwd:amd64 3.5.46 <none>\n";
+}
+
+
 class LogAuthThread_UT : public testing::Test
 {
 public:
@@ -710,3 +775,200 @@ TEST(LogAuthThread_run_UT, LogAuthThread_run_UT_008)
 
 
 
+
+// ---- Tests for uncovered functions ----
+
+// Test handleAudit: exercise with runInCmd=true (skip SE/pkexec), audit log data
+TEST_F(LogAuthThread_UT, handleAudit_UT_001)
+{
+    Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists);
+    stub.set(A_foo, stub_Logexists);
+
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished);
+    stub.set(ADDR(QProcess, exitCode), stub_exitCode);
+    stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
+    stub.set(ADDR(DLDBusHandler, isFileExist), stub_isFileExist_true);
+    stub.set(ADDR(DLDBusHandler, getFileSize), stub_getFileSize_small);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_auditReadLog);
+
+    Utils::runInCmd = true;
+    m_logAuthThread->m_canRun = true;
+    m_logAuthThread->m_FilePath = QStringList() << "/var/log/audit/audit.log";
+    m_logAuthThread->handleAudit();
+    Utils::runInCmd = false;
+    EXPECT_EQ(m_logAuthThread->m_canRun, true);
+}
+
+// Test handleAudit: file does not exist (isFileExist returns false), emits and returns
+TEST_F(LogAuthThread_UT, handleAudit_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(DLDBusHandler, isFileExist), stub_isFileExist_false);
+
+    m_logAuthThread->m_canRun = true;
+    m_logAuthThread->m_FilePath = QStringList() << "/var/log/audit/audit.log";
+    m_logAuthThread->handleAudit();
+    EXPECT_EQ(m_logAuthThread->m_canRun, true);
+}
+
+// Test handleAuth: exercise with real temp file (permissions OK), auth log data
+TEST_F(LogAuthThread_UT, handleAuth_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished);
+    stub.set(ADDR(QProcess, exitCode), stub_exitCode);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_authReadLog);
+
+    QString tmpPath = "/tmp/test_auth_ut_dlv.txt";
+    {
+        QFile tmpFile(tmpPath);
+        tmpFile.open(QIODevice::WriteOnly);
+        tmpFile.write("test auth log");
+        tmpFile.close();
+    }
+
+    m_logAuthThread->m_canRun = true;
+    m_logAuthThread->m_FilePath = QStringList() << tmpPath;
+    m_logAuthThread->handleAuth();
+    EXPECT_EQ(m_logAuthThread->m_canRun, true);
+
+    QFile::remove(tmpPath);
+}
+
+// Test handleAuth: file does not exist and path does not contain "txt" -> continue (skip)
+TEST_F(LogAuthThread_UT, handleAuth_UT_002)
+{
+    Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists);
+    stub.set(A_foo, stub_Logexists_false);
+
+    m_logAuthThread->m_canRun = true;
+    m_logAuthThread->m_FilePath = QStringList() << "/var/log/auth_nonexistent.log";
+    m_logAuthThread->handleAuth();
+    EXPECT_EQ(m_logAuthThread->m_canRun, true);
+}
+
+// Test handleCoredump: exercise with runInCmd=true, coredumpctl-list data with "missing" coreFile
+TEST_F(LogAuthThread_UT, handleCoredump_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished);
+    stub.set(ADDR(QProcess, exitCode), stub_exitCode);
+    stub.set(ADDR(QProcess, readAllStandardOutput), stub_LogreadAllStandardOutput);
+    stub.set(ADDR(DLDBusHandler, executeCmd), stub_coredumpExecuteCmd);
+    stub.set(ADDR(Utils, getUserNamebyUID), stub_getUserNamebyUID);
+
+    Utils::runInCmd = true;
+    m_logAuthThread->m_canRun = true;
+    m_logAuthThread->handleCoredump();
+    Utils::runInCmd = false;
+    EXPECT_EQ(m_logAuthThread->m_canRun, true);
+}
+
+// Test readAppLogFromLastLines: read last N lines from a real temp file
+TEST_F(LogAuthThread_UT, readAppLogFromLastLines_UT_001)
+{
+    QString tmpPath = "/tmp/test_readlastlines_ut_dlv.txt";
+    {
+        QFile tmpFile(tmpPath);
+        tmpFile.open(QIODevice::WriteOnly);
+        tmpFile.write("line1\nline2\nline3\nline4\n");
+        tmpFile.close();
+    }
+
+    QString result = m_logAuthThread->readAppLogFromLastLines(tmpPath, 2);
+    EXPECT_TRUE(result.contains("line3") || result.contains("line4"));
+
+    // Test with non-existent file
+    QString result2 = m_logAuthThread->readAppLogFromLastLines("/tmp/nonexistent_file_xyz_dl.txt", 2);
+    EXPECT_TRUE(result2.isEmpty());
+
+    QFile::remove(tmpPath);
+}
+
+// Test readAppLogFromLastLines: file with content shorter than count
+TEST_F(LogAuthThread_UT, readAppLogFromLastLines_UT_002)
+{
+    QString tmpPath = "/tmp/test_readlastlines_short_ut_dl.txt";
+    {
+        QFile tmpFile(tmpPath);
+        tmpFile.open(QIODevice::WriteOnly);
+        tmpFile.write("only_one_line\n");
+        tmpFile.close();
+    }
+
+    QString result = m_logAuthThread->readAppLogFromLastLines(tmpPath, 5);
+    EXPECT_TRUE(result.contains("only_one_line"));
+
+    QFile::remove(tmpPath);
+}
+
+// Test dpkgLineTime/dpkgFileOutOfTimeRange via handleDkpg: time filter set, file out of range (skip)
+TEST_F(LogAuthThread_UT, handleDpkg_TimeFilter_OutOfRange_UT_001)
+{
+    Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists);
+    stub.set(A_foo, stub_Logexists);
+
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished);
+    stub.set(ADDR(QProcess, readAllStandardOutput), dmesgLogreadAllStandardOutput);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag);
+    stub.set(wtmp_close, stub_wtmp_close);
+    stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
+    stub.set(ADDR(QProcess, exitCode), stub_exitCode);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_dpkgReadLog_timetest);
+
+    m_logAuthThread->m_FilePath = QStringList() << "/test/dpkg.txt";
+    m_logAuthThread->m_canRun = true;
+    // Filter range far in the future -> dpkgFileOutOfTimeRange returns true -> skip file
+    m_logAuthThread->m_dkpgFilters.timeFilterBegin = 9999999999999;
+    m_logAuthThread->m_dkpgFilters.timeFilterEnd = 9999999999998;
+    m_logAuthThread->handleDkpg();
+    EXPECT_EQ(m_logAuthThread->m_canRun, true);
+    m_logAuthThread->m_dkpgFilters.timeFilterBegin = 0;
+    m_logAuthThread->m_dkpgFilters.timeFilterEnd = 0;
+}
+
+// Test dpkgLineTime/dpkgFileOutOfTimeRange via handleDkpg: time filter set, file in range (process)
+TEST_F(LogAuthThread_UT, handleDpkg_TimeFilter_InRange_UT_001)
+{
+    Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists);
+    stub.set(A_foo, stub_Logexists);
+
+    stub.set(ADDR(SharedMemoryManager, isAttached), stub_isAttached);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_Logstart);
+    stub.set(ADDR(QProcess, waitForFinished), stub_LogwaitForFinished);
+    stub.set(ADDR(QProcess, readAllStandardOutput), dmesgLogreadAllStandardOutput);
+    stub.set(ADDR(SharedMemoryManager, setRunnableTag), stub_LogsetRunnableTag);
+    stub.set(wtmp_close, stub_wtmp_close);
+    stub.set(ADDR(QProcess, setProcessChannelMode), stub_setProcessChannelMode);
+    stub.set(ADDR(QProcess, exitCode), stub_exitCode);
+    stub.set(ADDR(DLDBusHandler, readLog), stub_dpkgReadLog_timetest);
+
+    m_logAuthThread->m_FilePath = QStringList() << "/test/dpkg.txt";
+    m_logAuthThread->m_canRun = true;
+    // Filter range encompasses 2020-11-24 -> dpkgFileOutOfTimeRange returns false -> process lines
+    m_logAuthThread->m_dkpgFilters.timeFilterBegin = 1000000000000;
+    m_logAuthThread->m_dkpgFilters.timeFilterEnd = 2000000000000;
+    m_logAuthThread->handleDkpg();
+    EXPECT_EQ(m_logAuthThread->m_canRun, true);
+    m_logAuthThread->m_dkpgFilters.timeFilterBegin = 0;
+    m_logAuthThread->m_dkpgFilters.timeFilterEnd = 0;
+}
