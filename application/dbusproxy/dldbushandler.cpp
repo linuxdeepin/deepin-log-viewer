@@ -252,6 +252,7 @@ QStringList DLDBusHandler::getFileInfo(const QString &flag, bool unzip)
 
     // home 目录下日志由用户日志访问类本地列举
     if (isHomePath(flag)) {
+        m_bGetFileInfoError = false;
         return UserLogAccess::instance()->getFileInfo(flag, unzip);
     }
 
