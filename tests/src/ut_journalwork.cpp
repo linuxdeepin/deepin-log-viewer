@@ -98,6 +98,17 @@ TEST(journalWork_doWork_UT, journalWork_doWork_UT)
     p->deleteLater();
 }
 
+TEST(journalWork_run_UT, journalWork_run_UT)
+{
+    journalWork *p = new journalWork(nullptr);
+    EXPECT_NE(p, nullptr);
+    Stub stub;
+    stub.set(sd_journal_get_data, stub_sd_journal_get_data_work);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_work);
+    p->run();
+    p->deleteLater();
+}
+
 TEST(journalWork_getReplaceColorStr_UT, journalWork_getReplaceColorStr_UT)
 {
     journalWork *p = new journalWork(nullptr);
