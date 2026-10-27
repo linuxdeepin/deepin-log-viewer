@@ -1206,13 +1206,15 @@ void DisplayContent::insertJournalTable(QList<LOG_MSG_JOURNAL> logList, int star
     for (int i = start; i < end; i++) {
         items.clear();
         item = new DStandardItem();
+        QString CH_str = m_transDict.value(logList[i].level);
+        QString lvStr = CH_str.isEmpty() ? logList[i].level : CH_str;
         QString iconPath = m_iconPrefix + getIconByname(logList[i].level);
 
         if (getIconByname(logList[i].level).isEmpty())
-            item->setText(logList[i].level);
+            item->setText(lvStr);
         item->setIcon(QIcon(iconPath));
         item->setData(JOUR_TABLE_DATA);
-        item->setData(logList[i].level, Log_Item_SPACE::levelRole);
+        item->setData(lvStr, Log_Item_SPACE::levelRole);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
         items << item;
         item = new DStandardItem(logList[i].daemonName);
@@ -1349,13 +1351,15 @@ void DisplayContent::insertJournalBootTable(QList<LOG_MSG_JOURNAL> logList, int 
     QList<QStandardItem *> items;
     for (int i = start; i < end; i++) {
         items.clear();
+        QString CH_str = m_transDict.value(logList[i].level);
+        QString lvStr = CH_str.isEmpty() ? logList[i].level : CH_str;
         QString iconPath = m_iconPrefix + getIconByname(logList[i].level);
 
         if (getIconByname(logList[i].level).isEmpty())
-            item->setText(logList[i].level);
+            item->setText(lvStr);
         item->setIcon(QIcon(iconPath));
         item->setData(BOOT_KLU_TABLE_DATA);
-        item->setData(logList[i].level, Log_Item_SPACE::levelRole);
+        item->setData(lvStr, Log_Item_SPACE::levelRole);
         item->setAccessibleText(QString("treeview_context_%1_%2").arg(i).arg(0));
         items << item;
         item = new DStandardItem(logList[i].daemonName);

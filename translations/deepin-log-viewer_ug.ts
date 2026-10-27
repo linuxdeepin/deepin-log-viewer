@@ -145,7 +145,7 @@
     <name>DisplayContent</name>
     <message>
         <source>zip(*.zip)</source>
-        <translation type="unfinished"/>
+        <translation>zip(*.zip)</translation>
     </message>
     <message>
         <source>TEXT (*.txt);; Doc (*.doc);; Xls (*.xls);; Html (*.html)</source>
@@ -499,6 +499,10 @@
  audit only administrators can view the audit log</source>
         <translation>نۆۋەتتىكى سىستېما بىخەتەرلىك دەرىجىسى: يۇقىرى
 تەكشۈرگۈچى باشقۇرغۇچىلا تەكشۈرۈش خاتىرىسىنى كۆرەلەيدۇ</translation>
+    </message>
+    <message>
+        <source>Audit log is not exist.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
