@@ -23,6 +23,12 @@ QStringList stub_getOtherFileInfo(const QString &flag)
     return QStringList() << "test";
 }
 
+bool stub_ooc_checkAuthentication_true(const QString &path)
+{
+    Q_UNUSED(path);
+    return true;
+}
+
 class LogOOCFileParseThread_UT : public testing::Test
 {
 public:
@@ -77,6 +83,9 @@ TEST_F(LogOOCFileParseThread_UT, UT_DoWork_001)
     Stub stub;
     stub.set(ADDR(DLDBusHandler, readLog), stub_ooc_readLog);
     stub.set(ADDR(DLDBusHandler, getOtherFileInfo), stub_getOtherFileInfo);
+    // pkexec fails in headless CI env (exit 127); stub checkAuthentication
+    // so doWork proceeds to call the stubbed readLog
+    stub.set(ADDR(LogOOCFileParseThread, checkAuthentication), stub_ooc_checkAuthentication_true);
     QString path("test");
     m_logThread->setParam(path);
     m_logThread->doWork();
@@ -100,4 +109,17 @@ TEST_F(LogOOCFileParseThread_UT, UT_GetIndex_001){
 
 TEST_F(LogOOCFileParseThread_UT, UT_checkAuthentication_001){
     m_logThread->checkAuthentication("test");
+}
+
+TEST_F(LogOOCFileParseThread_UT, UT_Run_001)
+{
+    // run() calls doWork(); empty path → doWork returns early, no DBus calls
+    m_logThread->run();
+}
+
+TEST_F(LogOOCFileParseThread_UT, UT_StopProccess_DoubleCall_001)
+{
+    // First call executes stop logic; second call hits the m_isStopProccess guard
+    m_logThread->stopProccess();
+    m_logThread->stopProccess();
 }

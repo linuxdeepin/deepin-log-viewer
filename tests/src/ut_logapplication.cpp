@@ -97,22 +97,34 @@ TEST_P(LogApplication_notify_UT, LogApplication_notify_UT)
     stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
     stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
     stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), stub_beginPointLinux);
     stub.set(ADDR(LogCollectorMain, handleApplicationTabEventNotify), LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result_Func);
 
     LogApplication *p = new LogApplication(argc, argv);
     EXPECT_NE(p, nullptr);
     LogApplication_notify_UT_Param param = GetParam();
+
+    // 真正构造一个 LogCollectorMain 并赋给 m_mainWindow，确保 notify 中
+    // handleApplicationTabEventNotify 转发分支被实际执行（而非空指针跳过）。
+    LogCollectorMain *mainWindow = nullptr;
+    if (param.isMainWindow) {
+        mainWindow = new LogCollectorMain(nullptr);
+    }
+    p->m_mainWindow = mainWindow;
+
     if (param.isKeyPress) {
         int key = param.isKeyTab ? Qt::Key_Tab : Qt::Key_Left;
         QKeyEvent keyEvent(QEvent::KeyPress, key, Qt::NoModifier);
         LogApplication_notify_mainWindow_handleApplicationTabEventNotify_result = param.isSucces;
-        p->m_mainWindow = param.isMainWindow ? p->m_mainWindow : nullptr;
-        p->notify(nullptr, &keyEvent);
+        EXPECT_NO_FATAL_FAILURE(p->notify(nullptr, &keyEvent));
     } else {
         QEvent *e = new QEvent(QEvent::None);
-        p->notify(nullptr, e);
+        EXPECT_NO_FATAL_FAILURE(p->notify(nullptr, e));
         delete e;
     }
 
+    if (mainWindow) {
+        mainWindow->deleteLater();
+    }
     p->deleteLater();
 }
