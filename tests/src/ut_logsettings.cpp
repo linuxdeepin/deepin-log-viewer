@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -31,4 +31,18 @@ TEST(LogSettings_saveConfigWinSize_UT, LogSettings_saveConfigWinSize_UT_001)
     EXPECT_NE(p, nullptr);
     p->saveConfigWinSize(100, 200);
     p->deleteLater();
+}
+
+TEST(LogSettings_instance_UT, LogSettings_instance_UT_001)
+{
+    LogSettings *p1 = LogSettings::instance();
+    LogSettings *p2 = LogSettings::instance();
+    EXPECT_NE(p1, nullptr);
+    EXPECT_EQ(p1, p2);
+}
+
+TEST(LogSettings_loadAuditMap_UT, LogSettings_loadAuditMap_UT_001)
+{
+    auto auditMap = LogSettings::loadAuditMap();
+    SUCCEED();
 }
