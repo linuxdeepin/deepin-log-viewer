@@ -1,3 +1,16 @@
+deepin-log-viewer (6.5.43) unstable; urgency=medium
+
+  * docs: add Portuguese (pt_BR) help manual and normalize en_US manual paths
+  * test: add unit tests for LogBackend
+  * fix: clear stale display when segment index is -1 on init load
+  * fix: disable leak detection to avoid false UT failure
+  * fix(test): fix all unit test failures in deepin-log-viewer
+  * feat(test): add ut-summary.json generation for test results and coverage
+  * fix: optimize dpkg log time filtering with file-level pre-filtering
+  * fix: skip auto-refresh when screen is locked
+
+ -- re2zero <yangwu@uniontech.com>  Tue, 27 Oct 2026 19:38:43 +0800
+
 deepin-log-viewer (6.5.42) unstable; urgency=medium
 
   * fix: remove p7zip-specific -l switch from 7z export command
