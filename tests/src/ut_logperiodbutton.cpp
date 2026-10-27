@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,14 @@
 
 #include <QDebug>
 #include <QPaintEvent>
+#include <QFocusEvent>
+#include <QApplication>
+#include <DStyle>
+#include <DApplication>
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#include <QEnterEvent>
+#endif
+
 TEST(LogPeriodButton_Constructor_UT, LogPeriodButton_Constructor_UT_001)
 {
     LogPeriodButton *p = new LogPeriodButton("", nullptr);
@@ -31,7 +39,9 @@ TEST(LogPeriodButton_getFocusReason_UT, LogPeriodButton_getFocusReason_UT_001)
 {
     LogPeriodButton *p = new LogPeriodButton("", nullptr);
     EXPECT_NE(p, nullptr);
-    p->getFocusReason();
+    EXPECT_EQ(p->getFocusReason(), Qt::MouseFocusReason);
+    p->m_reson = Qt::TabFocusReason;
+    EXPECT_EQ(p->getFocusReason(), Qt::TabFocusReason);
     delete p;
 }
 
@@ -57,17 +67,70 @@ TEST(LogPeriodButton_leaveEvent_UT, LogPeriodButton_leaveEvent_UT_001)
     delete e;
     delete p;
 }
+#else
+TEST(LogPeriodButton_enterEvent_UT, LogPeriodButton_enterEvent_UT_001)
+{
+    LogPeriodButton *p = new LogPeriodButton("", nullptr);
+    EXPECT_NE(p, nullptr);
+    QEnterEvent *e = new QEnterEvent(QPointF(0, 0), QPointF(0, 0), QPointF(0, 0));
+    p->enterEvent(e);
+    EXPECT_EQ(p->isEnter, true);
+    delete e;
+    delete p;
+}
+
+TEST(LogPeriodButton_leaveEvent_UT, LogPeriodButton_leaveEvent_UT_001)
+{
+    LogPeriodButton *p = new LogPeriodButton("", nullptr);
+    EXPECT_NE(p, nullptr);
+    QEnterEvent *enterE = new QEnterEvent(QPointF(0, 0), QPointF(0, 0), QPointF(0, 0));
+    p->enterEvent(enterE);
+    EXPECT_EQ(p->isEnter, true);
+    delete enterE;
+
+    QEvent *e = new QEvent(QEvent::Leave);
+    p->leaveEvent(e);
+    EXPECT_EQ(p->isEnter, false);
+    delete e;
+    delete p;
+}
 #endif
 
-//TEST(LogPeriodButton_paintEvent_UT, LogPeriodButton_paintEvent_UT_001)
-//{
-//    LogPeriodButton *p = new LogPeriodButton("", nullptr);
-//    EXPECT_NE(p, nullptr);
+TEST(LogPeriodButton_paintEvent_UT, LogPeriodButton_paintEvent_UT_001)
+{
+    // Ensure DApplication::style() returns a DStyle so dynamic_cast succeeds
+    QApplication::setStyle(new Dtk::Widget::DStyle);
 
-//    p->paintEvent(new QPaintEvent(p->rect()));
+    LogPeriodButton *p = new LogPeriodButton("", nullptr);
+    EXPECT_NE(p, nullptr);
+    QPaintEvent e(p->rect());
 
-//    p->deleteLater();
-//}
+    // isEnter = false branch
+    p->paintEvent(&e);
+    EXPECT_EQ(p->isEnter, false);
+
+    // isEnter = true branch (hover state)
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    QEnterEvent enterE(QPointF(0, 0), QPointF(0, 0), QPointF(0, 0));
+    p->enterEvent(&enterE);
+#else
+    QEvent enterE(QEvent::Enter);
+    p->enterEvent(&enterE);
+#endif
+    EXPECT_EQ(p->isEnter, true);
+    p->paintEvent(&e);
+
+    // focus rect branch: TabFocusReason
+    p->m_reson = Qt::TabFocusReason;
+    p->setFocus(Qt::TabFocusReason);
+    p->paintEvent(&e);
+
+    // focus rect branch: BacktabFocusReason
+    p->m_reson = Qt::BacktabFocusReason;
+    p->paintEvent(&e);
+
+    delete p;
+}
 
 class LogPeriodButton_focusInEvent_UT_Param
 {
@@ -93,6 +156,7 @@ TEST_P(LogPeriodButton_focusInEvent_UT, LogPeriodButton_focusInEvent_UT_001)
     p->setChecked(false);
     QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusIn, param.reason);
     p->focusInEvent(focusEvent);
+    EXPECT_EQ(p->getFocusReason(), param.reason);
     delete focusEvent;
     delete p;
 }

@@ -1,9 +1,10 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "filtercontent.h"
 #include "logperiodbutton.h"
+#include "lognormalbutton.h"
 #include "structdef.h"
 #include "logcombox.h"
 #include "qtcompat.h"
@@ -166,4 +167,147 @@ TEST_F(FilterContent_UT, slot_buttonClicked_UT)
 {
     m_filter->slot_buttonClicked(BUTTONID::RESET);
     EXPECT_EQ(m_filter->m_curBtnId,ALL)<<"check the status after slot_buttonClicked()";
+}
+
+// ======================== Additional tests for 100% function coverage ========================
+
+TEST_F(FilterContent_UT, getSetLeftButtonState_UT)
+{
+    m_filter->setLeftButtonState(false);
+    EXPECT_FALSE(m_filter->getLeftButtonState());
+    m_filter->setLeftButtonState(true);
+    EXPECT_TRUE(m_filter->getLeftButtonState());
+}
+
+TEST_F(FilterContent_UT, getSetChangedcomboxstate_UT)
+{
+    m_filter->setChangedcomboxstate(false);
+    EXPECT_FALSE(m_filter->getChangedcomboxstate());
+    m_filter->setChangedcomboxstate(true);
+    EXPECT_TRUE(m_filter->getChangedcomboxstate());
+}
+
+TEST_F(FilterContent_UT, setExportButtonEnable_UT)
+{
+    ASSERT_NE(m_filter->exportBtn, nullptr);
+    m_filter->setExportButtonEnable(true);
+    EXPECT_TRUE(m_filter->exportBtn->isEnabled());
+    m_filter->setExportButtonEnable(false);
+    EXPECT_FALSE(m_filter->exportBtn->isEnabled());
+}
+
+TEST_F(FilterContent_UT, slot_cbxStatusChanged_UT)
+{
+    // idx 0 -> str empty ("All")
+    m_filter->slot_cbxStatusChanged(0);
+    // idx 1 -> str "OK"
+    m_filter->slot_cbxStatusChanged(1);
+    // idx 2 -> str "Failed"
+    m_filter->slot_cbxStatusChanged(2);
+    SUCCEED();
+}
+
+TEST_F(FilterContent_UT, slot_cbxAuditTypeChanged_UT)
+{
+    m_filter->slot_cbxAuditTypeChanged(1);
+    SUCCEED();
+}
+
+TEST_F(FilterContent_UT, slot_cbxDnfLvIdxChanged_UT)
+{
+    ASSERT_GT(m_filter->cbx_dnf_lv->count(), 0);
+    m_filter->slot_cbxDnfLvIdxChanged(0);
+    SUCCEED();
+}
+
+TEST_F(FilterContent_UT, slot_cbxAppIdxChanged_UT)
+{
+    // Add a dummy item so itemData returns a value
+    m_filter->cbx_app->addItem("testApp");
+    m_filter->cbx_app->setItemData(0, "testApp", Qt::UserRole + 1);
+    m_filter->slot_cbxAppIdxChanged(0);
+    SUCCEED();
+}
+
+TEST_F(FilterContent_UT, setSubmodulesComboBoxItem_UT)
+{
+    // Call with empty app name; LogApplicationHelper returns default config
+    m_filter->setSubmodulesComboBoxItem("");
+    EXPECT_NE(m_filter->cbx_submodule, nullptr);
+}
+
+TEST_F(FilterContent_UT, slot_cbxSubmoduleChanged_UT)
+{
+    m_filter->cbx_submodule->addItem("All");
+    m_filter->cbx_submodule->addItem("mod1");
+    m_filter->cbx_submodule->setCurrentIndex(1);
+    m_filter->slot_cbxSubmoduleChanged(1);
+    SUCCEED();
+}
+
+TEST_F(FilterContent_UT, slot_buttonClicked_All_UT)
+{
+    m_filter->slot_buttonClicked(BUTTONID::ALL);
+    EXPECT_EQ(m_filter->m_curBtnId, BUTTONID::ALL);
+    m_filter->slot_buttonClicked(BUTTONID::ONE_DAY);
+    EXPECT_EQ(m_filter->m_curBtnId, BUTTONID::ONE_DAY);
+    m_filter->slot_buttonClicked(BUTTONID::THREE_DAYS);
+    EXPECT_EQ(m_filter->m_curBtnId, BUTTONID::THREE_DAYS);
+    m_filter->slot_buttonClicked(BUTTONID::ONE_WEEK);
+    EXPECT_EQ(m_filter->m_curBtnId, BUTTONID::ONE_WEEK);
+    m_filter->slot_buttonClicked(BUTTONID::ONE_MONTH);
+    EXPECT_EQ(m_filter->m_curBtnId, BUTTONID::ONE_MONTH);
+    m_filter->slot_buttonClicked(BUTTONID::THREE_MONTHS);
+    EXPECT_EQ(m_filter->m_curBtnId, BUTTONID::THREE_MONTHS);
+}
+
+TEST_F(FilterContent_UT, shortCutExport_Disabled_UT)
+{
+    m_filter->setExportButtonEnable(false);
+    m_filter->shortCutExport();
+    EXPECT_FALSE(m_filter->exportBtn->isEnabled());
+    m_filter->setExportButtonEnable(true);
+}
+
+TEST_F(FilterContent_UT, slot_logCatelogueRefresh_Boot_UT)
+{
+    QStandardItemModel m_model;
+    QStandardItem item;
+    m_model.appendRow(&item);
+    m_model.setData(m_model.index(0, 0), QString(BOOT_TREE_DATA), Qt::UserRole + 66);
+    m_filter->slot_logCatelogueRefresh(m_model.index(0, 0));
+    SUCCEED();
+}
+
+TEST_F(FilterContent_UT, eventFilter_Tab_UT)
+{
+    QKeyEvent tabEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier);
+    EXPECT_FALSE(m_filter->eventFilter(m_filter->m_allBtn, &tabEvent));
+    EXPECT_FALSE(m_filter->eventFilter(m_filter->m_todayBtn, &tabEvent));
+    EXPECT_FALSE(m_filter->eventFilter(m_filter->m_threeDayBtn, &tabEvent));
+    EXPECT_FALSE(m_filter->eventFilter(m_filter->m_lastWeekBtn, &tabEvent));
+    EXPECT_FALSE(m_filter->eventFilter(m_filter->m_lastMonthBtn, &tabEvent));
+    EXPECT_FALSE(m_filter->eventFilter(m_filter->m_threeMonthBtn, &tabEvent));
+
+    QKeyEvent backtabEvent(QEvent::KeyPress, Qt::Key_Backtab, Qt::NoModifier);
+    EXPECT_FALSE(m_filter->eventFilter(m_filter->m_allBtn, &backtabEvent));
+}
+
+TEST_F(FilterContent_UT, eventFilter_NonKeyPress_UT)
+{
+    QEvent nonKey(QEvent::HoverEnter);
+    EXPECT_FALSE(m_filter->eventFilter(m_filter->m_allBtn, &nonKey));
+}
+
+TEST_F(FilterContent_UT, updateDataState_UT)
+{
+    m_filter->updateDataState();
+    SUCCEED();
+}
+
+TEST_F(FilterContent_UT, exportBtnClicked_Signal_UT)
+{
+    // Trigger the clicked signal to exercise the QtPrivate FunctorCall lambda
+    m_filter->exportBtn->click();
+    SUCCEED();
 }
