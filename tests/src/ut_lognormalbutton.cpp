@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,11 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QPaintEvent>
+#include <DStyle>
+#include <DApplication>
+#include <QApplication>
+
+DWIDGET_USE_NAMESPACE
 TEST(LogNormalButton_Constructor_UT, LogNormalButton_Constructor_UT_001)
 {
     LogNormalButton *p = new LogNormalButton(nullptr);
@@ -88,13 +93,38 @@ TEST_P(LogNormalButton_keyReleaseEvent_UT, LogNormalButton_keyReleaseEvent_UT_00
     p->deleteLater();
 }
 
-//TEST(LogNormalButton_paintEvent_UT, LogNormalButton_paintEventr_UT)
-//{
-//    LogNormalButton *p = new LogNormalButton("aa", nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->paintEvent(new QPaintEvent(p->rect()));
-//    p->deleteLater();
-//}
+bool stub_lognormalbutton_hasFocus()
+{
+    return true;
+}
+
+TEST(LogNormalButton_paintEvent_UT, LogNormalButton_paintEvent_UT_001)
+{
+    LogNormalButton *p = new LogNormalButton("aa", nullptr);
+    EXPECT_NE(p, nullptr);
+    // paintEvent uses dynamic_cast<DStyle*>(DApplication::style());
+    // ensure the app style is DStyle so the cast succeeds
+    QApplication::setStyle(new DStyle);
+    QPaintEvent *e = new QPaintEvent(p->rect());
+    p->paintEvent(e);
+    delete e;
+    p->deleteLater();
+}
+
+TEST(LogNormalButton_paintEvent_UT, LogNormalButton_paintEvent_UT_002)
+{
+    LogNormalButton *p = new LogNormalButton("aa", nullptr);
+    EXPECT_NE(p, nullptr);
+    QApplication::setStyle(new DStyle);
+    // Cover the focus-rect branch: set focus reason to Tab and stub hasFocus
+    p->m_reson = Qt::TabFocusReason;
+    Stub stub;
+    stub.set(ADDR(QWidget, hasFocus), stub_lognormalbutton_hasFocus);
+    QPaintEvent *e = new QPaintEvent(p->rect());
+    p->paintEvent(e);
+    delete e;
+    p->deleteLater();
+}
 
 class LogNormalButton_focusInEvent_UT_Param
 {
