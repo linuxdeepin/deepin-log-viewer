@@ -388,8 +388,23 @@ int DisplayContent::loadSegementPage(bool bNext/* = true*/, bool bReset/* = true
 {
     int nSegementIndex = m_pLogBackend->getNextSegementIndex(m_flag, bNext);
     qDebug() << "loadSegementPage index:" << nSegementIndex;
-    if(nSegementIndex == -1)
+    if(nSegementIndex == -1) {
+        // 清除日志后文件总行数为 0 时,getNextSegementIndex 也会返回 -1。
+        // 此时是初次加载/刷新(generateKernFile/generateKwinFile 已把
+        // segementIndex 重置为 -1),必须清空界面残留数据,否则右键"清除日志"
+        // 后内核/kwin日志列表不会立即刷新。
+        // 注意:滚动翻页时 segementIndex >= 0,不能在此误清已显示的数据
+        bool bInitLoad = m_pLogBackend->m_type2Filter[m_flag].segementIndex == -1;
+        if (bReset && bInitLoad) {
+            clearAllDatas();
+            if (m_flag == KERN)
+                createKernTableForm();
+            else if (m_flag == Kwin)
+                createKwinTableForm();
+            setLoadState(DATA_COMPLETE);
+        }
         return -1;
+    }
 
     if (bReset)
         clearAllDatas();
