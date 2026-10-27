@@ -5,64 +5,90 @@
 #include "logiconbutton.h"
 
 #include <gtest/gtest.h>
-#include <stub.h>
 
-#include <QDebug>
 #include <QEvent>
-TEST(LogCombox_Constructor_UT, LogCombox_Constructor_UT_001)
+#include <QMouseEvent>
+#include <QResizeEvent>
+#include <QSize>
+#include <QFontMetrics>
+
+// Constructor with parent only: verify flat, focus policy and icon size.
+TEST(LogIconButton_Constructor, Constructor_ParentOnly)
 {
-    LogIconButton *p = new LogIconButton(nullptr);
-    EXPECT_NE(p, nullptr);
-    p->deleteLater();
+    LogIconButton *btn = new LogIconButton(nullptr);
+    ASSERT_NE(btn, nullptr);
+    EXPECT_TRUE(btn->isFlat());
+    EXPECT_EQ(btn->focusPolicy(), Qt::NoFocus);
+    EXPECT_EQ(btn->iconSize(), QSize(32, 32));
+    delete btn;
 }
 
-TEST(LogCombox_Constructor_UT, LogCombox_Constructor_UT_002)
+// Constructor with text and parent: verify text plus flat, focus policy, icon size.
+TEST(LogIconButton_Constructor, Constructor_TextAndParent)
 {
-    LogIconButton *p = new LogIconButton("aa", nullptr);
-    EXPECT_NE(p, nullptr);
-    p->deleteLater();
+    const QString text = QStringLiteral("test_icon");
+    LogIconButton *btn = new LogIconButton(text, nullptr);
+    ASSERT_NE(btn, nullptr);
+    EXPECT_EQ(btn->text(), text);
+    EXPECT_TRUE(btn->isFlat());
+    EXPECT_EQ(btn->focusPolicy(), Qt::NoFocus);
+    EXPECT_EQ(btn->iconSize(), QSize(32, 32));
+    delete btn;
 }
 
-TEST(LogCombox_sizeHint_UT, LogCombox_sizeHint_UT)
+// sizeHint() must return a size whose height equals font metrics height and
+// whose width equals QPushButton::sizeHint().width().
+TEST(LogIconButton_SizeHint, ReturnsValidSize)
 {
-    LogIconButton *p = new LogIconButton("aa", nullptr);
-    EXPECT_NE(p, nullptr);
-    p->sizeHint();
-    p->deleteLater();
+    LogIconButton *btn = new LogIconButton(QStringLiteral("abc"), nullptr);
+    const QSize hint = btn->sizeHint();
+    EXPECT_GT(hint.width(), 0);
+    EXPECT_GT(hint.height(), 0);
+    const int fontHeight = QFontMetrics(btn->font()).height();
+    EXPECT_EQ(hint.height(), fontHeight);
+    delete btn;
 }
 
-TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT)
+// mousePressEvent() is a no-op; calling with a valid event must not crash.
+TEST(LogIconButton_MousePressEvent, DoesNotCrashWithValidEvent)
 {
-    LogIconButton *p = new LogIconButton("aa", nullptr);
-    EXPECT_NE(p, nullptr);
-    p->mousePressEvent(nullptr);
-    p->deleteLater();
+    LogIconButton *btn = new LogIconButton(QStringLiteral("x"), nullptr);
+    QMouseEvent me(QEvent::MouseButtonPress, QPointF(0, 0), QPointF(0, 0),
+                   Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    btn->mousePressEvent(&me);
+    SUCCEED();
+    delete btn;
 }
 
-TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT_001)
+// event() returns false for non-HoverEnter events (and forwards to QPushButton::event).
+TEST(LogIconButton_Event, ReturnsFalseForNonHoverEnter)
 {
-    LogIconButton *p = new LogIconButton("aa", nullptr);
-    EXPECT_NE(p, nullptr);
-    QEvent *e = new QEvent(QEvent::QueryWhatsThis);
-    p->event(e);
-    delete e;
-    p->deleteLater();
+    LogIconButton *btn = new LogIconButton(QStringLiteral("y"), nullptr);
+    QEvent e(QEvent::QueryWhatsThis);
+    EXPECT_FALSE(btn->event(&e));
+    delete btn;
 }
 
-TEST(LogCombox_mousePressEvent_UT, LogCombox_mousePressEvent_UT_002)
+// event() returns false for HoverEnter events (does not forward to QPushButton::event).
+TEST(LogIconButton_Event, ReturnsFalseForHoverEnter)
 {
-    LogIconButton *p = new LogIconButton("aa", nullptr);
-    EXPECT_NE(p, nullptr);
-    QEvent *e = new QEvent(QEvent::HoverEnter);
-    p->event(e);
-    delete e;
-    p->deleteLater();
+    LogIconButton *btn = new LogIconButton(QStringLiteral("z"), nullptr);
+    QEvent e(QEvent::HoverEnter);
+    EXPECT_FALSE(btn->event(&e));
+    delete btn;
 }
 
-TEST(LogCombox_resizeEvent_UT, LogCombox_resizeEvent_UT)
+// resizeEvent() resizes the button to sizeHint().width() x fontMetrics().height().
+TEST(LogIconButton_ResizeEvent, ResizesToSizeHint)
 {
-    LogIconButton *p = new LogIconButton("aa", nullptr);
-    EXPECT_NE(p, nullptr);
-    p->resizeEvent(nullptr);
-    p->deleteLater();
+    LogIconButton *btn = new LogIconButton(QStringLiteral("r"), nullptr);
+    const QSize oldSize(200, 200);
+    btn->resize(oldSize);
+    QResizeEvent re(QSize(100, 100), oldSize);
+    btn->resizeEvent(&re);
+    const int expectedHeight = QFontMetrics(btn->font()).height();
+    const int expectedWidth = btn->sizeHint().width();
+    EXPECT_EQ(btn->width(), expectedWidth);
+    EXPECT_EQ(btn->height(), expectedHeight);
+    delete btn;
 }
