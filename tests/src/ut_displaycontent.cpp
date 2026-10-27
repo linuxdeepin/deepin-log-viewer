@@ -159,6 +159,103 @@ void stub_jounalWorkRun(){
 
 }
 
+bool stub_isFileExist(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return true;
+}
+
+bool stub_isFileExist_false(const QString &filePath)
+{
+    Q_UNUSED(filePath);
+    return false;
+}
+
+bool stub_isCoredumpctlExist()
+{
+    return true;
+}
+
+bool stub_isCoredumpctlExist_false()
+{
+    return false;
+}
+
+void stub_refreshAuthLogList()
+{
+}
+
+bool stub_showFileItem(const QString &path, const QString &startupId)
+{
+    Q_UNUSED(path);
+    Q_UNUSED(startupId);
+    return true;
+}
+
+void stub_generateOOCFile(const QString &path)
+{
+    Q_UNUSED(path);
+}
+
+AppLogConfig stub_appLogConfig(const QString &app)
+{
+    Q_UNUSED(app);
+    AppLogConfig config;
+    return config;
+}
+
+QList<LOG_MSG_AUDIT> stub_filterAudit(AUDIT_FILTERS filter, QList<LOG_MSG_AUDIT> list)
+{
+    Q_UNUSED(filter);
+    return list;
+}
+
+QList<LOG_FILE_OTHERORCUSTOM> stub_filterOOC(QString str, QList<LOG_FILE_OTHERORCUSTOM> list)
+{
+    Q_UNUSED(str);
+    return list;
+}
+
+
+int stub_loadSegementPage_return0(bool bBool1, bool bBool2)
+{
+    Q_UNUSED(bBool1);
+    Q_UNUSED(bBool2);
+    return 0;
+}
+
+int stub_loadSegementPage_return_neg1(bool bBool1, bool bBool2)
+{
+    Q_UNUSED(bBool1);
+    Q_UNUSED(bBool2);
+    return -1;
+}
+
+int stub_scrollBarMaximum()
+{
+    return 0;
+}
+
+int stub_scrollBarMaximum_nonzero()
+{
+    return 100;
+}
+
+int stub_scrollBarValue()
+{
+    return 0;
+}
+
+int stub_modelRowCount()
+{
+    return 0;
+}
+
+int stub_modelRowCount_large()
+{
+    return 600;
+}
+
 TEST_F(DisplayContentlx_UT, exportClicked_UT)
 {
     Stub stub;
@@ -2834,6 +2931,11 @@ TEST(DisplayContent_clearAllFilter_UT, DisplayContent_clearAllFilter_UT)
 }
 
 #include <QStandardItemModel>
+#include "../application/logapplicationhelper.h"
+#include "../application/dbusproxy/dldbushandler.h"
+#include "../application/parsethread/parsethreadbase.h"
+#include <DDesktopServices>
+#include <QCoreApplication>
 TEST(DisplayContent_clearAllDatalist_UT, DisplayContent_clearAllDatalist_UT)
 {
     DisplayContent *p = new DisplayContent(nullptr);
@@ -3168,6 +3270,1077 @@ TEST_P(DisplayContent_slot_refreshClicked_UT, DisplayContent_slot_refreshClicked
     EXPECT_EQ(p->m_curListIdx,QModelIndex())<<"check the status after slot_refreshClicked()";
     p->deleteLater();
 }
+
+
+// ====== Tests for uncovered functions ======
+
+// --- slot_logData ---
+TEST(DisplayContent_slot_logData_UT, DisplayContent_slot_logData_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = JOURNAL;
+    QList<QString> list;
+    list << "test1" << "test2";
+    p->slot_logData(list, JOURNAL);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_logData_UT, DisplayContent_slot_logData_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = JOURNAL;
+    QList<QString> list;
+    p->slot_logData(list, JOURNAL);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_logData_UT, DisplayContent_slot_logData_UT_003)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = BOOT;
+    QList<QString> list;
+    list << "test1";
+    p->slot_logData(list, JOURNAL);
+    p->deleteLater();
+}
+
+// --- slot_clearTable ---
+TEST(DisplayContent_slot_clearTable_UT, DisplayContent_slot_clearTable_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = KERN;
+    p->slot_clearTable();
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_clearTable_UT, DisplayContent_slot_clearTable_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Kwin;
+    p->slot_clearTable();
+    p->deleteLater();
+}
+
+// --- slot_dnfLevel ---
+TEST(DisplayContent_slot_dnfLevel_UT, DisplayContent_slot_dnfLevel_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DisplayContent, generateDnfFile), stub_generateDnfFile);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->slot_dnfLevel(CRITICAL);
+    p->deleteLater();
+}
+
+// --- slot_getSubmodule ---
+TEST(DisplayContent_slot_getSubmodule_UT, DisplayContent_slot_getSubmodule_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, appLogConfig), stub_appLogConfig);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = APP;
+    p->slot_getSubmodule(0);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_getSubmodule_UT, DisplayContent_slot_getSubmodule_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, appLogConfig), stub_appLogConfig);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = APP;
+    p->slot_getSubmodule(1);
+    p->deleteLater();
+}
+
+// --- slot_getAuditType ---
+TEST(DisplayContent_slot_getAuditType_UT, DisplayContent_slot_getAuditType_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogBackend, filterAudit), stub_filterAudit);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->slot_getAuditType(1);
+    p->deleteLater();
+}
+
+// --- slot_parseFinished ---
+TEST(DisplayContent_slot_parseFinished_UT, DisplayContent_slot_parseFinished_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DisplayContent, loadSegementPage), stub_loadSegementPage_return0);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = JOURNAL;
+    p->slot_parseFinished(JOURNAL, ParseThreadBase::Normal);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_parseFinished_UT, DisplayContent_slot_parseFinished_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = JOURNAL;
+    p->slot_parseFinished(JOURNAL, ParseThreadBase::CancelAuth);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_parseFinished_UT, DisplayContent_slot_parseFinished_UT_003)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = BOOT;
+    p->slot_parseFinished(JOURNAL, ParseThreadBase::Normal);
+    p->deleteLater();
+}
+
+// --- slot_auditData ---
+TEST(DisplayContent_slot_auditData_UT, DisplayContent_slot_auditData_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->m_firstLoadPageData = true;
+    QList<LOG_MSG_AUDIT> list;
+    LOG_MSG_AUDIT item;
+    item.eventType = "test";
+    item.dateTime = "2026-01-01 00:00:00";
+    item.processName = "proc";
+    item.status = "ok";
+    item.msg = "msg";
+    list << item;
+    p->slot_auditData(list);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_auditData_UT, DisplayContent_slot_auditData_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = BOOT;
+    QList<LOG_MSG_AUDIT> list;
+    p->slot_auditData(list);
+    p->deleteLater();
+}
+
+// --- slot_auditFinished ---
+TEST(DisplayContent_slot_auditFinished_UT, DisplayContent_slot_auditFinished_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->slot_auditFinished(false);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_auditFinished_UT, DisplayContent_slot_auditFinished_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->slot_auditFinished(true);
+    QCoreApplication::processEvents(QEventLoop::AllEvents, 200);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_auditFinished_UT, DisplayContent_slot_auditFinished_UT_003)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = BOOT;
+    p->slot_auditFinished(false);
+    p->deleteLater();
+}
+
+// --- slot_authData ---
+TEST(DisplayContent_slot_authData_UT, DisplayContent_slot_authData_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Auth;
+    p->m_firstLoadPageData = true;
+    QList<LOG_MSG_AUTH> list;
+    LOG_MSG_AUTH item;
+    item.dateTime = "2026-01-01 00:00:00";
+    item.hostName = "host";
+    item.processName = "proc";
+    item.msg = "msg";
+    list << item;
+    p->slot_authData(list);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_authData_UT, DisplayContent_slot_authData_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = BOOT;
+    QList<LOG_MSG_AUTH> list;
+    p->slot_authData(list);
+    p->deleteLater();
+}
+
+// --- slot_authFinished ---
+TEST(DisplayContent_slot_authFinished_UT, DisplayContent_slot_authFinished_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Auth;
+    p->slot_authFinished();
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_authFinished_UT, DisplayContent_slot_authFinished_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = BOOT;
+    p->slot_authFinished();
+    p->deleteLater();
+}
+
+// --- slot_coredumpData ---
+TEST(DisplayContent_slot_coredumpData_UT, DisplayContent_slot_coredumpData_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = COREDUMP;
+    p->m_firstLoadPageData = true;
+    QList<LOG_MSG_COREDUMP> list;
+    LOG_MSG_COREDUMP item;
+    item.sig = "SIGSEGV";
+    item.dateTime = "2026-01-01 00:00:00";
+    item.coreFile = "/tmp/core";
+    item.userName = "user";
+    item.exe = "/usr/bin/test";
+    list << item;
+    p->slot_coredumpData(list, false);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_coredumpData_UT, DisplayContent_slot_coredumpData_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = BOOT;
+    QList<LOG_MSG_COREDUMP> list;
+    p->slot_coredumpData(list, false);
+    p->deleteLater();
+}
+
+// --- slot_coredumpFinished ---
+TEST(DisplayContent_slot_coredumpFinished_UT, DisplayContent_slot_coredumpFinished_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = COREDUMP;
+    p->slot_coredumpFinished();
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_coredumpFinished_UT, DisplayContent_slot_coredumpFinished_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = BOOT;
+    p->slot_coredumpFinished();
+    p->deleteLater();
+}
+
+// --- createAuditTableForm ---
+TEST(DisplayContent_createAuditTableForm_UT, DisplayContent_createAuditTableForm_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->createAuditTableForm();
+    p->deleteLater();
+}
+
+// --- createAuthTableForm ---
+TEST(DisplayContent_createAuthTableForm_UT, DisplayContent_createAuthTableForm_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->createAuthTableForm();
+    p->deleteLater();
+}
+
+// --- createCoredumpTableForm ---
+TEST(DisplayContent_createCoredumpTableForm_UT, DisplayContent_createCoredumpTableForm_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->createCoredumpTableForm();
+    p->deleteLater();
+}
+
+// --- createAuditTable ---
+TEST(DisplayContent_createAuditTable_UT, DisplayContent_createAuditTable_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_AUDIT> list;
+    LOG_MSG_AUDIT item;
+    item.eventType = "test";
+    item.dateTime = "2026-01-01 00:00:00";
+    item.processName = "proc";
+    item.status = "ok";
+    item.msg = "msg";
+    list << item;
+    p->createAuditTable(list);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_createAuditTable_UT, DisplayContent_createAuditTable_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_AUDIT> list;
+    p->createAuditTable(list);
+    p->deleteLater();
+}
+
+// --- createAuthTable ---
+TEST(DisplayContent_createAuthTable_UT, DisplayContent_createAuthTable_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_AUTH> list;
+    LOG_MSG_AUTH item;
+    item.dateTime = "2026-01-01 00:00:00";
+    item.hostName = "host";
+    item.processName = "proc";
+    item.msg = "msg";
+    list << item;
+    p->createAuthTable(list);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_createAuthTable_UT, DisplayContent_createAuthTable_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_AUTH> list;
+    p->createAuthTable(list);
+    p->deleteLater();
+}
+
+// --- createCoredumpTable ---
+TEST(DisplayContent_createCoredumpTable_UT, DisplayContent_createCoredumpTable_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_COREDUMP> list;
+    LOG_MSG_COREDUMP item;
+    item.sig = "SIGSEGV";
+    item.dateTime = "2026-01-01 00:00:00";
+    item.coreFile = "/tmp/core";
+    item.userName = "user";
+    item.exe = "/usr/bin/test";
+    list << item;
+    p->createCoredumpTable(list);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_createCoredumpTable_UT, DisplayContent_createCoredumpTable_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_COREDUMP> list;
+    p->createCoredumpTable(list);
+    p->deleteLater();
+}
+
+// --- insertAuditTable ---
+TEST(DisplayContent_insertAuditTable_UT, DisplayContent_insertAuditTable_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_AUDIT> list;
+    LOG_MSG_AUDIT item;
+    item.eventType = "test";
+    item.dateTime = "2026-01-01 00:00:00";
+    list << item;
+    p->insertAuditTable(list, 0, 1);
+    p->deleteLater();
+}
+
+// --- insertAuthTable ---
+TEST(DisplayContent_insertAuthTable_UT, DisplayContent_insertAuthTable_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_AUTH> list;
+    LOG_MSG_AUTH item;
+    item.dateTime = "2026-01-01 00:00:00";
+    list << item;
+    p->insertAuthTable(list, 0, 1);
+    p->deleteLater();
+}
+
+// --- insertCoredumpTable ---
+TEST(DisplayContent_insertCoredumpTable_UT, DisplayContent_insertCoredumpTable_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QList<LOG_MSG_COREDUMP> list;
+    LOG_MSG_COREDUMP item;
+    item.sig = "SIGSEGV";
+    item.dateTime = "2026-01-01 00:00:00";
+    list << item;
+    p->insertCoredumpTable(list, 0, 1);
+    p->deleteLater();
+}
+
+// --- parseListToModel AUDIT ---
+class DisplayContent_parseListToModel_AUDIT_UT_Param
+{
+public:
+    DisplayContent_parseListToModel_AUDIT_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
+    {
+        isEmptyList = iIsEmptyList;
+        isEmptyModel = iIsEmptyModel;
+    }
+    bool isEmptyList;
+    bool isEmptyModel;
+};
+
+class DisplayContent_parseListToModel_AUDIT_UT : public ::testing::TestWithParam<DisplayContent_parseListToModel_AUDIT_UT_Param>
+{
+};
+
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_AUDIT_UT, ::testing::Values(DisplayContent_parseListToModel_AUDIT_UT_Param(true, true), DisplayContent_parseListToModel_AUDIT_UT_Param(true, false), DisplayContent_parseListToModel_AUDIT_UT_Param(false, false)));
+
+TEST_P(DisplayContent_parseListToModel_AUDIT_UT, DisplayContent_parseListToModel_AUDIT_UT)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_parseListToModel_AUDIT_UT_Param param = GetParam();
+    QList<LOG_MSG_AUDIT> list;
+    if (!param.isEmptyList) {
+        for (int i = 0; i < 10; ++i) {
+            LOG_MSG_AUDIT item;
+            item.eventType = "test";
+            item.dateTime = "2026-01-01 00:00:00";
+            item.processName = "proc";
+            item.status = "ok";
+            item.msg = "msg";
+            list.append(item);
+        }
+    }
+    p->parseListToModel(list, (param.isEmptyModel ? nullptr : p->m_pModel));
+    p->deleteLater();
+}
+
+// --- parseListToModel AUTH ---
+class DisplayContent_parseListToModel_AUTH_UT_Param
+{
+public:
+    DisplayContent_parseListToModel_AUTH_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
+    {
+        isEmptyList = iIsEmptyList;
+        isEmptyModel = iIsEmptyModel;
+    }
+    bool isEmptyList;
+    bool isEmptyModel;
+};
+
+class DisplayContent_parseListToModel_AUTH_UT : public ::testing::TestWithParam<DisplayContent_parseListToModel_AUTH_UT_Param>
+{
+};
+
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_AUTH_UT, ::testing::Values(DisplayContent_parseListToModel_AUTH_UT_Param(true, true), DisplayContent_parseListToModel_AUTH_UT_Param(true, false), DisplayContent_parseListToModel_AUTH_UT_Param(false, false)));
+
+TEST_P(DisplayContent_parseListToModel_AUTH_UT, DisplayContent_parseListToModel_AUTH_UT)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_parseListToModel_AUTH_UT_Param param = GetParam();
+    QList<LOG_MSG_AUTH> list;
+    if (!param.isEmptyList) {
+        for (int i = 0; i < 10; ++i) {
+            LOG_MSG_AUTH item;
+            item.dateTime = "2026-01-01 00:00:00";
+            item.hostName = "host";
+            item.processName = "proc";
+            item.msg = "msg";
+            list.append(item);
+        }
+    }
+    p->parseListToModel(list, (param.isEmptyModel ? nullptr : p->m_pModel));
+    p->deleteLater();
+}
+
+// --- parseListToModel COREDUMP ---
+class DisplayContent_parseListToModel_COREDUMP_UT_Param
+{
+public:
+    DisplayContent_parseListToModel_COREDUMP_UT_Param(bool iIsEmptyList, bool iIsEmptyModel)
+    {
+        isEmptyList = iIsEmptyList;
+        isEmptyModel = iIsEmptyModel;
+    }
+    bool isEmptyList;
+    bool isEmptyModel;
+};
+
+class DisplayContent_parseListToModel_COREDUMP_UT : public ::testing::TestWithParam<DisplayContent_parseListToModel_COREDUMP_UT_Param>
+{
+};
+
+INSTANTIATE_TEST_CASE_P(DisplayContent, DisplayContent_parseListToModel_COREDUMP_UT, ::testing::Values(DisplayContent_parseListToModel_COREDUMP_UT_Param(true, true), DisplayContent_parseListToModel_COREDUMP_UT_Param(true, false), DisplayContent_parseListToModel_COREDUMP_UT_Param(false, false)));
+
+TEST_P(DisplayContent_parseListToModel_COREDUMP_UT, DisplayContent_parseListToModel_COREDUMP_UT)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    DisplayContent_parseListToModel_COREDUMP_UT_Param param = GetParam();
+    QList<LOG_MSG_COREDUMP> list;
+    if (!param.isEmptyList) {
+        for (int i = 0; i < 10; ++i) {
+            LOG_MSG_COREDUMP item;
+            item.sig = "SIGSEGV";
+            item.dateTime = "2026-01-01 00:00:00";
+            item.coreFile = "/tmp/core";
+            item.userName = "user";
+            item.exe = "/usr/bin/test";
+            list.append(item);
+        }
+    }
+    p->parseListToModel(list, (param.isEmptyModel ? nullptr : p->m_pModel));
+    p->deleteLater();
+}
+
+// --- generateOOCLogs ---
+TEST(DisplayContent_generateOOCLogs_UT, DisplayContent_generateOOCLogs_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, getOtherLogList), LogApplicationHelper_getCustomLogList_002);
+    stub.set(ADDR(LogBackend, filterOOC), stub_filterOOC);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = OtherLog;
+    p->generateOOCLogs(DisplayContent::OOC_OTHER);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateOOCLogs_UT, DisplayContent_generateOOCLogs_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList_002);
+    stub.set(ADDR(LogBackend, filterOOC), stub_filterOOC);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = CustomLog;
+    p->generateOOCLogs(DisplayContent::OOC_CUSTOM);
+    p->deleteLater();
+}
+
+// --- generateAuditFile ---
+TEST(DisplayContent_generateAuditFile_UT, DisplayContent_generateAuditFile_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DLDBusHandler, isFileExist), stub_isFileExist);
+    stub.set(ADDR(LogFileParser, parseByAudit), LogFileParser_parseByAudit);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->generateAuditFile(ALL, 0);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuditFile_UT, DisplayContent_generateAuditFile_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DLDBusHandler, isFileExist), stub_isFileExist);
+    stub.set(ADDR(LogFileParser, parseByAudit), LogFileParser_parseByAudit);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->generateAuditFile(ONE_DAY, 0);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuditFile_UT, DisplayContent_generateAuditFile_UT_003)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DLDBusHandler, isFileExist), stub_isFileExist);
+    stub.set(ADDR(LogFileParser, parseByAudit), LogFileParser_parseByAudit);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->generateAuditFile(THREE_DAYS, 0);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuditFile_UT, DisplayContent_generateAuditFile_UT_004)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DLDBusHandler, isFileExist), stub_isFileExist);
+    stub.set(ADDR(LogFileParser, parseByAudit), LogFileParser_parseByAudit);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->generateAuditFile(ONE_WEEK, 0);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuditFile_UT, DisplayContent_generateAuditFile_UT_005)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DLDBusHandler, isFileExist), stub_isFileExist);
+    stub.set(ADDR(LogFileParser, parseByAudit), LogFileParser_parseByAudit);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->generateAuditFile(ONE_MONTH, 0);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuditFile_UT, DisplayContent_generateAuditFile_UT_006)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DLDBusHandler, isFileExist), stub_isFileExist);
+    stub.set(ADDR(LogFileParser, parseByAudit), LogFileParser_parseByAudit);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->generateAuditFile(THREE_MONTHS, 0);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuditFile_UT, DisplayContent_generateAuditFile_UT_007)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DLDBusHandler, isFileExist), stub_isFileExist_false);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Audit;
+    p->generateAuditFile(ALL, 0);
+    p->deleteLater();
+}
+
+// --- generateAuthFile ---
+TEST(DisplayContent_generateAuthFile_UT, DisplayContent_generateAuthFile_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, refreshAuthLogList), stub_refreshAuthLogList);
+    stub.set(ADDR(LogFileParser, parseByAuth), LogFileParser_parseByAuth);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Auth;
+    p->generateAuthFile(ALL);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuthFile_UT, DisplayContent_generateAuthFile_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, refreshAuthLogList), stub_refreshAuthLogList);
+    stub.set(ADDR(LogFileParser, parseByAuth), LogFileParser_parseByAuth);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Auth;
+    p->generateAuthFile(ONE_DAY);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuthFile_UT, DisplayContent_generateAuthFile_UT_003)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, refreshAuthLogList), stub_refreshAuthLogList);
+    stub.set(ADDR(LogFileParser, parseByAuth), LogFileParser_parseByAuth);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Auth;
+    p->generateAuthFile(THREE_DAYS);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuthFile_UT, DisplayContent_generateAuthFile_UT_004)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, refreshAuthLogList), stub_refreshAuthLogList);
+    stub.set(ADDR(LogFileParser, parseByAuth), LogFileParser_parseByAuth);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Auth;
+    p->generateAuthFile(ONE_WEEK);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuthFile_UT, DisplayContent_generateAuthFile_UT_005)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, refreshAuthLogList), stub_refreshAuthLogList);
+    stub.set(ADDR(LogFileParser, parseByAuth), LogFileParser_parseByAuth);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Auth;
+    p->generateAuthFile(ONE_MONTH);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateAuthFile_UT, DisplayContent_generateAuthFile_UT_006)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(LogApplicationHelper, refreshAuthLogList), stub_refreshAuthLogList);
+    stub.set(ADDR(LogFileParser, parseByAuth), LogFileParser_parseByAuth);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = Auth;
+    p->generateAuthFile(THREE_MONTHS);
+    p->deleteLater();
+}
+
+// --- generateCoredumpFile ---
+TEST(DisplayContent_generateCoredumpFile_UT, DisplayContent_generateCoredumpFile_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(Utils, isCoredumpctlExist), stub_isCoredumpctlExist);
+    stub.set(ADDR(LogFileParser, parseByCoredump), LogFileParser_parseByCoredump);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = COREDUMP;
+    p->generateCoredumpFile(ALL);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateCoredumpFile_UT, DisplayContent_generateCoredumpFile_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(Utils, isCoredumpctlExist), stub_isCoredumpctlExist);
+    stub.set(ADDR(LogFileParser, parseByCoredump), LogFileParser_parseByCoredump);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = COREDUMP;
+    p->generateCoredumpFile(ONE_DAY);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateCoredumpFile_UT, DisplayContent_generateCoredumpFile_UT_003)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(Utils, isCoredumpctlExist), stub_isCoredumpctlExist);
+    stub.set(ADDR(LogFileParser, parseByCoredump), LogFileParser_parseByCoredump);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = COREDUMP;
+    p->generateCoredumpFile(THREE_DAYS);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateCoredumpFile_UT, DisplayContent_generateCoredumpFile_UT_004)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(Utils, isCoredumpctlExist), stub_isCoredumpctlExist);
+    stub.set(ADDR(LogFileParser, parseByCoredump), LogFileParser_parseByCoredump);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = COREDUMP;
+    p->generateCoredumpFile(ONE_WEEK);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateCoredumpFile_UT, DisplayContent_generateCoredumpFile_UT_005)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(Utils, isCoredumpctlExist), stub_isCoredumpctlExist);
+    stub.set(ADDR(LogFileParser, parseByCoredump), LogFileParser_parseByCoredump);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = COREDUMP;
+    p->generateCoredumpFile(ONE_MONTH);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateCoredumpFile_UT, DisplayContent_generateCoredumpFile_UT_006)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(Utils, isCoredumpctlExist), stub_isCoredumpctlExist);
+    stub.set(ADDR(LogFileParser, parseByCoredump), LogFileParser_parseByCoredump);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = COREDUMP;
+    p->generateCoredumpFile(THREE_MONTHS);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_generateCoredumpFile_UT, DisplayContent_generateCoredumpFile_UT_007)
+{
+    Stub stub;
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(Utils, isCoredumpctlExist), stub_isCoredumpctlExist_false);
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->m_flag = COREDUMP;
+    p->generateCoredumpFile(ALL);
+    p->deleteLater();
+}
+
+// --- slot_requestShowRightMenu (COREDUMP branch + lambdas) ---
+QString slot_requestShowRightMenu_COREDUMP_data;
+QVariant slot_requestShowRightMenu_COREDUMP_data_Func(void *obj, int arole)
+{
+    Q_UNUSED(obj);
+    Q_UNUSED(arole);
+    return QVariant(slot_requestShowRightMenu_COREDUMP_data);
+}
+
+bool slot_requestShowRightMenu_COREDUMP_isValid_Func(void *obj)
+{
+    Q_UNUSED(obj);
+    return true;
+}
+
+TEST(DisplayContent_slot_requestShowRightMenu_UT, DisplayContent_slot_requestShowRightMenu_UT_002)
+{
+    Stub stub;
+    stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_menu_exec);
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(QModelIndex, data), slot_requestShowRightMenu_COREDUMP_data_Func);
+    stub.set(ADDR(QModelIndex, isValid), slot_requestShowRightMenu_COREDUMP_isValid_Func);
+    stub.set((bool(*)(const QString&, const QString&))&DDesktopServices::showFileItem, stub_showFileItem);
+
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QPoint point(20, 10);
+    p->m_flag = COREDUMP;
+    slot_requestShowRightMenu_COREDUMP_data = "normal";
+    // Add 5 items so m_pModel->item(index.row(), 4) is valid
+    QList<QStandardItem*> items;
+    for (int i = 0; i < 5; ++i) {
+        items << new QStandardItem();
+    }
+    items[4]->setData("/tmp/test_core", Qt::UserRole + 2);
+    p->m_pModel->appendRow(items);
+    p->m_treeView->selectionModel()->select(p->m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    p->m_treeView->setCurrentIndex(p->m_pModel->index(0, 0));
+    p->slot_requestShowRightMenu(point);
+    // Trigger lambdas to cover DDesktopServices::showFileItem and generateOOCFile
+    p->m_act_openForder->trigger();
+    p->m_act_refresh->trigger();
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_requestShowRightMenu_UT, DisplayContent_slot_requestShowRightMenu_UT_003)
+{
+    Stub stub;
+    stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_menu_exec);
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(QModelIndex, data), slot_requestShowRightMenu_COREDUMP_data_Func);
+    stub.set(ADDR(QModelIndex, isValid), slot_requestShowRightMenu_COREDUMP_isValid_Func);
+
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QPoint point(20, 10);
+    p->m_flag = COREDUMP;
+    slot_requestShowRightMenu_COREDUMP_data = "missing";
+    QList<QStandardItem*> items;
+    for (int i = 0; i < 5; ++i) {
+        items << new QStandardItem();
+    }
+    items[4]->setData("/tmp/test_core", Qt::UserRole + 2);
+    p->m_pModel->appendRow(items);
+    p->m_treeView->selectionModel()->select(p->m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    p->m_treeView->setCurrentIndex(p->m_pModel->index(0, 0));
+    p->slot_requestShowRightMenu(point);
+    p->deleteLater();
+}
+
+TEST(DisplayContent_slot_requestShowRightMenu_UT, DisplayContent_slot_requestShowRightMenu_UT_004)
+{
+    Stub stub;
+    stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_menu_exec);
+    stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork);
+    stub.set(ADDR(DisplayContent, generateOOCFile), stub_generateOOCFile);
+    stub.set((bool(*)(const QString&, const QString&))&DDesktopServices::showFileItem, stub_showFileItem);
+
+    DisplayContent *p = new DisplayContent(nullptr);
+    EXPECT_NE(p, nullptr);
+    QPoint point(20, 10);
+    p->m_flag = OtherLog;
+    QStandardItem * standItem = new QStandardItem();
+    standItem->setData("/tmp/test_path", Qt::UserRole + 2);
+    p->m_pModel->appendRow(QList<QStandardItem*>() << standItem << new QStandardItem());
+    p->m_treeView->selectionModel()->select(p->m_pModel->index(0, 0), QItemSelectionModel::Rows | QItemSelectionModel::Select);
+    p->m_treeView->setCurrentIndex(p->m_pModel->index(0, 0));
+    p->slot_requestShowRightMenu(point);
+    // Trigger lambdas to cover DDesktopServices::showFileItem and generateOOCFile
+    p->m_act_openForder->trigger();
+    p->m_act_refresh->trigger();
+    p->deleteLater();
+}
+
 
 displaycontent_test::displaycontent_test()
 {
