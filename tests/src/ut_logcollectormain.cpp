@@ -14,11 +14,16 @@
 #include <DTitlebar>
 #include <DWindowCloseButton>
 #include <DDialog>
+#include <DStyle>
 #include <QFileDialog>
 
 #include <QKeyEvent>
 #include <QDebug>
 #include <QList>
+#include <QDir>
+#include "dbusmanager.h"
+#include "dbusproxy/dldbushandler.h"
+#include "logallexportthread.h"
 
 #include <gtest/gtest.h>
 
@@ -412,3 +417,208 @@ TEST(LogCollectorMain_closeEvent_UT, LogCollectorMain_closeEvent_UT_001)
 }
 
 
+
+// ===== Tests added to cover lambda closures (target: 100% function coverage) =====
+
+#include <QMetaObject>
+#include <QTimer>
+#include <QFutureWatcher>
+#include <QtConcurrent>
+#include <QEventLoop>
+#include <QTest>
+#include <DIconButton>
+
+// Stub: LogAllExportThread::run — emit signals to trigger the lambdas connected in exportAllLogs
+void LogAllExportThread_run_stub(LogAllExportThread *self)
+{
+    self->updateTolProcess(100);
+    self->updatecurrentProcess(50);
+    self->exportFinsh(true);
+}
+
+// Stub: DLDBusHandler::whiteListOutPaths — return non-empty list so export path check passes
+QStringList DLDBusHandler_whiteListOutPaths_stub()
+{
+    return QStringList() << "." << "/" << QDir::homePath();
+}
+
+// Stub: DBusManager::isSEOpen
+bool DBusManager_isSEOpen_stub()
+{
+    return false;
+}
+
+// Stub: DBusManager::isAuditAdmin
+bool DBusManager_isAuditAdmin_stub()
+{
+    return false;
+}
+
+// Stub: DBusManager::isScreenLocked — return false so refresh lambda else-branch fires
+bool DBusManager_isScreenLocked_false()
+{
+    return false;
+}
+
+// Stub: DDialog::exec that processes events so queued lambdas can fire
+int LogCollectorMain_exec_processEvents(DDialog *self)
+{
+    Q_UNUSED(self)
+    // Process events for a short time to let thread signals fire
+    QTest::qWait(500);
+    return 1;
+}
+
+// ===== initShortCut lambda coverage =====
+TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_003)
+{
+    // Set DStyle so DApplication::style() returns a valid DStyle* — prevents SEGV
+    // in LogPeriodButton::paintEvent when showMaximized()/showNormal() triggers repaints
+    qApp->setStyle(new DStyle);
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    ASSERT_TRUE(p);
+
+    // Emit the activated signal on each shortcut to invoke the lambdas
+    if (p->m_scWndReize) {
+        QMetaObject::invokeMethod(p->m_scWndReize, "activated");
+    }
+    if (p->m_scFindFont) {
+        QMetaObject::invokeMethod(p->m_scFindFont, "activated");
+    }
+    if (p->m_scExport) {
+        QMetaObject::invokeMethod(p->m_scExport, "activated");
+    }
+    // Process events so signal lambdas execute
+    QTest::qWait(100);
+
+    p->deleteLater();
+}
+
+// ===== initTitlebarExtensions lambda coverage =====
+TEST(LogCollectorMain_initTitlebarExtensions_UT, LogCollectorMain_initTitlebarExtensions_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    typedef bool (*fptr)(LogApplication *);
+    fptr test = (fptr)(&LogApplication::notify);
+    stub.set(test, LogCollectorMain_notify);
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    ASSERT_TRUE(p);
+
+    // Click the refresh button to trigger the clicked lambda
+    if (p->m_refreshBtn) {
+        p->m_refreshBtn->click();
+    }
+    QTest::qWait(100);
+
+    p->deleteLater();
+}
+
+// ===== switchRefreshActionTriggered lambda coverage =====
+TEST(LogCollectorMain_switchRefreshActionTriggered_UT, LogCollectorMain_switchRefreshActionTriggered_UT_002)
+{
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    typedef bool (*fptr)(LogApplication *);
+    fptr test = (fptr)(&LogApplication::notify);
+    stub.set(test, LogCollectorMain_notify);
+    // Stub DBusManager::isScreenLocked so QtConcurrent::run completes quickly
+    stub.set(ADDR(DBusManager, isScreenLocked), DBusManager_isScreenLocked_false);
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    ASSERT_TRUE(p);
+
+    // Use the actual refresh action at index 0 ("10 sec") so indexOf returns 0
+    // and timeInterval = 10*1000 > 0, which creates the timer.
+    if (!p->m_refreshActions.isEmpty()) {
+        p->switchRefreshActionTriggered(p->m_refreshActions[0]);
+    }
+
+    // Now trigger the timer timeout to invoke the outer lambda
+    if (p->m_refreshTimer) {
+        p->m_refreshTimer->stop();
+        // Emit timeout signal to invoke the lambda connected in switchRefreshActionTriggered
+        QMetaObject::invokeMethod(p->m_refreshTimer, "timeout");
+        // Wait for QtConcurrent::run(DBusManager::isScreenLocked) to complete
+        // and the QFutureWatcher::finished lambda to fire
+        QTest::qWait(2000);
+    }
+    p->deleteLater();
+}
+
+// ===== exportAllLogs lambda coverage =====
+TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_003)
+{
+    Stub stub;
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
+    stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
+    stub.set(ADDR(LogFileParser, parseByJournalBoot), LogFileParser_parseByJournalBoot);
+    stub.set(ADDR(LogFileParser, parseByDpkg), LogFileParser_parseByDpkg);
+    stub.set(ADDR(LogFileParser, parseByXlog), LogFileParser_parseByXlog);
+    stub.set(ADDR(LogFileParser, parseByBoot), LogFileParser_parseByBoot);
+    stub.set(ADDR(LogFileParser, parseByKern), LogFileParser_parseByKern);
+    stub.set(ADDR(LogFileParser, parseByApp), LogFileParser_parseByApp);
+    stub.set(ADDR(LogFileParser, parseByNormal), LogFileParser_parseByNormal);
+    stub.set(ADDR(LogFileParser, parseByKwin), LogFileParser_parseByKwin);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    typedef bool (*fptr)(LogApplication *);
+    fptr test = (fptr)(&LogApplication::notify);
+    stub.set(test, LogCollectorMain_notify);
+    LogCollectorMain *p = new LogCollectorMain(nullptr);
+    ASSERT_TRUE(p);
+
+    // Authorization: use true so auth passes (static bool already set true by UT_002,
+    // but set it anyway for independence)
+    stub.set(ADDR(Utils, checkAuthorization), LogCollectorMain_checkAuthorization_true);
+    // File dialog returns a path
+    stub.set(ADDR(QFileDialog, getSaveFileName), LogCollectorMain_QString);
+    // Whitelist returns non-empty so path check passes
+    stub.set(ADDR(DLDBusHandler, whiteListOutPaths), DLDBusHandler_whiteListOutPaths_stub);
+    // DBus checks stubbed to avoid hangs
+    stub.set(ADDR(DBusManager, isSEOpen), DBusManager_isSEOpen_stub);
+    stub.set(ADDR(DBusManager, isAuditAdmin), DBusManager_isAuditAdmin_stub);
+    // DDialog::exec processes events so thread signals fire the lambdas
+    typedef int (*fptr2)(DDialog *);
+    fptr2 test1 = (fptr2)(&DDialog::exec);
+    stub.set(test1, LogCollectorMain_exec_processEvents);
+    // Stub LogAllExportThread::run to emit the 3 signals so the connected lambdas fire
+    typedef void (*fptr_run)(LogAllExportThread *);
+    fptr_run run_ptr = (fptr_run)(&LogAllExportThread::run);
+    stub.set(run_ptr, LogAllExportThread_run_stub);
+
+    p->exportAllLogs();
+    QTest::qWait(500);
+
+    p->deleteLater();
+}
