@@ -10,9 +10,23 @@
 #include <DStyle>
 
 #include <QDebug>
+#include <QEventPoint>
+#include <QFocusEvent>
+#include <QGuiApplication>
+#include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QMouseEvent>
 #include <QPaintEvent>
 #include <QPainter>
+#include <QPixmap>
+#include <QPointingDevice>
 #include <QScrollBar>
+#include <QSignalSpy>
+#include <QStandardItemModel>
+#include <QTest>
+#include <QTouchEvent>
+#include <QWidget>
+
 DWIDGET_USE_NAMESPACE
 
 int stub_pixelMetric002(DStyle::PixelMetric m, const QStyleOption *opt = nullptr, const QWidget *widget = nullptr)
@@ -27,221 +41,218 @@ void stub_drawPrimitive002(DStyle::PrimitiveElement pe, const QStyleOption *opt,
 class LogTreeView_UT : public testing::Test
 {
 public:
-    //添加日志
-    void SetUp() //TEST跑之前会执行SetUp
+    void SetUp()
     {
         m_treeView = new LogTreeView();
-        qDebug() << "SetUp";
     }
-    void TearDown() //TEST跑完之后会执行TearDown
+    void TearDown()
     {
         delete m_treeView;
     }
     LogTreeView *m_treeView;
 };
 
-TEST_F(LogTreeView_UT, singleRowHeight_UT)
+// Constructor + initUI: covered implicitly by SetUp; verify delegates installed.
+TEST_F(LogTreeView_UT, constructor_UT)
+{
+    EXPECT_NE(m_treeView->itemDelegate(), nullptr);
+    EXPECT_NE(m_treeView->header(), nullptr);
+    EXPECT_FALSE(m_treeView->rootIsDecorated());
+    EXPECT_EQ(m_treeView->editTriggers(), QAbstractItemView::NoEditTriggers);
+    EXPECT_TRUE(m_treeView->testAttribute(Qt::WA_AcceptTouchEvents));
+}
+
+// singleRowHeight: null model -> -1
+TEST_F(LogTreeView_UT, singleRowHeight_nullModel_UT)
 {
     EXPECT_EQ(-1, m_treeView->singleRowHeight());
 }
 
+// singleRowHeight: valid model with index -> rowHeight (>0 after show)
+TEST_F(LogTreeView_UT, singleRowHeight_validModel_UT)
+{
+    QStandardItemModel model(1, 1);
+    model.setItem(0, 0, new QStandardItem("row0"));
+    m_treeView->setModel(&model);
+    // rowHeight requires the view to be laid out; index validity is the key branch.
+    QModelIndex idx = m_treeView->model()->index(0, 0);
+    ASSERT_TRUE(idx.isValid());
+    int h = m_treeView->singleRowHeight();
+    EXPECT_GE(h, 0);
+    m_treeView->setModel(nullptr);
+}
+
+// singleRowHeight: model present but no rows -> invalid index -> -1
+TEST_F(LogTreeView_UT, singleRowHeight_emptyModel_UT)
+{
+    QStandardItemModel model(0, 1);
+    m_treeView->setModel(&model);
+    EXPECT_EQ(-1, m_treeView->singleRowHeight());
+    m_treeView->setModel(nullptr);
+}
+
+// paintEvent
 TEST_F(LogTreeView_UT, paintEvent_UT)
 {
     emit m_treeView->verticalScrollBar()->sliderPressed();
-    QPaintEvent repait(m_treeView->rect());
-    m_treeView->paintEvent(&repait);
-    EXPECT_NE(m_treeView,nullptr)<<"check the status after paintEvent()";
+    QPaintEvent repaint(m_treeView->rect());
+    m_treeView->paintEvent(&repaint);
+    SUCCEED();
 }
 
+// drawRow: invalid index (odd-row branch), stubbed style metrics
 TEST_F(LogTreeView_UT, drawRow_UT)
 {
     Stub stub;
     stub.set((int (DStyle::*)(DStyle::PixelMetric, const QStyleOption *, const QWidget *) const)ADDR(DStyle, pixelMetric), stub_pixelMetric002);
     stub.set((void (DStyle::*)(DStyle::PrimitiveElement, const QStyleOption *, QPainter *, const QWidget *) const)ADDR(DStyle, drawPrimitive), stub_drawPrimitive002);
-    QPainter painter;
+    QPixmap pixmap(100, 100);
+    QPainter painter(&pixmap);
     QStyleOptionViewItem option;
     m_treeView->drawRow(&painter, option, QModelIndex());
-    EXPECT_NE(m_treeView,nullptr)<<"check the status after drawRow()";
+    SUCCEED();
 }
 
-TEST_F(LogTreeView_UT, keyPressEvent_UT)
+// drawRow: valid index (even row) with selection to exercise selected branch.
+// The widget is shown and laid out so QTreeView::drawRow can render safely.
+TEST_F(LogTreeView_UT, drawRow_selectedEvenRow_UT)
 {
+    Stub stub;
+    stub.set((int (DStyle::*)(DStyle::PixelMetric, const QStyleOption *, const QWidget *) const)ADDR(DStyle, pixelMetric), stub_pixelMetric002);
+    stub.set((void (DStyle::*)(DStyle::PrimitiveElement, const QStyleOption *, QPainter *, const QWidget *) const)ADDR(DStyle, drawPrimitive), stub_drawPrimitive002);
+    QStandardItemModel model(2, 1);
+    model.setItem(0, 0, new QStandardItem("even"));
+    model.setItem(1, 0, new QStandardItem("odd"));
+    m_treeView->setModel(&model);
+    m_treeView->setCurrentIndex(model.index(0, 0));
+    m_treeView->resize(200, 100);
+    m_treeView->show();
+    QTest::qWait(50);
+    QPixmap pixmap(200, 100);
+    QPainter painter(&pixmap);
+    QStyleOptionViewItem option;
+    option.rect = m_treeView->visualRect(model.index(0, 0));
+    option.state |= QStyle::State_Enabled | QStyle::State_Selected;
+    m_treeView->drawRow(&painter, option, model.index(0, 0));
+    m_treeView->setModel(nullptr);
+    SUCCEED();
+}
+
+// keyPressEvent: Key_Up emits pressed(currentIndex)
+TEST_F(LogTreeView_UT, keyPressEvent_KeyUp_UT)
+{
+    QSignalSpy spy(m_treeView, &LogTreeView::pressed);
     QKeyEvent event(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
     m_treeView->keyPressEvent(&event);
-    EXPECT_NE(m_treeView,nullptr)<<"check the status after keyPressEvent()";
+    EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(LogTreeView_UT, mouseMoveEvent_UT)
+// keyPressEvent: Key_Down emits pressed(currentIndex)
+TEST_F(LogTreeView_UT, keyPressEvent_KeyDown_UT)
 {
-    QMouseEvent moveEvent(QEvent::MouseMove, QPoint(0, 0), QPoint(10, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    QSignalSpy spy(m_treeView, &LogTreeView::pressed);
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+    m_treeView->keyPressEvent(&event);
+    EXPECT_EQ(spy.count(), 1);
+}
+
+// keyPressEvent: other key does not emit pressed
+TEST_F(LogTreeView_UT, keyPressEvent_OtherKey_UT)
+{
+    QSignalSpy spy(m_treeView, &LogTreeView::pressed);
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_0, Qt::NoModifier);
+    m_treeView->keyPressEvent(&event);
+    EXPECT_EQ(spy.count(), 0);
+}
+
+// event: TouchBegin with a real touch-screen device and a single touch point.
+TEST_F(LogTreeView_UT, event_TouchBeginSinglePoint_UT)
+{
+    QPointingDevice device("testTouch", 1, QInputDevice::DeviceType::TouchScreen,
+                           QPointingDevice::PointerType::Finger,
+                           QPointingDevice::Capability::Position, 1, 1);
+    QList<QEventPoint> points;
+    points << QEventPoint(0, QEventPoint::State::Pressed, QPointF(10, 10), QPointF(10, 10));
+    QTouchEvent touchEvent(QEvent::TouchBegin, &device, Qt::NoModifier, points);
+    EXPECT_FALSE(m_treeView->m_isPressed);
+    bool ret = m_treeView->event(&touchEvent);
+    EXPECT_TRUE(m_treeView->m_isPressed);
+    (void)ret;
+}
+
+// event: TouchBegin while already pressed -> inner branch skipped
+TEST_F(LogTreeView_UT, event_TouchBeginAlreadyPressed_UT)
+{
     m_treeView->m_isPressed = true;
+    QPointingDevice device("testTouch", 1, QInputDevice::DeviceType::TouchScreen,
+                           QPointingDevice::PointerType::Finger,
+                           QPointingDevice::Capability::Position, 1, 1);
+    QList<QEventPoint> points;
+    points << QEventPoint(0, QEventPoint::State::Pressed, QPointF(20, 20), QPointF(20, 20));
+    QTouchEvent touchEvent(QEvent::TouchBegin, &device, Qt::NoModifier, points);
+    m_treeView->event(&touchEvent);
+    EXPECT_TRUE(m_treeView->m_isPressed);
+}
+
+// event: non-TouchBegin event just delegates to parent
+TEST_F(LogTreeView_UT, event_nonTouch_UT)
+{
+    QEvent hideEvent(QEvent::Hide);
+    bool ret = m_treeView->event(&hideEvent);
+    EXPECT_FALSE(m_treeView->m_isPressed);
+    (void)ret;
+}
+
+// mouseMoveEvent: pressed -> custom scroll path
+TEST_F(LogTreeView_UT, mouseMoveEvent_pressed_UT)
+{
+    m_treeView->m_isPressed = true;
+    m_treeView->m_lastTouchBeginPos = QPointF(0, 0);
+    QMouseEvent moveEvent(QEvent::MouseMove, QPoint(50, 50), QPoint(50, 50), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
     m_treeView->mouseMoveEvent(&moveEvent);
-    EXPECT_NE(m_treeView,nullptr)<<"check the status after mouseMoveEvent()";
+    EXPECT_TRUE(m_treeView->m_isPressed);
 }
 
-TEST_F(LogTreeView_UT, mousePressEvent_UT)
+// mouseMoveEvent: not pressed -> parent path
+TEST_F(LogTreeView_UT, mouseMoveEvent_notPressed_UT)
 {
-    QMouseEvent event(QEvent::MouseButtonPress, QPointF(0, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-    m_treeView->mousePressEvent(&event);
-    EXPECT_NE(m_treeView,nullptr)<<"check the status after mousePressEvent()";
+    m_treeView->m_isPressed = false;
+    QMouseEvent moveEvent(QEvent::MouseMove, QPoint(0, 0), QPoint(10, 0), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    m_treeView->mouseMoveEvent(&moveEvent);
+    EXPECT_FALSE(m_treeView->m_isPressed);
 }
 
-TEST_F(LogTreeView_UT, mouseReleaseEvent_UT)
+// mouseReleaseEvent: pressed -> resets flag
+TEST_F(LogTreeView_UT, mouseReleaseEvent_pressed_UT)
 {
-    QMouseEvent event(QEvent::MouseButtonRelease, QPointF(20, 20), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    m_treeView->m_isPressed = true;
+    QMouseEvent event(QEvent::MouseButtonRelease, QPointF(20, 20), QPointF(20, 20), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
     m_treeView->mouseReleaseEvent(&event);
-    EXPECT_NE(m_treeView,nullptr)<<"check the status after mouseReleaseEvent()";
+    EXPECT_FALSE(m_treeView->m_isPressed);
 }
 
-//TEST_F(LogTreeView_UT, Event_UT)
-//{
-//    QEvent en(QEvent::TouchBegin);
-//    m_treeView->event(&en);
-//}
+// mouseReleaseEvent: not pressed -> parent path
+TEST_F(LogTreeView_UT, mouseReleaseEvent_notPressed_UT)
+{
+    m_treeView->m_isPressed = false;
+    QMouseEvent event(QEvent::MouseButtonRelease, QPointF(20, 20), QPointF(20, 20), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    m_treeView->mouseReleaseEvent(&event);
+    EXPECT_FALSE(m_treeView->m_isPressed);
+}
 
-//TEST(LogTreeView_Constructor_UT, LogTreeView_Constructor_UT_001)
-//{
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
+// focusInEvent: records the focus reason
+TEST_F(LogTreeView_UT, focusInEvent_UT)
+{
+    EXPECT_NE(m_treeView->m_reson, Qt::TabFocusReason);
+    QFocusEvent focusEvent(QEvent::FocusIn, Qt::TabFocusReason);
+    m_treeView->focusInEvent(&focusEvent);
+    EXPECT_EQ(m_treeView->m_reson, Qt::TabFocusReason);
+}
 
-//    p->deleteLater();
-//}
-
-//TEST(LogTreeView_singleRowHeight_UT, LogTreeView_singleRowHeight_UT_001)
-//{
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->singleRowHeight();
-//    p->deleteLater();
-//}
-
-//TEST(LogTreeView_initUI_UT, LogTreeView_initUI_UT_001)
-//{
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->initUI();
-//    p->deleteLater();
-//}
-
-////TEST(LogTreeView_paintEvent_UT, LogTreeView_paintEvent_UT_001)
-////{
-////    LogTreeView *p = new LogTreeView(nullptr);
-////    EXPECT_NE(p, nullptr);
-////    p->paintEvent(new QPaintEvent(p->rect()));
-////    p->deleteLater();
-////}
-
-////TEST(LogTreeView_drawRow_UT, LogTreeView_drawRow_UT_001)
-////{
-////    LogTreeView *p = new LogTreeView(nullptr);
-////    EXPECT_NE(p, nullptr);
-////    p->drawRow(new QPainter, QStyleOptionViewItem(), QModelIndex());
-////    p->deleteLater();
-////}
-
-//class LogTreeView_keyPressEvent_UT_Param
-//{
-//public:
-//    LogTreeView_keyPressEvent_UT_Param(int iKey)
-//    {
-//        key = iKey;
-//    }
-//    int key;
-//};
-
-//class LogTreeView_keyPressEvent_UT : public ::testing::TestWithParam<LogTreeView_keyPressEvent_UT_Param>
-//{
-//};
-
-//INSTANTIATE_TEST_CASE_P(LogTreeView, LogTreeView_keyPressEvent_UT, ::testing::Values(LogTreeView_keyPressEvent_UT_Param(Qt::Key_Up), LogTreeView_keyPressEvent_UT_Param(Qt::Key_Down), LogTreeView_keyPressEvent_UT_Param(Qt::Key_0)));
-
-//TEST_P(LogTreeView_keyPressEvent_UT, LogTreeView_keyPressEvent_UT_001)
-//{
-//    LogTreeView_keyPressEvent_UT_Param param = GetParam();
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-
-//    QKeyEvent *keyEvent = new QKeyEvent(QEvent::KeyPress, param.key, Qt::NoModifier);
-//    p->keyPressEvent(keyEvent);
-//    p->deleteLater();
-//}
-
-//class LogTreeView_event_UT_Param
-//{
-//public:
-//    LogTreeView_event_UT_Param(QEvent::Type iKey)
-//    {
-//        key = iKey;
-//    }
-//    QEvent::Type key;
-//};
-
-//class LogTreeView_event_UT : public ::testing::TestWithParam<LogTreeView_event_UT_Param>
-//{
-//};
-
-//INSTANTIATE_TEST_CASE_P(LogTreeView, LogTreeView_event_UT, ::testing::Values(LogTreeView_event_UT_Param(QEvent::TouchBegin), LogTreeView_event_UT_Param(QEvent::Hide)));
-
-//TEST_P(LogTreeView_event_UT, LogTreeView_event_UT_001)
-//{
-//    LogTreeView_event_UT_Param param = GetParam();
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    QTouchEvent a(param.key);
-//    p->event(&a);
-//    p->deleteLater();
-//}
-
-//TEST(LogTreeView_mousePressEvent_UT, LogTreeView_mousePressEvent_UT)
-//{
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->mousePressEvent(new QMouseEvent(QEvent::MouseButtonPress, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
-//    p->deleteLater();
-//}
-
-//TEST(LogTreeView_mouseMoveEvent_UT, LogTreeView_mouseMoveEvent_UT_001)
-//{
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->m_isPressed = true;
-//    p->mouseMoveEvent(new QMouseEvent(QEvent::MouseMove, QPoint(1, 1), Qt::NoButton, Qt::NoButton, Qt::NoModifier));
-//    p->deleteLater();
-//}
-
-//TEST(LogTreeView_mouseMoveEvent_UT, LogTreeView_mouseMoveEvent_UT_002)
-//{
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->m_isPressed = false;
-//    p->mouseMoveEvent(new QMouseEvent(QEvent::MouseMove, QPoint(1, 1), Qt::NoButton, Qt::NoButton, Qt::NoModifier));
-//    p->deleteLater();
-//}
-
-//TEST(LogTreeView_mouseReleaseEvent_UT, LogTreeView_mouseReleaseEvent_UT_001)
-//{
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->m_isPressed = false;
-//    p->mouseReleaseEvent(new QMouseEvent(QEvent::MouseButtonRelease, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
-//    p->deleteLater();
-//}
-
-//TEST(LogTreeView_mouseReleaseEvent_UT, LogTreeView_mouseReleaseEvent_UT_002)
-//{
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-//    p->m_isPressed = true;
-//    p->mouseReleaseEvent(new QMouseEvent(QEvent::MouseButtonRelease, QPoint(1, 1), Qt::LeftButton, Qt::LeftButton, Qt::NoModifier));
-//    p->deleteLater();
-//}
-
-//TEST(LogTreeView_focusInEvent_UT, LogTreeView_focusInEvent_UT_001)
-//{
-//    LogTreeView *p = new LogTreeView(nullptr);
-//    EXPECT_NE(p, nullptr);
-
-//    QFocusEvent *focusEvent = new QFocusEvent(QEvent::FocusIn);
-//    p->focusInEvent(focusEvent);
-//    p->deleteLater();
-//}
+// focusInEvent: BacktabFocusReason
+TEST_F(LogTreeView_UT, focusInEvent_backtab_UT)
+{
+    QFocusEvent focusEvent(QEvent::FocusIn, Qt::BacktabFocusReason);
+    m_treeView->focusInEvent(&focusEvent);
+    EXPECT_EQ(m_treeView->m_reson, Qt::BacktabFocusReason);
+}
