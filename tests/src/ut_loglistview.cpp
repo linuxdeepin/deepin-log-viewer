@@ -22,6 +22,9 @@
 #include <QStyle>
 #include <DStyle>
 #include <DSysInfo>
+#include <dlfcn.h>
+#include <sys/mman.h>
+#include <unistd.h>
 
 static bool stub_isSEOpen()
 {
@@ -422,4 +425,240 @@ TEST(LogListView_focusOutEventcontextMenuEvent_UT, LogListView_paintEvent)
 
     QPaintEvent repaint(p->rect());
     p->paintEvent(&repaint);
+}
+
+// ---- new includes for additional coverage ----
+#include <DDesktopServices>
+#include <DDialog>
+#include <QShortcut>
+#include <QStandardItemModel>
+#include <QImage>
+#include <QTimer>
+#include <QMetaObject>
+#include <QAbstractItemView>
+#include <QItemSelectionModel>
+
+// ---- stubs for additional coverage ----
+
+AppLogConfig stub_appLogConfig_valid(void * /*self*/, const QString &app)
+{
+    AppLogConfig cfg;
+    cfg.name = app;
+    cfg.visible = true;
+    SubModuleConfig sm;
+    sm.name = app;
+    sm.logType = "file";
+    sm.logPath = "/tmp/dlv_test_app.log";
+    cfg.subModules.append(sm);
+    return cfg;
+}
+
+AppLogConfig stub_appLogConfig_invalid(void * /*self*/, const QString &app)
+{
+    Q_UNUSED(app);
+    AppLogConfig cfg;
+    return cfg;
+}
+
+int stub_ddialog_exec_rejected()
+{
+    return 0;
+}
+
+bool stub_showFileItem(const QString &localFilePath, const QString &startupId)
+{
+    Q_UNUSED(localFilePath);
+    Q_UNUSED(startupId);
+    return true;
+}
+
+bool stub_showFolder_file(const QString &localFilePath, const QString &startupId)
+{
+    Q_UNUSED(localFilePath);
+    Q_UNUSED(startupId);
+    return true;
+}
+
+// 1. getLogTypes
+TEST(LogListView_getLogTypes_UT, LogListView_getLogTypes_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    QStringList types = p->getLogTypes();
+    EXPECT_FALSE(types.isEmpty());
+    p->deleteLater();
+}
+
+// 2. requestshowRightMenu with a valid index position
+TEST(LogListView_requestshowRightMenu_UT, LogListView_requestshowRightMenu_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_menu_exec);
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->resize(QSize(200, 400));
+    p->show();
+    qApp->processEvents();
+    QModelIndex idx = p->model()->index(0, 0);
+    if (idx.isValid()) {
+        p->selectionModel()->select(idx, QItemSelectionModel::ClearAndSelect);
+        p->setCurrentIndex(idx);
+        QPoint pos = p->visualRect(idx).center();
+        p->requestshowRightMenu(pos);
+    }
+    p->deleteLater();
+}
+
+// 3. LogListDelegate::paint with focus branch
+TEST(LogListDelegate_paint_UT, LogListDelegate_paint_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    stub.set(ADDR(QWidget, hasFocus), stub_hasFocus);
+    qApp->setStyle(new Dtk::Widget::DStyle);
+    LogListView *v = new LogListView(nullptr);
+    LogListDelegate *p = new LogListDelegate(v);
+    EXPECT_NE(p, nullptr);
+    v->m_reson = Qt::TabFocusReason;
+    QImage img(200, 200, QImage::Format_ARGB32);
+    QPainter painter(&img);
+    QStyleOptionViewItem option;
+    option.widget = v;
+    option.state |= QStyle::State_HasFocus;
+    option.rect = QRect(0, 0, 100, 40);
+    QModelIndex idx = v->model()->index(0, 0);
+    p->paint(&painter, option, idx);
+    painter.end();
+    p->deleteLater();
+    v->deleteLater();
+}
+
+// 4. constructor lambda: trigger m_rightClickTriggerShortCut activated
+TEST(LogListView_rightClickShortCut_UT, LogListView_rightClickShortCut_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_menu_exec);
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->resize(QSize(200, 400));
+    p->show();
+    qApp->processEvents();
+    QModelIndex idx = p->model()->index(0, 0);
+    if (idx.isValid()) {
+        p->selectionModel()->select(idx, QItemSelectionModel::ClearAndSelect);
+        p->setCurrentIndex(idx);
+    }
+    QShortcut *sc = p->findChild<QShortcut *>("RightClickTriggerShortCut");
+    EXPECT_NE(sc, nullptr);
+    if (sc) {
+        QMetaObject::invokeMethod(sc, "activated", Qt::DirectConnection);
+    }
+    p->deleteLater();
+}
+
+// 5. slot_getAppPath lambda: stub appLogConfig to return valid config with matching submodule
+TEST(LogListView_slot_getAppPath_UT, LogListView_slot_getAppPath_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    stub.set(ADDR(LogApplicationHelper, appLogConfig), stub_appLogConfig_valid);
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    QString app = "dlv_test_app";
+    p->slot_getAppPath(0, app);
+    EXPECT_EQ(p->g_path, QString("/tmp/dlv_test_app.log"));
+    p->deleteLater();
+}
+
+// 6. showRightMenu lambdas: g_openForder / g_refresh / g_clear
+TEST(LogListView_showRightMenuLambdas_UT, LogListView_showRightMenuLambdas_UT_001)
+{
+    Stub stub;
+    stub.set(ADDR(DLDBusHandler, readLog), stub_ListViewreadLog);
+    stub.set(ADDR(DebugTimeManager, beginPointLinux), stubbeginPointLinux);
+    stub.set(ADDR(LogApplicationHelper, getCustomLogList), LogApplicationHelper_getCustomLogList);
+    stub.set((QAction * (QMenu::*)(const QPoint &, QAction *)) ADDR(QMenu, exec), stub_menu_exec);
+    stub.set(static_cast<bool (*)(const QString &, const QString &)>(&Dtk::Gui::DDesktopServices::showFileItem), stub_showFileItem);
+    stub.set(static_cast<bool (*)(const QString &, const QString &)>(&Dtk::Gui::DDesktopServices::showFolder), stub_showFolder_file);
+
+    LogListView *p = new LogListView(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->resize(QSize(200, 400));
+    p->show();
+    qApp->processEvents();
+    QModelIndex idx = p->model()->index(0, 0);
+    ASSERT_TRUE(idx.isValid());
+    p->selectionModel()->select(idx, QItemSelectionModel::ClearAndSelect);
+    p->setCurrentIndex(idx);
+    QPoint point(0, 0);
+    p->showRightMenu(point, false);
+
+    // trigger g_openForder lambda
+    if (p->g_openForder) {
+        p->g_openForder->setEnabled(true);
+        p->g_openForder->trigger();
+    }
+    // trigger g_refresh lambda
+    if (p->g_refresh) {
+        p->g_refresh->setEnabled(true);
+        p->g_refresh->trigger();
+    }
+    // trigger g_clear lambda
+    // DDialog::exec() is virtual, so stub.h (which patches function entry
+    // addresses) cannot intercept it. Instead, directly patch DDialog's
+    // vtable to replace the exec() slot with a stub returning Rejected (0).
+    // This avoids the nested event loop that crashes in the offscreen Qt
+    // platform after state pollution from earlier tests in the full suite.
+    if (p->g_clear) {
+        p->g_clear->setEnabled(true);
+
+        // Locate DDialog::exec() address from the loaded shared library
+        void *dtk_handle = dlopen("libdtk6widget.so.6", RTLD_NOLOAD | RTLD_LAZY);
+        ASSERT_NE(dtk_handle, nullptr) << "Failed to open libdtk6widget.so.6";
+        void *real_exec = dlsym(dtk_handle, "_ZN3Dtk6Widget7DDialog4execEv");
+        ASSERT_NE(real_exec, nullptr) << "Failed to find DDialog::exec symbol";
+
+        // Create a temporary DDialog to access the class vtable
+        Dtk::Widget::DDialog *tmpDlg = new Dtk::Widget::DDialog();
+        void **vtable = *(void ***)tmpDlg;
+
+        // Search the vtable for the exec() entry
+        int exec_idx = -1;
+        for (int i = 0; i < 256; i++) {
+            if (vtable[i] == real_exec) {
+                exec_idx = i;
+                break;
+            }
+        }
+        ASSERT_NE(exec_idx, -1) << "Could not find exec() in DDialog vtable";
+
+        // Make the vtable page writable and patch the entry
+        uintptr_t page_start = (uintptr_t)&vtable[exec_idx] & ~((uintptr_t)getpagesize() - 1);
+        mprotect((void *)page_start, getpagesize() * 2, PROT_READ | PROT_WRITE);
+        vtable[exec_idx] = reinterpret_cast<void *>(&stub_ddialog_exec_rejected);
+
+        // Trigger g_clear — DDialog::exec() now calls our stub, returns Rejected
+        p->g_clear->trigger();
+        qApp->processEvents();
+
+        // Restore the original vtable entry
+        vtable[exec_idx] = real_exec;
+
+        delete tmpDlg;
+    }
+    p->deleteLater();
 }

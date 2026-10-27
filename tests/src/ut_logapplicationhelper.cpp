@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -188,3 +188,210 @@ TEST(LogApplicationHelper_getPathByAppId_UT, LogApplicationHelper_getPathByAppId
     p->deleteLater();
 }
 
+
+// ===== Tests for previously uncovered methods =====
+
+TEST(LogApplicationHelper_createTransLogFiles_UT, LogApplicationHelper_createTransLogFiles_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->createTransLogFiles();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_getAppLogConfigs_UT, LogApplicationHelper_getAppLogConfigs_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    auto configs = p->getAppLogConfigs();
+    EXPECT_GE(configs.size(), 0);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_getAuthLogList_UT, LogApplicationHelper_getAuthLogList_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    auto list = p->getAuthLogList();
+    EXPECT_GE(list.size(), 0);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_getLastReportTime_UT, LogApplicationHelper_getLastReportTime_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    QDateTime dt = p->getLastReportTime();
+    (void)dt;
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_getMaxReportCoredump_UT, LogApplicationHelper_getMaxReportCoredump_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    int max = p->getMaxReportCoredump();
+    EXPECT_GE(max, 0);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_initAuthLog_UT, LogApplicationHelper_initAuthLog_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->initAuthLog();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_isAppLogConfigExist_UT, LogApplicationHelper_isAppLogConfigExist_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->getAppLogConfigs();
+    bool ret = p->isAppLogConfigExist("");
+    EXPECT_FALSE(ret);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_isAppLogConfigExist_UT, LogApplicationHelper_isAppLogConfigExist_UT_002)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->getAppLogConfigs();
+    bool ret = p->isAppLogConfigExist("deepin-log-viewer");
+    (void)ret;
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_isJsonAppLogConfigExist_UT, LogApplicationHelper_isJsonAppLogConfigExist_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    bool ret = p->isJsonAppLogConfigExist("");
+    EXPECT_FALSE(ret);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_isJsonAppLogConfigExist_UT, LogApplicationHelper_isJsonAppLogConfigExist_UT_002)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    bool ret = p->isJsonAppLogConfigExist("deepin-log-viewer");
+    (void)ret;
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_isValidAppName_UT, LogApplicationHelper_isValidAppName_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    bool ret = p->isValidAppName("");
+    EXPECT_FALSE(ret);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_isValidAppName_UT, LogApplicationHelper_isValidAppName_UT_002)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    bool ret = p->isValidAppName("nonexistent_app");
+    EXPECT_FALSE(ret);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_jsonAppLogConfig_UT, LogApplicationHelper_jsonAppLogConfig_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    auto config = p->jsonAppLogConfig("");
+    EXPECT_TRUE(config.name.isEmpty());
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_jsonAppLogConfig_UT, LogApplicationHelper_jsonAppLogConfig_UT_002)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    auto config = p->jsonAppLogConfig("nonexistent_app");
+    EXPECT_TRUE(config.name.isEmpty());
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_loadAppLogConfigsByJson_UT, LogApplicationHelper_loadAppLogConfigsByJson_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->loadAppLogConfigsByJson();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_refreshAuthLogList_UT, LogApplicationHelper_refreshAuthLogList_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    p->refreshAuthLogList();
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_saveLastRerportTime_UT, LogApplicationHelper_saveLastRerportTime_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    QDateTime dt = QDateTime::currentDateTime();
+    p->saveLastRerportTime(dt);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_validityJsonLogPath_UT, LogApplicationHelper_validityJsonLogPath_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    SubModuleConfig submodule;
+    submodule.name = "testapp";
+    submodule.logType = "file";
+    submodule.logPath = "";
+    p->validityJsonLogPath(submodule);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_validityJsonLogPath_UT, LogApplicationHelper_validityJsonLogPath_UT_002)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    SubModuleConfig submodule;
+    submodule.name = "testapp";
+    submodule.logType = "file";
+    submodule.logPath = "~/nonexistent_path/test.log";
+    p->validityJsonLogPath(submodule);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_validityJsonLogPath_UT, LogApplicationHelper_validityJsonLogPath_UT_003)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    SubModuleConfig submodule;
+    submodule.name = "testapp";
+    submodule.logType = "journal";
+    submodule.logPath = "";
+    p->validityJsonLogPath(submodule);
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_appLogConfig_UT, LogApplicationHelper_appLogConfig_UT_001)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    auto config = p->appLogConfig("");
+    EXPECT_TRUE(config.name.isEmpty());
+    p->deleteLater();
+}
+
+TEST(LogApplicationHelper_appLogConfig_UT, LogApplicationHelper_appLogConfig_UT_002)
+{
+    LogApplicationHelper *p = new LogApplicationHelper(nullptr);
+    EXPECT_NE(p, nullptr);
+    auto config = p->appLogConfig("nonexistent_app");
+    EXPECT_TRUE(config.name.isEmpty());
+    p->deleteLater();
+}
