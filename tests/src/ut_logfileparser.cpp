@@ -473,3 +473,218 @@ TEST_F(LogFileParser_UT, UT_parseByOOC_001)
     QString path("test");
     m_parser->parseByOOC(path);
 }
+
+#include "logapplicationhelper.h"
+
+// ---- New stubs for uncovered functions ----
+
+bool stub_tryStart001(QRunnable *runnable)
+{
+    Q_UNUSED(runnable);
+    return true;
+}
+
+AppLogConfig stub_appLogConfig_one(const QString &app)
+{
+    Q_UNUSED(app);
+    AppLogConfig config;
+    config.name = "testapp";
+    SubModuleConfig sub;
+    sub.name = "testapp";
+    config.subModules.append(sub);
+    return config;
+}
+
+AppLogConfig stub_appLogConfig_multi(const QString &app)
+{
+    Q_UNUSED(app);
+    AppLogConfig config;
+    config.name = "testapp";
+    SubModuleConfig sub1;
+    sub1.name = "sub1";
+    SubModuleConfig sub2;
+    sub2.name = "sub2";
+    config.subModules.append(sub1);
+    config.subModules.append(sub2);
+    return config;
+}
+
+AppLogConfig stub_appLogConfig_empty(const QString &app)
+{
+    Q_UNUSED(app);
+    AppLogConfig config;
+    return config;
+}
+
+QStringList stub_getAuthLogList()
+{
+    return QStringList() << "/var/log/auth.log";
+}
+
+// ---- Test cases for uncovered functions ----
+
+TEST_F(LogFileParser_UT, UT_ParseByDpkg_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
+    DKPG_FILTERS filter;
+    int index = m_parser->parseByDpkg(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByXlog_001)
+{
+    Stub stub;
+    stub.set((bool (QThreadPool::*)(QRunnable *))ADDR(QThreadPool, tryStart), stub_tryStart001);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
+    XORG_FILTERS filter;
+    int index = m_parser->parseByXlog(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByNormal_001)
+{
+    Stub stub;
+    stub.set((bool (QThreadPool::*)(QRunnable *))ADDR(QThreadPool, tryStart), stub_tryStart001);
+    NORMAL_FILTERS filter;
+    int index = m_parser->parseByNormal(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByKwin_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    KWIN_FILTERS filter;
+    int index = m_parser->parseByKwin(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByBoot_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
+    int index = m_parser->parseByBoot();
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_Parse_Kern_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    LOG_FILTER_BASE filter;
+    filter.type = KERN;
+    int index = m_parser->parse(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_Parse_Kwin_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    LOG_FILTER_BASE filter;
+    filter.type = Kwin;
+    int index = m_parser->parse(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_Parse_Default_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    LOG_FILTER_BASE filter;
+    filter.type = NONE;
+    int index = m_parser->parse(filter);
+    EXPECT_EQ(index, -1);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByKern_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
+    KERN_FILTERS filter;
+    int index = m_parser->parseByKern(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByApp_OneSubModule_001)
+{
+    Stub stub;
+    stub.set(ADDR(QThread, start), QThread_start);
+    stub.set(ADDR(LogApplicationHelper, appLogConfig), stub_appLogConfig_one);
+    APP_FILTERS filter;
+    filter.app = "testapp";
+    int index = m_parser->parseByApp(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByApp_MultiSubModule_001)
+{
+    Stub stub;
+    stub.set(ADDR(QThread, start), QThread_start);
+    stub.set(ADDR(LogApplicationHelper, appLogConfig), stub_appLogConfig_multi);
+    APP_FILTERS filter;
+    filter.app = "testapp";
+    int index = m_parser->parseByApp(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByApp_NoSubModule_001)
+{
+    Stub stub;
+    stub.set(ADDR(LogApplicationHelper, appLogConfig), stub_appLogConfig_empty);
+    APP_FILTERS filter;
+    filter.app = "testapp";
+    int index = m_parser->parseByApp(filter);
+    EXPECT_EQ(index, -1);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByDnf_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
+    DNF_FILTERS filter;
+    m_parser->parseByDnf(filter);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByDmesg_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
+    DMESG_FILTERS filter;
+    m_parser->parseByDmesg(filter);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByAudit_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    stub.set(ADDR(DLDBusHandler, getFileInfo), stubfileparser_getFileInfo);
+    AUDIT_FILTERS filter;
+    int index = m_parser->parseByAudit(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByAuth_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    stub.set(ADDR(LogApplicationHelper, getAuthLogList), stub_getAuthLogList);
+    AUTH_FILTERS filter;
+    int index = m_parser->parseByAuth(filter);
+    EXPECT_GE(index, 0);
+}
+
+TEST_F(LogFileParser_UT, UT_ParseByCoredump_001)
+{
+    Stub stub;
+    stub.set((void (QThreadPool::*)(QRunnable *, int))ADDR(QThreadPool, start), stub_start001);
+    COREDUMP_FILTERS filter;
+    int index = m_parser->parseByCoredump(filter, true);
+    EXPECT_GE(index, 0);
+}

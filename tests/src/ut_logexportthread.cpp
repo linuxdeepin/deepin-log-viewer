@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -731,3 +731,215 @@ TEST_F(LogExportthread_UT, isProcessing_UT){
      EXPECT_EQ(res,false);
 }
 
+
+// ---- stubs for exportToZip / run(ZipCoredump) / run(AUDIT/AUTH) coverage ----
+#include "utils.h"
+#include "dbusproxy/dldbushandler.h"
+#include <QProcess>
+#include <QDir>
+
+QString stub_zip_getAppDataPath()
+{
+    return "/tmp/ut_logexport_zip";
+}
+
+QString stub_zip_mkMutiDir(const QString &path)
+{
+    return path;
+}
+
+bool stub_zip_exportLog(const QString &outDir, const QString &in, bool isFile)
+{
+    Q_UNUSED(outDir);
+    Q_UNUSED(in);
+    Q_UNUSED(isFile);
+    return true;
+}
+
+void stub_zip_QProcessStart(const QString &program, const QStringList &args, QIODevice::OpenMode mode)
+{
+    Q_UNUSED(program);
+    Q_UNUSED(args);
+    Q_UNUSED(mode);
+}
+
+bool stub_zip_waitForFinished(int msecs)
+{
+    Q_UNUSED(msecs);
+    return true;
+}
+
+TEST_F(LogExportthread_UT, enableAppendExport_UT)
+{
+    exportThread->enableAppendExport(true);
+    EXPECT_EQ(exportThread->m_appendExport, true);
+    exportThread->enableAppendExport(false);
+    EXPECT_EQ(exportThread->m_appendExport, false);
+    exportThread->enableAppendExport();
+    EXPECT_EQ(exportThread->m_appendExport, true);
+}
+
+TEST_F(LogExportthread_UT, exportToZipPublic_UT)
+{
+    QList<LOG_MSG_COREDUMP> coredumpList;
+    LOG_MSG_COREDUMP core;
+    core.coreFile = "present";
+    core.storagePath = "/tmp/test_core";
+    coredumpList.append(core);
+    QStringList labels;
+    labels << "label1" << "label2";
+    exportThread->exportToZipPublic("test.zip", coredumpList, labels);
+    EXPECT_EQ(exportThread->m_fileName, QString("test.zip"));
+    EXPECT_EQ(exportThread->m_coredumplist.size(), 1);
+    EXPECT_EQ(exportThread->m_labels.size(), 2);
+    EXPECT_EQ(exportThread->m_runMode, LogExportThread::ZipCoredump);
+    EXPECT_EQ(exportThread->m_canRunning, true);
+}
+
+TEST_F(LogExportthread_UT, initMap_UT)
+{
+    exportThread->initMap();
+    EXPECT_EQ(exportThread->m_levelStrMap.size(), 8);
+    EXPECT_TRUE(exportThread->m_levelStrMap.contains("Emergency"));
+    EXPECT_TRUE(exportThread->m_levelStrMap.contains("Alert"));
+    EXPECT_TRUE(exportThread->m_levelStrMap.contains("Critical"));
+    EXPECT_TRUE(exportThread->m_levelStrMap.contains("Error"));
+    EXPECT_TRUE(exportThread->m_levelStrMap.contains("Warning"));
+    EXPECT_TRUE(exportThread->m_levelStrMap.contains("Notice"));
+    EXPECT_TRUE(exportThread->m_levelStrMap.contains("Info"));
+    EXPECT_TRUE(exportThread->m_levelStrMap.contains("Debug"));
+}
+
+TEST_F(LogExportthread_UT, strTranslate_UT)
+{
+    exportThread->initMap();
+    QString result = exportThread->strTranslate("Emergency");
+    EXPECT_FALSE(result.isEmpty());
+    QString unknown = exportThread->strTranslate("NonExistentLevel");
+    EXPECT_EQ(unknown, QString("NonExistentLevel"));
+}
+
+TEST_F(LogExportthread_UT, htmlEscapeCovert_UT)
+{
+    QString html = "<div>test>?￥|</div>";
+    exportThread->htmlEscapeCovert(html);
+    EXPECT_FALSE(html.contains("<"));
+    EXPECT_FALSE(html.contains(">"));
+    EXPECT_FALSE(html.contains("?"));
+    EXPECT_FALSE(html.contains("￥"));
+    EXPECT_FALSE(html.contains("|"));
+    EXPECT_TRUE(html.contains("&lt"));
+    EXPECT_TRUE(html.contains("&gt"));
+    EXPECT_TRUE(html.contains("&iexcl"));
+    EXPECT_TRUE(html.contains("&yen"));
+    EXPECT_TRUE(html.contains("&brvbar"));
+}
+
+TEST_F(LogExportthread_UT, exportToZip_UT)
+{
+    Stub stub;
+    stub.set(ADDR(Utils, getAppDataPath), stub_zip_getAppDataPath);
+    stub.set(ADDR(Utils, mkMutiDir), stub_zip_mkMutiDir);
+    stub.set(ADDR(DLDBusHandler, exportLog), stub_zip_exportLog);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_zip_QProcessStart);
+    stub.set(ADDR(QProcess, waitForFinished), stub_zip_waitForFinished);
+
+    // 空列表, m_canRunning=true, nCoreDumpCount=0 -> else 分支
+    exportThread->m_canRunning = true;
+    QList<LOG_MSG_COREDUMP> emptyList;
+    bool res1 = exportThread->exportToZip("test_empty.zip", emptyList);
+    EXPECT_EQ(res1, true);
+
+    // 含 coreFile=="present" 的列表, nCoreDumpCount>0 -> connect 分支
+    QList<LOG_MSG_COREDUMP> coreList;
+    LOG_MSG_COREDUMP core1;
+    core1.coreFile = "present";
+    core1.storagePath = "/tmp/test_core1";
+    coreList.append(core1);
+    LOG_MSG_COREDUMP core2;
+    core2.coreFile = "absent";
+    core2.storagePath = "/tmp/test_core2";
+    coreList.append(core2);
+    exportThread->m_canRunning = true;
+    bool res2 = exportThread->exportToZip("test_core.zip", coreList);
+    EXPECT_EQ(res2, true);
+
+    // m_canRunning=false -> 提前返回 false
+    exportThread->m_canRunning = false;
+    bool res3 = exportThread->exportToZip("test_stop.zip", coreList);
+    EXPECT_EQ(res3, false);
+}
+
+TEST_F(LogExportthread_UT, ExportRunZip_UT)
+{
+    Stub stub;
+    stub.set(ADDR(Utils, getAppDataPath), stub_zip_getAppDataPath);
+    stub.set(ADDR(Utils, mkMutiDir), stub_zip_mkMutiDir);
+    stub.set(ADDR(DLDBusHandler, exportLog), stub_zip_exportLog);
+    stub.set((void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode))ADDR(QProcess, start), stub_zip_QProcessStart);
+    stub.set(ADDR(QProcess, waitForFinished), stub_zip_waitForFinished);
+
+    QList<LOG_MSG_COREDUMP> coreList;
+    LOG_MSG_COREDUMP core;
+    core.coreFile = "present";
+    core.storagePath = "/tmp/test_core";
+    coreList.append(core);
+    exportThread->m_coredumplist = coreList;
+    exportThread->m_fileName = "test_run.zip";
+    exportThread->m_runMode = LogExportThread::ZipCoredump;
+    exportThread->m_canRunning = true;
+    exportThread->run();
+    EXPECT_NE(exportThread, nullptr);
+}
+
+TEST_F(LogExportthread_UT, ExportRunAuditAuth_UT)
+{
+    Stub stub;
+    typedef bool (QFile::*fptr)() const;
+    fptr A_foo = (fptr)(&QFile::exists);
+    stub.set(A_foo, stub_dfwexists);
+    stub.set(ADDR(DocxFactory::WordProcessingMerger, load), stub_load);
+    stub.set(ADDR(DocxFactory::WordProcessingMerger, paste), stub_paste);
+    stub.set(ADDR(DocxFactory::WordProcessingMerger, save), stub_save);
+    stub.set((void (DocxFactory::WordProcessingMerger::*)(const std::string &, const std::string &, const std::string &))ADDR(DocxFactory::WordProcessingMerger, setClipboardValue), stub_setClipboardValue);
+
+    LOG_MSG_AUDIT audit;
+    audit.auditType = "IDENTAUTH";
+    audit.dateTime = "20261027";
+    audit.msg = "test audit";
+    audit.status = "success";
+    QList<LOG_MSG_AUDIT> auditList;
+    auditList.append(audit);
+
+    LOG_MSG_AUTH auth;
+    auth.dateTime = "20261027";
+    auth.hostName = "localhost";
+    auth.processName = "test";
+    auth.msg = "test auth";
+    QList<LOG_MSG_AUTH> authList;
+    authList.append(auth);
+
+    exportThread->m_alist = auditList;
+    exportThread->m_authlist = authList;
+    exportThread->m_fileName = "test_audit";
+    exportThread->m_labels = QStringList() << "test";
+    exportThread->m_canRunning = false;
+
+    exportThread->m_runMode = LogExportThread::TxtAUDIT;
+    exportThread->run();
+    exportThread->m_runMode = LogExportThread::TxtAUTH;
+    exportThread->run();
+    exportThread->m_runMode = LogExportThread::HtmlAUDIT;
+    exportThread->run();
+    exportThread->m_runMode = LogExportThread::HtmlAUTH;
+    exportThread->run();
+    exportThread->m_runMode = LogExportThread::DocAUDIT;
+    exportThread->run();
+    exportThread->m_runMode = LogExportThread::DocAUTH;
+    exportThread->run();
+    exportThread->m_runMode = LogExportThread::XlsAUDIT;
+    exportThread->run();
+    exportThread->m_runMode = LogExportThread::XlsAUTH;
+    exportThread->run();
+    EXPECT_NE(exportThread, nullptr);
+}
