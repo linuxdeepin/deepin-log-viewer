@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,6 +11,7 @@
 #include <QPainter>
 #include <QEvent>
 #include <QFocusEvent>
+#include <QStandardItemModel>
 #include <DStyle>
 
 int stub_pixelMetric(DStyle::PixelMetric m, const QStyleOption *opt = nullptr, const QWidget *widget = nullptr)
@@ -89,3 +90,21 @@ TEST(LogViewHeaderView_sectionSizeHint_UT, LogViewHeaderView_sectionSizeHint_UT_
     p->sectionSizeHint(0);
     p->deleteLater();
 }
+
+// ---- 增强用例：覆盖 getSpacing/setSpacing ----
+TEST_F(LogViewHeaderView_UT, LogViewHeaderView_spacing_UT)
+{
+    EXPECT_EQ(m_LogViewHeaderView->getSpacing(), 1);
+    m_LogViewHeaderView->setSpacing(5);
+    EXPECT_EQ(m_LogViewHeaderView->getSpacing(), 5);
+    m_LogViewHeaderView->setSpacing(1);
+}
+
+// ---- 增强用例：直接调用私有槽 updateSizeMode ----
+TEST_F(LogViewHeaderView_UT, LogViewHeaderView_updateSizeMode_UT)
+{
+    m_LogViewHeaderView->updateSizeMode();
+    SUCCEED();
+}
+
+
