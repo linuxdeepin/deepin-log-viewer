@@ -474,7 +474,7 @@ TEST_F(LogViewerServiceTest, OpenLogStreamAuthOk)
     ASSERT_TRUE(tmpFile.open());
     tmpFile.write("stream line\n");
     tmpFile.flush();
-    QString [REDACTED CREDENTIAL]
+    QString token = m_service->openLogStream(tmpFile.fileName());
     EXPECT_FALSE(token.isEmpty());
 }
 
@@ -500,7 +500,7 @@ TEST_F(LogViewerServiceTest, ReadLogInStreamValidToken)
     ASSERT_TRUE(tmpFile.open());
     tmpFile.write("stream data 1\nstream data 2\n");
     tmpFile.flush();
-    QString [REDACTED CREDENTIAL]
+    QString token = m_service->openLogStream(tmpFile.fileName());
     ASSERT_FALSE(token.isEmpty());
     QString result = m_service->readLogInStream(token);
     EXPECT_TRUE(result.contains("stream data"));

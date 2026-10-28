@@ -465,7 +465,7 @@ int stub_ddialog_exec_rejected()
     return 0;
 }
 
-bool stub_showFileItem(const QString &localFilePath, const QString &startupId)
+static bool stub_showFileItem(const QString &localFilePath, const QString &startupId)
 {
     Q_UNUSED(localFilePath);
     Q_UNUSED(startupId);

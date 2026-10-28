@@ -91,6 +91,7 @@ set(LINK_LIBS
 
 if (QT_DESIRED_VERSION MATCHES 6)
     list(APPEND LINK_LIBS Qt${QT_DESIRED_VERSION}::Core5Compat)
+    list(APPEND LINK_LIBS Qt${QT_DESIRED_VERSION}::GuiPrivate Qt${QT_DESIRED_VERSION}::CorePrivate)
 else()
     list(APPEND LINK_LIBS ${Gsetting_LIBRARIES})
     include_directories(${Gsetting_INCLUDE_DIRS})
@@ -101,6 +102,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty)
 
 FILE(GLOB allSource
      ../application/filtercontent.cpp
+     ../application/cliapplicationhelper.cpp
+     ../application/logtableview.cpp
      ../application/displaycontent.cpp
      ../application/logcollectormain.cpp
      ../application/logfileparser.cpp
@@ -144,6 +147,7 @@ FILE(GLOB allSource
      ../application/parsethread/parsethreadbase.cpp
      ../application/parsethread/parsethreadkern.cpp
      ../application/parsethread/parsethreadkwin.cpp
+     ../logViewerService/logviewerservice.cpp
 )
 FILE(GLOB qrcFiles
     ../application/assets/resources.qrc
@@ -259,6 +263,8 @@ include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../3rdparty/tmp
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../application")
 include_sub_directories_recursively("${CMAKE_CURRENT_SOURCE_DIR}/../liblogviewerplugin")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../logViewerService)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../logViewerAuth)
 
 include_directories( ${Boost_INCLUDE_DIRS})
 include_directories( ${ZLIB_INCLUDE_DIRS})
@@ -269,7 +275,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 
 include_directories(src)
 
-add_executable (${PROJECT_NAME_TEST} ${allSource} ${APP_QRC_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
+add_executable (${PROJECT_NAME_TEST} ${allSource} ../application/configs/json/org_deepin_log_viewer.hpp ${APP_QRC_FILES} ${qrcFiles}   ${allTestSource} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 #添加插件单元测试进程
 add_executable (${PROJECT_NAME_PLUGIN_TEST} ${allPluginTestSource} ${LVP_HEADERS} ${LVP_SOURCES} ${MINIZIP_SOURCES} ${LXW_SOURCES} ${DOCXFAC_SOURCES} ${DOCXFAC_SOURCES_C} ${TMPFILE_SOURCES} ${MD5SOURCES})
 

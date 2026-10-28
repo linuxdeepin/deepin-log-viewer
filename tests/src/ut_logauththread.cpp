@@ -173,7 +173,7 @@ bool stub_isFileExist_true(const QString &filePath)
     return true;
 }
 
-bool stub_isFileExist_false(const QString &filePath)
+static bool stub_isFileExist_false(const QString &filePath)
 {
     Q_UNUSED(filePath);
     return false;
