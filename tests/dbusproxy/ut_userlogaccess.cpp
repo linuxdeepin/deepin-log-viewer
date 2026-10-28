@@ -172,7 +172,7 @@ TEST(UT_UserLogAccess_openLogStream, UT_UserLogAccess_openLogStream_normal)
     tmp.write("stream line 1\nstream line 2\n");
     tmp.close();
 
-    QString [REDACTED CREDENTIAL]
+    QString token = UserLogAccess::instance()->openLogStream(tmp.fileName());
     EXPECT_FALSE(token.isEmpty());
     EXPECT_TRUE(token.startsWith(QStringLiteral("local-")));
 }
@@ -180,7 +180,7 @@ TEST(UT_UserLogAccess_openLogStream, UT_UserLogAccess_openLogStream_normal)
 // openLogStream：读取失败返回空 token
 TEST(UT_UserLogAccess_openLogStream, UT_UserLogAccess_openLogStream_empty)
 {
-    QString [REDACTED CREDENTIAL]
+    QString token = UserLogAccess::instance()->openLogStream("/tmp/dlv_ut_nonexistent.log");
     EXPECT_TRUE(token.isEmpty());
 }
 
@@ -198,7 +198,7 @@ TEST(UT_UserLogAccess_readLogInStream, UT_UserLogAccess_readLogInStream_valid)
     tmp.write("aaa\nbbb\n");
     tmp.close();
 
-    QString [REDACTED CREDENTIAL]
+    QString token = UserLogAccess::instance()->openLogStream(tmp.fileName());
     ASSERT_FALSE(token.isEmpty());
 
     QString first = UserLogAccess::instance()->readLogInStream(token);

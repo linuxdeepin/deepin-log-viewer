@@ -153,14 +153,14 @@ TEST_F(UT_DLDBusHandler, openLogStream_home_branch_returns_local_token)
 {
     Utils::homePath = m_homeDir.path();
     QString abs = makeHomeFile("stream.log", "stream-content\n");
-    QString [REDACTED CREDENTIAL]
+    QString token = m_handler->openLogStream(abs);
     EXPECT_TRUE(token.startsWith(QStringLiteral("local-")));
 }
 
 TEST_F(UT_DLDBusHandler, openLogStream_home_branch_unreadable_returns_empty)
 {
     Utils::homePath = m_homeDir.path();
-    QString [REDACTED CREDENTIAL] + "/no_such_file.log");
+    QString token = m_handler->openLogStream(m_homeDir.path() + "/no_such_file.log");
     EXPECT_TRUE(token.isEmpty());
 }
 
@@ -176,7 +176,7 @@ TEST_F(UT_DLDBusHandler, readLogInStream_local_token_returns_content)
 {
     Utils::homePath = m_homeDir.path();
     QString abs = makeHomeFile("stream2.log", "data-line\n");
-    QString [REDACTED CREDENTIAL]
+    QString token = m_handler->openLogStream(abs);
     ASSERT_FALSE(token.isEmpty());
     QString result = m_handler->readLogInStream(token);
     EXPECT_FALSE(result.isEmpty());

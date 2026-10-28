@@ -82,7 +82,8 @@ static QDateTime stub_appHelper_getLastReportTime()
 }
 
 static void stub_appHelper_saveLastRerportTime(const QDateTime &) {}
-static LogApplicationHelper *stub_appHelper_instance() { return reinterpret_cast<LogApplicationHelper *>(0x1); }
+alignas(LogApplicationHelper) static char stub_appHelper_buf[sizeof(LogApplicationHelper)] = {};
+static LogApplicationHelper *stub_appHelper_instance() { return reinterpret_cast<LogApplicationHelper *>(stub_appHelper_buf); }
 
 static int stub_appHelper_getMaxReportCoredump()
 {
@@ -134,7 +135,8 @@ static QString stub_dlbus_readLogLinesInRange(const QString &, int, int)
 {
     return QString();
 }
-static DLDBusHandler *stub_dlbus_instance() { return reinterpret_cast<DLDBusHandler *>(0x1); }
+alignas(DLDBusHandler) static char stub_dlbus_buf[sizeof(DLDBusHandler)] = {};
+static DLDBusHandler *stub_dlbus_instance() { return reinterpret_cast<DLDBusHandler *>(stub_dlbus_buf); }
 
 static QString stub_Utils_mkMutiDir(const QString &) { return QString(); }
 static bool stub_Utils_checkAndDeleteDir(const QString &) { return true; }

@@ -181,6 +181,21 @@ bool stub_isCoredumpctlExist_false()
     return false;
 }
 
+int LogFileParser_parseByAudit(const AUDIT_FILTERS &)
+{
+    return 0;
+}
+
+int LogFileParser_parseByAuth(const AUTH_FILTERS &)
+{
+    return 0;
+}
+
+int LogFileParser_parseByCoredump(const COREDUMP_FILTERS &, bool)
+{
+    return 0;
+}
+
 void stub_refreshAuthLogList()
 {
 }

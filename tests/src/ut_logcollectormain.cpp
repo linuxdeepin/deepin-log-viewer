@@ -75,8 +75,21 @@ bool LogCollectorMain_notify(QObject *obj, QEvent *event)
     return false;
 }
 
+
+// 兜底：部分用例链中 QApplication 可能被 deleteLater 销毁，建 QWidget 前确保实例存在
+static QApplication *ensureQtApp()
+{
+    if (qApp == nullptr) {
+        static int argc = 0;
+        static QApplication *app = new QApplication(argc, nullptr);
+        return app;
+    }
+    return static_cast<QApplication *>(qApp);
+}
+
 TEST(LogCollectorMain_Constructor_UT, LogCollectorMain_Constructor_UT)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -96,6 +109,7 @@ TEST(LogCollectorMain_Constructor_UT, LogCollectorMain_Constructor_UT)
 
 TEST(LogCollectorMain_Destructor_UT, LogCollectorMain_Destructor_UT)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -114,6 +128,7 @@ TEST(LogCollectorMain_Destructor_UT, LogCollectorMain_Destructor_UT)
 }
 TEST(LogCollectorMain_initUI_UT, LogCollectorMain_initUI_UT)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -133,6 +148,7 @@ TEST(LogCollectorMain_initUI_UT, LogCollectorMain_initUI_UT)
 
 TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_001)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -153,6 +169,7 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_001)
 
 TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_002)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -182,6 +199,7 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_002)
 
 TEST(LogCollectorMain_initConnection_UT, LogCollectorMain_initConnection_UT)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -306,6 +324,7 @@ TEST_P(LogCollectorMain_handleApplicationTabEventNotify_UT, LogCollectorMain_han
 
 TEST(LogCollectorMain_switchRefreshActionTriggered_UT, LogCollectorMain_switchRefreshActionTriggered_UT_001)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -337,6 +356,7 @@ TEST(LogCollectorMain_switchRefreshActionTriggered_UT, LogCollectorMain_switchRe
 
 TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_001)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -361,6 +381,7 @@ TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_001)
 
 TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_002)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -392,6 +413,7 @@ TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_002)
 
 TEST(LogCollectorMain_closeEvent_UT, LogCollectorMain_closeEvent_UT_001)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -472,6 +494,7 @@ int LogCollectorMain_exec_processEvents(DDialog *self)
 // ===== initShortCut lambda coverage =====
 TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_003)
 {
+    ensureQtApp();
     // Set DStyle so DApplication::style() returns a valid DStyle* — prevents SEGV
     // in LogPeriodButton::paintEvent when showMaximized()/showNormal() triggers repaints
     qApp->setStyle(new DStyle);
@@ -509,6 +532,7 @@ TEST(LogCollectorMain_initShortCut_UT, LogCollectorMain_initShortCut_UT_003)
 // ===== initTitlebarExtensions lambda coverage =====
 TEST(LogCollectorMain_initTitlebarExtensions_UT, LogCollectorMain_initTitlebarExtensions_UT_002)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -539,6 +563,7 @@ TEST(LogCollectorMain_initTitlebarExtensions_UT, LogCollectorMain_initTitlebarEx
 // ===== switchRefreshActionTriggered lambda coverage =====
 TEST(LogCollectorMain_switchRefreshActionTriggered_UT, LogCollectorMain_switchRefreshActionTriggered_UT_002)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
@@ -580,6 +605,7 @@ TEST(LogCollectorMain_switchRefreshActionTriggered_UT, LogCollectorMain_switchRe
 // ===== exportAllLogs lambda coverage =====
 TEST(LogCollectorMain_exportAllLogs_UT, LogCollectorMain_exportAllLogs_UT_003)
 {
+    ensureQtApp();
     Stub stub;
     stub.set(ADDR(DebugTimeManager, beginPointLinux), Log_beginPointLinux);
     stub.set(ADDR(LogFileParser, parseByJournal), LogFileParser_parseByJournal);
