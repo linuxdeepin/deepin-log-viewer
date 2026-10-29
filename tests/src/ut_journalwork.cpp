@@ -12,6 +12,13 @@
 
 #include <gtest/gtest.h>
 
+static int g_workPreviousLeft = 0;
+// 限制 FOREACH_BACKWARDS 迭代次数，避免遍历真实 journal 全量条目（大 journal 机器上超时）
+static int stub_sd_journal_previous_limited(sd_journal *)
+{
+    return g_workPreviousLeft-- > 0 ? 1 : 0;
+}
+
 int stub_sd_journal_get_data_work(sd_journal *j, const char *field, const void **data, size_t *l)
 {
     return 0;
@@ -92,7 +99,9 @@ TEST(journalWork_doWork_UT, journalWork_doWork_UT)
     journalWork *p = new journalWork(nullptr);
     EXPECT_NE(p, nullptr);
     Stub stub;
+    g_workPreviousLeft = 10;
     stub.set(sd_journal_get_data, stub_sd_journal_get_data_work);
+    stub.set(sd_journal_previous, stub_sd_journal_previous_limited);
     stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_work);
     p->doWork();
     p->deleteLater();
@@ -103,7 +112,9 @@ TEST(journalWork_run_UT, journalWork_run_UT)
     journalWork *p = new journalWork(nullptr);
     EXPECT_NE(p, nullptr);
     Stub stub;
+    g_workPreviousLeft = 10;
     stub.set(sd_journal_get_data, stub_sd_journal_get_data_work);
+    stub.set(sd_journal_previous, stub_sd_journal_previous_limited);
     stub.set(ADDR(journalWork, getReplaceColorStr), stub_getReplaceColorStr_work);
     p->run();
     p->deleteLater();

@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <gtest/gtest.h>
+#include <QDBusConnection>
+#include <QDBusInterface>
 #include "../application/dbusmanager.h"
 
 #include <stub.h>
@@ -56,32 +58,52 @@ TEST(DBusManager_isAuditAdmin_UT, DBusManager_isAuditAdmin_UT_002)
     delete p;
 }
 
-// 4) getHomePathByFreeDesktop —— 无 DBus 属性时返回空串
+// 4) getHomePathByFreeDesktop —— 结果取决于 login1 是否可用：
+//    有系统总线时返回 "/home/<user>"，无则返回空串；断言与环境解耦
 TEST(DBusManager_getHomePathByFreeDesktop_UT, DBusManager_getHomePathByFreeDesktop_UT_001)
 {
     QString home = DBusManager::getHomePathByFreeDesktop();
-    EXPECT_TRUE(home.isEmpty());
+    if (!home.isEmpty())
+        EXPECT_TRUE(home.startsWith("/home/")) << "home=" << home.toStdString();
 }
 
 TEST(DBusManager_getHomePathByFreeDesktop_UT, DBusManager_getHomePathByFreeDesktop_UT_002)
 {
     DBusManager *p = new DBusManager(nullptr);
     QString home = p->getHomePathByFreeDesktop();
-    EXPECT_EQ(home, QString());
+    if (!home.isEmpty())
+        EXPECT_TRUE(home.startsWith("/home/")) << "home=" << home.toStdString();
     delete p;
 }
 
-// 5) isScreenLocked —— 锁屏服务不可用时视为未锁屏，应返回 false
+// 5) isScreenLocked —— 返回值取决于会话总线上的锁屏服务：
+//    服务不存在时恒为 false；服务在运行时返回真实 Visible 状态
+//    （无人值守的桌面会话可能正处锁屏，为 true），断言与环境解耦
+static bool lockFrontVisibleForAssertion()
+{
+    const char *services[][3] = {
+        {"org.deepin.dde.LockFront1", "/org/deepin/dde/LockFront1", "org.deepin.dde.LockFront1"},
+        {"com.deepin.dde.lockFront", "/com/deepin/dde/lockFront", "com.deepin.dde.lockFront"},
+    };
+    for (const auto &svc : services) {
+        QDBusInterface lockFront(svc[0], svc[1], svc[2], QDBusConnection::sessionBus());
+        if (!lockFront.isValid())
+            continue;
+        QVariant visible = lockFront.property("Visible");
+        if (visible.isValid())
+            return visible.toBool();
+    }
+    return false;
+}
+
 TEST(DBusManager_isScreenLocked_UT, DBusManager_isScreenLocked_UT_001)
 {
-    bool rs = DBusManager::isScreenLocked();
-    EXPECT_EQ(rs, false);
+    EXPECT_EQ(DBusManager::isScreenLocked(), lockFrontVisibleForAssertion());
 }
 
 TEST(DBusManager_isScreenLocked_UT, DBusManager_isScreenLocked_UT_002)
 {
     DBusManager *p = new DBusManager(nullptr);
-    bool rs = p->isScreenLocked();
-    EXPECT_FALSE(rs);
+    EXPECT_EQ(p->isScreenLocked(), lockFrontVisibleForAssertion());
     delete p;
 }

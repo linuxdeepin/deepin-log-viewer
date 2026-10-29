@@ -16,6 +16,13 @@
 #include <gtest/gtest.h>
 #include <systemd/sd-journal.h>
 
+static int g_bootPreviousLeft = 0;
+// 限制 FOREACH_BACKWARDS 迭代次数，避免遍历真实 journal 全量条目（大 journal 机器上超时）
+static int stub_sd_journal_previous_limited(sd_journal *)
+{
+    return g_bootPreviousLeft-- > 0 ? 1 : 0;
+}
+
 int stub_sd_journal_get_data_bootwork001(sd_journal *j, const char *field, const void **data, size_t *l)
 {
     return 0;
@@ -93,7 +100,9 @@ TEST(JournalBootWork_setArg_UT, JournalBootWork_setArg_UT_002)
 TEST(JournalBootWork_doWork_UT, JournalBootWork_doWork_UT)
 {
     Stub stub;
+    g_bootPreviousLeft = 10;
     stub.set(sd_journal_get_data, stub_sd_journal_get_data_bootwork001);
+    stub.set(sd_journal_previous, stub_sd_journal_previous_limited);
     stub.set(ADDR(JournalBootWork, getReplaceColorStr), stub_getReplaceColorStr_bootwork001);
     JournalBootWork *p = new JournalBootWork(nullptr);
     p->doWork();
