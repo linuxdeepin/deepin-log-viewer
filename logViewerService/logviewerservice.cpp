@@ -1253,7 +1253,7 @@ bool LogViewerService::exportLog(const QDBusUnixFileDescriptor &fd, const QStrin
                 sourceFile.close();
             } else {
                 const qint64 chunkSize = 1024 * 1024;  // 1MB
-                QScopedPointer<char> buffer(new char[chunkSize]);
+                QScopedArrayPointer<char> buffer(new char[chunkSize]);
                 bool error = false;
                 while (!sourceFile.atEnd()) {
                     qint64 bytesRead = sourceFile.read(buffer.data(), chunkSize);
@@ -1427,7 +1427,7 @@ bool LogViewerService::exportOpsLog(const QDBusUnixFileDescriptor &fd)
                 constexpr qint64 bufSize = 1 << 20;  // 1 MiB
                 // 缓冲区较大，改用堆分配，避免占用过多线程栈空间；
                 // 与本文件 exportLog() 中 1 MiB 缓冲区的处理方式保持一致。
-                QScopedPointer<char> buf(new char[bufSize]);
+                QScopedArrayPointer<char> buf(new char[bufSize]);
                 qint64 n = 0;
                 bool error = false;
                 while ((n = zipIn.read(buf.data(), bufSize)) > 0) {

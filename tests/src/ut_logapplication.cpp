@@ -21,7 +21,8 @@ TEST(LogApplication_Constructor_UT, LogApplication_Constructor_UT)
     char **argv;
     LogApplication *p = new LogApplication(argc, argv);
     EXPECT_NE(p, nullptr);
-    p->deleteLater();
+    // QApplication 常驻不复位：deleteLater 被后续用例泵事件处理掉后，
+    // 其他建 QWidget 的用例会 qFatal，故有意保留实例（测试进程生命周期内泄漏）
 }
 void stub_beginPointLinux(const QString &point, const QString &status)
 {
@@ -47,7 +48,8 @@ TEST(LogApplication_setMainWindow_UT, LogApplication_setMainWindow_UT)
     LogCollectorMain *m = new LogCollectorMain(nullptr);
     p->setMainWindow(m);
     EXPECT_EQ(m, p->m_mainWindow);
-    p->deleteLater();
+    // 主窗口同步删除（异步刷新链挂在其子对象上）；QApplication 常驻不删除
+    delete m;
 }
 
 class LogApplication_notify_UT_Param
@@ -124,7 +126,7 @@ TEST_P(LogApplication_notify_UT, LogApplication_notify_UT)
     }
 
     if (mainWindow) {
-        mainWindow->deleteLater();
+        delete mainWindow;
     }
-    p->deleteLater();
+    // QApplication 常驻：删除后后续建 QWidget 的用例会 qFatal
 }

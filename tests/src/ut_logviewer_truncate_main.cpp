@@ -67,6 +67,10 @@ static QByteArray stub_truncate_readAllStandardOutput()
 // ---- Helper: run main() in forked child to avoid QCoreApplication conflict ----
 static void runInChild(std::function<void()> func)
 {
+#if defined(__SANITIZE_ADDRESS__)
+    // ASAN 进程 fork 出的子进程会在运行时内部锁上死锁，无法等到退出
+    GTEST_SKIP() << "skip fork-based main test under AddressSanitizer";
+#else
     pid_t pid = fork();
     ASSERT_GE(pid, 0);
     if (pid == 0) {
@@ -77,6 +81,7 @@ static void runInChild(std::function<void()> func)
     int status = 0;
     waitpid(pid, &status, 0);
     EXPECT_TRUE(WIFEXITED(status) && WEXITSTATUS(status) == 0);
+#endif
 }
 
 // ---- Tests ----

@@ -28,6 +28,12 @@ protected:
         m_oldHome = Utils::homePath;
         m_handler = new DLDBusHandler();
         ASSERT_NE(m_handler, nullptr);
+        // 将 DBus 代理指向不存在的服务：真实后端（root 服务）收到 exportOpsLog/
+        // exportLog 等请求会触发 polkit 交互鉴权，无人值守环境（UT 服务器）没人
+        // 输密码会导致调用一直阻塞到超时；假服务让调用立即报错返回，同时保留
+        // 文件打开、fd 传递等前端链路的覆盖
+        m_handler->m_dbus = new DeepinLogviewerInterface(
+            "com.nonexistent.dlv.ut", "/dlv/ut", QDBusConnection::systemBus(), m_handler);
     }
     void TearDown() override
     {

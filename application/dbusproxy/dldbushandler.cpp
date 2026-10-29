@@ -353,7 +353,7 @@ bool DLDBusHandler::exportLog(const QString &outDir, const QString &in, bool isF
             return false;
         }
         const qint64 chunkSize = 1024 * 1024;
-        QScopedPointer<char> buffer(new char[chunkSize]);
+        QScopedArrayPointer<char> buffer(new char[chunkSize]);
         bool error = false;
         while (!sourceFile.atEnd()) {
             qint64 bytesRead = sourceFile.read(buffer.data(), chunkSize);

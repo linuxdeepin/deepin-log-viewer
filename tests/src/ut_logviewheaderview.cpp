@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -28,6 +28,12 @@ public:
     //添加日志
     void SetUp() //TEST跑之前会执行SetUp
     {
+        // paintEvent 内部 dynamic_cast<DStyle*>(style())，非 DStyle 时为空指针直接崩溃
+        if (qApp == nullptr) {
+            static int argc = 0;
+            static QApplication app(argc, nullptr);
+        }
+        qApp->setStyle(new DStyle);
         m_LogViewHeaderView = new LogViewHeaderView(Qt::Vertical);
         qDebug() << "SetUp";
     }
@@ -48,6 +54,11 @@ TEST(LogViewHeaderView_paintSection_UT, LogViewHeaderView_paintSection_UT_001)
     Stub stub;
     stub.set((int (DStyle::*)(DStyle::PixelMetric, const QStyleOption *, const QWidget *) const)ADDR(DStyle, pixelMetric), stub_pixelMetric);
     stub.set((void (DStyle::*)(DStyle::PrimitiveElement, const QStyleOption *, QPainter *, const QWidget *) const)ADDR(DStyle, drawPrimitive), stub_drawPrimitive);
+    if (qApp == nullptr) {
+        static int argc = 0;
+        static QApplication app(argc, nullptr);
+    }
+    qApp->setStyle(new DStyle);
     LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
     EXPECT_NE(p, nullptr);
     QPainter painter;
@@ -84,6 +95,11 @@ TEST(LogViewHeaderView_sectionSizeHint_UT, LogViewHeaderView_sectionSizeHint_UT_
 {
     Stub stub;
     stub.set((int (DStyle::*)(DStyle::PixelMetric, const QStyleOption *, const QWidget *) const)ADDR(DStyle, pixelMetric), stub_pixelMetric);
+    if (qApp == nullptr) {
+        static int argc = 0;
+        static QApplication app(argc, nullptr);
+    }
+    qApp->setStyle(new DStyle);
     LogViewHeaderView *p = new LogViewHeaderView(Qt::Horizontal, nullptr);
     EXPECT_NE(p, nullptr);
     p->sectionSizeHint(0);
