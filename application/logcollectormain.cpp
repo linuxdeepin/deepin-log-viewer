@@ -224,8 +224,11 @@ void LogCollectorMain::initTitlebarExtensions()
     QVariant var = m_settings->getOption(refreshIntervalKey);
     if (!var.isNull()) {
         int index = var.toInt();
-        m_refreshActions[index]->setChecked(true);
-        m_refreshActions[index]->triggered(true);
+        // 配置值可能来自被篡改或不兼容版本的配置文件，越界访问 m_refreshActions 会崩溃
+        if (index >= 0 && index < m_refreshActions.size()) {
+            m_refreshActions[index]->setChecked(true);
+            m_refreshActions[index]->triggered(true);
+        }
     }
     DWidget *widget = new DWidget;
     QHBoxLayout *layout = new QHBoxLayout(widget);

@@ -206,6 +206,8 @@ QString Utils::loadFontFamilyFromFiles(const QString &fontFileName)
 QString Utils::getReplaceColorStr(const char *d)
 {
     qCDebug(logApp) << "Replacing color strings in text";
+    if (!d)
+        return QString();
     QByteArray byteChar(d);
     byteChar = replaceEmptyByteArray(byteChar);
     QString d_str = QString(byteChar);
@@ -1007,7 +1009,13 @@ LoggerRules::LoggerRules(QObject *parent)
     : QObject(parent), m_rules(""), m_config(nullptr) {
 }
 
-LoggerRules::~LoggerRules() { m_config->deleteLater(); }
+LoggerRules::~LoggerRules()
+{
+    // m_config 构造时为 nullptr；若 initLoggerRules() 未执行或提前退出，
+    // 直接解引用会触发空指针崩溃
+    if (m_config)
+        m_config->deleteLater();
+}
 
 void LoggerRules::initLoggerRules()
 {

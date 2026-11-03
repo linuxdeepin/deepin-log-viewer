@@ -138,6 +138,32 @@ TEST(UT_UserLogAccess_readLogLinesInRange, UT_UserLogAccess_readLogLinesInRange_
     EXPECT_EQ(r[1], QStringLiteral("l1"));
 }
 
+// readLogLinesInRange：正向读取 startLine > 0（修复前字节偏移被当作行号使用，必然越界崩溃）
+TEST(UT_UserLogAccess_readLogLinesInRange, UT_UserLogAccess_readLogLinesInRange_forwardFromOffset)
+{
+    QTemporaryFile tmp;
+    tmp.open();
+    tmp.write("l0\nl1\nl2\nl3\nl4\n");
+    tmp.close();
+
+    QStringList r = UserLogAccess::instance()->readLogLinesInRange(tmp.fileName(), 2, 2, false);
+    ASSERT_EQ(r.size(), 2);
+    EXPECT_EQ(r[0], QStringLiteral("l2"));
+    EXPECT_EQ(r[1], QStringLiteral("l3"));
+}
+
+// readLogLinesInRange：startLine 超出文件行数时返回空，不越界
+TEST(UT_UserLogAccess_readLogLinesInRange, UT_UserLogAccess_readLogLinesInRange_startLineBeyond)
+{
+    QTemporaryFile tmp;
+    tmp.open();
+    tmp.write("l0\nl1\n");
+    tmp.close();
+
+    QStringList r = UserLogAccess::instance()->readLogLinesInRange(tmp.fileName(), 10, 2, false);
+    EXPECT_TRUE(r.isEmpty());
+}
+
 // readLogLinesInRange：反向读取
 TEST(UT_UserLogAccess_readLogLinesInRange, UT_UserLogAccess_readLogLinesInRange_reverse)
 {

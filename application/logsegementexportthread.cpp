@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019-2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -439,6 +439,11 @@ void LogSegementExportThread::saveDoc()
     if (rsNameFile.exists()) {
         rsNameFile.remove();
     }
+    // initDoc() 提前返回时 m_pDocMerger 仍为空指针，直接调用 save 会崩溃
+    if (!m_pDocMerger) {
+        qCWarning(logApp) << "saveDoc: doc merger not initialized, skip saving";
+        return;
+    }
     m_pDocMerger->save(fileNamex.toStdString());
     QFile(fileNamex).rename(m_fileName);
 }
@@ -446,6 +451,8 @@ void LogSegementExportThread::saveDoc()
 void LogSegementExportThread::closeXls()
 {
     qCDebug(logApp) << "Closing XLS export";
-    workbook_close(m_pWorkbook);
+    // workbook_new() 失败时返回空指针，直接 close 会崩溃
+    if (m_pWorkbook)
+        workbook_close(m_pWorkbook);
     malloc_trim(0);
 }
