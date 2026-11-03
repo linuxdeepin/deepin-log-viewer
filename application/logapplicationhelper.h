@@ -12,6 +12,8 @@
 #endif
 
 #include <QMap>
+#include <QFileSystemWatcher>
+#include <QTimer>
 #include <QObject>
 
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
@@ -105,8 +107,10 @@ private:
 
 signals:
     void sigValueChanged(const QString &key);
+    void sigAppLogDirChanged();
 
 public slots:
+    void slot_appLogDirChanged();
 
 private:
     /**
@@ -172,6 +176,16 @@ private:
     //gsettings,自定义日志配置
     QGSettings *m_pGSettings = nullptr;
 #endif
+
+    /**
+     * @brief m_appLogDirWatcher 监视~/.cache/deepin目录变化的文件系统监视器
+     */
+    QFileSystemWatcher *m_appLogDirWatcher {nullptr};
+
+    /**
+     * @brief m_debounceTimer 防抖定时器，合并短时间内的多次目录变更信号
+     */
+    QTimer *m_debounceTimer {nullptr};
 };
 
 #endif  // LOGAPPLICATIONHELPER_H

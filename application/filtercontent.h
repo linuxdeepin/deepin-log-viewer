@@ -136,6 +136,7 @@ public slots:
     void slot_cbxAuditTypeChanged(int idx);
     void setExportButtonEnable(bool iEnable);
     void slot_cbxDnfLvIdxChanged(int idx);
+    void slot_appLogDirChanged();
 
 private:
     /**
