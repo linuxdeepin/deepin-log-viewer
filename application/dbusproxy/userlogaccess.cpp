@@ -189,6 +189,10 @@ qint64 UserLogAccess::readFileAndReturnIndex(const QString &filePath, qint64 sta
         return lineIndexes.at(startLine);
     }
 
+    // startLine 超出文件实际行数时（文件比请求的起始行短）返回 -1，
+    // 直接 at(startLine) 会触发 QList 越界断言崩溃
+    if (startLine < 0 || startLine >= static_cast<qint64>(lineIndexes.size()))
+        return -1;
     return lineIndexes.at(startLine);
 }
 
@@ -229,7 +233,19 @@ QStringList UserLogAccess::readLogLinesInRange(const QString &filePath, qint64 s
         return lines;
     }
 
-    if (!file.seek(m_logLineIndex[token].at(startLineIndex))) {
+    // 正向读取时 readFileAndReturnIndex 返回的已是起始行的字节偏移，可直接用于 seek。
+    // 旧代码误将该字节偏移当作行号再取 m_logLineIndex[token].at(...)，
+    // startLine > 0 时偏移量超出列表长度导致越界崩溃（startLine == 0 时两者碰巧都为 0）。
+    // 反向读取时上面的分支已把 startLineIndex 换算为行号，需要查表转换为字节偏移。
+    qint64 seekOffset = startLineIndex;
+    if (bReverse) {
+        const QList<uint64_t> &indexList = m_logLineIndex[token];
+        if (indexList.isEmpty() || startLineIndex >= indexList.size()) {
+            return lines;
+        }
+        seekOffset = static_cast<qint64>(indexList.at(startLineIndex));
+    }
+    if (!file.seek(seekOffset)) {
         qCWarning(logUserLogAccess) << "Failed to seek file:" << filePath;
         return lines;
     }

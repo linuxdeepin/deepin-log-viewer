@@ -160,10 +160,16 @@ void ParseThreadKern::handleKern()
                 msg.hostName = list[1];
             } else {
                 if (list[0].contains("-")) {
+                    // 两段式时间需要至少 3 个字段，三段式需要至少 4 个；
+                    // 不足时按无效行跳过，避免 QStringList 越界访问
+                    if (list.size() < 3)
+                        continue;
                     timeList << list[0] << list[1];
                     iTime = formatDateTime(list[0], list[1]);
                     msg.hostName = list[2];
                 } else {
+                    if (list.size() < 4)
+                        continue;
                     timeList << list[0] << list[1] << list[2];
                     iTime = formatDateTime(list[0], list[1], list[2]);
                     msg.hostName = list[3];
