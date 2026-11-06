@@ -264,7 +264,9 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
         }
     } else {
         qCDebug(logService) << "Line indexes are not empty, reading from file";
-        if (startLine < lineIndexes.size() && !reverseOrder) {
+        if (startLine >= 0 &&
+            startLine < static_cast<qint64>(lineIndexes.size()) &&
+            !reverseOrder) {
             return lineIndexes[startLine];
         } else {
             file.seekg(lineIndexes.last());
@@ -284,16 +286,19 @@ qint64 LogViewerService::readFileAndReturnIndex(const QString &filePath, qint64 
 
     file.close();
 
-    qCDebug(logService) << "Returning index:" << lineIndexes.at(startLine);
+    if (startLine < 0 || startLine >= static_cast<qint64>(lineIndexes.size()))
+        return -1;
+
+    qint64 returnIndex = startLine;
     if (reverseOrder) {
-        startLine = lineIndexes.size() - startLine - 1;
-        if (startLine < 0)
+        returnIndex = static_cast<qint64>(lineIndexes.size()) - startLine - 1;
+        if (returnIndex < 0 ||
+            returnIndex >= static_cast<qint64>(lineIndexes.size()))
             return -1;
-        else
-            return lineIndexes.at(startLine);
     }
 
-    return lineIndexes.at(startLine); // 返回给定起始行的索引
+    qCDebug(logService) << "Returning index:" << lineIndexes.at(returnIndex);
+    return lineIndexes.at(returnIndex); // 返回给定起始行的索引
 }
 
 QString LogViewerService::getCallerHomeDir()
@@ -500,6 +505,9 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
     if (!checkAuth(s_Action_View))
         return lines;
 
+    if (lineCount <= 0)
+        return lines;
+
     // ProtectHome=tmpfs 遮蔽后，后端仅允许读取 /var/log/ 和 /tmp 下的系统日志文件；
     // /home、/root 下的用户日志由前端用户日志访问类在用户进程内本地读取，不再经此后端接口。
     if (!filePath.startsWith("/var/log/") && !filePath.startsWith("/tmp")) {
@@ -531,11 +539,13 @@ QStringList LogViewerService::readLogLinesInRange(const QString &filePath, qint6
     }
 
     if (bReverse) {
-        int startLineCount = m_logLineIndex[token].size() - lineCount;
+        const qint64 startLineCount =
+            static_cast<qint64>(m_logLineIndex[token].size()) - lineCount;
         startLineIndex = startLineCount > 0 ? startLineCount : 0;
     }
 
-    if (startLineIndex < 0)
+    if (startLineIndex < 0 ||
+        startLineIndex >= static_cast<qint64>(m_logLineIndex[token].size()))
         return lines;
 
     if (!file.seek(m_logLineIndex[token].at(startLineIndex))) {
