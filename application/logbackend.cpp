@@ -55,7 +55,15 @@ LogBackend *LogBackend::instance(QObject *parent)
 
 LogBackend::~LogBackend()
 {
-
+    // 退出时先停掉在飞的解析/导出 runnable 并等待其真正结束，再进入成员与
+    // 子对象析构：这些 worker（journalWork/JournalBootWork/LogAuthThread 及
+    // 导出线程）既是 QThreadPool 的 autoDelete QRunnable，又是 m_logFileParser
+    // 的 QObject 子对象。若不等它们返回就析构，池线程随后 autoDelete 会再次
+    // delete 已释放的对象，造成 double-free，表现为关闭窗口即段错误。
+    emit stopExport();
+    m_logFileParser.stopAllLoad();
+    QThreadPool::globalInstance()->clear();
+    QThreadPool::globalInstance()->waitForDone();
 }
 
 LogBackend::LogBackend(QObject *parent) : QObject(parent)
