@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -14,6 +14,7 @@
 #include "logoocfileparsethread.h"
 
 #include <QMap>
+#include <QPointer>
 #include <QThread>
 #include <QDebug>
 
@@ -115,8 +116,10 @@ signals:
 public slots:
     void slog_proccessError(const QString &iError);
 private:
-    LogOOCFileParseThread *m_OOCThread {nullptr};
-    LogApplicationParseThread *m_appThread {nullptr};
+    // QPointer：两线程均挂 finished→deleteLater，结束后指针自动置空，
+    // 析构时的 isRunning 判断不会访问悬空指针
+    QPointer<LogOOCFileParseThread> m_OOCThread {nullptr};
+    QPointer<LogApplicationParseThread> m_appThread {nullptr};
 };
 
 #endif  // LOGFILEPARSER_H

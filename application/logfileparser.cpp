@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2023 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -63,6 +63,14 @@ LogFileParser::LogFileParser(QWidget *parent)
 LogFileParser::~LogFileParser()
 {
     stopAllLoad();
+    // OOC/应用日志解析线程是真实 QThread（不在线程池里），stopAllLoad 已置
+    // 停止标记；等 run() 返回后再进入子对象清理，避免运行中的 QThread 被析构
+    if (m_OOCThread && m_OOCThread->isRunning()) {
+        m_OOCThread->wait();
+    }
+    if (m_appThread && m_appThread->isRunning()) {
+        m_appThread->wait();
+    }
     if (SharedMemoryManager::getInstance()) {
         //释放共享内存
         SharedMemoryManager::instance()->releaseMemory();
