@@ -693,7 +693,10 @@ AppLogConfigList LogApplicationHelper::getAppLogConfigs()
 
     // 将新增的json配置应用更新到应用配置列表中
     for (auto appConfig : m_JsonAppLogConfigs) {
-        if (!isAppLogConfigExist(appConfig.name))
+        // JSON 应用兜底配置仍必须对应一个已安装且可显示的 desktop 应用，
+        // 避免应用未安装时因 JSON 配置本身而在列表中显示原始应用名。
+        if (!isAppLogConfigExist(appConfig.name)
+                && m_desktop_files.contains(appConfig.name + ".desktop"))
             m_appLogConfigs.push_back(appConfig);
     }
 

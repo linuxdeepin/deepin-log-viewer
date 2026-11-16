@@ -398,7 +398,8 @@ install(FILES assets/auditRule.conf DESTINATION ${CMAKE_INSTALL_PREFIX}/share/de
 install(FILES assets/deepin-logger DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
 
 # Install log json config file.
-install(FILES configs/logconfig/deepin-log-viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d/)
+install(FILES configs/logconfig/deepin-log-viewer.json configs/logconfig/deepin-movie.json
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-log-viewer/deepin-log.conf.d/)
 
 # Install debugmode json config file.
 install(FILES configs/debugconfig/org.deepin.log.viewer.json DESTINATION ${CMAKE_INSTALL_PREFIX}/share/deepin-debug-config/deepin-debug-config.d/)
