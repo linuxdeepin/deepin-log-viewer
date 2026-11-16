@@ -472,6 +472,7 @@ struct LOG_FILTER_BASE {
     qint64 timeFilterEnd = -1;
     QString filePath;
     int segementIndex;
+    QStringList cachedFilePaths;
 };
 
 Q_DECLARE_METATYPE(LOG_FILTER_BASE)

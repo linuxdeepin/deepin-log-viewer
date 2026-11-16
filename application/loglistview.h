@@ -65,6 +65,7 @@ protected:
 signals:
     void itemChanged(const QModelIndex &index);
     void sigRefresh(const QModelIndex &index); // add refresh
+    void sigTruncateRefresh(const QModelIndex &index); // truncate then refresh
 
 private:
     QStandardItemModel *m_pModel {nullptr};

@@ -3340,6 +3340,16 @@ void DisplayContent::insertApplicationTable(const QList<LOG_MSG_APPLICATOIN> &li
 
 /**
  * @author Airy
+ * @brief DisplayContent::slot_truncateRefresh 截断日志后刷新，先失效内核缓存再走正常刷新流程
+ * @param index 当前选中的日志类型的index
+ */
+void DisplayContent::slot_truncateRefresh(const QModelIndex &index)
+{
+    m_pLogBackend->invalidateKernCache();
+    slot_refreshClicked(index);
+}
+
+/**
  * @brief DisplayContent::slot_refreshClicked for refresh日志类型listview右键刷新数据槽函数
  * @param index 当前选中的日志类型的index
  */
