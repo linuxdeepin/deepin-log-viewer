@@ -1,3 +1,21 @@
+deepin-log-viewer (6.5.44) unstable; urgency=medium
+
+  * test: extend unit tests for display and filter modules
+  * test: extend dbus tests and add plugin/delegate tests
+  * test: extend tests for detail widget and app helper
+  * test: add unit tests for opslog, threads and auth
+  * test: add unit tests for service and main window
+  * test: add unit tests for utils, threads and entries
+  * test: add unit tests for export and file parsers
+  * fix(test): repair UT build and sanitizer failures after coverage
+    series merge
+  * fix(test): make full UT suite pass under ASan without filters or
+    masks
+  * fix: guard crash-prone paths found by Mode-5 scan
+  * fix: guard line range indices in log viewer service
+
+ -- wangrong <wangrong@uniontech.com>  Tue, 17 Nov 2026 20:24:14 +0800
+
 deepin-log-viewer (6.5.43) unstable; urgency=medium
 
   * docs: add Portuguese (pt_BR) help manual and normalize en_US manual paths
