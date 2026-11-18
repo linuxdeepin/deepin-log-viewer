@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -22,7 +22,6 @@ static char utmpbuf[NRECS * UTSIZE];
 static int num_recs;
 static int cur_rec;
 static int fdWtmp = -1;
-static int bpos;
 static __off_t fpos;
 
 struct utmp_list {
