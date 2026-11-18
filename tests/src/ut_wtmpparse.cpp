@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -6,6 +6,7 @@
 
 #include <stub.h>
 
+#include <QFile>
 #include <QDebug>
 
 #include <gtest/gtest.h>
@@ -32,14 +33,81 @@ TEST(wtmpparse_wtmp_next_UT, seek_end_UT)
 
 TEST(wtmpparse_wtmp_next_UT, wtmp_reload_back_UT)
 {
+    // fdWtmp == -1 after the failed wtmp_open_back() above: reload must report no records
     int result = wtmp_reload_back();
-    EXPECT_NE(result, 0);
+    EXPECT_EQ(result, 0);
 }
 
 TEST(wtmpparse_wtmp_next_UT, wtmp_back_UT)
 {
     struct utmp *test = wtmp_back();
     EXPECT_EQ(test, nullptr);
+}
+
+namespace {
+const char *backTestFile()
+{
+    return "/tmp/ut_wtmpparse_back_test.bin";
+}
+
+int writeBackTestFile(int recCount, int extraBytes)
+{
+    QFile f(backTestFile());
+    if (!f.open(QIODevice::WriteOnly | QIODevice::Truncate))
+        return -1;
+    for (int i = 0; i < recCount; ++i) {
+        struct utmp u;
+        memset(&u, 0, sizeof(u));
+        u.ut_time = static_cast<decltype(u.ut_time)>(i + 1);
+        if (f.write(reinterpret_cast<const char *>(&u), sizeof(u)) != sizeof(u))
+            return -1;
+    }
+    if (extraBytes > 0)
+        f.write(QByteArray(extraBytes, 'x'));
+    f.close();
+    return 0;
+}
+}  // namespace
+
+// Regression test for PMS #383511: wtmp_back() must iterate every record once,
+// from the end of the file back to the start, and stop with nullptr - never
+// reading outside utmpbuf regardless of file size or read errors.
+TEST(wtmpparse_wtmp_next_UT, wtmp_back_iterate_full_file)
+{
+    const int recCount = 40;  // more than two NRECS(16) chunks
+    ASSERT_EQ(writeBackTestFile(recCount, 0), 0);
+    ASSERT_NE(wtmp_open_back(const_cast<char *>(backTestFile())), -1);
+
+    int count = 0;
+    struct utmp *rec;
+    while ((rec = wtmp_back()) != nullptr && count < recCount + 10) {
+        EXPECT_EQ(rec->ut_time, static_cast<decltype(rec->ut_time)>(recCount - count));
+        ++count;
+    }
+    EXPECT_EQ(count, recCount);
+    EXPECT_EQ(rec, nullptr);
+    wtmp_close();
+    unlink(backTestFile());
+}
+
+TEST(wtmpparse_wtmp_next_UT, wtmp_back_partial_record_and_empty)
+{
+    // file with a trailing partial record: only whole records are returned
+    ASSERT_EQ(writeBackTestFile(3, 100), 0);
+    ASSERT_NE(wtmp_open_back(const_cast<char *>(backTestFile())), -1);
+    int count = 0;
+    while (wtmp_back() != nullptr && count < 10)
+        ++count;
+    EXPECT_EQ(count, 3);
+    wtmp_close();
+    unlink(backTestFile());
+
+    // empty file: no records at all
+    ASSERT_EQ(writeBackTestFile(0, 0), 0);
+    ASSERT_NE(wtmp_open_back(const_cast<char *>(backTestFile())), -1);
+    EXPECT_EQ(wtmp_back(), nullptr);
+    wtmp_close();
+    unlink(backTestFile());
 }
 
 TEST(wtmpparse_wtmp_next_UT, show_end_time_UT)
