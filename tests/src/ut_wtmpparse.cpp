@@ -7,6 +7,7 @@
 #include <stub.h>
 
 #include <QFile>
+#include <QTemporaryDir>
 #include <QDebug>
 
 #include <gtest/gtest.h>
@@ -99,9 +100,12 @@ TEST(wtmpparse_wtmp_back_UT, wtmp_back_with_file_UT)
 }
 
 namespace {
-const char *backTestFile()
+// Unique per-process directory: a fixed /tmp path could be pre-empted by a
+// symlink or by a concurrent test run
+QByteArray backTestFile()
 {
-    return "/tmp/ut_wtmpparse_back_test.bin";
+    static QTemporaryDir dir;
+    return dir.filePath("wtmp_back.bin").toLocal8Bit();
 }
 
 int writeBackTestFile(int recCount, int extraBytes)
@@ -130,7 +134,7 @@ TEST(wtmpparse_wtmp_back_UT, wtmp_back_iterate_full_file)
 {
     const int recCount = 40;  // more than two NRECS(16) chunks
     ASSERT_EQ(writeBackTestFile(recCount, 0), 0);
-    ASSERT_NE(wtmp_open_back(const_cast<char *>(backTestFile())), -1);
+    ASSERT_NE(wtmp_open_back(backTestFile().data()), -1);
 
     int count = 0;
     struct utmp *rec;
@@ -141,27 +145,61 @@ TEST(wtmpparse_wtmp_back_UT, wtmp_back_iterate_full_file)
     EXPECT_EQ(count, recCount);
     EXPECT_EQ(rec, nullptr);
     wtmp_close();
-    unlink(backTestFile());
+    unlink(backTestFile().constData());
+}
+
+// A file larger than one chunk with a trailing partial record: every returned
+// record must still be whole and correctly aligned
+TEST(wtmpparse_wtmp_back_UT, wtmp_back_multi_chunk_partial_tail)
+{
+    const int recCount = 20;  // spans more than one NRECS(16) chunk
+    ASSERT_EQ(writeBackTestFile(recCount, 7), 0);
+    ASSERT_NE(wtmp_open_back(backTestFile().data()), -1);
+
+    int count = 0;
+    struct utmp *rec;
+    while ((rec = wtmp_back()) != nullptr && count < recCount + 10) {
+        EXPECT_EQ(rec->ut_time, static_cast<decltype(rec->ut_time)>(recCount - count));
+        ++count;
+    }
+    EXPECT_EQ(count, recCount);
+    EXPECT_EQ(rec, nullptr);
+    wtmp_close();
+    unlink(backTestFile().constData());
+}
+
+// pread() failure with a VALID fd and positive fpos (a directory: open()
+// succeeds but pread() fails with EISDIR) must report zero records
+TEST(wtmpparse_wtmp_back_UT, wtmp_reload_back_pread_failure_UT)
+{
+    const char *dirPath = "/tmp";
+    if (wtmp_open_back(const_cast<char *>(dirPath)) == -1) {
+        SUCCEED() << "could not open directory for the pread failure test";
+        return;
+    }
+    EXPECT_EQ(wtmp_reload_back(), 0);
+    EXPECT_EQ(wtmp_back(), nullptr);
+    wtmp_close();
 }
 
 TEST(wtmpparse_wtmp_back_UT, wtmp_back_partial_record_and_empty)
 {
     // file with a trailing partial record: only whole records are returned
     ASSERT_EQ(writeBackTestFile(3, 100), 0);
-    ASSERT_NE(wtmp_open_back(const_cast<char *>(backTestFile())), -1);
+    ASSERT_NE(wtmp_open_back(backTestFile().data()), -1);
     int count = 0;
     while (wtmp_back() != nullptr && count < 10)
         ++count;
     EXPECT_EQ(count, 3);
     wtmp_close();
-    unlink(backTestFile());
+    unlink(backTestFile().constData());
 
     // empty file: no records at all
     ASSERT_EQ(writeBackTestFile(0, 0), 0);
-    ASSERT_NE(wtmp_open_back(const_cast<char *>(backTestFile())), -1);
+    ASSERT_NE(wtmp_open_back(backTestFile().data()), -1);
     EXPECT_EQ(wtmp_back(), nullptr);
     wtmp_close();
-    unlink(backTestFile());
+    unlink(backTestFile().constData());
 }
 
 TEST(wtmpparse_show_end_time_UT, show_end_time_UT)

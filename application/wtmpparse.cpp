@@ -87,6 +87,12 @@ int wtmp_reload_back(void)
     if (fdWtmp == -1 || fpos <= 0)
         return 0;
 
+    // drop a trailing partial record, otherwise every chunk would be offset
+    // from the record grid and all parsed records would be corrupted
+    fpos -= fpos % static_cast<off_t>(UTSIZE);
+    if (fpos <= 0)
+        return 0;
+
     off = fpos - static_cast<off_t>(len);
     if (off < 0) {  // less than one chunk left: read the head from the file start
         len = static_cast<size_t>(fpos);
