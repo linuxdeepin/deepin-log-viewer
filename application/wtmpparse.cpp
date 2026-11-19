@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2019 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2019 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -24,7 +24,8 @@ int wtmp_open_back(char *filename)
 {
     qCDebug(logApp) << "Opening wtmp file for backward reading:" << filename;
     fdWtmp = open(filename, O_RDONLY);
-    bpos = cur_rec = num_recs = 0;
+    num_recs = 0;
+    cur_rec = -1;  // no chunk loaded yet, so the first wtmp_back() triggers a reload
     fpos = lseek(fdWtmp, 0, SEEK_END);
     qCDebug(logApp) << "File position set to end:" << fpos;
     return fdWtmp;
@@ -79,17 +80,32 @@ struct utmp *wtmp_next(void)
 int wtmp_reload_back(void)
 {
     qCDebug(logApp) << "Reloading wtmp data backwards";
-    int amt_read;
+    ssize_t amt_read;
+    size_t len = NRECS * UTSIZE;
+    off_t off;
 
-    off_t o;
-    o = ((fpos - 1) / (NRECS * UTSIZE)) * (NRECS * UTSIZE);
-    bpos = (int)(fpos - o);
-    fpos -= NRECS * UTSIZE;
-    amt_read = pread(fdWtmp, utmpbuf, NRECS * UTSIZE, fpos);
-    num_recs = amt_read / UTSIZE;
+    if (fdWtmp == -1 || fpos <= 0)
+        return 0;
+
+    off = fpos - static_cast<off_t>(len);
+    if (off < 0) {  // less than one chunk left: read the head from the file start
+        len = static_cast<size_t>(fpos);
+        off = 0;
+    }
+    fpos = off;
+
+    amt_read = pread(fdWtmp, utmpbuf, len, off);
+    if (amt_read <= 0) {  // read error (pread returns -1): treat as no more records
+        qCWarning(logApp) << "Failed to read wtmp data backwards, error:" << strerror(errno);
+        return 0;
+    }
+
+    num_recs = static_cast<int>(amt_read / UTSIZE);
+    if (num_recs <= 0)
+        return 0;
+
+    cur_rec = num_recs - 1;  // reading backwards: start from the last record of this chunk
     qCDebug(logApp) << "Read" << num_recs << "wtmp records backwards";
-
-    cur_rec = 0;
 
     return num_recs;
 }
@@ -103,8 +119,13 @@ struct utmp *wtmp_back(void)
         return NULLUT;
     }
 
-    if (cur_rec == 0 && wtmp_reload_back() == 0) {
+    if (cur_rec < 0 && wtmp_reload_back() == 0) {
         qCDebug(logApp) << "No more records to read backwards";
+        return NULLUT;
+    }
+
+    if (cur_rec < 0 || cur_rec >= num_recs) {  // never index outside the chunk buffer
+        qCDebug(logApp) << "Chunk index out of range, stop";
         return NULLUT;
     }
 
