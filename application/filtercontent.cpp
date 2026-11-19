@@ -287,6 +287,10 @@ void FilterContent::initConnections()
     connect(typeCbx, SIGNAL(currentIndexChanged(int)), this,
             SLOT(slot_cbxLogTypeChanged(int)));  // add by Airy
     connect(auditTypeCbx, SIGNAL(currentIndexChanged(int)), this, SLOT(slot_cbxAuditTypeChanged(int)));
+
+    // 监听应用日志目录变化信号，自动刷新应用下拉列表
+    connect(LogApplicationHelper::instance(), &LogApplicationHelper::sigAppLogDirChanged,
+            this, &FilterContent::slot_appLogDirChanged);
 }
 
 /**
@@ -304,6 +308,38 @@ void FilterContent::shortCutExport()
     //判断现在导出按钮是否能够点击,不能点击时不可以导出
     if (!itemData.isEmpty() && canExport)
         emit sigExportInfo();
+}
+
+/**
+ * @brief FilterContent::slot_appLogDirChanged 应用日志目录变化时刷新应用下拉列表
+ */
+void FilterContent::slot_appLogDirChanged()
+{
+    // 仅当当前处于应用日志页面时才刷新
+    if (m_currentType != APP_TREE_DATA) {
+        return;
+    }
+
+    qCDebug(logApp) << "App log directory changed, refreshing app combo box";
+
+    // 保存当前选择的应用名称
+    QString currentApp;
+    if (cbx_app->count() > 0) {
+        currentApp = cbx_app->itemData(cbx_app->currentIndex(), Qt::UserRole + 1).toString();
+    }
+
+    // 重建应用下拉列表
+    setAppComboBoxItem();
+
+    // 恢复之前选择的应用
+    if (!currentApp.isEmpty()) {
+        for (int i = 0; i < cbx_app->count(); ++i) {
+            if (cbx_app->itemData(i, Qt::UserRole + 1).toString() == currentApp) {
+                cbx_app->setCurrentIndex(i);
+                break;
+            }
+        }
+    }
 }
 
 /**

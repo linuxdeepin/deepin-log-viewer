@@ -58,7 +58,42 @@ void LogApplicationHelper::init()
     initOtherLog();
     initCustomLog();
     initAuthLog();
+
+    // 监视~/.cache/deepin/目录变化，当新应用日志目录出现时自动刷新应用列表
+    if (!m_appLogDirWatcher) {
+        QString watchPath = Utils::homePath + "/.cache/deepin/";
+        QDir watchDir(watchPath);
+        if (!watchDir.exists()) {
+            watchDir.mkpath(watchPath);
+        }
+        m_appLogDirWatcher = new QFileSystemWatcher(this);
+        m_appLogDirWatcher->addPath(watchPath);
+        connect(m_appLogDirWatcher, &QFileSystemWatcher::directoryChanged,
+                this, &LogApplicationHelper::slot_appLogDirChanged);
+    }
+
+    // 初始化防抖定时器，合并短时间内的多次目录变更信号
+    if (!m_debounceTimer) {
+        m_debounceTimer = new QTimer(this);
+        m_debounceTimer->setSingleShot(true);
+        m_debounceTimer->setInterval(300);
+        connect(m_debounceTimer, &QTimer::timeout, this, [this]() {
+            qCDebug(logApp) << "Debounce timeout, emitting app log dir changed signal";
+            emit sigAppLogDirChanged();
+        });
+    }
     qCDebug(logApp) << "LogApplicationHelper initialization completed";
+}
+
+/**
+ * @brief LogApplicationHelper::slot_appLogDirChanged 应用日志目录变化时防抖通知
+ */
+void LogApplicationHelper::slot_appLogDirChanged()
+{
+    qCDebug(logApp) << "App log directory changed, debouncing refresh";
+    if (m_debounceTimer) {
+        m_debounceTimer->start();
+    }
 }
 
 void LogApplicationHelper::initAppLog()
